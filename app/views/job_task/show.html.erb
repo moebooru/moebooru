@@ -1,0 +1,15 @@
+<h4>Job #<%= @job_task.id %></h4>
+
+<ul>
+  <li><strong>Type</strong>: <%= @job_task.task_type %></li>
+  <li><strong>Status</strong>: <%= @job_task.status %></li>
+  <li><strong>Data</strong>: <%= @job_task.pretty_data rescue "ERROR" %></li>
+  <li><strong>Message</strong>: <%= @job_task.status_message %></li>
+</ul>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Listing", :action => "index" %></li>
+  <% if @job_task.status == "error" %>
+    <li><%= link_to "Retry", :action => "retry", :id => @job_task.id %></li>
+  <% end %>
+<% end %>

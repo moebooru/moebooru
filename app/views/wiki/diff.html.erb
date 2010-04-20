@@ -1,0 +1,17 @@
+<%= render :partial => "sidebar" %>
+
+<div class="content wiki" id="wiki-diff">
+  <h2 class="title"><%= h @oldpage.pretty_title %></h2>
+  <p>
+    Comparing versions
+    <%= link_to h(params[:from]), {:action => "show", :title => params[:title], :version => params[:from]} %>
+    and
+    <%= link_to h(params[:to]), {:action => "show", :title => params[:title], :version => params[:to]} %>.
+  </p>
+  <p><em>Legend:</em> <del>old text</del> <ins>new text</ins></p>
+  <div id="body">
+    <%= @difference %>
+  </div>
+</div>
+
+<%= render :partial => "footer" %>

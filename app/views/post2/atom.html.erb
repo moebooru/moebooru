@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title><%= h CONFIG["app_name"] %></title>
+	<link href="http://<%= h CONFIG["server_host"] %>/post/atom" rel="self"/>
+  <link href="http://<%= h CONFIG["server_host"] %>/post/index" rel="alternate"/>
+  <id>http://<%= h CONFIG["server_host"] %>/post/atom?tags=<%= h params[:tags] %></id>
+  <% if @posts.any? %>
+    <updated><%= @posts[0].created_at.gmtime.xmlschema %></updated>
+  <% end %>
+  <author><name><%= h CONFIG["app_name"] %></name></author>
+  <% @posts.each do |post| %>
+    <entry>
+      <title><%= h post.cached_tags %></title>
+      <link href="http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %>" rel="alternate"/>
+      <% if post.source =~ /^http/ %>
+        <link href="<%= h post.source %>" rel="related"/>
+      <% end %>
+      <id>http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></id>
+      <updated><%= post.created_at.gmtime.xmlschema %></updated>
+      <summary><%= h post.cached_tags %></summary>
+      <content type="xhtml">
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <a href="http://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %>">
+            <img src="<%= post.preview_url %>"/>
+          </a>
+        </div>
+      </content>
+      <author>
+        <name><%= h post.author %></name>
+      </author>
+    </entry>
+  <% end %>
+</feed>

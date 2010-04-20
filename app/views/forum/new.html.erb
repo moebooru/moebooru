@@ -1,0 +1,31 @@
+<h2>New Topic</h2>
+
+<div style="margin: 1em 0;">
+  <div id="preview" style="display: none; margin: 1em 0;">
+  </div>
+
+  <div id="reply">
+    <% form_tag({:action => "create"}) do %>
+      <%= hidden_field "forum_post", "parent_id", :value => params["parent_id"] %>
+      <table>
+        <tr>
+          <td><label for="forum_post_title">Title</label></td>
+          <td><%= text_field "forum_post", "title", :size => 60 %></td>
+        </tr>
+        <tr>
+          <td><label for="forum_post_body">Body</label></td>
+          <td><%= text_area "forum_post", "body", :rows => 10, :cols => 60 %></td>
+        </tr>
+        <tr>
+          <td colspan="2"><%= submit_tag "Post" %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+  
+</div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "List", :action => "index" %></li>
+  <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+<% end %>

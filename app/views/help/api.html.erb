@@ -1,0 +1,595 @@
+<div class="help">
+  <h1>Help: API v1.13.0</h1>
+
+  <div class="section">
+    <p>Danbooru offers a simple API to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
+    <p style="text-align: center;"><a href="#changelog">Change Log</a> | <a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a> | <a href="#comments">Comments</a> | <a href="#wiki">Wiki</a> | <a href="#notes">Notes</a> | <a href="#users">Users</a> | <a href="#forum">Forum</a> | <a href="#pools">Pools</a></p>
+  </div>
+
+  <div class="section">
+    <div class="section">
+      <h2>Basics</h2>
+      <p>HTTP defines two request methods: GET and POST. You'll be using these two methods to interact with the Danbooru API. Most API calls that change the state of the database (like creating, updating, or deleting something) require an HTTP POST call. API calls that only retrieve data can typically be done with an HTTP GET call.</p>
+      <p>In the Danbooru API, a URL is analogous to a function name. You pass in the function parameters as a query string. Here's an extremely simple example: <a class="code" href="http://miezaru.donmai.us/post/index.xml?limit=1" target="_blank">/post/index.xml?limit=1</a>.</p>
+      <p>The <code>post</code> part indicates the controller we're working with. In this case it's posts. <code>index</code> describes the action. Here we're retrieving a list of posts. Finally, the <code>xml</code> part describes what format we want the response in. You can specify <code>.xml</code> for XML responses, <code>.json</code> for JSON responses, and nothing at all for HTML responses.</p>
+    </div>
+  
+    <div class="section">
+      <h4>Responses</h4>
+      <p>All API calls that change state will return a single element response (for XML calls). They are formatted like this:</p>
+      <div class="code">
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>
+        &lt;response success="false" reason="duplicate"/&gt;
+      </div>
+      <p>For JSON responses, they'll look like this:</p>
+      <div class="code">
+        {success: false, reason: "duplicate"}
+      </div>
+      <p>While you can usually determine success or failure based on the response object, you can also figure out what happened based on the HTTP status code. In addition to the standard ones, Danbooru uses some custom status codes in the 4xx and 5xx range.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Status Code</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>200 OK</td>
+            <td>Request was successful</td>
+          </tr>
+          <tr>
+            <td>403 Forbidden</td>
+            <td>Access denied</td>
+          </tr>
+          <tr>
+            <td>404 Not Found</td>
+            <td>Not found</td>
+          </tr>
+          <tr>
+            <td>420 Invalid Record</td>
+            <td>Record could not be saved</td>
+          </tr>
+          <tr>
+            <td>421 User Throttled</td>
+            <td>User is throttled, try again later</td>
+          </tr>
+          <tr>
+            <td>422 Locked</td>
+            <td>The resource is locked and cannot be modified</td>
+          </tr>
+          <tr>
+            <td>423 Already Exists</td>
+            <td>Resource already exists</td>
+          </tr>
+          <tr>
+            <td>424 Invalid Parameters</td>
+            <td>The given parameters were invalid</td>
+          </tr>
+          <tr>
+            <td>500 Internal Server Error</td>
+            <td>Some unknown error occurred on the server</td>
+          </tr>
+          <tr>
+            <td>503 Service Unavailable</td>
+            <td>Server cannot currently handle the request, try again later</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="section">
+      <h4>JSON Responses</h4>
+      <p>While you will probably want to work with XML in the majority of cases, if you're writing something in Javascript then the JSON responses may be preferable. They are much faster to parse and there's less code to write to get your data structure:</p>
+      <div class="code">
+        var data = eval("(" + responseText + ")")<br>
+        alert(data.response)
+      </div>
+    </div>
+  
+    <div class="section">
+      <h4>Logging In</h4>
+      <p>Some actions may require you to log in. For any action you can always specify two parameters to identify yourself:</p>
+      <ul>
+        <li><strong>login</strong> Your login name.</li>
+        <li><strong>password_hash</strong> Your SHA1 hashed password. Simply hashing your plain password will NOT work since Danbooru salts its passwords. The actual string that is hashed is "<%= CONFIG["password_salt"] %>--<em>your-password</em>--".</li>
+      </ul>
+      <p>Please be aware of the security risks involved in sending your password through an unencrypted channel. Although your password will be hashed, it is still theoretically possible for someone to steal your account by creating a fake cookie based on your hashed password.</p>
+    </div>
+  </div>
+
+
+
+  <div class="section">
+    <a name="posts"></a>
+    <h2>Posts</h2>
+
+    <div class="section">
+      <h4>List</h4>
+      <p>The base URL is /post/index.xml.</p>
+      <ul>
+        <li><strong>limit</strong> How many posts you want to retrieve. There is a hard limit of 100 posts per request.</li>
+        <li><strong>page</strong> The page number.</li>
+        <li><strong>tags</strong> The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>Create</h4>
+      <p>The base URL is /post/create.xml. There are only two mandatory fields: you need to supply the tags, and you need to supply the file, either through a multipart form or through a source URL.</p>
+      <ul>
+        <li><strong>post[tags]</strong> A space delimited list of tags.</li>
+        <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+        <li><strong>post[rating]</strong> The rating for the post. Can be: safe, questionable, or explicit.</li>
+        <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
+        <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
+        <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
+        <li><strong>post[parent_id]</strong> The ID of the parent post.</li>
+        <li><strong>md5</strong> Supply an MD5 if you want Danbooru to verify the file after uploading. If the MD5 doesn't match, the post is destroyed.</li>
+      </ul>
+      <p>If the call fails, the following response reasons are possible:</p>
+      <ul>
+        <li><strong>MD5 mismatch</strong> This means you supplied an MD5 parameter and what Danbooru got doesn't match. Try uploading the file again.</li>
+        <li><strong>duplicate</strong> This post already exists in Danbooru (based on the MD5 hash). An additional attribute called <code>location</code> will be set, pointing to the (relative) URL of the original post.</li>
+        <li><strong><em>other</em></strong> Any other error will have its error message printed.</li>
+      </ul>
+      <p>If the post upload succeeded, you'll get an attribute called <code>location</code> in the response pointing to the relative URL of your newly uploaded post.</p>
+    </div>
+    <div class="section">
+      <h4>Update</h4>
+      <p>The base URL is /post/update.xml. Only the <code>id</code> parameter is required. Leave the other parameters blank if you don't want to change them.</p>
+      <ul>
+        <li><strong>id</strong> The id number of the post to update.</li>
+        <li><strong>post[tags]</strong> A space delimited list of tags.</li>
+        <li><strong>post[file]</strong> The file data encoded as a multipart form.</li>
+        <li><strong>post[rating]</strong> The rating for the post. Can be: safe, questionable, or explicit.</li>
+        <li><strong>post[source]</strong> If this is a URL, Danbooru will download the file.</li>
+        <li><strong>post[is_rating_locked]</strong> Set to true to prevent others from changing the rating.</li>
+        <li><strong>post[is_note_locked]</strong> Set to true to prevent others from adding notes.</li>
+        <li><strong>post[parent_id]</strong> The ID of the parent post.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Destroy</h4>
+      <p>You must be logged in to use this action. You must also be the user who uploaded the post (or you must be a moderator).</p>
+      <ul>
+        <li><strong>id</strong> The id number of the post to delete.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Tag History</h4>
+      <p>This action retrieves the history of tag changes for a post (or all posts). The base URL is /post/tag_history.xml.</p>
+      <ul>
+        <li><strong>post_id</strong> Specify if you only want the tag histories for a single post.</li>
+        <li><strong>limit</strong> How many histories you want to retrieve.</li>
+        <li><strong>page</strong> The page number.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Revert Tags</h4>
+      <p>This action reverts a post to a previous set of tags. The base URL is /post/revert_tags.xml.</p>
+      <ul>
+        <li><strong>id</strong> The post id number to update.</li>
+        <li><strong>history_id</strong> The id number of the tag history.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Favorites</h4>
+      <p>This action finds all the users who have favorited a post. The base URL is /post/favorites.xml.</p>
+      <ul>
+        <li><strong>id</strong> The post id number to query.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Vote</h4>
+      <p>This action lets you vote for a post. You can only vote once per post per IP address. The base URL is /post/vote.xml.</p>
+      <ul>
+        <li><strong>id</strong> The post id number to update.</li>
+        <li><strong>score</strong> Set to <code>1</code> to vote up and <code>-1</code> to vote down. All other values will be ignored.</li>
+      </ul>
+      <p>If the call did not succeed, the following reasons are possible:</p>
+      <ul>
+        <li><strong>already voted</strong> You have already voted for this post.</li>
+        <li><strong>invalid score</strong> You have supplied an invalid score.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <a name="tags"></a>
+    <h2>Tags</h2>
+
+    <div class="section">
+      <h4>List</h4>
+      <p>The base URL is /tag/index.xml.</p>
+      <ul>
+        <li><strong>limit</strong> How many tags to retrieve. Setting this to 0 will return every tag.</li>
+        <li><strong>page</strong> The page number.</li>
+        <li><strong>order</strong> Can be <code>date</code>, <code>count</code>, or <code>name</code>.</li>
+        <li><strong>id</strong> The id number of the tag.</li>
+        <li><strong>after_id</strong> Return all tags that have an id number greater than this.</li>
+        <li><strong>name</strong> The exact name of the tag.</li>
+        <li><strong>name_pattern</strong> Search for any tag that has this parameter in its name.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Update</h4>
+      <p>The base URL is /tag/update.xml.</p>
+      <ul>
+        <li><strong>name</strong> The name of the tag to update.</li>
+        <li><strong>tag[tag_type]</strong> The tag type. General: 0, artist: 1, copyright: 3, character: 4.</li>
+        <li><strong>tag[is_ambiguous]</strong> Whether or not this tag is ambiguous. Use 1 for true and 0 for false.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Related</h4>
+      <p>The base URL is /tag/related.xml.</p>
+      <ul>
+        <li><strong>tags</strong> The tag names to query.</li>
+        <li><strong>type</strong> Restrict results to this tag type (can be <code>general</code>, <code>artist</code>, <code>copyright</code>, or <code>character</code>).</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+  <div class="section">
+    <a name="artists"></a>
+    <h2>Artists</h2>
+
+    <div class="section">
+      <h4>List</h4>
+      <p>The base URL is /artist/index.xml.</p>
+      <ul>
+        <li><strong>name</strong> The name (or a fragment of the name) of the artist.</li>
+        <li><strong>order</strong> Can be <code>date</code> or <code>name</code>.</li>
+        <li><strong>page</strong> The page number.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Create</h4>
+      <p>The base URL is /artist/create.xml.</p>
+      <ul>
+        <li><strong>artist[name]</strong> The artist's name.</li>
+        <li><strong>artist[urls]</strong> A list of URLs associated with the artist, whitespace delimited.</li>
+        <li><strong>artist[alias]</strong> The artist that this artist is an alias for. Simply enter the alias artist's name.</li>
+        <li><strong>artist[group]</strong> The group or cicle that this artist is a member of. Simply enter the group's name.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Update</h4>
+      <p>The base URL is /artist/update.xml. Only the <strong>id</strong> parameter is required. The other parameters are optional.</p>
+      <ul>
+        <li><strong>id</strong> The id of thr artist to update.</li>
+        <li><strong>artist[name]</strong> The artist's name.</li>
+        <li><strong>artist[urls]</strong> A list of URLs associated with the artist, whitespace delimited.</li>
+        <li><strong>artist[alias]</strong> The artist that this artist is an alias for. Simply enter the alias artist's name.</li>
+        <li><strong>artist[group]</strong> The group or cicle that this artist is a member of. Simply enter the group's name.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h4>Destroy</h4>
+      <p>The base URL is /artist/destroy.xml. You must be logged in to delete artists.</p>
+      <ul>
+        <li><strong>id</strong> The id of the artist to destroy.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+
+  <div class="section">
+    <a name="comments"></a>
+    <h2>Comments</h2>
+  
+    <div class="section">
+      <h4>Show</h4>
+      <p>The base URL is /comment/show.xml. This retrieves a single comment.</p>
+      <ul>
+        <li><strong>id</strong> The id number of the comment to retrieve.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>Create</h4>
+      <p>The base URL is /comment/create.xml.</p>
+      <ul>
+        <li><strong>comment[anonymous]</strong> Set to 1 if you want to post this comment anonymously.</li>
+        <li><strong>comment[post_id]</strong> The post id number to which you are responding.</li>
+        <li><strong>comment[body]</strong> The body of the comment.</li>
+      </ul>
+    </div>  
+
+    <div class="section">
+      <h4>Destroy</h4>
+      <p>The base url is /comment/destroy.xml. You must be logged in to use this action. You must also be the owner of the comment, or you must be a moderator.</p>
+      <ul>
+        <li><strong>id</strong> The id number of the comment to delete.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+
+  <div class="section">
+    <a name="wiki"></a>
+    <h2>Wiki</h2>
+    <p>All titles must be exact (but case and whitespace don't matter).</p>
+  
+    <div class="section">
+      <h4>List</h4>
+      <p>The base URL is /wiki/index.xml. This retrieves a list of every wiki page.</p>
+      <ul>
+        <li><strong>order</strong> How you want the pages ordered. Can be: <code>title</code>, <code>date</code>.</li>
+        <li><strong>limit</strong> The number of pages to retrieve.</li>
+        <li><strong>page</strong> The page number.</li>
+        <li><strong>query</strong> A word or phrase to search for.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>Create</h4>
+      <p>The base URL is /wiki/create.xml.</p>
+      <ul>
+        <li><strong>wiki_page[title]</strong> The title of the wiki page.</li>
+        <li><strong>wiki_page[body]</strong> The body of the wiki page.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>Update</h4>
+      <p>The base URL is /wiki/update.xml. Potential error reasons: "Page is locked"</p>
+      <ul>
+        <li><strong>title</strong> The title of the wiki page to update.</li>
+        <li><strong>wiki_page[title]</strong> The new title of the wiki page.</li>
+        <li><strong>wiki_page[body]</strong> The new body of the wiki page.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>Show</h4>
+      <p>The base URL is /wiki/show.xml. Potential error reasons: "artist type"</p>
+      <ul>
+        <li><strong>title</strong> The title of the wiki page to retrieve.</li>
+        <li><strong>version</strong> The version of the page to retrieve.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>Destroy</h4>
+      <p>The base URL is /wiki/destroy.xml. You must be logged in as a moderator to use this action.</p>
+      <ul>
+        <li><strong>title</strong> The title of the page to delete.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Lock</h4>
+      <p>The base URL is /wiki/lock.xml. You must be logged in as a moderator to use this action.</p>
+      <ul>
+        <li><strong>title</strong> The title of the page to lock.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Unlock</h4>
+      <p>The base URL is /wiki/unlock.xml. You must be logged in as a moderator to use this action.</p>
+      <ul>
+        <li><strong>title</strong> The title of the page to unlock.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>Revert</h4>
+      <p>The base URL is /wiki/revert.xml. Potential error reasons: "Page is locked"</p>
+      <ul>
+        <li><strong>title</strong> The title of the wiki page to update.</li>
+        <li><strong>version</strong> The version to revert to.</li>
+      </ul>
+    </div>
+  
+    <div class="section">
+      <h4>History</h4>
+      <p>The base URL is /wiki/history.xml.</p>
+      <ul>
+        <li><strong>title</strong> The title of the wiki page to retrieve versions for.</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+  <div class="section">
+    <a name="notes"></a>
+    <h2>Notes</h2>
+  
+    <div class="section">
+      <h4>List</h4>
+      <p>The base URL is /note/index.xml.</p>
+      <ul>
+        <li><strong>post_id</strong> The post id number to retrieve notes for.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>Search</h4>
+      <p>The base URL is /note/search.xml.</p>
+      <ul>
+        <li><strong>query</strong> A word or phrase to search for.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>History</h4>
+      <p>The base URL is /note/history.xml. You can either specify <code>id</code>, <code>post_id</code>, or nothing. Specifying nothing will give you a list of every note verison.</p>
+      <ul>
+        <li><strong>limit</strong> How many versions to retrieve.</li>
+        <li><strong>page</strong> The offset.</li>
+        <li><strong>post_id</strong> The post id number to retrieve note versions for.</li>
+        <li><strong>id</strong> The note id number to retrieve versions for.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Revert</h4>
+      <p>The base URL is /note/revert.xml. Potential error reasons: "Post is locked"</p>
+      <ul>
+        <li><strong>id</strong> The note id to update.</li>
+        <li><strong>version</strong> The version to revert to.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Create/Update</h4>
+      <p>The base URL is /note/update.xml. Notes differ from the other controllers in that the interface for creation and updates is the same. If you supply an <code>id</code> parameter, then Danbooru will assume you're updating an existing note. Otherwise, it will create a new note. Potential error reasons: "Post is locked"</p>
+      <ul>
+        <li><strong>id</strong> If you are updating a note, this is the note id number to update.</li>
+        <li><strong>note[post_id]</strong> The post id number this note belongs to.</li>
+        <li><strong>note[x]</strong> The x coordinate of the note.</li>
+        <li><strong>note[y]</strong> The y coordinate of the note.</li>
+        <li><strong>note[width]</strong> The width of the note.</li>
+        <li><strong>note[height]</strong> The height of the note.</li>
+        <li><strong>note[is_active]</strong> Whether or not the note is visible. Set to 1 for active, 0 for inactive.</li>
+        <li><strong>note[body]</strong> The note message.</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+  <div class="section">
+    <a name="users"></a>
+    <h2>Users</h2>
+  
+    <div class="section">
+      <h4>Search</h4>
+      <p>The base URL is /user/index.xml. If you don't specify any parameters you'll get a listing of all users.</p>
+      <ul>
+        <li><strong>id</strong> The id number of the user.</li>
+        <li><strong>name</strong> The name of the user.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <a name="forum"></a>
+    <h2>Forum</h2>
+    
+    <div class="section">
+      <h4>List</h4>
+      <p>The base URL is /forum/index.xml. If you don't specify any parameters you'll get a list of all the parent topics.</p>
+      <ul>
+        <li><strong>parent_id</strong> The parent ID number. You'll return all the responses to that forum post.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <a name="pools"></a>
+    <h2>Pools</h2>
+    
+    <div class="section">
+      <h4>List Pools</h4>
+      <p>The base URL is /pool/index.xml. If you don't specify any parameters you'll get a list of all pools.</p>
+      <ul>
+        <li><strong>query</strong> The title.</li>
+        <li><strong>page</strong> The page.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>List Posts</h4>
+      <p>The base URL is /pool/show.xml. If you don't specify any parameters you'll get a list of all pools.</p>
+      <ul>
+        <li><strong>id</strong> The pool id number.</li>
+        <li><strong>page</strong> The page.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Update</h4>
+      <p>The base URL is /pool/update.xml.</p>
+      <ul>
+        <li><strong>id</strong> The pool id number.</li>
+        <li><strong>pool[name]</strong> The name.</li>
+        <li><strong>pool[is_public]</strong> 1 or 0, whether or not the pool is public.</li>
+        <li><strong>pool[description]</strong> A description of the pool.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h4>Create</h4>
+      <p>The base URL is /pool/create.xml.</p>
+      <ul>
+        <li><strong>pool[name]</strong> The name.</li>
+        <li><strong>pool[is_public]</strong> 1 or 0, whether or not the pool is public.</li>
+        <li><strong>pool[description]</strong> A description of the pool.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>Destroy</h4>
+      <p>The base URL is /pool/destroy.xml.</p>
+      <ul>
+        <li><strong>id</strong> The pool id number.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>Add Post</h4>
+      <p>The base URL is /pool/add_post.xml. Potential error reasons: "Post already exists", "access denied"</p>
+      <ul>
+        <li><strong>pool_id</strong> The pool to add the post to.</li>
+        <li><strong>post_id</strong> The post to add.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>Remove Post</h4>
+      <p>The base URL is /pool/remove_post.xml. Potential error reasons: "access denied"</p>
+      <ul>
+        <li><strong>pool_id</strong> The pool to remove the post from.</li>
+        <li><strong>post_id</strong> The post to remove.</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <a name="changelog"></a>
+    <h2>Change Log</h2>
+    <div class="section">
+      <h4>1.15.0</h4>
+      <ul>
+        <li>Added documentation for pools</li>
+      </ul>
+      
+      <h4>1.13.0</h4>
+      <ul>
+        <li>Changed interface for artists to use new URL system</li>
+        <li>JSON requests now end in a .json suffix</li>
+        <li>Renamed some error reason messages</li>
+        <li>Removed comment/index from API</li>
+        <li>Removed url and md5 parameters from artist search (can just pass the URL or MD5 hash to the name parameter)</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h4>1.8.1</h4>
+      <ul>
+        <li>Removed post[is_flagged] attribute</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

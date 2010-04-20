@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %>">
+<head>
+  <title><%= @page_title %></title>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
+  <%= @content_for_html_header %>
+  <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
+  <%= stylesheet_link_tag "default" %>
+  <%# The javascript-hide class is used to hide elements (eg. blacklisted posts) from JavaScript. %>
+  <script type="text/javascript">
+    var css = ".javascript-hide { display: none !important; }";
+    var style = document.createElement("style"); style.type = "text/css";
+    if(style.styleSheet) // IE
+      style.styleSheet.cssText = css;
+    else
+      style.appendChild(document.createTextNode(css));
+    document.getElementsByTagName("head")[0].appendChild(style);
+  </script>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-291955-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+  })();
+  </script>
+
+  <%= javascript_include_tag :all, :cache => "application" %>
+  <!--[if lt IE 8]>
+  <script src="/IE8.js" type="text/javascript"></script>
+  <![endif]-->
+  <%= CONFIG["custom_html_headers"] %>
+  <!--[if lt IE 7]>
+    <style type="text/css">
+      body div#post-view > div#right-col > div > div#note-container > div.note-body {
+        overflow: visible;
+      }
+    </style>
+    <script src="http://ie7-js.googlecode.com/svn/trunk/lib/IE7.js" type="text/javascript"></script>
+  <![endif]-->
+</head>
+<body>
+  <div id="header">
+    <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/", :id=>"ruu") %><span><%= tag_header(h(params[:tags])) %></span></h2>
+    <ul class="flat-list" id="navbar">
+      <%= navbar_link_to("My Account", {:controller => "user", :action => "home"}, :id => "my-account", :level => :member) %>
+      <%= navbar_link_to("Posts", :controller => "post", :action => "index") %>
+      <%= navbar_link_to("Comments", {:controller => "comment", :action => "index"}, :id => "comments-link") %>
+      <%= navbar_link_to("Notes", :controller => "note", :action => "index") %>
+      <%= navbar_link_to("Artists", :controller => "artist", :action => "index") if CONFIG["enable_artists"] %>
+      <%= navbar_link_to("Tags", :controller => "tag", :action => "index", :order => "date") %>
+      <%= navbar_link_to("Pools", :controller => "pool", :action => "index") %>
+      <%= navbar_link_to("Wiki", :controller => "wiki", :action => "show", :title => "help:home") %>
+      <%= navbar_link_to("Forum", {:controller => "forum", :action => "index"}, :id => "forum-link") %>
+      <% if CONFIG["server_host"] == "moe.imouto.org" %>
+      <% end %>
+      <%= navbar_link_to("Help", :controller => "help", :action => "index") %>
+      <%= navbar_link_to("More&nbsp;&raquo;", :controller => "static", :action => "more") %>
+      <li>
+	<a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
+	  <span>New&nbsp;mail</span>
+	</a>
+      </li>
+    </ul>
+  </div>
+  <%= render :partial => "layouts/login" %>
+
+  <% if CONFIG["server_host"] == "moe.imouto.org" %>
+    <%# This is actually just to keyword "image board" and "danbooru" for searches like
+        "tinkle danbooru".  Be careful, this looks very stupid in search results if taken
+        too far: "Sex hentai porn danbooru image board"; this should hint search engines,
+        not spam them. %>
+    <div style="display: none;">Danbooru-based image board with a specialization in high-quality images.</div>
+  <% end %>
+
+  <!--[if lt IE 7]>
+  <div style="display: none;" id="old-browser">Your browser is very old, and this site will not display properly.
+    Please consider upgrading to a more recent web browser:
+    <a href="http://www.mozilla.com/firefox/">Firefox</a>,
+    <a href="http://www.opera.com/">Opera</a>,
+    <a href="http://www.microsoft.com/windows/internet-explorer/download-ie.aspx">Internet Explorer</a>.
+    <div style="text-align: right;" id="old-browser-hide">
+      <a href="#" onclick='$("old-browser").hide(); Cookie.put("hide-ie-nag", "1");'>(hide this message)</a>
+    </div>
+  </div>
+  <![endif]-->
+  <%= render :partial => "layouts/notice" %>
+  
+  <div class="blocked" id="block-reason" style="display: none;">
+  </div>
+
+  <div id="content">
+    <%= @content_for_layout %>
+    <% if @content_for_subnavbar %>
+      <div class="footer">
+        <ul class="flat-list" id="subnavbar">
+          <%= @content_for_subnavbar %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <script type="text/javascript">
+    Cookie.setup()
+    InitTextAreas();
+  </script>
+
+  <!--[if lt IE 7]>
+    <script type="text/javascript">
+      if(Cookie.get("hide-ie-nag") != "1")
+        $("old-browser").show();
+    </script>
+  <![endif]-->
+  <%= @content_for_post_cookie_javascripts %>
+</body>
+</html>

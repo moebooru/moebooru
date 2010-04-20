@@ -1,0 +1,36 @@
+<div style="display: none;" class="post-hover" id="index-hover-info">
+  <div id="hover-top-line">
+    <div style="float: right; margin-left: 0em;">
+      <span id="hover-dimensions"></span>,
+      <span id="hover-file-size"></span>
+    </div>
+    <div style="padding-right: 1em">
+      Post #<span id="hover-post-id"></span>
+    </div>
+  </div>
+
+  <div style="padding-bottom: 0.5em">
+    <div style="float: right; margin-left: 0em;">
+      <span id="hover-author"></span>
+    </div>
+    <div style="padding-right: 1em">
+      Score: <span id="hover-score"></span>
+      Rating: <span id="hover-rating"></span>
+      <span id="hover-not-shown">Hidden</span>
+    </div>
+  </div>
+  <div>
+    <span id="hover-tags">
+      <% CONFIG["tag_types"].values.uniq.map { |value| Tag.type_name_from_value(value) }.sort { |a,b|
+        Tag.tag_list_order(a) <=> Tag.tag_list_order(b)
+      }.each do |name| %>
+        <span class="tag-type-<%= name %>"><a id="hover-tag-<%= name %>"></a></span>
+      <% end %>
+    </span>
+  </div>
+</div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">Post.hover_info_init();</script>
+<% end %>
+

@@ -1,0 +1,44 @@
+<h4>My Inbox</h4>
+
+<% if @dmails.empty? %>
+  <p>You have no messages.</p>
+<% else %>
+  <div class="mail">
+    <table width="100%" class="highlightable">
+      <thead>
+        <tr>
+          <th width="15%">From</th>
+          <th width="15%">To</th>
+          <th width="55%">Title</th>
+          <th width="15%">When</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dmails.each do |dmail| %>
+          <tr class="<%= cycle 'even', 'odd' %>" id="row-<%= dmail.id %>">
+            <td><%= h dmail.from.name %></td>
+            <td><%= h dmail.to.name %></td>
+            <td>
+              <% if dmail.from_id == @current_user.id %>
+                <%= link_to(h(dmail.title), {:action => "show", :id => dmail.id}, :class => "sent") %>
+              <% else %>
+                <% if dmail.has_seen? %>
+                  <%= link_to(h(dmail.title), {:action => "show", :id => dmail.id}, :class => "received") %>
+                <% else %>
+                  <strong><%= link_to(h(dmail.title), {:action => "show", :id => dmail.id}, :class => "received") %></strong>
+                <% end %>
+              <% end %>            
+            </td>
+            <td><%= time_ago_in_words(dmail.created_at) %> ago</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>  
+  </div>
+<% end %>
+
+<div id="paginator" style="margin-bottom: 1em;">
+  <%= will_paginate(@dmails) %>
+</div>
+
+<%= render :partial => "footer" %>

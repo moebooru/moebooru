@@ -1,0 +1,33 @@
+<div>
+  <h5>Options</h5>
+  <ul>
+    <li><%= link_to_function "Edit", "$('comments').hide(); $('edit').show().scrollTo(); $('post_tags').focus(); Cookie.put('show_defaults_to_edit', 1);" %></li>
+    <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
+      <li><%= link_to_function "Resize image", "Post.resize_image()" %></li>
+    <% end %>
+    <% if @post.image? && @post.can_be_seen_by?(@current_user) %>
+      <li><%= link_to("#{@post.has_sample? ? "Original image":"Image"} (#{number_to_human_size(@post.file_size)})", @post.file_url, :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged", :id => "highres", :onclick => "Post.highres(); return false") %></li>
+    <% end %>
+    <% if @post.can_user_delete?(@current_user) then %>
+    <li><%= link_to "Delete", :action => "delete", :id => @post.id %></li>
+    <% end %>
+    <% if @post.is_deleted? && @current_user.is_janitor_or_higher?%>
+      <li><%= link_to "Undelete", :action => "undelete", :id => @post.id %></li>
+    <% end %>
+    <% unless @post.is_flagged? || @post.is_deleted? %>
+      <li><%= link_to_function "Flag for deletion", "Post.flag(#{@post.id})", :level => :member %></li>
+    <% end %>
+    <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
+      <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :level => :member %></li>
+    <% end %>
+    <li id="add-to-favs"><%= link_to_function "Add to favorites", "Post.vote(#{@post.id}, 3)" %></li>
+    <li id="remove-from-favs"><%= link_to_function "Remove from favorites", "Post.vote(#{@post.id}, 2)" %></li>
+    <% if @post.is_pending? && @current_user.is_janitor_or_higher? %>
+      <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.approve(#{@post.id})}" %></li>
+    <% end %>
+    <% unless @post.is_deleted? %>
+      <li id="add-to-pool"><%= link_to_remote "Add to pool", :update => "add-to-pool", :url => {:controller => "pool", :action => "select", :post_id => @post.id}, :method => "get" %></li>
+    <% end %>
+    <li id="set-avatar"><%= link_to "Set avatar", :controller => "user", :action => "set_avatar", :id => @post.id %></li>
+  </ul>
+</div>

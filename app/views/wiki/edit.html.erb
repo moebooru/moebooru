@@ -1,0 +1,42 @@
+<%= render :partial => "sidebar" %>
+
+<div class="content" style="float: left; width: 40em;">
+  <h2 class="wiki-title"><%= h(@wiki_page.pretty_title) %> (Editing)</h2>
+  <div id="wiki-view">
+  </div>
+  <% form_tag({:action => "update"}, :level=>:member) do %>
+    <%= hidden_field "wiki_page", "title", :value => @wiki_page.title %>
+    <%= text_area("wiki_page", "body", :size => "60x30") %>
+    <%= submit_tag("Save", :name => "save") %>
+    <%= button_to_function("Cancel", "location.pathname = '/wiki/show?title=#{@wiki_page.title}'") %>
+    <%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki_page_body').value)})") %>
+  <% end %>
+</div>
+
+<div style="float: left; margin-left: 5em; width: 15em;">
+  <h4>Reference</h4>
+  <pre>
+A paragraph.
+
+Followed by another.
+
+h4. A header
+
+* List item 1
+* List item 2
+* List item 3
+
+Linebreaks are important between lists, 
+headers, and paragraphs.
+
+URLs are automatically linked: http://www.google.com
+
+A [[wiki link]] (underscores are not needed).
+
+A {{post link}}.
+
+<a href="/help/dtext">Read more</a>.
+  </pre>
+</div>
+
+<%= render :partial => "footer" %>

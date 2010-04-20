@@ -1,0 +1,1 @@
+<p>Hello, <%= h(@user.pretty_name) %>. You need to activate your account by visiting <%= link_to "this link", :controller => "user", :action => "activate_user", :hash => User.confirmation_hash(@user.name), :only_path => false, :host => CONFIG["server_host"] %>.</p>

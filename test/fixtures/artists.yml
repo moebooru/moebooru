@@ -1,0 +1,7 @@
+monet:
+  id: 1
+  alias_id: ~
+  group_id: ~
+  name: money
+  updated_at: <%= Time.now %>
+  updater_id: 1

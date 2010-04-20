@@ -1,0 +1,30 @@
+<div class="comment avatar-container" id="c<%= comment.id %>">
+  <div class="author">
+    <% if comment.user_id %>
+      <h6><a href="/user/show/<%= comment.user_id %>"><%= h comment.pretty_author %></a></h6>
+    <% else %>
+      <h6><%= h comment.pretty_author %></h6>
+    <% end %>
+    <span class="date" title="Posted at <%= comment.created_at.strftime('%c') %>">Posted <%= time_ago_in_words(comment.created_at) %> ago</span>
+    <% if comment.user and comment.user.has_avatar? then %>
+      <div class="comment-avatar-container"> <%= avatar(comment.user, comment.id) %> </div>
+    <% end %>
+  </div>
+  <div class="content">
+    <div class="body">
+      <%= format_inlines(format_text(comment.body, :mode => :comment), comment.id) %>
+    </div>
+    <div class="post-footer" style="clear: left;">
+      <ul class="flat-list pipe-list">
+        <li> <%= link_to_function "Quote", "Comment.quote(#{comment.id})" %>
+        <% if @current_user.has_permission?(comment) %>
+          <li> <%= link_to "Edit", :controller => "comment", :action => "edit", :id => comment.id %>
+          <li> <%= link_to_function "Delete", "Comment.destroy(#{comment.id})" %>
+        <% else %>
+          <li> <%= link_to_function "Flag for deletion", "Comment.flag(#{comment.id})" %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
+

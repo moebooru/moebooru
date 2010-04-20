@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require File.dirname(__FILE__) + '/../../config/environment'
+
+Artist.find(:all).each do |artist|
+  # Validation will normalize URLs
+  artist.save
+end

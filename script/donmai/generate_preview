@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require File.dirname(__FILE__) + "/../../lib/danbooru_image_resizer/danbooru_image_resizer"
+
+ARGV.each do |source|
+  ext = File.extname(source)[0..-1]
+  md5 = source.gsub(/\..+$/, "")
+  preview_path = File.dirname(__FILE__) + "/../../tmp/preview/#{md5}.jpg"
+
+  Danbooru.resize_image(ext, source, preview_path)
+end

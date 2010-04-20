@@ -1,0 +1,19 @@
+<div id="mail-show" class="mail">
+  <div id="previous-messages" style="display: none;">
+  </div>
+  
+  <%= render :partial => "message", :locals => {:message => @dmail} %>
+
+  <div style="width: 50em; display: none;" id="response">
+    <%= render :partial => "compose", :locals => {:from_id => @current_user.id} %>
+  </div>
+
+  <% content_for(:footer) do %>
+    <li><%= link_to_function "Show conversation", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})" %></li>
+    <% if @dmail.to_id == @current_user.id %>
+      <li><%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.from.name)}')" %></li>
+    <% end %>
+  <% end %>
+
+  <%= render :partial => "footer" %>
+</div>

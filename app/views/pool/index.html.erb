@@ -1,0 +1,56 @@
+<div id="pool-index">
+  <div style="margin-bottom: 2em;">
+    <% form_tag({:action => "index"}, :method => :get) do %>
+      <% if params.has_key?(:order) %>
+      <%= hidden_field_tag "order", params[:order] %>
+      <% end %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search" %>
+    <% end %>
+  </div>
+
+  <img style="position: absolute; display: none; border: 2px solid #000; right: 42%;" id="hover-thumb" src="about:blank" alt="">
+  
+  <table width="100%" class="highlightable">
+    <thead>
+      <tr>
+        <th width="60%">Name</th>
+        <th width="*">Creator</th>
+        <th width="*">Posts</th>
+        <th width="*">Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @pools.each do |p| %>
+        <tr class="<%= cycle 'even', 'odd' %>" id="p<%= p.id %>">
+          <td><%= link_to h(p.pretty_name), :action => "show", :id => p.id %></td>
+          <td><%= h(p.user.pretty_name) %></td>
+          <td><%= p.post_count %></td>
+          <td><%= time_ago_in_words(p.created_at) %> ago</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div id="paginator">
+  <%= will_paginate(@pools) %>
+</div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  var thumb = $("hover-thumb");
+  <% @samples.each do |pool, post| %>
+    Post.register(<%= post.to_json %>);
+    Post.init_hover_thumb($("p<%= pool.id %>"), <%= post.id %>, thumb);
+  <% end %>
+  Post.init_blacklisted({replace: true});
+
+  <% @samples.each do |pool, post| %>
+    if(!Post.is_blacklisted(<%= post.id %>))
+      Preload.preload('<%= escape_javascript(post.preview_url) %>');
+  <% end %>
+</script>
+<% end %>
+
+<%= render :partial => "footer" %>

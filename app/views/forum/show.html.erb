@@ -1,0 +1,54 @@
+<% if @forum_post.is_locked? %>
+  <div class="status-notice">
+    <p>This topic is locked.</p>
+  </div>
+<% end %>
+
+<div id="forum" class="response-list">
+  <% unless params[:page].to_i > 1 %>
+    <%= render :partial => "post", :locals => {:post => @forum_post} %>
+  <% end %>
+
+  <% @children.each do |c| %>
+    <%= render :partial => "post", :locals => {:post => c} %>
+  <% end %>
+</div>
+
+<% unless @forum_post.is_locked? %>
+  <div style="clear: both;">
+    
+    <div id="preview" style="display: none; margin: 1em 0;">
+    </div>
+
+    <div id="reply" style="display: none;">
+      <% form_tag({:action => "create"}, :level => :member) do %>
+        <%= hidden_field "forum_post", "title", :value => "" %>
+        <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
+        <%= text_area "forum_post", "body", :rows => 10, :cols => 60, :value => "" %>
+        <%= submit_tag "Post" %>
+        <%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
+      <% end %>
+    </div>    
+  </div>
+<% end %>
+
+<div id="paginator">
+  <%= will_paginate(@children) %>
+</div>
+
+<script type="text/javascript">
+  <%= avatar_init %>
+  InlineImage.init();
+</script>
+
+<% content_for("subnavbar") do %>
+  <% unless @forum_post.is_locked? %>
+    <li><%= link_to_function "Reply", "Element.toggle('reply')" %></li>
+  <% end %>
+  <li><%= link_to "List", :action => "index" %></li>
+  <li><%= link_to "New topic", :action => "new" %></li>
+  <% unless @forum_post.is_parent? %>
+    <li><%= link_to "Parent", :action => "show", :id => @forum_post.parent_id %></li>
+  <% end %>
+  <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+<% end %>

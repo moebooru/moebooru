@@ -1,0 +1,80 @@
+<div>
+  <div style="margin-bottom: 1em;">
+    <div class="history-search-row">
+      <div class="history-search-label">
+        <label for="user_name">User</label>
+      </div>
+      <div>
+        <% form_tag({:action => "index"}, :method => :get) do %>
+          <%= text_field_tag "user_name", params[:user_name], :id => "user_name", :size => 20 %> <%= submit_tag "Search" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="history-search-row">
+      <div class="history-search-label">
+        <label for="post_id">Post ID</label>
+      </div>
+      <div>
+        <% form_tag({:action => "index"}, :method => :get) do %>
+        <%= text_field_tag "post_id", params[:post_id], :id => "post_id", :size => 10 %> <%= submit_tag "Search" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div style="clear: left;">
+    <img style="position: absolute; display: none; border: 2px solid #000; right: 10%;" id="hover-thumb" src="">
+
+    <table width="100%" class="highlightable" id="history">
+      <thead>
+        <tr>
+          <th width="1%"></th>
+          <th width="4%">Post</th>
+          <th width="5%">Date</th>
+          <th width="10%">User</th>
+          <th width="80%">Tags</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @change_list.each do |change| %>
+          <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change[:change].id %>" >
+            <td style="background: <%= id_to_color(change[:change].post_id) %>;"></td>
+            <td><%= link_to change[:change].post_id, :controller => "post", :action => "show", :id => change[:change].post_id %></td>
+            <td><%= change[:change].created_at.strftime("%b %e") %></td>
+            <td><%= link_to change[:change].author, :controller => "user", :action => "show", :id => change[:change].user_id %></td>
+            <td>
+              <span class="added-tags"><%= tag_list(change[:added_tags], :obsolete => change[:obsolete_added_tags], :prefix => "+") %></span>
+              <span class="removed-tags"><%= tag_list(change[:removed_tags], :obsolete=>change[:obsolete_removed_tags], :prefix=>"-") %></span>
+              <span class="unchanged-tags"><%= tag_list(change[:unchanged_tags], :prefix => "") %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="footer">
+    <%= link_to_function "Undo", "PostTagHistory.undo()", :id => "undo" %> |
+    <a id="revert" href="#">Revert to</a>
+  </div>
+</div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  var thumb = $("hover-thumb");
+  <% @change_list.each do |change| %>
+    PostTagHistory.add_change(<%= change[:change].id %>, <%= change[:change].post_id %>, '<%= escape_javascript(change[:change].author) %>')
+    Post.register(<%= change[:change].post.to_json %>)
+    Post.init_hover_thumb($("r<%= change[:change].id %>"), <%= change[:change].post.id %>, thumb);
+  <% end %>
+  Post.init_blacklisted({replace: true});
+
+  <% @change_list.each do |change| %>
+    if(!Post.is_blacklisted(<%= change[:change].post.id %>))
+      Preload.preload('<%= escape_javascript(change[:change].post.preview_url) %>');
+  <% end %>
+  PostTagHistory.init()
+</script>
+<% end %>
+
+<div id="paginator">
+  <%= will_paginate(@changes) %>
+</div>

@@ -1,0 +1,39 @@
+<div>
+  <% if posts.empty? %>
+    <p>Nobody here but us chickens!</p>
+  <% else %>
+    <ul id="post-list-posts">
+    <% posts.each do |post| %>
+      <% if post.instance_of?(Post) %>
+        <%= print_preview(post, :similarity=>(@similar[:similarity][post] rescue nil), :blacklisting => true) %>
+      <% else %>
+      <%= print_ext_similarity_preview(post, {:similarity=>(@similar[:similarity][post] rescue nil)}) %>
+      <% end %>
+    <% end %>
+    </ul>
+
+    <%# Make sure this is done early, as lots of other scripts depend on this registration. %>
+    <% content_for_prefix("post_cookie_javascripts") do %>
+    <script type="text/javascript">
+      <% if @posts %>
+        Post.post_tags = <%= get_tag_types(@posts).to_json %>;
+      <% end %>
+      <% posts.each do |post| %>
+        Post.register(<%= post.to_json %>)
+      <% end %>
+    </script>
+    <% end %>
+  <% end %>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  <% if @search_id %>
+    Post.init_blacklisted({exclude: "<%= h(@search_id) %>"})
+  <% else %>
+    Post.init_blacklisted()
+  <% end %>
+
+  Post.init_post_list();
+</script>
+<% end %>
+</div>

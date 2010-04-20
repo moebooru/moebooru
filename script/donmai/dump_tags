@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+ROOT_DIR = File.dirname(__FILE__) + "/../.."
+
+require "#{ROOT_DIR}/config/environment.rb"
+
+File.open("#{ROOT_DIR}/public/tags.xml", "w") do |f|
+  tags = Tag.find(:all)
+  f.write(tags.to_xml(:root => "tags"))
+end

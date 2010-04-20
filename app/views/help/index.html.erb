@@ -1,0 +1,43 @@
+<div class="help">
+  <h1>Help</h1>
+  <ul class="link-page">
+    <li><a href="/help/about">&raquo; About Danbooru</a></li>
+    <li><a href="/help/faq">&raquo; Frequently Asked Questions</a></li>
+    <li><a href="/help/start">&raquo; Getting Started</a></li>
+    <li><a href="/help/users">&raquo; Accounts</a></li>
+    <li><a href="/help/api">&raquo; API</a></li>
+    <% if CONFIG["enable_artists"] %>
+      <li><a href="/help/artists">&raquo; Artists</a></li>
+    <% end %>
+    <li><a href="/help/bookmarklet">&raquo; Bookmarklet</a></li>
+    <li><a href="/help/trac">&raquo; Bugs</a></li>
+    <li><a href="/help/cheatsheet">&raquo; Cheat Sheet</a></li>
+    <li><a href="/help/comments">&raquo; Comments</a></li>
+    <li><a href="/help/dtext">&raquo; DText</a></li>
+    <li><a href="/help/extension">&raquo; Firefox Extension</a></li>
+    <% if CONFIG["image_samples"] %>
+      <li><a href="/help/image_sampling">&raquo; Image Sampling</a></li>
+    <% end %>
+    <li><a href="/help/irc">&raquo; IRC</a></li>
+    <li><a href="/help/notes">&raquo; Notes</a></li>
+    <li><a href="/help/pools">&raquo; Pools</a></li>
+    <li><a href="/help/posts">&raquo; Posts</a></li>
+    <% if CONFIG["enable_parent_posts"] %>
+      <li><a href="/help/post_relationships">&raquo; Post Relationships</a></li>
+    <% end %>
+    <li><a href="/help/ratings">&raquo; Ratings</a></li>
+    <li><a href="/help/source_code">&raquo; Source Code</a></li>
+    <li><a href="/help/tag_scripts">&raquo; Tag Scripts</a></li>
+    <li><a href="/help/tags">&raquo; Tags</a></li>
+    <li><a href="/help/tag_aliases">&raquo; Tag Aliases</a></li>
+    <li><a href="/help/tag_implications">&raquo; Tag Implications</a></li>
+    <li><a href="/help/mass_tag_edit">&raquo; Mass Tag Edit</a></li>
+    <li><a href="/help/trac">&raquo; Suggestions</a></li>
+    <li><a href="/help/voting">&raquo; Voting</a></li>
+    <li><a href="/help/wiki">&raquo; Wiki</a></li>
+  </ul>
+</div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

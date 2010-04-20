@@ -1,0 +1,42 @@
+<h4>Report: User Votes</h4>
+
+<div>
+  <p>The following report shows user votes over the past three days.</p>
+
+  <div style="float: left; width: 700px;">
+    <img src="<%= h @votes_url %>" width="600" height="300"/>  
+  </div>
+
+  <div style="float: left; width: 200px;">
+    <table width="100%">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Total</th>
+          <th>Votes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr class="<%= cycle 'even', 'odd' %>">
+            <td><%= link_to_unless user["user_id"].nil?, h(user["name"]), :controller => "user", :action => "show", :id => user["user_id"] %></td>
+            <td><%= link_to_unless user["user_id"].nil?, user["change_count"], :controller => "post", :action => "index", :tags => "vote:>=1:#{user["name"]} order:vote" %></td>
+	    <td>
+              <span class="stars" style="white-space: nowrap">
+                <% (1..3).each do |vote| %>
+                    <% count = (user["votes"] && user["votes"][vote]) || "0" %>
+                    <% text = "#{count} <span class='score-on score-voted score-visible'>★</span>" %>
+                    <% if user["user_id"].nil? %>
+                    <%= content_tag :span, text, :class => "star star-#{vote}" %>
+                    <% else %>
+                    <%= link_to text, {:controller => "post", :action => "index", :tags => "vote:>=#{vote}:#{user["name"]} order:vote"}, :class => "star star-#{vote}" %>
+                    <% end %>
+                <% end %>
+              <span>
+	    </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+<h3>Delete Pool</h3>
+
+<% form_tag(:action => "destroy") do %>
+  <p>Are you sure you wish to delete "<%= h(@pool.pretty_name) %>"?</p>
+  <%= submit_tag "Yes" %> <%= button_to_function "No", "history.back()" %>
+<% end %>
+
+<%= render :partial => "footer" %>

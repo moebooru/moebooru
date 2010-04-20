@@ -1,0 +1,25 @@
+<h3>Create Pool</h3>
+
+<% form_tag({:action => "create"}, :level => :member) do %>
+  <table class="form">
+    <tbody>
+      <tr>
+        <th><label for="pool_name">Name</label></th>
+        <td><%= text_field "pool", "name" %></td>
+      </tr>
+      <tr>
+        <th><label for="pool_is_public">Public?</label></th>
+        <td><%= check_box "pool", "is_public" %></td>
+      </tr>
+      <tr>
+        <th><label for="pool_description">Description</label></th>
+        <td><%= text_area "pool", "description", :size => "40x10" %></td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %></td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
+
+<%= render :partial => "footer" %>

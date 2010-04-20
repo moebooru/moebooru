@@ -1,0 +1,69 @@
+<div id="pool-show">
+  <h4>Pool: <%= h(@pool.pretty_name) %></h4>
+  <% unless @pool.description.blank? %>
+    <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
+  <% end %>
+  <% if @current_user.can_change?(@pool, :posts) %>
+    <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
+    <label for="del-mode">Delete Mode</label>
+    <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
+  <% end %>
+  <div style="margin-top: 1em;">
+  <ul id="post-list-posts">
+    <% @posts.each do |post| %>
+      <%= print_preview(post, :onclick => "return remove_post_confirm(#{post.id}, #{@pool.id})",
+			:user => @current_user) %>
+    <% end %>
+  </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  function remove_post_confirm(post_id, pool_id) {
+    if (!$("del-mode") || !$("del-mode").checked) {
+      return true
+    }
+
+    Pool.remove_post(post_id, pool_id)
+    return false
+  }
+
+  Post.post_tags = <%= get_tag_types(@posts).to_json %>;
+  <% @posts.each do |post| %>
+    Post.register(<%= post.to_json %>)
+  <% end %>
+</script>
+<%= render :partial => "post/hover" %>
+
+<div id="paginator">
+  <%= will_paginate(@posts) %>
+</div>
+
+<% content_for("footer") do %>
+  <% if CONFIG["pool_zips"] %>
+    <% zip_params = {} %>
+    <% zip_params[:originals] = true if @pool.has_originals? && params[:originals] %>
+    <% has_jpeg = CONFIG["jpeg_enable"] && @pool.has_jpeg_zip?(zip_params) %>
+    <% if has_jpeg %>
+      <li><%= link_to_pool_zip params[:originals] ? "Download original JPGs":"Download JPGs", @pool, zip_params.merge({:jpeg => true}) %></li>
+    <% end %>
+    <li><%= link_to_pool_zip params[:originals] ? "Download originals":"Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
+  <% end %>
+  <% if @pool.has_originals? %>
+    <% if params[:originals] == "1" %>
+      <li><%= link_to "View edited", :id => params[:id], :originals => 0 %></li>
+    <% else %>
+      <li><%= link_to "View originals", :id => params[:id], :originals => 1 %></li>
+    <% end %>
+  <% end %>
+  <% if @current_user.has_permission?(@pool) %>
+    <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
+    <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>
+  <% end %>
+  <% if @current_user.can_change?(@pool, :posts) %>
+    <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>
+    <li><%= link_to "Import", :action => "import", :id => params[:id] %></li>
+  <% end %>
+  <li><%= link_to "History", :controller => "history", :action => "index", :search => "pool:#{params[:id]}" %></li>
+<% end %>
+
+<%= render :partial => "footer" %>

@@ -1,0 +1,86 @@
+<div id="user-edit">
+  <% form_tag(:controller => "user", :action => "update") do %>
+    <table class="form">
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <%= submit_tag "Save" %> <%= submit_tag "Cancel" %>
+          </td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <th width="15%">
+            <label class="block" for="user_blacklisted_tags">Tag Blacklist</label>
+            <p>Any post containing all blacklisted tags on a line will be hidden. Separate tags with spaces.</p>
+          </th>
+          <td width="85%">
+            <%= text_area "user", "blacklisted_tags", :size => "80x6" %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_email">Email</label>
+            <% if CONFIG["enable_account_email_activation"] %>
+              <p>An email address is required to activate your account.</p>
+            <% else %>
+              <p>This field is optional. It is useful if you ever forget your password and want to reset it.</p>
+            <% end %>
+          </th>
+          <td>
+            <%= text_field "user", "email", :size => 40 %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_favorite_tags_text">Favorite Tags</label>
+            <p>Enter a list of tags you really like, whitespace delimited.</p>
+          </th>
+          <td>
+            <%= text_area "user", "favorite_tags_text", :size => "40x5" %>
+          </td>          
+        </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_my_tags">Edit Tags</label>
+            <p>These will be accessible when you <a href="/post/upload">upload</a> or edit a post.</p>
+          </th>
+          <td>
+            <%= text_area "user", "my_tags", :size => "40x5" %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_always_resize_images">Resize Images</label>
+            <p>If enabled, large images will always be resized to fit the screen.</p>
+          </th>
+          <td>
+            <%= check_box "user", "always_resize_images" %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <label class="block" for="user_receive_dmails">Receive Mails</label>
+            <p>Receive emails when someone sends you a message.</p>
+          </th>
+          <td>
+            <%= check_box "user", "receive_dmails" %>
+          </td>
+        </tr>
+        <% if CONFIG["image_samples"] && !CONFIG["force_image_samples"] %>
+        <tr>
+          <th>
+            <label class="block" for="user_show_samples">Show Image Samples</label>
+            <p>Show reduced large-resolution images.</p>
+          </th>
+          <td>
+            <%= check_box "user", "show_samples" %>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<%= render :partial => "footer" %>

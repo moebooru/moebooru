@@ -1,0 +1,9 @@
+<% include_tag_hover_highlight ||= false %>
+<div>
+  <h5>Tags</h5>
+  <ul id="tag-sidebar">
+    <%= tag_links(@tags[:exclude], :prefix => "-", :with_hover_highlight => true, :with_hover_highlight => include_tag_hover_highlight) %>
+    <%= tag_links(@tags[:include], :with_aliases => @include_tag_reverse_aliases, :with_hover_highlight => include_tag_hover_highlight) %>
+    <%= tag_links(Tag.find_related(@tags[:related].to_a), :with_hover_highlight => true, :with_hover_highlight => include_tag_hover_highlight) %>
+  </ul>
+</div>

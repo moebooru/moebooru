@@ -1,0 +1,21 @@
+class UpdatePostText < ActiveRecord::Migration
+  def self.up
+    Comment.find(:all, :conditions => ["body ILIKE '%%<i>%%' OR body ILIKE '%%<b>%%'"]).each { |comment|
+      comment.body = comment.body.gsub(/<i>/i, "[i]")
+      comment.body = comment.body.gsub(/<\/i>/i, "[/i]")
+      comment.body = comment.body.gsub(/<b>/i, "[b]")
+      comment.body = comment.body.gsub(/<\/b>/i, "[/b]")
+      comment.save!
+    }
+  end
+
+  def self.down
+    Comment.find(:all, :conditions => ["body ILIKE '%%[i]%%' OR body ILIKE '%%[b]%%'"]).each { |comment|
+      comment.body = comment.body.gsub(/[i]/i, "<i>")
+      comment.body = comment.body.gsub(/[\/i]/i, "</i>")
+      comment.body = comment.body.gsub(/[b]/i, "<b>")
+      comment.body = comment.body.gsub(/[\/b]/i, "</b>")
+      comment.save!
+    }
+  end
+end

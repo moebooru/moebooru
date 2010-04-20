@@ -1,0 +1,11 @@
+<div class="help">
+  <h1>Help: Forum</h1>
+
+  <div class="section">
+    <p>All forum posts are formatted using <%= link_to "DText", :action => "dtext" %>.</p>
+  </div>
+</div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

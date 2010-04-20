@@ -1,0 +1,14 @@
+<% content_for("subnavbar") do %>
+  <li><%= link_to "List", :controller => "post", :action => "index" %></li>
+  <li><%= link_to "Upload", :controller => "post", :action => "upload" %></li>
+  <li id="my-favorites-container"><%= link_to "My Favorites", "/", :id => "my-favorites" %></li>
+  <li><%= link_to "Random", :controller => "post", :tags => "order:random" %></li>
+  <li><%= link_to "Popular", :controller => "post", :action => "popular_recent" %></li>
+  <li><%= link_to "Image Search", :controller => "post", :action => "similar" %></li>
+  <li><%= link_to "History", :controller => "history", :action => "index" %></li>
+  <% if @current_user.is_janitor_or_higher? %>
+    <li><%= link_to "Moderate", :controller => "post", :action => "moderate" %></li>
+  <% end %>
+  <%= @content_for_footer %>
+  <li><%= link_to "Help", :controller => "help", :action => "posts" %></li>
+<% end %>

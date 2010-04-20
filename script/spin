@@ -1,0 +1,2 @@
+#!/bin/sh
+/home/albert/danbooru/script/process/spinner -c '/home/albert/danbooru/script/process/spawner -p 7000 -i 1' -d

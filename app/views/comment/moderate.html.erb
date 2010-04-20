@@ -1,0 +1,45 @@
+<script type="text/javascript">
+  function highlight_row(checkbox) {
+    var row = checkbox.parentNode.parentNode
+    if (row.original_class == null) {
+      row.original_class = row.className
+    }
+    
+    if (checkbox.checked) {
+      row.className = "highlight"
+    } else {
+      row.className = row.original_class
+    }
+  }
+</script>
+
+<form method="post" action="/comment/moderate">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Author</th>
+        <th>Body</th>
+      </tr>      
+    </thead>
+    <tfoot>
+      <tr>
+        <td colspan="3">
+          <%= button_to_function "Select all", "$$('.c').each(function (i) {i.checked = true; highlight_row(i)}); return false" %> 
+          <%= button_to_function "Invert selection", "$$('.c').each(function (i) {i.checked = !i.checked; highlight_row(i)}); return false" %> 
+          <%= submit_tag "Approve" %> 
+          <%= submit_tag "Delete" %>
+        </td>
+      </tr>      
+    </tfoot>
+    <tbody>
+      <% @comments.each do |c| %>
+        <tr>
+          <td><input type="checkbox" class="c" name="c[<%= c.id %>]" onclick="highlight_row(this)"></td>
+          <td><%= link_to h(c.author), :controller => "post", :action => "show", :id => c.post_id %></td>
+          <td><%= h(c.body) %></td>
+        </tr>
+      <% end %>      
+    </tbody>
+  </table>
+</form>

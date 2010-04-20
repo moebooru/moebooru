@@ -1,0 +1,182 @@
+<% if @inline.inline_images.length > 0 %>
+<% block, script, inline_html_id = format_inline(@inline, 0, "inline", "") %>
+<% end %>
+
+<div>
+  Inline tag: image #<%= @inline.id %>
+  <% if @current_user.has_permission?(@inline) %>
+
+    | <a href="#" onclick='InlineImage.expand("<%= inline_html_id %>"); return false;'>Preview</a>
+
+    <% if @inline.inline_images.length < 9 %>
+      <span id="post-add-button">| <a href="#" onclick="show_post_add(); return false;">Add an image</a></span>
+    <% end %>
+  <% end %>
+  <p>
+
+
+  <div id="post-add" style="display: none;">
+    <% form_tag({:action => "add_image"}, :level => :member, :multipart => true) do %>
+      <%= hidden_field_tag "id", @inline.id %>
+      <div id="posts">
+        <table class="form">
+          <tbody>
+            <tr>
+              <th width="15%"><label for="image_file">File</label></th>
+              <td width="85%"><%= file_field "image", "file", :size => 50, :tabindex => 1 %></td>
+            </tr>
+            <tr>
+              <th>
+                <label for="image_source">Source</label>
+              </th>
+              <td>
+                <%= text_field "image", "source", :size => 50, :tabindex => 2 %>
+                <%= submit_tag "Add image" %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+    
+  </div>
+</div>
+
+<div style="width: 100%; overflow: auto;">
+  <%= block %>
+</div>
+
+<div id="inline-edit">
+  <% for image in @inline.inline_images %>
+    <% form_tag({:action => "delete_image"}, :id => "delete-image-%i" % image.id) do %>
+      <%= hidden_field_tag "id", image.id %>
+    <% end %>
+  <% end %>
+
+  <% form_tag(:action => "update") do %>
+    <label for="inline_description">Description:</label>
+    <br>
+    <span id="inline-description">
+      <a id="inline-description-edit-button" href="#" onclick="show_edit_desc(); return false;">
+        <%= format_text(@inline.description) %>
+
+        <% if @inline.description.length == 0 %>click to add a description for this set<% end %>
+      </a>
+      <br>
+    </span>
+
+    <div id="inline-description-edit" style="display: none;">
+      <%= text_area "inline", "description", :size => "40x5" %>
+    </div>
+    <br>
+
+    <% for image in @inline.inline_images %>
+      <div id="inline-<%= image.id %>" class="inline-image-entry" style="margin-bottom: 1.5em;">
+        <div style="height: 1.6em;">
+          <span style="line-height: 1.6em;">
+          <% if @current_user.has_permission?(@inline) %>
+            <%= link_to "Remove image", "#", :onclick => "if(confirm('Remove this image?')) $('delete-image-#{image.id}').submit(); return false;" %>
+            | <%= link_to_function "Move up", "orderShift(#{image.id}, -1)" %>
+            | <%= link_to_function "Move down", "orderShift(#{image.id}, +1)" %>
+            |
+            <a href="#" id="image-description-<%= image.id %>" onclick="show_edit_inline_desc(<%= image.id %>); return false;">
+              <% if image.description.length == 0 %>
+                Add description
+              <% else %>
+              <%= h(image.description) %>
+              <% end %>
+            </a>
+
+            <span id="image-description-edit-<%= image.id %>" style="display: none;">
+              <%= text_field_tag "image[#{image.id}][description]", image.description, :size => 40, :disabled => (not @current_user.has_permission?(@inline)) %>
+            </span>
+          <% else %>
+            <%= h(image.description) %>
+          <% end %>
+          </span>
+        </div>
+        <img style="display: inline" src="<%= image.preview_url %>" width="<%= image.preview_dimensions[:width] %>" height="<%= image.preview_dimensions[:height] %>"></img>
+
+        <%= hidden_field_tag "image[#{image.id}][sequence]", image.sequence, :size => 10, :disabled => (not @current_user.has_permission?(@inline)), :class=>"inline-sequence" %>
+        <div>
+        </div>
+
+      </div>
+    <% end %>
+
+    <%= hidden_field_tag "id", @inline.id %>
+    <%= submit_tag "Save changes", :disabled => (not @current_user.has_permission?(@inline)) %>
+  <% end %>
+</div>
+
+</div>
+<script language="javascript">
+<%= script %>
+InlineImage.init();
+
+function show_post_add()
+{
+  $("post-add").show();
+  $("post-add-button").hide();
+}
+
+function show_edit_desc()
+{
+  $("inline-description-edit").show();
+  $("inline-description").hide();
+  $("inline-description-edit").down("textarea").focus();
+}
+
+function show_edit_inline_desc(id)
+{
+  $("image-description-" + id).hide();
+  $("image-description-edit-" + id).show();
+  $("image-description-edit-" + id).down("input").focus();
+}
+
+function orderShift(id, direction) {
+  var first_image = $("inline-" + id);
+  var second_image;
+  if(direction > 0)
+  {
+    var sibs = first_image.nextSiblings();
+    second_image = sibs[0];
+  }
+  else
+  {
+    second_image = first_image;
+    var sibs = first_image.previousSiblings();
+    first_image = sibs[0];
+  }
+  if(!first_image || !second_image)
+    return;
+
+  {
+    var swap = first_image.down(".inline-sequence").value;
+    first_image.down(".inline-sequence").value = second_image.down(".inline-sequence").value;
+    second_image.down(".inline-sequence").value = swap;
+  }
+  var parentNode = second_image.parentNode;
+  parentNode.removeChild(second_image);
+  parentNode.insertBefore(second_image, first_image);
+}
+
+</script>
+
+<% form_tag({:action => "delete"}, :id => "delete-group") do %>
+  <%= hidden_field_tag "id", @inline.id %>
+<% end %>
+<% form_tag({:action => "copy"}, :id => "copy-group") do %>
+  <%= hidden_field_tag "id", @inline.id %>
+<% end %>
+
+<% content_for("subnavbar") do %>
+  <% if @current_user.has_permission?(@inline) %>
+    <li><%= link_to "Delete", "#", :onclick => "if(confirm('Delete this group of images?')) $('delete-group').submit(); return false;" %></li>
+    <li><%= link_to "Crop", :action => "crop", :id => @inline.id %></li>
+  <% end %>
+
+  <li><%= link_to "Copy", "#", :onclick => "$('copy-group').submit(); return false;", :level => :member %></li>
+<% end %>
+
+<%= render :partial => "footer" %>

@@ -1,0 +1,7 @@
+<h4>Delete Artist</h4>
+<p>Are you sure you want to delete <%= h @artist.name %>?</p>
+
+<% form_tag({:action => "destroy"}, :level => :privileged) do %>
+  <%= submit_tag "Yes" %>
+  <%= submit_tag "No" %>
+<% end %>

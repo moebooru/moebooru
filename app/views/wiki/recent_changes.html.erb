@@ -1,0 +1,27 @@
+<%= render :partial => "sidebar" %>
+
+<div class="content">
+  <table width="100%">
+    <thead>
+      <tr>
+        <th width="60%">Page</th>
+        <th width="40%">Last edited</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @wiki_pages.each do |wiki_page| %>
+        <tr class="<%= cycle 'even', 'odd' %>">
+          <td><%= link_to h(wiki_page.pretty_title), :controller => "wiki", :action => "show", :title => wiki_page.title %></td>
+          <td><%= wiki_page.updated_at.strftime("%m/%d %I:%M") %> by <%= h wiki_page.author %></td>
+        </tr>
+      <% end %>     
+    </tbody>
+  </table>
+
+  <div id="paginator">
+    <%= will_paginate(@wiki_pages) %>
+  </div>
+</div>
+
+
+<%= render :partial => "footer" %>

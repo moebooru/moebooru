@@ -1,0 +1,82 @@
+<div id="edit" style="display: none;">
+  <% form_tag({:controller => "post", :action => "update", :id => @post.id}, :id => "edit-form", :level => :member) do %>
+    <%= hidden_field_tag "post[old_tags]", @post.cached_tags %>
+    <table class="form">
+      <tfoot>
+        <tr>
+          <td colspan="2"><%= submit_tag "Save changes", :tabindex => 11, :accesskey => "s" %></td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <th width="15%">
+            <label class="block" for="post_rating_questionable">Rating</label>
+            <% unless @current_user.is_privileged_or_higher? %>
+              <p>Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (<%= link_to "help", {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
+            <% end %>
+          </th>
+          <td width="85%">
+            <% if @post.is_rating_locked? %>
+              This post is rating locked.
+            <% else %>
+              <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %> 
+              <label for="post_rating_explicit">Explicit</label> 
+              <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>  
+              <label for="post_rating_questionable">Questionable</label>
+              <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %> 
+              <label for="post_rating_safe">Safe</label>
+            <% end %>
+          </td>
+        </tr>
+        <% if CONFIG["enable_parent_posts"] %>
+          <tr>
+            <th><label>Parent Post</label></th>
+            <td><%= text_field "post", "parent_id", :size => 10, :tabindex => 4 %></td>
+          </tr>
+        <% end %>
+          <tr>
+            <th><label class="block" for="post_is_shown_in_index">Shown in index</label></th>
+            <td><%= check_box "post", "is_shown_in_index", :tabindex => 7 %></td>
+          </tr>
+        <% if @current_user.is_privileged_or_higher? %>
+          <tr>
+            <th><label class="block" for="post_is_note_locked">Note locked</label></th>
+            <td><%= check_box "post", "is_note_locked", :tabindex => 7 %></td>
+          </tr>
+          <tr>
+            <th><label class="block" for="post_is_rating_locked">Rating locked</label></th>
+            <td><%= check_box "post", "is_rating_locked", :tabindex => 8 %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <th><label class="block" for="post_source">Source</label></th>
+          <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
+        </tr>
+          <tr>
+            <th>
+              <label class="block" for="post_tags">Tags</label>
+              <% unless @current_user.is_privileged_or_higher? %>
+                <p>Separate tags with spaces (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
+              <% end %>
+            </th>
+            <td>
+              <%= text_area "post", "tags", :disabled => !@post.can_be_seen_by?(@current_user), :size => "50x4", :value => @post.cached_tags, :tabindex => 10 %>
+            <% if @post.can_be_seen_by?(@current_user) %>
+              <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
+              <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
+              <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
+              <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> 
+              <% if CONFIG["enable_artists"] %>
+              | <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+              <% end %>
+            <% end %>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+    <div>
+      <h5>Related Tags</h5>
+      <div style="margin-bottom: 1em;" id="related"><em>None</em></div>
+    </div>
+  <% end %>
+</div>

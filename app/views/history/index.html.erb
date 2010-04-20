@@ -1,0 +1,130 @@
+<div>
+  <div style="margin-bottom: 1em;">
+    <ul class="history-header">
+      <% if @type == "all" || @type == "posts" %>
+        <li>&raquo; <%= link_to @options[:show_all_tags]? "Showing all tags":"Showing only changed tags",
+                  :controller => "post", :action => "similar", :params => params.merge({:show_all_tags=>@options[:show_all_tags]? 0:1}) %></li>
+      <% end %>
+
+      <%# If we're searching for a specific object, omit the id/name column and
+          show it once at the top.  %>
+      <% if @options[:specific_table] && !@changes.empty? %>
+        <li>
+          &raquo; History for <%= @type.singularize %>:
+          <%= link_to @options[:show_name] ? @changes.first.group_by_obj.pretty_name : @changes.first.group_by_id, :controller => @changes.first.get_group_by_controller, :action => "show", :id => @changes.first.group_by_id %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div style="clear: left;">
+    <img style="position: absolute; display: none; border: 2px solid #000; right: 10%;" id="hover-thumb" src="about:blank" alt="">
+
+    <table width="100%" class="highlightable" id="history">
+      <thead>
+        <tr>
+          <%
+            ts = ApplicationHelper::TableScale.new
+            ts.add(4) if @type == "all" # type
+            ts.add(1) # box
+            if @options[:specific_table]
+            elsif @options[:show_name]
+              ts.add(15) # name
+            else
+              ts.add(4) # id
+            end
+            ts.add(5) # date
+            ts.add(10) # user
+            ts.add(80) # change
+          %>
+          <% if @type == "all" %>
+            <th width="<%= ts.get %>">Type</th>
+          <% end %>
+          <th width="<%= ts.get %>"></th>
+          <% if @options[:specific_table] %>
+          <% elsif @options[:show_name] %>
+            <th width="<%= ts.get %>"><%= @type.singularize.capitalize %></th>
+          <% else %>
+            <th width="<%= ts.get %>">
+              <% if @type == "all" %>
+                Id
+              <% else %>
+                <%= @type.singularize.capitalize %>
+              <% end %>
+            </th>
+          <% end %>
+          <th width="<%= ts.get %>" style="min-width: 4em">Date</th>
+          <th width="<%= ts.get %>">User</th>
+          <th width="<%= ts.get %>">Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @changes.each do |change| %>
+          <tr class="<%= cycle 'even', 'odd' %> <%= ((Time.now - change.user.created_at < 60*60*24*3) rescue false) and "new-user" or "" %>" id="r<%= change.id %>">
+            <% if @type == "all" %>
+              <td><%= change.group_by_table.singularize.humanize %></td>
+            <% end %>
+
+            <td style="background: <%= id_to_color(change.group_by_id) %>;"></td>
+            <% if not @options[:specific_table] %>
+              <% classes = ["id"] %>
+              <% classes << ["deleted"] if change.group_by_obj.class == Post && change.group_by_obj.status == "deleted" %>
+              <% classes << ["held"] if change.group_by_obj.class == Post && change.group_by_obj.is_held %>
+              <td class="<%= classes.join(" ") %>"><%= link_to (@options[:show_name] ? change.group_by_obj.pretty_name : change.group_by_id),
+                :controller => change.get_group_by_controller,
+                :action => change.get_group_by_action,
+                :id => change.group_by_id %></td>
+            <% end %>
+            <td><%= change.created_at.strftime("%b %e") %></td>
+            <td class="author"><%= link_to_unless change.user_id == nil, change.author, :controller => "user", :action => "show", :id => change.user_id %></td>
+            <td class="change"><%= format_changes(change, @options) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+    <div class="history-search-row">
+      <div>
+        <% form_tag({:action => @params[:action]}, :method => :get) do %>
+          <%= text_field_tag "search", params[:search], :id => "search", :size => 20 %> <%= submit_tag "Search" %>
+        <% end %>
+      </div>
+    </div>
+  
+  <div class="footer history-footer">
+    <%= link_to_function "Undo", "History.undo(false)", :level => :member, :id => "undo" %> |
+    <%= link_to_function "Redo", "History.undo(true)", :level => :member, :id => "redo" %>
+  </div>
+  <% content_for("subnavbar") do %>
+    <li><%= link_to "All", :action => "index" %></li>
+    <li><%= link_to "Posts", :action => "post" %></li>
+    <li><%= link_to "Pools", :action => "pool" %></li>
+    <li><%= link_to "Tags", :action => "tag" %></li>
+  <% end %>
+</div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  var thumb = $("hover-thumb");
+  <% @changes.each do |change| %>
+    History.add_change(<%= change.id %>, "<%= change.get_group_by_controller %>", <%= change.group_by_id %>, [ <%= change.history_changes.map { |c| c.id }.join(", ") %> ], '<%= escape_javascript(change.author) %>')
+    <% if change.group_by_table_class == Post %>
+      Post.register(<%= change.group_by_obj.to_json %>)
+      Post.init_hover_thumb($("r<%= change.id %>"), <%= change.group_by_id %>, thumb);
+    <% end %>
+  <% end %>
+  Post.init_blacklisted({replace: true});
+
+  <% @changes.each do |change| %>
+    <% if change.group_by_table_class == Post %>
+      if(!Post.is_blacklisted(<%= change.group_by_obj.id %>))
+        Preload.preload('<%= escape_javascript(change.group_by_obj.preview_url) %>');
+    <% end %>
+  <% end %>
+  History.init()
+</script>
+<% end %>
+
+<div id="paginator">
+  <%= will_paginate(@changes) %>
+</div>

@@ -1,0 +1,26 @@
+<h4>Search</h4>
+
+<% form_tag({:action => "search"}, :method => :get) do %>
+  <%= text_field_tag "query", params[:query], :size => 40 %> <%= submit_tag "Search" %>
+<% end %>
+
+<% if @notes %>
+  <div style="margin-top: 2em;">
+    <% @notes.each do |note| %>
+      <div style="float: left; clear: both; margin-bottom: 2em;">
+        <div style="float: left; width: 200px;">
+          <%= link_to image_tag(note.post.preview_url), :controller => "post", :action => "show", :id => note.post_id %>
+        </div>
+        <div style="float: left;">
+          <%= hs note.formatted_body %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <div id="paginator">
+    <%= will_paginate(@notes) %>
+  </div>
+<% end %>
+
+<%= render :partial => "footer" %>

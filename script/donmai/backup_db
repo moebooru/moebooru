@@ -1,0 +1,3 @@
+#/usr/local/bin/bash
+
+/usr/local/bin/pg_dump -U pgsql -Fc -f /home/moe/moe-live/db/backup/db-`date +"%Y-%m-%d-%H-%M"`.dump danbooru_new

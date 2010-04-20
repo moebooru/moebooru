@@ -1,0 +1,51 @@
+<h4>Invites</h4>
+<p>You can vouch for existing members and invite them to contributor status.</p>
+
+<div style="margin-bottom: 2em">
+  <h6>Invite User</h6>
+  <% form_tag({:action => "invites"}, :onsubmit => "return confirm('Are you sure you want to invite ' + $F('user_name') + '?')") do %>
+    <table width="100%">
+      <tfoot>
+        <tr>
+          <td colspan="2"><%= submit_tag "Submit" %></td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <td><label for="member_name">Name</label></td>
+          <td><%= text_field_with_auto_complete "member", "name", {:value => params[:name]}, :min_chars => 3, :skip_style => true, :url => {:controller => "user", :action => "auto_complete_for_member_name"} %></td>
+        </tr>
+        <tr>
+          <td><label for="member_level">Level</label></td>
+          <td><%= select "member", "level", [["Contributor", CONFIG["user_levels"]["Contributor"]], ["Privileged", CONFIG["user_levels"]["Privileged"]]] %></td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<div>
+  <h6>Current Invites</h6>
+  <p>These are the users you have invited so far.</p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Posts</th>
+        <th>Favorites</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @invited_users.each do |user| %>
+        <tr>
+          <td><%= link_to h(user.pretty_name), :controller => "user", :action => "show", :id => user.id %></td>
+          <td><%= link_to Post.count(:conditions => "user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
+          <td><%= link_to PostVotes.count(:conditions => "user_id = #{user.id} AND score = 3"), :controller => "post", :action => "index", :tags => "vote:3:#{user.name} order:vote" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= render :partial => "footer" %>

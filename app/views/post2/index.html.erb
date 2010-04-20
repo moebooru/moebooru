@@ -1,0 +1,135 @@
+<div id="post-list">  
+  <% if @tag_suggestions && @tag_suggestions.any? %>
+    <div class="status-notice">
+      Maybe you meant: <%= @tag_suggestions.map {|x| link_to(h(x), :action => "index", :tags => x)}.to_sentence(:connector => "or") %>
+    </div>
+  <% end %>
+
+  <div class="sidebar">
+    <%= render :partial => "search" %>
+    <%= print_advertisement("vertical") %>
+
+    <% if @current_user.is_privileged_or_higher? %>
+    <div style="margin-bottom: 1em;" id="mode-box">
+      <h5>Mode</h5>
+      <form onsubmit="return false;" action="">
+        <div>
+          <select name="mode" id="mode" onchange="PostModeMenu.change()" onkeyup="PostModeMenu.change()" style="width: 13em;">
+            <option value="view">View posts</option>
+            <option value="edit">Edit posts</option>
+<!--            <option value="rating-s">Rate safe</option>
+            <option value="rating-q">Rate questionable</option>
+	    <option value="rating-e">Rate explicit</option>
+            <% if @current_user.is_privileged_or_higher? %>
+              <option value="lock-rating">Lock rating</option>
+              <option value="lock-note">Lock notes</option>
+            <% end %> -->
+            <% if @current_user.is_mod_or_higher? %>
+              <option value="approve">Approve post</option>
+            <% end %>
+            <option value="flag">Flag post</option>
+            <option value="apply-tag-script">Apply tag script</option>
+          </select>          
+        </div>
+      </form>
+    </div>
+
+    <%= render :partial => "tag_script" %>
+    <% end %>
+
+    <div id="blacklisted-sidebar" style="display: none;">
+      <h5>
+        <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
+        <span id="blacklist-count" class="post-count"></span>
+      </h5>
+      <ul id="blacklisted-list" style="display: none;">
+        <li>
+      </ul>
+    </div>
+
+    <%= render :partial => 'tags' %>
+  </div>
+  <div class="content">
+    <% if CONFIG["can_see_ads"].call(@current_user) %>
+      <%= CONFIG["ad_code_index_bottom"] %>
+    <% end %>
+    
+    <% if @ambiguous_tags.any? %>
+      <div class="status-notice">
+        The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>
+      </div>
+    <% end %>
+    
+    <div id="quick-edit" style="display: none; margin-bottom: 1em;">
+      <h4>Edit Tags</h4>
+      <% form_tag(:action => "update") do %>
+        <%= hidden_field_tag "id", "" %>
+        <%= hidden_field_tag "post[old_tags]", "" %>
+        <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
+        <%= submit_tag "Update" %>
+        <%= button_to_function "Cancel", "$('quick-edit').hide()" %>
+      <% end %>
+    </div>
+
+    <%= render :partial => "posts", :locals => {:posts => @posts} %>
+
+    <div id="paginator">
+      <%= will_paginate(@posts) %>
+    </div>
+  </div>
+</div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  var submit_quick_edit = function(e) {
+    $("quick-edit").hide()
+    new Ajax.Request("/post/update.json", {
+      parameters: $("quick-edit").down("form").serialize(),
+      onSuccess: function(resp) {
+        var resp = resp.responseJSON
+        notice("Post updated")
+        $("quick-edit").hide()
+        Post.register(resp.post)
+      },
+      onFailure: function(resp) {
+        var resp = resp.responseJSON
+        notice("Error: " + resp.reason)
+      }
+    })
+    e.stop()    
+  }
+  
+  $("quick-edit").down("form").observe("submit", submit_quick_edit)
+  $("post_tags").observe("keydown", function(e) {
+    if(e.keyCode != Event.KEY_RETURN)
+      return;
+    submit_quick_edit(e);
+    e.stop();
+  })
+  PostModeMenu.init()
+  <% @preload.each do |post| %>
+  Preload.preload('<%= escape_javascript(post.preview_url) %>');
+  <% end %>
+</script>
+<% end %>
+
+<% content_for("html_header") do %>
+  <%= auto_discovery_link_tag_with_id :rss, {:controller => "post", :action => "piclens", :tags => params[:tags], :page => params[:page]}, {:id => 'pl'} %>
+  <%= navigation_links(@posts) %>
+<% end %>
+
+<%= render :partial => "footer" %>
+
+<% if @content_for_subnavbar %>
+  <!-- Align the links to the content, not the window. -->
+  <div style="clear: both;">
+    <div class="sidebar">&nbsp;</div>
+    <div class="footer" style="clear: none;" class="content">
+      <ul class="flat-list" id="subnavbar">
+        <%= @content_for_subnavbar %>
+      </ul>
+    </div>
+  </div>
+  <% @content_for_subnavbar = nil %>
+<% end %>
+

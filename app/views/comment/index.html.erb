@@ -1,0 +1,61 @@
+<div id="comment-list">
+  <div id="search" style="margin-bottom: 1em;">
+    <% form_tag({:action => "search"}, :method => :get) do %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search"%>
+    <% end %>
+  </div>
+
+  <% if @posts.empty? %>
+    <h4>No comments.</h4>
+  <% end %>
+
+  <% @posts.each do |post| %>
+    <div class="post">
+      <div class="col1">
+        <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview javascript-hide", :id => "p%i" % post.id), :controller => "post", :action => "show", :id => post.id) %>&nbsp;
+      </div>
+      <div class="col2" id="comments-for-p<%= post.id %>">
+        <div class="header">
+          <div>
+            <span class="info"><strong>Date</strong> <%= compact_time(post.created_at) %></span>
+            <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
+            <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
+            <span class="info"><strong>Score</strong>
+              <span id="post-score-<%= post.id %>"><%= post.score %></span>
+              <%= vote_widget(post, @current_user) %>
+	      <%= vote_tooltip_widget(post) %>
+            </span>
+
+            <% if post.comments.size > 6 %>
+              <span class="info"><strong>Hidden</strong> <%= link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
+            <% end %>
+          </div>
+          <div class="tags">
+            <strong>Tags</strong>
+            <% post.cached_tags.split(/ /).each do |name| %>
+              <span class="tag-type-<%= Tag.type_name(name) %>">
+                <a href="/post/index?tags=<%= h name %>"><%= h name.tr("_", " ") %></a>
+              </span>
+            <% end %>
+          </div>
+        </div>
+        <%= render :partial => "comments", :locals => {:comments => post.recent_comments, :post_id => post.id, :hide => true} %>          
+      </div>
+    </div>
+  <% end %>
+
+  <div id="paginator">
+    <%= will_paginate(@posts) %>
+  </div>
+  
+  <script type="text/javascript">
+    <% @posts.each do |post| %>
+      Post.register(<%= post.to_json %>)
+      Post.init_vote(<%= post.id %>, <%= @votes[post.id] or "null" %>)
+    <% end %>
+    Post.init_blacklisted({replace: true})
+  </script>
+
+  <%= render :partial => "footer" %>
+</div>

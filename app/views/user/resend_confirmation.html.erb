@@ -1,0 +1,26 @@
+<div class="page">
+  <p>If you haven't received your confirmation email, make sure it wasn't caught by your spam filter.</p>
+  <% form_tag(:action => "resend_confirmation") do %>
+    <table class="form">
+      <tbody>
+        <tr>
+          <th>
+            <label class="block" for="email">Email</label>
+          </th>
+          <td>
+            <%= text_field_tag "email" %>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <%= submit_tag "Submit" %>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  <% end %>
+</div>
+
+<%= render :partial => "footer" %>

@@ -1,0 +1,34 @@
+<div id="blacklisted-sidebar" style="display: none;">
+  <h5>
+    <%= link_to_function "Hidden Posts", "$('blacklisted-list-box').toggle()", :class => "no-focus-outline" %>
+    <span id="blacklist-count" class="post-count"></span>
+  </h5>
+  <div id="blacklisted-list-box" style="display: none; margin-bottom: 1em;">
+    <ul id="blacklisted-list" style="margin-bottom: 0em;">
+      <li>
+    </ul>
+
+    <% form_tag("#", :id=>"blacklisted-tag-add", :level => :member) do %>
+      <div>
+        &raquo; <%= text_field_tag("add-blacklist", "", :size => 20) %>
+        <%= link_to_function "Add", "Post.blacklist_add_commit();", :class => "text-button", :style=>"padding: 0px 4px", :level => :blocked %>
+        <%= submit_tag "Add", :style => "display: none;" %>
+      </div>
+      Posts containing all tags will be hidden. Separate tags with spaces.
+    <% end %>
+  </div>
+
+</div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  document.observe("dom:loaded", function() {
+    $("blacklisted-tag-add").observe("submit", function(e) {
+      if(e.stopped) return;
+      e.stop();
+      Post.blacklist_add_commit();
+    });
+  });
+</script>
+<% end %>
+

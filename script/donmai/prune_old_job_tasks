@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require File.dirname(__FILE__) + '/../../config/environment'
+
+JobTask.find(:all, :conditions => ["status = ? and created_at < ?", "finished", 1.day.ago]).each do |job|
+  job.destroy
+end
+
+JobTask.update_all("status = 'pending'", "task_type = 'calculate_favorite_tags'")

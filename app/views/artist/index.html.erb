@@ -1,0 +1,50 @@
+<div id="artist-index">
+  <div id="search-form" style="margin-bottom: 1em;">
+    <% form_tag({:action => "index"}, :method => :get) do %>
+      <%= text_field_tag "name", params[:name], :size => 40 %> <%= submit_tag "Search" %>
+    <% end %>
+  </div>
+
+  <% if @artists.any? %>
+    <table class="highlightable" width="100%">
+      <thead>
+        <tr>
+          <th width="5%"></th>
+          <th width="40%">Name</th>
+          <th width="55%">Updated By</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @artists.each do |artist| %>
+          <% content_tag(:tr, :class => cycle('even', 'odd'), :id => "artist-#{artist.id}") do %>
+            <td>
+              <%= link_to_unless artist.alias_id, "P", {:controller => "post", :action => "index", :tags => artist.name}, :title => "Find posts for artist" %>
+              <%= link_to "E", {:action => "update", :id => artist.id}, :title => "Edit artist" %> 
+              <%= link_to "D", {:action => "destroy", :id => artist.id} %>
+            </td>
+            <td>
+              <%= link_to h(artist.name), {:action => "show", :id => artist.id} %>
+              <% if artist.alias_id %>
+                &rarr; <%= link_to h(artist.alias_name), {:action => "show", :id => artist.alias_id}, :title => "This artist is an alias" %>
+              <% end %>
+              <% if artist.group_id %>
+                [<%= link_to h(artist.group_name), {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
+              <% end %>             
+            </td>
+            <% if artist.updater_id %>
+              <td><%= h(User.find_name(artist.updater_id)) %></td>
+            <% else %>
+              <td></td>
+            <% end %>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <div id="paginator">
+    <%= will_paginate(@artists) %>
+  </div>
+
+  <%= render :partial => "footer" %>
+</div>

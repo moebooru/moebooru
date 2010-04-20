@@ -1,0 +1,62 @@
+<div>
+  <% form_tag({:action => "index"}, :method => :get) do %>
+    <table class="form">
+      <tbody>
+        <tr>
+          <th width="15%">
+            <label for="name">Name</label>
+            <p>Use * as a wildcard.</p>
+          </th>
+          <td width="85%"><%= text_field_tag "name", params[:name], :size => 40 %></td>
+        </tr>
+        <tr>
+          <th><label for="type">Type</label></th>
+          <td><%= select_tag "type", options_for_select([["Any", ""], *CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]}],
+                                                          [(params[:type].blank?) && "" || params[:type].to_i()]) %></td>
+        </tr>
+        <tr>
+          <th><label for="order">Order</label></th>
+          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Count", "count"], ["Date", "date"]],
+                                                         [params[:order] || ""]) %></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td><%= submit_tag "Search" %></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  <% end %>
+</div>
+
+<table width="100%" class="highlightable"> 
+  <thead>
+    <tr>
+      <th width="5%">Posts</th>
+      <th width="45%">Name</th>
+      <th width="50%">Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tags.each do |tag| %>
+      <tr class="<%= cycle 'even', 'odd' %>">
+        <td align="right"><%= tag['post_count'] %></td>
+	<td class="tag-type-<%= tag.type_name %>">
+	  <a href="/wiki/show?title=<%= u tag["name"] %>">?</a>
+	  <a href="/post/index?tags=<%= u tag["name"] %>"><%= h tag["name"] %></a>
+	</td>
+        <td>
+        <%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %>
+        (<%= link_to "edit", :action => "edit", :name => tag['name'] %>)
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div id="paginator">
+  <%= will_paginate(@tags) %>
+</div>
+
+<%= render :partial => "footer" %>

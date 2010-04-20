@@ -1,0 +1,42 @@
+<div id="artist-update">
+  <p>Separate multiple aliases and group members with commas.</p>
+  
+  <div id="preview" style="display: none; margin: 1em 0;">
+  </div>
+
+  <% form_tag({:action => "update"}, :level => :member) do %>
+    <%= hidden_field_tag "id", @artist.id %>
+    
+    <table class="form">
+      <tr>
+        <th><label for="artist_name">Name</label></th>
+        <td><%= text_field "artist", "name", :size => 80 %></td>
+      </tr>
+      <tr>
+        <th><label for="artist_aliases">Aliases</label></th>
+        <td><%= text_field "artist", "alias_names", :size => 80 %></td>
+      </tr>
+      <tr>
+        <th><label for="artist_members">Members</label></th>
+        <td><%= text_field "artist", "member_names", :size => 80 %></td>
+      </tr>
+      <tr>
+        <th><label for="artist_urls">URLs</label></th>
+        <td><%= text_area "artist", "urls", :size => "80x6", :class => "no-block" %></td>
+      </tr>
+      <tr>
+        <th><label for="artist_notes">Notes</label></th>
+        <td><%= text_area "artist", "notes", :size => "80x6", :class => "no-block", :disabled => @artist.notes_locked? %></td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <%= submit_tag "Save" %>
+          <%= button_to_function "Cancel", "history.back()" %>
+          <%= submit_to_remote "preview", "Preview Notes", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+</div>
+
+<%= render :partial => "footer" %>

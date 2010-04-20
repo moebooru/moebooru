@@ -1,0 +1,21 @@
+<div>
+  <h5>Related Posts</h5>
+  <ul>
+    <li><%= link_to "Previous", :controller => "post", :action => "show", :id => @post.id - 1 %></li>
+    <li><%= link_to "Next", :controller => "post", :action => "show", :id => @post.id + 1 %></li>
+    <% if @post.parent_id %>
+      <li><%= link_to "Parent", :controller => "post", :action => "show", :id => @post.parent_id %></li>
+    <% end %>
+    <li><%= link_to "Random", :controller => "post", :action => "random" %></li>
+    <% if @current_user.is_member_or_higher? %>
+    <% unless @post.is_deleted? || !@post.image? %>
+      <li><a id="find-dupes">Find dupes</a><%#= link_to "Find dupes", :controller => "post", :action => "similar", :id => @post.id, :services=>"local" %></li>
+      <li><a id="find-similar">Find similar</a><%#= link_to "Find similar", :controller => "post", :action => "similar", :id => @post.id, :services=>"all" %></li>
+      <script type="text/javascript">
+        $("find-dupes").href = '<%= escape_javascript(url_for(:controller => 'post', :action => 'similar', :id => @post.id, :services=>'local')) %>';
+        $("find-similar").href = '<%= escape_javascript(url_for(:controller => 'post', :action => 'similar', :id => @post.id, :services=>'all')) %>';
+      </script>
+    <% end %>
+    <% end %>
+  </ul>
+</div>

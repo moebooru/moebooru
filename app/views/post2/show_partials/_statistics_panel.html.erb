@@ -1,0 +1,30 @@
+<div id="stats">
+  <h5>Statistics</h5>
+  <ul>
+    <li>Id: <%= @post.id %></li>
+    <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
+    <% if @current_user.is_admin? && @post.approver %>
+      <li>Approver: <%= @post.approver.name %></li>
+    <% end %>
+    <% if @post.image? %>
+      <li>Size: <%= @post.width %>x<%= @post.height %></li>
+    <% end %>
+    <% unless @post.source.blank? %>
+      <li>Source: <%= source_link @post.normalized_source %></li>
+    <% end %>
+    <li>Rating: <%= @post.pretty_rating %> <%= vote_tooltip_widget(@post) %></li>
+
+    <li>
+      Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>
+      <%= vote_widget(@post, @current_user) %>
+    </li>
+
+    <% content_for("post_cookie_javascripts") do %>
+    <script type="text/javascript">
+      Post.init_vote(<%= @post.id %>, <%= @vote or "null" %>)
+    </script>
+    <% end %>
+    
+    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
+  </ul>
+</div>

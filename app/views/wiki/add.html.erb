@@ -1,0 +1,39 @@
+<%= render :partial => "sidebar" %>
+
+<div class="content" style="float: left; width: 40em;">
+  <div id="wiki-view">
+  </div>
+  <% form_tag({:action => "create"}, :level=>:member) do %>
+    <%= text_field "wiki_page", "title" %>
+    <%= text_area("wiki_page", "body", :size => "60x30") %><br>
+    <%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "history.back()") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki_page_body').value)})") %>
+  <% end %>
+</div>
+
+<div style="float: left; width: 15em;">
+  <h4>Reference</h4>
+  <pre>
+A paragraph.
+
+Followed by another.
+
+h4. A header
+
+* List item 1
+* List item 2
+* List item 3
+
+Linebreaks are important between lists, 
+headers, and paragraphs.
+
+A "conventional link":http://www.google.com
+
+A [[wiki link]] (underscores are not needed)
+
+An aliased [[real page|wiki link]]
+
+<a href="http://hobix.com/textile/quick.html" target="_blank">Read more</a>.
+  </pre>
+</div>
+
+<%= render :partial => "footer" %>

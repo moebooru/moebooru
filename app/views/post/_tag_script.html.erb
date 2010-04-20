@@ -1,0 +1,14 @@
+<div id="edit-tag-script" style="display: none;" class="top-corner-float">
+  <h5>Tag script</h5>
+  <form onsubmit="return false;" action="">
+    <%= text_field_tag "tag-script", "", :size => "40", :id => "tag-script" %>
+  </form>
+  <div style="margin-top: 0.25em;">
+    <%= link_to_function "&raquo; Apply tag script to all of these posts", 'PostModeMenu.apply_tag_script_to_all_posts()' %>
+  </div>
+</div>
+<% content_for("post_cookie_javascripts") do %>
+  <script type="text/javascript">
+    TagScript.init($("tag-script"));
+  </script>
+<% end %>

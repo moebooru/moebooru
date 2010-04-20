@@ -1,0 +1,4 @@
+This directory contains various shell scripts for system maintenance
+on the donmai.us machine.  Feel free to modify and tweak them for your
+own use.  You will probably want to copy this directory so that
+Subversion updates won't screw up your own scripts.

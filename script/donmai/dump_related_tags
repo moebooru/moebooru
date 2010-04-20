@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require "rubygems"
+require "postgres"
+require "sqlite3"
+require "yaml"
+require "enumerator"
+require "pp"
+
+`rm -f /var/www/danbooru/public/sqlite.db.gz`
+`rm -f /var/www/danbooru/public/sqlite.db`
+
+pg = PGconn.new("127.0.0.1", nil, nil, nil, "danbooru")
+sl = SQLite3::Database.new("/var/www/danbooru/public/sqlite.db")
+
+sl.transaction do |db|
+  db.execute("CREATE TABLE cached_tags (tag_id INTEGER, related_tag_id INTEGER, post_count INTEGER)")
+  pg.exec("SELECT id, cached_related FROM tags").result.each do |id, related|
+    related.split(/,/).each_slice(2) do |rtag_name, count|
+      rtag_id = pg.exec("SELECT id FROM tags WHERE name = '%s'" % rtag_name.gsub(/'/, "''").gsub(/\\/, "\\\\"))[0]
+      rtag_id = rtag_id[0] if rtag_id
+      db.execute("INSERT INTO cached_tags (tag_id, related_tag_id, post_count) VALUES (?, ?, ?)", id, rtag_id, count) if rtag_id
+    end
+  end
+end
+
+`gzip /var/www/danbooru/public/sqlite.db`

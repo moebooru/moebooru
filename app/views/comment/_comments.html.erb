@@ -1,0 +1,27 @@
+<div class="response-list">
+  <% comments.each do |c| %>
+    <%= render :partial => "comment/comment", :locals => {:comment => c} %>
+  <% end %>
+</div>
+
+<div style="clear: both;">
+  <% if hide %>
+    <%= content_tag "h6", link_to_function("Reply &raquo;", "Element.hide('respond-link-#{post_id}'); Element.show('reply-#{post_id}')"), :id => "respond-link-#{post_id}" %>
+  <% end %>
+
+  <% content_tag("div", :id => "reply-#{post_id}", :style => (hide ? "display: none;" : nil)) do %>
+    <% form_tag({:controller => "comment", :action => "create"}, {:level => :member}) do %>
+      <%= hidden_field_tag "comment[post_id]", post_id, :id => "comment_post_id_#{post_id}" %>
+      <%= text_area "comment", "body", :rows => "7", :id => "reply-text-#{post_id}", :style=>"width: 98%; margin-bottom: 2px;" %>
+      <%= submit_tag "Post" %>
+      <!-- <%= submit_tag "Post without bumping" %> -->
+    <% end %>
+<!--    <p style="margin-top: 1em; font-style: italic;">[spoiler]Hide spoiler text like this[/spoiler] (<%= link_to "more", :controller => "help", :action => "comments" %>)</p> -->
+  <% end %> 
+</div>
+
+<script type="text/javascript">
+  <%= avatar_init %>
+  InlineImage.init();
+</script>
+

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %>">
+<head>
+  <title><%= @page_title %></title>
+  <meta name="description" content="moe.imouto.org - A Danbooru focusing on High Resolution Anime Scans, Ecchi Scans, Hentai Scans, Moe Scans, and Bishoujo Scans; No registration required, no ads, & unlimited downloads. " />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
+  <%= stylesheet_link_tag "default" %>
+  <%= javascript_include_tag :all, :cache => "application" %>
+  <%= CONFIG["custom_html_headers"] %>
+  <script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write("\<script src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'>\<\/script>" );
+  </script>
+  <script type="text/javascript">
+  if(typeof(_gat) != "undefined") {
+    var pageTracker = _gat._getTracker("UA-291955-3");
+    pageTracker._initData();
+    pageTracker._trackPageview();
+  }
+  </script>
+</head>
+<body>
+  <%= render :partial => "layouts/notice" %>
+  <div id="content">
+    <%= @content_for_layout %>    
+  </div>
+  <%= @content_for_post_cookie_javascripts %>
+</body>
+</html>

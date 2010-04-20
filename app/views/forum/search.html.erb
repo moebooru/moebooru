@@ -1,0 +1,33 @@
+<div id="forum">
+  <div style="margin-bottom: 1em;">
+    <% form_tag({:action => "search"}, :method => :get) do %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search"%>
+    <% end %>
+  </div>
+  
+  <table class="highlightable">
+    <thead>
+      <tr>
+        <th width="20%">Topic</th>
+        <th width="50%">Message</th>
+        <th width="10%">Author</th>
+        <th width="20%">Last Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @forum_posts.each do |fp| %>
+        <% content_tag :tr, :class => cycle('even', 'odd') do %>
+          <td><%= link_to(h(fp.root.title), :action => "show", :id => fp.root_id) %></td>
+          <td><%= link_to(h(fp.body[0, 70]) + "...", :action => "show", :id => fp.id) %></td>
+          <td><%= h fp.author %></td>
+          <td><%= time_ago_in_words(fp.updated_at) %> ago by <%= fp.last_updater %></td>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div id="paginator">
+    <%= will_paginate(@forum_posts) %>
+  </div>
+</div>

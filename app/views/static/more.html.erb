@@ -1,0 +1,124 @@
+<div id="static-more">
+  <h2><%= link_to CONFIG['app_name'], '/' %></h2>
+  <div>
+    <ul>
+      <li><h4>Posts</h4></li>
+      <li><a href="/help/posts">Help</a></li>
+      <li><a href="/post/atom">Atom Feed</a></li>
+      <li><a href="/post/index">Listing</a></li>
+      <li><a href="/post/similar">Image Search</a></li>
+      <li><a href="/post/popular_recent">Popular (last 24 hours)</a></li>
+      <li><a href="/post/popular_by_day">Popular (by day)</a></li>
+      <li><a href="/post/popular_by_week">Popular (by week)</a></li>
+      <li><a href="/post/popular_by_month">Popular (by month)</a></li>
+      <li><a href="/post/random">Random</a></li>
+      <li><a href="/post/deleted_index">Recent Deletions</a></li>
+      <li><a href="/history/index">History</a></li>
+      <li><a href="/post/upload">Upload</a></li>
+    </ul>
+    <ul>
+      <li><h4>Tools</h4></li>
+      <li><a href="/help/bookmarklet">Bookmarklet</a></li>
+      <li><a href="http://unbuffered.info/danbooruup">Firefox Extension</a></li>
+      <li><a href="/help/api">API Documentation</a></li>
+    </ul>
+    <% if CONFIG["enable_reporting"] %>
+      <ul>
+        <li><h4>Reports</h4></li>
+	<li><a href="/report/note_changes">Note Changes</a></li>
+	<li><a href="/report/tag_changes">Tag Changes</a></li>
+        <li><a href="/report/votes">User Votes</a></li>
+	<!-- <li><a href="/stats/awstats.danbooru.html">Web Server Statitics</a></li> -->
+	<li><a href="/job_task/index">Job Tasks</a></li>
+      </ul>
+    <% end %>
+  </div>
+  <div>
+    <ul>
+      <li><h4>Tags</h4></li>
+      <li><a href="/help/tags">Help</a></li>
+      <li><a href="/tag_alias/index">Aliases</a></li>
+      <li><a href="/tag_implication/index">Implications</a></li>
+      <li><a href="/tag/edit">Edit</a></li>
+      <li><a href="/tag/cloud">List (cloud view)</a></li>
+      <li><a href="/tag/index">List (all)</a></li>
+      <li><a href="/tag/mass_edit">Mass Edit</a></li>
+    </ul>
+    <ul>
+      <li><h4>Notes</h4></li>
+      <li><a href="/help/notes">Help</a></li>
+      <li><a href="/note/history">History</a></li>
+      <li><a href="/note/index">Listing</a></li>
+    </ul>
+    <% if CONFIG["enable_artists"] %>
+      <ul>
+        <li><h4>Artists</h4></li>
+        <li><a href="/help/artists">Help</a></li>
+        <li><a href="/artist/index">Listing</a></li>
+      </ul>
+    <% end %>
+    <ul>
+      <li><h4>Pools</h4></li>
+      <li><a href="/help/pools">Help</a></li>
+      <li><a href="/pool/index">Listing</a></li>
+    </ul>
+  </div>
+  <div>
+    <ul>
+      <li><h4>Comments</h4></li>
+      <li><a href="/help/comments">Help</a></li>
+      <li><a href="/comment/index">Listing</a></li>
+      <li><a href="/comment/moderate">Moderate</a></li>
+      <% if CONFIG["enable_trac"] %>
+        <li><a href="http://trac.donmai.us">Trac</a></li>
+      <% end %>
+    </ul>
+    <ul>
+      <li><h4>Forum</h4></li>
+      <li><a href="/help/forum">Help</a></li>
+      <li><a href="/forum/index">Listing</a></li>
+      <li><a href="/inline/index">Inline Images</a></li>
+    </ul>
+    <ul>
+      <li><h4>Wiki</h4></li>
+      <li><a href="/help/wiki">Help</a></li>
+      <li><a href="/wiki/index">Listing</a></li>
+      <li><a href="/wiki/history">History</a></li>
+    </ul>
+    <ul>
+      <li><h4>Stats</h4></li>
+      <li><a href="http://mrtg.imouto.org/">MRTG for moe.imouto.org</a></li>
+      <% if CONFIG["server_host"] == "moe.imouto.org" %>
+      <li><a href="http://awstats.moe.imouto.org/">AWstats for moe.imouto.org</a></li>
+      <% end %>
+    </ul>
+  </div>
+  <div>
+    <ul>
+      <li><h4>Users</h4></li>
+      <li><a href="/help/users">Help</a></li>
+      <li><a href="/user/show_blocked_users">Blocked Users</a></li>
+      <li><a href="/user/change_password">Change Password</a></li>
+      <li><a href="/user/home">Home</a></li>
+      <li><a href="/user/invites">Invites</a></li>
+      <li><a href="/user/index">Listing</a></li>
+      <li><a href="/user/login">Login</a></li>
+      <li><a href="/user/logout">Logout</a></li>
+      <% unless @current_user.nil? %>
+        <li><a href="/user/show/<%= @current_user.id %>">My Profile</a></li>
+      <% end %>
+      <li><a href="/user_record/index">Records</a></li>
+      <li><a href="/user/reset_password">Reset Password</a></li>
+      <li><a href="/user/edit">Settings</a></li>
+      <li><a href="/user/signup">Signup</a></li>
+      <li><a href="/static/terms_of_service">Terms of Service</a></li>
+    </ul>
+    <% if @current_user.is_admin_or_higher? %>
+      <ul>
+        <li><h4>Admin</h4></li>
+        <li><a href="/admin/edit_user">Edit User</a></li>   
+        <li><a href="/admin/reset_password">Reset Password</a></li>     
+      </ul>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+admin:
+  id: 1
+  name: admin
+  password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
+  level: 50
+  email: admin@danbooru.com
+  invite_count: 0
+  always_resize_images: false
+  invited_by: ~
+  last_logged_in_at: <%= Time.now %>
+  last_forum_topic_read_at: <%= 1.day.ago %>
+  has_mail: false
+  receive_dmails: true
+  show_samples: true
+
+mod:
+  id: 2
+  name: mod
+  password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
+  level: 40
+  email: mod@danbooru.com
+  invite_count: 0
+  always_resize_images: false
+  invited_by: ~
+  last_logged_in_at: <%= Time.now %>
+  last_forum_topic_read_at: <%= 1.day.ago %>
+  has_mail: false
+  receive_dmails: true
+  show_samples: true
+
+privileged:
+  id: 3
+  name: privileged
+  password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
+  level: 30
+  email: privileged@danbooru.com
+  invite_count: 0
+  always_resize_images: false
+  invited_by: ~
+  last_logged_in_at: <%= Time.now %>
+  last_forum_topic_read_at: <%= 1.day.ago %>
+  has_mail: false
+  receive_dmails: false
+  show_samples: true
+
+member:
+  id: 4
+  name: member
+  password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
+  level: 20
+  email: member@danbooru.com
+  invite_count: 0
+  always_resize_images: false
+  invited_by: ~
+  last_logged_in_at: <%= Time.now %>
+  last_forum_topic_read_at: <%= 1.day.ago %>
+  has_mail: false
+  receive_dmails: true
+  show_samples: true
+
+blocked:
+  id: 5
+  name: blocked
+  password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
+  level: 10
+  email: blocked@danbooru.com
+  invite_count: 0
+  always_resize_images: false
+  invited_by: ~
+  last_logged_in_at: <%= Time.now %>
+  last_forum_topic_read_at: <%= 1.day.ago %>
+  has_mail: false
+  receive_dmails: true
+  show_samples: true
+  
+unactivated:
+  id: 6
+  name: unactivated
+  password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
+  level: 0
+  email: unactivated@danbooru.com
+  invite_count: 0
+  always_resize_images: false
+  invited_by: ~
+  last_logged_in_at: <%= Time.now %>
+  last_forum_topic_read_at: <%= 1.day.ago %>
+  has_mail: false
+  receive_dmails: true
+  show_samples: true

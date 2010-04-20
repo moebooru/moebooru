@@ -1,0 +1,29 @@
+<h4>Advertisement Statistics</h4>
+
+<% form_tag(:action => "reset_stats") do %>
+  <table width="100%" class="highlightable">
+    <thead>
+      <tr>
+        <th width="5%"></th>
+        <th width="5%" style="text-align: right;">Hits</th>
+        <th width="90%"></th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <td colspan="3">
+          <%= submit_tag "Reset" %>
+        </td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <% @ads.each do |ad| %>
+        <tr>
+          <td><%= link_to(ad.id, ad.image_url) %></td>
+          <td style="text-align: right;"><%= ad.hit_count %></td>
+          <td></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

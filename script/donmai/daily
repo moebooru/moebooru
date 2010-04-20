@@ -1,0 +1,8 @@
+#/usr/local/bin/bash
+
+export RAILS_ENV=production
+cd "$(dirname $0)/../../"
+script/donmai/backup_db
+script/donmai/prune_backup_dbs
+/usr/local/bin/gfind /home/moe/moe-live/tmp/cache/javascripts/ -type f -mtime +2 | xargs -r rm
+

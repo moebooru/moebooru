@@ -1,0 +1,25 @@
+<div class="status-notice" id="pool<%= pool.id %>">
+  <div style="display: inline;">
+    <p>
+      <% if pool_post.prev_post_id %>
+        <%= link_to "&laquo; Previous", :action => "show", :id => pool_post.prev_post_id %>
+      <% end %>
+      <% if pool_post.next_post_id %>
+        <%= link_to "Next &raquo;", :action => "show", :id => pool_post.next_post_id %>
+      <% end %>
+      This post is <%= h(pool_post.pretty_sequence) %>
+      in the <%= link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %> pool
+    <% if pool_post.master_id %>
+      <% pooled_post_id = pool_post.master.post.id %>
+      through its child <%= link_to "post ##{pooled_post_id}", :id => pooled_post_id %>
+    <% else %>
+      <% pooled_post_id = @post.id %>
+    <% end %>
+
+    <% if @current_user.can_change?(pool_post, :active) %>
+    (<%= link_to_function "remove",
+     "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{pooled_post_id}, #{pool.id})"
+     %>)<% end %>.
+    </p>
+  </div>
+</div>

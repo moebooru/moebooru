@@ -1,0 +1,1741 @@
+body, div, h1, h2, h3, h4, h5, h6, p, ul, li, dd, dt {
+  color: white;
+  font-family: verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+form {
+  margin-bottom: 0; /* opera defaults to 1em for some reason */
+}
+
+h1, h2, h3, h4 {
+  font-family: Tahoma;
+}
+
+body {
+  font-size: 80%;
+  background: #222;
+  padding: 1em 3em;
+  margin: 0;
+}
+
+.action-post-show > body {
+  background: #000;
+}
+
+a:link {
+  color: #ee8887;
+  text-decoration: none;
+}
+
+.blacklisted-tags-disabled {
+  color: #AAA !important;
+}
+
+a:visited {
+  color: #ee8887;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffaaae;
+  text-decoration: none;
+}
+
+a:active {
+  color: #006FFA;
+  text-decoration: none;
+}
+
+a.last-page {
+  color: #666;
+}
+
+a.spoiler > .spoilerwarning {
+  color: #ff4020;
+  background: #181818;
+}
+
+addr {
+	display: block;
+	margin-left: 2em;
+	font-weight: bold;
+}
+
+blockquote {
+  color: black;
+  margin: 0 0 1em 0;
+  padding: 1em;
+  border: 1px solid #666;
+  background: #AAA;
+}
+
+blockquote p {
+  color: black;
+  margin-bottom: 0em;
+}
+
+code {
+  font-family: monospace;
+  font-size: 1.2em;
+}
+
+dd {
+  margin-bottom: 1em;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dt.bad {
+  color: red;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h1#static-index-header {
+  font-size: 4em; 
+  margin: 1em 0 .5em 0;
+  text-align: center;
+}
+
+h1#static-index-header a {
+  text-align: center;
+  display: block;
+  font-size: 0px;
+  text-indent: -3000em;
+  margin: 0;
+  padding:75px 300px 75px 300px;
+  background: transparent url("../images/logo.png") no-repeat scroll center center;
+}
+
+h2 {
+  font-size: 1.8em;
+}
+
+h2.wiki-title {
+  color: #003DD8;
+  margin-bottom: 0.25em;
+}
+
+h2#site-title {
+  display: block;
+  text-align: left;
+  margin: -1em 0 .5em -3em;
+  padding: 0px 0px 0px 484px;
+  height: 75px;
+  background: transparent url("../images/logo_small.png") no-repeat scroll top left;
+}
+
+h2#site-title a#ruu {
+  display: none;
+  margin: 0;
+  padding: 0;
+}
+
+h2#site-title span {
+  display: block;
+  padding: 1em 0 0 0;
+  text-align: left;
+  margin: 0;
+}
+
+div#static-more h2 {
+  margin: -1em 0 0 -3em;
+}
+
+
+div#static-more h2 a {
+  display: block;
+  font-size: 0px;
+  background: transparent url("../images/logo_small.png") no-repeat scroll top left;
+  margin: 0 0 .5em 0;
+  padding: 37px 242px 38px 242px;
+}  
+
+h3 {
+  font-size: 1.6em;
+}
+
+h4 {
+  font-size: 1.4em;
+}
+
+h5 {
+  font-size: 1.2em;
+}
+
+h6 {
+  font-size: 1em;
+}
+
+img {
+  border: none;
+  vertical-align: middle;
+}
+
+img.preview {
+  border: 3px hidden #000;
+  margin-top: 1em;
+}
+
+img.flagged {
+  border: 3px solid #F00;
+}
+
+img.has-children {
+  border: 3px solid #0F0;
+}
+
+img.has-parent {
+  border: 3px solid #CC0;
+}
+
+img.pending {
+  border: 3px solid #00F;
+}
+
+
+input {
+  padding: 0 0.3em;
+}
+
+input[type=password]:focus {
+  background: #FFC;
+	color: #000;
+}
+
+input[type=text]:focus {
+  background: #FFC;
+	color: #000;
+}
+
+label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+li {
+  margin-left: 1em;
+}
+
+ol {
+  margin-left: 1em;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+span.author {
+  color: gray;
+}
+
+span.date {
+  color: #AAA;
+}
+
+span.date a {
+  color: #AAA;
+}
+
+span.locked-topic {
+  color: #666;
+}
+
+span.informational {
+  cursor: help;
+}
+
+span.post-count {
+  color: #AAA;
+}
+
+span.thumb {
+  display: inline-block;
+  height: 180px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+ul#post-list-posts span.thumb {
+  display: block;
+}
+
+span.plid {
+  display: none;
+}
+
+span.unread-topic {
+  font-weight: bold;
+}
+
+span.stars .star {
+	font-family: "Zapf Dingbats", "Apple Symbols", sans-serif;	/* on OS X 10.4, different fonts are used as fallbacks for the full and empty star characters, so let's make sure we use a font that has them at the same size */
+}
+
+span.vote-desc {
+	color: #888;
+	margin-left: 0.5em;
+}
+
+strong.divider {
+  font-weight: bold;
+  color: gray;
+}
+
+table {
+  margin-bottom: 2em;
+}
+
+table.form {
+  width: 70em;
+}
+
+table.form p {
+  font-size: 0.8em;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+}
+
+table.form th {
+  color: white;
+  white-space: normal;
+  padding-right: 1em;
+  text-align: right;
+  background: #333;
+}
+
+table.highlightable {
+}
+
+table.highlightable > tbody > tr:hover {
+  background: #67100F;
+}
+
+table.highlightable th {
+}
+
+table.highlightable td {
+}
+
+table.highlightable th {
+  margin: 0;
+}
+
+table td {
+  padding: 1px 4px; 
+  vertical-align: top;
+}
+
+table th {
+  font-weight: bold;
+  text-align: left;
+  vertical-align: top;
+  padding: 0.2em 0.5em;
+  white-space: nowrap;
+}
+
+table tr.bad {
+  background: rgb(255, 230, 230);
+}
+
+table tr.even {
+  color: white;
+  background: #444 ;
+}
+
+table tr.good {
+  background: rgb(230, 255, 230);
+}
+
+tr.odd {
+  color: white;
+  background: #333;
+}
+
+table tr.selected {
+  background: #044 !important; /* override highlightable */
+}
+
+table tr.highlight {
+  background: #67100F;
+}
+
+table tr.pending-tag {
+  background: #503030;
+}
+
+textarea {
+  display: block;
+  padding: 0 0.3em;
+  font-family: sans-serif;
+  font-size: 1.2em;
+}
+
+textarea.no-block {
+  display: inline;
+}
+
+textarea:focus {
+  background: #FFC;
+  color: #000;
+}
+
+ul {
+  margin: 0 0 1em 0em;
+}
+
+ul.bare-list li {
+  list-style-type: none;
+}
+
+ul.flat-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+ul.flat-list li {
+  display: inline;
+  list-style-type: none;
+  font-weight: bold;
+  padding: 0;
+  margin: 0 1em 0 0;
+}
+
+ul.flat-list li a {
+  font-weight: normal;
+}
+
+ul.flat-list li a.forum-update {
+  font-weight: bold;
+}
+
+ul.flat-list li a.comments-update {
+  font-weight: bold;
+}
+
+ul.link-page {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+ul.link-page > li {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.tag-type-artist > a, #history .tag-type-artist {
+  color: #cccc00;
+}
+
+.tag-type-artist > a:hover {
+  color: #33CFFF;
+}
+
+.tag-type-faults > a, #history .tag-type-faults {
+  color: #FF2020;
+}
+
+.tag-type-faults > a:hover {
+  color: #33CFFF;
+}
+
+.tag-type-circle > a, #history .tag-type-circle {
+  color: #0bb;
+}
+
+.tag-type-circle > a:hover {
+  color: #33CFFF;
+}
+
+.tag-type-character > a, #history .tag-type-character {
+  color: #0A0;
+}
+
+.tag-type-character > a:hover {
+  color: #33CFFF;
+}
+
+.tag-type-copyright > a, #history .tag-type-copyright {
+  color: #D0D;
+}
+
+.tag-type-copyright > a:hover {
+  color: #33CFFF;
+}
+
+.added {
+  color: #00CC00;
+}
+
+.removed {
+  color: #ff0000;
+}
+
+.name-change, .name-change a {
+  color: #ffff00;
+}
+
+#history .obsolete .name-change, #history .obsolete .name-change a {
+  color: #bbb;
+}
+
+#history .id.deleted > a {
+	color: #999;
+}
+
+#history .id.held > a {
+	color: #0bb;
+}
+#history .new-user .author a {
+	font-weight: bold;
+}
+
+#history .obsolete, #history .obsolete span {
+	color: #999;
+}
+
+.unchanged {
+  font-size: 0.8em;
+}
+
+.history-search-row {
+  float: left;
+  position: absolute; /* don't move the footer around */
+  margin-top: 1em;
+  margin-left: 2em;
+}
+
+div.footer.history-footer {
+  clear: none;
+}
+
+.history-search-label {
+  width: 10%;
+  float: left;
+}
+
+div#artist-index > table td {
+  white-space: nowrap;
+}
+
+div.auto_complete {
+  width: 350px;
+  background: #fff;
+}
+
+div.auto_complete ul {
+  border:1px solid #888;
+  margin:0;
+  padding:0;
+  width:100%;
+  list-style-type:none;
+}
+
+div.auto_complete ul li {
+  margin:0;
+  padding:3px;
+}
+
+div.auto_complete ul li.selected { 
+  background-color: #ffb; 
+}
+
+div.auto_complete ul strong.highlight { 
+  color: #800; 
+  margin:0;
+  padding:0;
+}
+
+div.blocked {
+  border: 2px solid #F00;
+  background: #FCC;
+  color: #F00;
+  font-size: 1.2em;
+  padding: 1em;
+  margin: 1em;
+  text-align: center;
+}
+
+div#comment-list > div.post .preview {
+  margin-bottom: 1em;
+}
+
+div#comment-list > div.post > div.col1 {
+  width: 200px;
+  float: left;
+  clear: left;
+}
+
+div#comment-list > div.post > div.col2 {
+  float: left;
+  width: 50em;
+  background-color: #333;
+  padding: 1px 4px 3px 4px;
+  margin-bottom: 1em;
+}
+
+div#comment-list > div.post > div.col2 > div.header {
+  margin-bottom: 1em;
+}
+
+div#comment-list > div.post > div.col2 > div.header > div > span.info {
+  margin-right: 1em;
+}
+
+div#comment-list > div.post > div.col2 > div.header > div.tags > span {
+  margin: 0 0.5em 0 0;
+}
+
+div.content {
+  float: left;
+  margin: 0;
+  width: 77%;
+}
+
+div.footer {
+  margin-top: 1em;
+  text-align: center;
+  font-size: 120%;
+  color: #CCC;
+  clear: both;
+}
+
+div.footer.footer-aligned-to-content {
+  clear: none;
+}
+
+div.footer > .footer-disabled {
+  color: #777777;
+}
+
+div.footer > #label {
+  color: #777777;
+}
+
+div#forum > table th:first-child {
+  text-align: left;
+}
+
+div#forum > table td:first-child {
+  text-align: left;
+}
+
+.has-mail > span {
+  font-weight: bold;
+  color: #eeee00;
+}
+
+.has-deleted-posts {
+  font-weight: bold;
+}
+
+div#header {
+  margin-bottom: 1em;
+}
+
+ul.pipe-list {
+  display: inline;
+}
+
+ul.pipe-list li + li:before {
+  content: "| ";
+  color: #CCC;
+}
+
+ul.pipe-list li {
+  display: inline;
+  list-style-type: none;
+  margin: 0;
+  font-weight: normal;
+}
+
+
+ul#subnavbar li + li:before {
+  content: "| ";
+  color: #CCC;
+}
+
+ul#subnavbar {
+  display: inline;
+}
+
+ul#subnavbar li {
+  display: inline;
+  list-style-type: none;
+  margin: 0;
+  font-weight: normal;
+}
+
+div#header #site-title {
+}
+
+div#header ul#navbar {
+  margin: 0;
+}
+
+div#header ul#navbar li {
+}
+
+div#header ul#navbar li.current-page {
+}
+
+div#header ul#navbar li.current-page a {
+/*  font-weight: bold; */
+}
+
+div#header ul#subnavbar {
+  padding: 5px 20px 5px 15px;
+  background-color: #F7F7FF;
+  margin: 0 0 1em 0;
+}
+
+div#header ul#subnavbar li {
+  padding: 0 5px;
+}
+
+div#header ul#subnavbar li a {
+}
+
+div.help {
+  width: 40em;
+  margin-top: 2em;
+}
+
+div.help a.code {
+  font-family: monospace;
+}
+
+div.help div.code {
+  border: 1px dashed green;
+  margin: 1em 0;
+  padding: 1em 2em;
+  background: #EEE;
+  overflow: hidden;
+  font-family: monospace;
+}
+
+div.help > div.section {
+  margin-bottom: 4em;
+}
+
+div.help > div.section > div.section {
+  margin-bottom: 2em;
+}
+
+div.help h1,
+div.help h2,
+div.help h3,
+div.help h4 {
+  margin: 0 0 0.5em 0;  
+}
+
+div.help h4 {
+  color: #060;
+}
+
+div#info {
+  font-style: italic;
+}
+
+div.mail .received {
+  color: #EE0;
+}
+
+div.mail .sent {
+  color: #0EE;
+}
+
+div#mail-show div.message {
+  margin-bottom: 4em;
+}
+
+div#notice {
+  font-size: 1.5em;
+  color: white;
+  font-weight: bold;
+  padding: 0px 3px 0px 3px;
+  border: 1px solid #ddd;
+  /* Use a margin to prevent the box from falling under scrollbars. */
+  max-width: 800px;
+  margin-right: 50px;
+  border-top: none;
+  background-color: #333;
+}
+
+/* Using margin-left: auto; margin-right: auto; to center doesn't seem to work
+ * on position: fixed;, so we have to do this with two blocks. */
+#notice-container
+{
+  top: 0;
+  width: 100%;
+  position: fixed;
+  z-index: 1000;
+  text-align: center;
+}
+
+#notice-container > table
+{
+  margin: auto;
+}
+
+div#notice-container td {
+  padding-top: 0px; 
+}
+
+div#static_notice {
+  font-size: 1.2em;
+  color: red;
+  font-weight: bold;
+  margin-bottom: 1em;
+  padding-left: 20px;
+}
+
+div#old-browser
+{
+  font-size: 1.2em;
+  color: red;
+  font-weight: bold;
+  margin-bottom: 1em;
+  border: 1px solid #EAEAEA;
+  text-align: center;
+  padding: 1em;
+  margin: 1em;
+  background: black;
+}
+
+div#old-browser > #old-browser-hide
+{
+  font-size: 0.8em;
+}
+
+div.page {
+  width: 40em;
+}
+
+div#paginator {
+  display: block;
+  padding: 2em 0 1em 0;
+  font-size: 1em;
+  text-align: center;
+  font-weight: bold;
+  clear: both;
+}
+
+div#paginator a {
+  margin: 0 3px;
+  padding: 2px 6px;
+  font-weight: normal;
+  border: 1px solid #EAEAEA;
+}
+
+div#paginator a.arrow {
+  border: none;
+}
+
+.text-button
+{
+	padding: 0px 2px;
+	border: 1px solid #EAEAEA;
+}
+
+.text-button:hover
+{
+	background: rgb(60, 60, 220);
+	color: white;
+}
+
+div#paginator a.arrow:hover {
+  background: white;
+  color: #33CFFF;
+}
+
+div#paginator a.current {
+  border: 1px solid #AAA;
+}
+
+div#paginator a:hover {
+  background: rgb(60, 60, 220);
+  color: white;
+}
+
+div#paginator span {
+  margin: 0 3px;
+  padding: 2px 6px;
+}
+
+div#post-add p#scale {
+  color: #999;
+  font-style: italic;
+}
+
+div#post-popular > h3 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+div#post-view > div#right-col > div > div#note-container {
+  position: absolute;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.note-body {
+  background: #FFE;
+  border: 1px solid black;
+  display: none;
+  max-width: 300px;
+  min-width: 140px;
+  min-height: 10px;
+  position: absolute;
+  padding: 5px;
+  cursor: pointer;
+  overflow: auto;
+  color: #222;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.note-body > p.tn {
+  font-size: 0.8em;
+  color: gray;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.note-box {
+  position: absolute;
+  border: 1px solid black;
+  width: 150px;
+  height: 150px;
+  cursor: move;
+  background: #FFE;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.note-box > div.note-corner {
+  background: black;
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.unsaved {
+  background: #FFF;
+  border: 1px solid red;
+}
+
+div#post-view > div#right-col > div > div#note-container > div.unsaved > div.note-corner {
+  background: red;
+}
+
+div#post-view > div#right-col > div > img {
+  margin-right: 5em;
+}
+
+div#post-view > div#right-col > div#edit {
+  margin-bottom: 2em;
+  padding: 1em;
+}
+
+div.quote > a {
+  color: #581a21;
+}
+
+div#related {
+  margin: 0 3em 1em 0;
+}
+
+div#related > div.tag-column {
+  float: left;
+  margin: 0 2em 2em 0;
+  max-width: 12em;
+  height: 35em;
+}
+
+div#related > div.tag-column > a {
+  margin-right: 1em;
+}
+
+div.response-list > div.comment {
+  float: left;
+  margin-bottom: 1.5em;
+}
+div.response-list#forum {
+  width: 50em;
+}
+
+div.response-list > div.comment > div.author {
+  float: left;
+  width: 12em;
+  padding-right: 1em;
+}
+
+div.response-list > div.comment > div.author > h6 {
+  font-size: 1.3em;
+}
+
+div.response-list > div.comment > div.content {
+  float: left;
+  width: 36em;
+  padding: 0 0 0 10px;
+  margin: 0;
+}
+
+div.response-list > div.comment > div.content > div.post-footer {
+  margin-top: 1em;
+  color: #CCC;
+}
+
+div.response-list > div.comment > div.content > div.post-footer a {
+  color: #666;
+}
+
+div.sidebar {
+  width: 20%;
+  margin-right: 1em;
+  float: left;
+  overflow: visible;
+}
+
+div.sidebar li {
+  list-style-type: none;
+  margin: 0;
+}
+
+a.original-file-changed#highres {
+  color: #CC0;
+}
+
+div#static-index {
+  text-align: center;
+}
+
+div#static-index > div#links > a {
+  margin: 0 0.5em;
+}
+
+div#static-more > div {
+  float: left;
+  width: 25%;
+}
+
+div#static-more > div > ul {
+  margin-top: 2em;
+}
+
+div#static-more > div > ul > li {
+  list-style-type: none;
+  margin: 0;
+}
+
+div.status-notice {
+  border: 2px solid #666;
+  padding: 1em;
+  margin: 1em;
+  background: black;
+}
+
+div.status-notice p {
+  margin: 0;
+}
+
+div#tag-list {
+  text-align: center;
+  margin-bottom: 2em;
+}
+
+div#tag-list > a {
+  padding-right: 5px;
+}
+
+div#upgrade-account {
+	margin: 1em;
+	padding: 1em;
+	font-size: 1.2em;
+	font-weight: bold;
+	text-align: center;
+}
+
+div#upgrade-account a {
+	color: black;
+}
+
+div#upgrade-account a#hide-upgrade-account-link {
+	font-size: 0.8em;
+	color: #CCC;
+	display: block;
+}
+
+div#user-record > table > tbody > tr.positive-record {
+  color: black;
+  background: #EFE;
+}
+
+div#user-record > table > tbody > tr.negative-record {
+  color: black;
+  background: #FEE;
+}
+
+div.wiki > h2.title {
+  color: #99F;
+  font-size: 1.6em;
+}
+
+div#wiki-show > div#body {
+/*  line-height: 2em; */
+  width: 50em;
+  text-align: left;
+  float: left;
+}
+
+div#wiki-show > div#body ul {
+  line-height: 1.2em;
+  margin: 0 0 0 1em;
+}
+
+div#wiki-show > div#body > ul {
+  margin-bottom: 1em;
+}
+
+div#wiki-show > div#body > div#byline {
+  color: #666;
+  font-style: italic;
+}
+
+div#wiki-diff > div#body {
+  font-family: monospace;
+  font-size: 1.2em;
+  margin-top: 1em;  
+}
+
+div#wiki-diff del {
+  background-color: #f88;
+  text-decoration: line-through;
+}
+
+table#history {
+  margin-bottom: 0;
+}
+
+#history .text-block {
+  color: #AAA;
+  padding-left: .35em;
+  margin-left: .05em;
+  border-left: 1px dashed #fff;
+}
+
+#history .initial-diff {
+  color: #FFF;
+}
+
+#history .diff ins {
+  color: #FFF;
+  text-decoration: none;
+}
+
+#history .diff ins:before {
+  content: "+";
+  color: #CCC;
+}
+
+#history .diff del {
+  text-decoration: none;
+  color: #F33;
+}
+
+#history .diff del:before {
+  content: "-";
+  color: #CCC;
+}
+
+ul.history-header {
+  margin-top: 0.5em;
+}
+
+.history-header li {
+  list-style-type: none;
+}
+
+div#wiki-diff ins {
+  background-color: #8f8;
+}
+a.directlink span {
+        display: none;
+        margin: 0;
+        padding: 0;
+        color: #ee8887;
+}
+
+ul#post-list-posts {
+  display: inline;
+  list-style-type: none;
+}
+
+ul#post-list-posts li {
+  float: left;
+  margin: 0;
+  width: 180px;
+  list-style-type: none;
+}
+
+a.directlink {
+        background: #555 url("/images/ddl.gif") no-repeat scroll center center;
+        display: block;
+        height: 15px;
+        padding: 2px 0 0 0;
+        margin: 0 0 10px 0;
+        text-align: center;
+        font-size: 10px;
+}
+
+a.largeimg {
+        background: #111 url("/images/ddl_large.gif") no-repeat scroll center center;
+}
+
+.highlighted-post > a.directlink {
+	background: #400 url("/images/ddl_large.gif") no-repeat scroll center center;
+}
+
+.top-corner-float {
+	position: fixed;
+	background: #222;
+	border: solid #000 2px;
+	padding: 10px;
+	top: 2px;
+	right: 2px;
+}
+
+.post-hover {
+	border: 2px solid #000;
+	min-width: 20em;
+	max-width: 30em;
+	padding: 2px;
+	background: #222;
+	position: absolute;
+}
+
+.clickable { cursor: pointer; }
+.no-focus-outline:focus { outline: none; }
+
+.post-hover #hover-top-line {
+	background: #333;	
+	white-space: nowrap;
+	width: 100%;
+}
+
+a.tag-script-applied {
+	background-color: #880 !important;
+}
+
+body.dragging-to-post, body.dragging-to-post * {
+  cursor: no-drop;
+}
+
+body.dragging-to-post .thumb * {
+  cursor: pointer;
+}
+
+a.directlink:hover {
+        background-image: none;
+}
+
+a.largeimg:hover {
+        background-image: none;
+}
+
+a.directlink:hover span {
+        display: block;
+}
+
+.similar {
+	background: #555;
+	display: block;
+	padding: 2px 0 0 0;
+	margin: 10px 0 0 0;
+	text-align: center;
+	height: 15px;
+}
+
+a.similar span {
+	display: block;
+	height: 100%;
+	font-size: 10px;
+	color: #ee8887;
+}
+
+a.similar-match span {
+	font-weight: bold;
+}
+
+img.service-icon {
+	height: 15px;
+}
+
+img.service-icon#list {
+	margin: 1px 0px 0px 0px;
+}
+
+img.service-icon#source {
+	vertical-align: top;
+	margin: -1px 5px 0px 0px;
+}
+
+.service-active {
+	font-weight: bold;
+}
+
+
+.score:focus {
+	outline: none;
+}
+.score > span {
+	display: none;
+}
+.score > .score-visible {
+	display: inline;
+}
+
+span.stars .star-1 { color:#0a0; }
+span.stars .star-2 { color:#0f0; }
+span.stars .star-3 { color:#ff0; }
+
+.star:focus {
+	outline: none;
+}
+.star > .score-on, .star > .score-off {
+	display: none;
+}
+.star > .score-visible {
+	display: inline;
+}
+
+.avatar-crop {
+	float: left;
+	margin-left: 1em;
+}
+
+.crop-preview-frame-inner {
+        padding: 5px;
+}
+
+.avatar-submit {
+	margin-left: auto;
+	margin-right: auto;
+	width: 6em;
+}
+
+#crop-preview-box {
+	z-index: 300;
+	margin-top: 5px;
+	position: fixed;
+}
+
+.crop-preview-frame {
+	width: 110px;
+	height: 110px;
+	background-color: #333;
+}
+
+.comment-avatar-container
+{
+	margin-top: .5em;
+	margin-left: .5em;
+}
+
+.forum-avatar-container
+{
+	margin-top: .5em;
+	margin-left: .5em;
+}
+
+.avatar
+{
+
+/*	opacity: 0.5;
+	filter:alpha(opacity=50); */
+}
+
+.avatar-container:hover .avatar
+{
+/*	opacity: 1;
+	filter:alpha(opacity=100); */
+}
+
+.imgCrop_wrap {
+	/* width: 500px;   @done_in_js */
+	/* height: 375px;  @done_in_js */
+	position: relative;
+	cursor: crosshair;
+}
+
+/* an extra classname is applied for Opera < 9.0 to fix it's lack of opacity support */
+.imgCrop_wrap.opera8 .imgCrop_overlay,
+.imgCrop_wrap.opera8 .imgCrop_clickArea { 
+	background-color: transparent;
+}
+
+/* fix for IE displaying all boxes at line-height by default, although they are still 1 pixel high until we combine them with the pointless span */
+.imgCrop_wrap,
+.imgCrop_wrap * {
+	font-size: 0;
+}
+
+.imgCrop_overlay {
+	background-color: #000;
+	opacity: 0.5;
+	filter:alpha(opacity=50);
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.imgCrop_selArea {
+	position: absolute;
+	/* @done_in_js 
+	top: 20px;
+	left: 20px;
+	width: 200px;
+	height: 200px;
+	background: transparent url(castle.jpg) no-repeat  -210px -110px;
+	*/
+	cursor: move;
+	z-index: 2;
+}
+
+/* clickArea is all a fix for IE 5.5 & 6 to allow the user to click on the given area */
+.imgCrop_clickArea {
+	width: 100%;
+	height: 100%;
+	background-color: #FFF;
+	opacity: 0.01;
+	filter:alpha(opacity=01);
+}
+
+.imgCrop_marqueeHoriz {
+	position: absolute;
+	width: 100%;
+	height: 1px;
+	background: transparent url(/marqueeHoriz.gif) repeat-x 0 0;
+	z-index: 3;
+}
+
+.imgCrop_marqueeVert {
+	position: absolute;
+	height: 100%;
+	width: 1px;
+	background: transparent url(/marqueeVert.gif) repeat-y 0 0;
+	z-index: 3;
+}
+
+/* 
+ *  FIX MARCHING ANTS IN IE
+ *	As IE <6 tries to load background images we can uncomment the follwoing hack 
+ *  to remove that issue, not as pretty - but is anything in IE?
+ *  And yes I do know that 'filter' is evil, but it will make it look semi decent in IE
+ *
+* html .imgCrop_marqueeHoriz,
+* html .imgCrop_marqueeVert {
+	background: transparent;
+	filter: Invert; 
+}
+* html .imgCrop_marqueeNorth { border-top: 1px dashed #000; }
+* html .imgCrop_marqueeEast  { border-right: 1px dashed #000; }
+* html .imgCrop_marqueeSouth { border-bottom: 1px dashed #000; }
+* html .imgCrop_marqueeWest  { border-left: 1px dashed #000; }
+*/
+
+.imgCrop_marqueeNorth { top: 0; left: 0; }
+.imgCrop_marqueeEast  { top: 0; right: 0; }
+.imgCrop_marqueeSouth { bottom: 0px; left: 0; }
+.imgCrop_marqueeWest  { top: 0; left: 0; }
+
+
+.imgCrop_handle {
+	position: absolute;
+	border: 1px solid #333;
+	width: 6px;
+	height: 6px;
+	background: #FFF;
+	opacity: 0.5;
+	filter:alpha(opacity=50);
+	z-index: 4;
+}
+
+/* fix IE 5 box model */
+* html .imgCrop_handle {
+	width: 8px;
+	height: 8px;
+	wid\th: 6px;
+	hei\ght: 6px;
+}
+
+.imgCrop_handleN {
+	top: -3px;
+	left: 0;
+	/* margin-left: 49%;    @done_in_js */
+	cursor: n-resize;
+}
+
+.imgCrop_handleNE { 
+	top: -3px;
+	right: -3px;
+	cursor: ne-resize;
+}
+
+.imgCrop_handleE {
+	top: 0;
+	right: -3px;
+	/* margin-top: 49%;    @done_in_js */
+	cursor: e-resize;
+}
+
+.imgCrop_handleSE {
+	right: -3px;
+	bottom: -3px;
+	cursor: se-resize;
+}
+
+.imgCrop_handleS {
+	right: 0;
+	bottom: -3px;
+	/* margin-right: 49%; @done_in_js */
+	cursor: s-resize;
+}
+
+.imgCrop_handleSW {
+	left: -3px;
+	bottom: -3px;
+	cursor: sw-resize;
+}
+
+.imgCrop_handleW {
+	top: 0;
+	left: -3px;
+	/* margin-top: 49%;  @done_in_js */
+	cursor: w-resize;
+}
+
+.imgCrop_handleNW {
+	top: -3px;
+	left: -3px;
+	cursor: nw-resize;
+}
+
+/**
+ * Create an area to click & drag around on as the default browser behaviour is to let you drag the image 
+ */
+.imgCrop_dragArea {
+	width: 100%;
+	height: 100%;
+	z-index: 200;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.imgCrop_previewWrap {
+	/* width: 200px;  @done_in_js */
+	/* height: 200px; @done_in_js */
+	overflow: hidden;
+	position: relative;
+}
+
+.imgCrop_previewWrap img {
+	position: absolute;
+}
+
+
+#login-background {
+	z-index: 500;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+        background: url("/images/login-background.png") repeat scroll center center;
+}
+
+#login-container {
+	z-index: 500;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	display: table;
+	left: 0;
+	top: 0;
+}
+
+#login-container-inner {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+}
+
+#login-container-with-tabs {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 40em;
+	min-width: 30em;
+	width: 50%;
+}
+
+#login {
+	margin-left: auto;
+	margin-right: auto;
+	background: #111;
+	border: 1px solid #111;
+
+	height: 18em;
+}
+
+ul.login-tabs {
+	padding-left: 1.0em;
+	left: 0;
+	text-align: left;
+	height: 1.4em; /* match with ul.login-tabs li a height */
+}
+
+ul.login-tabs li {
+	display: block;
+	float: left;
+}
+
+ul.login-tabs li a {
+	display: block;
+	height: 1.4em;
+	background: #111;
+	padding: 2px 6px 0px 6px;
+	border-width: 1px 1px 0px 1px;
+	border-style: solid;
+	border-color: #444;
+	font-weight: bold;
+	color: white;
+}
+
+ul.login-tabs li.selected a {
+	background: #111;
+	color: white;
+	border-color: #eee;
+}
+
+ul.login-tabs li a:hover {
+  background: rgb(60, 60, 220);
+  color: white;
+}
+
+#login-popup-submit {
+  padding: 2px 6px;
+  border: 1px solid #EAEAEA;
+  margin: 10px;
+}
+
+#login-popup-submit:hover {
+  background: rgb(60, 60, 220);
+  color: white;
+}
+
+#login-popup-notices {
+	padding: 1em;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.tab-header-text
+{
+	text-align: center;
+	padding: 1em;
+	padding-bottom: 0.5em;
+	padding-left: 1.5em;
+	padding-right: 1.5em;	
+}
+
+/* Inlines that immediately follow other inlines should stay on the same row.  Text
+ * immediately following an inline should flow around it.  Any other inlines should
+ * clear left, so if we have "inline1<br>inline2", the second inline starts on a new
+ * line, instead of flowing to the right of inline1 offset downward by the <br>. */
+.inline-image > .inline-thumb
+{
+	float: left;
+	clear: left;
+}
+
+P,.inline-image + .inline-image > .inline-thumb
+{
+	clear: none;
+}
+
+/* A new <p> clears the text away from any inline that it's flowing around. */
+.inline-image + p
+{
+	clear: left;
+}
+
+/* The forums don't format two consecutive newlines into a <p>, so treat two consecutive
+ * newlines as a <p>. */
+.inline-image + br + br
+{
+	clear: left;
+}
+
+.inline-image > .inline-thumb
+{
+	cursor: pointer;
+}
+
+.inline-image > .inline-thumb img /* margin for normal thumbs, but not in inline/edit */
+{
+	margin: 0.5em;
+}
+
+.inline-image .expanded-image .main-inline-image > img
+{
+	border: 2px solid #000;
+}
+
+.inline-image .expanded-image-ui > .expanded-image
+{
+	clear: both;
+}
+
+.inline-image .expanded-image-ui
+{
+	padding: 0.75em 0 0.25em 0;
+	clear: both;
+}
+
+.inline-image .expanded-image-ui .select-image
+{
+	margin: 1px 3px;
+	padding: 2px 6px;
+	font-weight: normal;
+	border: 1px solid #EAEAEA;
+	display: inline-block;
+}
+
+.inline-image .expanded-image-ui .select-image:hover
+{
+	background: rgb(40, 40, 180);
+	color: white;
+}
+.inline-image .expanded-image-ui .select-image:focus
+{
+	outline: none;
+}
+
+.inline-image .expanded-image-ui .select-image.selected-image-tab
+{
+	background: rgb(60, 60, 220);
+	color: white;
+}
+
+.inline-image .expanded-image-ui .edit-link
+{
+	margin-left: 0.5em;
+}

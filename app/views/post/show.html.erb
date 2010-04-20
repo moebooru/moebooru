@@ -1,0 +1,57 @@
+<div id="post-view">
+  <% if @post.nil? %>
+    <h2>Nobody here but us chickens!</h2>
+  <% else %>
+    <% if @post.can_be_seen_by?(@current_user) %>
+      <script type="text/javascript"> Post.register(<%= @post.to_json %>) </script>
+    <% end %>
+
+    <%= render :partial => "post/show_partials/status_notices" %>
+
+    <div class="sidebar">
+      <%= render :partial => "search" %>
+      <%= print_advertisement("vertical") %>
+      <%= render :partial => "tags" %>
+      <%= render :partial => "post/show_partials/statistics_panel" %>
+      <%= render :partial => "post/show_partials/options_panel" %>
+      <%= render :partial => "post/show_partials/history_panel" %>
+      <%= render :partial => "post/show_partials/related_posts_panel" %>
+  <a href = "http://novelnews.net/" target = "_blank"><img src = "http://moe.imouto.org/images/encubed-01.png" alt="encubed" /></a>
+  <br>
+  <a href = "http://konachan.com/" target = "_blank"><img src = "http://konachan.com/images/button.png" alt="konachan" /></a>
+    </div>
+    <div class="content" id="right-col">
+      <%= print_advertisement("horizontal") %>
+      <%= render :partial => "post/show_partials/image" %>      
+      <%= render :partial => "post/show_partials/image_footer" %>
+      <%= render :partial => "post/show_partials/edit" %>
+      <%= render :partial => "post/show_partials/comments" %>
+    </div>
+
+    <% content_for("post_cookie_javascripts") do %>
+      <script type="text/javascript">
+        Post.observe_text_area("post_tags")
+
+        RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
+        if (Cookie.get('resize_image') == '1') {
+          Post.resize_image()
+        }
+        var anchored_to_comment = window.location.hash == "#comments";
+        if(window.location.hash.match(/^#c[0-9]+$/))
+          anchored_to_comment = true;
+
+        if (Cookie.get('show_defaults_to_edit') == '1' && !anchored_to_comment) {
+          $('comments').hide();
+          $('edit').show();
+	}
+
+        OnKey(192, null, function(e) { Post.vote(<%= @post.id %>, +0); return true; }); // `
+        OnKey(49, null, function(e) { Post.vote(<%= @post.id %>, +1); return true; });
+        OnKey(50, null, function(e) { Post.vote(<%= @post.id %>, +2); return true; });
+        OnKey(51, null, function(e) { Post.vote(<%= @post.id %>, +3); return true; });
+      </script>
+    <% end %>
+  <% end %>
+</div>
+
+<%= render :partial => "footer" %>

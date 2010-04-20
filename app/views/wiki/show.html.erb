@@ -1,0 +1,130 @@
+<%#= render :partial => "sidebar" %>
+
+<div class="wiki" id="wiki-show">
+  <h2 class="title">
+    <% if @tag %>
+      <%= h @tag.pretty_type_name %>:
+    <% end %>
+
+    <% if @page.nil? %>
+      <%= h params[:title].tr("_", " ") %>
+    <% else %>
+      <%= h @page.pretty_title %> <%- unless @page.last_version? -%><span class="old-version">(Version <%= @page.version %>)</span><%- end -%>
+    <% end %>
+  </h2>
+
+  <% if @page.nil? && @artist.nil? %>
+    <p>No page currently exists.</p>
+  <% end %>
+
+  <% unless @page.nil? %>
+    <div id="body">
+      <%= format_inlines(format_text(@page.body), 1) %>
+    </div>
+  <% end %>
+
+  <% if @artist %>
+    <div style="clear: both;">
+     <table class="form" style="margin-bottom: 1em;">
+       <tbody>
+         <% @artist.artist_urls.each do |artist_url| %>
+          <tr>
+            <th>URL</th>
+            <td>
+              <%= link_to h(artist_url.url), h(artist_url.url) %>
+              <% if @current_user.is_mod_or_higher? %>
+                (<%= link_to "mass edit", :controller => "tag", :action => "mass_edit", :source => "-#{@artist.name} source:" + ArtistUrl.normalize_for_search(artist_url.url), :name => @artist.name %>)
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @artist.alias_id %>
+          <tr>
+            <th>Alias for</th>
+            <td><%= link_to h(@artist.alias_name), :action => "show", :title => @artist.alias_name %></td>
+          </tr>
+        <% end %>
+        <% if @artist.aliases.any? %>
+          <tr>
+            <th>Aliases</th>
+            <td><%= @artist.aliases.map {|x| link_to(h(x.name), :action => "show", :title => x.name)}.join(", ") %></td>
+          </tr>
+        <% end %>
+        <% if @artist.group_id %>
+          <tr>
+            <th>Member of</th>
+            <td><%= link_to h(@artist.group_name), :action => "show", :title => @artist.group_name %></td>
+          </tr>
+        <% end %>
+        <% if @artist.members.any? %>
+          <tr>
+            <th>Members</th>
+            <td><%= @artist.members.map {|x| link_to(h(x.name), :action => "show", :title => x.name)}.join(", ") %></td>
+          </tr>
+        <% end %>
+       </tbody>
+     </table>
+    </div>
+  <% end %>
+    
+  <% unless @posts.nil? %>
+    <ul id="post-list-posts" style="margin-top: 1em; margin-bottom: 1em; display: block; clear: both;">
+      <% @posts.each do |p| %>
+        <%= print_preview(p) %>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% unless @page.nil? %>
+    <div id="byline" style="clear: both;">Updated by <%= link_to h(@page.author), :controller => "user", :action => "show", :id => @page.user_id %> <%= time_ago_in_words(@page.updated_at) %> ago</div>
+  <% end %>
+  </div>
+
+  <div class="footer" style="clear: both;">
+  <% if @page.nil? %>
+    <%= link_to "View Posts", :controller => "post", :action => "index", :tags => params[:title] %> |
+    <%= link_to "Edit", :controller => "wiki", :action => "edit", :title => params[:title] %>
+  <% else %>
+    <%= link_to_unless @page.first_version?, "&lt;&lt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version-1 %>
+    <%= link_to "View posts", :controller => "post", :action => "index", :tags => @page.title %>
+    | <%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %>
+    <% if not @page.is_locked? %>
+      | <%= link_to "Edit", :controller => "wiki", :action => "edit", :title => @page.title, :version => @page.version %>
+    <% end %>
+    <% if @page.is_locked? %>
+      <% if can_access?(:mod) %>
+      | <%= link_to "Unlock", {:controller => "wiki", :action => "unlock", :title => @page.title}, :method => "post" %>
+      <% end %>
+    <% else %>
+      | <%= link_to "Revert", {:controller => "wiki", :action => "revert", :title => @page.title, :version => @page.version}, :level => :member, :confirm => "Are you sure you want to revert to this page?", :method => :post %>
+      <% if can_access?(:mod) %>
+      | <%= link_to "Delete", {:controller => "wiki", :action => "destroy", :title => @page.title}, :confirm => "Are you sure you want to delete this page (and all versions)?", :method => :post %>
+      | <%= link_to "Lock", {:controller => "wiki", :action => "lock", :title => @page.title}, :method => :post %>
+      | <%= link_to "Rename", :action => "rename", :title => @page.title %>
+      <% end %>
+    <% end %>
+    <%= link_to_unless @page.last_version?, "&gt;&gt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1 %>
+  <% end %>
+  <br>
+
+  <% content_for("subnavbar") do %>
+    <% if @artist %>
+      <li><%= link_to "Edit Artist", :controller => "artist", :action => "update", :id => @artist.id %></li>
+      <% if can_access?(:privileged) %>
+        <li><%= link_to "Delete Artist", :controller => "artist", :action => "destroy", :id => @artist.id %></li>
+      <% end %>
+      <% unless @artist.alias_id %>
+        <li><%= link_to "Alias Artist", :controller => "artist", :action => "create", :alias_id => @artist.id %></li>
+      <% end %>
+    <% elsif @tag && @tag.type_name == "artist" %>
+      <li><%= link_to "Create", :controller => "artist", :action => "add", :name => @title %></li>
+    <% end %>
+  <% end %>
+
+  <%= render :partial => "footer", :locals => {:omit_div => true} %>
+</div>
+
+<script type="text/javascript">
+  InlineImage.init();
+</script>
+

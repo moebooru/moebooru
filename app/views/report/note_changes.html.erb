@@ -1,0 +1,28 @@
+<h4>Report: Note Changes</h4>
+
+<div>
+  <p>The following report shows note changes aggregated by user over the past three days.</p>
+
+  <div style="float: left; width: 700px;">
+    <img src="<%= h @note_changes_url %>" width="600" height="300"/>  
+  </div>
+
+  <div style="float: left; width: 200px;">
+    <table width="100%">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Changes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr class="<%= cycle 'even', 'odd' %>">
+            <td><%= link_to_unless user["user_id"].nil?, h(user["name"]), :controller => "user", :action => "show", :id => user["user_id"] %></td>
+            <td><%= link_to_unless user["user_id"].nil?, user["change_count"], :controller => "note", :action => "history", :user_id => user["user_id"] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+<h3>Pool Ordering: <%= link_to @pool.pretty_name, :action => :show, :id => @pool.id  %></h3>
+<p>Lower numbers will appear first.</p>
+
+<script type="text/javascript">
+  function orderAutoFill() {
+    var i = 0
+    var step = parseInt(prompt("Enter an interval"))
+
+    $$(".pp").each(function(x) {
+      x.value = i
+      i += step
+    })
+  }
+
+  function orderReverse() {
+    var orders = []
+    $$(".pp").each(function(x) {
+      orders.push(x.value)
+    })
+    var i = orders.size() - 1
+    $$(".pp").each(function(x) {
+      x.value = orders[i]
+      i -= 1
+    })
+  }
+
+  function orderShift(start, offset) {
+    var found = false;
+    $$(".pp").each(function(x) {
+      if(x.id == "pool_post_sequence[" + start + "]")
+        found = true;
+      if(!found)
+        return;
+      x.value = Number(x.value) + offset;
+    });
+  }
+</script>
+
+<% form_tag(:action => "order") do %>
+  <%= hidden_field_tag "id", @pool.id %>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Order</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @pool_posts.each do |pp| %>
+        <tr>
+          <td>
+            <% if pp.post.can_be_seen_by?(@current_user) %>
+              <%= link_to(image_tag(pp.post.preview_url), {:controller => "post", :action => "show", :id => pp.post_id}, :title => pp.post.cached_tags)%>
+            <% end %>
+          </td>
+          <td>
+            <%= text_field_tag "pool_post_sequence[#{pp.id}]", pp.sequence, :class => "pp", :size => 5, :tabindex => 1 %>
+            <%= link_to_function "+1", "orderShift(#{pp.id}, +1)", :class=>"text-button" %>
+            <%= link_to_function "-1", "orderShift(#{pp.id}, -1)", :class=>"text-button" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2"><%= submit_tag "Save", :tabindex => 2 %> <%= button_to_function "Auto Order", "orderAutoFill()", :tabindex => 2 %> <%= button_to_function "Reverse", "orderReverse()", :tabindex => 2 %> <%= button_to_function "Cancel", "history.back()", :tabindex => 2 %></td>
+      </tr>
+    </tfoot>
+  </table>
+<% end %>

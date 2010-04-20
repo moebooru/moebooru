@@ -1,0 +1,38 @@
+<div id="forum">
+  <% form_tag({:action => "search"}, :method => :get) do %>
+    <%= text_field_tag "query", params[:query] %>
+    <%= submit_tag "Search"%>
+  <% end %>
+  
+  <table class="highlightable" style="width: 50em">
+    <thead>
+      <tr>
+        <th width="10%">Post</th>
+        <th width="60%">Message</th>
+        <th width="15%">Author</th>
+        <th width="15%">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @comments.each do |comment| %>
+        <% content_tag :tr, :class => cycle('even', 'odd') do %>
+          <td><%= link_to("##{comment.post_id}", :controller => "post", :action => "show", :id => comment.post_id) %></td>
+          <td><%= link_to(h(comment.body[0, 70]) + "...", :controller => "post", :action => "show", :id => comment.post_id, :anchor => "c#{comment.id}") %></td>
+	  <td>
+            <% if comment.user_id %>
+              <a href="/user/show/<%= comment.user_id %>"><%= h comment.pretty_author %></a>
+            <% else %>
+              <%= h comment.pretty_author %>
+            <% end %>
+	  </td>
+
+          <td><%= time_ago_in_words(comment.created_at) %> ago</td>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div id="paginator">
+    <%= will_paginate(@comments) %>
+  </div>
+</div>

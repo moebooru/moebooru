@@ -1,0 +1,45 @@
+<div id="pool-index">
+  <table width="100%" class="highlightable">
+    <thead>
+      <tr>
+        <th width="40px">First image</th>
+        <th width="60%">Description</th>
+        <th width="*">User</th>
+        <th width="*">Images</th>
+        <th width="*">Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @inlines.each do |p| %>
+        <tr class="<%= cycle 'even', 'odd' %>" id="p<%= p.id %>">
+          <td>
+            <a href='<%= url_for(:action => "edit", :id => p.id) %>'>
+            <% if p.inline_images.first %>
+              <%= image_tag(p.inline_images.first.preview_url, :alt => "thumb", :width=>p.inline_images.first.preview_dimensions[:width], :height=>p.inline_images.first.preview_dimensions[:height]) %>
+            <% else %>
+              (no images)
+            <% end %>
+            </a>
+          </td>
+          <td><%= h(p.description) %></td>
+          <td><%= link_to h(p.user.pretty_name), :controller => "user", :action => "show", :id => p.user.id %></td>
+          <td><%= p.inline_images.length %></td>
+          <td><%= time_ago_in_words(p.created_at) %> ago</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div id="paginator">
+  <%= will_paginate(@inlines) %>
+</div>
+
+<% form_tag({:action => "create"}, :id => "create-new") do %>
+<% end %>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Create", "#", :level => :member, :onclick => "$('create-new').submit(); return false;" %></li>
+<% end %>
+
+<%= render :partial => "footer" %>

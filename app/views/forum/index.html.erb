@@ -1,0 +1,79 @@
+<div id="forum">
+  <div id="search" style="margin-bottom: 1em;">
+    <% form_tag({:action => "search"}, :method => :get) do %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search"%>
+    <% end %>
+  </div>
+  
+  <table class="highlightable" width="100%">
+    <thead>
+      <tr>
+        <th width="65%">Title</th>
+        <th width="10%">Created by</th>
+        <th width="10%">Updated by</th>
+        <th width="10%">Updated</th>
+        <th width="5%">Responses</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @forum_posts.each do |fp| %>
+        <% content_tag :tr, :class => cycle('even', 'odd') do %>
+          <td>
+            <% if @current_user.is_a?(User) && fp.updated_at > @current_user.last_forum_topic_read_at %>
+              <span class="forum-topic unread-topic"><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
+            <% else %>
+              <span class="forum-topic"><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
+            <% end %>
+
+            <% if fp.response_count > 30 %>
+              <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.response_count / 30.0).ceil}, :class => "last-page" %>
+            <% end %>
+
+            <% if fp.is_locked? %>
+              <span class="locked-topic">(locked)</span>
+            <% end %>
+          </td>
+          <td><%= h fp.author %></td>
+          <td><%= h fp.last_updater %></td>
+          <td><%= time_ago_in_words(fp.updated_at) %> ago</td>
+          <td><%= fp.response_count %></td>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div id="paginator">
+    <%= will_paginate(@forum_posts) %>
+  </div>
+
+  <% content_for("subnavbar") do %>
+    <li><%= link_to "New topic", :action => "new" %></li>
+    <% unless @current_user.is_anonymous? %>
+      <li><%= link_to_function "Mark all read", "Forum.mark_all_read()" %></li>
+    <% end %>
+    <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+  <% end %>
+
+  <div id="preview" style="display: none; margin: 1em 0;">
+  </div>
+
+  <div id="reply" style="display: none;">
+    <% form_tag({:action => "create"}, :level => :member) do %>
+      <%= hidden_field "forum_post", "parent_id", :value => params["parent_id"] %>
+      <table>
+        <tr>
+          <td><label for="forum_post_title">Title</label></td>
+          <td><%= text_field "forum_post", "title", :size => 60 %></td>
+        </tr>
+        <tr>
+          <td><label for="forum_post_body">Body</label></td>
+          <td><%= text_area "forum_post", "body", :rows => 10, :cols => 60 %></td>
+        </tr>
+        <tr>
+          <td colspan="2"><%= submit_tag "Post" %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

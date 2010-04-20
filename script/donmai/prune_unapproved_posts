@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require File.dirname(__FILE__) + '/../../config/environment'
+
+user = User.find(1)
+
+Post.find(:all, :conditions => ["status = 'pending' and created_at < ? ", 3.days.ago], :select => "id").each do |post|
+  Post.destroy_with_reason(post.id, "Unapproved in three days", user.id)
+end

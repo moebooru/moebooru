@@ -1,0 +1,3 @@
+<% (?a..?z).each do |letter| %>
+  <%= link_to letter.chr, :action => "index", :type => params[:type], :order => params[:order], :letter => letter.chr %>
+<% end %>

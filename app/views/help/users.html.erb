@@ -1,0 +1,12 @@
+<div class="help">
+  <h1>Help: Accounts</h1>
+
+  <div class="section">
+    <p>There are three types of accounts: basic, privileged, and blocked.</p>
+    <p>See the <%= link_to "signup", :controller => "user", :action => "signup" %> page for more details.</p>
+  </div>
+</div>
+
+<% content_for("subnavbar") do %>
+  <li><%= link_to "Help", :action => "index" %></li>
+<% end %>

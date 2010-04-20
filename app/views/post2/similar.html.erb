@@ -1,0 +1,202 @@
+<div id="post-list">  
+    <div class="sidebar">
+      <%= render :partial => "search" %>
+      <% if CONFIG["can_see_ads"].call(@current_user) %>
+	<%= CONFIG["ad_code_index_side"] %>
+      <% end %>
+      <div style="margin-bottom: 1em;" id="mode-box">
+	<h5>Mode</h5>
+	<form onsubmit="return false;" action="">
+	  <div>
+            <select name="mode" id="mode" onchange="PostModeMenu.change()" onkeyup="PostModeMenu.change()" style="width: 13em;">
+	      <option value="view">View Posts</option>
+	      <option value="reparent">Reparent</option>
+	      <option value="dupe">Flag as duplicate</option>
+	      <option value="edit">Edit Posts</option>
+<!--	      <option value="rating-s">Rate Safe</option>
+	      <option value="rating-q">Rate Questionable</option>
+	      <option value="rating-e">Rate Explicit</option>
+              <% if @current_user.is_privileged_or_higher? %>
+		<option value="lock-rating">Lock Rating</option>
+		<option value="lock-note">Lock Notes</option>
+              <% end %>-->
+	      <option value="flag">Flag Post</option>
+	      <option value="apply-tag-script">Apply Tag Script</option>
+	    </select>          
+	  </div>
+	</form>
+      </div>
+
+      <%= render :partial => "tag_script" %>
+
+      <div id="blacklisted-sidebar" style="display: none;">
+        <h5>
+          <%= link_to_function "Hidden", "$('blacklisted-list').toggle()" %>
+          <span id="blacklist-count" class="post-count"></span>
+        </h5>
+        <ul id="blacklisted-list" style="display: none;">
+        </ul>
+      </div>
+
+      <div>
+	<h5>Services</h5>
+	<ul>
+	  <li> <%= link_to "Use all services", :controller => "post", :action => "similar", :params => params.merge({:services=>"all"}) %>
+	  <% CONFIG["image_service_list"].map do |service, server| %>
+	  <li>
+	    <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
+	      <%= image_tag("http://" + service + "/favicon.ico", :class=>"service-icon", :id=>"list") %>
+              <%= link_to "#{service}", :controller => "post", :action => "similar", :params => params.merge({:services=>service}) %>
+	      <% if @errors[server] %>
+		(down)
+                <!-- <%= @errors[server][:message] %> -->
+	      <% end %>
+	    </span>
+	  <% end %>
+	</ul>
+      </div>
+      <div>
+	<h5>Options</h5>
+	<ul>
+	  <li> <%= link_to params[:forcegray]? "Don't ignore colors":"Ignore colors", :controller => "post", :action => "similar", :params => params.merge({:forcegray=>params[:forcegray]? 0:1}) %>
+	  <% unless params[:threshold] %>
+	  <li><%= link_to "Show More", :controller => "post", :action => "similar", :params => params.merge({:threshold=>0}) %></li>
+	  <% end %>
+	  <% if params[:url] %>
+	  <li>
+          <%= link_to "Upload this image", :controller => "post", :action => "upload",
+                  :url => (params[:full_url] or params[:url]),
+                  :tags => params[:tags],
+                  :rating => params[:rating],
+                  :parent => params[:parent]
+          %>
+	  </li>
+	  <% end %>
+	</ul>
+      </div>
+    </div>
+    <% if @initial %>
+      <div id="duplicate">
+	Your post may be a duplicate.
+	Please read the <%= link_to "duplicate post guidelines", :controller => "wiki", :action => "show", :title => "duplicate post_guidelines" %>.
+	<ul>
+	<li>
+	  If your post is a better version of an existing one, but the old post should remain,
+	  <%= link_to_function( "reparent", "$('mode').value = 'reparent'; PostModeMenu.change();"); %>
+	  the old post.
+	<li>
+	  If your post is a better version of an existing one, and the old post should be deleted,
+	  <%= link_to_function( "mark the old post as a duplicate", "$('mode').value = 'dupe'; PostModeMenu.change();"); %>.
+	<li>
+	  <form action=<%= url_for(:action => "destroy", :name=>"destroy") %> id="destroy" method="post">
+            <%= hidden_field_tag "id", params[:id], :id=>"destroy_id" %>
+	    <%= hidden_field_tag "reason", "duplicate" %>
+	    Otherwise, please
+	    <%= link_to_function( "delete your post", nil) do |page| page.call "$('destroy').submit" end %>.
+	  </form>
+	</ul>
+	<div id="blacklisted-notice" style="display: none;">
+          Your tag blacklist has hidden some potential duplicates.  Use <b>Hidden</b> in
+          the sidebar to view hidden posts.
+	</div>
+      </div>
+    <% end %>
+    <div class="content">
+      <div id="quick-edit" style="display: none; margin-bottom: 1em;">
+	<h4>Edit Tags</h4>
+	<% form_tag(:action => "update") do %>
+	  <%= hidden_field_tag "id", "" %>
+	  <%= hidden_field_tag "post[old_tags]", "" %>
+	  <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
+	  <%= submit_tag "Update" %>
+	  <%= button_to_function "Cancel", "$('quick-edit').hide()" %>
+	<% end %>
+      </div>
+
+      <% unless @initial %>
+      <% form_tag({:controller => "post", :action => "similar"}, :multipart => true, :id => "similar-form") do %>
+        <input name="forcegray" type="hidden" value="<%= h(@params[:forcegray]) %>">
+        <input name="services" type="hidden" value="<%= h(@params[:services]) %>">
+        <input name="threshold" type="hidden" value="<%= h(@params[:threshold]) %>">
+
+
+        <table class="form">
+          <tfoot>
+            <tr>
+              <td colspan="2"><%= submit_tag "Search", :tabindex => 3, :accesskey => "s" %></td>
+            </tr>
+          </tfoot>
+          <tbody>
+            <tr>
+              <th>
+                <label for="url">Source</label>
+              </th>
+              <td>
+                <input id="url" name="url" size="50" type="text" tabindex="1" value="<%= h(params[:url]) %>">
+              </td>
+            </tr>
+            <tr>
+              <th width="20%"><label for="post_file">File</label></th>
+              <td width="80%"><input id="file" name="file" size="50" tabindex="2" type="file"></td>              
+            </tr>
+          </tbody>
+        </table>
+      <% end %>
+      <% end %>
+
+      <% if not @posts.nil? %>
+      <%= render :partial => "posts", :locals => {:posts => @posts} %>
+      <% end %>
+
+      <div id="paginator"></div>
+
+      <% if params[:full_url] %>
+      <img src="<%= params[:full_url] %>"/>
+      <% end %>
+    </div>
+</div>
+<script type="text/javascript">
+  <% unless @initial %>
+  $("url").focus();
+  <% end %>
+
+  <% if params[:id] %>
+  // for post_mode_menu.js:click
+  id=<%= params[:id] %>;
+  <% end %>
+
+  var submit_quick_edit = function(e) {
+    $("quick-edit").hide()
+    new Ajax.Request("/post/update.json", {
+      parameters: $("quick-edit").down("form").serialize(),
+      onSuccess: function(resp) {
+        var resp = resp.responseJSON
+        notice("Post updated")
+        $("quick-edit").hide()
+        Post.register(resp.post)
+      },
+      onFailure: function(resp) {
+        var resp = resp.responseJSON
+        notice("Error: " + resp.reason)
+      }
+    })
+    e.stop()
+  }
+
+  $("quick-edit").down("form").observe("submit", submit_quick_edit)
+  $("post_tags").observe("keydown", function(e) {
+    if(e.keyCode != Event.KEY_RETURN)
+      return;
+    submit_quick_edit(e);
+    e.stop();
+  })
+
+  PostModeMenu.init()
+  if (Cookie.get("login") != "") {
+    $("my-favorites").href = "/post/index?tags=vote%3A3%3A" + Cookie.get("login") + "%20order%3Avote"
+  } else {
+    $("my-favorites-container").hide()
+  }
+</script>
+
+<%= render :partial => "footer" %>

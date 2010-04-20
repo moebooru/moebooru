@@ -1,0 +1,113 @@
+<form method="get" action="/post/moderate">
+  <%= text_field_tag "query", "", :size => 40 %>
+  <%= submit_tag "Search" %>
+</form>
+
+<script type="text/javascript">
+  function highlight_row(checkbox) {
+    var row = checkbox.parentNode.parentNode
+    if (row.original_class == null) {
+      row.original_class = row.className
+    }
+    
+    if (checkbox.checked) {
+      row.className = "highlight"
+    } else {
+      row.className = row.original_class
+    }
+  }
+</script>
+
+<div style="margin-bottom: 2em;">
+  <h2>Pending</h2>
+  <form method="post" action="/post/moderate">
+    <%= hidden_field_tag "reason", "" %>
+
+    <div style="margin: 1em 0;">
+      <h4>Deletion Guidelines</h4>
+      <p>As a general rule, you should not delete posts. Only approve of posts that you personally like. Posts that are not approved in three days will be automatically deleted.</p>
+    </div>
+
+    <table width="100%">
+      <tfoot>
+        <tr>
+          <td colspan="3">
+            <%= button_to_function "Select all", "$$('.p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+            <%= button_to_function "Invert selection", "$$('.p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+            <%= submit_tag "Approve" %> 
+            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
+          </td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <% @pending_posts.each do |p| %>
+          <tr class="<% if p.score > 2 %>good<% elsif p.score < -2 %>bad<% else %><%= cycle 'even', 'odd' %><% end %>">
+            <td><input type="checkbox" class="p" name="ids[<%= p.id %>]" onclick="highlight_row(this)"></td>
+            <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), :controller => "post", :action => "show", :id => p.id %></td>
+            <td class="checkbox-cell">
+              <ul>
+                <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
+                <li>Rating: <%= p.pretty_rating %></li>
+                <% if p.parent_id %>
+                  <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
+                <% end %>
+                <li>Tags: <%= h p.cached_tags %></li>
+                <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span></li>
+              </ul>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </form>
+</div>
+
+<div>
+  <h2>Flagged</h2>
+  <form method="post" action="/post/moderate">
+    <%= hidden_field_tag "reason2", "" %>
+
+    <table width="100%">
+      <tfoot>
+        <tr>
+          <td colspan="3">
+            <%= button_to_function "Select all", "$$('.f').each(function (i) {i.checked = true; highlight_row(i)})" %> 
+            <%= button_to_function "Invert selection", "$$('.f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
+            <%= submit_tag "Approve" %> 
+            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason2').value = reason; return true} else {return false}" %>
+          </td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <% @flagged_posts.each do |p| %>
+          <tr class="<%= cycle 'even', 'odd' %>">
+            <td><input type="checkbox" class="f" name="ids[<%= p.id %>]" onclick="highlight_row(this)"></td>
+            <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), :controller => "post", :action => "show", :id => p.id %></td>
+            <td class="checkbox-cell">
+              <ul>
+                <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
+                <li>Rating: <%= p.pretty_rating %></li>
+                <% if p.parent_id %>
+                  <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
+                <% end %>
+                <li>Tags: <%= h p.cached_tags %></li>
+                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id}, {})" %>)</li>
+                <li>Reason: <%= format_text(p.flag_detail.reason, :skip_simple_format => true) %> (<%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %>)</li>
+              </ul>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </form>
+  
+  <script type="text/javascript">
+    var cells = $$(".checkbox-cell")
+    $$(".checkbox-cell").invoke("observe", "click", function(e) {this.up().firstDescendant().down("input").click()})
+    <% (@pending_posts + @flagged_posts).uniq.each do |post| %>
+      Post.register(<%= post.to_json %>)
+    <% end %>
+  </script>
+</div>
+
+<%= render :partial => "footer" %>

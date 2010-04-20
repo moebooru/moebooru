@@ -1,0 +1,20 @@
+# Copy this to "database.yml" and adjust
+# the fields accordingly.
+
+development:
+  adapter: postgresql
+  database: danbooru
+  username: albert
+  host: 127.0.0.1
+
+test:
+  adapter: postgresql
+  database: danbooru
+  username: albert
+  host: 127.0.0.1
+
+production:
+  adapter: postgresql
+  database: danbooru
+  username: albert
+  host: 127.0.0.1

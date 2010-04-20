@@ -1,0 +1,37 @@
+<div>
+  <% if posts.empty? %>
+    <p>Nobody here but us chickens!</p>
+  <% else %>
+    <ul id="post-list-posts">
+    <% posts.each do |post| %>
+      <% if post.instance_of?(Post) %>
+      <%= print_preview(post, {:onclick => "return PostModeMenu.click(#{post.id})",
+        :onmouseover => "PostModeMenu.post_mouseover(#{post.id})",
+        :onmouseout => "PostModeMenu.post_mouseout(#{post.id})",
+        :similarity=>(@similar[:similarity][post] rescue nil)}) %>
+      <% else %>
+      <%= print_ext_similarity_preview(post, {:similarity=>(@similar[:similarity][post] rescue nil)}) %>
+      <% end %>
+    <% end %>
+    </ul>
+    <script type="text/javascript">
+      <% posts.each do |post| %>
+        Post.register(<%= post.to_json %>)
+      <% end %>
+    </script>
+  <% end %>
+  
+  <script type="text/javascript">
+    <% if @search_id %>
+      Post.init_blacklisted({exclude: "<%= h(@search_id) %>"})
+    <% else %>
+      Post.init_blacklisted()
+    <% end %>
+
+    var blacklisted_sidebar = $("blacklisted-sidebar")
+    var blacklisted_notice = $("blacklisted-notice")
+    if(blacklisted_sidebar && blacklisted_notice && blacklisted_sidebar.visible())
+      blacklisted_notice.show()
+    Post.init_post_list();
+  </script>
+</div>

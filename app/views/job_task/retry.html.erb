@@ -1,0 +1,6 @@
+<h4>Retry Job #<%= @job_task.id %></h4>
+
+<% form_tag(:action => "retry") do %>
+  <%= submit_tag "Yes" %>
+  <%= button_to_function "No", "location.back()" %>
+<% end %>

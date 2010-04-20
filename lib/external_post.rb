@@ -33,6 +33,10 @@ class ExternalPost
     return [dim[:width], dim[:height]]
   end
 
-  def use_jpeg?(user) false end
-  def has_jpeg? false end
+  def use_jpeg?(user)
+    false
+  end
+  def has_jpeg?
+    false
+  end
 end

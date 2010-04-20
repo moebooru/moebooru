@@ -63,9 +63,9 @@ module PostImageStoreMethods
 
     def store_jpeg_url
       if CONFIG["use_pretty_image_urls"] then
-        path = CONFIG["url_base"] + "/jpeg/#{md5}/#{url_encode(pretty_file_name({:type => :jpeg}))}.jpg"
+        path = "/jpeg/#{md5}/#{url_encode(pretty_file_name({:type => :jpeg}))}.jpg"
       else
-        path = CONFIG["url_base"] + "/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
+        path = "/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
       end
 
       return select_random_image_server + path

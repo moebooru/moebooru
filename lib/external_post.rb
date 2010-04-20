@@ -32,4 +32,7 @@ class ExternalPost
     dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
     return [dim[:width], dim[:height]]
   end
+
+  def use_jpeg?(user) false end
+  def has_jpeg? false end
 end

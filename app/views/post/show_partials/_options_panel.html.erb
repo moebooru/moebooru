@@ -15,11 +15,11 @@
 	  size = @post.file_size
 	end
       %>
-      <li><%= link_to("#{@post.has_sample? ? "View large version":"Image"}", url,
+      <li><%= link_to("#{@post.has_sample? ? "View larger version":"Image"}", url,
 		      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
 		      :id => "highres-show", :onclick => "Post.highres(); return false") %>
       </li>
-      <li><%= link_to("#{@post.has_sample? ? "Download large version":"Image"} (#{number_to_human_size(size)})", url,
+      <li><%= link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(size)})", url,
 		      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
 		      :id => "highres") %>
       </li>

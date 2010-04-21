@@ -30,7 +30,7 @@
 
 <% if !@post.is_deleted? && @post.use_sample?(@current_user) && @post.can_be_seen_by?(@current_user)%>
   <div class="status-notice" style="display: none;" id="resized_notice">
-    This image has been resized. Click on the <%= link_to_function "View large version", "Post.highres()" %> link in the sidebar for a high-quality version.
+    This image has been resized. Click on the <%= link_to_function "View larger version", "Post.highres()" %> link in the sidebar for a high-quality version.
     <!--
     <% unless @current_user.is_anonymous? || CONFIG["force_image_samples"] %>
       <%= link_to_function "Always view original", :onclick => "User.disable_samples()" %>.

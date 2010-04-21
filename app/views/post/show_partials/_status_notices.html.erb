@@ -30,11 +30,13 @@
 
 <% if !@post.is_deleted? && @post.use_sample?(@current_user) && @post.can_be_seen_by?(@current_user)%>
   <div class="status-notice" style="display: none;" id="resized_notice">
-    This image has been resized. Click on the <%= link_to_function "Original image", "Post.highres()" %> link in the sidebar to view the original image.
+    This image has been resized. Click on the <%= link_to_function "View large version", "Post.highres()" %> link in the sidebar for a high-quality version.
+    <!--
     <% unless @current_user.is_anonymous? || CONFIG["force_image_samples"] %>
       <%= link_to_function "Always view original", :onclick => "User.disable_samples()" %>.
     <% end %>
-    <%= link_to_function "Don't show this message", "$('resized_notice').hide(); Cookie.put('hide_resized_notice', '1')" %>.
+    -->
+    <%= link_to_function "Hide this message", "$('resized_notice').hide(); Cookie.put('hide_resized_notice', '1')" %>.
     <script type="text/javascript">
       if (Cookie.get("hide_resized_notice") != "1") {
         $("resized_notice").show()

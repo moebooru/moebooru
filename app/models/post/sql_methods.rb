@@ -62,6 +62,11 @@ module PostSqlMethods
         cond_params << q[:md5].split(/,/)
       end
     
+      if q[:ext].is_a?(String)
+        conds << "p.file_ext IN (?)"
+        cond_params << q[:ext].downcase.split(/,/)
+      end
+    
       if q[:deleted_only] == true
         conds << "p.status = 'deleted'"
       else

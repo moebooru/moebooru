@@ -42,7 +42,11 @@ module DText
 	'<a href="' + url + '">' + link + '</a>'
       else
         link = $2
-	text = $3
+	if $3 then
+	  text = $3
+	else
+	  text = $2
+	end
         '<a href="' + link + '">' + text + '</a>'
       end
     end

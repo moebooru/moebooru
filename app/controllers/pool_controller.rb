@@ -55,7 +55,7 @@ class PoolController < ApplicationController
       conds << "((pools_posts.active = true AND pools_posts.slave_id IS NULL) OR pools_posts.master_id IS NOT NULL)"
     end
 
-    @posts = Post.paginate :per_page => 24, :order => "nat_sort(pools_posts.sequence), pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => [conds.join(" AND "), *cond_params], :select => "posts.*", :page => params[:page]
+    @posts = Post.paginate :per_page => 24, :order => "nat_sort(pools_posts.sequence), pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => [conds.join(" AND "), *cond_params], :select => "posts.*, pools_posts.sequence AS sequence", :page => params[:page]
 
     set_title @pool.pretty_name
     respond_to do |fmt|

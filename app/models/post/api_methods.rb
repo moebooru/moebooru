@@ -1,6 +1,6 @@
 module PostApiMethods
   def api_attributes
-    return {
+    ret = {
       :id => id, 
       :tags => cached_tags, 
       :created_at => created_at, 
@@ -31,6 +31,12 @@ module PostApiMethods
       :width => width,
       :height => height
     }
+
+    # If we're being formatted as the contents of a pool, we'll have the pool_post
+    # sequence loaded too.
+    ret[:sequence] = sequence if self.respond_to?("sequence")
+
+    return ret
   end
 
   def to_json(*args)

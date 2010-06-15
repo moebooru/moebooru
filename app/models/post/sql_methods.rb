@@ -254,6 +254,11 @@ module PostSqlMethods
         sql << options[:select]
       else
         sql << "p.*"
+
+	# If we're searching in a pool, include the pool_post sequence in API output.
+	if q.has_key?(:pool)
+	  sql << ", pools_posts.sequence AS sequence"
+	end
       end
 
       sql << " FROM " + joins.join(" ")

@@ -269,9 +269,6 @@ class UserController < ApplicationController
   def unblock
     params[:user].keys.each do |user_id|
       Ban.destroy_all(["user_id = ?", user_id])
-      user = User.find(user_id)
-      user.level = CONFIG["user_levels"]["Member"]
-      user.save
     end
     
     redirect_to :action => "show_blocked_users"

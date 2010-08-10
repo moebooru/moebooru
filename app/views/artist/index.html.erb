@@ -2,6 +2,8 @@
   <div id="search-form" style="margin-bottom: 1em;">
     <% form_tag({:action => "index"}, :method => :get) do %>
       <%= text_field_tag "name", params[:name], :size => 40 %> <%= submit_tag "Search" %>
+      <br />
+      <%= select_tag "order", options_for_select([["Name", "name"], ["Date", "date"]],[params[:order] || ""]) %>
     <% end %>
   </div>
 
@@ -10,8 +12,9 @@
       <thead>
         <tr>
           <th width="5%"></th>
-          <th width="40%">Name</th>
-          <th width="55%">Updated By</th>
+          <th width="35%">Name</th>
+          <th width="50%">Updated By</th>
+          <th width="10%">Last Modified</th>
         </tr>
       </thead>
       <tbody>
@@ -36,6 +39,7 @@
             <% else %>
               <td></td>
             <% end %>
+            <td><%= artist.updated_at.strftime '%b %d %Y, %H:%M' %></td>
           <% end %>
         <% end %>
       </tbody>

@@ -53,7 +53,7 @@
               <% end %>
             </th>
           <% end %>
-          <th width="<%= ts.get %>" style="min-width: 4em">Date</th>
+          <th width="<%= ts.get %>" style="min-width: 10em">Date</th>
           <th width="<%= ts.get %>">User</th>
           <th width="<%= ts.get %>">Change</th>
         </tr>
@@ -75,7 +75,7 @@
                 :action => change.get_group_by_action,
                 :id => change.group_by_id %></td>
             <% end %>
-            <td><%= change.created_at.strftime("%b %e") %></td>
+            <td><%= change.created_at.strftime("%b %d %Y, %H:%M") %></td>
             <td class="author"><%= link_to_unless change.user_id == nil, change.author, :controller => "user", :action => "show", :id => change.user_id %></td>
             <td class="change"><%= format_changes(change, @options) %></td>
           </tr>

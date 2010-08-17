@@ -46,7 +46,7 @@ module PostHelper
     link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
     span = %{<span class="thumb">#{link}</span>}
     
-    if post.use_jpeg?(@current_user) then
+    if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then
       dl_width = post.jpeg_width.to_i
       dl_height = post.jpeg_height.to_i
       dl_url = post.jpeg_url

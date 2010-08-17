@@ -5,7 +5,7 @@
     <ul id="post-list-posts">
     <% posts.each do |post| %>
       <% if post.instance_of?(Post) %>
-        <%= print_preview(post, :similarity=>(@similar[:similarity][post] rescue nil), :blacklisting => true) %>
+        <%= print_preview(post, :similarity=>(@similar[:similarity][post] rescue nil), :blacklisting => true, :disable_jpeg_direct_links => true) %>
       <% else %>
       <%= print_ext_similarity_preview(post, {:similarity=>(@similar[:similarity][post] rescue nil)}) %>
       <% end %>

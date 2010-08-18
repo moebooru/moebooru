@@ -56,6 +56,10 @@ module ApplicationHelper
   end
 
   def format_inline(inline, num, id, preview_html=nil)
+    if inline.inline_images.empty? then
+      return ""
+    end
+
     url = inline.inline_images.first.preview_url
     if not preview_html
       preview_html = %{<img src="#{url}">}

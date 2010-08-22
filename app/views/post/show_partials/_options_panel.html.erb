@@ -17,10 +17,12 @@
 	  ext = @post.file_ext.upcase
 	end
       %>
-      <li><%= link_to("#{@post.has_sample? ? "View larger version":"Image"}", url,
+      <% if @post.has_sample? %>
+      <li><%= link_to("View larger version", url,
 		      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
 		      :id => "highres-show", :onclick => "Post.highres(); return false") %>
       </li>
+      <% end %>
       <li><%= link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(size)} #{ext})", url,
 		      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
 		      :id => "highres") %>

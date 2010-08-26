@@ -59,25 +59,6 @@ class PoolPost < ActiveRecord::Base
   belongs_to :slave, :class_name => "PoolPost", :foreign_key => "slave_id"
 
 protected
-  # Find a pool_post that can be a master post of pp: active, explicitly in this pool (not another
-  # slave), doesn't already have a master post, and has self.post as its post parent.
-  def self.find_master_pool_post(pp)
-    sql = <<-SQL
-      SELECT pp.* FROM posts p JOIN pools_posts pp ON (p.id = pp.post_id)
-      WHERE p.parent_id = #{pp.post_id}
-        AND pp.active
-        AND pp.pool_id = #{pp.pool_id}
-        AND pp.master_id IS NULL
-        AND pp.slave_id IS NULL
-      ORDER BY pp.id ASC
-      LIMIT 1
-    SQL
-    new_master = PoolPost.find_by_sql([sql])
-
-    return nil if new_master.empty?
-    return new_master[0]
-  end
-
   # If our master post is no longer valid, by being deactivated or the post having
   # its parent changed, unlink us from it.
   def detach_stale_master
@@ -101,17 +82,6 @@ protected
     detach_stale_master
 
     need_save = false
-
-    # Don't set a slave if we already have a master or a slave, or if we're already active.
-    if !self.slave_id && !self.master_id && !self.active
-      new_master = PoolPost.find_master_pool_post(self)
-      if new_master
-        self.master_id = new_master.id
-        new_master.slave_id = self.id
-        new_master.save!
-        need_save = true
-      end
-    end
 
     # If we have a master, propagate changes from it to us.
     if self.master

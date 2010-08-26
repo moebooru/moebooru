@@ -164,9 +164,13 @@ module PostSqlMethods
         end
 
         if q[:pool].is_a?(String)
-          joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
-          conds << "pools.name ILIKE ? ESCAPE E'\\\\'"
-          cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
+          if q[:pool] == "*" then
+            joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
+          else
+            joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
+            conds << "pools.name ILIKE ? ESCAPE E'\\\\'"
+            cond_params << ("%" + q[:pool].to_escaped_for_sql_like + "%")
+          end
         end
       end
 

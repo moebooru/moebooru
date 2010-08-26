@@ -39,5 +39,19 @@ Pool = {
         }          
       }
     })
+  },
+  transfer_post: function(old_post_id, new_post_id, pool_id, sequence)
+  {
+    Post.update_batch(
+      [{ id: old_post_id, tags: "-pool:" + pool_id },
+       { id: new_post_id, tags: "pool:" + pool_id + ":" + sequence }],
+      function() {
+        notice("Pool post transferred to parent")
+        if($("p" + old_post_id))
+          $("p" + old_post_id).remove()
+        if($("pool" + pool_id))
+          $("pool" + pool_id).remove()
+      }
+    );
   }
 }

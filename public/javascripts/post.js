@@ -116,7 +116,9 @@ Post = {
   update_styles: function(post)
   {
     var e = $("p" + post.id);
+    if(!e) return;
     var img = e.down("IMG");
+    if(!img) return;
     if(post["has_children"])
       img.addClassName("has-children");
     else

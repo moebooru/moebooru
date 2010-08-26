@@ -139,14 +139,12 @@ module PostSqlMethods
       end
 
       if q.has_key?(:pool)
-        if q.has_key?(:pool_posts)
-          if q[:pool_posts] == "all"
-            conds << "(pools_posts.active OR pools_posts.master_id IS NOT NULL)"
-          elsif q[:pool_posts] == "master"
-            conds << "(pools_posts.master_id IS NOT NULL)"
-          elsif q[:pool_posts] == "slave"
-            conds << "(pools_posts.active AND pools_posts.slave_id IS NOT NULL)"
-          end
+        if q.has_key?(:pool_posts) and q[:pool_posts] == "all"
+          conds << "(pools_posts.active OR pools_posts.master_id IS NOT NULL)"
+        elsif q.has_key?(:pool_posts) and q[:pool_posts] == "master"
+          conds << "(pools_posts.master_id IS NOT NULL)"
+        elsif q.has_key?(:pool_posts) and q[:pool_posts] == "slave"
+          conds << "(pools_posts.active AND pools_posts.slave_id IS NOT NULL)"
         elsif q.has_key?(:pool_posts) && q[:pool_posts] == "orig"
           conds << "pools_posts.active = true"
         else

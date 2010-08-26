@@ -10,16 +10,22 @@
       This post is <%= h(pool_post.pretty_sequence) %>
       in the <%= link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %> pool
     <% if pool_post.master_id %>
-      <% pooled_post_id = pool_post.master.post.id %>
+      <% pooled_post = pool_post.master.post %>
+      <% pooled_post_id = pooled_post.id %>
       through its child <%= link_to "post ##{pooled_post_id}", :id => pooled_post_id %>
     <% else %>
-      <% pooled_post_id = @post.id %>
+      <% pooled_post = @post %>
+      <% pooled_post_id = pooled_post.id %>
     <% end %>
 
     <% if @current_user.can_change?(pool_post, :active) %>
     (<%= link_to_function "remove",
      "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{pooled_post_id}, #{pool.id})"
-     %>)<% end %>.
+     %>)
+    <% if not pooled_post.parent_id.nil? %>
+    (<%= link_to_function "transfer to parent",
+     "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)} and add the parent post instead?')) Pool.transfer_post(#{pooled_post_id}, #{pooled_post.parent_id}, #{pool.id}, #{pool_post.sequence})"
+    %>)<% end %><% end %>.
     </p>
   </div>
 </div>

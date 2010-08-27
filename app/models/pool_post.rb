@@ -58,6 +58,16 @@ class PoolPost < ActiveRecord::Base
   belongs_to :master, :class_name => "PoolPost", :foreign_key => "master_id"
   belongs_to :slave, :class_name => "PoolPost", :foreign_key => "slave_id"
 
+public
+  def detach_master
+    self.master.slave_id = nil
+    self.master.save!
+
+    self.master_id = nil
+    self.master = nil
+    self.save!
+  end
+
 protected
   # If our master post is no longer valid, by being deactivated or the post having
   # its parent changed, unlink us from it.
@@ -69,13 +79,8 @@ protected
     # master is no longer our child, it's no longer a valid parent.
     return if self.master.active && !self.active && self.master.post.parent_id == self.post_id
 
-    self.master.slave_id = nil
-    self.master.save!
-
-    self.master_id = nil
-    self.master = nil
-    self.save!
-   end
+    detach_master
+  end
 
   def find_master_and_propagate
     # If we have a master post, verify that it's still valid; if not, detach us from it.

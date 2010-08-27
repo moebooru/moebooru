@@ -51,13 +51,15 @@
 <% if CONFIG["enable_parent_posts"] %>
   <% if @post.parent_id %>
     <div class="status-notice">
-      This post belongs to a <%= link_to "parent post", :action => "show", :id => @post.parent_id %>. Child posts are often minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+      This post belongs to a <%= link_to "parent post", :action => "show", :id => @post.parent_id %>.
     </div>
   <% end %>
 
   <% if @post.has_children? %>
+    <% children = @post.get_children %>
     <div class="status-notice">
-      This post has <%= link_to "child posts", :action => "index", :tags => "parent:#{@post.id}" %>. Child posts are often minor variations of the parent post (<%= link_to "learn more", :controller => "help", :action => "post_relationships" %>).
+      This post has <%= link_to (children.length == 1? "a child post":"child posts"), :action => "index", :tags => "parent:#{@post.id}" %> (post #<%=
+        children.map {|child| link_to(h(child.id), :action => "show")}.join(", ") %>).
     </div>
   <% end %>
 <% end %>

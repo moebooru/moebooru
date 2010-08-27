@@ -40,6 +40,7 @@ Pool = {
       }
     })
   },
+
   transfer_post: function(old_post_id, new_post_id, pool_id, sequence)
   {
     Post.update_batch(
@@ -51,6 +52,24 @@ Pool = {
           $("p" + old_post_id).remove()
         if($("pool" + pool_id))
           $("pool" + pool_id).remove()
+      }
+    );
+  },
+
+  detach_post: function(post_id, pool_id, is_parent)
+  {
+    Post.update_batch(
+      [{ id: post_id, tags: "-pool:" + pool_id }],
+      function() {
+        notice("Post detached")
+        if(is_parent) {
+          var elem = $("pool-detach-" + pool_id + "-" + post_id);
+          if(elem)
+            elem.remove()
+        } else {
+          if($("pool" + pool_id))
+            $("pool" + pool_id).remove()
+        }
       }
     );
   }

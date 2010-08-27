@@ -941,7 +941,7 @@ Post = {
      */
     var change_requests = [];
     new Ajax.Request("/post/index.json", {
-      parameters: "parent:" + post_id,
+      parameters: { tags: "parent:" + post_id },
       
       onComplete: function(resp) {
         var resp = resp.responseJSON

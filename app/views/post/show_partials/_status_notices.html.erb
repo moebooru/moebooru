@@ -51,7 +51,8 @@
 <% if CONFIG["enable_parent_posts"] %>
   <% if @post.parent_id %>
     <div class="status-notice">
-      This post belongs to a <%= link_to "parent post", :action => "show", :id => @post.parent_id %>.
+      This post belongs to a <%= link_to "parent post", :action => "show", :id => @post.parent_id %><%
+      %><span> (<%= link_to_function "make this post the parent", "Post.reparent_post(#{@post.id}, #{@post.parent_id}, #{@post.get_parent.parent_id ? "true":"false"})" %>)</span>.
     </div>
   <% end %>
 

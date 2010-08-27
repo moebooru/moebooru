@@ -66,12 +66,20 @@ class Pool < ActiveRecord::Base
           raise AccessDeniedError
         end
         
-        pool_post = pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
+        pool_post = all_pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
         if pool_post then
+          was_active = pool_post.active
           pool_post.active = false
           pool_post.save!
+
+	  if not pool_post.master_id.nil? then
+            pool_post.detach_master
+	  end
+
           self.reload
-          decrement!(:post_count)
+          if was_active then
+            decrement!(:post_count)
+          end
           update_pool_links
         end
       end

@@ -44,8 +44,8 @@ Pool = {
   transfer_post: function(old_post_id, new_post_id, pool_id, sequence)
   {
     Post.update_batch(
-      [{ id: old_post_id, tags: "-pool:" + pool_id },
-       { id: new_post_id, tags: "pool:" + pool_id + ":" + sequence }],
+      [{ id: old_post_id, tags: "-pool:" + pool_id, old_tags: "" },
+       { id: new_post_id, tags: "pool:" + pool_id + ":" + sequence, old_tags: "" }],
       function() {
         notice("Pool post transferred to parent")
         if($("p" + old_post_id))
@@ -59,7 +59,7 @@ Pool = {
   detach_post: function(post_id, pool_id, is_parent)
   {
     Post.update_batch(
-      [{ id: post_id, tags: "-pool:" + pool_id }],
+      [{ id: post_id, tags: "-pool:" + pool_id, old_tags: "" }],
       function() {
         notice("Post detached")
         if(is_parent) {

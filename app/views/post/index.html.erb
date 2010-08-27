@@ -9,7 +9,7 @@
     <%= render :partial => "search" %>
     <%= print_advertisement("vertical") %>
     <% if @current_user.is_privileged_or_higher? %>
-    <div style="margin-bottom: 1em;" id="mode-box">
+    <div style="margin-bottom: 1em; display: none;" id="mode-box" class="advanced-editing">
       <h5>Mode</h5>
       <form onsubmit="return false;" action="">
         <div>

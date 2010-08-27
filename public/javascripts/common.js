@@ -188,6 +188,15 @@ function InitTextAreas()
   });
 }
 
+function InitAdvancedEditing()
+{
+  if(Cookie.get("show_advanced_editing") != "1")
+    return;
+
+  $$(".advanced-editing").each(function(elem) {
+    $(elem).show();
+  });
+}
 
 /* When we resume a user submit after logging in, we want to run submit events, as
  * if the submit had happened normally again, but submit() doesn't do this.  Run

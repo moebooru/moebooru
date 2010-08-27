@@ -4,9 +4,11 @@
     <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
   <% end %>
   <% if @current_user.can_change?(@pool, :posts) %>
+  <div class="advanced-editing" style="display: none;">
     <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
     <label for="del-mode">Delete Mode</label>
     <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
+  </div>
   <% end %>
   <div style="margin-top: 1em;">
   <ul id="post-list-posts">

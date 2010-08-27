@@ -161,7 +161,10 @@ module PostTagMethods
             name, seq = $1.split(":")
 
             pool = Pool.find_by_name(name)
-            options = {:user => User.find(updater_user_id)}
+
+            # Set :ignore_already_exists, so pool:1:2 can be used to change the sequence number
+            # of a post that already exists in the pool.
+            options = {:user => User.find(updater_user_id), :ignore_already_exists => true}
             if defined?(seq) then
               options[:sequence] = seq
             end

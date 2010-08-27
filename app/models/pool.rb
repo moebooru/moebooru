@@ -43,7 +43,9 @@ class Pool < ActiveRecord::Base
 
         pool_post = all_pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
         if pool_post
-          raise PostAlreadyExistsError if pool_post.active
+          # If :ignore_already_exists, we won't raise PostAlreadyExistsError; this allows
+          # he sequence to be changed if the post already exists.
+          raise PostAlreadyExistsError if pool_post.active and not options[:ignore_already_exists]
           pool_post.active = true
           pool_post.sequence = seq
           pool_post.save!

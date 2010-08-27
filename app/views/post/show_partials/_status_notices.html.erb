@@ -59,7 +59,7 @@
     <% children = @post.get_children %>
     <div class="status-notice">
       This post has <%= link_to (children.length == 1? "a child post":"child posts"), :action => "index", :tags => "parent:#{@post.id}" %> (post #<%=
-        children.map {|child| link_to(h(child.id), :action => "show")}.join(", ") %>).
+        children.map {|child| link_to(h(child.id), :action => "show", :id => child.id)}.join(", ") %>).
     </div>
   <% end %>
 <% end %>

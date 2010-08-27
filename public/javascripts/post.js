@@ -923,5 +923,35 @@ Post = {
         thumb.removeClassName("highlighted-post");
       }
     });
+  },
+
+  reparent_post: function(post_id, old_parent_id, has_grandparent, finished)
+  {
+    /* If the parent has a parent, this is too complicated to handle automatically. */
+    if(has_grandparent)
+    {
+      alert("The parent post has a parent, so this post can't be automatically reparented.");
+      return;
+    }
+
+    /*
+     * Request a list of child posts.
+     * The parent post itself will be returned by parent:.  This is expected; it'll cause us
+     * to parent the post to itself, which unparents it from the old parent.
+     */
+    var change_requests = [];
+    new Ajax.Request("/post/index.json", {
+      parameters: "parent:" + post_id,
+      
+      onComplete: function(resp) {
+        var resp = resp.responseJSON
+	for(var i = 0; i < resp.length; ++i)
+	  change_requests.push({ id: resp[i].id, tags: "parent:" + post_id, old_tags: "" });
+
+	/* We have the list of changes to make in change_requests.  Send a batch
+	 * request. */
+	Post.update_batch(change_requests, function() { document.location.reload() });
+      }
+    });
   }
 }

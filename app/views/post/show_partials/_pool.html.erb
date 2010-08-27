@@ -7,7 +7,7 @@
       <% if pool_post.next_post_id %>
         <%= link_to "Next &raquo;", :action => "show", :id => pool_post.next_post_id %>
       <% end %>
-      This post is <%= h(pool_post.pretty_sequence) %>
+      This post is <span id="pool-seq-<%= pool_post.pool_id %>"><%= h(pool_post.pretty_sequence) %></span>
       in the <%= link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %> pool
     <% if pool_post.master_id %>
       <% pooled_post = pool_post.master.post %>
@@ -22,6 +22,8 @@
     <span class="advanced-editing" style="display: none;">
     (<%= link_to_function "remove",
      "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{pooled_post_id}, #{pool.id})"
+     %>, <%= link_to_function "change page",
+     "Pool.change_sequence(#{pooled_post_id}, #{pool_post.pool_id}, #{pool_post.sequence.to_json})"
      %>)
     <% if not pooled_post.parent_id.nil? %>
     (<%= link_to_function "transfer to parent",

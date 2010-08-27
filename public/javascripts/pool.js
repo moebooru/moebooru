@@ -72,5 +72,38 @@ Pool = {
         }
       }
     );
+  },
+
+  /* This matches PoolPost.pretty_sequence. */
+  post_pretty_sequence: function(sequence)
+  {
+    if(sequence.match(/^[0-9]+.*/))
+      return "#" + sequence;
+    else
+      return "\"" + sequence + "\"";
+  },
+
+  change_sequence: function(post_id, pool_id, old_sequence)
+  {
+    new_sequence = prompt("Please enter the new page number:", old_sequence);
+    if(new_sequence == null)
+      return;
+    if(new_sequence.indexOf(" ") != -1)
+    {
+      notice("Invalid page number");
+      return;
+    }
+
+    Post.update_batch(
+      [{ id: post_id, tags: "pool:" + pool_id + ":" + new_sequence, old_tags: "" }],
+      function() {
+        notice("Post updated")
+        var elem = $("pool-seq-" + pool_id);
+        if(!Object.isUndefined(elem.innerText))
+          elem.innerText = Pool.post_pretty_sequence(new_sequence);
+        else
+          elem.textContent = Pool.post_pretty_sequence(new_sequence);
+      }
+    );
   }
 }

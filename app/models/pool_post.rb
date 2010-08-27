@@ -17,6 +17,7 @@ class PoolPost < ActiveRecord::Base
     return pool.is_public? || user.has_permission?(pool)
   end
 
+  # This matches Pool.post_pretty_sequence in pool.js.
   def pretty_sequence
     if sequence =~ /^[0-9]+.*/
       return "##{sequence}"

@@ -24,28 +24,26 @@
      "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{pooled_post_id}, #{pool.id})"
      %>, <%= link_to_function "change page",
      "Pool.change_sequence(#{pooled_post_id}, #{pool_post.pool_id}, #{pool_post.sequence.to_json})"
-     %>)
-    <% if not pooled_post.parent_id.nil? %>
-    (<%= link_to_function "transfer to parent",
+     %><% if not pooled_post.parent_id.nil? %>,
+     <%= link_to_function "transfer to parent",
      "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)} and add the parent post instead?')) Pool.transfer_post(#{pooled_post_id}, #{pooled_post.parent_id}, #{pool.id}, #{pool_post.sequence})"
-    %>)<% end %>
-    <% end %>
+    %><% end %><%
+    %><% end %><%
 
-    <% if not pool_post.slave_id.nil? %>
+    %><% if not pool_post.slave_id.nil? %>,
       <span id="pool-detach-<%= pool.id %>-<%= pool_post.slave.post_id %>">
-    (<%= link_to_function "detach parent from pool",
+    <%= link_to_function "detach parent from pool",
      "if(confirm('Are you sure you want to remove the parent post from #{escape_javascript(pool.pretty_name)}, and show this post instead?')) Pool.detach_post(#{pool_post.slave.post_id}, #{pool.id}, true)"
-    %>)
-      </span>
-    <% end %>
+    %><%
+    %></span><%
+    %><% end %><%
  
-    <% if not pool_post.master_id.nil? %>
+    %><% if not pool_post.master_id.nil? %>,
       <span id="pool-detach-<%= pool.id %>-<%= pool_post.post_id %>">
-    (<%= link_to_function "detach from pool",
+    <%= link_to_function "detach from pool",
      "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}, and show the original post instead?')) Pool.detach_post(#{pool_post.post_id}, #{pool.id}, false)"
-    %>)
-      </span>
-    <% end %>
+    %></span><%
+    %><% end %>)
     </span>
     </p>
   </div>

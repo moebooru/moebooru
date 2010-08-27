@@ -67,4 +67,9 @@ module PostParentMethods
       end
     end
   end
+
+  def get_children
+    return [] if not self.has_children
+    return Post.find(:all, :conditions => ["parent_id = ?", self.id])
+  end
 end

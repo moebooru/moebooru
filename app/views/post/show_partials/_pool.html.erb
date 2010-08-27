@@ -19,6 +19,7 @@
     <% end %>
 
     <% if @current_user.can_change?(pool_post, :active) %>
+    <span class="advanced-editing" style="display: none;">
     (<%= link_to_function "remove",
      "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{pooled_post_id}, #{pool.id})"
      %>)
@@ -42,7 +43,8 @@
      "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}, and show the original post instead?')) Pool.detach_post(#{pool_post.post_id}, #{pool.id}, false)"
     %>)
       </span>
-    <% end %>.
+    <% end %>
+    </span>
     </p>
   </div>
 </div>

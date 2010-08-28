@@ -35,6 +35,8 @@ module PostParentMethods
     m.validate :validate_parent
     m.after_delete :give_favorites_to_parent
     m.versioned :parent_id, :default => nil
+    m.has_many :children, :class_name => "Post", :order => "id",
+      :foreign_key => :parent_id, :conditions => "status <> 'deleted'"
   end
   
   def validate_parent
@@ -70,10 +72,5 @@ module PostParentMethods
 
   def get_parent
     return Post.find(:first, :conditions => ["id = ?", self.parent_id])
-  end
-
-  def get_children
-    return [] if not self.has_children
-    return Post.find(:all, :conditions => ["parent_id = ?", self.id])
   end
 end

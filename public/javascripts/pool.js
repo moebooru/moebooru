@@ -48,10 +48,10 @@ Pool = {
        { id: new_post_id, tags: "pool:" + pool_id + ":" + sequence, old_tags: "" }],
       function() {
         notice("Pool post transferred to parent")
-        if($("p" + old_post_id))
-          $("p" + old_post_id).remove()
-        if($("pool" + pool_id))
-          $("pool" + pool_id).remove()
+
+	/* We might be on the parent or child, which will do different things to
+	 * the pool status display.  Just reload the page. */
+	document.location.reload();
       }
     );
   },

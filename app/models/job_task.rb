@@ -124,7 +124,7 @@ class JobTask < ActiveRecord::Base
     upload = BatchUpload.find(:first, :conditions => ["status = 'pending'"], :order => "id ASC")
     if upload.nil? then return end
 
-    update_attributes(:data => {:id => upload.id, :user_id => upload.user_id, :url => upload.ulr})
+    update_attributes(:data => {:id => upload.id, :user_id => upload.user_id, :url => upload.url})
     upload.run
   end
 

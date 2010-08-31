@@ -6,6 +6,9 @@
   <li><%= link_to "Popular", :controller => "post", :action => "popular_recent" %></li>
   <li><%= link_to "Image Search", :controller => "post", :action => "similar" %></li>
   <li><%= link_to "History", :controller => "history", :action => "index" %></li>
+  <% if @current_user.is_contributor_or_higher? %>
+    <li><%= link_to "Batch", :controller => "batch" %></li>
+  <% end %>
   <% if @current_user.is_janitor_or_higher? %>
     <li><%= link_to "Moderate", :controller => "post", :action => "moderate" %></li>
   <% end %>

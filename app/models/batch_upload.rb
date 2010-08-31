@@ -10,6 +10,15 @@ class BatchUpload < ActiveRecord::Base
   end
 
   def run
+    # Ugly: set the current user ID to the one set in the batch, so history entries
+    # will be created as that user.
+    old_thread_user = Thread.current["danbooru-user"]
+    old_thread_user_id = Thread.current["danbooru-user_id"]
+    old_ip_addr = Thread.current["danbooru-ip_addr"]
+    Thread.current["danbooru-user"] = User.find_by_id(self.user_id)
+    Thread.current["danbooru-user_id"] = self.user_id
+    Thread.current["danbooru-ip_addr"] = self.ip
+
     self.active = true
     self.save!
 
@@ -45,6 +54,10 @@ class BatchUpload < ActiveRecord::Base
     end
 
     self.save!
+
+    Thread.current["danbooru-user"] = old_thread_user
+    Thread.current["danbooru-user_id"] = old_thread_user_id
+    Thread.current["danbooru-ip_addr"] = old_ip_addr
   end
 end
 

@@ -26,7 +26,11 @@
               <%= h(item.data["error"].to_s) %>
             <% end %>
           <% elsif item.status == "pending" then %>
-            Pending
+            <% if item.active then %>
+              Uploading
+            <% else %>
+              Pending
+            <% end %>
           <% elsif item.status == "paused" then %>
             Paused
           <% elsif item.status == "finished" then %>

@@ -1739,3 +1739,8 @@ P,.inline-image + .inline-image > .inline-thumb
 {
 	margin-left: 0.5em;
 }
+
+.batch-buttons form
+{
+	float: left;
+}

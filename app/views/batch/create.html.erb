@@ -1,0 +1,89 @@
+<% if not @urls %>
+  <div id="batch-post-source">
+    <% form_tag({:action => "create"}, :level => :contributor, :method => "get", :id => "edit-form") do %>
+      <div id="posts">
+        <table class="form">
+          <tbody>
+            <tr>
+              <th> <label for="post_source">URL</label> </th>
+              <td>
+                <input id="post_url" name="url" size="50" tabindex="2" type="text" value="<%= h(params["url"]) %>">
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td> <%= submit_tag "Load file index", :tabindex => 8 %> </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div id="post-add">
+    <div id="static_notice" style="display: none;"></div>
+
+    <% form_tag({:action => "enqueue"}, :level => :contributor, :multipart => true, :id => "edit-form") do %>
+      <div id="posts">
+        <table class="form">
+          <tbody>
+            <tr>
+              <th> <label for="post_files">URL</label> </th>
+              <td> <%= h(@source) %> </td>
+            </tr>
+            <tr>
+              <th> <label for="post_files">Files</label> </th>
+              <td>
+                <select id="files" name="files[]" multiple size="15">
+                  <% for url in @urls do %>
+                    <option value="<%= h(url) %>" selected="selected" onmousedown="return false;"><%= File.basename(url) %></option>
+                  <% end %>
+                </select>
+              </td>
+            </tr>
+
+            <tr>
+              <th> <label for="post_tags">Tags</label> </th>
+              <td>
+                <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
+              </td>
+            </tr>
+
+            <tr>
+              <th>
+                <label for="post_rating_questionable">Rating</label>
+              </th>
+              <td>
+              <input id="post_rating_explicit" name="post[rating]" type="radio" value="e" <% if (params[:rating] or "q") == "e" %>checked="checked"<% end %> tabindex="5">
+                <label for="post_rating_explicit">Explicit</label>
+
+              <input id="post_rating_questionable" name="post[rating]" type="radio" value="q" <% if (params[:rating] or "q") == "q" %>checked="checked"<% end %> tabindex="6">
+                <label for="post_rating_questionable">Questionable</label>
+
+              <input id="post_rating_safe" name="post[rating]" type="radio" value="s" <% if (params[:rating] or "q") == "s" %>checked="checked"<% end %> tabindex="7">
+                <label for="post_rating_safe">Safe</label>
+              </td>
+            </tr>
+
+            <tr>
+              <td></td>
+              <td>
+                <%= submit_tag "Start upload", :tabindex => 8, :accesskey => "s" %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% content_for("post_cookie_javascripts") do %>
+  <script type="text/javascript">
+    if($("post_url"))
+      $("post_url").focus();
+    else if($("post_tags"))
+      $("post_tags").focus();
+  </script>
+<% end %>
+

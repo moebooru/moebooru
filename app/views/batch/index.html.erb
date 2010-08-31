@@ -1,0 +1,75 @@
+<h4>Batch Uploads</h4>
+
+<table width="100%" class="highlightable">
+  <thead>
+    <tr>
+      <th width="5%">#</th>
+      <th width="10%">User</th>
+      <th width="10%">URL</th>
+      <th width="25%">Tags</th>
+      <th width="45%">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @items.each do |item| %>
+      <tr class="<%= cycle 'even', 'odd' %>">
+        <td><%= item.id %></td>
+        <td><%= link_to h(User.find_name(item.user_id)), :controller => "user", :action => "show", :id => item.user_id %></td>
+
+        <td><%= h(File.basename(item.url)) %></td>
+        <td><%= h(item.tags) %></td>
+        <td>
+          <% if item.status == "error" then %>
+            <% if item.data["post_id"] then %>
+              Post #<%= link_to h(item.data["post_id"]), :controller => "post", :action => "show", :id => item.data["post_id"] %> already exists
+            <% else %>
+              <%= h(item.data["error"].to_s) %>
+            <% end %>
+          <% elsif item.status == "pending" then %>
+            Pending
+          <% elsif item.status == "paused" then %>
+            Paused
+          <% elsif item.status == "finished" then %>
+            Post #<%= link_to h(item.data["post_id"]), :controller => "post", :action => "show", :id => item.data["post_id"] %> complete
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="batch-buttons">
+  <% form_tag({:action => "create"}, :method => :get) do %>
+    <%= submit_tag("Queue uploads", :name => "queue") %>
+  <% end %>
+
+  <% form_tag({:action => "update"}) do %>
+    <%= hidden_field_tag "do", "retry" %>
+    <%= submit_tag("Retry failed") %>
+  <% end %>
+
+  <% form_tag({:action => "update"}) do %>
+    <%= hidden_field_tag "do", "clear_finished" %>
+    <%= submit_tag("Clear finished uploads") %>
+  <% end %>
+
+  <% form_tag({:action => "update"}) do %>
+    <%= hidden_field_tag "do", "abort_all" %>
+    <%= submit_tag("Cancel all uploads") %>
+  <% end %>
+
+  <% form_tag({:action => "update"}) do %>
+    <%= hidden_field_tag "do", "pause" %>
+    <%= submit_tag("Pause") %>
+  <% end %>
+
+  <% form_tag({:action => "update"}) do %>
+    <%= hidden_field_tag "do", "unpause" %>
+    <%= submit_tag("Resume") %>
+  <% end %>
+</div>
+
+<div id="paginator">
+  <%= will_paginate(@items) %>
+</div>
+

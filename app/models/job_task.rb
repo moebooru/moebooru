@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_favorite_tags upload_posts_to_mirrors periodic_maintenance)
+  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_favorite_tags upload_posts_to_mirrors periodic_maintenance upload_batch_posts)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -120,6 +120,14 @@ class JobTask < ActiveRecord::Base
     end
   end
 
+  def execute_upload_batch_posts
+    upload = BatchUpload.find(:first, :conditions => ["status = 'pending'"], :order => "id ASC")
+    if upload.nil? then return end
+
+    update_attributes(:data => {:id => upload.id, :user_id => upload.user_id, :url => upload.ulr})
+    upload.run
+  end
+
   def pretty_data
     case task_type
     when "mass_tag_edit"
@@ -165,6 +173,14 @@ class JobTask < ActiveRecord::Base
         end
         "sleeping (#{eta})"
       end
+
+    when "upload_batch_posts"
+      if status == "pending" then
+        return "idle"
+      elsif status == "processing" then
+        user = User.find_name(data["user_id"])
+        return "uploading #{data["url"]} for #{user}" 
+      end
     end
   end
   
@@ -184,7 +200,7 @@ class JobTask < ActiveRecord::Base
 
     while true
       execute_once
-      sleep 10
+      sleep 1
     end
   end  
 end

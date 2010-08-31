@@ -4,6 +4,8 @@ class HistoryController < ApplicationController
   verify :method => :post, :only => [:undo]
  
   def index
+    set_title "History"
+
     @params = params
     if params[:action] == "index"
       @type = "all"

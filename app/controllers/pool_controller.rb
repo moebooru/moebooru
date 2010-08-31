@@ -5,6 +5,8 @@ class PoolController < ApplicationController
   helper :post
   
   def index
+    set_title "Pools"
+
     options = { 
       :per_page => 20,
       :page => params[:page]

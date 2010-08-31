@@ -6,6 +6,8 @@ class BatchController < ApplicationController
   verify :method => :post, :only => [:update, :enqueue]
 
   def index
+    set_title "Batch queue"
+
     if @current_user.is_mod_or_higher? and params[:user_id] == "all" then
       user_id = nil
     elsif @current_user.is_mod_or_higher? and params[:user_id] then
@@ -90,6 +92,8 @@ class BatchController < ApplicationController
   end
 
   def create
+    set_title "Queue uploads"
+
     filter = {}
     if @current_user.is_mod_or_higher? and params[:user_id] == "all" then
     elsif @current_user.is_mod_or_higher? and params[:user_id] then

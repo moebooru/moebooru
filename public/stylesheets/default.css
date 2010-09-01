@@ -281,6 +281,7 @@ span.stars .star {
 span.vote-desc {
 	color: #888;
 	margin-left: 0.5em;
+	position: absolute;
 }
 
 strong.divider {

@@ -64,6 +64,9 @@
   <% if @current_user.can_change?(@pool, :posts) %>
     <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>
     <li><%= link_to "Import", :action => "import", :id => params[:id] %></li>
+    <% if @current_user.is_contributor_or_higher? %>
+      <li><%= link_to "Copy", :action => "copy", :id => params[:id] %></li>
+    <% end %>
   <% end %>
   <li><%= link_to "History", :controller => "history", :action => "index", :search => "pool:#{params[:id]}" %></li>
 <% end %>

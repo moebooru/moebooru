@@ -2,6 +2,7 @@ class PoolController < ApplicationController
   layout "default"
   before_filter :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]
   before_filter :post_member_only, :only => [:create]
+  before_filter :contributor_only, :only => [:copy]
   helper :post
   
   def index
@@ -106,6 +107,28 @@ class PoolController < ApplicationController
     end
   end
   
+  def copy
+    @old_pool = Pool.find_by_id(params[:id])
+
+    name = params[:name] || "#{@old_pool.name} (copy)"
+    @new_pool = Pool.new(:user_id => @current_user.id, :name => name, :description => @old_pool.description)
+
+    if request.post?
+      @new_pool.save
+
+      if not @new_pool.errors.empty? then
+        respond_to_error(@new_pool, :action => "index")
+        return
+      end
+
+      @old_pool.pool_posts.each { |pp|
+        @new_pool.add_post(pp.post_id, :sequence => pp.sequence)
+      }
+
+      respond_to_success("Pool created", :action => "show", :id => @new_pool.id)
+    end
+  end
+
   def destroy
     @pool = Pool.find(params[:id])
 

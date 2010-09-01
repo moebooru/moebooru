@@ -352,7 +352,7 @@ TagScript = {
       }
     } else if (command == "[reset]") {
       return []
-    } else if (command[0] == "-") {
+    } else if (command[0] == "-" && command.indexOf(":") == -1) {
       return tags.reject(function(x) {return x == command.substr(1, 100)})
     } else {
       tags.push(command)

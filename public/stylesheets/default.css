@@ -973,6 +973,7 @@ div.response-list > div.comment > div.author {
   float: left;
   width: 12em;
   padding-right: 1em;
+  overflow: hidden;
 }
 
 div.response-list > div.comment > div.author > h6 {

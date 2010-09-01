@@ -181,9 +181,19 @@ module PostTagMethods
 
 
         when /^-pool:(.+)/
-          name = $1
+          name, cmd = $1.split(":")
+
           pool = Pool.find_by_name(name)
           next if Thread.current["danbooru-user"] && !pool.can_change?(Thread.current["danbooru-user"], nil)
+
+          if cmd == "parent" then
+            # If we have a parent, remove ourself from the pool and add our parent in
+            # our place.  If we have no parent, do nothing and leave us in the pool.
+            if not self.parent_id.nil?
+              pool.transfer_post_to_parent(self.id, self.parent_id)
+            end
+            next
+          end
 
           pool.remove_post(id) if pool
         

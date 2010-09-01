@@ -58,7 +58,7 @@ class Post < ActiveRecord::Base
       return false
     end
 
-    if not user.is_mod_or_higher? and Time.now - self.created_at > 1.day
+    if not user.is_mod_or_higher? and Time.now - self.created_at > 1.day and not is_held
       return false
     end
 

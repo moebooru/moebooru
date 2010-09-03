@@ -13,14 +13,7 @@ class Pool < ActiveRecord::Base
   
   module PostMethods
     def self.included(m)
-      # Prefer child posts (the posts that were actually added to the pool).  This is what's displayed
-      # when editing the pool.
-      m.has_many :pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id", :conditions => "pools_posts.active = true"
-
-      # Prefer parent posts (the parents of posts that were added to the pool).  This is what's displayed by
-      # default in post/show.
-      m.has_many :pool_parent_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id",
-        :conditions => "pools_posts.active"
+      m.has_many :pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id", :conditions => "pools_posts.active"
       m.has_many :all_pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id"
       m.versioned :name
       m.versioned :description, :default => ""
@@ -108,11 +101,6 @@ class Pool < ActiveRecord::Base
       user.has_permission?(self)
     end
 
-    def has_originals?
-      pool_posts.each { |pp| return true if pp.slave_id }
-      return false
-    end
-
     def can_change?(user, attribute)
       return false if not user.is_member_or_higher?
       return is_public? || user.has_permission?(self)
@@ -120,7 +108,7 @@ class Pool < ActiveRecord::Base
 
     def update_pool_links
       transaction do
-        pp = pool_parent_posts(true) # force reload
+        pp = pool_posts(true) # force reload
         pp.each_index do |i|
           pp[i].next_post_id = nil
           pp[i].prev_post_id = nil
@@ -198,14 +186,12 @@ class Pool < ActiveRecord::Base
     def get_zip_filename(options={})
       filename = pretty_name.gsub(/\?/, "")
       filename += " (JPG)" if options[:jpeg]
-      filename += " (orig)" if options[:originals]
       "#{filename}.zip"
     end
 
     # Return true if any posts in this pool have a generated JPEG version.
     def has_jpeg_zip?(options={})
-      posts = options[:originals] ? pool_posts : pool_parent_posts
-      posts.each do |pool_post|
+      pool_posts.each do |pool_post|
         post = pool_post.post
         return true if post.has_jpeg?
       end
@@ -224,8 +210,7 @@ class Pool < ActiveRecord::Base
     # Estimate the size of the ZIP.
     def get_zip_size(options={})
       sum = 0
-      posts = options[:originals] ? pool_posts : pool_parent_posts
-      posts.each do |pool_post|
+      pool_posts.each do |pool_post|
         post = pool_post.post
         next if post.status == 'deleted'
         sum += options[:jpeg] && post.has_jpeg? ? post.jpeg_size : post.file_size
@@ -236,7 +221,6 @@ class Pool < ActiveRecord::Base
 
     def get_zip_control_file_path_for_time(time, options={})
       jpeg = options[:jpeg] || false
-      originals = options[:originals] || false
 
       # If this pool has a JPEG version, name the normal version "png".  Otherwise, name it
       # "normal".  This only affects the URL used to access the file, so the frontend can
@@ -249,12 +233,11 @@ class Pool < ActiveRecord::Base
         type = "normal"
       end
 
-      "#{RAILS_ROOT}/public/data/zips/%s-pool-%08i-%i%s" % [type, self.id, time.to_i, originals ? "-orig":""]
+      "#{RAILS_ROOT}/public/data/zips/%s-pool-%08i-%i" % [type, self.id, time.to_i]
     end
 
     def all_posts_in_zip_are_warehoused?(options={})
-      posts = options[:originals] ? pool_posts : pool_parent_posts
-      posts.each do |pool_post|
+      pool_posts.each do |pool_post|
         post = pool_post.post
         next if post.status == 'deleted'
         return false if not post.is_warehoused?
@@ -267,7 +250,6 @@ class Pool < ActiveRecord::Base
       return "" if pool_posts.empty?
 
       jpeg = options[:jpeg] || false
-      originals = options[:originals] || false
 
       buf = ""
 
@@ -285,8 +267,7 @@ class Pool < ActiveRecord::Base
       end
 
       filename_count = {}
-      posts = originals ? pool_posts : pool_parent_posts
-      posts.each do |pool_post|
+      parent_posts.each do |pool_post|
         post = pool_post.post
         next if post.status == 'deleted'
 

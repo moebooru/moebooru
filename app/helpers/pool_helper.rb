@@ -18,7 +18,6 @@ module PoolHelper
       number_to_human_size(pool.get_zip_size(zip_params)),
     ]
     options = { :action => "zip", :id => pool.id, :filename => pool.get_zip_filename(zip_params) }
-    options[:originals] = 1 if zip_params[:originals]
     options[:jpeg] = 1 if zip_params[:jpeg]
     link_to text, options, :level => :member
   end

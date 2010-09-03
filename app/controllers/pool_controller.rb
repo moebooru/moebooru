@@ -43,20 +43,15 @@ class PoolController < ApplicationController
   
   def show
     if params[:samples] == "0" then params.delete(:samples) end
-    if params[:originals] == "0" then params.delete(:originals) end
 
-    post_assoc = params[:originals] ? :pool_posts : :pool_parent_posts
+    post_assoc = :pool_parent_posts
     @pool = Pool.find(params[:id], :include => [post_assoc => :post])
 
     # We have the Pool.pool_parent_posts association for this, but that doesn't seem to want to work...
     conds = ["pools_posts.pool_id = ?"]
     cond_params = params[:id]
 
-    if params[:originals]
-      conds << "pools_posts.active = 't'"
-    else
-      conds << "((pools_posts.active = true AND pools_posts.slave_id IS NULL) OR pools_posts.master_id IS NOT NULL)"
-    end
+    conds << "pools_posts.active = 't'"
 
     @posts = Post.paginate :per_page => 24, :order => "nat_sort(pools_posts.sequence), pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => [conds.join(" AND "), *cond_params], :select => "posts.*, pools_posts.sequence AS sequence", :page => params[:page]
 
@@ -267,7 +262,7 @@ class PoolController < ApplicationController
   # Generate a ZIP control file for lighttpd, and redirect to the ZIP.
   if CONFIG["pool_zips"]
     def zip
-      post_assoc = params[:originals] ? :pool_posts : :pool_parent_posts
+      post_assoc = :pool_parent_posts
       pool = Pool.find(params[:id], :include => [post_assoc => :post])
       control_path = pool.get_zip_control_file_path(params)
       redirect_to pool.get_zip_url(control_path, params)

@@ -43,19 +43,11 @@
 <% content_for("footer") do %>
   <% if CONFIG["pool_zips"] %>
     <% zip_params = {} %>
-    <% zip_params[:originals] = true if @pool.has_originals? && params[:originals] %>
     <% has_jpeg = CONFIG["jpeg_enable"] && @pool.has_jpeg_zip?(zip_params) %>
     <% if has_jpeg %>
-      <li><%= link_to_pool_zip params[:originals] ? "Download original JPGs":"Download JPGs", @pool, zip_params.merge({:jpeg => true}) %></li>
+      <li><%= link_to_pool_zip "Download JPGs", @pool, zip_params.merge({:jpeg => true}) %></li>
     <% end %>
-    <li><%= link_to_pool_zip params[:originals] ? "Download originals":"Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
-  <% end %>
-  <% if @pool.has_originals? %>
-    <% if params[:originals] == "1" %>
-      <li><%= link_to "View edited", :id => params[:id], :originals => 0 %></li>
-    <% else %>
-      <li><%= link_to "View originals", :id => params[:id], :originals => 1 %></li>
-    <% end %>
+    <li><%= link_to_pool_zip "Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
   <% end %>
   <% if @current_user.has_permission?(@pool) %>
     <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>

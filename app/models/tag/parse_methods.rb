@@ -56,7 +56,7 @@ module TagParseMethods
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^(unlocked|deleted|ext|user|favtag|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|pool_posts|parent|order|change|holds|shown|limit):(.+)$/
+        if token =~ /^(unlocked|deleted|ext|user|favtag|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|shown|limit):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "vote"
@@ -102,8 +102,6 @@ module TagParseMethods
             end
             q[:exclude_pools] ||= []
             q[:exclude_pools] << pool
-          elsif $1 == "pool_posts"
-            q[:pool_posts] = $2
           elsif $1 == "parent"
             if $2 == "none"
               q[:parent_id] = false

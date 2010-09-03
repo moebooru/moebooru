@@ -139,17 +139,7 @@ module PostSqlMethods
       end
 
       if q.has_key?(:pool)
-        if q.has_key?(:pool_posts) and q[:pool_posts] == "all"
-          conds << "(pools_posts.active OR pools_posts.master_id IS NOT NULL)"
-        elsif q.has_key?(:pool_posts) and q[:pool_posts] == "master"
-          conds << "(pools_posts.master_id IS NOT NULL)"
-        elsif q.has_key?(:pool_posts) and q[:pool_posts] == "slave"
-          conds << "(pools_posts.active AND pools_posts.slave_id IS NOT NULL)"
-        elsif q.has_key?(:pool_posts) && q[:pool_posts] == "orig"
-          conds << "pools_posts.active = true"
-        else
-          conds << "((pools_posts.active = true AND pools_posts.slave_id IS NULL) OR pools_posts.master_id IS NOT NULL)"
-        end
+        conds << "pools_posts.active = true"
 
         if not q.has_key?(:order)
           pool_ordering = " ORDER BY pools_posts.pool_id ASC, nat_sort(pools_posts.sequence), pools_posts.post_id"

@@ -352,7 +352,7 @@ class PostController < ApplicationController
         @vote = PostVotes.find_by_ids(@current_user.id, @post.id).score rescue 0
       end
 
-      @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND (active = true OR master_id IS NOT NULL)", :order => "pools.name", :select => "pools.name, pools.id")
+      @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
       set_title @post.title_tags.tr("_", " ")

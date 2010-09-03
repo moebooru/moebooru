@@ -92,4 +92,12 @@ namespace :posts do
       post.upload_to_mirrors
     }
   end
+
+  desc 'Recalculate pool post counts'
+  task :recalc_pools => :environment do
+    Pool.find(:all).each { |pool|
+      pool.recalculate_post_count
+      pool.save!
+    }
+  end
 end

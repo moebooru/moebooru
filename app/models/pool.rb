@@ -76,6 +76,10 @@ class Pool < ActiveRecord::Base
       end
     end
 
+    def recalculate_post_count
+      post_count = pool_posts.count
+    end
+
     def transfer_post_to_parent(post_id, parent_id)
       pool_post = pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
       parent_pool_post = pool_posts.find(:first, :conditions => ["post_id = ?", parent_id])

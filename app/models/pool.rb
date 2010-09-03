@@ -77,7 +77,7 @@ class Pool < ActiveRecord::Base
     end
 
     def recalculate_post_count
-      post_count = pool_posts.count
+      self.post_count = pool_posts.count
     end
 
     def transfer_post_to_parent(post_id, parent_id)

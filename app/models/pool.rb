@@ -20,7 +20,7 @@ class Pool < ActiveRecord::Base
       # Prefer parent posts (the parents of posts that were added to the pool).  This is what's displayed by
       # default in post/show.
       m.has_many :pool_parent_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id",
-        :conditions => "(pools_posts.active = true AND pools_posts.slave_id IS NULL) OR pools_posts.master_id IS NOT NULL"
+        :conditions => "pools_posts.active"
       m.has_many :all_pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id"
       m.versioned :name
       m.versioned :description, :default => ""
@@ -73,10 +73,6 @@ class Pool < ActiveRecord::Base
           was_active = pool_post.active
           pool_post.active = false
           pool_post.save!
-
-	  if not pool_post.master_id.nil? then
-            pool_post.detach_master
-	  end
 
           self.reload
           if was_active then

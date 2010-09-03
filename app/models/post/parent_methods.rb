@@ -31,7 +31,6 @@ module PostParentMethods
   def self.included(m)
     m.extend(ClassMethods)
     m.after_save :update_parent
-    m.after_save :update_pool_children
     m.validate :validate_parent
     m.after_delete :give_favorites_to_parent
     m.versioned :parent_id, :default => nil
@@ -46,16 +45,6 @@ module PostParentMethods
   def update_parent
     return if !parent_id_changed? && !status_changed?
     self.class.set_parent(id, parent_id, parent_id_was)
-  end
-
-  def update_pool_children
-    # If the parent didn't change, we don't need to update any pool posts.  (Don't use
-    # parent_id_changed?; we want to know if the id changed, not if it was just overwritten
-    # with the same value.)
-    return if self.parent_id == self.parent_id_was
-
-    # Give PoolPost a chance to update parenting when post parents change.
-    PoolPost.post_parent_changed(self)
   end
 
   def give_favorites_to_parent

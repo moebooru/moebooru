@@ -108,11 +108,9 @@ class Pool < ActiveRecord::Base
       transaction do
         pp = pool_posts(true) # force reload
         pp.each_index do |i|
-          pp[i].next_post_id = nil
-          pp[i].prev_post_id = nil
-          pp[i].next_post_id = pp[i + 1].post_id unless i == pp.size - 1
-          pp[i].prev_post_id = pp[i - 1].post_id unless i == 0
-          pp[i].save
+          pp[i].next_post_id = (i == pp.size - 1) ? nil : pp[i + 1].post_id
+          pp[i].prev_post_id = i == 0 ? nil : pp[i - 1].post_id
+          pp[i].save if pp[i].changed?
         end
       end
     end

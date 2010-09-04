@@ -271,7 +271,7 @@ class Pool < ActiveRecord::Base
       end
 
       filename_count = {}
-      parent_posts.each do |pool_post|
+      pool_posts.each do |pool_post|
         post = pool_post.post
         next if post.status == 'deleted'
 

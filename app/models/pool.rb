@@ -46,8 +46,6 @@ class Pool < ActiveRecord::Base
           PoolPost.create(:pool_id => id, :post_id => post_id, :sequence => seq)
         end
         
-        increment!(:post_count)
-
         unless options[:skip_update_pool_links]
           self.reload
           update_pool_links
@@ -63,14 +61,10 @@ class Pool < ActiveRecord::Base
         
         pool_post = all_pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
         if pool_post then
-          was_active = pool_post.active
           pool_post.active = false
           pool_post.save!
 
-          self.reload
-          if was_active then
-            decrement!(:post_count)
-          end
+          self.reload # saving pool_post modified us
           update_pool_links
         end
       end

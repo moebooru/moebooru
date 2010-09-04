@@ -27,7 +27,11 @@ class PoolPost < ActiveRecord::Base
   end
 
   def update_pool
-    if active_changed? then
+    # If active has changed, update our pool's count.  (Don't use active_changed?; that'll
+    # be true if active was modified and then set back to its original value.)  Tricky:
+    # if we're creating a new record, we need to treat active as changed so we increment
+    # the count.  In this case, self.id will be nil, since we havn't saved ourself yet.
+    if self.active != self.active_was or self.id == nil then
       if active then
         pool.increment!(:post_count)
       else

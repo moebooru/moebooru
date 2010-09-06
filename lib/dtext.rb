@@ -34,21 +34,24 @@ module DText
     utf8_char = '[\xC0-\xFF][\x80-\xBF]+'
 
     url = "(h?ttps?:\\/\\/(?:[a-zA-Z0-9_\\-#~%.,:;\\(\\)\\[\\]$@!&=+?\\/#]|#{utf8_char})+)"
-    str.gsub!(/#{url}|&lt;&lt;#{url}(?:\|(.+?))?&gt;&gt;/m) do |link| # url or <<url|text>>
+    str.gsub!(/#{url}|&lt;&lt;#{url}(?:\|(.+?))?&gt;&gt;|&quot;(.+?)&quot;:#{url}/m) do |link| # url or <<url|text>> or "text":url
       if $1 then
-        link = $1
-	url = link.gsub(/[.;,:'"]+$/, "")
-	if url =~ /^ttp/ then url = "h" + url end
-	'<a href="' + url + '">' + link + '</a>'
-      else
+        text = $1
+	link = text.gsub(/[.;,:'"]+$/, "")
+      elsif $2
         link = $2
 	if $3 then
 	  text = $3
 	else
 	  text = $2
 	end
-        '<a href="' + link + '">' + text + '</a>'
+      else
+        text = $4
+        link = $5
       end
+
+      if link =~ /^ttp/ then link = "h" + link end
+      '<a href="' + link + '">' + text + '</a>'
     end
     str
   end

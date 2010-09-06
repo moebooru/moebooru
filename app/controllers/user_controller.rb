@@ -128,26 +128,12 @@ class UserController < ApplicationController
     if user.errors.empty?
       save_cookies(user)
 
-      if CONFIG["enable_account_email_activation"]
-        begin
-          UserMailer::deliver_confirmation_email(user)
-          notice = "New account created. Confirmation email sent to #{user.email}"
-        rescue Net::SMTPSyntaxError, Net::SMTPFatalError
-          user.destroy
-          respond_to_success("Could not send confirmation email; account creation canceled",
-                             {:action => "signup"}, :api => {:response => "error", :errors => ["Could not send confirmation email; account creation canceled"]})
-          return
-        end
-      else
-        notice = "New account created"
-      end
-
       ret = { :exists => false }
       ret[:name] = user.name
       ret[:id] = user.id
       ret[:pass_hash] = user.password_hash
 
-      respond_to_success(notice, {:action => "home"}, :api => {:response => "success"}.merge(ret))
+      respond_to_success("New account created", {:action => "home"}, :api => {:response => "success"}.merge(ret))
     else
       error = user.errors.full_messages.join(", ")
       respond_to_success("Error: " + error, {:action => "signup"}, :api => {:response => "error", :errors => user.errors.full_messages})

@@ -8,13 +8,13 @@ class UserMailer < ActionMailer::Base
   helper :application
   default_url_options["host"] = CONFIG["server_host"]
 
-  def confirmation_email(user)
-    recipients UserMailer.normalize_address(user.email)
-    from CONFIG["email_from"]
-    subject "#{CONFIG["app_name"]} - Confirm email address"
-    body :user => user
-    content_type "text/html"
-  end
+  # def confirmation_email(user)
+  #   recipients UserMailer.normalize_address(user.email)
+  #   from CONFIG["email_from"]
+  #   subject "#{CONFIG["app_name"]} - Confirm email address"
+  #   body :user => user
+  #   content_type "text/html"
+  # end
 
   def new_password(user, password)
     recipients UserMailer.normalize_address(user.email)

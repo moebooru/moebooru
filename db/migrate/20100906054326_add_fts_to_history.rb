@@ -13,7 +13,7 @@ class AddFtsToHistory < ActiveRecord::Migration
       result varchar := '';
       first boolean := true;
     BEGIN
-      FOR i IN array_lower(words, 1) .. array_upper(words, 1) LOOP
+      FOR i IN coalesce(array_lower(words, 1), 0) .. coalesce(array_upper(words, 1), 0) LOOP
         IF NOT first THEN
           result := result || delimitor;
         ELSE

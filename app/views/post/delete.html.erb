@@ -7,7 +7,11 @@
 <% form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>
   <label>Reason</label> <%= text_field_tag "reason" %>
-  <%= submit_tag "Delete" %> <%= submit_tag "Cancel" %>
+  <% if @post.is_deleted? %>
+  <%= hidden_field_tag "destroy", "1" %>
+  <% end %>
+
+  <%= submit_tag @post.is_deleted? ? "Destroy permanently":"Delete" %> <%= submit_tag "Cancel" %>
 <% end %>
 
 <div class="deleting-post">
@@ -26,6 +30,8 @@
     <% else %>
       This post has no parent.  If this post has been replaced, reparent this post before deleting, and votes will be transferred.<p>
     <% end %>
+<% else %>
+  This post is already deleted.  Destroying it will remove it permanently.
 <% end %>
 </div>
 

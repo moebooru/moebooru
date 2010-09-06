@@ -27,7 +27,13 @@ class PoolController < ApplicationController
     end
 
     if params[:query]
-      options[:conditions] = ["lower(name) like ?", "%" + params[:query].to_escaped_for_sql_like + "%"]
+      conds = []
+      cond_params = []
+      params[:query].split(/ /).each { |word|
+        conds.push("lower(name) like lower(?)")
+        cond_params.push("%" + word.to_escaped_for_sql_like + "%")
+      }
+      options[:conditions] = [conds.join(" AND "), *cond_params]
     end
 
     @pools = Pool.paginate options

@@ -32,6 +32,13 @@ module PostSqlMethods
       end
     end
 
+    def geneate_sql_escape_helper(array)
+      array.map do |token|
+        escaped_token = token.gsub(/\\|'/, '\0\0\0\0').gsub("?", "\\\\77")
+        "''" + escaped_token + "''"
+      end
+    end
+
     def generate_sql(q, options = {})
       if q.is_a?(Hash)
         original_query = options[:original_query]
@@ -162,26 +169,26 @@ module PostSqlMethods
         end
       end
 
-      if q.has_key?(:include)
-        joins << "JOIN posts_tags ipt ON ipt.post_id = p.id"
-        conds << "ipt.tag_id IN (SELECT id FROM tags WHERE name IN (?))"
-        cond_params << (q[:include] + q[:related])
-      elsif q[:related].any?
-        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:related].size > CONFIG["tag_query_limit"]
-      
-        q[:related].each_with_index do |rtag, i|
-          joins << "JOIN posts_tags rpt#{i} ON rpt#{i}.post_id = p.id AND rpt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
-          join_params << rtag
-        end
+      tags_index_query = []
+
+      if q[:include].any?
+        tags_index_query << "(" + geneate_sql_escape_helper(q[:include]).join(" | ") + ")"
+      end
+
+      if q[:related].any?
+        raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
+        tags_index_query << "(" + geneate_sql_escape_helper(q[:related]).join(" & ") + ")"
       end
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        q[:exclude].each_with_index do |etag, i|
-          joins << "LEFT JOIN posts_tags ept#{i} ON p.id = ept#{i}.post_id AND ept#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"
-          conds << "ept#{i}.tag_id IS NULL"
-          join_params << etag
-        end
+
+        tags_index_query << "!(" + geneate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
+      end
+
+      if tags_index_query.any?
+        conds << "tags_index @@ to_tsquery('danbooru', E'" + tags_index_query.join(" & ") + "')"
+        p conds
       end
 
       if q[:rating].is_a?(String)
@@ -334,6 +341,7 @@ module PostSqlMethods
       end
 
       params = join_params + cond_params
+
       return Post.sanitize_sql([sql, *params])
     end
   end

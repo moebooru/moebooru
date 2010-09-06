@@ -57,7 +57,7 @@ class ArtistController < ApplicationController
       if params[:name]
         @artist.name = params[:name]
 
-        post = Post.find(:first, :conditions => ["id IN (SELECT post_id FROM posts_tags WHERE tag_id = (SELECT id FROM tags WHERE name = ?)) AND source LIKE 'http%'", params[:name]])
+        post = Post.find(:first, :conditions => ["tags_index @@ ? AND source LIKE 'http%'", params[:name]])
         unless post == nil || post.source.blank?
           @artist.urls = post.source
         end

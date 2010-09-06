@@ -22,7 +22,11 @@ module TagRelatedTagMethods
         LIMIT ?
       EOS
 
-      results = select_all_sql(sql, tag, type, limit)
+      begin
+        results = select_all_sql(sql, tag, type, limit)
+      rescue Exception
+        results = []
+      end
       
       if CONFIG["enable_caching"] && tag.size < 230
         post_count = (Tag.find_by_name(tag).post_count rescue 0) / 3
@@ -56,7 +60,11 @@ module TagRelatedTagMethods
       sql << " GROUP BY pt0.tag_id"
       sql << " ORDER BY tag_count DESC LIMIT 25"
 
-      return select_all_sql(sql, *tags).map {|x| [x["tag"], x["tag_count"]]}
+      begin
+        select_all_sql(sql, *tags).map {|x| [x["tag"], x["tag_count"]]}
+      rescue Exception
+        []
+      end
     end
 
     def find_related(tags)

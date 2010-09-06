@@ -63,7 +63,7 @@ class TagAlias < ActiveRecord::Base
   def approve(user_id, ip_addr)
     execute_sql("UPDATE tag_aliases SET is_pending = FALSE WHERE id = ?", id)
     
-    Post.find(:all, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = (SELECT id FROM tags WHERE name = ?))", name]).each do |post|
+    Post.find(:all, :conditions => ["tags_index @@ ?", name]).each do |post|
       post.reload
       post.update_attributes(:tags => post.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
     end

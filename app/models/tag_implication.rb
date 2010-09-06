@@ -40,9 +40,9 @@ class TagImplication < ActiveRecord::Base
   def approve(user_id, ip_addr)
     connection.execute("UPDATE tag_implications SET is_pending = FALSE WHERE id = #{self.id}")
     
-    p = Tag.find(self.predicate_id)
-    implied_tags = self.class.with_implied(p.name).join(" ")
-    Post.find(:all, :conditions => Tag.sanitize_sql(["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", p.id])).each do |post|
+    t = Tag.find(self.predicate_id)
+    implied_tags = self.class.with_implied(t.name).join(" ")
+    Post.find(:all, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", t.id]).each do |post|
       post.reload
       post.update_attributes(:tags => post.cached_tags + " " + implied_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
     end    

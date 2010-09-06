@@ -80,7 +80,7 @@ class PostController < ApplicationController
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
         @post.destroy
-        respond_to_error("MD5 mismatch", {:action => "upload"}, :status => 420)
+        respond_to_error("MD5 mismatch", {:action => "error"}, :status => 420)
       else
         if CONFIG["dupe_check_on_upload"] && @post.image? && @post.parent_id.nil?
           if params[:format] == "xml" || params[:format] == "json"
@@ -107,7 +107,7 @@ class PostController < ApplicationController
 
       respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :api => {:location => url_for(:controller => "post", :action => "show", :id => p.id)}, :status => 423)
     else
-      respond_to_error(@post, :action => "upload")
+      respond_to_error(@post, :action => "error")
     end
   end
 

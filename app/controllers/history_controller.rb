@@ -1,3 +1,5 @@
+require 'versioning'
+
 class HistoryController < ApplicationController
   layout 'default'
 #  before_filter :member_only
@@ -15,6 +17,10 @@ class HistoryController < ApplicationController
 
     conds = []
     cond_params = []
+
+    hc_conds = []
+    hc_cond_params = []
+
     # :specific_history => showing only one history
     # :specific_table => showing changes only for a particular table
     # :show_all_tags => don't omit post tags that didn't change
@@ -46,6 +52,33 @@ class HistoryController < ApplicationController
           cond_params << param.to_i
 
           set_type_to_result = true
+        elsif search_type == "field"
+          param =~ /^(.+?):(.*)/;
+          table, field = $1, $2
+
+          # For convenience:
+          field = "cached_tags" if field == "tags"
+
+          # Look up the named class.
+          cls = Versioning.get_versioned_classes_by_name[table]
+          if cls.nil? then
+            conds << "false"
+            next
+          end
+
+          conds << "group_by_table = ?"
+          cond_params << table
+
+          hc_conds << "field = ?"
+          hc_cond_params << field
+
+          # A changes that has no previous value is the initial value for that object.  Don't show
+          # these changes unless they're different from the default for that field.
+          default_value, has_default = cls.get_versioned_default(field.to_sym)
+          if has_default then
+            hc_conds << "(previous_id IS NOT NULL OR value <> ?)"
+            hc_cond_params << default_value
+          end
         else
           @options[:specific_table] = true
           @type = search_type.pluralize
@@ -58,10 +91,12 @@ class HistoryController < ApplicationController
     }
 
     if value_index_query.any?
-      conds << """
-        id IN (SELECT history_id FROM history_changes WHERE
-        value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "'))
-      """
+      hc_conds << """value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "')"""
+    end
+
+    if hc_conds.any?
+      conds << """id IN (SELECT history_id FROM history_changes WHERE #{hc_conds.join(" AND ")})"""
+      cond_params += hc_cond_params
     end
 
     if @type != "all"

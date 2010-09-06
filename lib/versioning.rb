@@ -1,5 +1,22 @@
 require 'history_change'
 require 'history'
+require 'set'
+
+module Versioning
+  def get_versioned_classes
+    return [Pool, PoolPost, Post, Tag]
+  end
+  module_function :get_versioned_classes
+
+  def get_versioned_classes_by_name
+    val = {}
+    get_versioned_classes.each { |cls|
+      val[cls.table_name] = cls
+    }
+    return val
+  end
+  module_function :get_versioned_classes_by_name
+end
 
 module ActiveRecord
   module Versioning
@@ -138,6 +155,13 @@ module ActiveRecord
         end
 
         @versioning_display = opt
+      end
+
+      def get_versioned_default(name)
+        attr = get_versioned_attributes[name]
+        return nil, false if attr.nil?
+        return nil, false if not attr.include?(:default) 
+        return attr[:default], true
       end
 
       def get_versioning_group_by
@@ -390,10 +414,9 @@ module ActiveRecord
       # This is only used for importing initial histories.  When adding new versioned properties,
       # call update_versioned_tables directly with the table and attributes to update.  
       def update_all_versioned_tables
-        update_versioned_tables Pool, :allow_missing => true
-        update_versioned_tables PoolPost, :allow_missing => true
-        update_versioned_tables Post, :allow_missing => true
-        update_versioned_tables Tag, :allow_missing => true
+        Versioned.get_versioned_classes.each { |cls|
+          update_versioned_tables cls, :allow_missing => true
+        }
       end
     end
   end

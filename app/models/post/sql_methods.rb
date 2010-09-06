@@ -188,7 +188,6 @@ module PostSqlMethods
 
       if tags_index_query.any?
         conds << "tags_index @@ to_tsquery('danbooru', E'" + tags_index_query.join(" & ") + "')"
-        p conds
       end
 
       if q[:rating].is_a?(String)

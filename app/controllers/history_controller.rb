@@ -58,7 +58,10 @@ class HistoryController < ApplicationController
     }
 
     if value_index_query.any?
-      conds << "value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "')"
+      conds << """
+        id IN (SELECT history_id FROM history_changes WHERE
+        value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "'))
+      """
     end
 
     if @type != "all"
@@ -76,8 +79,7 @@ class HistoryController < ApplicationController
     end
 
     @changes = History.paginate(History.generate_sql(params).merge(
-      :order => "histories.id DESC", :per_page => 20, :select => "histories.*", :page => params[:page],
-      :joins => "JOIN history_changes ON (histories.id = history_changes.history_id)",
+      :order => "id DESC", :per_page => 20, :select => "*", :page => params[:page],
       :conditions => [conds.join(" AND "), *cond_params],
       :include => [:history_changes]
     ))

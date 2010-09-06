@@ -1,4 +1,4 @@
-RAILS_GEM_VERSION = "2.1.0"
+RAILS_GEM_VERSION = "2.2.2"
 
 require File.join(File.dirname(__FILE__), 'boot')
 

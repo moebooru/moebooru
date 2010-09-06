@@ -34,6 +34,12 @@ class JobTask < ActiveRecord::Base
       update_attributes(:status => "pending")
       raise x
     rescue Exception => x
+      text = "\n\n"
+      text << "Error executing job: #{task_type}\n"
+      text << "    "
+      text << x.backtrace.join("\n    ")
+      logger.fatal(text)
+
       update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
     end
   end

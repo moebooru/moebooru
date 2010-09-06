@@ -4,7 +4,7 @@
   <li><%= link_to "Aliases", :controller => "tag_alias", :action => "index" %></li>
   <li><%= link_to "Implications", :controller => "tag_implication", :action => "index" %></li>
   <% if @current_user.is_mod_or_higher? %>
-    <li><%= link_to "Mass Edit", :controller => "tag", :action => "mass_edit" %></li>
+    <li><%= link_to "Mass edit", :controller => "tag", :action => "mass_edit" %></li>
   <% end %>
   <li><%= link_to "Edit", :controller => "tag", :action => "edit" %></li>
   <%= @content_for_footer %>

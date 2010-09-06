@@ -48,6 +48,10 @@ module ApplicationHelper
       klass = nil
     end
     
+    if %w(tag_alias tag_implication).include?(params[:controller]) && options[:controller] == "tag"
+      klass = "current-page"
+    end
+
     content_tag("li", link_to(text, options, html_options), :class => klass)
   end
 

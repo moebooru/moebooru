@@ -173,6 +173,8 @@ module PostTagMethods
               pool = Pool.create(:name => name, :is_public => false, :user_id => updater_user_id)
             end
 
+            next if pool.nil?
+
             next if Thread.current["danbooru-user"] && !pool.can_change?(Thread.current["danbooru-user"], nil)
             pool.add_post(id, options) if pool
           rescue Pool::PostAlreadyExistsError

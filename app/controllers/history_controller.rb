@@ -21,10 +21,13 @@ class HistoryController < ApplicationController
     @options = {
       :show_all_tags => @params[:show_all_tags] == "1"
     }
-    if params[:search]
+    set_type_to_result = false
+    search_type = param = nil
+    search = params[:search] || ""
+    value_index_query = []
+    search.split(' ').each { |s|
       # If a search specifies a table name, it overrides the action.
-      search_type, param = 
-      if params[:search] =~ /^(.+?):(.*)/
+      if s =~ /^(.+?):(.*)/
         search_type = $1
         param = $2
 
@@ -49,7 +52,13 @@ class HistoryController < ApplicationController
           conds << "histories.group_by_id = ?"
           cond_params << param.to_i
         end
+      else
+        value_index_query << "(" + Post.geneate_sql_escape_helper(s).join(" | ") + ")"
       end
+    }
+
+    if value_index_query.any?
+      conds << "value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "')"
     end
 
     if @type != "all"
@@ -67,7 +76,8 @@ class HistoryController < ApplicationController
     end
 
     @changes = History.paginate(History.generate_sql(params).merge(
-      :order => "id DESC", :per_page => 20, :select => "*", :page => params[:page],
+      :order => "histories.id DESC", :per_page => 20, :select => "histories.*", :page => params[:page],
+      :joins => "JOIN history_changes ON (histories.id = history_changes.history_id)",
       :conditions => [conds.join(" AND "), *cond_params],
       :include => [:history_changes]
     ))

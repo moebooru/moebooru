@@ -65,7 +65,7 @@ class PostController < ApplicationController
 #    return
 
     if @current_user.is_member_or_lower? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
-      respond_to_error("Daily limit exceeded", {:action => "index"}, :status => 421)
+      respond_to_error("Daily limit exceeded", {:action => "error"}, :status => 421)
       return
     end
 
@@ -248,10 +248,10 @@ class PostController < ApplicationController
     page = params[:page].to_i
     
     if @current_user.is_member_or_lower? && split_tags.size > 2
-      respond_to_error("You can only search up to two tags at once with a basic account", :action => "index")
+      respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
       return
     elsif split_tags.size > 6
-      respond_to_error("You can only search up to six tags at once", :action => "index")
+      respond_to_error("You can only search up to six tags at once", :action => "error")
       return
     end
     
@@ -267,7 +267,7 @@ class PostController < ApplicationController
     begin
       count = Post.fast_count(tags)
     rescue => x
-      respond_to_error("Error: #{x}", :action => "index")
+      respond_to_error("Error: #{x}", :action => "error")
       return
     end
 
@@ -717,6 +717,9 @@ class PostController < ApplicationController
     post = Post.find(params[:id])
     post.undelete!
     respond_to_success("Post was undeleted", :action => "show", :id => params[:id])
+  end
+  
+  def error
   end
   
   def exception

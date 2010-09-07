@@ -53,6 +53,11 @@ Cookie = {
       $("has-mail-notice").show()
     }
   
+    if (this.get("posts_flagged") == "1") {
+      if($("moderate"))
+        $("moderate").addClassName("posts-flagged")
+    }
+  
     if (this.get("forum_updated") == "1") {
       $("forum-link").addClassName("forum-update")
     }

@@ -430,6 +430,10 @@ ul.flat-list li a.comments-update {
   font-weight: bold;
 }
 
+ul.flat-list li a.posts-flagged {
+  font-weight: bold;
+}
+
 ul.link-page {
   font-size: 1.2em;
   font-weight: bold;

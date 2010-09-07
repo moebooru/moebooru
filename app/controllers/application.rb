@@ -315,6 +315,14 @@ class ApplicationController < ActionController::Base
         cookies["comments_updated"] = "0"
       end
 
+      if @current_user.is_janitor_or_higher? then
+        if Post.count(:conditions => "status = 'flagged'") > 0 then
+          cookies["posts_flagged"] = "1"
+        else
+          cookies["posts_flagged"] = "0"
+        end
+      end
+
       if @current_user.is_blocked?
         if @current_user.ban
           cookies["block_reason"] = "You have been blocked. Reason: #{@current_user.ban.reason}. Expires: #{@current_user.ban.expires_at.strftime('%Y-%m-%d')}"

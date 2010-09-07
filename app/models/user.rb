@@ -631,7 +631,7 @@ class User < ActiveRecord::Base
   def self.generate_sql(params)
     return Nagato::Builder.new do |builder, cond|
       if params[:name]
-        cond.add "name ILIKE ? ESCAPE E'\\\\'", "%" + params[:name].to_escaped_for_sql_like + "%"
+        cond.add "name ILIKE ? ESCAPE E'\\\\'", "%" + params[:name].tr(" ", "_").to_escaped_for_sql_like + "%"
       end
 
       if params[:level] && params[:level] != "any"

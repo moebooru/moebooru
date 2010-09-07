@@ -24,7 +24,7 @@ class ReportController < ApplicationController
   end
 
   def post_uploads
-    @users = Report.wiki_updates(@start_date, @end_date, @limit)
+    @users = Report.post_uploads(@start_date, @end_date, @limit)
     @report_title = "Post Uploads"
     @change_params = lambda {|user_id| {:controller => "post", :action => "index", :tags => "user:#{User.find_name(user_id)}"}}
     render :action => "common"

@@ -46,12 +46,15 @@ class TagSubscription < ActiveRecord::Base
     find(:all).each do |tag_subscription|
       if tag_subscription.user.is_privileged_or_higher?
         begin
-          tags = tag_subscription.tag_query.scan(/\S+/)
-          tags.each do |tag|
-            post_ids = Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
-            tag_subscription.add_posts!(post_ids)
+          TagSubscription.transaction do
+            tag_subscription.update_attribute :cached_post_ids, ""
+            tags = tag_subscription.tag_query.scan(/\S+/)
+            tags.each do |tag|
+              post_ids = Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
+              tag_subscription.add_posts!(post_ids)
+            end
+            tag_subscription.prune!
           end
-          tag_subscription.prune!
         rescue Exception => x
           # fail silently
         end

@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_favorite_tags upload_posts_to_mirrors periodic_maintenance upload_batch_posts)
+  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions upload_posts_to_mirrors periodic_maintenance upload_batch_posts)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -66,10 +66,10 @@ class JobTask < ActiveRecord::Base
     ti.approve(updater_id, updater_ip_addr)
   end
   
-  def execute_calculate_favorite_tags
-    return if Cache.get("delay-favtags-calc")
-    Cache.put("delay-favtags-calc", "1", 15.minutes)
-    FavoriteTag.process_all
+  def execute_calculate_tag_subscriptions
+    return if Cache.get("delay-tag-sub-calc")
+    Cache.put("delay-tag-sub-calc", "1", 15.minutes)
+    TagSubscription.process_all
     update_attributes(:data => {:last_run => Time.now.strftime("%Y-%m-%d %H:%M")})
   end
   
@@ -144,7 +144,7 @@ class JobTask < ActiveRecord::Base
       ti = TagImplication.find(data["id"])
       "start:#{ti.predicate.name} result:#{ti.consequent.name}"
       
-    when "calculate_favorite_tags"
+    when "calculate_tag_subscriptions"
       last_run = data["last_run"]
       "last run:#{last_run}"
 

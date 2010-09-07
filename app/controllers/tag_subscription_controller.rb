@@ -12,11 +12,13 @@ class TagSubscriptionController < ApplicationController
   end
   
   def update
-    if request.post? && params[:tag_subscription]
-      params[:tag_subscription].each_key do |tag_subscription_id|
-        tag_subscription = TagSubscription.find(tag_subscription_id)
-        if tag_subscription.user_id == @current_user.id
-          tag_subscription.update_attributes(params[:tag_subscription][tag_subscription_id])
+    if request.post?
+      if params[:tag_subscription]
+        params[:tag_subscription].each_key do |tag_subscription_id|
+          tag_subscription = TagSubscription.find(tag_subscription_id)
+          if tag_subscription.user_id == @current_user.id
+            tag_subscription.update_attributes(params[:tag_subscription][tag_subscription_id])
+          end
         end
       end
       

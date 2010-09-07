@@ -3,7 +3,7 @@ class TagSubscriptionController < ApplicationController
   
   def create
     if request.post?
-      if @current_user.favorite_tags.size >= CONFIG["max_tag_subscriptions"]
+      if @current_user.tag_subscriptions.size >= CONFIG["max_tag_subscriptions"]
         @tag_subscription = nil
       else
         @tag_subscription = TagSubscription.create(:user_id => @current_user.id, :tag_query => "")

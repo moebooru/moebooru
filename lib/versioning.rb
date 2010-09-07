@@ -455,7 +455,7 @@ module ActiveRecord
                             :group_by_id => ver.post_id,
                             :user_id => ver.user_id || ver.post.user_id,
                             :created_at => ver.created_at,
-                            :aux => {:note_body => ver.body})
+                            :aux => {:note_body => prev ? prev.body : ver.body})
             h.save!
 
             fields.each { |f|

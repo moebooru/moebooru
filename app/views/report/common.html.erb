@@ -18,6 +18,10 @@
             <th><label for="end_date">End Date</label></th>
             <td><%= text_field_tag "end_date", @end_date, :size => 10 %></td>
           </tr>
+          <tr>
+            <th><label for="limit">Limit</label></th>
+            <td><%= text_field_tag "limit", @limit, :size => 5 %></td>
+          </tr>
         </tbody>
       </table>
     <% end %>

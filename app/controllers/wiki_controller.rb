@@ -135,8 +135,12 @@ class WikiController < ApplicationController
 
   def recent_changes
     set_title "Recent Changes"
-
-    @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => params[:page]
+    
+    if params[:user_id]
+      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => params[:page], :conditions => ["user_id = ?", params[:user_id]]
+    else
+      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => params[:page]
+    end
     respond_to_list("wiki_pages")
   end
 

@@ -126,7 +126,7 @@ PostModeMenu = {
     if (s.value == "edit") {
       var post = Post.posts.get(post_id)
       $("id").value = post_id
-      $("post[old_tags]").value = post.tags.join(" ")
+      $("post_old_tags").value = post.tags.join(" ")
       $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
       $("quick-edit").show()
       $("post_tags").focus()

@@ -19,7 +19,11 @@ class ForumController < ApplicationController
   end
 
   def preview
-    render :inline => "<h4>Preview</h4><%= format_text(params[:forum_post][:body]) %>"
+    if params[:forum_post]
+      render :inline => "<h4>Preview</h4><%= format_text(params[:forum_post][:body]) %>"
+    else
+      render :text => ""
+    end
   end
   
   def new

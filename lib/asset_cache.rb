@@ -8,11 +8,13 @@ module ActionView
   module Helpers
     module AssetTagHelper
       private
-      alias_method :orig_expand_javascript_sources, :expand_javascript_sources
-      def expand_javascript_sources(sources)
-        x = orig_expand_javascript_sources sources
-        x.delete("application")
-        x
+      class AssetCollection
+        alias_method :orig_all_asset_files, :all_asset_files
+        def all_asset_files
+          x = orig_all_asset_files
+          x.delete("application")
+          x
+        end
       end
     end
   end

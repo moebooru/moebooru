@@ -18,10 +18,14 @@
   <a href = "http://novelnews.net/" target = "_blank"><img src = "http://moe.imouto.org/images/encubed-01.png" alt="encubed" /></a>
   <br>
   <a href = "http://konachan.com/" target = "_blank"><img src = "http://konachan.com/images/button.png" alt="konachan" /></a>
+  <% if CONFIG["can_see_ads"].call(@current_user) %>
   <%= render :partial => "vertical" %>
+  <% end %>
     </div>
     <div class="content" id="right-col">
+    <% if CONFIG["can_see_ads"].call(@current_user) %>
       <%= print_advertisement("horizontal") %>
+      <% end %>
       <%= render :partial => "post/show_partials/image" %>      
       <%= render :partial => "post/show_partials/image_footer" %>
       <%= render :partial => "post/show_partials/edit" %>

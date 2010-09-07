@@ -48,14 +48,12 @@
 
     <%= render :partial => 'blacklists' %>
     <%= render :partial => 'tags', :locals => {:include_tag_hover_highlight=>true} %>
+    <% if CONFIG["can_see_ads"].call(@current_user) %>
     <%= render :partial => "vertical" %>
+    <% end %>
 
   </div>
-  <div class="content">
-    <% if CONFIG["can_see_ads"].call(@current_user) %>
-      <%= CONFIG["ad_code_index_bottom"] %>
-    <% end %>
-    
+  <div class="content">    
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
         The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>

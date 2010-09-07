@@ -8,8 +8,8 @@
 </ul>
 
 <% content_for("subnavbar") do %>
-  <li><%= link_to "Listing", :action => "index" %></li>
+  <li><%= link_to "List", :action => "index" %></li>
   <% if @job_task.status == "error" %>
-    <li><%= link_to "Retry", :action => "retry", :id => @job_task.id %></li>
+    <li><%= link_to "Restart", :action => "restart", :id => @job_task.id %></li>
   <% end %>
 <% end %>

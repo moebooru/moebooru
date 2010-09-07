@@ -22,7 +22,7 @@ class JobTaskController < ApplicationController
     end
   end
 
-  def retry
+  def restart
     @job_task = JobTask.find(params[:id])
 
     if request.post?

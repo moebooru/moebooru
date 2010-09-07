@@ -34,12 +34,13 @@ class Post < ActiveRecord::Base
   
   def self.destroy_with_reason(id, reason, current_user)
     post = Post.find(id)
-    post.flag!(reason, current_user.id)
-    if post.flag_detail
-      post.flag_detail.update_attributes(:is_resolved => true)
+    Post.transaction do
+      post.flag!(reason, current_user.id)
+      if post.flag_detail
+        post.flag_detail.update_attributes(:is_resolved => true)
+      end
+      post.delete
     end
-
-    post.delete
   end
 
   def delete

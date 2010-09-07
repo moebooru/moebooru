@@ -252,7 +252,7 @@ CONFIG["tag_query_limit"] = 6
 # Set this to insert custom CSS or JavaScript files into your app.
 CONFIG["custom_html_headers"] = nil
 
-# Set this to true to hand off time consuming tasks (downloading files, resizing images, any sort of heavy calculation) to a separate process. In general, if a user sees a page where a task was handed off, an HTTP status code of 503 will be returned. You need beanstalkd installed in order for this to work. This is only necessary if you are getting heavy traffic or you are doing several heavy calculations.
+# Set this to true to hand off time consuming tasks (downloading files, resizing images, any sort of heavy calculation) to a separate process.
 CONFIG["enable_asynchronous_tasks"] = false
 
 CONFIG["avatar_max_width"] = 125
@@ -263,7 +263,7 @@ CONFIG["avatar_max_height"] = 125
 CONFIG["load_average_threshold"] = false
 
 # Max number of posts to cache
-CONFIG["favorite_tag_post_limit"] = 60
+CONFIG["favorite_tag_post_limit"] = 200
 
 # Max number of fav tags per user
-CONFIG["favorite_tag_limit"] = 3
+CONFIG["favorite_tag_limit"] = 5

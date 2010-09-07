@@ -1,6 +1,6 @@
 module Report
-  def usage_by_user(table_name, start, stop, conds = [], params = [], column = "created_at", limit = 29)
-    conds << ["%s BETWEEN ? AND ?" % column]
+  def usage_by_user(table_name, start, stop, limit = 29, conds = [], params = [], column = "created_at")
+    conds << "%s BETWEEN ? AND ?" % column
     params << start
     params << stop
 
@@ -14,6 +14,7 @@ module Report
     users << {"user_id" => nil, "change_count" => other_count}
     
     users.each do |user|
+      user["change_count"] = user["change_count"].to_i
       if user["user_id"]
         user["user"] = User.find(user["user_id"])
         user["name"] = user["user"].name
@@ -51,7 +52,7 @@ module Report
   def add_sum(users)
     sum = 0
     users.each do |user|
-      sum += user["change_count"].to_i
+      sum += user["change_count"]
     end
     users.each do |user|
       user["sum"] = sum.to_f

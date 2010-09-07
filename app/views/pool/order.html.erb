@@ -27,7 +27,7 @@
   function orderShift(start, offset) {
     var found = false;
     $$(".pp").each(function(x) {
-      if(x.id == "pool_post_sequence[" + start + "]")
+      if(x.id == "pool_post_sequence_" + start)
         found = true;
       if(!found)
         return;

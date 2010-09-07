@@ -95,9 +95,13 @@ module PostSqlMethods
 
       if q[:favtag].is_a?(String)
         user = User.find_by_name(q[:favtag])
+        q[:favtag] =~ /^(.+?):(.+)$/
+        username = $1
+        favtag_name = $2
+        user = User.find_by_name(username)
 
-        if user
-          post_ids = FavoriteTag.find_post_ids(user.id)
+        if user && favtag_name
+          post_ids = FavoriteTag.find_post_ids(user.id, favtag_name)
           conds << "p.id IN (?)"
           cond_params << post_ids
         end

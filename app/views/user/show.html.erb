@@ -39,7 +39,7 @@
         <% if @user.favorite_tags.empty? %>
           None
         <% else %>
-          <%= @user.favorite_tags.map {|x| link_to(h(x.tag_query), :controller => "post", :action => "index", :tags => x.tag_query)}.join(", ") %>
+          <%= @user.favorite_tags.map {|x| link_to(h(x.tag_query), :controller => "post", :action => "index", :tags => "favtag:#{@user.name}:#{x.name}")}.join(", ") %>
         <% end %>
           
         <% if @current_user.id == @user.id %>
@@ -150,10 +150,12 @@
   </table>
 </div>
 
-<div style="margin-bottom: 1em; float: left; clear: both;">
-  <h4><%= link_to "Favorite Tags", :controller => "post", :action => "index", :tags => "favtag:#{@user.name}" %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_tag_posts(5).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
-</div>
+<% @user.favorite_tags.each do |favtag| %>
+  <div style="margin-bottom: 1em; float: left; clear: both;">
+    <h4>Favorite Tags: <%= h favtag.name %> <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "favtag:#{@user.name}:#{favtag.name}" %></h4>
+    <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_tag_posts(5, favtag.name).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
+  </div>
+<% end %>
 
 <div style="margin-bottom: 1em; float: left; clear: both;">
   <h4><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "vote:3:#{@user.name} order:vote" %></h4>

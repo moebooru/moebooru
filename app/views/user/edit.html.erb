@@ -33,11 +33,10 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_favorite_tags_text">Favorite Tags</label>
+            <label class="block" for="user_tag_subscriptions_text">Tag Subscriptions</label>
           </th>
-          <td>
-            <%= @user.favorite_tags.map {|x| link_to(h(x.tag_query), :controller => "post", :action => "index", :tags => "favtag:#{@user.name}:#{x.name}")}.join(", ") %>
-            (<%= link_to "edit", :controller => "favorite_tag", :action => "index" %>)
+          <td class="large-text">
+            <%= render :partial => "tag_subscription/user_listing", :locals => {:user => @user} %>
           </td>          
         </tr>
         <tr>

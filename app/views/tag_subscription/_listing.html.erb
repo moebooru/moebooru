@@ -1,0 +1,24 @@
+<thead>
+  <tr>
+    <th></th>
+    <th width="15%">Name</th>
+    <th width="70%">Tags</th>
+    <th width="10%">Visible</th>
+  </tr>
+</thead>
+
+<tfoot>
+  <tr>
+    <td></td>
+    <td colspan="3">
+      <%= submit_tag "Save" %>
+      <%= button_to_remote "Add", :url => {:controller => "tag_subscription", :action => "create"} %>
+    </td>
+  </tr>
+</tfoot>
+
+<tbody id="tag_subscription-body">
+  <% tag_subscriptions.each do |tag_subscription| %>
+    <%= render :partial => "listing_row", :locals => {:tag_subscription => tag_subscription} %>
+  <% end %>  
+</tbody>

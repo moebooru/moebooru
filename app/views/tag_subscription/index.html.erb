@@ -1,0 +1,10 @@
+<% form_tag(:action => "update") do %>
+  <h4>Edit Tag Subscriptions</h4>
+  <div style="margin-bottom: 1em;">
+    You can only create up to <%= CONFIG["max_tag_subscriptions"] %> tag subscriptions.
+  </div>
+  
+  <table width="100%" class="highlightable">
+    <%= render :partial => "listing", :locals => {:tag_subscriptions => @tag_subscriptions} %>
+  </table>
+<% end %>

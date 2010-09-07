@@ -1,0 +1,6 @@
+if @tag_subscription
+  page.insert_html :bottom, "tag-subscription-body", :partial => "listing_row", :locals => {:tag_subscription => @tag_subscription}
+else
+  page[:notice].update("You can only create up to #{CONFIG['max_tag_subscriptions']} tag subscriptions")
+  page[:notice].show
+end

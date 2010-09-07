@@ -34,17 +34,9 @@
     </tr>
     <% end %>
     <tr>
-      <td><strong>Favorite Tags</strong></td>
-      <td>
-        <% if @user.favorite_tags.empty? %>
-          None
-        <% else %>
-          <%= favorite_tag_listing(@user) %>
-        <% end %>
-          
-        <% if @current_user.id == @user.id %>
-          (<%= link_to "edit", :action => "edit" %>)
-        <% end %>
+      <td><strong>Tag Subscriptions</strong></td>
+      <td class="large-text">
+        <%= render :partial => "tag_subscription/user_listing", :locals => {:user => @user} %>
       </td>
     </tr>
     <tr>
@@ -150,10 +142,10 @@
   </table>
 </div>
 
-<% @user.favorite_tags.each do |favtag| %>
+<% @user.tag_subscriptions.visible.each do |tag_subscription| %>
   <div style="margin-bottom: 1em; float: left; clear: both;">
-    <h4>Favorite Tags: <%= h favtag.name %> <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "favtag:#{@user.name}:#{favtag.name}" %></h4>
-    <%= render :partial => "post/posts", :locals => {:posts => @user.favorite_tag_posts(5, favtag.name).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
+    <h4>Tag Subscription: <%= h tag_subscription.name %> <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "sub:#{@user.name}:#{tag_subscription.name}" %></h4>
+    <%= render :partial => "post/posts", :locals => {:posts => @user.tag_subscription_posts(5, tag_subscription.name).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
   </div>
 <% end %>
 

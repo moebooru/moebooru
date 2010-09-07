@@ -1,3 +1,0 @@
-page["favtag-row-#{@favtag.id}"].remove
-page["notice"] = "Favorite tag deleted"
-page["notice"].show

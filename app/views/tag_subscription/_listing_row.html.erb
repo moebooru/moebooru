@@ -1,0 +1,8 @@
+<tr id="tag-subscription-row-<%= tag_subscription.id %>">
+  <td><%= button_to_remote "-", :url => {:controller => "tag_subscription", :action => "destroy", :id => tag_subscription.id} %></td>
+  <td><%= text_field_tag "tag_subscription[#{tag_subscription.id}][name]", tag_subscription.name, :size => 20 %></td>
+  <td><%= text_field_tag "tag_subscription[#{tag_subscription.id}][tag_query]", tag_subscription.tag_query, :size => 70 %></td>
+  <td>
+    <%= select_tag "tag_subscription[#{tag_subscription.id}][is_visible_on_profile]", options_for_select([["Visible", 1], ["Hidden", 0]], tag_subscription.is_visible_on_profile) %>
+  </td>
+</tr>

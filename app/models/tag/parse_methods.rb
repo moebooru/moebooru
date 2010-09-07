@@ -56,7 +56,7 @@ module TagParseMethods
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^(unlocked|deleted|ext|user|favtag|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|shown|limit):(.+)$/
+        if token =~ /^(unlocked|deleted|ext|user|sub|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|shown|limit):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "vote"
@@ -68,8 +68,8 @@ module TagParseMethods
             q[:error] = "no user named %s" % user if q[:vote_negated].nil?
           elsif $1 == "fav"
             q[:fav] = $2
-          elsif $1 == "favtag"
-            q[:favtag] = $2
+          elsif $1 == "sub"
+            q[:subscriptions] = $2
           elsif $1 == "md5"
             q[:md5] = $2
           elsif $1 == "-rating"

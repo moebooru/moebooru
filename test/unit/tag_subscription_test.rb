@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class FavoriteTagTest < ActiveSupport::TestCase
+class TagSubscriptionTest < ActiveSupport::TestCase
   fixtures :users
   
   def setup
@@ -13,8 +13,8 @@ class FavoriteTagTest < ActiveSupport::TestCase
     post
   end
   
-  def create_favtag(tags, params = {})
-    FavoriteTag.create({:tag_query => tags, :name => "General", :user_id => 1}.merge(params))
+  def create_tag_subscription(tags, params = {})
+    TagSubscription.create({:tag_query => tags, :name => "General", :user_id => 1}.merge(params))
   end
   
   def test_initial_posts
@@ -23,20 +23,20 @@ class FavoriteTagTest < ActiveSupport::TestCase
     p3 = create_post("tag3")
     p4 = create_post("tag4")
     
-    ft = create_favtag("tag2")
+    ft = create_tag_subscription("tag2")
     assert_equal("#{p2.id},#{p1.id}", ft.cached_post_ids)
   end
   
   def test_prune
-    old = CONFIG["favorite_tag_post_limit"]
-    CONFIG["favorite_tag_post_limit"] = 1
+    old = CONFIG["tag_subscription_post_limit"]
+    CONFIG["tag_subscription_post_limit"] = 3
 
-    ft = create_favtag("tag1")
+    ft = create_tag_subscription("tag1")
     ft.update_attribute(:cached_post_ids, "6,5,4,3,2,1")
     ft.prune!
     assert_equal("6", ft.cached_post_ids)
     
-    CONFIG["favorite_tag_post_limit"] = old
+    CONFIG["tag_subscription_post_limit"] = old
   end
   
   def test_find_post_ids
@@ -45,21 +45,21 @@ class FavoriteTagTest < ActiveSupport::TestCase
     p3 = create_post("tag3")
     p4 = create_post("tag4")
 
-    ft1 = create_favtag("tag2")
-    ft2 = create_favtag("tag3", :name => "Special")
+    ft1 = create_tag_subscription("tag2")
+    ft2 = create_tag_subscription("tag3", :name => "Special")
 
-    assert_equal([p3.id, p2.id, p1.id], FavoriteTag.find_post_ids(1).sort.reverse.map {|x| x.to_i})
-    assert_equal([p3.id, p1.id], FavoriteTag.find_post_ids(1, "Special").sort.reverse.map {|x| x.to_i})
-    assert_equal([p3.id], FavoriteTag.find_post_ids(1, nil, 1).map {|x| x.to_i})
+    assert_equal([p3.id, p2.id, p1.id], TagSubscription.find_post_ids(1).sort.reverse.map {|x| x.to_i})
+    assert_equal([p3.id, p1.id], TagSubscription.find_post_ids(1, "Special").sort.reverse.map {|x| x.to_i})
+    assert_equal([p3.id], TagSubscription.find_post_ids(1, nil, 1).map {|x| x.to_i})
   end
   
   def test_process_all
-    ft = create_favtag("tag2")
+    ft = create_tag_subscription("tag2")
     p1 = create_post("tag1 tag2 tag3")
     p2 = create_post("tag2")
     p3 = create_post("tag3")
     p4 = create_post("tag4")
-    FavoriteTag.process_all
+    TagSubscription.process_all
     ft.reload
     assert_equal("#{p2.id},#{p1.id}", ft.cached_post_ids)
   end

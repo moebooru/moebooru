@@ -7,7 +7,7 @@ class UserController < ApplicationController
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
   before_filter :post_member_only, :only => [:set_avatar]
-  helper :post
+  helper :post, :tag_subscription
   helper :avatar
   filter_parameter_logging :password
   auto_complete_for :user, :name

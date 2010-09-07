@@ -545,25 +545,27 @@ class User < ActiveRecord::Base
   end
 
  
-  module UserFavoriteTagMethods
+  module UserTagSubscriptionMethods
     def self.included(m)
-      m.has_many :favorite_tags, :dependent => :delete_all, :order => "name"
+      m.has_many :tag_subscriptions, :dependent => :delete_all, :order => "name"
     end
     
-    def favorite_tags_text=(text)
-      favorite_tags.clear
-      
-      text.scan(/\S+/).slice(0, 20).each do |new_fav_tag|
-        favorite_tags.create(:tag_query => new_fav_tag)
+    def tag_subscriptions_text=(text)
+      User.transaction do
+        tag_subscriptions.clear
+
+        text.scan(/\S+/).each do |new_tag_subscription|
+          tag_subscriptions.create(:tag_query => new_tag_subscription)
+        end
       end
     end
     
-    def favorite_tags_text
-      favorite_tags.map(&:tag_query).sort.join(" ")
+    def tag_subscriptions_text
+      tag_subscriptions_text.map(&:tag_query).sort.join(" ")
     end
     
-    def favorite_tag_posts(limit)
-      FavoriteTag.find_posts(id, limit)
+    def tag_subscription_posts(limit, name)
+      TagSubscription.find_posts(id, name, limit)
     end
   end
   
@@ -583,7 +585,7 @@ class User < ActiveRecord::Base
   include UserLevelMethods
   include UserInviteMethods
   include UserAvatarMethods
-  include UserFavoriteTagMethods
+  include UserTagSubscriptionMethods
 
   @salt = CONFIG["user_password_salt"]
   

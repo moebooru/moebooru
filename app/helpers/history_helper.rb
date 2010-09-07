@@ -351,9 +351,9 @@ module HistoryHelper
         if change.value == 't' then
           # Don't show the note initially being set to active.
           return nil if not change.previous
-          html << "undeleted"
+          html << "note undeleted"
         else
-          html << "deleted"
+          html << "note deleted"
         end
       end
     end

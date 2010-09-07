@@ -89,12 +89,16 @@ class CommentController < ApplicationController
   end
 
   def search
-    options = { :order => "id desc", :per_page => 25, :page => params[:page] }
+    options = { :order => "id desc", :per_page => 30, :page => params[:page] }
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
       options[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query]
+    else
+      options[:conditions] = ["false"]
     end
     @comments = Comment.paginate options
+
+    respond_to_list("comments")
   end
 
   def moderate

@@ -1,5 +1,8 @@
 <% content_for("subnavbar") do %>
   <li><%= link_to "List", :action => "index" %></li>
-  <li><%= link_to "Moderate", :action => "moderate" %></li>
+  <li><%= link_to "Search", :action => "search" %></li>
+  <% if @current_user.is_janitor_or_higher? %>
+    <li><%= link_to "Moderate", :action => "moderate" %></li>
+  <% end %>
   <li><%= link_to "Help", :controller => "help", :action => "comments" %></li>
 <% end %>

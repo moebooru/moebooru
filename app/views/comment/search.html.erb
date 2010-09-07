@@ -1,8 +1,10 @@
 <div id="forum">
-  <% form_tag({:action => "search"}, :method => :get) do %>
-    <%= text_field_tag "query", params[:query] %>
-    <%= submit_tag "Search"%>
-  <% end %>
+  <div style="margin-bottom: 1em;">
+    <% form_tag({:action => "search"}, :method => :get) do %>
+      <%= text_field_tag "query", params[:query], :size => 40 %>
+      <%= submit_tag "Search"%>
+    <% end %>
+  </div>
   
   <table class="highlightable" style="width: 50em">
     <thead>

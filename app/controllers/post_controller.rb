@@ -48,9 +48,6 @@ class PostController < ApplicationController
 
   def upload
     @deleted_posts = FlaggedPostDetail.new_deleted_posts(@current_user)
-#    redirect_to :action => "upload_problem"
-#    return
-
 #    if params[:url]
 #      @post = Post.find(:first, :conditions => ["source = ?", params[:url]])
 #    end
@@ -61,9 +58,6 @@ class PostController < ApplicationController
   end
 
   def create
-#    respond_to_error("Uploads temporarily disabled due to Amazon S3 issues", :action => "upload_problem")
-#    return
-
     if @current_user.is_member_or_lower? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
       respond_to_error("Daily limit exceeded", {:action => "error"}, :status => 421)
       return

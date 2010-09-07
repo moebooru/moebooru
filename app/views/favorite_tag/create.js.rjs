@@ -1,0 +1,6 @@
+if @favtag
+  page.insert_html :bottom, "favtag-body", :partial => "listing_row", :locals => {:favtag => @favtag}
+else
+  page[:notice].update("You can only create up to #{CONFIG['favorite_tag_limit']} favorite tags")
+  page[:notice].show
+end

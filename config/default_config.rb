@@ -262,5 +262,8 @@ CONFIG["avatar_max_height"] = 125
 # CONFIG["load_average_threshold"] = 2
 CONFIG["load_average_threshold"] = false
 
-CONFIG["favorite_tag_limit"] = 60
+# Max number of posts to cache
+CONFIG["favorite_tag_post_limit"] = 60
 
+# Max number of fav tags per user
+CONFIG["favorite_tag_limit"] = 3

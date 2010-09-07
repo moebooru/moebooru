@@ -1,0 +1,5 @@
+<tr id="favtag-row-<%= favtag.id %>">
+  <td><%= button_to_remote "-", :url => {:controller => "favorite_tag", :action => "destroy", :id => favtag.id} %></td>
+  <td><%= text_field_tag "favtag[#{favtag.id}][name]", favtag.name, :size => 20 %></td>
+  <td><%= text_field_tag "favtag[#{favtag.id}][tag_query]", favtag.tag_query, :size => 60 %></td>
+</tr>

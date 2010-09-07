@@ -547,7 +547,7 @@ class User < ActiveRecord::Base
  
   module UserFavoriteTagMethods
     def self.included(m)
-      m.has_many :favorite_tags, :dependent => :delete_all
+      m.has_many :favorite_tags, :dependent => :delete_all, :order => "name"
     end
     
     def favorite_tags_text=(text)

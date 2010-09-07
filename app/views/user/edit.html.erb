@@ -34,10 +34,10 @@
         <tr>
           <th>
             <label class="block" for="user_favorite_tags_text">Favorite Tags</label>
-            <p>Enter a list of tags you really like, whitespace delimited.</p>
           </th>
           <td>
-            <%= text_area "user", "favorite_tags_text", :size => "40x5" %>
+            <%= h @user.favorite_tags.map {|x| x.tag_query}.join(", ") %>
+            (<%= link_to "edit", :controller => "favorite_tag", :action => "index" %>)
           </td>          
         </tr>
         <tr>

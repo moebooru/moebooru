@@ -62,7 +62,7 @@
     </tr>
     <tr>
       <td><strong>Comments</strong></td>
-      <td><%= Comment.count(:all, :conditions => "user_id = #{@user.id}") %></td>
+      <td><%= link_to Comment.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Edits</strong></td>

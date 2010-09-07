@@ -429,14 +429,7 @@ module ActiveRecord
             p value
             if prev then
               prev_value = prev.send(field)
-              if value == prev_value then
-                p "* skip"
-              else
-                p ". no skip"
-              end
               next if value == prev_value
-            else
-              p "... no prev"
             end
             fields << [field.to_s, value]
           }

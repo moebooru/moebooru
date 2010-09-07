@@ -1,6 +1,6 @@
 class AddAuxToHistory < ActiveRecord::Migration
   def self.up
-    add_column :histories, :aux_as_json, :string
+    add_column :histories, :aux_as_json, :text
   end
 
   def self.down

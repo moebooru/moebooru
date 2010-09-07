@@ -59,6 +59,11 @@ module ActiveRecord
           :group_by_id => self.get_group_by_id,
           :user_id => Thread.current["danbooru-user_id"]
         }
+
+        cb = self.class.get_versioning_aux_callback
+        if cb then
+          options[:aux] = self.send(cb)
+        end
         history = History.new(options)
         history.save!
 
@@ -155,6 +160,18 @@ module ActiveRecord
         end
 
         @versioning_display = opt
+      end
+
+      # Configure a callback to fill in auxilliary history information.
+      #
+      # The callback must return a hash; its contents will be serialized into aux.  This
+      # is used where we need additional data for a particular type of history.
+      def versioning_aux_callback(func)
+        @versioning_aux_callback = func
+      end
+
+      def get_versioning_aux_callback
+        return @versioning_aux_callback
       end
 
       def get_versioned_default(name)
@@ -425,8 +442,6 @@ module ActiveRecord
           fields = []
           [:is_active, :body, :x, :y, :width, :height].each { |field|
             value = ver.send(field)
-            p "\n\n\n"
-            p value
             if prev then
               prev_value = prev.send(field)
               next if value == prev_value
@@ -439,7 +454,8 @@ module ActiveRecord
             h = History.new(:group_by_table => "posts",
                             :group_by_id => ver.post_id,
                             :user_id => ver.user_id || ver.post.user_id,
-                            :created_at => ver.created_at)
+                            :created_at => ver.created_at,
+                            :aux => {:note_body => ver.body})
             h.save!
 
             fields.each { |f|

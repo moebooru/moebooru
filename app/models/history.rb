@@ -2,6 +2,19 @@ class History < ActiveRecord::Base
   belongs_to :user
   has_many :history_changes, :order => "id"
 
+  def aux
+    return {} if aux_as_json.nil?
+    JSON.parse(aux_as_json)
+  end
+
+  def aux=(o)
+    if o.empty? then
+      self.aux_as_json = nil
+    else
+      self.aux_as_json = o.to_json
+    end
+  end
+
   def group_by_table_class
     Object.const_get(group_by_table.classify)
   end

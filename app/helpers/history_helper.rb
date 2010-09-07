@@ -180,6 +180,12 @@ module HistoryHelper
       html << ": "
     end
 
+    if history.aux["note_body"]
+      body = history.aux["note_body"]
+      body = body[0, 20] + "..." if body.length > 20
+      html << "note #{h(body)}: "
+    end
+
     html << parts.map { |part| part[:html] }.join(" ")
 
     if hidden > 0
@@ -351,9 +357,9 @@ module HistoryHelper
         if change.value == 't' then
           # Don't show the note initially being set to active.
           return nil if not change.previous
-          html << "note undeleted"
+          html << "undeleted"
         else
-          html << "note deleted"
+          html << "deleted"
         end
       end
     end

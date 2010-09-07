@@ -34,13 +34,6 @@ class ReportController < ApplicationController
     start = 3.days.ago.to_s
     stop = Time.now.to_s
     @users = Report.usage_by_user("post_votes", start, stop, 29, conds=["score > 0"], params=[], column="updated_at")
-    GoogleChart::PieChart.new("600x300", "Votes", false) do |pc|
-      @users.each do |user|
-        pc.data user["name"].gsub(/\|/, 'l'), user["change_count"].to_i
-      end
-      
-      @votes_url = pc.to_url
-    end
 
     @users.each do |user|
       conds = ["updated_at BETWEEN ? AND ?"]

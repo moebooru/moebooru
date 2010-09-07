@@ -4,7 +4,7 @@ require 'set'
 
 module Versioning
   def get_versioned_classes
-    return [Pool, PoolPost, Post, Tag]
+    return [Pool, PoolPost, Post, Tag, Note]
   end
   module_function :get_versioned_classes
 
@@ -405,6 +405,57 @@ module ActiveRecord
                                      :field => "rating",
                                      :value => rating)
             c.save!
+          end
+        }
+      end
+
+      def import_note_history
+        count = NoteVersion.count(:all)
+        current = 1
+        NoteVersion.find(:all, :order => "id ASC").each { |ver|
+          p "%i/%i" % [current, count]
+          current += 1
+
+          if ver.version == 1 then
+            prev = nil
+          else
+            prev = NoteVersion.find(:first, :conditions => ["post_id = ? and note_id = ? and version = ?", ver.post_id, ver.note_id, ver.version-1])
+          end
+
+          fields = []
+          [:is_active, :body, :x, :y, :width, :height].each { |field|
+            value = ver.send(field)
+            p "\n\n\n"
+            p value
+            if prev then
+              prev_value = prev.send(field)
+              if value == prev_value then
+                p "* skip"
+              else
+                p ". no skip"
+              end
+              next if value == prev_value
+            else
+              p "... no prev"
+            end
+            fields << [field.to_s, value]
+          }
+
+          # Only create the History if we actually found any changes.
+          if fields.any? then
+            h = History.new(:group_by_table => "posts",
+                            :group_by_id => ver.post_id,
+                            :user_id => ver.user_id || ver.post.user_id,
+                            :created_at => ver.created_at)
+            h.save!
+
+            fields.each { |f|
+              c = h.history_changes.new(:table_name => "notes",
+                                       :remote_id => ver.note_id,
+                                       :field => f[0],
+                                       :value => f[1])
+              c.save!
+            }
           end
         }
       end

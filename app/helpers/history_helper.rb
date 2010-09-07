@@ -75,6 +75,9 @@ module HistoryHelper
 
       :Tag => {
       },
+
+      :Note => {
+      },
     }
 
     @att_options.each_key { |classname|
@@ -144,7 +147,10 @@ module HistoryHelper
             next
           end
 
-          part = format_change(history, c, options, table_options).merge(:primary_order => field_options[:primary_order] || table_options[:primary_order])
+          part = format_change(history, c, options, table_options)
+          next if not part
+
+          part = part.merge(:primary_order => field_options[:primary_order] || table_options[:primary_order])
           parts << part
         end
       end
@@ -324,6 +330,31 @@ module HistoryHelper
       when "is_ambiguous"
         html << (change.value == 't' ? added : removed)
         html << "ambiguous"
+      end
+    when "notes"
+      case change.field
+      when "body"
+        if change.previous
+          html << "body changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [h(change.previous.value), h(change.value)]
+        else
+          html << "body: <span class='name-change'>%s</span>" % [h(change.value)]
+        end
+      when "x"
+        html << "x:#{h(change.value)}"
+      when "y"
+        html << "y:#{h(change.value)}"
+      when "height"
+        html << "height:#{h(change.value)}"
+      when "width"
+        html << "width:#{h(change.value)}"
+      when "is_active"
+        if change.value == 't' then
+          # Don't show the note initially being set to active.
+          return nil if not change.previous
+          html << "undeleted"
+        else
+          html << "deleted"
+        end
       end
     end
 

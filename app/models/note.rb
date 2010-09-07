@@ -6,6 +6,14 @@ class Note < ActiveRecord::Base
   acts_as_versioned :order => "updated_at DESC"
   after_save :update_post
   
+  versioning_display :class => :post
+  versioned :is_active, :default => 'f', :allow_reverting_to_default => true
+  versioned :x
+  versioned :y
+  versioned :width
+  versioned :height
+  versioned :body
+
   module LockMethods
     def self.included(m)
       m.validate :post_must_not_be_note_locked

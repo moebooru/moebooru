@@ -93,17 +93,8 @@ class UserControllerTest < ActionController::TestCase
     post :create, {:user => {:name => "mog", :email => "mog@danbooru.com", :password => "zugzug1", :password_confirmation => "zugzug1"}}
     mog = User.find_by_name("mog")
     assert_not_nil(mog)
-    
-    if CONFIG["enable_account_email_activation"]
-      assert_equal(CONFIG["user_levels"]["Unactivated"], mog.level)      
-      assert_equal(1, ActionMailer::Base.deliveries.size)
-      
-      post :activate_user, {:hash => User.confirmation_hash("mog")}
-      mog.reload
-      assert_equal(CONFIG["user_levels"]["Member"], mog.level)
-    end
   end
-    
+  
   def test_update
     get :edit, {}, {:user_id => 4}
     assert_response :success
@@ -155,17 +146,5 @@ class UserControllerTest < ActionController::TestCase
     post :unblock, {:user => {"4" => "1"}}, {:user_id => 1}
     banned.reload
     assert_equal(CONFIG["user_levels"]["Member"], banned.level)
-  end
-  
-  if CONFIG["enable_account_email_activation"]
-    def test_resend_confirmation
-      setup_action_mailer
-      
-      get :resend_confirmation, {}, {}
-      assert_response :success
-      
-      post :resend_confirmation, {:email => "unactivated@danbooru.com"}
-      assert_equal(1, ActionMailer::Base.deliveries.size)
-    end
   end
 end

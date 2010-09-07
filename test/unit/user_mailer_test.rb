@@ -19,12 +19,12 @@ class UserMailerTest < ActiveSupport::TestCase
     user
   end
   
-  def test_confirmation_email
-    user = create_user("bob")
-    assert_nothing_raised {UserMailer.deliver_confirmation_email(user)}
-    assert_not_equal(0, ActionMailer::Base.deliveries.size)
-    assert_equal("From: #{CONFIG['admin_contact']}\r\nTo: bob@danbooru.com\r\nSubject: #{CONFIG['app_name']} - Confirm email address\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Hello, bob. You need to activate your account by visiting <a href=\"http://#{CONFIG['server_host']}/user/activate_user?hash=#{User.confirmation_hash('bob')}\">this link</a>.</p>\n", ActionMailer::Base.deliveries[0].encoded)
-  end
+  # def test_confirmation_email
+  #   user = create_user("bob")
+  #   assert_nothing_raised {UserMailer.deliver_confirmation_email(user)}
+  #   assert_not_equal(0, ActionMailer::Base.deliveries.size)
+  #   assert_equal("From: #{CONFIG['admin_contact']}\r\nTo: bob@danbooru.com\r\nSubject: #{CONFIG['app_name']} - Confirm email address\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Hello, bob. You need to activate your account by visiting <a href=\"http://#{CONFIG['server_host']}/user/activate_user?hash=#{User.confirmation_hash('bob')}\">this link</a>.</p>\n", ActionMailer::Base.deliveries[0].encoded)
+  # end
   
   def test_new_password
     user = create_user("bob")

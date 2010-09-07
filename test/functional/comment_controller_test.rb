@@ -49,7 +49,7 @@ class CommentControllerTest < ActionController::TestCase
     CONFIG["member_comment_limit"] = 1
     create_comment(1, "c1", :user_id => 4)
     post :create, {:comment => {:post_id => 1, :body => "c2"}, :commit => "Post"}, {:user_id => 4}
-    assert_redirected_to :controller => "comment", :action => "index"
+    assert_redirected_to :controller => "post", :action => "show", :id => 1
     assert_equal(1, Post.find(1).comments.size)
     assert_equal("c1", Post.find(1).comments[0].body)
     CONFIG["member_comment_limit"] = old_member_comment_limit

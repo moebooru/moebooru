@@ -68,16 +68,9 @@ class JobTask < ActiveRecord::Base
   
   def execute_calculate_favorite_tags
     return if Cache.get("delay-favtags-calc")
-
-    last_processed_post_id = data["last_processed_post_id"].to_i
-    
-    if last_processed_post_id == 0
-      last_processed_post_id = Post.maximum("id").to_i
-    end
-    
     Cache.put("delay-favtags-calc", "1", 15.minutes)
-    new_id = FavoriteTag.process_all(last_processed_post_id)
-    update_attributes(:data => {"last_processed_post_id" => new_id})
+    FavoriteTag.process_all
+    update_attributes(:data => {:last_run => Time.now.strftime("%Y-%m-%d %H:%M")})
   end
   
   def update_data(*args)
@@ -152,7 +145,8 @@ class JobTask < ActiveRecord::Base
       "start:#{ti.predicate.name} result:#{ti.consequent.name}"
       
     when "calculate_favorite_tags"
-      "post_id:#{data['last_processed_post_id']}"
+      last_run = data["last_run"]
+      "last run:#{last_run}"
 
     when "upload_posts_to_mirrors"
       ret = ""

@@ -12,7 +12,7 @@ class JobTaskControllerTest < ActionController::TestCase
     get :show, {:id => job_task.id}
     assert_response :success
     
-    get :retry, {:id => job_task.id}
+    get :restart, {:id => job_task.id}
     assert_response :success
   end
 end

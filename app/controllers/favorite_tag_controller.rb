@@ -12,7 +12,7 @@ class FavoriteTagController < ApplicationController
   end
   
   def update
-    if request.post?
+    if request.post? && params[:favtag]
       params[:favtag].each_key do |favtag_id|
         favtag = FavoriteTag.find(favtag_id)
         if favtag.user_id == @current_user.id

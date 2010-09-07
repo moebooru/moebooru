@@ -90,9 +90,31 @@ class CommentController < ApplicationController
 
   def search
     options = { :order => "id desc", :per_page => 30, :page => params[:page] }
+    conds = []
+    cond_params = []
     if params[:query]
-      query = params[:query].scan(/\S+/).join(" & ")
-      options[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query]
+      keywords = []
+      params[:query].scan(/\S+/).each { |s|
+        if s =~ /^(.+?):(.*)/
+          search_type = $1
+          param = $2
+          if search_type == "user"
+            user = User.find_by_name(param)
+            if user
+              conds << "user_id = ?"
+              cond_params << user.id
+            else
+              conds << "false"
+            end
+            next
+          end
+        end
+
+        conds << "text_search_index @@ plainto_tsquery(?)"
+        cond_params << s
+      }
+
+      options[:conditions] = [conds.join(" AND "), *cond_params]
     else
       options[:conditions] = ["false"]
     end

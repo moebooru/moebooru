@@ -6,9 +6,6 @@ CONFIG["version"] = "1.15.0"
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"
 
-# Set to true to require an e-mail address to register.
-CONFIG["enable_account_email_activation"] = false
-
 # This is a salt used to make dictionary attacks on account passwords harder.
 CONFIG["password_salt"] = "choujin-steiner"
 

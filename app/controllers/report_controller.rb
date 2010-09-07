@@ -67,7 +67,7 @@ private
     if params[:end_date]
       @end_date = Date.parse(params[:end_date])
     else
-      @end_date = Date.today
+      @end_date = Date.today + 1.day
     end
 
     if params[:limit]

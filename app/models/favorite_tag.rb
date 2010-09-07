@@ -14,7 +14,11 @@ class FavoriteTag < ActiveRecord::Base
   end
   
   def interested?(post_id)
-    Post.find_by_tags(tag_query + " id:#{post_id}").any?
+    begin
+      Post.find_by_tags(tag_query + " id:#{post_id}").any?
+    rescue Exception
+      false
+    end
   end
   
   def add_post!(post_id)
@@ -34,7 +38,11 @@ class FavoriteTag < ActiveRecord::Base
   end
   
   def self.find_post_ids(user_id, favtag_name, limit = 60)
-    find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, favtag_name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_post_$
+    if favtag_name
+      find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, favtag_name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_pos$
+    else
+      find(:all, :conditions => ["user_id = ?", user_id], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten
+    end
   end
  
   def self.find_posts(user_id, favtag_name, limit = 60)

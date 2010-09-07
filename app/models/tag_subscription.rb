@@ -14,22 +14,6 @@ class TagSubscription < ActiveRecord::Base
     end
   end
   
-  def add_posts!(post_ids)
-    if cached_post_ids.blank?
-      update_attribute :cached_post_ids, post_ids.join(",")
-    else
-      update_attribute :cached_post_ids, "#{post_id.join(',')},#{cached_post_ids}"
-    end
-  end
-  
-  def prune!
-    hoge = cached_post_ids.split(/,/)
-    
-    if hoge.size > CONFIG["tag_subscription_post_limit"] / 3
-      update_attribute :cached_post_ids, hoge[0, CONFIG["tag_subscription_post_limit"] / 3].join(",")
-    end
-  end
-  
   def self.find_post_ids(user_id, name = nil, limit = CONFIG["tag_subscription_post_limit"])
     if name
       find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.sort.reverse.slice(0, limit)
@@ -47,13 +31,12 @@ class TagSubscription < ActiveRecord::Base
       if tag_subscription.user.is_privileged_or_higher?
         begin
           TagSubscription.transaction do
-            tag_subscription.update_attribute :cached_post_ids, ""
             tags = tag_subscription.tag_query.scan(/\S+/)
+            post_ids = []
             tags.each do |tag|
-              post_ids = Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
-              tag_subscription.add_posts!(post_ids)
+              post_ids += Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
             end
-            tag_subscription.prune!
+            tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
           end
         rescue Exception => x
           # fail silently

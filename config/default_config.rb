@@ -266,4 +266,5 @@ CONFIG["load_average_threshold"] = false
 CONFIG["favorite_tag_post_limit"] = 200
 
 # Max number of fav tags per user
-CONFIG["favorite_tag_limit"] = 5
+CONFIG["max_tag_subscriptions"] = 5
+

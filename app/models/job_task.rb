@@ -75,9 +75,9 @@ class JobTask < ActiveRecord::Base
       last_processed_post_id = Post.maximum("id").to_i
     end
     
-    Cache.put("delay-favtags-calc", "1", 10.minutes)
-    FavoriteTag.process_all(last_processed_post_id)
-    update_attributes(:data => {"last_processed_post_id" => Post.maximum("id")})
+    Cache.put("delay-favtags-calc", "1", 5.minutes)
+    new_id = FavoriteTag.process_all(last_processed_post_id)
+    update_attributes(:data => {"last_processed_post_id" => new_id})
   end
   
   def update_data(*args)

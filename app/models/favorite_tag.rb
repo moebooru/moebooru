@@ -32,8 +32,8 @@ class FavoriteTag < ActiveRecord::Base
   def prune!
     hoge = cached_post_ids.split(/,/)
     
-    if hoge.size > CONFIG["favorite_tag_limit"]
-      update_attribute :cached_post_ids, hoge[0, CONFIG["favorite_tag_limit"]].join(",")
+    if hoge.size > CONFIG["favorite_tag_post_limit"]
+      update_attribute :cached_post_ids, hoge[0, CONFIG["favorite_tag_post_limit"]].join(",")
     end
   end
   
@@ -50,7 +50,7 @@ class FavoriteTag < ActiveRecord::Base
   end
   
   def self.process_all(last_processed_post_id)
-    posts = Post.find(:all, :conditions => ["id > ?", last_processed_post_id], :order => "id DESC", :select => "id")
+    posts = Post.find(:all, :conditions => ["id > ? AND created_at < ?", last_processed_post_id, 12.hours.ago], :order => "id DESC", :select => "id")
     fav_tags = FavoriteTag.find(:all)
     
     fav_tags.each do |fav_tag|
@@ -63,6 +63,12 @@ class FavoriteTag < ActiveRecord::Base
       
         fav_tag.prune!
       end
+    end
+
+    if posts.any?
+      posts.first.id
+    else
+      last_processed_post_id
     end
   end
 end

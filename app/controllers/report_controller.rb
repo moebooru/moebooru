@@ -31,15 +31,13 @@ class ReportController < ApplicationController
   end
   
   def votes
-    start = 3.days.ago.to_s
-    stop = Time.now.to_s
-    @users = Report.usage_by_user("post_votes", start, stop, 29, conds=["score > 0"], params=[], column="updated_at")
+    @users = Report.usage_by_user("post_votes", @start_date, @end_date, 29, conds=["score > 0"], params=[], column="updated_at")
 
     @users.each do |user|
       conds = ["updated_at BETWEEN ? AND ?"]
       params = []
-      params << start
-      params << stop
+      params << @start_date
+      params << @end_date
 
       if user["user"] then
         conds << "user_id = ?"

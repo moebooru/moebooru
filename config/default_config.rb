@@ -1,7 +1,7 @@
 CONFIG = {}
 
 # The version of this Danbooru.
-CONFIG["version"] = "1.15.0"
+CONFIG["version"] = "1.16.0"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"

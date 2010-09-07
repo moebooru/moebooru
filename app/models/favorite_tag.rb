@@ -46,9 +46,13 @@ class FavoriteTag < ActiveRecord::Base
     
     fav_tags.each do |fav_tag|
       if fav_tag.user.is_privileged_or_higher?
-        post_ids = Post.find_by_tags(fav_tag.tag_query, :limit => 30, :select => "p.id", :order => "p.id desc").map(&:id)
-        fav_tag.add_posts!(post_ids)
-        fav_tag.prune!
+        begin
+          post_ids = Post.find_by_tags(fav_tag.tag_query, :limit => 30, :select => "p.id", :order => "p.id desc").map(&:id)
+          fav_tag.add_posts!(post_ids)
+          fav_tag.prune!
+        rescue Exception => x
+          # fail silently
+        end
         sleep 1
       end
     end

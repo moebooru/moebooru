@@ -39,7 +39,7 @@
         <% if @user.favorite_tags.empty? %>
           None
         <% else %>
-          <%= @user.favorite_tags.map {|x| "<strong>" + h(x.name) + "</strong>: " + link_to(h(x.tag_query), :controller => "post", :action => "index", :tags => "favtag:#{@user.name}:#{x.na me}")}.join(", ") %>
+          <%= favorite_tag_listing(@user) %>
         <% end %>
           
         <% if @current_user.id == @user.id %>

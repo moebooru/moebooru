@@ -9,7 +9,7 @@ class FavoriteTag < ActiveRecord::Base
 
   def initialize_post_ids
     if user.is_privileged_or_higher?
-      self.cached_post_ids = Post.find_by_tags(tag_query, :limit => 60, :select => "p.id", :order => "p.id desc").map(&:id).uniq.join(",")
+      self.cached_post_ids = Post.find_by_tags(tag_query, :limit => CONFIG["favorite_tag_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id).uniq.join(",")
     end
   end
   
@@ -24,12 +24,12 @@ class FavoriteTag < ActiveRecord::Base
   def prune!
     hoge = cached_post_ids.split(/,/)
     
-    if hoge.size > CONFIG["favorite_tag_post_limit"]
-      update_attribute :cached_post_ids, hoge[0, CONFIG["favorite_tag_post_limit"]].join(",")
+    if hoge.size > CONFIG["favorite_tag_post_limit"] / 3
+      update_attribute :cached_post_ids, hoge[0, CONFIG["favorite_tag_post_limit"] / 3].join(",")
     end
   end
   
-  def self.find_post_ids(user_id, favtag_name = nil, limit = 200)
+  def self.find_post_ids(user_id, favtag_name = nil, limit = CONFIG["favorite_tag_post_limit"])
     if favtag_name
       find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, favtag_name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.slice(0, limit)
     else
@@ -37,7 +37,7 @@ class FavoriteTag < ActiveRecord::Base
     end
   end
  
-  def self.find_posts(user_id, favtag_name = nil, limit = 60)
+  def self.find_posts(user_id, favtag_name = nil, limit = CONFIG["favorite_tag_post_limit"])
     Post.find(:all, :conditions => ["id in (?)", find_post_ids(user_id, favtag_name, limit)], :order => "id DESC", :limit => limit)
   end
   
@@ -47,7 +47,7 @@ class FavoriteTag < ActiveRecord::Base
     fav_tags.each do |fav_tag|
       if fav_tag.user.is_privileged_or_higher?
         begin
-          post_ids = Post.find_by_tags(fav_tag.tag_query, :limit => 60, :select => "p.id", :order => "p.id desc").map(&:id)
+          post_ids = Post.find_by_tags(fav_tag.tag_query, :limit => CONFIG["favorite_tag_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
           fav_tag.add_posts!(post_ids)
           fav_tag.prune!
         rescue Exception => x

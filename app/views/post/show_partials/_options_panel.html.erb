@@ -56,5 +56,6 @@
       <li id="add-to-pool" class="advanced-editing" style="display: none;"><%= link_to_remote "Add to pool", :update => "add-to-pool", :url => {:controller => "pool", :action => "select", :post_id => @post.id}, :method => "get" %></li>
     <% end %>
     <li id="set-avatar"><%= link_to "Set avatar", :controller => "user", :action => "set_avatar", :id => @post.id %></li>
+    <li><%= link_to "Post history", :controller => "history", :action => "index", :search => "post:#{@post.id}" %></li>
   </ul>
 </div>

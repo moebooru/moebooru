@@ -128,7 +128,7 @@ module ActiveRecord
           self.after_save :save_versioned_attributes
           self.after_create :remember_new
 
-          self.versioning_display if not @versioning_display
+          self.versioning_group_by if not @versioning_group_by
         end
 
         @versioned_attributes[att] = *options || {}
@@ -140,10 +140,10 @@ module ActiveRecord
       # :foreign_key => Key within :class to display.
       # :controller, :action => Route for displaying the grouped class.
       #
-      #   versioning_display :class => :pool
-      #   versioning_display :class => :pool, :foreign_key => :pool_id, :action => "show"
-      #   versioning_display :class => :pool, :foreign_key => :pool_id, :controller => Post
-      def versioning_display(options = {})
+      #   versioning_group_by :class => :pool
+      #   versioning_group_by :class => :pool, :foreign_key => :pool_id, :action => "show"
+      #   versioning_group_by :class => :pool, :foreign_key => :pool_id, :controller => Post
+      def versioning_group_by(options = {})
         opt = {
           :class => self.to_s.to_sym,
           :controller => self.to_s,
@@ -159,7 +159,7 @@ module ActiveRecord
           end
         end
 
-        @versioning_display = opt
+        @versioning_group_by = opt
       end
 
       # Configure a callback to fill in auxilliary history information.
@@ -182,11 +182,11 @@ module ActiveRecord
       end
 
       def get_versioning_group_by
-        @versioning_display
+        @versioning_group_by
       end
 
       def get_group_by_class
-        cl = @versioning_display[:class].to_s.classify
+        cl = @versioning_group_by[:class].to_s.classify
         Object.const_get(cl)
       end
 
@@ -195,7 +195,7 @@ module ActiveRecord
       end
 
       def get_group_by_foreign_key
-        @versioning_display[:foreign_key]
+        @versioning_group_by[:foreign_key]
       end
 
       # Specify a parent table.  After a change is undone in this table, the

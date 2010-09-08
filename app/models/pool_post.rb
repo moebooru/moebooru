@@ -3,7 +3,7 @@ class PoolPost < ActiveRecord::Base
   belongs_to :post
   belongs_to :pool
   versioned_parent :pool
-  versioning_display :class => :pool
+  versioning_group_by :class => :pool
   versioned :active, :default => 'f', :allow_reverting_to_default => true
   versioned :sequence
   before_save :update_pool

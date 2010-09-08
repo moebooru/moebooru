@@ -189,7 +189,7 @@ module HistoryHelper
     html << parts.map { |part| part[:html] }.join(" ")
 
     if hidden > 0
-      html << " (#{link_to("%i more..." % hidden, :action => @params[:action], :search => "change:%i" % history.id)})"
+      html << " (#{link_to("%i more..." % hidden, :search => "change:%i" % history.id)})"
     end
 
     return html

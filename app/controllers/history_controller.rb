@@ -8,11 +8,49 @@ class HistoryController < ApplicationController
   def index
     set_title "History"
 
-    @params = params
-    if params[:action] == "index"
-      @type = "all"
-    else
-      @type = params[:action].pluralize
+    search = params[:search] || ""
+
+    q = Hash.new {|h, k| h[k] = []}
+
+    search.split(' ').each { |s|
+      if s =~ /^(.+?):(.*)/
+        search_type = $1
+        param = $2
+
+        if search_type == "user"
+          q[:user] = param
+        elsif search_type == "change"
+          q[:change] = param.to_i
+        elsif search_type == "type"
+          q[:type] = param
+        elsif search_type == "id"
+          q[:id] = param.to_i
+        elsif search_type == "field"
+          # :type must also be set for this to be used.
+          q[:field] = param
+        else
+          # pool:123
+          q[:type] = search_type
+          q[:id] = param.to_i
+        end
+      else
+        q[:keywords] << s
+      end
+    }
+
+    q[:type] = q[:type].pluralize if q.has_key?(:type)
+    q[:inner_type] = q[:inner_type].pluralize if q.has_key?(:inner_type)
+
+    # If notes:id has been specified, search using the inner key in history_changes
+    # rather than the grouping table in histories.  We don't expose this in general.
+    # Searching based on hc.table_name without specifying an ID is slow, and the
+    # details here shouldn't be visible anyway.
+    if q.has_key?(:type) and q.has_key?(:id) and q[:type] == "notes" then
+      q[:inner_type] = q[:type]
+      q[:remote_id] = q[:id]
+
+      q.delete(:type)
+      q.delete(:id)
     end
 
     conds = []
@@ -21,88 +59,106 @@ class HistoryController < ApplicationController
     hc_conds = []
     hc_cond_params = []
 
+    value_index_query = []
+
+    if q[:user].is_a?(String)
+      user = User.find_by_name(q[:user])
+      if user
+        conds << "histories.user_id = ?"
+        cond_params << user.id
+      else
+        conds << "false"
+      end
+    end
+
+    if q.has_key?(:id) then
+      conds << "group_by_id = ?"
+      cond_params << q[:id]
+    end
+
+    if q.has_key?(:type) then
+
+      conds << "group_by_table = ?"
+      cond_params << q[:type]
+    end
+
+    if q.has_key?(:change)
+      conds << "histories.id = ?"
+      cond_params << q[:change]
+    end
+
+    if q.has_key?(:type)
+      conds << "group_by_table = ?"
+      cond_params << q[:type]
+    end
+
+    if q.has_key?(:inner_type)
+      q[:inner_type] = q[:inner_type].pluralize
+
+      hc_conds << "hc.table_name = ?"
+      hc_cond_params << q[:inner_type]
+    end
+
+    if q.has_key?(:remote_id)
+      hc_conds << "hc.remote_id = ?"
+      hc_cond_params << q[:remote_id]
+    end
+
+    q[:keywords].each { |keyword|
+      value_index_query << "(" + Post.geneate_sql_escape_helper(keyword).join(" | ") + ")"
+    }
+
+    if q.has_key?(:field) and q.has_key?(:type)
+      # Look up a particular field change, eg. "type:posts field:rating".
+      # XXX: The WHERE id IN (SELECT id...) used to implement this is slow when we don't have
+      # anything else filtering the results.
+      field = q[:field]
+      table = q[:type]
+
+      # For convenience:
+      field = "cached_tags" if field == "tags"
+
+      # Look up the named class.
+      cls = Versioning.get_versioned_classes_by_name[table]
+      if cls.nil? then
+        conds << "false"
+      else
+        hc_conds << "hc.field = ?"
+        hc_cond_params << field
+
+        # A changes that has no previous value is the initial value for that object.  Don't show
+        # these changes unless they're different from the default for that field.
+        default_value, has_default = cls.get_versioned_default(field.to_sym)
+        if has_default then
+          hc_conds << "(hc.previous_id IS NOT NULL OR value <> ?)"
+          hc_cond_params << default_value
+        end
+      end
+    end
+
+    if value_index_query.any?
+      hc_conds << """hc.value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "')"""
+    end
+
+    if hc_conds.any?
+      conds << """histories.id IN (SELECT history_id FROM history_changes hc JOIN histories h ON (hc.history_id = h.id) WHERE #{hc_conds.join(" AND ")})"""
+      cond_params += hc_cond_params
+    end
+
+    if q.has_key?(:type) and not q.has_key?(:change) then
+      @type = q[:type]
+    else
+      @type = "all"
+    end
+
     # :specific_history => showing only one history
     # :specific_table => showing changes only for a particular table
     # :show_all_tags => don't omit post tags that didn't change
     @options = {
-      :show_all_tags => @params[:show_all_tags] == "1"
+      :show_all_tags => params[:show_all_tags] == "1",
+      :specific_object => (q.has_key?(:type) and q.has_key?(:id)),
+      :specific_history => q.has_key?(:change),
     }
-    set_type_to_result = false
-    search_type = param = nil
-    search = params[:search] || ""
-    value_index_query = []
-    search.split(' ').each { |s|
-      # If a search specifies a table name, it overrides the action.
-      if s =~ /^(.+?):(.*)/
-        search_type = $1
-        param = $2
-
-        if search_type == "user"
-          user = User.find_by_name(param)
-          if user
-            conds << "histories.user_id = ?"
-            cond_params << user.id
-          else
-            conds << "false"
-          end
-        elsif search_type == "change"
-          @type = "all"
-          @options[:specific_history] = true
-          conds << "histories.id = ?"
-          cond_params << param.to_i
-
-          set_type_to_result = true
-        elsif search_type == "field"
-          param =~ /^(.+?):(.*)/;
-          table, field = $1, $2
-
-          # For convenience:
-          field = "cached_tags" if field == "tags"
-
-          # Look up the named class.
-          cls = Versioning.get_versioned_classes_by_name[table]
-          if cls.nil? then
-            conds << "false"
-            next
-          end
-
-          conds << "group_by_table = ?"
-          cond_params << table
-
-          hc_conds << "field = ?"
-          hc_cond_params << field
-
-          # A changes that has no previous value is the initial value for that object.  Don't show
-          # these changes unless they're different from the default for that field.
-          default_value, has_default = cls.get_versioned_default(field.to_sym)
-          if has_default then
-            hc_conds << "(previous_id IS NOT NULL OR value <> ?)"
-            hc_cond_params << default_value
-          end
-        else
-          @options[:specific_table] = true
-          @type = search_type.pluralize
-          conds << "histories.group_by_id = ?"
-          cond_params << param.to_i
-        end
-      else
-        value_index_query << "(" + Post.geneate_sql_escape_helper(s).join(" | ") + ")"
-      end
-    }
-
-    if value_index_query.any?
-      hc_conds << """value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "')"""
-    end
-
-    if hc_conds.any?
-      conds << """id IN (SELECT history_id FROM history_changes WHERE #{hc_conds.join(" AND ")})"""
-      cond_params += hc_cond_params
-    end
-
-    if @type != "all"
-      conds << "histories.group_by_table = ?"
-      cond_params << @type
-    end
 
     @options[:show_name] = false
     if @type != "all"
@@ -114,24 +170,20 @@ class HistoryController < ApplicationController
     end
 
     @changes = History.paginate(History.generate_sql(params).merge(
-      :order => "id DESC", :per_page => 20, :select => "*", :page => params[:page],
+      :order => "histories.id DESC", :per_page => 20, :select => "*", :page => params[:page],
       :conditions => [conds.join(" AND "), *cond_params],
       :include => [:history_changes]
     ))
 
     # If we're searching for a specific change, force the display to the
     # type of the change we found.
-    if set_type_to_result && !@changes.empty?
+    if q.has_key?(:change) && !@changes.empty?
       @type = @changes.first.group_by_table.pluralize
     end
 
     render :action => :index
   end
   
-  alias_method :post, :index
-  alias_method :pool, :index
-  alias_method :tag, :index
-
   def undo
     ids = params[:id].split(/,/)
     

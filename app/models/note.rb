@@ -6,7 +6,7 @@ class Note < ActiveRecord::Base
   acts_as_versioned :order => "updated_at DESC"
   after_save :update_post
   
-  versioning_display :class => :post
+  versioning_group_by :class => :post
   versioned :is_active, :default => 'f', :allow_reverting_to_default => true
   versioned :x
   versioned :y

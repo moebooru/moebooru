@@ -76,7 +76,7 @@ module TagTypeMethods
     m.versioned :tag_type
     m.versioned :is_ambiguous, :default => false
 
-    m.versioning_display :action => "edit"
+    m.versioning_group_by :action => "edit"
 
     # This maps ids to names
     m.type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}    

@@ -3,6 +3,7 @@ Forum = {
     new Ajax.Request("/forum/mark_all_read", {
       onComplete: function() {
         $$("span.forum-topic").invoke("removeClassName", "unread-topic")
+        $$("div.forum-update").invoke("removeClassName", "unread-topic")
         main_menu.mark_forum_posts_read();
         notice("Marked all topics as read")
       }

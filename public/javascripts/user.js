@@ -221,7 +221,14 @@ User = {
     /* event is not available when we get to the callback in IE7. */
     var e = clone_event(event);
 
-    return User.run_login(true, function() { target.simulate_anchor_click(e); });
+    if(User.run_login(true, function() { target.simulate_anchor_click(e); }))
+      return true;
+
+    /* Login is running, so stop the event.  Don't just return false; call stop(), so
+     * event.stopped is available to the caller if we've been sent this message via
+     * Element.dispatchEvent. */
+    event.stop();
+    return false;
   },
 
   /* Handle login from an onsubmit.  If login is needed, stop the event and resubmit

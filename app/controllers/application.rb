@@ -120,6 +120,11 @@ class ApplicationController < ActionController::Base
       UserLog.access(@current_user, request)
     end
 
+    def set_current_request
+      # This is used by the menu in the default layout, to bold the current page.
+      @current_request = request
+    end
+
     CONFIG["user_levels"].each do |name, value|
       normalized_name = name.downcase.gsub(/ /, "_")
 
@@ -216,6 +221,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :set_title
   before_filter :set_current_user
+  before_filter :set_current_request
   before_filter :check_ip_ban
   after_filter :init_cookies
   
@@ -296,7 +302,19 @@ class ApplicationController < ActionController::Base
   end
   
   def init_cookies
+    forum_posts = ForumPost.find(:all, :order => "updated_at DESC", :limit => 10, :conditions => "parent_id IS NULL")
+    cookies["current_forum_posts"] = forum_posts.map { |fp|
+      if @current_user.is_anonymous?
+        updated = false
+      else
+        updated = fp.updated_at > @current_user.last_forum_topic_read_at
+      end
+      [fp.title, fp.id, updated]
+    }.to_json
+
     unless @current_user.is_anonymous?
+      cookies["user_id"] = @current_user.id.to_s
+
       if @current_user.has_mail?
         cookies["has_mail"] = "1"
       else

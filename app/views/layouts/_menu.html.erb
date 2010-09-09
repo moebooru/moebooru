@@ -1,0 +1,179 @@
+<% if @current_user.is_contributor_or_higher? %>
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  var def = [];
+
+  var account_menu = [];
+  <% if @current_user.is_anonymous? %>
+    account_menu.push(<%= make_sub_item("Login", {:controller => :user, :action => "login"}, :level => :member) %>);
+    account_menu.push(<%= make_sub_item("Reset&nbsp;Password", :controller => :user, :action => "reset_password") %>);
+  <% else %>
+    account_menu.push(<%= make_sub_item("Logout", :controller => :user, :action => "logout") %>);
+
+    if(Cookie.get("user_id"))
+    {
+      var profile_item = <%= make_sub_item("My&nbsp;Profile", :controller => :user, :action => "show") %>;
+      profile_item.dest += "/" + Cookie.get("user_id")
+      account_menu.push(profile_item);
+    }
+
+    account_menu.push(<%= make_sub_item("My&nbsp;Mail", :controller => "dmail", :action => "inbox") %>);
+
+    if(Cookie.get("login"))
+    {
+      var favorites_item = <%= make_sub_item("My&nbsp;Favorites", :controller => "post", :action => "index", :tags => "order:vote vote:3:") %>;
+      favorites_item.dest += Cookie.get("login")
+      account_menu.push(favorites_item);
+    }
+
+    account_menu.push(<%= make_sub_item("Settings", :controller => :user, :action => "edit") %>);
+    account_menu.push(<%= make_sub_item("Change&nbsp;Password", :controller => :user, :action => "change_password") %>);
+  <% end %>
+
+  def.push(<%= make_main_item("My&nbsp;Account", {:controller => :user, :action => "home"}, {:name => "my_account", :level => :member}) %>);
+  def[def.length-1].sub = account_menu;
+
+  var posts_menu = [];
+  posts_menu.push(<%= make_sub_item("View posts", :controller => :post, :action => "index") %>);
+  posts_menu.push(<%= make_sub_item("Upload", :controller => :post, :action => "upload") %>);
+  /* <%= make_sub_item("Subscriptions", :controller => :post, :action => "index") %>, */
+  <!-- <li id="my-subscriptions-container"><%= link_to "Subscriptions", "/", :id => "my-subscriptions" %> -->
+  posts_menu.push(<%= make_sub_item("Random", :controller => :post, :tags => "order:random") %>);
+  posts_menu.push(<%= make_sub_item("Popular", :controller => :post, :action => "popular_recent") %>);
+  posts_menu.push(<%= make_sub_item("Image&nbsp;Search", :controller => :post, :action => "similar") %>);
+  posts_menu.push(<%= make_sub_item("History", :controller => :history, :action => "index") %>);
+  <% if @current_user.is_contributor_or_higher? %>
+    posts_menu.push(<%= make_sub_item("Batch upload", :controller => :batch) %>);
+  <% end %>
+  <% if @current_user.is_janitor_or_higher? %>
+    posts_menu.push(<%= make_sub_item("Moderate", :controller => :post, :action => "moderate") %>);
+    if(Cookie.get("posts_flagged") == "1") {
+      posts_menu[posts_menu.length-1].class_names = ["bolded"];
+    }
+  <% end %>
+
+  def.push(<%= make_main_item("Posts", {:controller => :post, :action => "index"}, {:name => "posts"}) %>);
+  def[def.length-1].sub = posts_menu;
+
+  var comments_menu = [];
+  comments_menu.push(<%= make_sub_item("View&nbsp;comments", :controller => :comment, :action => "index") %>);
+  comments_menu.push(<%= make_sub_item("Search", :controller => :comment, :action => "search") %>);
+  <% if @current_user.is_janitor_or_higher? %>
+  comments_menu.push(<%= make_sub_item("Moderate", :controller => :comment, :action => "moderate") %>);
+  <% end %>
+  def.push(<%= make_main_item("Comments", {:controller => :comment, :action => "index"}, {:html_id => "comments-link", :name => "comments"}) %>);
+  if (Cookie.get("comments_updated") == "1") {
+    def[def.length-1].class_names = ["bolded"];
+  }
+  def[def.length-1].sub = comments_menu;
+
+  var notes_menu = [];
+  notes_menu.push(<%= make_sub_item("View&nbsp;notes", :controller => :note, :action => "index") %>);
+  notes_menu.push(<%= make_sub_item("Search", :controller => :note, :action => "search") %>);
+  notes_menu.push(<%= make_sub_item("Requests", :controller => :posts, :action => "index", :tags => "translation_request") %>);
+  def.push(<%= make_main_item("Notes", {:controller => :note, :action => "index"}, {:name => "notes"}) %>);
+  def[def.length-1].sub = notes_menu;
+
+  <% if CONFIG["enable_artists"] %>
+  var artists_menu = [];
+  artists_menu.push(<%= make_sub_item("View artists", :controller => :artist, :action => "index") %>);
+  artists_menu.push(<%= make_sub_item("Create", :controller => :artist, :action => "create") %>);
+  def.push(<%= make_main_item("Artists", {:controller => :artist, :action => "index"}, {:name => "artists"}) %>);
+  def[def.length-1].sub = artists_menu;
+  <% end %>
+
+  var tags_menu = [];
+  tags_menu.push(<%= make_sub_item("View tags", :controller => :tag, :action => "index") %>);
+  tags_menu.push(<%= make_sub_item("Popular", :controller => :tag, :action => "popular_by_day") %>);
+  tags_menu.push(<%= make_sub_item("Aliases", :controller => :tag_alias, :action => "index") %>);
+  tags_menu.push(<%= make_sub_item("Implications", :controller => :tag_implication, :action => "index") %>);
+  <% if @current_user.is_mod_or_higher? %>
+    tags_menu.push(<%= make_sub_item("Mass&nbsp;edit", :controller => :tag, :action => "mass_edit") %>);
+  <% end %>
+  tags_menu.push(<%= make_sub_item("Edit", :controller => :tag, :action => "edit") %>);
+  def.push(<%= make_main_item("Tags", {:controller => :tag, :action => "index", :order => "date"}, {:name => "tags"}) %>);
+  def[def.length-1].sub = tags_menu;
+
+  var pools_menu = [];
+  pools_menu.push(<%= make_sub_item("View pools", :controller => :pool, :action => "index") %>);
+  pools_menu.push(<%= make_sub_item("Create&nbsp;new&nbsp;pool", :controller => :pool, :action => "create") %>);
+  def.push(<%= make_main_item("Pools", {:controller => :pool, :action => "index"}, {:name => "pools"}) %>);
+  def[def.length-1].sub = pools_menu;
+
+  var wiki_menu = [];
+  wiki_menu.push(<%= make_sub_item("View wiki index", :controller => :wiki, :action => "index") %>);
+  wiki_menu.push(<%= make_sub_item("Create&nbsp;new&nbsp;page", :controller => :wiki, :action => "add") %>);
+  def.push(<%= make_main_item("Wiki", {:controller => :wiki, :action => "show", :title => "help:home"}, {:name => "wiki"}) %>);
+  def[def.length-1].sub = wiki_menu;
+
+  var forum_menu = [];
+  forum_menu.push(<%= make_sub_item("View topics", :controller => :forum, :action => "index") %>);
+  forum_menu.push(<%= make_sub_item("New&nbsp;topic", :controller => :forum, :action => "new") %>);
+  def.push(<%= make_main_item("Forum", {:controller => :forum, :action => "index"}, {:name => "forum", :html_id => "forum-link"}) %>);
+  if (Cookie.get("forum_updated") == "1") {
+    def[def.length-1].class_names = ["bolded"];
+  }
+  def[def.length-1].sub = forum_menu;
+
+  var help_menu = [];
+  <% current_controller = @current_request.parameters[:controller].to_sym %>
+  <% if [:post, :comment, :note, :artist, :tag, :wiki, :pool, :forum].include?(current_controller) then %>
+    help_menu.push(<%= make_sub_item("#{current_controller.to_s.capitalize} Help", {:controller => :help, :action => get_help_action_for_controller(current_controller)}) %>);
+  <% end %>
+  def.push(<%= make_main_item("Help", {:controller => :help}, {:name => "help"}) %>);
+  def[def.length-1].sub = help_menu;
+
+  def.push(<%= make_main_item("More&nbsp;&raquo;", {:controller => :static, :action => "more"}, {:name => "more"}) %>);
+</script>
+<% end %>
+
+<div id="main-menu">
+  <%
+    @top_menu_items.each { |item|
+      class_names = []
+      class_names << "menu"
+      class_names << "top-item-#{item[:name]}"
+      class_names += item[:class_names]
+      onclick = ""
+      if item[:login] then
+        onclick="onclick='if(!User.run_login_onclick(event)) return false;'"
+      end
+      %>
+      <%# This div must not contain any whitespace nodes.  If it does, FF will return offsetLeft
+         incorrectly, causing problems if the menu wraps. #%>
+      <div <%= "id='#{item[:html_id]}' " if(item[:html_id]) %> class='<%= class_names.join(" ") %>'><a href="<%= item[:dest] %>" <%= onclick %>><%= item[:label] %></a></div>
+  <% } %>
+  <a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
+    <span>New&nbsp;mail</span>
+  </a>
+</div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  var main_menu = new MainMenu($("main-menu"), def);
+  main_menu.add_forum_posts_to_submenu();
+  main_menu.init();
+</script>
+<% end %>
+<% else %>
+<ul class="flat-list" id="navbar">
+  <%= navbar_link_to("My Account", {:controller => "user", :action => "home"}, :id => "my-account", :level => :member) %>
+  <%= navbar_link_to("Posts", :controller => "post", :action => "index") %>
+  <%= navbar_link_to("Comments", {:controller => "comment", :action => "index"}, :id => "comments-link") %>
+  <%= navbar_link_to("Notes", :controller => "note", :action => "index") %>
+  <%= navbar_link_to("Artists", :controller => "artist", :action => "index") if CONFIG["enable_artists"] %>
+  <%= navbar_link_to("Tags", :controller => "tag", :action => "index", :order => "date") %>
+  <%= navbar_link_to("Pools", :controller => "pool", :action => "index") %>
+  <%= navbar_link_to("Wiki", :controller => "wiki", :action => "show", :title => "help:home") %>
+  <%= navbar_link_to("Forum", {:controller => "forum", :action => "index"}, :id => "forum-link") %>
+  <% if CONFIG["server_host"] == "moe.imouto.org" %>
+  <% end %>
+  <%= navbar_link_to("Help", :controller => "help", :action => "index") %>
+  <%= navbar_link_to("More&nbsp;&raquo;", :controller => "static", :action => "more") %>
+  <li>
+   <a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
+     <span>New&nbsp;mail</span>
+   </a>
+  </li>
+</ul>
+<% end %>

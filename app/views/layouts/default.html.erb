@@ -48,26 +48,7 @@
 <body>
   <div id="header">
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/", :id=>"ruu") %><span><%= tag_header(h(params[:tags])) %></span></h2>
-    <ul class="flat-list" id="navbar">
-      <%= navbar_link_to("My Account", {:controller => "user", :action => "home"}, :id => "my-account", :level => :member) %>
-      <%= navbar_link_to("Posts", :controller => "post", :action => "index") %>
-      <%= navbar_link_to("Comments", {:controller => "comment", :action => "index"}, :id => "comments-link") %>
-      <%= navbar_link_to("Notes", :controller => "note", :action => "index") %>
-      <%= navbar_link_to("Artists", :controller => "artist", :action => "index") if CONFIG["enable_artists"] %>
-      <%= navbar_link_to("Tags", :controller => "tag", :action => "index", :order => "date") %>
-      <%= navbar_link_to("Pools", :controller => "pool", :action => "index") %>
-      <%= navbar_link_to("Wiki", :controller => "wiki", :action => "show", :title => "help:home") %>
-      <%= navbar_link_to("Forum", {:controller => "forum", :action => "index"}, :id => "forum-link") %>
-      <% if CONFIG["server_host"] == "moe.imouto.org" %>
-      <% end %>
-      <%= navbar_link_to("Help", :controller => "help", :action => "index") %>
-      <%= navbar_link_to("More&nbsp;&raquo;", :controller => "static", :action => "more") %>
-      <li>
-	<a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
-	  <span>New&nbsp;mail</span>
-	</a>
-      </li>
-    </ul>
+    <%= render :partial => "layouts/menu" %>
   </div>
   <%= render :partial => "layouts/login" %>
 

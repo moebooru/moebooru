@@ -196,6 +196,48 @@ module ApplicationHelper
     return html.join("\n")
   end  
   
+  def make_menu_item(label, url_options = {}, options = {})
+    item = {
+      :label => label,
+      :dest => url_for(url_options),
+      :class_names => options[:class_names] || []
+    }
+    item[:html_id] = options[:html_id] if options[:html_id]
+    item[:name] = options[:name] if options[:name]
+
+    if options[:level] && need_signup?(options[:level]) then
+      item[:login] = true
+    end
+
+    if url_options[:controller].to_s == @current_request.parameters[:controller].to_s
+      item[:class_names] << "current-menu"
+    end
+
+    return item
+  end
+
+  def make_main_item(*options)
+    item = make_menu_item(*options)
+    @top_menu_items ||= []
+    @top_menu_items << item
+    return item.to_json
+  end
+
+  def make_sub_item(*options)
+    item = make_menu_item(*options)
+    return item.to_json
+  end
+
+  def get_help_action_for_controller(controller)
+    singular = ["forum", "wiki"]
+    help_action = controller.to_s
+    if singular.include?(help_action)
+      return help_action
+    else
+      return help_action.pluralize
+    end
+  end
+
   # Return true if the user can access the given level, or if creating an
   # account would.  This is only actually used for actions that require
   # privileged or higher; it's assumed that starting_level is no lower

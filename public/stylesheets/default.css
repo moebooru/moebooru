@@ -404,6 +404,64 @@ ul.bare-list li {
   list-style-type: none;
 }
 
+#main-menu .menu {
+  display: inline;
+  position: relative;
+  padding: 0px 2px 1px 2px;
+  margin-right: 0.6em;
+}
+#main-menu a:focus {
+  /* XXX: isn't working in IE7 */
+  outline: none;
+}
+#main-menu .selected-menu {
+  background: #ffffff;
+}
+#main-menu .current-menu > A {
+  color: #ffbbbb;
+}
+#main-menu .selected-menu > A {
+  color: #000000;
+}
+#main-menu .bolded {
+  font-weight: bold;
+}
+#main-menu .unread-topic {
+  font-weight: bold;
+}
+.dropdown-menu .separator {
+  width: 100%;
+  background: #AAAAAA;
+  height: 1px;
+  margin: 1px 0px;
+  /* For IE7: */
+  overflow: hidden;
+}
+.dropdown-menu {
+  position: absolute;
+  background: #000000;
+  padding: 2px 2px;
+
+  /* Some items, like forum titles, may be very long.  Clamp the box size. */
+  max-width: 20em;
+  overflow: hidden;
+
+  /* Dropdowns should render over most page elements, like the avatar crop overlay, but
+   * not on top of the login overlay. */
+  z-index: 100;
+  border: 1px solid #555555;
+}
+.dropdown-menu .submenu {
+  display: block;
+  width: auto;
+  padding: 0px 2px;
+  font-size: 140%;
+}
+.dropdown-menu .focused-menu-item {
+  background: #ffffff;
+  color: #000000;
+}
+
 ul.flat-list {
   display: block;
   margin: 0;
@@ -422,11 +480,11 @@ ul.flat-list li a {
   font-weight: normal;
 }
 
-ul.flat-list li a.forum-update {
+div.forum-update a {
   font-weight: bold;
 }
 
-ul.flat-list li a.comments-update {
+div.comments-update a {
   font-weight: bold;
 }
 
@@ -1344,7 +1402,7 @@ span.stars .star-3 { color:#ff0; }
 }
 
 #crop-preview-box {
-	z-index: 300;
+	z-index: 30;
 	margin-top: 5px;
 	position: fixed;
 }
@@ -1546,7 +1604,7 @@ span.stars .star-3 { color:#ff0; }
 .imgCrop_dragArea {
 	width: 100%;
 	height: 100%;
-	z-index: 200;
+	z-index: 10;
 	position: absolute;
 	top: 0;
 	left: 0;

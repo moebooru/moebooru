@@ -334,11 +334,8 @@ class ApplicationController < ActionController::Base
       end
 
       if @current_user.is_janitor_or_higher? then
-        if Post.count(:conditions => "status = 'flagged'") > 0 then
-          cookies["posts_flagged"] = "1"
-        else
-          cookies["posts_flagged"] = "0"
-        end
+        posts_flagged = Post.count(:conditions => "status = 'flagged'")
+        cookies["posts_flagged"] = posts_flagged.to_s
       end
 
       if @current_user.is_blocked?

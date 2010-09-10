@@ -50,6 +50,7 @@
 
     var posts_flagged = Cookie.get("posts_flagged");
     if (posts_flagged && parseInt(posts_flagged) > "0") {
+      posts_menu[posts_menu.length-1].label += " (" + posts_flagged + ")";
       posts_menu[posts_menu.length-1].class_names = ["bolded"];
     }
   <% end %>

@@ -390,10 +390,13 @@ MainMenu.prototype.add_forum_posts_to_submenu = function()
 
   for(var i = 0; i < forum_posts.length; ++i)
   {
-    /* [title, id, unread] */
+    /* [title, id, unread, last_page_no] */
     var fp = forum_posts[i];
+    var dest = "/forum/show/" + fp[1];
+    if(parseInt(fp[3]) > "1")
+	    dest += "?page=" + fp[3];
     menu.push({
-      label: fp[0], dest: "/forum/show/" + fp[1], class_names: ["forum-topic"]
+      label: fp[0], dest: dest, class_names: ["forum-topic"]
     });
 
     /* Bold the item if it's unread. */

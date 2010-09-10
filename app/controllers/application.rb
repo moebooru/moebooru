@@ -309,7 +309,7 @@ class ApplicationController < ActionController::Base
       else
         updated = fp.updated_at > @current_user.last_forum_topic_read_at
       end
-      [fp.title, fp.id, updated]
+      [fp.title, fp.id, updated, (fp.response_count / 30.0).ceil]
     }.to_json
 
     unless @current_user.is_anonymous?

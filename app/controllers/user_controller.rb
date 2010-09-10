@@ -151,7 +151,9 @@ class UserController < ApplicationController
     cookies[:login] = nil
     cookies[:pass_hash] = nil
 
-    respond_to_success("You are now logged out", :action => "home")
+    dest = { :action => "home" }
+    dest = params[:from] if params[:from]
+    respond_to_success("You are now logged out", dest)
   end
 
   def update

@@ -53,7 +53,8 @@ Cookie = {
       $("has-mail-notice").show()
     }
   
-    if (this.get("posts_flagged") == "1") {
+    var posts_flagged = this.get("posts_flagged");
+    if (posts_flagged && parseInt(posts_flagged) > "0") {
       if($("moderate"))
         $("moderate").addClassName("posts-flagged")
     }

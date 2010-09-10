@@ -47,7 +47,9 @@
   <% end %>
   <% if @current_user.is_janitor_or_higher? %>
     posts_menu.push(<%= make_sub_item("Moderate", :controller => :post, :action => "moderate") %>);
-    if(Cookie.get("posts_flagged") == "1") {
+
+    var posts_flagged = Cookie.get("posts_flagged");
+    if (posts_flagged && parseInt(posts_flagged) > "0") {
       posts_menu[posts_menu.length-1].class_names = ["bolded"];
     }
   <% end %>

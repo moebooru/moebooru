@@ -4,7 +4,7 @@
 
   var account_menu = [];
   <% if @current_user.is_anonymous? %>
-    account_menu.push(<%= make_sub_item("Login", {:controller => :user, :action => "login"}, :level => :member) %>);
+    account_menu.push(<%= make_sub_item("Login", {:controller => :user, :action => "login"}, :level => :member, :class_names => ["login-button"]) %>);
     account_menu.push(<%= make_sub_item("Reset&nbsp;Password", :controller => :user, :action => "reset_password") %>);
   <% else %>
     account_menu.push(<%= make_sub_item("Logout", :controller => :user, :action => "logout") %>);

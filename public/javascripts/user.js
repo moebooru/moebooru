@@ -221,7 +221,18 @@ User = {
     /* event is not available when we get to the callback in IE7. */
     var e = clone_event(event);
 
-    if(User.run_login(true, function() { target.simulate_anchor_click(e); }))
+    if(User.run_login(true, function() {
+        if(target.hasClassName("login-button"))
+        {
+          /* This is a login button, and not an action that happened to need login.  After
+           * a successful login, don't click the button; that'll just go to the login page.
+           * Instead, just reload the current page. */
+          Cookie.put("notice", "You have been logged in.");
+          document.location.reload();
+          return;
+        }
+        target.simulate_anchor_click(e);
+      }))
       return true;
 
     /* Login is running, so stop the event.  Don't just return false; call stop(), so

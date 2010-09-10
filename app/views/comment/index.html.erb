@@ -1,11 +1,4 @@
 <div id="comment-list">
-  <div id="search" style="margin-bottom: 1em;">
-    <% form_tag({:action => "search"}, :method => :get) do %>
-      <%= text_field_tag "query", params[:query], :size => 40 %>
-      <%= submit_tag "Search"%>
-    <% end %>
-  </div>
-
   <% if @posts.empty? %>
     <h4>No comments.</h4>
   <% end %>

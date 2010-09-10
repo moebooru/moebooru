@@ -29,6 +29,7 @@ class Dmail < ActiveRecord::Base
   end
   
   def to_name
+    return "" if to_id.nil?
     User.find_name(to_id)
   end
   

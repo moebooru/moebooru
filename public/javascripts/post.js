@@ -412,8 +412,28 @@ Post = {
       count += bld
       if (Post.blacklist_options.replace)
       {
-        thumb.src = bld ? "/blacklisted-preview.png" : post.preview_url
-        thumb.removeClassName("javascript-hide");
+        if(bld)
+        {
+          thumb.src = "about:blank";
+
+          /* Trying to work around Firefox displaying the old thumb.src briefly before loading
+           * the blacklisted thumbnail, even though they're applied at the same time: */
+          var f = function(event)
+          {
+            var img = event.target;
+            img.stopObserving("load");
+            img.stopObserving("error");
+            img.src = "/blacklisted-preview.png";
+            img.removeClassName("javascript-hide");
+          }
+          thumb.observe("load", f)
+          thumb.observe("error", f)
+        }
+        else
+        {
+          thumb.src = post.preview_url;
+          thumb.removeClassName("javascript-hide");
+        }
       }
       else
       {

@@ -29,10 +29,14 @@ class PoolController < ApplicationController
     if params[:query]
       conds = []
       cond_params = []
+      value_index_query = []
       params[:query].split(/ /).each { |word|
-        conds.push("lower(name) like lower(?)")
-        cond_params.push("%" + word.to_escaped_for_sql_like + "%")
+        value_index_query << "(" + Post.geneate_sql_escape_helper(word).join(" | ") + ")"
       }
+      if value_index_query.any? then
+        conds << """search_index @@ to_tsquery('pg_catalog.english', E'" + value_index_query.join(" & ") + "')"""
+      end
+
       options[:conditions] = [conds.join(" AND "), *cond_params]
     end
 

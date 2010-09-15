@@ -89,6 +89,14 @@ Object.extend(Element.Methods, {
       return $(element).showBase();
     else
       return $(element).hide();
+  },
+  isParentNode: function(element, parentNode) {
+    while(element) {
+      if(element == parentNode)
+        return true;
+      element = element.parentNode;
+    }
+    return false;
   }
 });
 Element.addMethods()

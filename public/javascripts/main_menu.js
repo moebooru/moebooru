@@ -1,3 +1,37 @@
+var align_element_to_menu = function(submenu, menu_item_elem)
+{
+  /* Align the top of the dropdown to the bottom-left of the menu link. */
+  var offset = menu_item_elem.cumulativeOffset();
+  var left = offset.left - 3;
+
+  {
+    /* If this would result in the menu falling off the right side of the screen,
+     * push it left. */
+    var right_edge = submenu.offsetWidth + offset.left;
+    var right_overlap = right_edge - document.body.offsetWidth;
+    if(right_overlap > 0)
+      left -= right_overlap;
+  }
+
+  submenu.style.left = left + "px";
+
+  /* offset.top is the top of the menu item text. */
+  var bottom = offset.top;
+
+  /* We want to align to the bottom, not the top, so add the height of the text. */
+  if(menu_item_elem.getBoundingClientRect)
+  {
+    /* This is needed in Chrome, where the scrollHeight of our text item is always 0. */
+    var height = menu_item_elem.getBoundingClientRect().bottom - menu_item_elem.getBoundingClientRect().top;
+    bottom += height;
+  }
+  else
+  {
+    bottom += menu_item_elem.scrollHeight;
+  }
+  submenu.style.top = bottom + "px";
+}
+
 function MainMenu(container, def)
 {
   this.container = container;
@@ -47,7 +81,7 @@ MainMenu.prototype.init = function()
   }
 
   var bound_remove_submenu = this.remove_submenu.bindAsEventListener(this);
-  document.observe("blur", bound_remove_submenu);
+  Element.observe(window, "blur", bound_remove_submenu);
   Element.observe(window, "pageshow", bound_remove_submenu);
   Element.observe(window, "pagehide", bound_remove_submenu);
 }
@@ -118,34 +152,7 @@ MainMenu.prototype.show_submenu = function(parent_menu_element, def)
   $(this.submenu).replace(html);
   this.submenu = this.container.down(".dropdown-menu");
 
-  /* Align the top of the dropdown to the bottom-left of the menu link. */
-  var offset = menu_item_elem.cumulativeOffset();
-  var left = offset.left - 3;
-  {
-    /* If this would result in the menu falling off the right side of the screen,
-     * push it left. */
-    var right_edge = this.submenu.offsetWidth + offset.left;
-    var right_overlap = right_edge - document.body.offsetWidth;
-    if(right_overlap > 0)
-      left -= right_overlap;
-  }
-  this.submenu.style.left = left + "px";
-
-  /* offset.top is the top of the menu item text. */
-  var bottom = offset.top;
-
-  /* We want to align to the bottom, not the top, so add the height of the text. */
-  if(menu_item_elem.getBoundingClientRect)
-  {
-    /* This is needed in Chrome, where the scrollHeight of our text item is always 0. */
-    var height = menu_item_elem.getBoundingClientRect().bottom - menu_item_elem.getBoundingClientRect().top;
-    bottom += height;
-  }
-  else
-  {
-    bottom += menu_item_elem.scrollHeight;
-  }
-  this.submenu.style.top = bottom + "px";
+  align_element_to_menu(this.submenu, menu_item_elem);
 
   var bound_remove_submenu = this.remove_submenu.bind(this);
   var menu_item_mouseover_event = function(event) {
@@ -169,7 +176,7 @@ MainMenu.prototype.show_submenu = function(parent_menu_element, def)
       elem.observe("click", function(event, item)
       {
         event.stop();
-        item.func();
+        item.func(event, this, def, item);
       }.bindAsEventListener(this, item));
     }
 
@@ -285,8 +292,6 @@ MainMenu.prototype.mouseup = function(event)
   this.stop_drag();
   if(!menu_was_shown)
     return;
-
-  //alert(menu_was_shown);
 
   /* We'll only get this event if the menu was opened.  Prevent the click from
    * occuring if the menu was opened.  Just stopping the event won't do it. */
@@ -417,4 +422,113 @@ MainMenu.prototype.mark_forum_posts_read = function()
     menu[i].class_names = menu[i].class_names.reject(function(x) { return x == "unread-topic"; });
   }
 }
+
+/* This shows a popup search box, contained within container like a submenu, aligned
+ * to the specified element (normally a menu item).  The popup will destroy itself when
+ * finished. */
+function QuickSearch(container, html, align_to)
+{
+  html = "<div class='dropdown-menu'>" + html + "</div>";
+
+  this.container = container;
+
+  this.hide_event = this.hide_event.bindAsEventListener(this);
+  this.on_document_keydown_event = this.on_document_keydown_event.bindAsEventListener(this);
+  this.document_mousedown_event = this.document_mousedown_event.bindAsEventListener(this);
+
+  /* Create the contents. */
+  this.submenu = document.createElement("div");
+
+  /* Note that we should be positioning relative to the viewport; our relative parent
+   * should be document.body.  However, don't parent our submenu directly to the body,
+   * since that breaks on some pages in IE8. */
+  this.container.insertBefore(this.submenu, this.container.firstChild);
+  $(this.submenu).replace(html);
+  this.submenu = this.container.down(".dropdown-menu");
+
+  align_element_to_menu(this.submenu, align_to);
+
+  /* We watch for escape presses on the document instead of the element, so even if
+   * the element doesn't receive focus for some reason, pressing escape still closes
+   * it. */
+  document.observe("keydown", this.on_document_keydown_event);
+  document.observe("mousedown", this.document_mousedown_event);
+
+  Element.observe(window, "pageshow", this.hide_event);
+  Element.observe(window, "pagehide", this.hide_event);
+
+  /* This stuff is specific to the actual content of the box: focus the form, and
+   * hide it on submit. */
+  this.submenu.down(".default").focus();
+  this.submenu.select("form").each(function(e) {
+    e.observe("submit", this.hide_event);
+  }.bind(this));
+}
+
+QuickSearch.prototype.on_document_keydown_event = function(event) {
+  if (event.keyCode == Event.KEY_ESC)
+    this.hide();
+}
+
+QuickSearch.prototype.document_mousedown_event = function(event)
+{
+  if($(event.target).isParentNode(this.submenu))
+    return;
+  this.hide();
+}
+
+QuickSearch.prototype.hide_event = function(event)
+{
+  this.hide();
+};
+
+QuickSearch.prototype.hide = function()
+{
+  if(!this.submenu)
+    return;
+
+  /* Remove the menu from the document.  We need to work around a FF3.6 bug here: if
+   * we simply remove the item from the document while a form dropdown box is open,
+   * the dropdown won't disappear.  We need to hide() first to cause it to be dropped,
+   * and defer removing the element until after we return in order to let it take
+   * effect. */
+  this.submenu.hide();
+  (function(elem) {
+    elem.parentNode.removeChild(elem);
+  }).curry(this.submenu).defer();
+
+  this.submenu = null;
+  document.stopObserving("keydown", this.on_document_keydown_event);
+  document.stopObserving("mousedown", this.document_mousedown_event);
+  Element.stopObserving(window, "blur", this.hide_event);
+  Element.stopObserving(window, "pageshow", this.hide_event);
+  Element.stopObserving(window, "pagehide", this.hide_event);
+}
+
+/* Create functions that can be used as the func parameter to a menu item to
+ * open quick searches. */
+function MakeSearchHandler(search_path, id, submit_button_text)
+{
+  var ShowSearch = function(event, menu, def, item)
+  {
+    var html = "";
+    html += '<form action="' + search_path + '" method="get">';
+    html += '<input id="' + id + '" name="' + id + '" size="30" type="text" class="default">';
+    html += '<br>';
+    html += '<input style="margin-top: 0.25em;" type="submit" value="' + submit_button_text + '">';
+    html += '</form>';
+
+    new QuickSearch(menu.container, html, menu.get_elem_for_top_item(def));
+  }
+  return ShowSearch;
+}
+
+ShowPostSearch = MakeSearchHandler("/post", "tags", "Search posts");
+ShowCommentSearch = MakeSearchHandler("/comment/search", "query", "Search comments");
+ShowNoteSearch = MakeSearchHandler("/note/search", "query", "Search notes");
+ShowArtistSearch = MakeSearchHandler("/artist", "name", "Search artists");
+ShowTagSearch = MakeSearchHandler("/tag", "name", "Search tags");
+ShowPoolSearch = MakeSearchHandler("/pool", "query", "Search pools");
+ShowWikiSearch = MakeSearchHandler("/wiki", "query", "Search wiki");
+ShowForumSearch = MakeSearchHandler("/forum/search", "query", "Search forums");
 

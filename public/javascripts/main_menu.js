@@ -1,4 +1,3 @@
-var x = 0;
 function MainMenu(container, def)
 {
   this.container = container;

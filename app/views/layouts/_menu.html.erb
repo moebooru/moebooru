@@ -136,6 +136,7 @@
   <% if [:post, :comment, :note, :artist, :tag, :wiki, :pool, :forum].include?(current_controller) then %>
     help_menu.push(<%= make_sub_item("#{current_controller.to_s.capitalize} Help", {:controller => :help, :action => get_help_action_for_controller(current_controller)}) %>);
   <% end %>
+  help_menu.push(<%= make_sub_item("Site Help", {:controller => :help}) %>);
   def.push(<%= make_main_item("Help", {:controller => :help}, {:name => "help"}) %>);
   def[def.length-1].sub = help_menu;
 

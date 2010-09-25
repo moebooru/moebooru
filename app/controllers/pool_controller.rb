@@ -2,7 +2,7 @@ class PoolController < ApplicationController
   layout "default"
   before_filter :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]
   before_filter :post_member_only, :only => [:create]
-  before_filter :contributor_only, :only => [:copy]
+  before_filter :contributor_only, :only => [:copy, :transfer_metadata]
   helper :post
   
   def index
@@ -275,5 +275,59 @@ class PoolController < ApplicationController
       control_path = pool.get_zip_control_file_path(params)
       redirect_to pool.get_zip_url(control_path, params)
     end
+  end
+
+  def transfer_metadata
+    @to = Pool.find(params[:to])
+
+    if not params[:from] then
+      @from = nil
+      return
+    end
+
+    @from = Pool.find(params[:from])
+
+    from_posts = @from.pool_posts
+    to_posts = @to.pool_posts
+
+    if from_posts.length == to_posts.length then
+      @truncated = false
+    else
+      @truncated = true
+      min_posts = [from_posts.length, to_posts.length].max
+      from_posts = from_posts.slice(0, min_posts)
+      to_posts = to_posts.slice(0, min_posts)
+    end
+
+    @posts = []
+    from_posts.each_index { |idx|
+      data = {}
+      from = from_posts[idx].post
+      to = to_posts[idx].post
+      data[:from] = from
+      data[:to] = to
+
+      from_tags = from.tags.split(" ")
+      to_tags = to.tags.split(" ")
+
+      tags = []
+      tags.concat(from_tags)
+
+      if from.rating != to.rating then
+        tags << "rating:%s" % to.rating
+      end
+
+      if from.is_shown_in_index != to.is_shown_in_index then
+        tags << (from.is_shown_in_index ? "show":"hide")
+      end
+
+      if from.parent_id != to.id then
+        tags << "child:%i" % from.id
+      end
+
+      data[:tags] = tags.join(" ")
+
+      @posts << data
+    }
   end
 end

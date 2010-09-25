@@ -183,7 +183,7 @@ class PostController < ApplicationController
     # updated everything.
     ret = Post.find_by_sql(["SELECT * FROM posts WHERE id IN (?)", ids.map { |id, t| id }])
 
-    respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:posts => ret})
+    respond_to_success("Posts updated", {:action => "index"}, :api => {:posts => ret})
   end
 
   def delete

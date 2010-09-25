@@ -151,7 +151,7 @@ module PostTagMethods
       self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
     end
 
-    metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent):/}
+    metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent|child):/}
     
     transaction do
       metatags.each do |metatag|
@@ -209,6 +209,16 @@ module PostTagMethods
         
           if CONFIG["enable_parent_posts"] && (Post.exists?(parent_id) or parent_id == 0)
             Post.set_parent(id, parent_id)
+          end
+
+        when /^child:(\d*)/
+          child_id = $1
+          if CONFIG["enable_parent_posts"] && Post.exists?(child_id)
+            # Don't just use set_parent, or history won't be saved, since it saves directly
+            # to the database.
+            p = Post.find(child_id)
+            p.parent_id = self.id
+            p.save!
           end
         end
       end

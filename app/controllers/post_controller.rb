@@ -155,8 +155,16 @@ class PostController < ApplicationController
 
     ids = {}
     params["post"].each { |post|
-      post_id = post[:id]
-      post.delete(:id)
+      if post.is_a?(Array) then
+        # We prefer { :id => 1, :rating => 's' }, but accept ["123", {:rating => 's'}], since that's
+        # what we'll get from HTML forms.
+        post_id = post[0]
+        post = post[1]
+      else
+        post_id = post[:id]
+        post.delete(:id)
+      end
+
       @post = Post.find(post_id)
       ids[@post.id] = true
 
@@ -183,7 +191,9 @@ class PostController < ApplicationController
     # updated everything.
     ret = Post.find_by_sql(["SELECT * FROM posts WHERE id IN (?)", ids.map { |id, t| id }])
 
-    respond_to_success("Posts updated", {:action => "index"}, :api => {:posts => ret})
+    url = params[:url]
+    url = {:action => "index"} if not url
+    respond_to_success("Posts updated", url, :api => {:posts => ret})
   end
 
   def delete

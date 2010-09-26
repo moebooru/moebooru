@@ -85,7 +85,6 @@ module PostTagMethods
   # Return the tags we display in URLs, page titles, etc.
   def title_tags
     ret = ""
-    ret << "hentai " if self.rating == "e"
     ret << cached_tags
     ret
   end

@@ -43,7 +43,7 @@ function MainMenu(container, def)
   this.dragging = null;
   this.dragging_over = null;
 
-  this.event_mouseup = this.mouseup.bindAsEventListener(this);
+  this.document_mouseup_event = this.document_mouseup.bindAsEventListener(this);
   this.mousemove_during_dropdown_timer_event = this.mousemove_during_dropdown_timer.bindAsEventListener(this);
 }
 
@@ -241,7 +241,7 @@ MainMenu.prototype.stop_drag = function()
   this.dragging_over = null;
   this.hovering_over_item(null);
 
-  document.stopObserving("mouseup", this.event_mouseup);
+  document.stopObserving("mouseup", this.document_mouseup_event);
 
   this.stop_dropdown_timer();
   this.remove_submenu();
@@ -260,7 +260,7 @@ MainMenu.prototype.top_menu_mousedown = function(event, def)
   /* Stop the previous drag event, which probably shouldn't still be active. */
   this.stop_drag();
 
-  document.observe("mouseup", this.event_mouseup);
+  document.observe("mouseup", this.document_mouseup_event);
 
   this.dragging = [event.clientX, event.clientY];
   this.dragging_over = def;
@@ -276,7 +276,7 @@ MainMenu.prototype.top_menu_mousedown = function(event, def)
   }.bind(this), 250);
 }
 
-MainMenu.prototype.mouseup = function(event)
+MainMenu.prototype.document_mouseup = function(event)
 {
   if(!event.isLeftClick())
     return;

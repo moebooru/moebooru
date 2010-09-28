@@ -67,6 +67,8 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute_calculate_tag_subscriptions
+    return
+
     return if Cache.get("delay-tag-sub-calc")
     Cache.put("delay-tag-sub-calc", "1", 15.minutes)
     TagSubscription.process_all

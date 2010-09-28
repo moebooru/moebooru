@@ -44,6 +44,7 @@ function MainMenu(container, def)
   this.dragging_over = null;
 
   this.document_mouseup_event = this.document_mouseup.bindAsEventListener(this);
+  this.document_click_event = this.document_click.bindAsEventListener(this);
   this.mousemove_during_dropdown_timer_event = this.mousemove_during_dropdown_timer.bindAsEventListener(this);
 }
 
@@ -242,6 +243,7 @@ MainMenu.prototype.stop_drag = function()
   this.hovering_over_item(null);
 
   document.stopObserving("mouseup", this.document_mouseup_event);
+  document.stopObserving("click", this.document_click_event);
 
   this.stop_dropdown_timer();
   this.remove_submenu();
@@ -261,6 +263,7 @@ MainMenu.prototype.top_menu_mousedown = function(event, def)
   this.stop_drag();
 
   document.observe("mouseup", this.document_mouseup_event);
+  document.observe("click", this.document_click_event);
 
   this.dragging = [event.clientX, event.clientY];
   this.dragging_over = def;
@@ -274,6 +277,22 @@ MainMenu.prototype.top_menu_mousedown = function(event, def)
     if(this.dragging_over)
       this.show_submenu(event.target, this.dragging_over);
   }.bind(this), 250);
+}
+
+/*
+ * We received a click while the mouse was already held down.  This probably means the
+ * user right- or middle-clicked a menu item while holding the menu open with the left
+ * mouse button.  In this case, let the browser do whatever it's going to do (probably
+ * open the menu item in a new window), and simply close the menu so releasing the left
+ * button doesn't activate the item a second time.
+ *
+ * Ordinary menu selections are handled in document_mouseup.
+ */
+MainMenu.prototype.document_click = function(event)
+{
+  if(event.isLeftClick())
+    return;
+  this.stop_drag();
 }
 
 MainMenu.prototype.document_mouseup = function(event)

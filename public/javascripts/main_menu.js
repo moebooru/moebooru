@@ -72,9 +72,9 @@ MainMenu.prototype.init = function()
     /* Implement the dropdown timer.  Start counting when the mouse goes down, and stop if
      * the mouse comes up for any reason.  This prevents the dropdown from flickering open
      * every time a top-level link is clicked. */
-    a.observe("mousedown", this.mousedown.bindAsEventListener(this, item));
-    a.observe("click", this.click.bindAsEventListener(this));
-    a.observe("mouseover", this.mouseover.bindAsEventListener(this, item));
+    a.observe("mousedown", this.top_menu_mousedown.bindAsEventListener(this, item));
+    a.observe("click", this.top_menu_click.bindAsEventListener(this));
+    a.observe("mouseover", this.top_menu_mouseover.bindAsEventListener(this, item));
 
     /* IE8 needs this one to prevent dragging: */
     a.observe("dragstart", function(event) { event.stop(); }.bindAsEventListener(this));
@@ -247,7 +247,7 @@ MainMenu.prototype.stop_drag = function()
   this.remove_submenu();
 };
 
-MainMenu.prototype.mousedown = function(event, def)
+MainMenu.prototype.top_menu_mousedown = function(event, def)
 {
   if(!event.isLeftClick())
     return;
@@ -340,7 +340,7 @@ MainMenu.prototype.mousemove_during_dropdown_timer = function(event)
   this.show_submenu(event.target, this.dragging_over);
 };
 
-MainMenu.prototype.click = function(event)
+MainMenu.prototype.top_menu_click = function(event)
 {
   this.stop_drag();
 
@@ -354,7 +354,7 @@ MainMenu.prototype.click = function(event)
   }
 }
 
-MainMenu.prototype.mouseover = function(event, def)
+MainMenu.prototype.top_menu_mouseover = function(event, def)
 {
   if(this.dragging)
   {

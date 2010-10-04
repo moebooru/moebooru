@@ -268,3 +268,7 @@ CONFIG["tag_subscription_post_limit"] = 200
 # Max number of fav tags per user
 CONFIG["max_tag_subscriptions"] = 5
 
+# If true, direct links in the index will point to the JPEG version if available, rather
+# than the PNG version.
+CONFIG["disable_jpeg_direct_links"] = true
+

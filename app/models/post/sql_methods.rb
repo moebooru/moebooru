@@ -34,9 +34,10 @@ module PostSqlMethods
 
     def geneate_sql_escape_helper(array)
       array.map do |token|
+        next if token.empty?
         escaped_token = token.gsub(/\\|'/, '\0\0\0\0').gsub("?", "\\\\77")
         "''" + escaped_token + "''"
-      end
+      end.compact
     end
 
     def generate_sql(q, options = {})

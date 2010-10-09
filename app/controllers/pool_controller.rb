@@ -30,9 +30,7 @@ class PoolController < ApplicationController
       conds = []
       cond_params = []
       value_index_query = []
-      params[:query].split(/ /).each { |word|
-        value_index_query << "(" + Post.geneate_sql_escape_helper(word).join(" | ") + ")"
-      }
+      value_index_query << "(" + Post.geneate_sql_escape_helper(params[:query].split(/ /)).join(" & ") + ")"
       if value_index_query.any? then
         conds << """search_index @@ to_tsquery('pg_catalog.english', E'" + value_index_query.join(" & ") + "')"""
       end

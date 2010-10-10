@@ -1,4 +1,4 @@
-require 'vendor/plugins/net-geoip/geoip'
+require "#{RAILS_ROOT}/vendor/plugins/net-geoip/geoip"
 
 module GeoIP
   # Given an IP, return a two-letter country code.  If the IP isn't known or the GeoIP

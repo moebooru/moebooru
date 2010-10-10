@@ -1,0 +1,41 @@
+$Id: README,v 1.5 2002/10/09 06:29:48 sean Exp $
+
+README for Net::GeoIP
+
+Prerequisites:  libGeoIP
+
+To compile:
+	ruby extconf.rb
+	make
+	make install
+
+To test:
+	rubytest
+
+To use:
+
+	require 'net/geoip'
+	Net::GeoIP::TYPE_DISK                 >> access type constant
+	Net::GeoIP::TYPE_RAM                  >> access type constant
+
+	g = Net::GeoIP.new([access_type])
+	g = Net::GeoIP.open(db_filename[, access_type])
+	Net::GeoIP.update_database(your_key_here[,debug])
+
+	g.country_code_by_addr('127.0.0.1')   >> 'US'
+	g.country_code_by_name('yahoo.com')   >> 'US'
+	g.country_code3_by_addr('127.0.0.1')  >> 'USA'
+	g.country_code3_by_name('yahoo.com')  >> 'USA'
+	g.country_name_by_addr('127.0.0.1')   >> 'United States'
+	g.country_name_by_name('yahoo.com')   >> 'United States'
+	g.country_id_by_addr('127.0.0.1')     >> 225
+	g.country_id_by_name('yahoo.com')     >> 225
+	g.region_by_addr('127.0.0.1')         >> ?? Can't test this
+	g.region_by_name('yahoo.com')         >> ?? Can't test this
+
+	g.database_info()                     >> Misc database info
+
+
+If an address doesn't have a country code, code3, or name, the library
+returns nil.  For country_id_by_*, Net::GeoIP returns 0 for countries
+it can't find.

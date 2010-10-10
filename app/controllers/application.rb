@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'geoip'
 
 class ApplicationController < ActionController::Base
   # This is a proxy class to make various nil checks unnecessary
@@ -125,6 +126,10 @@ class ApplicationController < ActionController::Base
       @current_request = request
     end
 
+    def set_country
+      @current_user_country = GeoIP.get_country_for_ip(request.remote_ip)
+    end
+
     CONFIG["user_levels"].each do |name, value|
       normalized_name = name.downcase.gsub(/ /, "_")
 
@@ -222,6 +227,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_title
   before_filter :set_current_user
   before_filter :set_current_request
+  before_filter :set_country
   before_filter :check_ip_ban
   after_filter :init_cookies
   

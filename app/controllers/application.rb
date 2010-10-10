@@ -318,6 +318,8 @@ class ApplicationController < ActionController::Base
       [fp.title, fp.id, updated, (fp.response_count / 30.0).ceil]
     }.to_json
 
+    cookies["country"] = @current_user_country
+
     unless @current_user.is_anonymous?
       cookies["user_id"] = @current_user.id.to_s
 

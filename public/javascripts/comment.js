@@ -68,5 +68,13 @@ Comment = {
         notice("Error deleting comment: " + resp.reason)
       }
     })
+  },
+
+  show_translated: function(id, translated) {
+    var element = $("c" + id);
+    element.down(".body").show(translated);
+    element.down(".untranslated-body").show(!translated);
+    element.down(".show-translated").show(translated);
+    element.down(".show-untranslated").show(!translated);
   }
 }

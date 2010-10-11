@@ -1058,6 +1058,11 @@ div.response-list > div.comment > div.content {
   margin: 0;
 }
 
+.translated-notice {
+  color: #AAA;
+  font-style: italic;
+}
+
 div.response-list > div.comment > div.content > div.post-footer {
   margin-top: 1em;
   color: #CCC;

@@ -1,4 +1,4 @@
-require 'lib/translate'
+require 'translate'
 
 class Comment < ActiveRecord::Base
   validates_format_of :body, :with => /\S/, :message => 'has no content'

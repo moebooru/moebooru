@@ -90,7 +90,7 @@ class AddFtsToHistory < ActiveRecord::Migration
   end
 
   def self.down
-    execute "ATLER TABLE history_changes DROP COLUMN value_index"
+    execute "ALTER TABLE history_changes DROP COLUMN value_index"
   end
 end
 

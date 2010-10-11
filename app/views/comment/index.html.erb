@@ -41,7 +41,14 @@
   <div id="paginator">
     <%= will_paginate(@posts) %>
   </div>
-  
+
+  <% if @page_uses_translations then %>
+    <% content_for("above_footer") do %>
+      Comment translation provided by <a href="http://translate.google.com">Google</a>.
+      <br>
+    <% end %>
+  <% end %>
+
   <script type="text/javascript">
     <% @posts.each do |post| %>
       Post.register(<%= post.to_json %>)

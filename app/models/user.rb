@@ -569,6 +569,33 @@ class User < ActiveRecord::Base
     end
   end
   
+  module UserLanguageMethods
+    def self.included(m)
+      m.validates_format_of :language, :with => /^([a-z\-]+)|$/
+      m.validates_format_of :secondary_languages, :with => /^([a-z\-]+(,[a-z\0]+)*)?$/
+      m.before_validation :commit_secondary_languages
+    end
+
+    def secondary_language_array=(langs)
+      @secondary_languages = langs
+    end
+
+    def secondary_language_array
+      return @secondary_languages if @secondary_languages
+      return self.secondary_languages.split(",")
+    end
+
+    def commit_secondary_languages
+      return if not @secondary_languages
+
+      if @secondary_languages.include?("none") then
+        self.secondary_languages = ""
+      else
+        self.secondary_languages = @secondary_languages.join(",")
+      end
+    end
+  end
+ 
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
   validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]
@@ -586,6 +613,7 @@ class User < ActiveRecord::Base
   include UserInviteMethods
   include UserAvatarMethods
   include UserTagSubscriptionMethods
+  include UserLanguageMethods
 
   @salt = CONFIG["user_password_salt"]
   

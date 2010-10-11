@@ -47,6 +47,10 @@ class ApplicationController < ActionController::Base
       false
     end
 
+    def language; ""; end
+    def secondary_languages; ""; end
+    def secondary_language_array; []; end
+
     CONFIG["user_levels"].each do |name, value|
       normalized_name = name.downcase.gsub(/ /, "_")
 
@@ -224,12 +228,21 @@ class ApplicationController < ActionController::Base
   include CacheHelper
   #local_addresses.clear
   
+  before_filter :time_start
   before_filter :set_title
   before_filter :set_current_user
   before_filter :set_current_request
   before_filter :set_country
   before_filter :check_ip_ban
   after_filter :init_cookies
+  after_filter :time_end
+  def time_start
+    @start = Time.now
+  end
+  def time_end
+    t = Time.now - @start
+    File.open("/tmp/temp", 'a+') {|f| f.write("%.3f #{@current_user_country} %15s #{request.request_uri}\n" % [t, request.remote_ip])}
+  end
   
   protected :build_cache_key
   protected :get_cache_key

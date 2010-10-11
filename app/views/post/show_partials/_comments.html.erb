@@ -1,3 +1,11 @@
 <div id="comments" style="margin-top: 1em; max-width: 800px; width: 100%;">
   <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
 </div>
+
+<% if @page_uses_translations then %>
+  <% content_for("above_footer") do %>
+    Comment translation provided by <a href="http://translate.google.com">Google</a>.
+    <br>
+  <% end %>
+<% end %>
+

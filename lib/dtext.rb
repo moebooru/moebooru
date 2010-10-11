@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'cgi'
+require 'hpricot'
 
 module DText
   def parse_inline(str)
@@ -127,5 +128,70 @@ module DText
   module_function :parse_inline
   module_function :parse_list
   module_function :parse
+
+  # Split a DText-formatted block (an HTML fragment) into individual quote blocks.  This
+  # changes:
+  # 
+  # <div><blockquote>text</blockquote></div>
+  #
+  # to
+  # <div><block id='1'/></div>
+  # and
+  # <blockquote>text</blockquote>
+  #
+  # This allows translating each quotation separately.  These blocks are reconstructed into
+  # a single HTML fragment using combine_blocks.
+  def split_block(doc, blocks, next_seq=[1])
+    while true
+      element = doc.at("//blockquote")
+      break if element.nil?
+
+      seq = next_seq[0]
+      next_seq[0] += 1
+
+      element.swap("<block id='%i'/>" % seq)
+
+      element = split_block(element, blocks, next_seq)
+      blocks[seq] = element.to_html
+    end
+
+    return doc
+  end
+
+  def split_blocks(html, blocks)
+    doc = Hpricot(html)
+    block = split_block(doc, blocks)
+    blocks[0] = block.to_html
+  end
+
+  def combine_block(top, blocks)
+    doc = Hpricot(top)
+    doc.search("block").each { |b|
+      id = b.get_attribute("id").to_i
+      block = blocks[id]
+      final_block = combine_block(block, blocks)
+      new_block = b.swap(final_block)
+    }
+    return doc.to_html
+  end
+
+  def combine_blocks(blocks)
+    return combine_block(blocks[0], blocks)
+  end
+
+  # Add the specified class to all top-level HTML elements.
+  def add_html_class(html, add)
+    doc = Hpricot(html)
+    doc.children.each { |c|
+      cls = c.get_attribute("class")
+      cls ||= ""
+      cls += " " if not cls.empty?
+      cls += add
+      c.set_attribute("class", cls)
+    }
+    return doc.to_html
+  end
+
+  module_function :split_block, :split_blocks, :combine_block, :combine_blocks, :add_html_class
 end
 

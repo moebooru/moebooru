@@ -174,7 +174,6 @@ module HistoryHelper
     html = ""
 
     if !options[:show_name] && history.group_by_table == "tags"
-      p history.history_changes.first.obj.pretty_name
       tag = history.history_changes.first.obj
       html << tag_link(tag.name)
       html << ": "

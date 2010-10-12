@@ -28,7 +28,7 @@
             <strong>Tags</strong>
             <% post.cached_tags.split(/ /).each do |name| %>
               <span class="tag-type-<%= Tag.type_name(name) %>">
-                <a href="/post/index?tags=<%= h name %>"><%= h name.tr("_", " ") %></a>
+                <a href="/post/index?tags=<%= u name %>"><%= h name.tr("_", " ") %></a>
               </span>
             <% end %>
           </div>

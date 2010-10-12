@@ -5,9 +5,7 @@
   <title><%= @page_title %></title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
-  <%= @content_for_html_header %>
-  <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
-  <%= stylesheet_link_tag "default" %>
+
   <%# The javascript-hide class is used to hide elements (eg. blacklisted posts) from JavaScript. %>
   <script type="text/javascript">
     var css = ".javascript-hide { display: none !important; }";
@@ -30,6 +28,10 @@
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
   })();
   </script>
+
+  <%= @content_for_html_header %>
+  <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
+  <%= stylesheet_link_tag "default" %>
 
   <%= javascript_include_tag :all, :cache => "application" %>
   <!--[if lt IE 8]>

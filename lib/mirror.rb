@@ -143,6 +143,18 @@ module Mirrors
     }
     server ||= mirrors[0]
 
+    # If this server has aliases, and an ID has been specified, pick a random server alias
+    # with the ID as a seed so we always use the same server name for the same image.
+    if not options[:id].nil? and not server[:aliases].nil? and options[:use_aliases] then
+      server_count = server[:aliases].length + 1
+      server_index = options[:id] % server_count
+      if server_index == 0 then
+        return server[:server]
+      else
+        return server[:aliases][server_index - 1]
+      end
+    end
+
     return server[:server]
   end
   else

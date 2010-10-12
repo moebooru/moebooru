@@ -8,8 +8,9 @@ module PostImageStoreMethods
       "%s/%s" % [md5[0,2], md5[2,2]]
     end
 
-    def select_random_image_server(*options)
-      Mirrors.select_image_server(self.is_warehoused?, self.created_at.to_i, *options)
+    def select_random_image_server(options = {})
+      options[:id] = self.id
+      Mirrors.select_image_server(self.is_warehoused?, self.created_at.to_i, options)
     end
 
     def file_path
@@ -42,7 +43,7 @@ module PostImageStoreMethods
           CONFIG["url_base"] + "/deleted-preview.png"
 
         elsif image?
-          select_random_image_server(:preview => true) + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
+          select_random_image_server(:preview => true, :use_aliases => true) + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
           CONFIG["url_base"] + "/download-preview.png"
         end

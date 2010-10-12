@@ -1,5 +1,5 @@
 <div id="static-more">
-  <h2><%= link_to CONFIG['app_name'], '/' %></h2>
+  <h2><%= link_to CONFIG['app_name'], '/', :id => "site-link" %></h2>
   <h5>You have been banned: <%= @ban.reason %></h5>
   
   <% if @ban.expires_at then %>

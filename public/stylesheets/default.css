@@ -149,7 +149,7 @@ div#static-more h2 {
 }
 
 
-div#static-more h2 a {
+#site-link {
   display: block;
   font-size: 0px;
   background: transparent url("../images/logo_small.png") no-repeat scroll top left;

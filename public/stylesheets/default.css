@@ -750,20 +750,6 @@ ul#subnavbar li {
 div#header #site-title {
 }
 
-div#header ul#navbar {
-  margin: 0;
-}
-
-div#header ul#navbar li {
-}
-
-div#header ul#navbar li.current-page {
-}
-
-div#header ul#navbar li.current-page a {
-/*  font-weight: bold; */
-}
-
 div#header ul#subnavbar {
   padding: 5px 20px 5px 15px;
   background-color: #F7F7FF;

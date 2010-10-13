@@ -103,7 +103,7 @@ class HistoryController < ApplicationController
     end
 
     q[:keywords].each { |keyword|
-      hc_conds << """hc.value_index @@ to_tsquery('danbooru', E'%s')"""
+      hc_conds << """hc.value_index @@ plainto_tsquery('danbooru', E'%s')"""
       hc_cond_params << keyword
     }
 

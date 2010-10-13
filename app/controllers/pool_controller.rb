@@ -30,7 +30,7 @@ class PoolController < ApplicationController
       conds = []
       cond_params = []
       params[:query].split(/ /).each { |word|
-        conds << "search_index @@ to_tsquery('pg_catalog.english', E'%s')"
+        conds << "search_index @@ plainto_tsquery('pg_catalog.english', E'%s')"
         cond_params << word
       }
 

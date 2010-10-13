@@ -566,7 +566,7 @@ ul.link-page > li {
 #history .id.held > a {
 	color: #0bb;
 }
-#history .new-user .author a {
+#history .new-user {
 	font-weight: bold;
 }
 

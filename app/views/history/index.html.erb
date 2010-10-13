@@ -60,7 +60,8 @@
       </thead>
       <tbody>
         <% @changes.each do |change| %>
-          <tr class="<%= cycle 'even', 'odd' %> <%= ((Time.now - change.user.created_at < 60*60*24*3) rescue false) and "new-user" or "" %>" id="r<%= change.id %>">
+          <% new_user = (Time.now - change.user.created_at < 60*60*24*3) rescue false %>
+          <tr class="<%= cycle 'even', 'odd' %>" id="r<%= change.id %>">
             <% if @type == "all" %>
               <td><%= change.group_by_table.singularize.humanize %></td>
             <% end %>
@@ -76,7 +77,7 @@
                 :id => change.group_by_id %></td>
             <% end %>
             <td><%= change.created_at.strftime("%b %d %Y, %H:%M") %></td>
-            <td class="author"><%= link_to_unless change.user_id == nil, change.author, :controller => "user", :action => "show", :id => change.user_id %></td>
+            <td class="author"><%= link_to_unless change.user_id == nil, change.author, {:controller => "user", :action => "show"}, {:class => "user-%i" % change.user_id + (new_user ? " new-user":"")} %></td>
             <td class="change"><%= format_changes(change, @options) %></td>
           </tr>
         <% end %>

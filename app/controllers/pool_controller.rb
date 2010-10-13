@@ -29,10 +29,13 @@ class PoolController < ApplicationController
     if params[:query]
       conds = []
       cond_params = []
-      params[:query].split(/ /).each { |word|
-        conds << "search_index @@ plainto_tsquery('pg_catalog.english', E'%s')"
-        cond_params << word
-      }
+
+      value_index_query = []
+      value_index_query << "(" + QueryParser.escape_for_tsquery(params[:query].split(/ /)).join(" & ") + ")"
+      if value_index_query.any? then
+        conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
+        cond_params << value_index_query.join(" & ")
+      end
 
       options[:conditions] = [conds.join(" AND "), *cond_params]
     end

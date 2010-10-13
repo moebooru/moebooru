@@ -24,7 +24,20 @@ module QueryParser
     
     return hoge
   end
+
+  # Given an array of keywords to search for, return an array of strings for to_tsquery.
+  # Words need to be escaped to prevent to_tsquery from parsing them as its own clumsy
+  # search syntax; note that this is separate from SQL string escaping, and the final SQL
+  # query will ultimately be double-escaped.
+  def escape_for_tsquery(array)
+    array.map do |token|
+      next if token.empty?
+      escaped_token = token.gsub(/\\|'/, '\0\0\0\0')
+      "'" + escaped_token + "'"
+    end.compact
+  end
   
   module_function :parse
   module_function :parse_meta
+  module_function :escape_for_tsquery
 end

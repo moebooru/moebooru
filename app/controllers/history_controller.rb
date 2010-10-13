@@ -102,10 +102,14 @@ class HistoryController < ApplicationController
       hc_cond_params << q[:remote_id]
     end
 
-    q[:keywords].each { |keyword|
-      hc_conds << """hc.value_index @@ plainto_tsquery('danbooru', E'%s')"""
-      hc_cond_params << keyword
-    }
+    if q[:keywords].any? then
+      value_index_query = []
+      value_index_query << "(" + QueryParser.escape_for_tsquery(q[:keywords]).join(" & ") + ")"
+      if value_index_query.any? then
+        hc_conds << "hc.value_index @@ to_tsquery('danbooru', ?)"
+        hc_cond_params << value_index_query.join(" & ")
+      end
+    end
 
     if q.has_key?(:field) and q.has_key?(:type)
       # Look up a particular field change, eg. "type:posts field:rating".

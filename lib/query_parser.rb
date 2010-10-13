@@ -30,11 +30,16 @@ module QueryParser
   # search syntax; note that this is separate from SQL string escaping, and the final SQL
   # query will ultimately be double-escaped.
   def escape_for_tsquery(array)
-    array.map do |token|
+    keywords = array.map do |token|
       next if token.empty?
       escaped_token = token.gsub(/\\|'/, '\0\0\0\0')
       "'" + escaped_token + "'"
     end.compact
+    query = []
+    if keywords.any? then
+      query << "(" + keywords.join(" & ") + ")"
+    end
+    return query
   end
   
   module_function :parse

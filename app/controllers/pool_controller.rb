@@ -30,8 +30,7 @@ class PoolController < ApplicationController
       conds = []
       cond_params = []
 
-      value_index_query = []
-      value_index_query << "(" + QueryParser.escape_for_tsquery(params[:query].split(/ /)).join(" & ") + ")"
+      value_index_query = QueryParser.escape_for_tsquery(params[:query].split(/ /))
       if value_index_query.any? then
         conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
         cond_params << value_index_query.join(" & ")

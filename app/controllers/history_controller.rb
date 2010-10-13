@@ -103,8 +103,7 @@ class HistoryController < ApplicationController
     end
 
     if q[:keywords].any? then
-      value_index_query = []
-      value_index_query << "(" + QueryParser.escape_for_tsquery(q[:keywords]).join(" & ") + ")"
+      value_index_query = QueryParser.escape_for_tsquery(q[:keywords])
       if value_index_query.any? then
         hc_conds << "hc.value_index @@ to_tsquery('danbooru', ?)"
         hc_cond_params << value_index_query.join(" & ")

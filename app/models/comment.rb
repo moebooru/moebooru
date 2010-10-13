@@ -61,23 +61,21 @@ class Comment < ActiveRecord::Base
 
     blocks.each { |id, block|
       translations, source_lang = Translate.translate(block, :referer => url, :languages => target_languages)
+      source_lang = "unk" if source_lang.empty?
+      translations[source_lang] = block
       data = block_data[id]
       translations.each { |lang, text|
         data[:source_lang] = source_lang
 
         # Mark each block with the language it's translated from, into, and whether they're
         # the same, so CSS rules can use it later.
-        cls = "from-lang-" + source_lang
-        cls += " to-lang-" + lang
-        cls += (source_lang == lang)? " original-language":" translated-language" 
-        marked_text = DText.add_html_class(text, cls)
+        #cls = "from-lang-" + source_lang
+        #cls += " to-lang-" + lang
+        #cls += (source_lang == lang)? " original-language":" translated-language" 
+        #marked_text = DText.add_html_class(text, cls)
 
-        data[:translated][lang] = marked_text
+        data[:translated][lang] = text
       }
-
-      if not data[:translated].has_key?(source_lang) then
-        data[:translated][source_lang] = block
-      end
     }
 
     transaction do
@@ -103,14 +101,14 @@ class Comment < ActiveRecord::Base
     # ones originally in the user's secondary languages.
     conds = []
 
-    # If we have a specified target language, then include fragments for that language.  Otherwise,
-    # include the original, untranslated fragment, which is the one where the source and target language
-    # are the same.
-    if target_lang.empty?
-      conds << "target_lang = source_lang"
-    else
+    # Always load the original, untranslated fragment as an option.
+    conds << "target_lang = source_lang"
+
+    # If we have a specified target language, then include fragments for that language.
+    if not target_lang.empty?
       conds << "target_lang = '#{target_lang}'"
     end
+
     source_lang_list = source_langs.map { |l| "'" + l + "'" }.join(",")
     conds << "source_lang IN (#{source_lang_list})" if not source_lang_list.empty?
     conds = conds.join(" OR ")

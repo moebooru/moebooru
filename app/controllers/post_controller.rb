@@ -688,6 +688,10 @@ class PostController < ApplicationController
           respond_to_error(@errors[:error], {:action => "index"}, :status => 503)
           return
         end
+        if not @searched
+          respond_to_error("no search supplied", {:action => "index"}, :status => 503)
+          return
+        end
         x = Builder::XmlMarkup.new(:indent => 2)
         x.instruct!
         render :xml => x.posts() {

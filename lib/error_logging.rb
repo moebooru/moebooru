@@ -13,9 +13,9 @@ module ActionController #:nodoc:
         end
 
         ActiveSupport::Deprecation.silence do
-          if ActionView::TemplateError === exception
-            logger.fatal(exception.to_s)
-          else
+#          if ActionView::TemplateError === exception
+#            logger.fatal(exception.to_s)
+#          else
             text = "\n\n"
             text << "#{exception.class} (#{exception.message}) #{self.controller_name}/#{self.action_name}\n"
             text << "Host: #{request.env["REMOTE_ADDR"]}\n"
@@ -29,7 +29,7 @@ module ActionController #:nodoc:
             text << clean_backtrace(exception).join("\n    ")
             text << "\n\n"
             logger.fatal(text)
-          end
+#          end
         end
 
 #        orig_log_error exception

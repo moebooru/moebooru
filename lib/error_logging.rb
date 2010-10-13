@@ -23,6 +23,7 @@ module ActionController #:nodoc:
             
             
             
+            text << "Request: http://#{request.env["HTTP_HOST"]}#{request.env["REQUEST_URI"]}\n"
             text << "Parameters: #{request.parameters.inspect}\n" if not request.parameters.empty?
             text << "Cookies: #{request.cookies.inspect}\n" if not request.cookies.empty?
             text << "    "

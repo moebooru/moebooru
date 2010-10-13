@@ -8,7 +8,8 @@ module ActionController #:nodoc:
           ActiveRecord::RecordNotFound,
           ActionController::UnknownController,
           ActionController::UnknownAction,
-          ActionController::RoutingError
+          ActionController::RoutingError,
+          SystemExit
           return
         end
 

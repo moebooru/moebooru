@@ -340,6 +340,11 @@ class PostController < ApplicationController
   end
 
   def piclens
+    if not params[:format].nil? then
+      redirect_to "/404"
+      return
+    end
+
     @posts = WillPaginate::Collection.create(params[:page], 16, Post.fast_count(params[:tags])) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end

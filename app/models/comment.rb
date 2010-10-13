@@ -101,7 +101,16 @@ class Comment < ActiveRecord::Base
   def get_translated_formatted_body_uncached(target_lang, source_langs)
     # Grab all relevant comment fragments: ones translated to the user's target language, and
     # ones originally in the user's secondary languages.
-    conds = ["target_lang = '#{target_lang}'"]
+    conds = []
+
+    # If we have a specified target language, then include fragments for that language.  Otherwise,
+    # include the original, untranslated fragment, which is the one where the source and target language
+    # are the same.
+    if target_lang.empty?
+      conds << "target_lang = source_lang"
+    else
+      conds << "target_lang = '#{target_lang}'"
+    end
     source_lang_list = source_langs.map { |l| "'" + l + "'" }.join(",")
     conds << "source_lang IN (#{source_lang_list})" if not source_lang_list.empty?
     conds = conds.join(" OR ")

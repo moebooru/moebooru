@@ -338,9 +338,9 @@ table td {
   vertical-align: top;
 }
 
-table td.large-text p {
+/*table td.large-text p {
   font-size: 1em;
-}
+}*/
 
 table th {
   font-weight: bold;

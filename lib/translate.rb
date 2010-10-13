@@ -23,6 +23,12 @@ module Translate
           response = http.request(request)
         end
         resp = JSON.parse(response.body)
+
+        # Undocumented: the API returns 404 if all translations return "could not reliably detect source language".
+        if resp["responseStatus"] == 404 then
+          return nil
+        end
+
         if resp["responseStatus"] != 200 then
           raise ServerError, resp["responseDetails"]
         end
@@ -35,6 +41,16 @@ module Translate
     end
   end
 
+  # Given a string, attempt to translate into the specified languages.
+  #
+  #   translate("Hello world", :languages => ["es", "ja"])
+  # 
+  # returns
+  # 
+  #   {"es" => "hola mundo", "ja" => "こんにちは世界"}, "en"
+  #
+  # Not all languages may successfully translate.  If the translation API can't figure out the language,
+  # no translations will be returned and the detected language will be "".
   def translate(s, options={})
     languages = options[:languages]
 
@@ -51,6 +67,11 @@ module Translate
 
     #resp = Translate.request(path)
     resp = Translate.post(path, params, :referer => options[:referer])
+    if resp.nil? then
+      # We didn't get a usable response.
+      return {}, ""
+    end
+
     data = resp["responseData"]
 
     # The translate API is a bit inconsistent: it returns an array only when there's more than

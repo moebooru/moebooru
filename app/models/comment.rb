@@ -138,7 +138,7 @@ class Comment < ActiveRecord::Base
       translated_from_languages << use_lang if use_lang != source_lang
     }
 
-    return DText.combine_blocks(selected_blocks), translated_from_languages
+    return DText.combine_blocks(selected_blocks, self.id), translated_from_languages
   end
 
   def get_translated_formatted_body(target_lang, source_langs)

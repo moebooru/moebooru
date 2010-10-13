@@ -164,19 +164,23 @@ module DText
     blocks[0] = block.to_html
   end
 
-  def combine_block(top, blocks)
+  def combine_block(top, blocks, logging_id = nil)
     doc = Hpricot(top)
     doc.search("block").each { |b|
       id = b.get_attribute("id").to_i
+      if not blocks.include?(id) then
+        logging_id ||= "(unknown)"
+        raise "Comment fragment requires fragment ##{id} which doesn't exist: comment ##{logging_id}, #{b}"
+      end
       block = blocks[id]
       final_block = combine_block(block, blocks)
-      new_block = b.swap(final_block)
+      b.swap(final_block)
     }
     return doc.to_html
   end
 
-  def combine_blocks(blocks)
-    return combine_block(blocks[0], blocks)
+  def combine_blocks(blocks, logging_id = nil)
+    return combine_block(blocks[0], blocks, logging_id)
   end
 
   # Add the specified class to all top-level HTML elements.

@@ -59,8 +59,6 @@ class HistoryController < ApplicationController
     hc_conds = []
     hc_cond_params = []
 
-    value_index_query = []
-
     if q[:user].is_a?(String)
       user = User.find_by_name(q[:user])
       if user
@@ -105,7 +103,8 @@ class HistoryController < ApplicationController
     end
 
     q[:keywords].each { |keyword|
-      value_index_query << "(" + Post.geneate_sql_escape_helper(keyword).join(" | ") + ")"
+      hc_conds << """hc.value_index @@ to_tsquery('danbooru', E'%s')"""
+      hc_cond_params << keyword
     }
 
     if q.has_key?(:field) and q.has_key?(:type)
@@ -134,10 +133,6 @@ class HistoryController < ApplicationController
           hc_cond_params << default_value
         end
       end
-    end
-
-    if value_index_query.any?
-      hc_conds << """hc.value_index @@ to_tsquery('danbooru', E'" + value_index_query.join(" & ") + "')"""
     end
 
     if hc_conds.any?

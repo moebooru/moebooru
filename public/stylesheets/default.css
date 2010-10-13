@@ -611,12 +611,12 @@ div.auto_complete ul {
   list-style-type:none;
 }
 
-div.auto_complete ul li {
+div.auto_complete ul > li {
   margin:0;
   padding:3px;
 }
 
-div.auto_complete ul li.selected { 
+div.auto_complete ul > li.selected { 
   background-color: #ffb; 
 }
 
@@ -1684,7 +1684,7 @@ ul.login-tabs li {
 	float: left;
 }
 
-ul.login-tabs li a {
+ul.login-tabs li > a {
 	display: block;
 	height: 1.4em;
 	background: #111;
@@ -1696,13 +1696,13 @@ ul.login-tabs li a {
 	color: white;
 }
 
-ul.login-tabs li.selected a {
+ul.login-tabs .selected > a {
 	background: #111;
 	color: white;
 	border-color: #eee;
 }
 
-ul.login-tabs li a:hover {
+ul.login-tabs li > a:hover {
   background: rgb(60, 60, 220);
   color: white;
 }

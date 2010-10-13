@@ -11,7 +11,7 @@
     <tbody>
       <tr>
         <th><label for="dmail_to_name">To</label></th>
-        <td><%= text_field_with_auto_complete "dmail", "to_name", {:value => params[:to]}, :min_chars => 3, :skip_style => true %></td>
+        <td><%= text_field_with_auto_complete "dmail", "to_name", {:value => params[:to]}, :skip_style => true, :min_chars => 3, :skip_style => true %></td>
       </tr>
       <tr>
         <th><label for="dmail_title">Title</label></th>

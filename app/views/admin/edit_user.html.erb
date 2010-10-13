@@ -3,7 +3,7 @@
     <table class="form">
       <tr>
         <th width="15%"><label class="block" for="user_name">User</label></th>
-        <td width="85%"><%= text_field_with_auto_complete "user", "name", {}, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %></td>
+        <td width="85%"><%= text_field_with_auto_complete "user", "name", {}, :skip_style => true, :min_chars => 3, :url => {:controller => "user", :action => "auto_complete_for_user_name"} %></td>
       </tr>
       <tr>
         <th>

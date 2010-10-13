@@ -13,7 +13,7 @@
       <tbody>
         <tr>
           <td><label for="member_name">Name</label></td>
-          <td><%= text_field_with_auto_complete "member", "name", {:value => params[:name]}, :min_chars => 3, :skip_style => true, :url => {:controller => "user", :action => "auto_complete_for_member_name"} %></td>
+          <td><%= text_field_with_auto_complete "member", "name", {:value => params[:name]}, :skip_style => true, :min_chars => 3, :skip_style => true, :url => {:controller => "user", :action => "auto_complete_for_member_name"} %></td>
         </tr>
         <tr>
           <td><label for="member_level">Level</label></td>

@@ -336,8 +336,6 @@ module PostSqlMethods
 	    end
           end
         end
-      elsif options[:order]
-        sql << " ORDER BY " + options[:order]
       end
 
       if options[:limit]

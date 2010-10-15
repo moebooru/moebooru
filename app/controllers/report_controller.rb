@@ -42,10 +42,11 @@ class ReportController < ApplicationController
 
       if user["user"] then
         conds << "user_id = ?"
-        params << user["user_id"]
+        params << user["id"]
       else
+        # "Other":
         conds << "user_id NOT IN (?)"
-        params << @users.select {|x| x["user_id"]}.map {|x| x["user_id"]}
+        params << @users.select {|x| x["id"]}.map {|x| x["id"]}
       end
 
       votes = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql(["SELECT COUNT(score) AS sum, score FROM post_votes WHERE #{conds.join(" AND ")} GROUP BY score", *params]))

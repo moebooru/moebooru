@@ -45,4 +45,29 @@ class DmailControllerTest < ActionController::TestCase
     get :show, {:id => d4.id}, {:user_id => 1}
     assert_redirected_to :controller => "user", :action => "login"
   end
+
+  def test_show_previous_messages
+    d1 = create_dmail(1, 2, "foo")
+    d2 = create_dmail(2, 1, "re: foo", { :parent_id => d1.id })
+    d3 = create_dmail(1, 2, "re: re: foo", { :parent_id => d1.id })
+
+    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id }, { :user_id => 1 }
+    assert_response :success
+    assert_equal [ d2 ], assigns(:dmails)
+
+    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id }, { :user_id => 2 }
+    assert_equal [ d2 ], assigns(:dmails)
+
+    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id }, { :user_id => 3 }
+    assert_equal [ ], assigns(:dmails)
+
+    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id + 1 }, { :user_id => 2 }
+    assert_equal [ d2, d3 ], assigns(:dmails)
+
+    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id + 1 }, { :user_id => 4 }
+    assert_equal [ ], assigns(:dmails)
+
+    get :show_previous_messages, { :parent_id => d2.id, :id => d3.id }, { :user_id => 1 }
+    assert_equal [ ], assigns(:dmails)
+  end
 end

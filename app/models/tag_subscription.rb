@@ -16,9 +16,9 @@ class TagSubscription < ActiveRecord::Base
   
   def self.find_post_ids(user_id, name = nil, limit = CONFIG["tag_subscription_post_limit"])
     if name
-      find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.sort.reverse.slice(0, limit)
+      find(:all, :conditions => ["user_id = ? AND name ILIKE ? ESCAPE E'\\\\'", user_id, name.to_escaped_for_sql_like + "%"], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.map(&:to_i).sort.reverse.slice(0, limit)
     else
-      find(:all, :conditions => ["user_id = ?", user_id], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.sort.reverse.slice(0, limit)
+      find(:all, :conditions => ["user_id = ?", user_id], :select => "id, cached_post_ids").map {|x| x.cached_post_ids.split(/,/)}.flatten.uniq.map(&:to_i).sort.reverse.slice(0, limit)
     end
   end
   

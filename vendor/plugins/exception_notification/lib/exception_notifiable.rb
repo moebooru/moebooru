@@ -93,7 +93,7 @@ module ExceptionNotifiable
         end
         return
         
-      elsif exception.to_s =~ /execution expired/
+      elsif exception.to_s =~ /execution expired|Connection reset/
         respond_to do |type|
           type.html { render :file => "#{RAILS_ROOT}/public/500_execution_expired.html", :status => 500}
           type.all  { render :nothing => true, :status => 500}

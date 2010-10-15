@@ -78,7 +78,7 @@
     </tr>
     <tr>
       <td><strong>Wiki Edits</strong></td>
-      <td><%= WikiPageVersion.count(:all, :conditions => "user_id = #{@user.id}") %></td>
+      <td><%= link_to WikiPageVersion.count(:all, :conditions => "user_id = #{@user.id}"), :controller => "wiki", :action => "recent_changes", :user_id => @user.id %></td>
     </tr>
     <tr>
       <td><strong>Forum Posts</strong></td>

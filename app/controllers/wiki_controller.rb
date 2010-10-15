@@ -35,7 +35,6 @@ class WikiController < ApplicationController
     
     limit = params[:limit] || 25
     query = params[:query] || ""
-    query = query.scan(/\S+/)
 
     search_params = {
       :order => order,
@@ -47,6 +46,7 @@ class WikiController < ApplicationController
       if query =~ /^title:/
         search_params[:conditions] = ["title ilike ?", "%" + query[6..-1].to_escaped_for_sql_like + "%"]
       else
+        query = query.scan(/\S+/)
         search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
       end
     end

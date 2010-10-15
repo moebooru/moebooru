@@ -27,8 +27,8 @@ module DText
     str.gsub!(/\n/m, "<br>")
     str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
     str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
-    str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></a><span class="spoilertext" style="display: none">\1</span>')
-    str.gsub!(/\[spoilers?(=(.+))\](.+?)\[\/spoilers?\]/m, '<a href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\2</span></a><span class="spoilertext" style="display: none">\3</span>')
+    str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>')
+    str.gsub!(/\[spoilers?(=(.+))\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\2</span></span><span class="spoilertext" style="display: none">\3</span>')
 
     # Ruby regexes are in the localization dark ages, so we need to match UTF-8 characters
     # manually:

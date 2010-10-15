@@ -52,7 +52,10 @@ a.last-page {
   color: #666;
 }
 
-a.spoiler > .spoilerwarning {
+span.spoiler {
+  cursor: pointer;
+}
+span.spoiler > .spoilerwarning {
   color: #ff4020;
   background: #181818;
 }

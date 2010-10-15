@@ -50,7 +50,8 @@ module ExceptionNotifiable
     def exceptions_to_treat_as_404
       exceptions = [ActiveRecord::RecordNotFound,
                     ActionController::UnknownController,
-                    ActionController::UnknownAction]
+                    ActionController::UnknownAction,
+                    ActionController::UnknownHttpMethod]
       exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
       exceptions
     end
@@ -78,6 +79,28 @@ module ExceptionNotifiable
     end
 
     def rescue_action_in_public(exception)
+      if exception.to_s =~ /statement timeout/
+        respond_to do |type|
+          type.html { render :file => "#{RAILS_ROOT}/public/503_timeout.html", :status => 503}
+          type.all  { render :nothing => true, :status => 503}
+        end
+        return
+        
+      elsif exception.to_s =~ /invalid byte sequence/
+        respond_to do |type|
+          type.html { render :file => "#{RAILS_ROOT}/public/500_invalid_byte_sequence.html", :status => 500}
+          type.all  { render :nothing => true, :status => 500}
+        end
+        return
+        
+      elsif exception.to_s =~ /execution expired/
+        respond_to do |type|
+          type.html { render :file => "#{RAILS_ROOT}/public/500_execution_expired.html", :status => 500}
+          type.all  { render :nothing => true, :status => 500}
+        end
+        return
+      end
+      
       case exception
         when *self.class.exceptions_to_treat_as_404
           render_404

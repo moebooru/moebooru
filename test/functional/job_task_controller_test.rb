@@ -9,10 +9,10 @@ class JobTaskControllerTest < ActionController::TestCase
     get :index
     assert_response :success
     
-    get :show, {:id => job_task.id}
+    get :show, {:id => job_task.id}, {:user_id => 1}
     assert_response :success
     
-    get :restart, {:id => job_task.id}
+    get :restart, {:id => job_task.id}, {:user_id => 1}
     assert_response :success
   end
 end

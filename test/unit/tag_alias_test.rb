@@ -68,6 +68,12 @@ class TagAliasTest < ActiveSupport::TestCase
     assert_equal("tag8", p3.cached_tags)
   end
   
+  def test_tag_types
+    sage = create_tag(:tag_type => 1, :name => "sage")
+    ta = TagAlias.create(:name => "sage", :alias => "mage", :is_pending => true, :reason => "none", :creator_id => 1)
+    assert_equal(1, ta.alias_tag.tag_type)
+  end
+  
   def test_api
     assert_nothing_raised {@alias.to_json}
     assert_nothing_raised {@alias.to_xml}

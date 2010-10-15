@@ -52,12 +52,22 @@ class TagAlias < ActiveRecord::Base
   end
 
   def alias=(name)
-    tag = Tag.find_or_create_by_name(name)
-    self.alias_id = tag.id
+    alias_tag = Tag.find_or_create_by_name(name)
+    tag = Tag.find_or_create_by_name(self.name)
+    
+    if alias_tag.tag_type != tag.tag_type
+      alias_tag.update_attribute(:tag_type, tag.tag_type)
+    end
+    
+    self.alias_id = alias_tag.id
   end
   
   def alias_name
     Tag.find(alias_id).name
+  end
+  
+  def alias_tag
+    Tag.find_or_create_by_name(name)
   end
 
   def approve(user_id, ip_addr)

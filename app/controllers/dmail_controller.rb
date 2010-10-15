@@ -4,7 +4,7 @@ class DmailController < ApplicationController
   
   def auto_complete_for_dmail_to_name
     @users = User.find(:all, :order => "lower(name)", :conditions => ["name ilike ? escape '\\\\'", params[:dmail][:to_name] + "%"])
-    render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"
+    render :layout => false
   end
   
   def show_previous_messages

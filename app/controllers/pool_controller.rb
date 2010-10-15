@@ -250,7 +250,7 @@ class PoolController < ApplicationController
       respond_to do |fmt|
         fmt.html
         fmt.js do
-          @posts = Post.find_by_tags(params[:query], :order => "id desc", :limit => 500)
+          @posts = Post.find_by_tag_join(params[:query], :limit => 500)
           @posts = @posts.select {|x| x.can_be_seen_by?(@current_user)}
         end
       end

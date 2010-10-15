@@ -1,37 +1,38 @@
 class ReportController < ApplicationController
   layout 'default'
   before_filter :set_dates
+  helper :user
 
   def tag_updates
-    @users = Report.tag_updates(@start_date, @end_date, @limit)
+    @users = Report.tag_updates(@start_date, @end_date, @limit, @level)
     @report_title = "Tag Updates"
     @change_params = lambda {|user_id| {:controller => "post_tag_history", :action => "index", :user_id => user_id}}
     render :action => "common"
   end
 
   def note_updates
-    @users = Report.note_updates(@start_date, @end_date, @limit)
+    @users = Report.note_updates(@start_date, @end_date, @limit, @level)
     @report_title = "Note Updates"
     @change_params = lambda {|user_id| {:controller => "note", :action => "history", :user_id => user_id}}
     render :action => "common"
   end
 
   def wiki_updates
-    @users = Report.wiki_updates(@start_date, @end_date, @limit)
+    @users = Report.wiki_updates(@start_date, @end_date, @limit, @level)
     @report_title = "Wiki Updates"
     @change_params = lambda {|user_id| {:controller => "wiki", :action => "recent_changes", :user_id => user_id}}
     render :action => "common"
   end
 
   def post_uploads
-    @users = Report.post_uploads(@start_date, @end_date, @limit)
+    @users = Report.post_uploads(@start_date, @end_date, @limit, @level)
     @report_title = "Post Uploads"
     @change_params = lambda {|user_id| {:controller => "post", :action => "index", :tags => "user:#{User.find_name(user_id)}"}}
     render :action => "common"
   end
   
   def votes
-    @users = Report.usage_by_user("post_votes", @start_date, @end_date, 29, conds=["score > 0"], params=[], column="updated_at")
+    @users = Report.usage_by_user("post_votes", @start_date, @end_date, 29, 0, ["score > 0"], [], "updated_at")
 
     @users.each do |user|
       conds = ["updated_at BETWEEN ? AND ?"]
@@ -68,6 +69,10 @@ private
       @end_date = Date.parse(params[:end_date])
     else
       @end_date = Date.today + 1.day
+    end
+
+    if params[:level]
+      @level = params[:level].to_i
     end
 
     if params[:limit]

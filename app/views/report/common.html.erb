@@ -22,6 +22,10 @@
             <th><label for="limit">Limit</label></th>
             <td><%= text_field_tag "limit", @limit, :size => 5 %></td>
           </tr>
+          <tr>
+            <td><label for="level">Level</label></td>
+            <td><%= user_level_select_tag "level", :include_blank => true %></td>
+          </tr>
         </tbody>
       </table>
     <% end %>
@@ -44,8 +48,8 @@
       <tbody>
         <% @users.each do |user| %>
           <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to_unless user["user_id"].nil?, h(user["name"]), :controller => "user", :action => "show", :id => user["user_id"] %></td>
-            <td><%= link_to_unless user["user_id"].nil?, user["change_count"], @change_params.call(user["user_id"]) %></td>
+            <td><%= link_to_unless user["id"].nil?, h(user["name"]), :controller => "user", :action => "show", :id => user["user_id"] %></td>
+            <td><%= link_to_unless user["id"].nil?, user["change_count"], @change_params.call(user["user_id"]) %></td>
             <td><%= number_to_percentage 100 * user["change_count"] / user["sum"], :precision => 1 %></td>
           </tr>
         <% end %>

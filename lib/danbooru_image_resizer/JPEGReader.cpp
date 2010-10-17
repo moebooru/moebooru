@@ -127,6 +127,11 @@ bool JPEG::Read(FILE *f, Filter *pOutput, char error[1024])
 	jpeg_stdio_src(&CInfo, f);
 	jpeg_read_header(&CInfo, TRUE);
 	CInfo.out_color_space = JCS_RGB;
+	if(CInfo.jpeg_color_space == JCS_CMYK || CInfo.jpeg_color_space == JCS_YCCK)
+	{
+		strcpy(error, "CMYK JPEGs are not supported; please convert to RGB");
+		goto cleanup;
+	}
 
 	jpeg_start_decompress(&CInfo);
 

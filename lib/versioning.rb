@@ -2,7 +2,7 @@ require 'history_change'
 require 'history'
 require 'set'
 
-module Versioning
+module Versioned
   def get_versioned_classes
     return [Pool, PoolPost, Post, Tag, Note]
   end

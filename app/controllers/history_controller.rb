@@ -121,7 +121,7 @@ class HistoryController < ApplicationController
       field = "cached_tags" if field == "tags"
 
       # Look up the named class.
-      cls = Versioning.get_versioned_classes_by_name[table]
+      cls = Versioned.get_versioned_classes_by_name[table]
       if cls.nil? then
         conds << "false"
       else

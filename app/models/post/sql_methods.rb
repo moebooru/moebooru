@@ -95,7 +95,7 @@ module PostSqlMethods
       end
 
       if q[:source].is_a?(String)
-        conds << "p.source LIKE ? ESCAPE E'\\\\'"
+        conds << "lower(p.source) LIKE lower(?) ESCAPE E'\\\\'"
         cond_params << q[:source]
       end
 

@@ -114,7 +114,7 @@ module PostTagMethods
     return if new_tags.nil?
 
     transaction do
-      metatags, self.new_tags = new_tags.partition {|x| x=~ /^(hold|unhold|show|hide|\+flag)$/}
+      metatags, self.new_tags = new_tags.partition {|x| x=~ /^(hold|unhold|show|hide|\+flag|source:.*)$/}
       metatags.each do |metatag|
         case metatag
         when /^hold$/
@@ -132,6 +132,8 @@ module PostTagMethods
         when /^\+flag$/
           # Permissions for this are checked on commit.
           self.metatag_flagged = "moderator flagged"
+        when /^source:(.*)/
+          self.source = $1
         end
       end
     end

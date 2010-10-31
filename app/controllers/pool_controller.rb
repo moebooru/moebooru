@@ -17,17 +17,22 @@ class PoolController < ApplicationController
 
     order = params[:order]
 
+    conds = []
+    cond_params = []
+
     search_tokens = []
     if params[:query]
       query = Tokenize.tokenize_with_quotes(params[:query] || "")
 
       query.each { |token|
-        if token =~ /^(order|limit):(.+)$/
+        if token =~ /^(order|limit|posts):(.+)$/
           if $1 == "order"
             order = $2
           elsif $1 == "limit"
             options[:per_page] = $2.to_i
             options[:per_page] = [options[:per_page], 100].min
+          elsif $1 == "posts"
+            Post.generate_sql_range_helper(Tag.parse_helper($2), "post_count", conds, cond_params)
           end
         else
           search_tokens << token
@@ -36,9 +41,6 @@ class PoolController < ApplicationController
     end
 
     if not search_tokens.empty? then
-      conds = []
-      cond_params = []
-
       value_index_query = QueryParser.escape_for_tsquery(search_tokens)
       if value_index_query.any? then
         conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
@@ -66,9 +68,9 @@ class PoolController < ApplicationController
           cond_params << q
         }
       end
-
-      options[:conditions] = [conds.join(" AND "), *cond_params]
     end
+
+    options[:conditions] = [conds.join(" AND "), *cond_params]
 
     if order.nil? then
       if search_tokens.empty?

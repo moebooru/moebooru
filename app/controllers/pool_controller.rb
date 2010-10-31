@@ -1,3 +1,5 @@
+require 'tokenize'
+
 class PoolController < ApplicationController
   layout "default"
   before_filter :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]
@@ -30,10 +32,33 @@ class PoolController < ApplicationController
       conds = []
       cond_params = []
 
-      value_index_query = QueryParser.escape_for_tsquery(params[:query].split(/ /))
+      query = Tokenize.tokenize_with_quotes(params[:query])
+      value_index_query = QueryParser.escape_for_tsquery(query)
       if value_index_query.any? then
         conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
         cond_params << value_index_query.join(" & ")
+
+        # If a search keyword contains spaces, then it was quoted in the search query
+        # and we should only match adjacent words.  tsquery won't do this for us; we need
+        # to filter results where the words aren't adjacent.
+        #
+        # This has a side-effect: any stopwords, stemming, parsing, etc. rules performed
+        # by to_tsquery won't be done here.  We need to perform the same processing as
+        # is used to generate search_index.  We don't perform all of the stemming rules, so
+        # although "jump" may match "jumping", "jump beans" won't match "jumping beans" because
+        # we'll filter it out.
+        #
+        # This also doesn't perform tokenization, so some obscure cases won't match perfectly;
+        # for example, "abc def" will match "xxxabc def abc" when it probably shouldn't.  Doing
+        # this more correctly requires Postgresql support that doesn't exist right now.
+        query.each { |q|
+          # Don't do this if there are no spaces in the query, so we don't turn off tsquery
+          # parsing when we don't need to.
+          next if not q.include?(" ")
+          conds << "(position(LOWER(?) IN LOWER(replace_underscores(name))) > 0 OR position(LOWER(?) IN LOWER(description)) > 0)"
+          cond_params << q
+          cond_params << q
+        }
       end
 
       options[:conditions] = [conds.join(" AND "), *cond_params]

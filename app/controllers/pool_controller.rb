@@ -82,8 +82,8 @@ class PoolController < ApplicationController
     when "name":        options[:order] = "nat_sort(name) asc"
     when "date":        options[:order] = "created_at desc"
     when "updated":     options[:order] = "updated_at desc"
-    when "date":        options[:order] = "id desc"
-    else                options[:order] = "id desc"
+    when "id":          options[:order] = "id desc"
+    else                options[:order] = "created_at desc"
     end
 
     @pools = Pool.paginate options

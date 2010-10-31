@@ -22,9 +22,12 @@ class PoolController < ApplicationController
       query = Tokenize.tokenize_with_quotes(params[:query] || "")
 
       query.each { |token|
-        if token =~ /^(order):(.+)$/
+        if token =~ /^(order|limit):(.+)$/
           if $1 == "order"
             order = $2
+          elsif $1 == "limit"
+            options[:per_page] = $2.to_i
+            options[:per_page] = [options[:per_page], 100].min
           end
         else
           search_tokens << token

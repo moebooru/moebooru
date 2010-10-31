@@ -15,25 +15,28 @@ class PoolController < ApplicationController
       :page => params[:page]
     }
 
-    case params[:order]
-    when "name":        options[:order] = "nat_sort(name) asc"
-    when "date":        options[:order] = "created_at desc"
-    when "updated":     options[:order] = "updated_at desc"
-    when "date":        options[:order] = "id desc"
-    else
-      if params.has_key?(:query)
-        options[:order] = "nat_sort(name) asc"
-      else
-        options[:order] = "created_at desc"
-      end
+    order = params[:order]
+
+    search_tokens = []
+    if params[:query]
+      query = Tokenize.tokenize_with_quotes(params[:query] || "")
+
+      query.each { |token|
+        if token =~ /^(order):(.+)$/
+          if $1 == "order"
+            order = $2
+          end
+        else
+          search_tokens << token
+        end
+      }
     end
 
-    if params[:query]
+    if not search_tokens.empty? then
       conds = []
       cond_params = []
 
-      query = Tokenize.tokenize_with_quotes(params[:query])
-      value_index_query = QueryParser.escape_for_tsquery(query)
+      value_index_query = QueryParser.escape_for_tsquery(search_tokens)
       if value_index_query.any? then
         conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
         cond_params << value_index_query.join(" & ")
@@ -62,6 +65,22 @@ class PoolController < ApplicationController
       end
 
       options[:conditions] = [conds.join(" AND "), *cond_params]
+    end
+
+    if order.nil? then
+      if search_tokens.empty?
+        order = "date"
+      else
+        order = "name"
+      end
+    end
+
+    case order
+    when "name":        options[:order] = "nat_sort(name) asc"
+    when "date":        options[:order] = "created_at desc"
+    when "updated":     options[:order] = "updated_at desc"
+    when "date":        options[:order] = "id desc"
+    else                options[:order] = "id desc"
     end
 
     @pools = Pool.paginate options

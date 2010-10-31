@@ -290,14 +290,44 @@ module HistoryHelper
         end
 
       when "description"
-        if options[:specific_history] || options[:specific_table]
-          if change.previous
-            html << "description changed:<div class='diff text-block'>#{Danbooru.diff(change.previous.value, change.value)}</div>"
-          else
-            html << "description:<div class='initial-diff text-block'>#{change.value}</div>"
-          end
+        if change.value == "" then
+          html << "description removed"
         else
-          html << "description changed"
+          if not change.previous then
+            html << "description: "
+          elsif change.previous.value == "" then
+            html << "description added: "
+          else
+            html << "description changed: "
+          end
+
+          # Show a diff if there's a previous description and it's not blank.  Otherwise,
+          # just show the new text.
+          show_diff = change.previous && change.previous.value != ""
+          if show_diff
+            text = Danbooru.diff(change.previous.value, change.value)
+          else
+            text = h(change.value)
+          end
+
+          # If there's only one line in the output, just show it inline.  Otherwise, show it
+          # as a separate block.
+          multiple_lines = text.include?("<br>")
+
+          show_in_detail = options[:specific_history] || options[:specific_object]
+          if not multiple_lines then
+            display = text
+          elsif show_diff then
+            display = "<div class='diff text-block'>#{text}</div>"
+          else
+            display = "<div class='initial-diff text-block'>#{text}</div>"
+          end
+
+          if multiple_lines and not show_in_detail then
+            html << "<a onclick='$(this).hide(); $(this).next().show()' href='#'>(show changes)</a><div style='display: none;'>#{display}</div>"
+          else
+            html << display
+          end
         end
       when "is_public"
         html << (change.value == 't' ? added : removed)

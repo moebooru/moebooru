@@ -754,7 +754,7 @@ Post = {
     var post = Post.posts.get(post_id);
     image.hide();
 
-    var offset = AlignItem.viewportOffset();
+    var offset = AlignItem.cumulativeOffset();
     image.style.width = "auto";
     image.style.height = "auto";
     if(Post.is_blacklisted(post_id))

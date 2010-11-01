@@ -17,10 +17,10 @@
 <% unless @forum_post.is_locked? %>
   <div style="clear: both;">
     
-    <div id="preview" style="display: none; margin: 1em 0;">
+    <div id="preview" class="response-list" style="display: none; margin: 1em 0;">
     </div>
 
-    <div id="reply" style="display: none;">
+    <div id="reply" style="display: none; clear: both;">
       <% form_tag({:action => "create"}, :level => :member) do %>
         <%= hidden_field "forum_post", "title", :value => "" %>
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>

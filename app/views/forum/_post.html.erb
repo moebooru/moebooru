@@ -15,6 +15,7 @@
     <div class="body">
       <%= format_inlines(format_text(post.body), post.id) %>
     </div>
+    <% if not @preview then %>
     <div class="post-footer" style="clear: left;">
       <ul class="flat-list pipe-list">
       <% if @current_user.has_permission?(post, :creator_id) %>
@@ -36,5 +37,6 @@
       <li> <%= link_to_function "Quote", "Forum.quote(#{post.id})" %>
       </ul>
     </div>
+    <% end %>
   </div>
 </div>

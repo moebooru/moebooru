@@ -1,10 +1,10 @@
 <h2>New Topic</h2>
 
 <div style="margin: 1em 0;">
-  <div id="preview" style="display: none; margin: 1em 0;">
+  <div id="preview" class="response-list" style="display: none;">
   </div>
 
-  <div id="reply">
+  <div id="reply" style="clear: both;">
     <% form_tag({:action => "create"}) do %>
       <%= hidden_field "forum_post", "parent_id", :value => params["parent_id"] %>
       <table>

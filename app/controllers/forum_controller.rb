@@ -20,7 +20,10 @@ class ForumController < ApplicationController
 
   def preview
     if params[:forum_post]
-      render :inline => "<h4>Preview</h4><%= format_text(params[:forum_post][:body]) %>"
+      @preview = true
+      forum_post = ForumPost.new(params[:forum_post].merge(:creator_id => session[:user_id]))
+      forum_post.created_at = Time.now
+      render (:partial => "post", :locals => {:post => forum_post})
     else
       render :text => ""
     end

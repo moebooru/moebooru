@@ -342,7 +342,7 @@ class PoolController < ApplicationController
       @truncated = false
     else
       @truncated = true
-      min_posts = [from_posts.length, to_posts.length].max
+      min_posts = [from_posts.length, to_posts.length].min
       from_posts = from_posts.slice(0, min_posts)
       to_posts = to_posts.slice(0, min_posts)
     end

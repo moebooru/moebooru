@@ -78,7 +78,7 @@ class BatchController < ApplicationController
 
       flash[:notice] = "Cleared %i finished uploads." % count
     elsif params[:do] == "abort_all" then
-      conds.push("status = 'pending'")
+      conds.push("status = 'pending' or status = 'paused'")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
 	item.destroy
 	count += 1

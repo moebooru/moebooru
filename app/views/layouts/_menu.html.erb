@@ -163,6 +163,9 @@
   <a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
     <span>New&nbsp;mail</span>
   </a>
+  <% if ['CN', 'HK'].include?(@current_user_country) then %>
+    如果您愿意捐助，请点击<a href='http://www.imouto.org/donate-cn/'>此链接</a>
+  <% end %>
 </div>
 
 <% content_for("post_cookie_javascripts") do %>

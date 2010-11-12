@@ -163,9 +163,9 @@
   <a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
     <span>New&nbsp;mail</span>
   </a>
-  <% if ['CN', 'HK'].include?(@current_user_country) then %>
+  <span id='cn' style="display: none;">
     如果您愿意捐助，请点击<a href='http://www.imouto.org/donate-cn/'>此链接</a>
-  <% end %>
+  </span>
 </div>
 
 <% content_for("post_cookie_javascripts") do %>
@@ -173,5 +173,7 @@
   var main_menu = new MainMenu($("main-menu"), def);
   main_menu.add_forum_posts_to_submenu();
   main_menu.init();
+  if(Cookie.get('country') == 'CN' || Cookie.get('country') == 'HK')
+    $('cn').show();
 </script>
 <% end %>

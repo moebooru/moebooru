@@ -1328,14 +1328,14 @@ a.directlink:hover span {
 	height: 15px;
 }
 
-a.similar span {
+a.similar span.similar-text {
 	display: block;
 	height: 100%;
 	font-size: 10px;
 	color: #ee8887;
 }
 
-a.similar-match span {
+a.similar-match span.similar-text {
 	font-weight: bold;
 }
 

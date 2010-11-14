@@ -1270,15 +1270,15 @@ a.largeimg:hover {
         background-image: none;
 }
 
-a.directlink:hover span {
-        display: block;
-}
-
-a.directlink span {
+a.directlink > span.directlink-res {
         display: none;
         margin: 0;
         padding: 0;
         color: #ee8887;
+}
+
+a.directlink:hover > span.directlink-res {
+        display: block;
 }
 
 .top-corner-float {

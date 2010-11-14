@@ -80,6 +80,10 @@ module PostHelper
     li_class = ""
     li_class += " javascript-hide" if options[:blacklisting]
     li_class += " creator-id-#{post.user_id}"
+    li_class += " flagged" if post.is_flagged?
+    li_class += " has-children" if post.has_children?
+    li_class += " has-parent" if post.parent_id
+    li_class += " pending" if post.is_pending?
     item = %{<li id="p#{post.id}" class="#{li_class}">#{span}#{directlink}</li>}
     return item
   end

@@ -50,7 +50,7 @@
         <tr>
           <td>
             <% if pp.post.can_be_seen_by?(@current_user) %>
-              <%= link_to(image_tag(pp.post.preview_url), {:controller => "post", :action => "show", :id => pp.post_id}, :title => pp.post.cached_tags)%>
+              <%= link_to(image_tag(pp.post.preview_url, :width => pp.post.preview_dimensions[0], :height => pp.post.preview_dimensions[1]), {:controller => "post", :action => "show", :id => pp.post_id}, :title => pp.post.cached_tags)%>
             <% end %>
           </td>
           <td>

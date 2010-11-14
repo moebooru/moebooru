@@ -43,12 +43,12 @@
         <tr>
           <td>
             <% if fp.can_be_seen_by?(@current_user) %>
-              <%= link_to(image_tag(fp.preview_url), {:controller => "post", :action => "show", :id => fp.id}, :title => fp.cached_tags)%>
+              <%= link_to(image_tag(fp.preview_url, :width => fp.preview_dimensions[0], :height => fp.preview_dimensions[1]), {:controller => "post", :action => "show", :id => fp.id}, :title => fp.cached_tags)%>
             <% end %>
           </td>
           <td>
             <% if tp.can_be_seen_by?(@current_user) %>
-              <%= link_to(image_tag(tp.preview_url), {:controller => "post", :action => "show", :id => tp.id}, :title => tp.cached_tags)%>
+              <%= link_to(image_tag(tp.preview_url, :width => tp.preview_dimensions[0], :height => tp.preview_dimensions[1]), {:controller => "post", :action => "show", :id => tp.id}, :title => tp.cached_tags)%>
             <% end %>
           </td>
           <td>

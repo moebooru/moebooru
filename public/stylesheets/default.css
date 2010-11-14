@@ -1280,6 +1280,25 @@ a.directlink > span.directlink-res {
 a.directlink:hover > span.directlink-res {
         display: block;
 }
+a.directlink:hover > .directlink-info {
+	display: none;
+}
+
+/* Float the post info when it's part of a regular directlink, but not when
+ * it's part of the text in similarity output. */
+.directlink .directlink-info {
+	float: right;
+	margin-right: 3em;
+}
+
+.parent-display { color: #00FF00; background: #00FF00; display: none; }
+.has-children .parent-display { display: inline; }
+.child-display { color: #FFFF00; background: #FFFF00; display: none; }
+.has-parent .child-display { display: inline; }
+.flagged-display { color: #FF0000; display: none; }
+.flagged .flagged-display { display: inline; }
+.pending-display { color: #0000FF; display: none; }
+.pending .pending-display { display: inline; }
 
 .top-corner-float {
 	position: fixed;

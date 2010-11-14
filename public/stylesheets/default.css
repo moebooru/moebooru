@@ -181,11 +181,6 @@ img {
   vertical-align: middle;
 }
 
-img.preview {
-  border: 3px hidden #000;
-  margin-top: 1em;
-}
-
 input {
   padding: 0 0.3em;
 }
@@ -245,15 +240,14 @@ span.post-count {
   color: #AAA;
 }
 
-span.thumb {
-  display: inline-block;
-  height: 180px;
+a.thumb {
+  display: block;
   text-align: center;
   vertical-align: middle;
-}
-
-ul#post-list-posts span.thumb {
-  display: block;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 15px;
 }
 
 span.plid {
@@ -1220,10 +1214,16 @@ ul#post-list-posts {
   list-style-type: none;
 }
 
+ul#post-list-posts .inner {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
 ul#post-list-posts li {
   float: left;
   margin: 0;
-  width: 180px;
   list-style-type: none;
 }
 
@@ -1231,10 +1231,11 @@ a.directlink {
         background: #555 url("/images/ddl.gif") no-repeat scroll center center;
         display: block;
         height: 15px;
-        padding: 2px 0 0 0;
+        padding: 1px 0 1px 0;
         margin: 0 0 10px 0;
         text-align: center;
         font-size: 10px;
+        white-space: nowrap;
 }
 
 a.largeimg {
@@ -1326,9 +1327,10 @@ body.dragging-to-post .thumb * {
 	background: #555;
 	display: block;
 	padding: 2px 0 0 0;
-	margin: 10px 0 0 0;
+	margin: 10px 0 10px 0;
 	text-align: center;
 	height: 15px;
+	white-space: nowrap;
 }
 
 a.similar span.similar-text {

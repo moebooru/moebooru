@@ -36,11 +36,12 @@ module PostHelper
     link_onmouseover = %{ onmouseover="#{options[:onmouseover]}"} if options[:onmouseover]
     link_onmouseout = %{ onmouseout="#{options[:onmouseout]}"} if options[:onmouseout]
     width, height = post.preview_dimensions
+    block_size = [150, 150]
 
     image = %{<img src="#{post.preview_url}" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">}
     plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
-    link = %{<a href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
-    span = %{<span class="thumb">#{link}</span>}
+    link = %{<a class="thumb" href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
+    div = %{<div class="inner" style="height: #{block_size[1]}px; width: #{block_size[0]}px;">#{link}</div>}
     
     if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then
       dl_width = post.jpeg_width.to_i
@@ -89,7 +90,7 @@ module PostHelper
     li_class += " has-children" if post.has_children?
     li_class += " has-parent" if post.parent_id
     li_class += " pending" if post.is_pending?
-    item = %{<li id="p#{post.id}" class="#{li_class}">#{span}#{directlink}</li>}
+    item = %{<li style="width: #{block_size[1]+15}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>}
     return item
   end
 

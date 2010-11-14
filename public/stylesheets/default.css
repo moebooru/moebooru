@@ -1300,6 +1300,12 @@ a.directlink:hover > .directlink-info {
 	padding: 2px;
 	background: #222;
 	position: absolute;
+	z-index: 2; /* over the regular post images */
+}
+
+.post-hover-overlay {
+	position: absolute;
+	z-index: 2; /* over the regular post images */
 }
 
 .clickable { cursor: pointer; }

@@ -826,9 +826,11 @@ Post = {
     Post.hover_info_displayed_post = post;
 
     var hover = $("index-hover-info");
+    var overlay = $("index-hover-overlay");
     if(!post)
     {
       hover.hide();
+      overlay.hide();
       return;
     }
     hover.down("#hover-dimensions").innerHTML = post.width + "x" + post.height;
@@ -879,6 +881,17 @@ Post = {
     if(x + hover_width > client_width) x = client_width - hover_width;
     hover.style.left = x + "px";
     hover.style.top = y + "px";
+
+    overlay.down("IMG").src = post.preview_url;
+    
+    /* This doesn't always align properly in Firefox if full-page zooming is being
+     * used. */
+    /* XXX: not always right in IE7 */
+    var x = thumb_center_x - post.actual_preview_width/2;
+    var y = thumb_offset[1];
+    overlay.style.left = x + "px";
+    overlay.style.top = y + "px";
+    overlay.show();
   },
 
   hover_info_shift_down: function()
@@ -913,6 +926,7 @@ Post = {
 
     document.observe("blur", function(e) { Post.hover_info_shift_up(); });
 
+    var overlay = $("index-hover-overlay");
     Post.posts.each(function(p) {
       var post_id = p[0]
       var post = p[1]
@@ -922,9 +936,10 @@ Post = {
         return;
 
       span.down("A").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
-      span.down("A").observe("mouseout", function(e) { Post.hover_info_mouseout(); });
+      span.down("A").observe("mouseout", function(e) { if(e.relatedTarget.isParentNode(overlay)) return; Post.hover_info_mouseout(); });
     });
 
+    overlay.observe("mouseout", function(e) { Post.hover_info_mouseout(); });
   },
 
   highlight_posts_with_tag: function(tag)

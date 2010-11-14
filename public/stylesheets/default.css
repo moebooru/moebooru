@@ -186,7 +186,7 @@ img.preview {
   margin-top: 1em;
 }
 
-img.flagged {
+.flagged img.preview {
   border: 3px solid #F00;
 }
 

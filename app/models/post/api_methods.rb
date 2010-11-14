@@ -16,6 +16,8 @@ module PostApiMethods
       :preview_url => preview_url, 
       :preview_width => preview_dimensions[0],
       :preview_height => preview_dimensions[1],
+      :actual_preview_width => raw_preview_dimensions[0],
+      :actual_preview_height => raw_preview_dimensions[1],
       :sample_url => sample_url,
       :sample_width => sample_width || width,
       :sample_height => sample_height || height,

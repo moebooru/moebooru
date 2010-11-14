@@ -160,7 +160,7 @@ module PostFileMethods
   def generate_preview
     return true unless image? && width && height
 
-    size = Danbooru.reduce_to({:width=>width, :height=>height}, {:width=>150, :height=>150})
+    size = Danbooru.reduce_to({:width=>width, :height=>height}, {:width=>300, :height=>300})
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
     if File.exists?(tempfile_sample_path)
@@ -177,7 +177,7 @@ module PostFileMethods
     end
 
     begin
-      Danbooru.resize(ext, path, tempfile_preview_path, size, 95)
+      Danbooru.resize(ext, path, tempfile_preview_path, size, 85)
     rescue Exception => x
       errors.add "preview", "couldn't be generated (#{x})"
       return false
@@ -292,6 +292,15 @@ module PostFileMethods
     end
   end
   
+  def raw_preview_dimensions
+    if image?
+      dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 300, :height => 300})
+      return [dim[:width], dim[:height]]
+    else
+      return [300, 300]
+    end
+  end
+
   def preview_dimensions
     if image?
       dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})

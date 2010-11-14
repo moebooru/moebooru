@@ -1231,7 +1231,7 @@ a.directlink {
         background: #555 url("/images/ddl.gif") no-repeat scroll center center;
         display: block;
         height: 15px;
-        padding: 1px 0 1px 0;
+        padding: 2px 0 0px 0;
         margin: 0 0 10px 0;
         text-align: center;
         font-size: 10px;
@@ -1330,14 +1330,8 @@ body.dragging-to-post .thumb * {
 	margin: 10px 0 10px 0;
 	text-align: center;
 	height: 15px;
-	white-space: nowrap;
-}
-
-a.similar span.similar-text {
-	display: block;
-	height: 100%;
 	font-size: 10px;
-	color: #ee8887;
+	white-space: nowrap;
 }
 
 a.similar-match span.similar-text {

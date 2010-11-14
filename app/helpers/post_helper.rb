@@ -66,9 +66,9 @@ module PostHelper
       %{<a class="#{similarity_class}" href="#{dl_url}"><span class="similar-text">#{icon}#{similarity_text}#{size}</span></a>}
     else
       if post.width.to_i > 1500 or post.height.to_i > 1500 
-        %{<a class="directlink largeimg" href="#{dl_url}"><span>#{dl_width} x #{dl_height}</span></a>}
+        %{<a class="directlink largeimg" href="#{dl_url}"><span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}
       else
-        %{<a class="directlink" href="#{dl_url}"><span>#{dl_width} x #{dl_height}</span></a>}
+        %{<a class="directlink" href="#{dl_url}"><span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}
       end
     end
     directlink = "" if options[:hide_directlink]

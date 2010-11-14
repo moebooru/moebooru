@@ -1,10 +1,12 @@
 module PostImageStoreMethods
   module LocalFlatWithAmazonS3Backup
     def move_file
-      FileUtils.mv(tempfile_path, file_path)
-      FileUtils.chmod(0664, file_path)
+      if File.exists?(tempfile_path)
+        FileUtils.mv(tempfile_path, file_path)
+        FileUtils.chmod(0664, file_path)
+      end
 
-      if image?
+      if File.exists?(tempfile_preview_path)
         FileUtils.mv(tempfile_preview_path, preview_path)
         FileUtils.chmod(0664, preview_path)
       end

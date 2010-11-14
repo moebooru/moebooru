@@ -52,6 +52,15 @@ module PostHelper
       dl_url = post.file_url
     end
 
+    directlink_info = %{
+      <span class="directlink-info">
+        <span class="parent-display">X</span>
+        <span class="child-display">X</span>
+        <span class="flagged-display">!</span>
+        <span class="pending-display">P</span>
+      </span>
+    }
+
     directlink = if options[:similarity]
       icon = %{<img src="/favicon.ico" class="service-icon" id="source">}
       size = %{ (#{dl_width}x#{dl_height})}
@@ -63,12 +72,12 @@ module PostHelper
         (if @initial then "Your post" else "Original" end):
        %{#{options[:similarity].to_i}%}
 
-      %{<a class="#{similarity_class}" href="#{dl_url}"><span class="similar-text">#{icon}#{similarity_text}#{size}</span></a>}
+      %{<a class="#{similarity_class}" href="#{dl_url}"><span class="similar-text">#{icon}#{similarity_text}#{size}#{directlink_info}</span></a>}
     else
       if post.width.to_i > 1500 or post.height.to_i > 1500 
-        %{<a class="directlink largeimg" href="#{dl_url}"><span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}
+        %{<a class="directlink largeimg" href="#{dl_url}">#{directlink_info}<span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}
       else
-        %{<a class="directlink" href="#{dl_url}"><span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}
+        %{<a class="directlink" href="#{dl_url}">#{directlink_info}<span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}
       end
     end
     directlink = "" if options[:hide_directlink]

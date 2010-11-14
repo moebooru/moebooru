@@ -35,7 +35,7 @@ Post = {
         if (resp.success) {
           notice("Post approved")
           if ($("p" + post_id)) {
-            $("p" + post_id).down("img").removeClassName("pending")
+            $("p" + post_id).removeClassName("pending")
           }
           if ($("pending-notice")) {
             $("pending-notice").hide()

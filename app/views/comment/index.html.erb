@@ -6,7 +6,7 @@
   <% @posts.each do |post| %>
     <div class="post">
       <div class="col1">
-        <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview javascript-hide", :id => "p%i" % post.id), :controller => "post", :action => "show", :id => post.id) %>&nbsp;
+        <%= link_to(image_tag(post.preview_url, :title => post.cached_tags, :class => "preview javascript-hide", :id => "p%i" % post.id, :width => post.preview_dimensions[0], :height => post.preview_dimensions[1]), :controller => "post", :action => "show", :id => post.id) %>&nbsp;
       </div>
       <div class="col2" id="comments-for-p<%= post.id %>">
         <div class="header">

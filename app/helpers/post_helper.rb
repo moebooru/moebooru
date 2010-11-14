@@ -73,7 +73,7 @@ module PostHelper
         (if @initial then "Your post" else "Original" end):
        %{#{options[:similarity].to_i}%}
 
-      %{<a class="#{similarity_class}" href="#{dl_url}"><span class="similar-text">#{icon}#{similarity_text}#{size}#{directlink_info}</span></a>}
+      %{<a class="#{similarity_class}" href="#{dl_url}"><span class="similar-text">#{icon}#{similarity_text}#{size}</span>#{directlink_info}</a>}
     else
       if post.width.to_i > 1500 or post.height.to_i > 1500 
         %{<a class="directlink largeimg" href="#{dl_url}">#{directlink_info}<span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}

@@ -803,7 +803,7 @@ Post = {
     Post.hover_info_update();
   },
 
-  hover_info_mouseout: function(post_id)
+  hover_info_mouseout: function()
   {
     if(Post.hover_info_hovered_post == null)
       return;
@@ -922,7 +922,7 @@ Post = {
         return;
 
       span.down("A").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
-      span.down("A").observe("mouseout", function(e) { Post.hover_info_mouseout(post_id); });
+      span.down("A").observe("mouseout", function(e) { Post.hover_info_mouseout(); });
     });
 
   },

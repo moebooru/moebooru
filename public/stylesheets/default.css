@@ -1231,12 +1231,6 @@ ul.history-header {
 div#wiki-diff ins {
   background-color: #8f8;
 }
-a.directlink span {
-        display: none;
-        margin: 0;
-        padding: 0;
-        color: #ee8887;
-}
 
 ul#post-list-posts {
   display: inline;
@@ -1266,6 +1260,25 @@ a.largeimg {
 
 .highlighted-post > a.directlink {
 	background: #400 url("/images/ddl_large.gif") no-repeat scroll center center;
+}
+
+a.directlink:hover {
+        background-image: none;
+}
+
+a.largeimg:hover {
+        background-image: none;
+}
+
+a.directlink:hover span {
+        display: block;
+}
+
+a.directlink span {
+        display: none;
+        margin: 0;
+        padding: 0;
+        color: #ee8887;
 }
 
 .top-corner-float {
@@ -1305,18 +1318,6 @@ body.dragging-to-post, body.dragging-to-post * {
 
 body.dragging-to-post .thumb * {
   cursor: pointer;
-}
-
-a.directlink:hover {
-        background-image: none;
-}
-
-a.largeimg:hover {
-        background-image: none;
-}
-
-a.directlink:hover span {
-        display: block;
 }
 
 .similar {

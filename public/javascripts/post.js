@@ -865,7 +865,7 @@ Post = {
     var hover_width = hover.scrollWidth;
     var hover_height = hover.scrollHeight;
 
-    var hover_thumb = $("p" + post.id);
+    var hover_thumb = $("p" + post.id).down("IMG");
     var thumb_offset = hover_thumb.positionedOffset();
     var thumb_center_x = thumb_offset[0] + hover_thumb.scrollWidth/2;
     var thumb_top_y = thumb_offset[1];
@@ -921,8 +921,8 @@ Post = {
       if(span == null)
         return;
 
-      span.down("SPAN").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
-      span.down("SPAN").observe("mouseout", function(e) { Post.hover_info_mouseout(post_id); });
+      span.down("A").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
+      span.down("A").observe("mouseout", function(e) { Post.hover_info_mouseout(post_id); });
     });
 
   },

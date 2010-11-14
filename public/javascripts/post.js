@@ -324,7 +324,7 @@ Post = {
 
       onSuccess: function(req) {
         notice("Post was flagged for deletion")
-        $("p" + id).down("img").addClassName("flagged")
+        $("p" + id).addClassName("flagged")
       }
     })
   },

@@ -186,23 +186,6 @@ img.preview {
   margin-top: 1em;
 }
 
-.flagged img.preview {
-  border: 3px solid #F00;
-}
-
-.has-children img.preview {
-  border: 3px solid #0F0;
-}
-
-.has-parent img.preview {
-  border: 3px solid #CC0;
-}
-
-.pending img.preview {
-  border: 3px solid #00F;
-}
-
-
 input {
   padding: 0 0.3em;
 }

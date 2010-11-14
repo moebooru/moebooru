@@ -117,17 +117,15 @@ Post = {
   {
     var e = $("p" + post.id);
     if(!e) return;
-    var img = e.down("IMG");
-    if(!img) return;
     if(post["has_children"])
-      img.addClassName("has-children");
+      e.addClassName("has-children");
     else
-      img.removeClassName("has-children");
+      e.removeClassName("has-children");
 
     if(post["parent_id"])
-      img.addClassName("has-parent");
+      e.addClassName("has-parent");
     else
-      img.removeClassName("has-parent");
+      e.removeClassName("has-parent");
   },
 
   update: function(post_id, params, finished) {

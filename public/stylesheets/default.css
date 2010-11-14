@@ -190,15 +190,15 @@ img.flagged {
   border: 3px solid #F00;
 }
 
-img.has-children {
+.has-children img.preview {
   border: 3px solid #0F0;
 }
 
-img.has-parent {
+.has-parent img.preview {
   border: 3px solid #CC0;
 }
 
-img.pending {
+.pending img.preview {
   border: 3px solid #00F;
 }
 

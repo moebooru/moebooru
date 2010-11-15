@@ -764,8 +764,8 @@ Post = {
       image.src = post.preview_url;
       if(post.status != "deleted")
       {
-        image.style.width = post.preview_width + "px";
-        image.style.height = post.preview_height + "px";
+        image.style.width = post.actual_preview_width + "px";
+        image.style.height = post.actual_preview_height + "px";
       }
     }
 

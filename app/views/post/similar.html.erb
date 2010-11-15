@@ -158,31 +158,7 @@
   id=<%= params[:id] %>;
   <% end %>
 
-  var submit_quick_edit = function(e) {
-    $("quick-edit").hide()
-    new Ajax.Request("/post/update.json", {
-      parameters: $("quick-edit").down("form").serialize(),
-      onSuccess: function(resp) {
-        var resp = resp.responseJSON
-        notice("Post updated")
-        $("quick-edit").hide()
-        Post.register(resp.post)
-      },
-      onFailure: function(resp) {
-        var resp = resp.responseJSON
-        notice("Error: " + resp.reason)
-      }
-    })
-    e.stop()
-  }
-
-  $("quick-edit").down("form").observe("submit", submit_quick_edit)
-  $("post_tags").observe("keydown", function(e) {
-    if(e.keyCode != Event.KEY_RETURN)
-      return;
-    submit_quick_edit(e);
-    e.stop();
-  })
+  new PostQuickEdit($("quick-edit"));
 
   PostModeMenu.init()
 </script>

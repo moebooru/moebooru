@@ -386,3 +386,37 @@ TagScript = {
     Post.update_batch(posts);
   }
 }
+
+function PostQuickEdit(container)
+{
+  this.container = container;
+  this.submit_event = this.submit_event.bindAsEventListener(this);
+
+  this.container.down("form").observe("submit", this.submit_event);
+  this.container.down("#post_tags").observe("keydown", function(e) {
+    if(e.keyCode != Event.KEY_RETURN)
+      return;
+    this.submit_event(e);
+  }.bindAsEventListener(this));
+}
+
+PostQuickEdit.prototype.submit_event = function(e)
+{
+  e.stop();
+  this.container.hide();
+
+  new Ajax.Request("/post/update.json", {
+    parameters: this.container.down("form").serialize(),
+    onSuccess: function(resp) {
+      var resp = resp.responseJSON;
+      notice("Post updated");
+      this.container.hide();
+      Post.register(resp.post);
+    },
+    onFailure: function(resp) {
+      var resp = resp.responseJSON;
+      notice("Error: " + resp.reason);
+    }
+  });
+}
+

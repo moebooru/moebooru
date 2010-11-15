@@ -16,4 +16,24 @@ class FlaggedPostDetail < ActiveRecord::Base
           user.id, user.id, user.last_deleted_post_seen_at).to_i
     end
   end
+
+  def flagged_by
+    return User.find_name(user_id)
+  end
+
+  def api_attributes
+    ret = {
+      :post_id => post_id,
+      :reason => reason,
+      :user_id => user_id,
+      :flagged_by => flagged_by,
+      :created_at => created_at,
+    }
+
+    return ret
+  end
+
+  def to_json(*args)
+    return api_attributes.to_json(*args)
+  end
 end

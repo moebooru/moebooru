@@ -101,7 +101,7 @@
 	  <%= hidden_field_tag "post[old_tags]", "" %>
 	  <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
 	  <%= submit_tag "Update" %>
-	  <%= button_to_function "Cancel", "$('quick-edit').hide()" %>
+          <%= tag(:input, :type => 'button', :value => "Cancel", :class => "cancel") %>
 	<% end %>
       </div>
 

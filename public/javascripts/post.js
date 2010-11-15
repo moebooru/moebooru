@@ -794,6 +794,15 @@ Post = {
     })
   },
 
+  hover_info_pin: function(post_id)
+  {
+    var post = null;
+    if(post_id != null)
+      post = Post.posts.get(post_id);    
+    Post.hover_info_pinned_post = post;
+    Post.hover_info_update();
+  },
+
   hover_info_mouseover: function(post_id)
   {
     var post = Post.posts.get(post_id);    
@@ -814,12 +823,17 @@ Post = {
   hover_info_hovered_post: null,
   hover_info_displayed_post: null,
   hover_info_shift_held: false,
+  hover_info_pinned_post: null, /* pinned by something like the edit menu; shift state and mouseover is ignored */
 
   hover_info_update: function()
   {
-    var post = Post.hover_info_hovered_post;
-    if(!Post.hover_info_shift_held)
-      post = null;
+    var post = Post.hover_info_pinned_post;
+    if(!post)
+    {
+      post = Post.hover_info_hovered_post;
+      if(!Post.hover_info_shift_held)
+        post = null;
+    }
 
     if(Post.hover_info_displayed_post == post)
       return;

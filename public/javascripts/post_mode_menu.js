@@ -404,6 +404,8 @@ function PostQuickEdit(container)
 
 PostQuickEdit.prototype.show = function(post_id)
 {
+  Post.hover_info_pin(post_id);
+
   var post = Post.posts.get(post_id);
   this.container.down("#id").value = post_id;
   this.container.down("#post_old_tags").value = post.tags.join(" ");
@@ -415,6 +417,7 @@ PostQuickEdit.prototype.show = function(post_id)
 PostQuickEdit.prototype.hide = function()
 {
   this.container.hide();
+  Post.hover_info_pin(null);
 }
 
 PostQuickEdit.prototype.submit_event = function(e)

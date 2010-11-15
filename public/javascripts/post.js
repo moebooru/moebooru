@@ -883,6 +883,20 @@ Post = {
       hover.down("#hover-not-shown").hide();
     else
       hover.down("#hover-not-shown").show();
+    hover.down("#hover-is-parent").show(post.parent_id != null);
+    hover.down("#hover-is-child").show(post.has_children);
+    hover.down("#hover-is-pending").show(post.status == "pending");
+    hover.down("#hover-is-flagged").show(post.status == "flagged");
+    var set_text_content = function(element, text)
+    {
+      (element.innerText || element).textContent = text;
+    }
+
+    if(post.status == "flagged")
+    {
+      hover.down("#hover-flagged-reason").setTextContent(post.flag_detail.reason);
+      hover.down("#hover-flagged-by").setTextContent(post.flag_detail.flagged_by);
+    }
 
     hover.down("#hover-file-size").innerHTML = number_to_human_size(post.file_size);
     hover.down("#hover-author").innerHTML = post.author;

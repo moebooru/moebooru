@@ -886,7 +886,6 @@ Post = {
     
     /* This doesn't always align properly in Firefox if full-page zooming is being
      * used. */
-    /* XXX: not always right in IE7 */
     var x = thumb_center_x - post.actual_preview_width/2;
     var y = thumb_offset[1];
     overlay.style.left = x + "px";

@@ -413,7 +413,7 @@ PostQuickEdit.prototype.show = function(post_id)
   var post = Post.posts.get(post_id);
   this.container.down("#id").value = post_id;
   this.container.down("#post_old_tags").value = post.tags.join(" ");
-  this.container.down("#post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1);
+  this.container.down("#post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1) + " ";
   this.container.show();
   this.container.down("#post_tags").focus();
 }

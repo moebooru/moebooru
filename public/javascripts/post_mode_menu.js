@@ -124,12 +124,7 @@ PostModeMenu = {
     }
 
     if (s.value == "edit") {
-      var post = Post.posts.get(post_id)
-      $("id").value = post_id
-      $("post_old_tags").value = post.tags.join(" ")
-      $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
-      $("quick-edit").show()
-      $("post_tags").focus()
+      post_quick_edit.show(post_id);
     } else if (s.value == 'vote') {
       Post.vote(this.vote_score, post_id, {})
     } else if (s.value == 'rating-q') {
@@ -397,7 +392,7 @@ function PostQuickEdit(container)
     if(e.keyCode == Event.KEY_ESC)
     {
       e.stop();
-      this.container.hide();
+      this.hide();
       return;
     }
 
@@ -407,17 +402,32 @@ function PostQuickEdit(container)
   }.bindAsEventListener(this));
 }
 
+PostQuickEdit.prototype.show = function(post_id)
+{
+  var post = Post.posts.get(post_id);
+  this.container.down("#id").value = post_id;
+  this.container.down("#post_old_tags").value = post.tags.join(" ");
+  this.container.down("#post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1);
+  this.container.show();
+  this.container.down("#post_tags").focus();
+}
+
+PostQuickEdit.prototype.hide = function()
+{
+  this.container.hide();
+}
+
 PostQuickEdit.prototype.submit_event = function(e)
 {
   e.stop();
-  this.container.hide();
+  this.hide();
 
   new Ajax.Request("/post/update.json", {
     parameters: this.container.down("form").serialize(),
     onSuccess: function(resp) {
       var resp = resp.responseJSON;
       notice("Post updated");
-      this.container.hide();
+      this.hide();
       Post.register(resp.post);
     },
     onFailure: function(resp) {

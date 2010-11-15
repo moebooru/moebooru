@@ -82,7 +82,7 @@
 
 <% content_for("post_cookie_javascripts") do %>
 <script type="text/javascript">
-  new PostQuickEdit($("quick-edit"));
+  post_quick_edit = new PostQuickEdit($("quick-edit"));
 
   PostModeMenu.init()
   <% @preload.each do |post| %>

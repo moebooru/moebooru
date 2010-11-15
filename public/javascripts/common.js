@@ -97,6 +97,14 @@ Object.extend(Element.Methods, {
       element = element.parentNode;
     }
     return false;
+  },
+  setTextContent: function(element, text)
+  {
+    if(element.innerText)
+      element.innerText = text;
+    else
+      element.textContent = text;
+    return element;
   }
 });
 Element.addMethods()

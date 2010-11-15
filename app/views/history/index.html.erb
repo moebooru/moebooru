@@ -111,7 +111,9 @@
     History.add_change(<%= change.id %>, "<%= change.get_group_by_controller %>", <%= change.group_by_id %>, [ <%= change.history_changes.map { |c| c.id }.join(", ") %> ], '<%= escape_javascript(change.author) %>')
     <% if change.group_by_table_class == Post %>
       Post.register(<%= change.group_by_obj.to_json %>)
-      Post.init_hover_thumb($("r<%= change.id %>"), <%= change.group_by_id %>, thumb);
+      var hover_row = $("r<%= change.id %>");
+      var container = hover_row.up("TABLE");
+      Post.init_hover_thumb(hover_row, <%= change.group_by_id %>, thumb, container);
     <% end %>
   <% end %>
   Post.init_blacklisted({replace: true});

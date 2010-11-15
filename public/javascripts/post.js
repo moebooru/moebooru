@@ -733,12 +733,12 @@ Post = {
     });
   },
 
-  init_hover_thumb: function(hover, post_id, thumb)
+  init_hover_thumb: function(hover, post_id, thumb, container)
   {
     /* Hover thumbs trigger rendering bugs in IE7. */
     if(Prototype.Browser.IE)
       return;
-    hover.observe("mouseover", function(e) { Post.hover_thumb_mouse_over(post_id, hover, thumb); });
+    hover.observe("mouseover", function(e) { Post.hover_thumb_mouse_over(post_id, hover, thumb, container); });
     hover.observe("mouseout", function(e) { if(e.relatedTarget == thumb) return; Post.hover_thumb_mouse_out(thumb); });
     if(!thumb.hover_init) {
       thumb.hover_init = true;
@@ -747,7 +747,7 @@ Post = {
 
   },
 
-  hover_thumb_mouse_over: function(post_id, AlignItem, image)
+  hover_thumb_mouse_over: function(post_id, AlignItem, image, container)
   {
     var post = Post.posts.get(post_id);
     image.hide();
@@ -764,12 +764,26 @@ Post = {
       image.src = post.preview_url;
       if(post.status != "deleted")
       {
-        image.style.width = post.preview_width + "px";
-        image.style.height = post.preview_height + "px";
+        image.style.width = post.actual_preview_width + "px";
+        image.style.height = post.actual_preview_height + "px";
       }
     }
 
-    image.style.top = offset.top-3 + "px";
+    var container_top = container.cumulativeOffset().top;
+    var container_bottom = container_top + container.getHeight() - 1;
+
+    /* Normally, align to the item we're hovering over.  If the image overflows over
+     * the bottom edge of the container, shift it upwards to stay in the container,
+     * unless the container's too small and that would put it over the top. */
+    var y = offset.top-2; /* -2 for top 2px border */
+    if(y + image.getHeight() > container_bottom)
+    {
+      var bottom_aligned_y = container_bottom - image.getHeight() - 4; /* 4 for top 2px and bottom 2px borders */
+      if(bottom_aligned_y >= container_top)
+        y = bottom_aligned_y;
+    }
+
+    image.style.top = y + "px";
     image.show();
   },
 

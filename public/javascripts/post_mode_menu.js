@@ -394,6 +394,13 @@ function PostQuickEdit(container)
 
   this.container.down("form").observe("submit", this.submit_event);
   this.container.down("#post_tags").observe("keydown", function(e) {
+    if(e.keyCode == Event.KEY_ESC)
+    {
+      e.stop();
+      this.container.hide();
+      return;
+    }
+
     if(e.keyCode != Event.KEY_RETURN)
       return;
     this.submit_event(e);

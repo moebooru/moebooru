@@ -1295,6 +1295,9 @@ a.directlink:hover > .directlink-info {
 	padding: 6px;
 	top: 2px;
 	right: 2px;
+
+        /* Draw this over the index shift-key overlays. */
+        z-index: 5;
 }
 
 .post-hover {

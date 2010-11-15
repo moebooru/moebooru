@@ -1227,6 +1227,10 @@ ul#post-list-posts li {
   list-style-type: none;
 }
 
+img.preview {
+        vertical-align: top;
+}
+
 a.directlink {
         background: #555 url("/images/ddl.gif") no-repeat scroll center center;
         display: block;
@@ -1306,6 +1310,13 @@ a.directlink:hover > .directlink-info {
 .post-hover-overlay {
 	position: absolute;
 	z-index: 2; /* over the regular post images */
+}
+.post-hover-overlay > img {
+        vertical-align: top;
+        border-width: 0 2px 2px 2px;
+        border-style: solid;
+        border-color: #000;
+        margin-left: -2px;
 }
 
 .clickable { cursor: pointer; }

@@ -61,13 +61,13 @@
     <% end %>
     
     <div id="quick-edit" style="display: none;" class="top-corner-float">
-      <h4>Edit Tags</h4>
       <% form_tag(:action => "update") do %>
         <%= hidden_field_tag "id", "" %>
         <%= hidden_field_tag "post[old_tags]", "" %>
         <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
         <%= submit_tag "Update" %>
         <%= button_to_function "Cancel", "$('quick-edit').hide()" %>
+      <h4 style="float: right;">Edit Tags</h4>
       <% end %>
     </div>
 

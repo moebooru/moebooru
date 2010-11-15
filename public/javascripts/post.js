@@ -883,8 +883,8 @@ Post = {
       hover.down("#hover-not-shown").hide();
     else
       hover.down("#hover-not-shown").show();
-    hover.down("#hover-is-parent").show(post.parent_id != null);
-    hover.down("#hover-is-child").show(post.has_children);
+    hover.down("#hover-is-parent").show(post.has_children);
+    hover.down("#hover-is-child").show(post.parent_id != null);
     hover.down("#hover-is-pending").show(post.status == "pending");
     hover.down("#hover-is-flagged").show(post.status == "flagged");
     var set_text_content = function(element, text)

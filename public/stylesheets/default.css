@@ -1331,6 +1331,11 @@ a.directlink:hover > .directlink-info {
 	width: 100%;
 }
 
+#hover-is-parent { color: #00FF00; }
+#hover-is-child { color: #FFFF00; }
+#hover-is-pending { color: #00FFFF; }
+#hover-is-flagged .flagged-text { color: #FF0000; }
+
 a.tag-script-applied {
 	background-color: #880 !important;
 }

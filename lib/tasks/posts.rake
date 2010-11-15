@@ -103,8 +103,9 @@ namespace :posts do
 
   desc 'Regenerate post previews'
   task :regen_previews => :environment do
-    Post.find_by_sql("SELECT p.* FROM posts p ORDER BY p.id DESC").each do |post|
-      p "%i..." % post.id
+    ActiveRecord::Base.select_values_sql("SELECT p.id FROM posts p ORDER BY p.id DESC").each do |post_id|
+      p "%i..." % post_id
+      post = Post.find_by_id(post_id)
       post.regenerate_images(:preview, :force_regen => false)
       post.save!
     end

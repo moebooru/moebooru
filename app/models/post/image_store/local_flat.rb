@@ -64,12 +64,10 @@ module PostImageStoreMethods
     end
 
     def move_file
-      if File.exists?(tempfile_path)
-        FileUtils.mv(tempfile_path, file_path)
-        FileUtils.chmod(0664, file_path)
-      end
+      FileUtils.mv(tempfile_path, file_path)
+      FileUtils.chmod(0664, file_path)
 
-      if File.exists?(tempfile_preview_path)
+      if image?
         FileUtils.mv(tempfile_preview_path, preview_path)
         FileUtils.chmod(0664, preview_path)
       end

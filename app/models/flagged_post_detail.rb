@@ -36,4 +36,8 @@ class FlaggedPostDetail < ActiveRecord::Base
   def to_json(*args)
     return api_attributes.to_json(*args)
   end
+
+  def to_xml(options = {})
+    return api_attributes.to_xml(options.merge(:root => "flagged_post_detail"))
+  end
 end

@@ -34,6 +34,10 @@ module PostApiMethods
       :height => height
     }
 
+    if status == "flagged"
+      ret[:flag_detail] = flag_detail
+    end
+
     # If we're being formatted as the contents of a pool, we'll have the pool_post
     # sequence loaded too.
     ret[:sequence] = sequence if self.respond_to?("sequence")

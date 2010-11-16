@@ -28,6 +28,9 @@
             <option value="flag">Flag post</option>
             <option value="apply-tag-script">Apply tag script</option>
             <option value="reparent-quick">Reparent posts</option>
+            <% if @searching_pool then %>
+              <option value="remove-from-pool">Remove from pool</option>
+            <% end %>
           </select>          
         </div>
       </form>
@@ -84,7 +87,7 @@
 <script type="text/javascript">
   post_quick_edit = new PostQuickEdit($("quick-edit"));
 
-  PostModeMenu.init()
+  PostModeMenu.init(<%= j(@searching_pool && @searching_pool.id) %>)
   <% @preload.each do |post| %>
   Preload.preload('<%= escape_javascript(post.preview_url) %>');
   <% end %>

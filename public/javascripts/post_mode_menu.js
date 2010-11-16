@@ -1,8 +1,11 @@
 PostModeMenu = {
   mode: "view",
 
-  init: function() {
+  init: function(pool_id) {
     try {	/* This part doesn't work on IE7; for now, let's allow execution to continue so at least some initialization is run */
+
+    /* If pool_id isn't null, it's the pool that we're currently searching for. */
+    this.pool_id = pool_id;
 
     var color_element = $("mode-box")
     this.original_style = { border: color_element.getStyle("border") }
@@ -80,6 +83,8 @@ PostModeMenu = {
       return {background: "#A3A"}
     } else if (s == "reparent-quick") {
       return {background: "#CCA"}
+    } else if (s == "remove-from-pool") {
+      return {background: "#CCA"}
     } else if (s == 'reparent') {
       return {background: "#0C0"}
     } else if (s == 'dupe') {
@@ -151,6 +156,14 @@ PostModeMenu = {
       Post.approve(post_id)
     } else if (s.value == 'add-to-pool') {
       Pool.add_post(post_id, 0)
+    } else if (s.value == "remove-from-pool") {
+      var finished = function()
+      {
+        var post = $("p" + post_id);
+        post.addClassName("deleted");
+        notice("Post #" + post_id + " removed from pool");
+      }
+      TagScript.run(post_id, "-pool:" + PostModeMenu.pool_id, finished);
     }
 
     event.stopPropagation();
@@ -355,7 +368,7 @@ TagScript = {
     }
   },
 
-  run: function(post_ids, tag_script) {
+  run: function(post_ids, tag_script, finished) {
     if(!Object.isArray(post_ids))
       post_ids = $A([post_ids]);
 
@@ -378,7 +391,7 @@ TagScript = {
     });
 
     notice("Updating " + posts.length + (post_ids.length == 1? " post": " posts") );
-    Post.update_batch(posts);
+    Post.update_batch(posts, finished);
   }
 }
 

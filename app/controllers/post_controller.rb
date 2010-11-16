@@ -282,6 +282,9 @@ class PostController < ApplicationController
     end
     
     @ambiguous_tags = Tag.select_ambiguous(split_tags)
+    if q.has_key?(:pool) then
+      @searching_pool = Pool.find_by_id(q[:pool])
+    end
     
     @posts = WillPaginate::Collection.new(page, limit, count)
     offset = @posts.offset

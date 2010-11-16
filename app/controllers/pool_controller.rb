@@ -110,7 +110,21 @@ class PoolController < ApplicationController
 
     conds << "pools_posts.active"
 
-    @posts = Post.paginate :per_page => 24, :order => "nat_sort(pools_posts.sequence), pools_posts.post_id", :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id", :conditions => [conds.join(" AND "), *cond_params], :select => "posts.*, pools_posts.sequence AS sequence", :page => params[:page]
+    options = {
+      :per_page => 24,
+      :order => "nat_sort(pools_posts.sequence), pools_posts.post_id",
+      :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id",
+      :conditions => [conds.join(" AND "), *cond_params],
+      :select => "posts.*, pools_posts.sequence AS sequence",
+      :page => params[:page],
+    }
+
+    @browse = params[:browse] == "1"
+    if @browse then
+      options[:per_page] = 1000
+      options[:order] = "posts.width > posts.height, pools_posts.post_id"
+    end
+    @posts = Post.paginate(options)
 
     set_title @pool.pretty_name
     respond_to do |fmt|

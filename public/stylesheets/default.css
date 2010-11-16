@@ -247,7 +247,6 @@ a.thumb {
   height: 100%;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 15px;
 }
 
 span.plid {
@@ -1220,14 +1219,19 @@ ul#post-list-posts .deleted {
 ul#post-list-posts .inner {
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 15px;
   overflow: hidden;
 }
 
 ul#post-list-posts li {
-  float: left;
-  margin: 0;
   list-style-type: none;
+
+  margin: 0 0 10px 0;
+  display: inline-block;
+  vertical-align: bottom;
+
+  /* inline-block hack for IE: */
+  zoom: 1;
+  *display: inline;
 }
 
 img.preview {
@@ -1238,8 +1242,9 @@ a.directlink {
         background: #555 url("/images/ddl.gif") no-repeat scroll center center;
         display: block;
         height: 15px;
-        padding: 2px 0 0px 0;
-        margin: 0 0 10px 0;
+        padding: 1px 0 1px 0;
+        /* Spacing between the thumbnail and the ddl bar: */
+        margin-top: 15px;
         text-align: center;
         font-size: 10px;
         white-space: nowrap;
@@ -1266,10 +1271,11 @@ a.directlink > span.directlink-res {
         margin: 0;
         padding: 0;
         color: #ee8887;
+        vertical-align: top;
 }
 
 a.directlink:hover > span.directlink-res {
-        display: block;
+        display: inline;
 }
 a.directlink:hover > .directlink-info {
 	display: none;

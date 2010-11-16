@@ -39,4 +39,23 @@ class ExternalPost
   def has_jpeg?
     false
   end
+
+  def is_flagged?
+    false
+  end
+  def has_children?
+    false
+  end
+  def is_pending?
+    false
+  end
+  def parent_id
+    nil
+  end
+
+  # For external posts, we only link to the page containing the image, not directly
+  # to the image itself, so url and file_url are the same.
+  def file_url
+    url
+  end
 end

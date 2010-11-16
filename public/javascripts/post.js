@@ -859,6 +859,7 @@ Post = {
     {
       hover.hide();
       overlay.hide();
+      overlay.down("IMG").src = "about:blank";
       return;
     }
     hover.down("#hover-dimensions").innerHTML = post.width + "x" + post.height;

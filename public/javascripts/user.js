@@ -564,6 +564,24 @@ User = {
         }
       }
     });
+  },
+
+  set_pool_browse_mode: function(browse_mode) {
+    new Ajax.Request("/user/update.json", {
+      parameters: {
+        "user[pool_browse_mode]": browse_mode
+      },
+
+      onComplete: function(resp) {
+        var resp = resp.responseJSON;
+
+        if (resp.success) {
+          window.location.reload();
+        } else {
+          notice("Error: " + resp.reason);
+        }
+      }
+    });
   }
 }
 

@@ -7,7 +7,7 @@
   <ul id="post-list-posts">
     <% @posts.each do |post| -%>
       <%-%><%= print_preview(post, :onclick => "return remove_post_confirm(#{post.id}, #{@pool.id})",
-			      :user => @current_user, :display => @browse? :large : :block, :hide_directlink => @browse) -%>
+			      :user => @current_user, :display => @browse_mode == 1? :large : :block, :hide_directlink => @browse_mode == 1) -%>
     <%- end -%>
   </ul>
   </div>
@@ -45,6 +45,9 @@
     <li><%= link_to_pool_zip "Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
   <% end %>
   <li><%= link_to "Index&nbsp;view", :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
+  <% if not @current_user.is_anonymous? %>
+  <li><%= link_to_function "Toggle view", "User.set_pool_browse_mode(#{ j(1-@browse_mode)});" %></li>
+  <% end %>
   <% if @current_user.has_permission?(@pool) %>
     <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
     <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>

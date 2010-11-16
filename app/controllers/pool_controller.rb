@@ -119,8 +119,9 @@ class PoolController < ApplicationController
       :page => params[:page],
     }
 
-    @browse = params[:browse] == "1"
-    if @browse then
+    @browse_mode = @current_user.pool_browse_mode
+
+    if @browse_mode == 1 then
       options[:per_page] = 1000
       options[:order] = "posts.width > posts.height, nat_sort(pools_posts.sequence), pools_posts.post_id"
     end

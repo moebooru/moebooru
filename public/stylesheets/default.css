@@ -1213,6 +1213,9 @@ ul#post-list-posts {
   display: inline;
   list-style-type: none;
 }
+ul#post-list-posts .deleted {
+  opacity: 0.5;
+}
 
 ul#post-list-posts .inner {
   margin-left: auto;

@@ -49,6 +49,7 @@
     <% end %>
     <li><%= link_to_pool_zip "Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
   <% end %>
+  <li><%= link_to "Index view", :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
   <% if @current_user.has_permission?(@pool) %>
     <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
     <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>

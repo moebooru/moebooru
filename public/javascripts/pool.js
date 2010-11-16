@@ -31,7 +31,7 @@ Pool = {
         if (resp.success) {
           notice("Post removed from pool")
           if($("p" + post_id))
-            $("p" + post_id).remove()            
+            $("p" + post_id).addClassName("deleted");
           if($("pool" + pool_id))
             $("pool" + pool_id).remove()            
         } else {

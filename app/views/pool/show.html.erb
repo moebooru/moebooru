@@ -3,32 +3,15 @@
   <% unless @pool.description.blank? %>
     <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
   <% end %>
-  <% if @current_user.can_change?(@pool, :posts) %>
-  <div class="advanced-editing" style="display: none;">
-    <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
-    <label for="del-mode">Delete Mode</label>
-    <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
-  </div>
-  <% end %>
   <div style="margin-top: 1em;">
   <ul id="post-list-posts">
     <% @posts.each do |post| %>
-      <%= print_preview(post, :onclick => "return remove_post_confirm(#{post.id}, #{@pool.id})",
-			:user => @current_user) %>
+      <%= print_preview(post, :user => @current_user) %>
     <% end %>
   </ul>
   </div>
 </div>
 <script type="text/javascript">
-  function remove_post_confirm(post_id, pool_id) {
-    if (!$("del-mode") || !$("del-mode").checked) {
-      return true
-    }
-
-    Pool.remove_post(post_id, pool_id)
-    return false
-  }
-
   Post.post_tags = <%= get_tag_types(@posts).to_json %>;
   <% @posts.each do |post| %>
     Post.register(<%= post.to_json %>)

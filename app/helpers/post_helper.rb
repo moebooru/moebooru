@@ -38,10 +38,13 @@ module PostHelper
     width, height = post.preview_dimensions
     block_size = [150, 150]
 
+    div_style = "width: #{block_size[0]}px;"
+    div_style += "height: #{block_size[1]}px;"
+
     image = %{<img src="#{post.preview_url}" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">}
     plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
     link = %{<a class="thumb" href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
-    div = %{<div class="inner" style="height: #{block_size[1]}px; width: #{block_size[0]}px;">#{link}</div>}
+    div = %{<div class="inner" style="#{div_style}">#{link}</div>}
     
     if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then
       dl_width = post.jpeg_width.to_i

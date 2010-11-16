@@ -1239,7 +1239,7 @@ img.preview {
 }
 
 a.directlink {
-        background: #555 url("/images/ddl.gif") no-repeat scroll center center;
+        background: #555;
         display: block;
         height: 15px;
         padding: 1px 0 1px 0;
@@ -1251,11 +1251,11 @@ a.directlink {
 }
 
 a.largeimg {
-        background: #111 url("/images/ddl_large.gif") no-repeat scroll center center;
+        background: #111;
 }
 
 .highlighted-post > a.directlink {
-	background: #400 url("/images/ddl_large.gif") no-repeat scroll center center;
+	background: #400;
 }
 
 a.directlink:hover {
@@ -1277,25 +1277,30 @@ a.directlink > span.directlink-res {
 a.directlink:hover > span.directlink-res {
         display: inline;
 }
+a.directlink:hover > .directlink-icon {
+	display: none;
+}
 a.directlink:hover > .directlink-info {
 	display: none;
 }
 
-/* Float the post info when it's part of a regular directlink, but not when
- * it's part of the text in similarity output. */
-.directlink .directlink-info {
-	float: right;
-	margin-right: 3em;
-}
-
-.parent-display { color: #00FF00; background: #00FF00; display: none; height: 1em; width: .75em; }
+.parent-display { display: none; height: 16px; width: 14px; }
 .has-children .parent-display { display: inline; }
-.child-display { color: #FFFF00; background: #FFFF00; display: none; height: 1em; width: .75em; }
+.child-display { display: none; height: 16px; width: 14px; }
 .has-parent .child-display { display: inline; }
-.flagged-display { color: #FF0000; display: none; font-weight: bold; }
+.flagged-display { display: none; height: 16px; width: 14px; }
 .flagged .flagged-display { display: inline; }
-.pending-display { color: #00FFFF; display: none; font-weight: bold; }
+.pending-display { display: none; height: 16px; width: 14px; }
 .pending .pending-display { display: inline; }
+
+.has-children .directlink-icon { display: none; }
+.has-parent .directlink-icon { display: none; }
+.flagged .directlink-icon { display: none; }
+.pending .directlink-icon { display: none; }
+.largeimg .directlink-icon-small { display: none; }
+.smallimg .directlink-icon-large { display: none; }
+
+.similar .directlink-icon { display: none; }
 
 .top-corner-float {
 	position: fixed;
@@ -1357,18 +1362,10 @@ body.dragging-to-post .thumb * {
   cursor: pointer;
 }
 
-.similar {
-	background: #555;
-	display: block;
-	padding: 2px 0 0 0;
-	margin: 10px 0 10px 0;
-	text-align: center;
-	height: 15px;
-	font-size: 10px;
-	white-space: nowrap;
+.similar-original {
+  background-color: #000;
 }
-
-a.similar-match span.similar-text {
+.similar-match span.similar-text {
 	font-weight: bold;
 }
 

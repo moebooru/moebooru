@@ -23,6 +23,7 @@ module PostHelper
   end
   
   def print_preview(post, options = {})
+    is_post = post.instance_of?(Post)
     unless CONFIG["can_see_post"].call(@current_user, post)
       return ""
     end
@@ -30,7 +31,11 @@ module PostHelper
     image_class = "preview"
     image_id = options[:image_id]
     image_id = %{id="#{h(image_id)}"} if image_id
-    image_title = h("Rating: #{post.pretty_rating} Score: #{post.score} Tags: #{h(post.cached_tags)} User:#{post.author}")
+    if is_post then
+      image_title = h("Rating: #{post.pretty_rating} Score: #{post.score} Tags: #{h(post.cached_tags)} User: #{post.author}")
+    else
+      image_title = ""
+    end
     link_onclick = options[:onclick]
     link_onclick = %{onclick="#{link_onclick}"} if link_onclick
     link_onmouseover = %{ onmouseover="#{options[:onmouseover]}"} if options[:onmouseover]
@@ -56,8 +61,14 @@ module PostHelper
     end
 
     image = %{<img src="#{post.preview_url}" style="margin-left: #{-crop_left}px;" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">}
-    plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
-    link = %{<a class="thumb" href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
+    if is_post then
+      plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
+      target_url = %{/post/show/#{post.id}/#{u(post.tag_title)}}
+    else
+      plid = ""
+      target_url = post.url
+    end
+    link = %{<a class="thumb" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
     div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
     
     if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then
@@ -70,39 +81,43 @@ module PostHelper
       dl_url = post.file_url
     end
 
-    directlink_info = %{
-      <span class="directlink-info">
-        <span class="parent-display">X</span>
-        <span class="child-display">X</span>
-        <span class="flagged-display">!</span>
-        <span class="pending-display">P</span>
-      </span>
-    }
+    directlink_info = 
+    %{<span class="directlink-info">} +
+        %{<img class="directlink-icon directlink-icon-large" src="/images/ddl_large.gif" alt="">}+
+        %{<img class="directlink-icon directlink-icon-small" src="/images/ddl.gif" alt="">}+
+        %{<img class="parent-display" src="/images/post-star-parent.gif" alt="">} +
+        %{<img class="child-display" src="/images/post-star-child.gif" alt="">} +
+        %{<img class="flagged-display" src="/images/post-star-flagged.gif" alt="">} +
+        %{<img class="pending-display" src="/images/post-star-pending.gif" alt="">} +
+      %{</span>}
+    li_class = ""
+
+    ddl_class = "directlink"
+    ddl_class += (post.width.to_i > 1500 or post.height.to_i > 1500)?  " largeimg":" smallimg"
 
     if options[:similarity]
-      icon = %{<img src="/favicon.ico" class="service-icon" id="source">}
-      size = %{ (#{dl_width}x#{dl_height})}
+      icon = %{<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">}
 
-      similarity_class = "similar similar_directlink"
-      similarity_class += " similar_original" if options[:similarity].to_s == "Original"
-      similarity_class += " similar-match" if options[:similarity].to_f >= 90 rescue false
-      similarity_text = options[:similarity].to_s == "Original"?
-        (if @initial then "Your post" else "Original" end):
-       %{#{options[:similarity].to_i}%}
-
-      directlink = %{<a class="#{similarity_class}" href="#{dl_url}"><span class="similar-text">#{icon}#{similarity_text}#{size}</span>#{directlink_info}</a>}
-    else
-      ddl_class = "directlink"
-      if post.width.to_i > 1500 or post.height.to_i > 1500 
-        ddl_class += " largeimg"
-      end
-      directlink = %{<a class="#{ddl_class}" href="#{dl_url}">#{directlink_info}<span class="directlink-res">#{dl_width} x #{dl_height}</span></a>}
+      ddl_class += " similar similar-directlink"
+      li_class += " similar-match" if options[:similarity].to_f >= 90 rescue false
+      li_class += " similar-original" if options[:similarity].to_s == "Original"
+      directlink_info = %{<span class="similar-text">#{icon}</span>#{directlink_info}}
     end
-    directlink = "" if options[:hide_directlink]
+
+    if options[:hide_directlink]
+      directlink = ""
+    else
+      directlink_res = %{<span class="directlink-res">#{dl_width} x #{dl_height}</span>}
+      directlink = %{<a class="#{ddl_class}" href="#{dl_url}">#{directlink_info}#{directlink_res}</a>}
+    end
       
-    li_class = ""
-    li_class += " javascript-hide" if options[:blacklisting]
-    li_class += " creator-id-#{post.user_id}"
+    if is_post
+      # Hide regular posts by default.  They'll be unhidden by the scripts once the
+      # blacklists are loaded.  Don't do this for ExternalPost, which don't support
+      # blacklists.
+      li_class += " javascript-hide" if options[:blacklisting]
+      li_class += " creator-id-#{post.user_id}"
+    end
     li_class += " flagged" if post.is_flagged?
     li_class += " has-children" if post.has_children?
     li_class += " has-parent" if post.parent_id
@@ -117,17 +132,18 @@ module PostHelper
     width, height = post.preview_dimensions
 
     image = %{<img src="#{post.preview_url}" alt="#{(post.md5)}" class="#{image_class} width="#{width}" height="#{height}">}
-    link = %{<a href="#{post.url}">#{image}</a>}
+    link = %{<a class="thumb" href="#{post.url}">#{image}</a>}
     icon = %{<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">}
-    span = %{<span class="thumb">#{link}</span>}
+    div = %{<div class="inner">#{link}</div>}
 
     size = if post.width > 0 then (%{ (#{post.width}x#{post.height})}) else "" end
     similarity_class = "similar"
     similarity_class += " similar-match" if options[:similarity].to_f >= 90 rescue false
-    similarity_class += " similar_original" if options[:similarity].to_s == "Original"
+    similarity_class += " similar-original" if options[:similarity].to_s == "Original"
     similarity_text = options[:similarity].to_s == "Original"?  "Image":%{#{options[:similarity].to_i}%}
     similarity = %{<a class="#{similarity_class}" href="#{post.url}"><span>#{icon}#{similarity_text}#{size}</span></a>}
-    item = %{<li id="p#{post.id}">#{span}#{similarity}</li>}
+    li_class = ""
+    item = %{<li id="p#{post.id}" class="#{li_class}">#{div}#{similarity}</li>}
     return item
   end
 

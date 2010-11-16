@@ -122,7 +122,7 @@ class PoolController < ApplicationController
     @browse = params[:browse] == "1"
     if @browse then
       options[:per_page] = 1000
-      options[:order] = "posts.width > posts.height, pools_posts.post_id"
+      options[:order] = "posts.width > posts.height, nat_sort(pools_posts.sequence), pools_posts.post_id"
     end
     @posts = Post.paginate(options)
 

@@ -5,10 +5,10 @@
   <% end %>
   <div style="margin-top: 1em;">
   <ul id="post-list-posts">
-    <% @posts.each do |post| %>
-      <%= print_preview(post, :onclick => "return remove_post_confirm(#{post.id}, #{@pool.id})",
-			:user => @current_user) %>
-    <% end %>
+    <% @posts.each do |post| -%>
+      <%-%><%= print_preview(post, :onclick => "return remove_post_confirm(#{post.id}, #{@pool.id})",
+			      :user => @current_user) -%>
+    <%- end -%>
   </ul>
   </div>
 </div>

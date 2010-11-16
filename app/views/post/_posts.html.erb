@@ -3,13 +3,13 @@
     <p>Nobody here but us chickens!</p>
   <% else %>
     <ul id="post-list-posts">
-    <% posts.each do |post| %>
-      <% if post.instance_of?(Post) %>
-        <%= print_preview(post, :similarity=>(@similar[:similarity][post] rescue nil), :blacklisting => true, :disable_jpeg_direct_links => (not @similar.nil?)) %>
-      <% else %>
+    <% posts.each do |post| -%>
+      <%- if post.instance_of?(Post) -%>
+        <%-%><%= print_preview(post, :similarity=>(@similar[:similarity][post] rescue nil), :blacklisting => true, :disable_jpeg_direct_links => (not @similar.nil?)) -%>
+      <%- else -%>
       <%= print_ext_similarity_preview(post, {:similarity=>(@similar[:similarity][post] rescue nil)}) %>
-      <% end %>
-    <% end %>
+      <%- end -%>
+    <%- end -%>
     </ul>
 
     <%# Make sure this is done early, as lots of other scripts depend on this registration. %>

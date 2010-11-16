@@ -910,7 +910,7 @@ Post = {
     var hover_height = hover.scrollHeight;
 
     var hover_thumb = $("p" + post.id).down("IMG");
-    var thumb_offset = hover_thumb.positionedOffset();
+    var thumb_offset = hover_thumb.cumulativeOffset();
     var thumb_center_x = thumb_offset[0] + hover_thumb.scrollWidth/2;
     var thumb_top_y = thumb_offset[1];
     var x = thumb_center_x - hover_width/2;

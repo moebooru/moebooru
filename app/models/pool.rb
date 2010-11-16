@@ -20,6 +20,7 @@ class Pool < ActiveRecord::Base
       m.versioned :is_public, :default => true
       m.versioned :is_active, :default => true
       m.after_undo :update_pool_links
+      m.after_save :expire_cache
     end
     
     def can_be_updated_by?(user)
@@ -122,6 +123,10 @@ class Pool < ActiveRecord::Base
       }
       
       return seq + 1
+    end
+
+    def expire_cache
+      Cache.expire
     end
   end
   

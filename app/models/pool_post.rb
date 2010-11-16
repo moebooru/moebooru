@@ -7,6 +7,7 @@ class PoolPost < ActiveRecord::Base
   versioned :active, :default => 'f', :allow_reverting_to_default => true
   versioned :sequence
   before_save :update_pool
+  after_save :expire_cache
 
   def can_change_is_public?(user)
     return user.has_permission?(pool) # only the owner can change is_public
@@ -40,6 +41,11 @@ class PoolPost < ActiveRecord::Base
 
       pool.save!
     end
+  end
+
+  # Changing pool orderings affects pool sorting in the index.
+  def expire_cache
+    Cache.expire
   end
 end
 

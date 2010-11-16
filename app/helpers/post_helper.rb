@@ -41,36 +41,24 @@ module PostHelper
       # to a smaller size.
       width, height = post.raw_preview_dimensions
       block_size = [200, 200]
-      visible_width = [200, width].min
+      visible_width = [block_size[0], width].min
       crop_left = (width - visible_width) / 2
-      fixed_height = false
     elsif options[:display] == :large then
       width, height = post.raw_preview_dimensions
       block_size = [width, height]
       crop_left = 0
-      fixed_height = false
     else
       # Scale it down to a smaller size.  This is exactly one half the actual size, to improve
       # resizing quality.
       width, height = post.preview_dimensions
       block_size = [150, 150]
       crop_left = 0
-      fixed_height = true
-    end
-
-    # If we're set to fixed-height, lock the height at the block size.  Otherwise, allow each block
-    # to size to fit the image; the block height only sets the maximum.
-    div_style = "width: #{block_size[0]}px;"
-    if fixed_height
-      div_style += " height: #{block_size[1]}px;"
-    else
-      div_style += " max-height: #{block_size[1]}px;"
     end
 
     image = %{<img src="#{post.preview_url}" style="margin-left: #{-crop_left}px;" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">}
     plid = %{<span class="plid">#pl http://#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
     link = %{<a class="thumb" href="/post/show/#{post.id}/#{u(post.tag_title)}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
-    div = %{<div class="inner" style="#{div_style}">#{link}</div>}
+    div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
     
     if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then
       dl_width = post.jpeg_width.to_i

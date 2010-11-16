@@ -18,7 +18,7 @@
       return true
     }
 
-    Pool.remove_post(post_id, pool_id)
+    $("p" + post_id).addClassName("deleted");
     return false
   }
 

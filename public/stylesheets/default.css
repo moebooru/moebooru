@@ -1288,13 +1288,13 @@ a.directlink:hover > .directlink-info {
 	margin-right: 3em;
 }
 
-.parent-display { color: #00FF00; background: #00FF00; display: none; }
+.parent-display { color: #00FF00; background: #00FF00; display: none; height: 1em; width: .75em; }
 .has-children .parent-display { display: inline; }
-.child-display { color: #FFFF00; background: #FFFF00; display: none; }
+.child-display { color: #FFFF00; background: #FFFF00; display: none; height: 1em; width: .75em; }
 .has-parent .child-display { display: inline; }
-.flagged-display { color: #FF0000; display: none; }
+.flagged-display { color: #FF0000; display: none; font-weight: bold; }
 .flagged .flagged-display { display: inline; }
-.pending-display { color: #0000FF; display: none; }
+.pending-display { color: #00FFFF; display: none; font-weight: bold; }
 .pending .pending-display { display: inline; }
 
 .top-corner-float {

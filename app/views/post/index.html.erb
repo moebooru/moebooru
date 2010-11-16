@@ -39,6 +39,10 @@
     <%= render :partial => "tag_script" %>
     <% end %>
 
+    <% if @searching_pool then %>
+      Viewing pool <%= link_to(h(@searching_pool.pretty_name), :controller => "pool", :action => "show", :id => @searching_pool.id) %>.
+    <% end %>
+
     <% if @showing_holds_only %>
       <% if !@posts.empty? %>
         <div style="margin-bottom: .5em;">

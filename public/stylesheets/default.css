@@ -1408,6 +1408,13 @@ span.stars .star-3 { color:#ff0; }
 	display: inline;
 }
 
+.del-mode {
+  color: #ee8887;
+}
+.del-mode > label {
+  font-weight: normal;
+}
+
 .avatar-crop {
 	float: left;
 	margin-left: 1em;

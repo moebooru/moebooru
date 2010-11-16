@@ -2,19 +2,19 @@ User = {
   disable_samples: function() {
     new Ajax.Request("/user/update.json", {
       parameters: {
-  "user[show_samples]": false
+        "user[show_samples]": false
       },
 
       onComplete: function(resp) {
-  var resp = resp.responseJSON
+        var resp = resp.responseJSON
 
-  if (resp.success) {
-    $("resized_notice").hide();
-    $("samples_disabled").show();
-    Post.highres();
-  } else {
-    notice("Error: " + resp.reason)
-  }
+        if (resp.success) {
+          $("resized_notice").hide();
+          $("samples_disabled").show();
+          Post.highres();
+        } else {
+          notice("Error: " + resp.reason)
+        }
       }
     })
   },

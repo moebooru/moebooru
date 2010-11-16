@@ -166,4 +166,10 @@ class Post < ActiveRecord::Base
       source
     end
   end
+  def service
+    CONFIG["local_image_service"]
+  end
+  def service_icon
+    "/favicon.ico"
+  end
 end

@@ -157,13 +157,7 @@ PostModeMenu = {
     } else if (s.value == 'add-to-pool') {
       Pool.add_post(post_id, 0)
     } else if (s.value == "remove-from-pool") {
-      var finished = function()
-      {
-        var post = $("p" + post_id);
-        post.addClassName("deleted");
-        notice("Post #" + post_id + " removed from pool");
-      }
-      TagScript.run(post_id, "-pool:" + PostModeMenu.pool_id, finished);
+      Pool.remove_post(post_id, PostModeMenu.pool_id);
     }
 
     event.stopPropagation();

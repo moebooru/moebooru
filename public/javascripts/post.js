@@ -1040,6 +1040,6 @@ Post = {
       notice("No more posts in this pool");
       return;
     }
-    window.location.href = get_url_for_post_in_pool(post_id, pool_id);
+    window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id);
   }
 }

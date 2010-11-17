@@ -198,6 +198,10 @@ function InitTextAreas()
     if(!form)
       return;
 
+    if(form.set_login_handler)
+      return;
+    form.set_login_handler = true;
+
     OnKey(13, { ctrlKey: true, AllowInputFields: true, AllowTextAreaFields: true, Element: elem}, function(f) {
       $(form).submitWithLogin();
     });

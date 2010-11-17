@@ -2,10 +2,10 @@
   <div style="display: inline;">
     <p>
       <% if pool_post.prev_post_id %>
-        <%= link_to "&laquo; Previous", :action => "show", :id => pool_post.prev_post_id %>
+        <%= link_to "&laquo; Previous", :action => "show", :id => pool_post.prev_post_id, :pool_id => pool_post.pool_id %>
       <% end %>
       <% if pool_post.next_post_id %>
-        <%= link_to "Next &raquo;", :action => "show", :id => pool_post.next_post_id %>
+        <%= link_to "Next &raquo;", :action => "show", :id => pool_post.next_post_id, :pool_id => pool_post.pool_id %>
       <% end %>
       This post is <span id="pool-seq-<%= pool_post.pool_id %>"><%= h(pool_post.pretty_sequence) %></span>
       in the <%= link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %> pool

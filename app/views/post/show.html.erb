@@ -52,6 +52,17 @@
         OnKey(49, null, function(e) { Post.vote(<%= @post.id %>, +1); return true; });
         OnKey(50, null, function(e) { Post.vote(<%= @post.id %>, +2); return true; });
         OnKey(51, null, function(e) { Post.vote(<%= @post.id %>, +3); return true; });
+        <% if not @following_pool_post.nil? %>
+          OnKey(Event.KEY_LEFT, null, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.prev_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
+          OnKey(Event.KEY_RIGHT, null, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.next_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
+
+          <% if @following_pool_post.next_post then %>
+            Preload.preload(<%= @following_pool_post.next_post.sample_url.to_json %>);
+          <% end %>
+          <% if @following_pool_post.prev_post then %>
+            Preload.preload(<%= @following_pool_post.prev_post.sample_url.to_json %>);
+          <% end %>
+        <% end %>
       </script>
     <% end %>
   <% end %>

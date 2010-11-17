@@ -213,7 +213,7 @@ function InitAdvancedEditing()
   if(Cookie.get("show_advanced_editing") != "1")
     return;
 
-  document.documentElement.removeClassName("hide-advanced-editing");
+  $(document.documentElement).removeClassName("hide-advanced-editing");
 }
 
 /* When we resume a user submit after logging in, we want to run submit events, as

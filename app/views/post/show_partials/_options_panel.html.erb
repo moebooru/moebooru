@@ -17,7 +17,7 @@
 	  ext = @post.file_ext.upcase
 	end
       %>
-      <% if @post.has_sample? %>
+      <% if @post.use_sample?(@current_user) %>
       <li><%= link_to("View larger version", url,
 		      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
 		      :id => "highres-show", :onclick => "Post.highres(); return false") %>

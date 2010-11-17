@@ -22,21 +22,49 @@ Preload = {
   preload_container: null,
   preload_raw_urls: [],
   preload_started: false,
+  onload_event_initialized: false,
 
+  create_preload_container: function()
+  {
+    var container = document.createElement("div");
+    container.style.display = "none";
+    document.body.appendChild(container);
+
+    container.preload = function(url) {
+      var imgTag = document.createElement("img");
+      imgTag.src = url;
+      this.appendChild(imgTag);
+    }.bind(container);
+
+    container.destroy = function(element) {
+      document.body.removeChild(this);
+    }.bind(container);
+
+    return container;
+  },
+
+  get_default_preload_container: function()
+  {
+    if(!this.preload_container)
+      this.preload_container = this.create_preload_container();
+    return this.preload_container;
+  },
   init: function()
   {
-    if(this.preload_container)
+    if(this.onload_event_initialized)
       return;
 
-    this.preload_container = document.createElement("div");
-    this.preload_container.style.display = "none";
-    document.body.appendChild(this.preload_container);
+    this.onload_event_initialized = true;
     Event.observe(window, "load", function() { Preload.preload_started = true; Preload.start_preload(); } );
   },
+
+  /* Preload the given URL once window.load has fired. */
   preload: function(url)
   {
+    var container = this.get_default_preload_container();
+
     Preload.init();
-    Preload.preload_list.push(url);
+    Preload.preload_list.push([url, container]);
     Preload.start_preload();
   },
 
@@ -49,29 +77,32 @@ Preload = {
     Preload.start_preload();
   },
 
+  create_raw_preload: function(url)
+  {
+    return new Ajax.Request(url, {
+      method: "get",
+      evalJSON: false,
+      evalJS: false,
+      parameters: null
+    });
+  },
   start_preload: function()
   {
     if(!Preload.preload_started)
       return;
 
-    var preload = this.preload_container;
     for(var i=0; i < Preload.preload_list.length; ++i)
     {
-      var imgTag = document.createElement("img");
-      imgTag.src = Preload.preload_list[i];
-      preload.appendChild(imgTag);
+      var preload = Preload.preload_list[i];
+      var container = preload[1];
+      container.preload(preload[0]);
     }
     Preload.preload_list.length = [];
 
     for(var i=0; i < Preload.preload_raw_urls.length; ++i)
     {
       var url = Preload.preload_raw_urls[i];
-      new Ajax.Request(url, {
-        method: "get",
-        evalJSON: false,
-        evalJS: false,
-        parameters: null
-      });
+      Preload.create_raw_preload(url);
     }
     Preload.preload_raw_urls = [];
   }

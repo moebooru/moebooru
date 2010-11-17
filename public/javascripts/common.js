@@ -209,6 +209,8 @@ function InitAdvancedEditing()
   if(Cookie.get("show_advanced_editing") != "1")
     return;
 
+  document.documentElement.removeClassName("hide-advanced-editing");
+
   $$(".advanced-editing").each(function(elem) {
     $(elem).show();
   });

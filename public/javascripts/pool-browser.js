@@ -36,7 +36,7 @@ PoolBrowser = function(pool, pool_posts)
   this.current_post_id = null;
   this.html_cache = new Hash;
   this.post_lru = new Array;
-  this.cache_session_id = Date.now();
+  this.cache_session_id = (new Date()).valueOf();
   this.post_id_version = new Hash;
 
   Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));

@@ -56,11 +56,12 @@
           OnKey(Event.KEY_LEFT, null, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.prev_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
           OnKey(Event.KEY_RIGHT, null, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.next_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
 
-          <% if @following_pool_post.next_post then %>
-            Preload.preload(<%= @following_pool_post.next_post.sample_url.to_json %>);
-          <% end %>
-          <% if @following_pool_post.prev_post then %>
-            Preload.preload(<%= @following_pool_post.prev_post.sample_url.to_json %>);
+          <% for pool_post in [@following_pool_post.next_post, @following_pool_post.prev_post] do %>
+            <% next if pool_post.nil? %>
+            Preload.preload(<%= pool_post.sample_url.to_json %>);
+            var url = Post.get_url_for_post_in_pool(<%= pool_post.id %>, <%= @following_pool_post.pool_id %>);
+            Preload.preload_raw(url);
+            <% p pool_post %>
           <% end %>
         <% end %>
       </script>

@@ -53,7 +53,7 @@ PoolBrowser = function(pool, pool_posts)
 
 PoolBrowser.prototype.get_first_post_id = function()
 {
-  return this.pool_posts[0]["post_id"];
+  return this.pool_posts[0].post_id;
 }
 
 PoolBrowser.prototype.get_current_post_id = function()
@@ -144,11 +144,12 @@ PoolBrowser.prototype.displayed_image_finished_loading = function(success, event
   var post_id = this.current_post_id;
   var pool_post = this.find_post_in_pool(post_id);
   var post_ids_to_preload = [];
-  if(pool_post.next_post_id != null)
-    post_ids_to_preload.push(pool_post.next_post_id);
-  if(pool_post.prev_post_id != null)
-    post_ids_to_preload.push(pool_post.prev_post_id);
-
+  var adjacent_pool_post = this.get_adjacent_post_id_wrapped(pool_post, true);
+  if(adjacent_pool_post != null)
+    post_ids_to_preload.push(adjacent_pool_post);
+  var adjacent_pool_post = this.get_adjacent_post_id_wrapped(pool_post, false);
+  if(adjacent_pool_post != null)
+    post_ids_to_preload.push(adjacent_pool_post);
   this.preload(post_ids_to_preload);
 },
 
@@ -261,10 +262,49 @@ PoolBrowser.prototype.set_post = function(post_id)
   });
 }
 
+/* If first is true, return the first pool_post in the pool, otherwise return the last pool_post. */
+PoolBrowser.prototype.get_boundary_pool_post = function(first)
+{
+  if(first)
+    return this.pool_posts[0];
+  else
+    return this.pool_posts[this.pool_posts.length-1];
+}
+
+/* If next is true, return the post after the given pool_post, otherwise return
+ * the post before it. */
+PoolBrowser.prototype.get_adjacent_post_id = function(pool_post, next)
+{
+  if(next)
+    return pool_post.next_post_id;
+  else
+    return pool_post.prev_post_id;
+}
+
+/* Return the next or previous post, wrapping around if necessary. */
+PoolBrowser.prototype.get_adjacent_post_id_wrapped = function(pool_post, next)
+{
+  var adjacent_pool_post_id = this.get_adjacent_post_id(pool_post, next);
+  if(adjacent_pool_post_id != null)
+    return adjacent_pool_post_id;
+  return this.get_boundary_pool_post(next).post_id;
+}
+
+/* Change to the next or previous post in the pool. */
 PoolBrowser.prototype.move = function(next)
 {
   var pool_post = this.find_post_in_pool(this.get_current_post_id());
   var key = next? "next_post_id":"prev_post_id";
-  this.set_post(pool_post[key], this.pool_id);
+  var new_post_id = this.get_adjacent_post_id(pool_post, next); //pool_post[key];
+  if(new_post_id == null)
+  {
+    if(next)
+      notice("Starting over from the beginning");
+    else
+      notice("Continued from the end");
+    new_post_id = this.get_boundary_pool_post(next).post_id;
+  }
+
+  this.set_post(new_post_id, this.pool_id);
 }
 

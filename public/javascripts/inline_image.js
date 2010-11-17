@@ -1,5 +1,4 @@
 InlineImage = {
-  images: new Hash,
   mouse_down: null,
   zoom_levels:
   [
@@ -13,89 +12,78 @@ InlineImage = {
       return 1 / InlineImage.zoom_levels[-level];
   },
 
-  register: function(id, inline)
+  register: function(id, data)
   {
-    inline.html_id = id;
-    inline.div = $(id);
-    InlineImage.images.set(id, inline);
+    var container = $(id);
+    data.html_id = id;
+    container.inline_image = data;
+    
+    /* initted is set to true after the image has been opened and the large images
+     * inside have been created by expand(). */
+    data.initted = false;
+    data.expanded = false;
+    data.toggled_from = null;
+    data.current = -1;
+    data.zoom_level = 0;
+
+    {
+      var ui_html = "";
+      if(data.images.length > 1)
+      {
+        for(var idx = 0; idx < data.images.length; ++idx)
+        {
+          // html_id looks like "inline-123-456".  Mark the button for each individual image as "inline-123-456-2".
+          var button_id = data.html_id + "-" + idx;
+          var text = data.images[idx].description.escapeHTML();
+          if(text == "")
+            text = "#" + (idx + 1);
+
+          ui_html += "<a href='#' id='" + button_id + "' class='select-image' onclick='InlineImage.show_image_no(\"" + data.html_id + "\", " + idx + "); return false;'>" + text + "</a>";
+        }
+      }
+      ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", +1); return false;'>+</a>";
+      ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", -1); return false;'>-</a>";
+      var zoom_id = data.html_id + "-zoom";
+      ui_html += "<a href='#' id='" + zoom_id + "' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", 0); return false;'>100%</a>";
+      ui_html += "<a href='#' class='select-image' onclick='InlineImage.close(\"" + data.html_id + "\"); return false;'>Close</a>";
+
+      ui_html += "<a href='/inline/edit/" + data.id + "' class='edit-link'>Image&nbsp;#" + data.id + "</a>";
+
+      container.down(".expanded-image-ui").innerHTML = ui_html;
+    }
+
+    container.down(".inline-thumb").observe("click", function(e) {
+      e.stop();
+      InlineImage.expand(data.html_id);
+    });
+    container.observe("dblclick", function(e) {
+      e.stop();
+    });
+
+    var viewer_img = container.down(".main-inline-image");
+
+    /* If the expanded image has more than one image to choose from, clicking it will
+     * temporarily show the next image.  Only show a pointer cursor if this is available. */
+    if(data.images.length > 1)
+      viewer_img.addClassName("clickable");
+
+    viewer_img.observe("mousedown", function(e) {
+      if(e.button != 0)
+        return;
+
+      data.toggled_from = data.current;
+      var idx = (data.current + 1) % data.images.length;
+      InlineImage.show_image_no(data.html_id, idx);
+      InlineImage.mouse_down = data;
+
+      /* We need to stop the event, so dragging the mouse after clicking won't turn it
+       * into a drag in Firefox.  If that happens, we won't get the mouseup. */
+      e.stop();
+    });
   },
 
   init: function()
   {
-    InlineImage.images.each(function(data) {
-      data[1].initted = false;
-      data[1].expanded = false;
-      data[1].toggled_from = null;
-      data[1].current = -1;
-      data[1].zoom_level = 0;
-    });
-
-    var images = $$(".inline-image");
-    images.each(function(div) {
-      var id = div.id;
-      var data = InlineImage.images.get(id);
-
-      if(data.div.initted)
-	return;
-
-      data.div.initted = true;
-
-      {
-        var ui_html = "";
-        if(data.images.length > 1)
-        {
-          for(var idx = 0; idx < data.images.length; ++idx)
-          {
-            // html_id looks like "inline-123-456".  Mark the button for each individual image as "inline-123-456-2".
-            var button_id = data.html_id + "-" + idx;
-            var text = data.images[idx].description.escapeHTML();
-            if(text == "")
-              text = "#" + (idx + 1);
-
-            ui_html += "<a href='#' id='" + button_id + "' class='select-image' onclick='InlineImage.show_image_no(\"" + data.html_id + "\", " + idx + "); return false;'>" + text + "</a>";
-          }
-        }
-        ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", +1); return false;'>+</a>";
-        ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", -1); return false;'>-</a>";
-        var zoom_id = data.html_id + "-zoom";
-        ui_html += "<a href='#' id='" + zoom_id + "' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", 0); return false;'>100%</a>";
-        ui_html += "<a href='#' class='select-image' onclick='InlineImage.close(\"" + data.html_id + "\"); return false;'>Close</a>";
-
-        ui_html += "<a href='/inline/edit/" + data.id + "' class='edit-link'>Image&nbsp;#" + data.id + "</a>";
-
-        data.div.down(".expanded-image-ui").innerHTML = ui_html;
-      }
-
-      div.down(".inline-thumb").observe("click", function(e) {
-        e.stop();
-        InlineImage.expand(data.html_id);
-      });
-      div.observe("dblclick", function(e) {
-        e.stop();
-      });
-
-      var viewer_img = data.div.down(".main-inline-image");
-
-      /* If the expanded image has more than one image to choose from, clicking it will
-       * temporarily show the next image.  Only show a pointer cursor if this is available. */
-      if(data.images.length > 1)
-        viewer_img.addClassName("clickable");
-
-      viewer_img.observe("mousedown", function(e) {
-        if(e.button != 0)
-          return;
-
-        data.toggled_from = data.current;
-        var idx = (data.current + 1) % data.images.length;
-        InlineImage.show_image_no(data.html_id, idx);
-        InlineImage.mouse_down = data;
-
-        /* We need to stop the event, so dragging the mouse after clicking won't turn it
-         * into a drag in Firefox.  If that happens, we won't get the mouseup. */
-        e.stop();
-      });
-    });
-
     /* Mouseup events aren't necessarily sent to the same element that received the mousedown,
      * so we need to track which element received a mousedown and handle mouseup globally. */
     document.observe("mouseup", function(e) {
@@ -115,7 +103,8 @@ InlineImage = {
 
   expand: function(id)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     data.expanded = true;
 
     if(!data.initted)
@@ -139,28 +128,30 @@ InlineImage = {
         img_html += "<img src='" + src + "' id='" + img_id + "' width=" + width + " height=" + height + " style='display: none;'>";
       }
 
-      var viewer_img = data.div.down(".main-inline-image");
+      var viewer_img = container.down(".main-inline-image");
       viewer_img.innerHTML = img_html;
     }
 
-    data.div.down(".inline-thumb").hide();
+    container.down(".inline-thumb").hide();
     InlineImage.show_image_no(data.html_id, 0);
-    data.div.down(".expanded-image").show();
+    container.down(".expanded-image").show();
 
-    // data.div.down(".expanded-image").scrollIntoView();
+    // container.down(".expanded-image").scrollIntoView();
   },
 
   close: function(id)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     data.expanded = false;
-    data.div.down(".expanded-image").hide();
-    data.div.down(".inline-thumb").show();
+    container.down(".expanded-image").hide();
+    container.down(".inline-thumb").show();
   },
 
   show_image_no: function(id, idx)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     var images = data["images"];
     var image = images[idx];
     var zoom = InlineImage.get_zoom(data.zoom_level);
@@ -213,7 +204,8 @@ InlineImage = {
 
   zoom: function(id, dir)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     if(dir == 0)
       data.zoom_level = 0; // reset
     else

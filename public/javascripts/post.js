@@ -1028,5 +1028,15 @@ Post = {
 	Post.update_batch(change_requests, function() { document.location.reload() });
       }
     });
+  },
+  jump_to_post_in_pool: function(post_id, pool_id)
+  {
+    if(post_id == null)
+    {
+      notice("No more posts in this pool");
+      return;
+    }
+    var url = "/post/show/" + post_id + "?pool_id=" + pool_id;
+    window.location.href = url;
   }
 }

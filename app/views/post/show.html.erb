@@ -50,7 +50,7 @@
 
         Post.init_post_show(<%= @post.id %>);
 
-        <% if not @following_pool_post.nil? and not @body_only %>
+        <% if not @following_pool_post.nil? and not @cache %>
           OnKey(65, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.prev_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
           OnKey(83, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.next_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
 

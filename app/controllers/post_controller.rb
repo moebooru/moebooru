@@ -359,6 +359,7 @@ class PostController < ApplicationController
   def show
     begin
       response.headers["Cache-Control"] = "max-age=300" if params[:cache]
+      @cache = params[:cache] # temporary
       @body_only = params[:body].to_i == 1
       if params[:md5]
         @post = Post.find_by_md5(params[:md5].downcase) || raise(ActiveRecord::RecordNotFound)

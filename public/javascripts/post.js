@@ -1029,6 +1029,10 @@ Post = {
       }
     });
   },
+  get_url_for_post_in_pool: function(post_id, pool_id)
+  {
+    return "/post/show/" + post_id + "?pool_id=" + pool_id;
+  },
   jump_to_post_in_pool: function(post_id, pool_id)
   {
     if(post_id == null)
@@ -1036,7 +1040,6 @@ Post = {
       notice("No more posts in this pool");
       return;
     }
-    var url = "/post/show/" + post_id + "?pool_id=" + pool_id;
-    window.location.href = url;
+    window.location.href = get_url_for_post_in_pool(post_id, pool_id);
   }
 }

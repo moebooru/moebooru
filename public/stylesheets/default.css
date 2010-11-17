@@ -383,6 +383,9 @@ ul.bare-list li {
   list-style-type: none;
 }
 
+/* This is !important to override things like ul#subnavbar li. */
+.hide-advanced-editing .advanced-editing { display: none !important; }
+
 #main-menu .menu {
   display: inline;
   position: relative;

@@ -358,6 +358,8 @@ class PostController < ApplicationController
 
   def show
     begin
+      response.headers["Cache-Control"] = "max-age=300" if params[:cache]
+      @body_only = params[:body].to_i == 1
       if params[:md5]
         @post = Post.find_by_md5(params[:md5].downcase) || raise(ActiveRecord::RecordNotFound)
       else
@@ -374,13 +376,21 @@ class PostController < ApplicationController
       else
         @following_pool_post = PoolPost.find(:first, :conditions => ["post_id = ?", @post.id]) rescue nil
       end
+      if params.has_key?(:pool_id) then
+        @viewing_pool_post = PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil
+      end
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
       set_title @post.title_tags.tr("_", " ")
-      response.headers["Cache-Control"] = "max-age=300"
+      render :layout => @viewing_pool_post? "empty": "default"
     rescue ActiveRecord::RecordNotFound
       render :action => "show_empty", :status => 404
     end
+  end
+
+  define_method("browse-pool") do  
+    @pool = Pool.find(params[:id], :include => [:pool_posts => :post])
+    set_title(@pool.pretty_name)
   end
 
   def view

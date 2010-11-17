@@ -1,0 +1,10 @@
+<div id="post-content"></div>
+<script type="text/javascript">
+  var pool = <%= @pool.to_json %>;
+  var pool_posts = <%= @pool.pool_posts.to_json %>;
+  <% @pool.pool_posts.each do |pool_post| %>
+    Post.register(<%= pool_post.post.to_json %>);
+  <% end %>
+  var browser = new PoolBrowser(pool, pool_posts);
+</script>
+

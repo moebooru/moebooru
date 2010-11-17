@@ -20,21 +20,40 @@ Preload = {
    */
   preload_list: [],
   preload_container: null,
+  preload_raw_urls: [],
+  preload_started: false,
+
+  init: function()
+  {
+    if(this.preload_container)
+      return;
+
+    this.preload_container = document.createElement("div");
+    this.preload_container.style.display = "none";
+    document.body.appendChild(this.preload_container);
+    Event.observe(window, "load", function() { Preload.preload_started = true; Preload.start_preload(); } );
+  },
   preload: function(url)
   {
-    if(!this.preload_container)
-    {
-      this.preload_container = document.createElement("div");
-      this.preload_container.style.display = "none";
-      document.body.appendChild(this.preload_container);
-      Event.observe(window, "load", function() { Preload.start_preload(); } );
-    }
-
+    Preload.init();
     Preload.preload_list.push(url);
+    Preload.start_preload();
+  },
+
+  /* Load the given URL with an AJAX request.  This is used to load things that aren't
+   * images. */
+  preload_raw: function(url)
+  {
+    Preload.init();
+    Preload.preload_raw_urls.push(url);
+    Preload.start_preload();
   },
 
   start_preload: function()
   {
+    if(!Preload.preload_started)
+      return;
+
     var preload = this.preload_container;
     for(var i=0; i < Preload.preload_list.length; ++i)
     {
@@ -42,5 +61,18 @@ Preload = {
       imgTag.src = Preload.preload_list[i];
       preload.appendChild(imgTag);
     }
+    Preload.preload_list.length = [];
+
+    for(var i=0; i < Preload.preload_raw_urls.length; ++i)
+    {
+      var url = Preload.preload_raw_urls[i];
+      new Ajax.Request(url, {
+        method: "get",
+        evalJSON: false,
+        evalJS: false,
+        parameters: null
+      });
+    }
+    Preload.preload_raw_urls = [];
   }
 }

@@ -48,10 +48,8 @@
           $('edit').show();
 	}
 
-        OnKey(192, null, function(e) { Post.vote(<%= @post.id %>, +0); return true; }); // `
-        OnKey(49, null, function(e) { Post.vote(<%= @post.id %>, +1); return true; });
-        OnKey(50, null, function(e) { Post.vote(<%= @post.id %>, +2); return true; });
-        OnKey(51, null, function(e) { Post.vote(<%= @post.id %>, +3); return true; });
+        Post.init_post_show(<%= @post.id %>);
+
         <% if not @following_pool_post.nil? %>
           OnKey(65, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.prev_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
           OnKey(83, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.next_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });

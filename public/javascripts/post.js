@@ -1041,5 +1041,21 @@ Post = {
       return;
     }
     window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id);
-  }
+  },
+
+  init_post_show: function(post_id)
+  {
+    this.displayed_post_id = post_id;
+
+    /* This may be called multiple times to change the post_id; update displayed_post_id
+     * each time but only set up events once. */
+    if(this.post_show_initialized)
+      return;
+    this.post_show_initialized = true;
+
+    OnKey(192, null, function(e) { Post.vote(this.displayed_post_id, +0); return true; }.bindAsEventListener(this)); // `
+    OnKey(49, null, function(e) { Post.vote(this.displayed_post_id, +1); return true; }.bindAsEventListener(this));
+    OnKey(50, null, function(e) { Post.vote(this.displayed_post_id, +2); return true; }.bindAsEventListener(this));
+    OnKey(51, null, function(e) { Post.vote(this.displayed_post_id, +3); return true; }.bindAsEventListener(this));
+  },
 }

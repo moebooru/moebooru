@@ -67,7 +67,7 @@
   <% end %>
   <li><%= link_to "History", :controller => "history", :action => "index", :search => "pool:#{params[:id]}" %></li>
   <% if @current_user.can_change?(@pool, :posts) %>
-  <li class="advanced-editing del-mode" style="display: none;">
+  <li class="advanced-editing del-mode">
     <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
     <label for="del-mode">Delete&nbsp;mode</label>
   </li>

@@ -8,7 +8,7 @@
   <div class="sidebar">
     <%= render :partial => "search" %>
     <% if @current_user.is_privileged_or_higher? %>
-    <div style="margin-bottom: 1em; display: none;" id="mode-box" class="advanced-editing">
+    <div style="margin-bottom: 1em;" id="mode-box" class="advanced-editing">
       <h5>Mode</h5>
       <form onsubmit="return false;" action="">
         <div>

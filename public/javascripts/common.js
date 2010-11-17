@@ -210,10 +210,6 @@ function InitAdvancedEditing()
     return;
 
   document.documentElement.removeClassName("hide-advanced-editing");
-
-  $$(".advanced-editing").each(function(elem) {
-    $(elem).show();
-  });
 }
 
 /* When we resume a user submit after logging in, we want to run submit events, as

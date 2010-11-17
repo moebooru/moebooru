@@ -377,6 +377,7 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
       set_title @post.title_tags.tr("_", " ")
+      response.headers["Cache-Control"] = "max-age=300"
     rescue ActiveRecord::RecordNotFound
       render :action => "show_empty", :status => 404
     end

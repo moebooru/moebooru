@@ -23,6 +23,9 @@ body {
 .action-post-show > body {
   background: #000;
 }
+.action-post-browse-pool > body {
+  background: #000;
+}
 
 a:link {
   color: #ee8887;

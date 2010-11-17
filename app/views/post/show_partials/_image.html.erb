@@ -11,7 +11,16 @@
            <div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= hs note.formatted_body %></div>
         <% end %>
       </div>
-      <%= image_tag(@post.sample_url(@current_user), :alt => @post.cached_tags, :id => 'image', :onclick => "Note.toggle();", :width => @post.get_sample_width(@current_user), :height => @post.get_sample_height(@current_user), :orig_width => @post.width, :orig_height => @post.height) %>
+      <%= image_tag(@post.sample_url(@current_user),
+                    :alt => @post.cached_tags,
+                    :id => 'image',
+                    :onclick => "Note.toggle();",
+                    :onload => "Post.image_finished_loading(true, event);",
+                    :onerror => "Post.image_finished_loading(false, event);",
+                    :width => @post.get_sample_width(@current_user),
+                    :height => @post.get_sample_height(@current_user),
+                    :orig_width => @post.width,
+                    :orig_height => @post.height) %>
     <% elsif @post.flash? %>
       <object width="<%= @post.width %>" height="<%= @post.height %>">
         <param name="movie" value="<%= @post.file_url %>">

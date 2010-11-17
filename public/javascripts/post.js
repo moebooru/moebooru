@@ -1058,4 +1058,20 @@ Post = {
     OnKey(50, null, function(e) { Post.vote(this.displayed_post_id, +2); return true; }.bindAsEventListener(this));
     OnKey(51, null, function(e) { Post.vote(this.displayed_post_id, +3); return true; }.bindAsEventListener(this));
   },
+
+  /*
+   * Register a function to be called once the image in post/show has finished loading.
+   * function(success, event)
+   * success - true on onload, false on onerror
+   */
+  finished_loading_handlers: [],
+  observe_finished_loading: function(func)
+  {
+    this.finished_loading_handlers.push(func);
+  },
+  image_finished_loading: function(success, event)
+  {
+    for(var i = 0; i < this.finished_loading_handlers.length; ++i)
+      this.finished_loading_handlers[i](success, event);
+  }
 }

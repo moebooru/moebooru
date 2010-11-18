@@ -678,14 +678,13 @@ Post = {
 
     /* Zoom the image to fit the viewport. */
     var ratio = client_width / img.original_width;
-    if (img.original_height > client_height)
+    if (img.original_height * ratio > client_height)
+      ratio = client_height / img.original_height;
+    if(ratio < 1)
     {
-      var r = client_height / img.original_height;
-      if(r < ratio)
-        ratio = r;
+      img.width = img.original_width * ratio;
+      img.height = img.original_height * ratio;
     }
-    img.width = img.original_width * ratio;
-    img.height = img.original_height * ratio;
 
     /* Scroll so the image is centered. */
     var offset = img.cumulativeOffset();

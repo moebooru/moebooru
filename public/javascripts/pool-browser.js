@@ -198,8 +198,11 @@ PoolBrowser.prototype.clear_container = function()
    * we don't need to keep the image around.  We'll restore it if we display the post
    * again. */
   var img = old_container.down("#image");
-  img.saved_src = img.src;
-  img.src = "about:blank";
+  if(img)
+  {
+    img.saved_src = img.src;
+    img.src = "about:blank";
+  }
   content.removeChild(old_container);
 }
 
@@ -233,7 +236,8 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
   {
     /* The argument is the node that we created previously.  Just insert it. */
     var img = data.down(".image");
-    img.src = img.saved_src;
+    if(img)
+      img.src = img.saved_src;
     
     content.appendChild(data);
   }

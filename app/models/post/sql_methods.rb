@@ -80,7 +80,9 @@ module PostSqlMethods
         cond_params << q[:ext].downcase.split(/,/)
       end
     
-      if q[:deleted_only] == true
+      if q[:show_deleted] == true
+        # ignore status
+      elsif q[:deleted_only] == true
         conds << "p.status = 'deleted'"
       else
         conds << "p.status <> 'deleted'"

@@ -187,7 +187,14 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
   var post_content_container = $(document.createElement("DIV"));
   post_content_container.className = "post-content-container";
   content.appendChild(post_content_container);
-  post_content_container.update(data);
+
+  /* This is like post_content_container.update(data), but we don't defer scripts, since
+   * that breaks things (eg. resized_notice gets moved around later, after we've already
+   * aligned the viewport). */
+  data = Object.toHTML(data);
+  post_content_container.innerHTML = data.stripScripts();
+  data.evalScripts(data);
+
   InitTextAreas();
 
   this.html_cache.set(post_id, post_content_container);
@@ -199,6 +206,7 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
 /* The displayed post has changed.  Update the rest of the display around it. */
 PoolBrowser.prototype.current_post_changed = function(post_id)
 {
+  Post.scale_and_fit_image();
   document.location.hash = post_id;
 
   var idx = this.find_post_idx_in_pool(post_id);
@@ -214,7 +222,6 @@ PoolBrowser.prototype.current_post_changed = function(post_id)
   }
 
   document.title = title;
-  Post.scale_and_fit_image();
 }
 
 PoolBrowser.prototype.get_url_for_post_page = function(post_id)

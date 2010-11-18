@@ -16,17 +16,13 @@
  * - When we load a new post, it's formatted and its scripts are evaluated normally.
  * - When we're replacing the displayed post, its node is stashed away in a node cache.
  * - If we come back to the post while it's in the node cache, we'll use the node directly.
+ * - HTML and images for posts are preloaded.  We don't use a simple mechanism like
+ *   Preload.preload_raw, because Opera's caching is broken for XHR and it'll always
+ *   do a slow revalidation.
  * - We don't depend on browser caching for HTML.  That would require us to expire a
  *   page when we switch away from it if we've made any changes (eg. voting), so we
  *   don't pull an out-of-date page next time.  This is slower, and would require us
  *   to be careful about expiring the cache.
- *
- * use browser cache for text cache and just Preload.preload_raw
- *
- * what happens to the browser cache when we expire the node cache?
- * should be expired
- * having an sid would only let us expire everything
- *
  */
 PoolBrowser = function(pool, pool_posts)
 {
@@ -34,10 +30,10 @@ PoolBrowser = function(pool, pool_posts)
   this.pool_id = pool.id;
   this.pool_posts = pool_posts;
   this.current_post_id = null;
-  this.html_cache = new Hash;
-  this.post_lru = new Array;
   this.cache_session_id = (new Date()).valueOf();
-  this.post_id_version = new Hash;
+  this.post_node_cache = new Hash;
+  this.post_html_cache = new Hash;
+  this.html_preloads = new Hash;
 
   Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
 
@@ -66,21 +62,6 @@ PoolBrowser.prototype.get_current_post_id = function()
   return parseInt(hash);
 }
 
-PoolBrowser.prototype.get_post_id_version = function(post_id)
-{
-  var version = this.post_id_version.get(post_id);
-  if(version == null)
-    return 0;
-  return version;
-}
-
-PoolBrowser.prototype.bump_post_id_version = function(post_id)
-{
-  var version = this.get_post_id_version(post_id);
-  ++version;
-  this.post_id_version.set(post_id, version);
-}
-
 PoolBrowser.prototype.find_post_idx_in_pool = function(post_id)
 {
   for(var i = 0; i < this.pool_posts.length; ++i)
@@ -98,40 +79,6 @@ PoolBrowser.prototype.find_post_in_pool = function(post_id)
     return null;
   return this.pool_posts[idx];
 }
-
-/* Move post_id to the top of the LRU. */
-PoolBrowser.prototype.touch_lru = function(post_id)
-{
-  this.post_lru = this.post_lru.without(post_id);
-  this.post_lru.unshift(post_id);
-}
-
-PoolBrowser.prototype.cache_cull = function()
-{
-  var max_cached_items = 3;
-
-  /* Keep the max_cached_items most recently-used items. */
-  var ids_to_keep = this.post_lru.slice(0, max_cached_items);
-
-  /* Make a list of cache entries to discard. */
-  var ids_to_purge = new Array;
-  this.html_cache.each(function(e) {
-    var post_id = parseInt(e[0]);
-    if(ids_to_keep.indexOf(post_id) != -1)
-      return;
-    ids_to_purge.push(post_id);
-  });
-
-  ids_to_purge.each(function(post_id) {
-    this.html_cache.unset(post_id);
-
-    /* We're expiring the post from our cache, and we'll request it from the server
-     * again next time.  Bump the cache version, to make sure any changes we've made
-     * to the post while we had it cached are reloaded. */
-    this.bump_post_id_version(post_id);
-  }.bind(this));
-}
-
 
 PoolBrowser.prototype.displayed_image_finished_loading = function(success, event)
 {
@@ -153,6 +100,69 @@ PoolBrowser.prototype.displayed_image_finished_loading = function(success, event
   this.preload(post_ids_to_preload);
 },
 
+/* If post_id isn't cached and isn't already being loaded, start loading it. */
+PoolBrowser.prototype.load_post_html = function(post_id)
+{
+  /* If the post's node is cached, then there's never any reason to load its HTML again. */
+  if(this.post_node_cache.get(post_id))
+    return;
+
+  var data = this.post_html_cache.get(post_id);
+  if(data != null)
+  {
+    /* This post's HTML is already loaded. */
+    if(this.current_post_id == post_id)
+    {
+      this.post_html_cache.unset(post_id);
+      this.set_post_content(data, post_id);
+    }
+    return;
+  }
+  
+  var existing_request = this.html_preloads.get(post_id);
+  if(existing_request != null)
+  {
+    /* This post is already being loaded. */
+    return;
+  }
+
+  var url = this.get_url_for_post_page(post_id);
+  var request = new Ajax.Request(url, {
+    method: "get",
+    evalJSON: false,
+    evalJS: false,
+    parameters: null,
+    onComplete: function(resp)
+    {
+      this.html_preloads.unset(post_id);
+    }.bind(this),
+    onSuccess: function(resp)
+    {
+      resp = resp.responseText;
+
+      /* If this is the post that currently wants to be displayed, switch to it. */
+      if(this.current_post_id == post_id)
+      {
+        this.set_post_content(resp, post_id);
+        return;
+      }
+
+      /* Otherwise, just cache the data for later. */
+      this.post_html_cache.set(post_id, resp);
+    }.bind(this),
+    onFailure: function(resp)
+    {
+      if(parseInt(this.current_post_id) == parseInt(post_id))
+      {
+        /* The post the user wants to see failed to load. */
+        notice("Error "  + resp.status + " loading post");
+      }
+    }.bind(this),
+  });
+
+  this.html_preloads.set(post_id, request);
+}
+
 /* Begin preloading the HTML and images for the given post IDs. */
 PoolBrowser.prototype.preload = function(post_ids)
 {
@@ -161,8 +171,7 @@ PoolBrowser.prototype.preload = function(post_ids)
   {
     var post_id = post_ids[i];
 
-    var html_url = this.get_url_for_post_page(post_id);
-    Preload.create_raw_preload(html_url);
+    this.load_post_html(post_id);
 
     var post = Post.posts.get(post_id);
     new_preload_container.preload(post.sample_url);
@@ -177,41 +186,65 @@ PoolBrowser.prototype.preload = function(post_ids)
   this.preload_container = new_preload_container;
 }
 
-PoolBrowser.prototype.set_post_content = function(data, post_id)
+PoolBrowser.prototype.clear_container = function()
 {
   var content = $("post-content");
   var old_container = content.down(".post-content-container");
-  if(old_container)
-    content.removeChild(old_container);
+  if(!old_container)
+    return;
 
-  var post_content_container = $(document.createElement("DIV"));
-  post_content_container.className = "post-content-container";
-  content.appendChild(post_content_container);
-
-  /* This is like post_content_container.update(data), but we don't defer scripts, since
-   * that breaks things (eg. resized_notice gets moved around later, after we've already
-   * aligned the viewport). */
-  data = Object.toHTML(data);
-  post_content_container.innerHTML = data.stripScripts();
-  data.evalScripts(data);
-
-  InitTextAreas();
-
-  this.html_cache.set(post_id, post_content_container);
-
-  this.touch_lru(post_id);
-  this.cache_cull();
+  /* We're no longer displaying the post, but we'll keep a reference to the container
+   * in post_node_cache.  Clear the image source attribute, to help hint the browser that
+   * we don't need to keep the image around.  We'll restore it if we display the post
+   * again. */
+  var img = old_container.down("#image");
+  img.saved_src = img.src;
+  img.src = "about:blank";
+  content.removeChild(old_container);
 }
 
-/* The displayed post has changed.  Update the rest of the display around it. */
-PoolBrowser.prototype.current_post_changed = function(post_id)
+PoolBrowser.prototype.set_post_content = function(data, post_id)
 {
+  /* Clear the previous post, if any. */
+  this.clear_container();
+
+  var content = $("post-content");
+
+  if(typeof(data) == typeof "")
+  {
+    /* The argument is a string, so it's a new, raw block of HTML.  We need to create
+     * its node. */
+    var post_content_container = $(document.createElement("DIV"));
+    post_content_container.className = "post-content-container";
+
+    content.appendChild(post_content_container);
+
+    /* This is like post_content_container.update(data), but we don't defer scripts, since
+     * that breaks things (eg. resized_notice gets moved around later, after we've already
+     * aligned the viewport). */
+    post_content_container.innerHTML = data.stripScripts();
+    data.evalScripts(data);
+
+    InitTextAreas();
+
+    this.post_node_cache.set(post_id, post_content_container);
+  }
+  else
+  {
+    /* The argument is the node that we created previously.  Just insert it. */
+    var img = data.down("#image");
+    img.src = img.saved_src;
+    
+    content.appendChild(data);
+  }
+
   Post.scale_and_fit_image();
   document.location.hash = post_id;
 
-  var idx = this.find_post_idx_in_pool(post_id);
   var title = "";
   title = this.pool.name.replace(/_/g, " ");
+
+  var idx = this.find_post_idx_in_pool(post_id);
   if(idx != -1)
   {
     var sequence = this.pool_posts[idx].sequence;
@@ -222,11 +255,12 @@ PoolBrowser.prototype.current_post_changed = function(post_id)
   }
 
   document.title = title;
+  Post.init_post_show(post_id);
 }
 
 PoolBrowser.prototype.get_url_for_post_page = function(post_id)
 {
-  var cache_id = this.cache_session_id + "-" + post_id + "-" + this.get_post_id_version(post_id);
+  var cache_id = this.cache_session_id + "-" + post_id;
   var url = "/post/show/" + post_id + "?pool_id=" + this.pool_id + "&cache=" + cache_id;
   return url;
 }
@@ -241,33 +275,16 @@ PoolBrowser.prototype.set_post = function(post_id)
     return;
   this.current_post_id = post_id;
 
-  var post_content_container = this.html_cache.get(post_id);
+  var post_content_container = this.post_node_cache.get(post_id);
   if(post_content_container)
   {
-    var content = $("post-content");
-    var old_container = content.down(".post-content-container");
-    if(old_container)
-      content.removeChild(old_container);
-
-    content.appendChild(post_content_container);
-    this.current_post_changed(post_id);
-    this.touch_lru(post_id);
+    this.set_post_content(post_content_container, post_id);
     return;
   }
 
-  var url = this.get_url_for_post_page(post_id);
-  new Ajax.Request(url, {
-    method: "get",
-    evalJSON: false,
-    evalJS: false,
-    parameters: null,
-    onSuccess: function(resp)
-    {
-      resp = resp.responseText;
-      this.set_post_content(resp, post_id);
-      this.current_post_changed(post_id);
-    }.bind(this)
-  });
+  /* We don't have the node cached.  Open the page from HTML cache or start
+   * loading the page as necessary. */
+  this.load_post_html(post_id);
 }
 
 /* If first is true, return the first pool_post in the pool, otherwise return the last pool_post. */

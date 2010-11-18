@@ -104,29 +104,24 @@ class PoolController < ApplicationController
 
     @pool = Pool.find(params[:id], :include => [:pool_posts => :post])
 
-    # We have the Pool.pool_posts association for this, but that doesn't seem to want to work...
-    conds = ["pools_posts.pool_id = ?"]
-    cond_params = params[:id]
-
-    conds << "pools_posts.active"
-
-    options = {
-      :per_page => 24,
-      :order => "nat_sort(pools_posts.sequence), pools_posts.post_id",
-      :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id",
-      :conditions => [conds.join(" AND "), *cond_params],
-      :select => "posts.*,
-        pools_posts.pool_id AS pool_pool_id, pools_posts.sequence AS pool_sequence, pools_posts.next_post_id AS pool_next_post_id, pools_posts.prev_post_id AS pool_prev_post_id",
-      :page => params[:page],
-    }
-
     @browse_mode = @current_user.pool_browse_mode
 
+    q = Tag.parse_query("")
+    q[:pool] = params[:id].to_i
+    q[:show_deleted_only] = false
     if @browse_mode == 1 then
-      options[:per_page] = 1000
-      options[:order] = "1.0*posts.width / GREATEST(1, posts.height), nat_sort(pools_posts.sequence), pools_posts.post_id"
+      q[:limit] = 1000
+      q[:order] = "portrait_pool"
+    else
+      q[:limit] = 24
     end
-    @posts = Post.paginate(options)
+
+    count = Post.count_by_sql(Post.generate_sql(q, :from_api => true, :count => true))
+
+    @posts = WillPaginate::Collection.new(params[:page], q[:limit], count)
+
+    sql = Post.generate_sql(q, :from_api => true, :offset => @posts.offset, :limit => @posts.per_page)
+    @posts.replace(Post.find_by_sql(sql))
 
     set_title @pool.pretty_name
     respond_to do |fmt|

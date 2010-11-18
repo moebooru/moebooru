@@ -307,6 +307,12 @@ module PostSqlMethods
         when "landscape"
           sql << " ORDER BY 1.0*width/GREATEST(1, height) DESC"
 
+        when "portrait_pool"
+          # We can only do this if we're searching for a pool.
+          if q.has_key?(:pool) then
+            sql << " ORDER BY 1.0*width / GREATEST(1, height), nat_sort(pools_posts.sequence), pools_posts.post_id"
+          end
+
         when "change", "change_asc"
           sql << " ORDER BY change_seq"
 

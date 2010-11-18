@@ -260,9 +260,7 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
 
 PoolBrowser.prototype.get_url_for_post_page = function(post_id)
 {
-  var cache_id = this.cache_session_id + "-" + post_id;
-  var url = "/post/show/" + post_id + "?browse_pool_id=" + this.pool_id + "&cache=" + cache_id;
-  return url;
+  return "/post/show/" + post_id + "?browse_pool_id=" + this.pool_id + "&cache=" + this.cache_session_id;
 }
 
 PoolBrowser.prototype.set_post = function(post_id)

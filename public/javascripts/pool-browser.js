@@ -214,6 +214,7 @@ PoolBrowser.prototype.current_post_changed = function(post_id)
   }
 
   document.title = title;
+  Post.scale_and_fit_image();
 }
 
 PoolBrowser.prototype.get_url_for_post_page = function(post_id)

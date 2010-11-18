@@ -14,6 +14,7 @@
       <%= image_tag(@post.sample_url(@current_user),
                     :alt => @post.cached_tags,
                     :id => 'image',
+                    :class => "image",
                     :onclick => "Note.toggle();",
                     :onload => "Post.image_finished_loading(true, event);",
                     :onerror => "Post.image_finished_loading(false, event);",

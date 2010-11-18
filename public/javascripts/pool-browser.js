@@ -232,7 +232,7 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
   else
   {
     /* The argument is the node that we created previously.  Just insert it. */
-    var img = data.down("#image");
+    var img = data.down(".image");
     img.src = img.saved_src;
     
     content.appendChild(data);

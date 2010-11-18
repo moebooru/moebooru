@@ -21,11 +21,6 @@
                     :height => @post.get_sample_height(@current_user),
                     :orig_width => @post.width,
                     :orig_height => @post.height) %>
-    <% if @viewing_pool_post %>
-      <!-- Hack: add padding to the page size, so we always have enough empty space on the bottom and right
-           to center the image. -->
-      <div id="padding" style="position: absolute; width: 3000px; height: 3000px; visibility: hidden;"></div>
-    <% end %>
     <% elsif @post.flash? %>
       <object width="<%= @post.width %>" height="<%= @post.height %>">
         <param name="movie" value="<%= @post.file_url %>">

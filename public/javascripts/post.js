@@ -664,6 +664,18 @@ Post = {
     }
   },
   
+  center_image: function()
+  {
+    var img = $("image");
+
+    var offset = img.cumulativeOffset();
+    var left_spacing = (window.innerWidth - img.offsetWidth) / 2;
+    var scroll_x = offset[0] - left_spacing;
+    var top_spacing = (window.innerHeight - img.offsetHeight) / 2;
+    var scroll_y = offset[1] - top_spacing;
+    window.scroll(scroll_x, scroll_y);
+  },
+
   scale_and_fit_image: function()
   {
     var img = $("image");
@@ -686,13 +698,14 @@ Post = {
       img.height = img.original_height * ratio;
     }
 
-    /* Scroll so the image is centered. */
+    /* Make sure the page is big enough to let us scroll far enough to center the image.
+     * This only works on the right and bottom. */
     var offset = img.cumulativeOffset();
-    var left_spacing = (client_width - img.offsetWidth) / 2;
-    var scroll_x = offset[0] - left_spacing;
-    var top_spacing = (client_height - img.offsetHeight) / 2;
-    var scroll_y = offset[1] - top_spacing;
-    window.scroll(scroll_x, scroll_y);
+    var required_width = img.offsetWidth + offset[0]*2;
+    var required_height = img.offsetHeight + offset[1]*2;
+    $(document.body).setStyle({minWidth: required_width + "px", minHeight: required_height + "px"});
+
+    this.center_image();
 
     Post.adjust_notes();
   },

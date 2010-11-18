@@ -279,7 +279,7 @@ module PostSqlMethods
       sql << " FROM " + joins.join(" ")
       sql << " WHERE " + conds.join(" AND ")
 
-      if q[:order] && !options[:count]
+      if q.has_key?(:order) && !options[:count]
         case q[:order]
         when "id"
           sql << " ORDER BY p.id"
@@ -327,15 +327,21 @@ module PostSqlMethods
           sql << " ORDER BY random"
 
         else
-          if pool_ordering
-            sql << pool_ordering
+          use_default_order = true
+        end
+      else
+        use_default_order = true
+      end
+
+      if use_default_order && !options[:count] then
+        if pool_ordering
+          sql << pool_ordering
+        else
+          if options[:from_api] then
+            # When using the API, default to sorting by ID.
+            sql << " ORDER BY p.id DESC"
           else
-	    if options[:from_api] then
-	      # When using the API, default to sorting by ID.
-	      sql << " ORDER BY p.id DESC"
-	    else
-	      sql << " ORDER BY p.index_timestamp DESC"
-	    end
+            sql << " ORDER BY p.index_timestamp DESC"
           end
         end
       end

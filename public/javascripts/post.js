@@ -666,9 +666,10 @@ Post = {
   
   get_scroll_offset_to_center: function(element)
   {
+    var window_size = document.viewport.getDimensions();
     var offset = element.cumulativeOffset();
-    var left_spacing = (window.innerWidth - element.offsetWidth) / 2;
-    var top_spacing = (window.innerHeight - element.offsetHeight) / 2;
+    var left_spacing = (window_size.width - element.offsetWidth) / 2;
+    var top_spacing = (window_size.height - element.offsetHeight) / 2;
     var scroll_x = offset[0] - left_spacing;
     var scroll_y = offset[1] - top_spacing;
     return [scroll_x, scroll_y];

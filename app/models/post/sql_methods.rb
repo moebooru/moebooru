@@ -32,6 +32,11 @@ module PostSqlMethods
         p << arr[1]
         p << arr[2]
 
+      when :in
+        items = ["?"] * arr[1].length
+        c << "#{field} IN (#{items.join(", ")})"
+        p.concat(arr[1])
+
       else
         # do nothing
       end

@@ -41,6 +41,13 @@ module TagParseMethods
       when /^>(.+)/
         return [:gt, parse_cast($1, type)]
 
+      when /^(.+?),(.+)/
+        items = range.split(",").map do |val|
+          parse_cast(val, type)
+        end
+
+        return [:in, items]
+
       else
         return [:eq, parse_cast(range, type)]
 

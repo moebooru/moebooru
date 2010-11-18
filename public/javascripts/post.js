@@ -675,10 +675,25 @@ Post = {
   },
   center_image: function()
   {
-    /* Make sure the page is big enough to let us scroll far enough to center the image.
-     * This only works on the right and bottom. */
+    /* Make sure we have enough space to scroll far enough to center the image.  Set a
+     * minimum size on the body to give us more space on the right and bottom, and add
+     * a padding to the image to give more space on the top and left. */
     var img = $("image");
+
+    /* Any existing padding (possibly from a previous call to this function) will be
+     * included in cumulativeOffset and throw things off, so clear it. */
+    img.setStyle({paddingLeft: 0});
+    img.setStyle({paddingTop: 0});
+
     var target_offset = Post.get_scroll_offset_to_center(img);
+    var padding_left = -target_offset[0];
+    if(padding_left < 0) padding_left = 0;
+    img.setStyle({paddingLeft: padding_left + "px"});
+
+    var padding_top = -target_offset[1];
+    if(padding_top < 0) padding_top = 0;
+    img.setStyle({paddingTop: padding_top + "px"});
+
     var required_width = target_offset[0] + window.innerWidth;
     var required_height = target_offset[1] + window.innerHeight;
     $(document.body).setStyle({minWidth: required_width + "px", minHeight: required_height + "px"});

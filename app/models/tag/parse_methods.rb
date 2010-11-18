@@ -114,8 +114,14 @@ module TagParseMethods
             if $2 == "rating"
               q[:unlocked_rating] = true
             end
-          elsif $1 == "deleted" && $2 == "true"
-            q[:deleted_only] = true
+          elsif $1 == "deleted"
+            # This is a little inconsistent, in order to be compatible with Danbooru: "deleted:true"
+            # shows only deleted posts.  The holds:only/holds:true scheme makes more sense.
+            if $2 == "true"
+              q[:show_deleted_only] = true
+            else $2 == "yes"
+              q[:show_deleted_only] = false # all posts, deleted or not
+            end
           elsif $1 == "ext"
             q[:ext] = $2
           elsif $1 == "change"

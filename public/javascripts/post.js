@@ -664,16 +664,29 @@ Post = {
     }
   },
   
+  get_scroll_offset_to_center: function(element)
+  {
+    var offset = element.cumulativeOffset();
+    var left_spacing = (window.innerWidth - element.offsetWidth) / 2;
+    var top_spacing = (window.innerHeight - element.offsetHeight) / 2;
+    var scroll_x = offset[0] - left_spacing;
+    var scroll_y = offset[1] - top_spacing;
+    return [scroll_x, scroll_y];
+  },
   center_image: function()
   {
+    /* Make sure the page is big enough to let us scroll far enough to center the image.
+     * This only works on the right and bottom. */
     var img = $("image");
+    var target_offset = Post.get_scroll_offset_to_center(img);
+    var required_width = target_offset[0] + window.innerWidth;
+    var required_height = target_offset[1] + window.innerHeight;
+    $(document.body).setStyle({minWidth: required_width + "px", minHeight: required_height + "px"});
 
-    var offset = img.cumulativeOffset();
-    var left_spacing = (window.innerWidth - img.offsetWidth) / 2;
-    var scroll_x = offset[0] - left_spacing;
-    var top_spacing = (window.innerHeight - img.offsetHeight) / 2;
-    var scroll_y = offset[1] - top_spacing;
-    window.scroll(scroll_x, scroll_y);
+    /* Resizing the body may shift the image to the right, since it's centered in the content.
+     * Recalculate offsets with the new cumulativeOffset. */
+    var target_offset = Post.get_scroll_offset_to_center(img);
+    window.scroll(target_offset[0], target_offset[1]);
   },
 
   scale_and_fit_image: function()
@@ -697,13 +710,6 @@ Post = {
       img.width = img.original_width * ratio;
       img.height = img.original_height * ratio;
     }
-
-    /* Make sure the page is big enough to let us scroll far enough to center the image.
-     * This only works on the right and bottom. */
-    var offset = img.cumulativeOffset();
-    var required_width = img.offsetWidth + offset[0]*2;
-    var required_height = img.offsetHeight + offset[1]*2;
-    $(document.body).setStyle({minWidth: required_width + "px", minHeight: required_height + "px"});
 
     this.center_image();
 

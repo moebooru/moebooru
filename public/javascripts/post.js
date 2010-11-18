@@ -664,6 +664,49 @@ Post = {
     }
   },
   
+  scale_and_fit_image: function()
+  {
+    var img = $("image");
+
+    if(img.original_width == null)
+    {
+      img.original_width = img.width;
+      img.original_height = img.height;
+    }
+    var client_width = window.innerWidth;
+    var client_height = window.innerHeight;
+
+    /* Zoom the image to fit the viewport. */
+    var ratio = client_width / img.original_width;
+    if (img.original_height > client_height)
+    {
+      var r = client_height / img.original_height;
+      if(r < ratio)
+        ratio = r;
+    }
+    img.width = img.original_width * ratio;
+    img.height = img.original_height * ratio;
+
+    /* Scroll so the image is centered. */
+    var offset = img.cumulativeOffset();
+    var left_spacing = (client_width - img.offsetWidth) / 2;
+    var scroll_x = offset[0] - left_spacing;
+    var top_spacing = (client_height - img.offsetHeight) / 2;
+    var scroll_y = offset[1] - top_spacing;
+    window.scroll(scroll_x, scroll_y);
+
+    Post.adjust_notes();
+  },
+
+  adjust_notes: function() {
+    if (!window.Note)
+      return;
+    for (var i=0; i<window.Note.all.length; ++i) {
+      window.Note.all[i].adjustScale()
+    }
+  },
+
+
   highres: function() {
     var img = $("image");
     

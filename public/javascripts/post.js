@@ -680,6 +680,8 @@ Post = {
      * minimum size on the body to give us more space on the right and bottom, and add
      * a padding to the image to give more space on the top and left. */
     var img = $("image");
+    if(!img)
+      return;
 
     /* Any existing padding (possibly from a previous call to this function) will be
      * included in cumulativeOffset and throw things off, so clear it. */
@@ -708,6 +710,8 @@ Post = {
   scale_and_fit_image: function()
   {
     var img = $("image");
+    if(!img)
+      return;
 
     if(img.original_width == null)
     {

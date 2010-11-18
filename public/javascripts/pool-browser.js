@@ -184,7 +184,7 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
   if(old_container)
     content.removeChild(old_container);
 
-  var post_content_container = document.createElement("DIV");
+  var post_content_container = $(document.createElement("DIV"));
   post_content_container.className = "post-content-container";
   content.appendChild(post_content_container);
   post_content_container.update(data);

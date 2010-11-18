@@ -115,7 +115,8 @@ class PoolController < ApplicationController
       :order => "nat_sort(pools_posts.sequence), pools_posts.post_id",
       :joins => "JOIN pools_posts ON posts.id = pools_posts.post_id",
       :conditions => [conds.join(" AND "), *cond_params],
-      :select => "posts.*, pools_posts.sequence AS sequence",
+      :select => "posts.*,
+        pools_posts.pool_id AS pool_pool_id, pools_posts.sequence AS pool_sequence, pools_posts.next_post_id AS pool_next_post_id, pools_posts.prev_post_id AS pool_prev_post_id",
       :page => params[:page],
     }
 

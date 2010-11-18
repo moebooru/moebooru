@@ -40,7 +40,13 @@ module PostApiMethods
 
     # If we're being formatted as the contents of a pool, we'll have the pool_post
     # sequence loaded too.
-    ret[:sequence] = sequence if self.respond_to?("sequence")
+    if self.respond_to?("pool_sequence") then
+      ret[:pool_post] = {}
+      ret[:pool_post][:pool_id] = pool_pool_id
+      ret[:pool_post][:next_post_id] = pool_next_post_id
+      ret[:pool_post][:prev_post_id] = pool_prev_post_id
+      ret[:pool_post][:sequence] = pool_sequence
+    end
 
     return ret
   end

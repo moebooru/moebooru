@@ -36,9 +36,13 @@
         Post.observe_text_area("post_tags")
 
         RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
+
+        <% if not @viewing_pool_post %>
         if (Cookie.get('resize_image') == '1') {
           Post.resize_image()
         }
+        <% end %>
+
         var anchored_to_comment = window.location.hash == "#comments";
         if(window.location.hash.match(/^#c[0-9]+$/))
           anchored_to_comment = true;

@@ -98,7 +98,7 @@ PoolBrowser.prototype.displayed_image_finished_loading = function(success, event
   if(adjacent_pool_post != null)
     post_ids_to_preload.push(adjacent_pool_post);
   this.preload(post_ids_to_preload);
-},
+}
 
 /* If post_id isn't cached and isn't already being loaded, start loading it. */
 PoolBrowser.prototype.load_post_html = function(post_id)
@@ -157,7 +157,7 @@ PoolBrowser.prototype.load_post_html = function(post_id)
         /* The post the user wants to see failed to load. */
         notice("Error "  + resp.status + " loading post");
       }
-    }.bind(this),
+    }.bind(this)
   });
 
   this.html_preloads.set(post_id, request);

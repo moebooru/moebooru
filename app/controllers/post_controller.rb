@@ -377,8 +377,8 @@ class PostController < ApplicationController
       else
         @following_pool_post = PoolPost.find(:first, :conditions => ["post_id = ?", @post.id]) rescue nil
       end
-      if params.has_key?(:pool_id) then
-        @viewing_pool_post = PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil
+      if params.has_key?(:browse_pool_id) then
+        @browsing_pool_post = PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", params[:browse_pool_id], @post.id]) rescue nil
       end
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true

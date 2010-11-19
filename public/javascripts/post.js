@@ -670,8 +670,8 @@ Post = {
     var offset = element.cumulativeOffset();
     var left_spacing = (window_size.width - element.offsetWidth) / 2;
     var top_spacing = (window_size.height - element.offsetHeight) / 2;
-    var scroll_x = offset[0] - left_spacing;
-    var scroll_y = offset[1] - top_spacing;
+    var scroll_x = offset.left - left_spacing;
+    var scroll_y = offset.top - top_spacing;
     return [scroll_x, scroll_y];
   },
   center_image: function()
@@ -685,8 +685,8 @@ Post = {
 
     /* Any existing padding (possibly from a previous call to this function) will be
      * included in cumulativeOffset and throw things off, so clear it. */
-    img.setStyle({paddingLeft: 0});
-    img.setStyle({paddingTop: 0});
+    img.setStyle({paddingLeft: 0, paddingTop: 0});
+    $(document.body).setStyle({minWidth: 0, minHeight: 0});
 
     var target_offset = Post.get_scroll_offset_to_center(img);
     var padding_left = -target_offset[0];

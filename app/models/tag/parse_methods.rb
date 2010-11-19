@@ -122,11 +122,11 @@ module TagParseMethods
               q[:unlocked_rating] = true
             end
           elsif $1 == "deleted"
-            # This is a little inconsistent, in order to be compatible with Danbooru: "deleted:true"
-            # shows only deleted posts.  The holds:only/holds:true scheme makes more sense.
+            # This naming is slightly odd, to retain API compatibility with Danbooru's "deleted:true"
+            # search flag.
             if $2 == "true"
               q[:show_deleted_only] = true
-            else $2 == "yes"
+            else $2 == "all"
               q[:show_deleted_only] = false # all posts, deleted or not
             end
           elsif $1 == "ext"
@@ -136,9 +136,9 @@ module TagParseMethods
           elsif $1 == "shown"
             q[:shown_in_index] = ($2 == "true")
           elsif $1 == "holds"
-            if $2 == "only"
+            if $2 == "true" or $2 == "only"
               q[:show_holds_only] = true
-            elsif $2 == "true"
+            elsif $2 == "all"
               q[:show_holds_only] = false # all posts, held or not
             end
           elsif $1 == "limit"

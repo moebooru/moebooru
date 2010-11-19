@@ -697,8 +697,9 @@ Post = {
     if(padding_top < 0) padding_top = 0;
     img.setStyle({paddingTop: padding_top + "px"});
 
-    var required_width = target_offset[0] + document.documentElement.clientWidth;
-    var required_height = target_offset[1] + document.documentElement.clientHeight;
+    var window_size = document.viewport.getDimensions();
+    var required_width = target_offset[0] + window_size.width;
+    var required_height = target_offset[1] + window_size.height;
     $(document.body).setStyle({minWidth: required_width + "px", minHeight: required_height + "px"});
 
     /* Resizing the body may shift the image to the right, since it's centered in the content.
@@ -718,8 +719,9 @@ Post = {
       img.original_width = img.width;
       img.original_height = img.height;
     }
-    var client_width = document.documentElement.clientWidth;
-    var client_height = document.documentElement.clientHeight;
+    var window_size = document.viewport.getDimensions();
+    var client_width = window_size.width;
+    var client_height = window_size.height;
 
     /* Zoom the image to fit the viewport. */
     var ratio = client_width / img.original_width;

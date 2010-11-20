@@ -188,7 +188,7 @@ function OnKey(key, options, press, release)
       return;
     if (e.ctrlKey != !!options.ctrlKey)
       return;
-    if(KeysDown[e.keyCode])
+    if (!options.allowRepeat && KeysDown[e.keyCode])
       return;
 
     KeysDown[e.keyCode] = true

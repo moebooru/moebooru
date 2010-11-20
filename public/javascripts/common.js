@@ -105,6 +105,20 @@ Object.extend(Element.Methods, {
     else
       element.textContent = text;
     return element;
+  },
+
+  /* Return the X offset of a node relative to a parent node.  Like cumulativeRange().left,
+   * but stops when parent is reached. */
+  cumulative_offset_range_x: function(node, parent)
+  {
+    var offset_x = 0;
+    do
+    {
+      offset_x += node.offsetLeft;
+      node = node.parentNode;
+    }
+    while(node != null && node != parent);
+    return offset_x;
   }
 });
 Element.addMethods()

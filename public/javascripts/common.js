@@ -300,7 +300,7 @@ Object.extend(String.prototype, {
     {
       var r = new RegExp("\\${" + s + "}", "g");
       var to = subs[s];
-      if(!to) to = "";
+      if(to == null) to = "";
       text = text.replace(r, to);
     }
 

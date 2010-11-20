@@ -13,7 +13,7 @@
   <% @posts.each do |post| -%>
     Post.register(<%= post.to_json %>);
   <% end %>
-  var pool_browser = new PoolBrowser();
+  var pool_browser = new BrowserView();
 
   var post_ids = <%= @posts.map { |post| post.id }.to_json %>;
   var pool = <%= (@pool || nil).to_json %>;

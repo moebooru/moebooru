@@ -25,7 +25,7 @@
  *   to be careful about expiring the cache.
  */
 
-PoolBrowser = function()
+BrowserView = function()
 {
   /* The post that we currently want to display.  This will be either one of the
    * current html_preloads, or be the displayed_post_id. */
@@ -46,7 +46,7 @@ PoolBrowser = function()
   this.set_debug();
 }
 
-PoolBrowser.prototype.log = function(s)
+BrowserView.prototype.log = function(s)
 {
   this.log_data += " " + s;
   var max_length = 200;
@@ -54,7 +54,7 @@ PoolBrowser.prototype.log = function(s)
     this.log_data = this.log_data.substr(this.log_data.length-max_length, max_length);
 }
 
-PoolBrowser.prototype.set_debug = function()
+BrowserView.prototype.set_debug = function()
 {
   var s = "wanted: " + this.wanted_post_id + ", displayed: " + this.displayed_post_id;
   var preload_keys = this.html_preloads.keys();
@@ -71,7 +71,7 @@ PoolBrowser.prototype.set_debug = function()
 }
 
 /* If post_id isn't cached and isn't already being loaded, start loading it. */
-PoolBrowser.prototype.load_post_html = function(post_id)
+BrowserView.prototype.load_post_html = function(post_id)
 {
   /* If the post's node is cached, then there's never any reason to load its HTML again. */
   if(this.post_node_cache.get(post_id))
@@ -139,7 +139,7 @@ PoolBrowser.prototype.load_post_html = function(post_id)
 }
 
 /* Begin preloading the HTML and images for the given post IDs. */
-PoolBrowser.prototype.preload = function(post_ids)
+BrowserView.prototype.preload = function(post_ids)
 {
   var new_preload_container = Preload.create_preload_container();
   for(var i = 0; i < post_ids.length; ++i)
@@ -161,7 +161,7 @@ PoolBrowser.prototype.preload = function(post_ids)
   this.preload_container = new_preload_container;
 }
 
-PoolBrowser.prototype.clear_container = function()
+BrowserView.prototype.clear_container = function()
 {
   var content = $("post-content");
   var old_container = content.down(".post-content-container");
@@ -181,7 +181,7 @@ PoolBrowser.prototype.clear_container = function()
   content.removeChild(old_container);
 }
 
-PoolBrowser.prototype.set_post_content = function(data, post_id)
+BrowserView.prototype.set_post_content = function(data, post_id)
 {
   /* Clear the previous post, if any. */
   this.clear_container();
@@ -224,12 +224,12 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
   Post.init_post_show(post_id);
 }
 
-PoolBrowser.prototype.get_url_for_post_page = function(post_id)
+BrowserView.prototype.get_url_for_post_page = function(post_id)
 {
   return "/post/show/" + post_id + "?browser=1&cache=" + this.cache_session_id;
 }
 
-PoolBrowser.prototype.set_post = function(post_id)
+BrowserView.prototype.set_post = function(post_id)
 {
   /* If there was a lazy load pending, cancel it. */
   this.cancel_lazily_load();
@@ -252,13 +252,13 @@ PoolBrowser.prototype.set_post = function(post_id)
   this.load_post_html(post_id);
 }
 
-PoolBrowser.prototype.is_post_id_cached = function(post_id)
+BrowserView.prototype.is_post_id_cached = function(post_id)
 {
   return this.post_node_cache.get(post_id) != null || this.post_html_cache.get(post_id) != null;
 }
 
 /* If post_id is already cached, set it and return true.  Otherwise, return false and do nothing. */
-PoolBrowser.prototype.set_post_if_cached = function(post_id)
+BrowserView.prototype.set_post_if_cached = function(post_id)
 {
   if(!this.is_post_id_cached(post_id))
     return false;
@@ -266,7 +266,7 @@ PoolBrowser.prototype.set_post_if_cached = function(post_id)
   return true;
 }
 
-PoolBrowser.prototype.cancel_lazily_load = function()
+BrowserView.prototype.cancel_lazily_load = function()
 {
   if(this.lazy_load_timer == null)
     return;
@@ -275,7 +275,7 @@ PoolBrowser.prototype.cancel_lazily_load = function()
    this.lazy_load_timer = null;
 }
 
-PoolBrowser.prototype.lazily_load = function(post_id)
+BrowserView.prototype.lazily_load = function(post_id)
 {
   this.cancel_lazily_load();
 

@@ -7,6 +7,7 @@ var Note = Class.create({
     
     this.id = id
     this.is_new = is_new
+    this.document_observers = [];
 
     // Cache the elements
     this.elements = {
@@ -237,15 +238,32 @@ var Note = Class.create({
     }
   },
 
+  addDocumentObserver: function(name, func)
+  {
+    document.observe(name, func);
+    this.document_observers.push([name, func]);
+  },
+
+  clearDocumentObservers: function(name, handler)
+  {
+    for(var i = 0; i < this.document_observers.length; ++i)
+    {
+      var observer = this.document_observers[i];
+      document.stopObserving(observer[0], observer[1]);
+    }
+
+    this.document_observers = [];
+  },
+
   // Start dragging the note
   dragStart: function(e) {
     if (Note.debug) {
       console.debug("Note#dragStart (id=%d)", this.id)
     }
     
-    document.observe("mousemove", this.drag.bindAsEventListener(this))
-    document.observe("mouseup", this.dragStop.bindAsEventListener(this))
-    document.observe("selectstart", function() {return false})
+    this.addDocumentObserver("mousemove", this.drag.bindAsEventListener(this))
+    this.addDocumentObserver("mouseup", this.dragStop.bindAsEventListener(this))
+    this.addDocumentObserver("selectstart", function() {return false})
 
     this.cursorStartX = e.pointerX()
     this.cursorStartY = e.pointerY()
@@ -263,7 +281,7 @@ var Note = Class.create({
       console.debug("Note#dragStop (id=%d)", this.id)
     }
     
-    document.stopObserving()
+    this.clearDocumentObservers()
 
     this.cursorStartX = null
     this.cursorStartY = null
@@ -323,9 +341,9 @@ var Note = Class.create({
       return
     }
 
-    document.observe("mousemove", this.editDrag.bindAsEventListener(this))
-    document.observe("mouseup", this.editDragStop.bindAsEventListener(this))
-    document.observe("selectstart", function() {return false})
+    this.addDocumentObserver("mousemove", this.editDrag.bindAsEventListener(this))
+    this.addDocumentObserver("mouseup", this.editDragStop.bindAsEventListener(this))
+    this.addDocumentObserver("selectstart", function() {return false})
 
     this.elements.editBox = $('edit-box');
     this.cursorStartX = e.pointerX()
@@ -340,7 +358,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#editDragStop (id=%d)", this.id)
     }
-    document.stopObserving()
+    this.clearDocumentObservers()
 
     this.cursorStartX = null
     this.cursorStartY = null
@@ -376,9 +394,9 @@ var Note = Class.create({
     this.boundsY = new ClipRange(10, this.elements.image.clientHeight - this.boxStartY - 5)
     this.dragging = true
 
-    document.stopObserving()
-    document.observe("mousemove", this.resize.bindAsEventListener(this))
-    document.observe("mouseup", this.resizeStop.bindAsEventListener(this))
+    this.clearDocumentObservers()
+    this.addDocumentObserver("mousemove", this.resize.bindAsEventListener(this))
+    this.addDocumentObserver("mouseup", this.resizeStop.bindAsEventListener(this))
     
     e.stop()
     this.bodyHide()
@@ -390,7 +408,7 @@ var Note = Class.create({
       console.debug("Note#resizeStop (id=%d)", this.id)
     }
     
-    document.stopObserving()
+    this.clearDocumentObservers()
 
     this.boxCursorStartX = null
     this.boxCursorStartY = null

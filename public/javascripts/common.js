@@ -308,3 +308,11 @@ Object.extend(String.prototype, {
   }
 });
 
+function createElement(type, className, html)
+{
+  var element = document.createElement(type);
+  element.className = className;
+  element.innerHTML = html;
+  return element;
+}
+

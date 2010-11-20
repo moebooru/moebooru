@@ -24,80 +24,50 @@
  *   don't pull an out-of-date page next time.  This is slower, and would require us
  *   to be careful about expiring the cache.
  */
-PoolBrowser = function(pool, pool_posts)
+
+PoolBrowser = function()
 {
-  this.pool = pool;
-  this.pool_id = pool.id;
-  this.pool_posts = pool_posts;
-  this.current_post_id = null;
+  /* The post that we currently want to display.  This will be either one of the
+   * current html_preloads, or be the displayed_post_id. */
+  this.wanted_post_id = null;
+
+  /* The post that's currently actually being displayed. */
+  this.displayed_post_id = null;
+
   this.cache_session_id = (new Date()).valueOf();
   this.post_node_cache = new Hash;
   this.post_html_cache = new Hash;
   this.html_preloads = new Hash;
 
-  Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
+//  this.set_post(this.get_current_post_id());
 
-  this.set_post(this.get_current_post_id());
-
-  OnKey(65, { AlwaysAllowOpera: true }, function(e) { this.move(false); }.bind(this));
-  OnKey(83, { AlwaysAllowOpera: true }, function(e) { this.move(true); }.bind(this));
-
-  Element.observe(window, "hashchange", function(e) {
-    this.set_post(this.get_current_post_id(), this.pool_id);
-  }.bind(this));
+  this.error = "";
+  this.log_data = "";
+  this.set_debug();
 }
 
-PoolBrowser.prototype.get_first_post_id = function()
+PoolBrowser.prototype.log = function(s)
 {
-  return this.pool_posts[0].post_id;
+  this.log_data += " " + s;
+  var max_length = 200;
+  if(this.log_data.length > max_length)
+    this.log_data = this.log_data.substr(this.log_data.length-max_length, max_length);
 }
 
-PoolBrowser.prototype.get_current_post_id = function()
+PoolBrowser.prototype.set_debug = function()
 {
-  var hash = document.location.hash;
-  if(!hash)
-    return this.get_first_post_id();
-  hash = hash.substr(1);
+  var s = "wanted: " + this.wanted_post_id + ", displayed: " + this.displayed_post_id;
+  var preload_keys = this.html_preloads.keys();
+  if(preload_keys.length > 0)
+    s += ", loading " + preload_keys;
+  if(this.lazy_load_timer)
+    s += ", lazy load pending";
+  if(this.error != "")
+    s += ", error: " + this.error;
+  s += " -- " + this.log_data;
 
-  return parseInt(hash);
-}
-
-PoolBrowser.prototype.find_post_idx_in_pool = function(post_id)
-{
-  for(var i = 0; i < this.pool_posts.length; ++i)
-  {
-    if(this.pool_posts[i].post_id == post_id)
-      return i;
-  }
-  return -1;
-}
-
-PoolBrowser.prototype.find_post_in_pool = function(post_id)
-{
-  var idx = this.find_post_idx_in_pool(post_id);
-  if(idx == -1)
-    return null;
-  return this.pool_posts[idx];
-}
-
-PoolBrowser.prototype.displayed_image_finished_loading = function(success, event)
-{
-  /*
-   * The image in the post we're displaying is finished loading.  
-   *
-   * Preload the next and previous posts.  Normally, one or the other of these will
-   * already be in cache.
-   */
-  var post_id = this.current_post_id;
-  var pool_post = this.find_post_in_pool(post_id);
-  var post_ids_to_preload = [];
-  var adjacent_pool_post = this.get_adjacent_post_id_wrapped(pool_post, true);
-  if(adjacent_pool_post != null)
-    post_ids_to_preload.push(adjacent_pool_post);
-  var adjacent_pool_post = this.get_adjacent_post_id_wrapped(pool_post, false);
-  if(adjacent_pool_post != null)
-    post_ids_to_preload.push(adjacent_pool_post);
-  this.preload(post_ids_to_preload);
+  $("debug").update(s);
+  this.debug_timer = window.setTimeout(this.set_debug.bind(this), 100);
 }
 
 /* If post_id isn't cached and isn't already being loaded, start loading it. */
@@ -111,7 +81,7 @@ PoolBrowser.prototype.load_post_html = function(post_id)
   if(data != null)
   {
     /* This post's HTML is already loaded. */
-    if(this.current_post_id == post_id)
+    if(this.wanted_post_id == post_id)
     {
       this.post_html_cache.unset(post_id);
       this.set_post_content(data, post_id);
@@ -119,8 +89,7 @@ PoolBrowser.prototype.load_post_html = function(post_id)
     return;
   }
   
-  var existing_request = this.html_preloads.get(post_id);
-  if(existing_request != null)
+  if(this.html_preloads.get(post_id) != null)
   {
     /* This post is already being loaded. */
     return;
@@ -134,14 +103,19 @@ PoolBrowser.prototype.load_post_html = function(post_id)
     parameters: null,
     onComplete: function(resp)
     {
+      /* Always remove the request from html_preloads, regardless of whether it succeeded
+       * or not. */
       this.html_preloads.unset(post_id);
     }.bind(this),
+
     onSuccess: function(resp)
     {
       resp = resp.responseText;
 
-      /* If this is the post that currently wants to be displayed, switch to it. */
-      if(this.current_post_id == post_id)
+      /* If this is the post that we currently want displayed, switch to it.
+       * There's no need to cache the text in post_html_cache in this case,
+       * since we're already converting it to an element. */
+      if(post_id == this.wanted_post_id)
       {
         this.set_post_content(resp, post_id);
         return;
@@ -150,9 +124,10 @@ PoolBrowser.prototype.load_post_html = function(post_id)
       /* Otherwise, just cache the data for later. */
       this.post_html_cache.set(post_id, resp);
     }.bind(this),
+
     onFailure: function(resp)
     {
-      if(parseInt(this.current_post_id) == parseInt(post_id))
+      if(this.wanted_post_id == post_id)
       {
         /* The post the user wants to see failed to load. */
         notice("Error "  + resp.status + " loading post");
@@ -211,6 +186,8 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
   /* Clear the previous post, if any. */
   this.clear_container();
 
+  this.displayed_post_id = post_id;
+
   var content = $("post-content");
 
   if(typeof(data) == typeof "")
@@ -243,39 +220,25 @@ PoolBrowser.prototype.set_post_content = function(data, post_id)
   }
 
   Post.scale_and_fit_image();
-  document.location.hash = post_id;
 
-  var title = "";
-  title = this.pool.name.replace(/_/g, " ");
-
-  var idx = this.find_post_idx_in_pool(post_id);
-  if(idx != -1)
-  {
-    var sequence = this.pool_posts[idx].sequence;
-    title += " ";
-    if(sequence.match(/^[0-9]/))
-      title += "#";
-    title += sequence;
-  }
-
-  document.title = title;
   Post.init_post_show(post_id);
 }
 
 PoolBrowser.prototype.get_url_for_post_page = function(post_id)
 {
-  return "/post/show/" + post_id + "?browse_pool_id=" + this.pool_id + "&cache=" + this.cache_session_id;
+  return "/post/show/" + post_id + "?browser=1&cache=" + this.cache_session_id;
 }
 
 PoolBrowser.prototype.set_post = function(post_id)
 {
-  /* If the post isn't in the pool, pick a default. */
-  if(this.find_post_in_pool(post_id) == null)
-    post_id = this.get_first_post_id();
+  /* If there was a lazy load pending, cancel it. */
+  this.cancel_lazily_load();
 
-  if(this.current_post_id == post_id)
+  this.wanted_post_id = post_id;
+
+  /* If the post is already displayed, then we don't need to do anything else. */
+  if(post_id == this.displayed_post_id)
     return;
-  this.current_post_id = post_id;
 
   var post_content_container = this.post_node_cache.get(post_id);
   if(post_content_container)
@@ -289,49 +252,49 @@ PoolBrowser.prototype.set_post = function(post_id)
   this.load_post_html(post_id);
 }
 
-/* If first is true, return the first pool_post in the pool, otherwise return the last pool_post. */
-PoolBrowser.prototype.get_boundary_pool_post = function(first)
+PoolBrowser.prototype.is_post_id_cached = function(post_id)
 {
-  if(first)
-    return this.pool_posts[0];
-  else
-    return this.pool_posts[this.pool_posts.length-1];
+  return this.post_node_cache.get(post_id) != null || this.post_html_cache.get(post_id) != null;
 }
 
-/* If next is true, return the post after the given pool_post, otherwise return
- * the post before it. */
-PoolBrowser.prototype.get_adjacent_post_id = function(pool_post, next)
+/* If post_id is already cached, set it and return true.  Otherwise, return false and do nothing. */
+PoolBrowser.prototype.set_post_if_cached = function(post_id)
 {
-  if(next)
-    return pool_post.next_post_id;
-  else
-    return pool_post.prev_post_id;
+  if(!this.is_post_id_cached(post_id))
+    return false;
+  this.set_post(post_id);
+  return true;
 }
 
-/* Return the next or previous post, wrapping around if necessary. */
-PoolBrowser.prototype.get_adjacent_post_id_wrapped = function(pool_post, next)
+PoolBrowser.prototype.cancel_lazily_load = function()
 {
-  var adjacent_pool_post_id = this.get_adjacent_post_id(pool_post, next);
-  if(adjacent_pool_post_id != null)
-    return adjacent_pool_post_id;
-  return this.get_boundary_pool_post(next).post_id;
+  if(this.lazy_load_timer == null)
+    return;
+
+   window.clearTimeout(this.lazy_load_timer);
+   this.lazy_load_timer = null;
 }
 
-/* Change to the next or previous post in the pool. */
-PoolBrowser.prototype.move = function(next)
+PoolBrowser.prototype.lazily_load = function(post_id)
 {
-  var pool_post = this.find_post_in_pool(this.get_current_post_id());
-  var key = next? "next_post_id":"prev_post_id";
-  var new_post_id = this.get_adjacent_post_id(pool_post, next); //pool_post[key];
-  if(new_post_id == null)
-  {
-    if(next)
-      notice("Starting over from the beginning");
-    else
-      notice("Continued from the end");
-    new_post_id = this.get_boundary_pool_post(next).post_id;
-  }
+  this.cancel_lazily_load();
 
-  this.set_post(new_post_id, this.pool_id);
+//  if(this.set_post_if_cached(post_id))
+//    return;
+  var ms = this.is_post_id_cached(post_id)? 50:500;
+
+  /* Once lazily_load is called with a new post, we should consistently stay on the current
+   * post or change to the new post.  We shouldn't change to a post that was previously
+   * requested by lazily_load (due to a background request completing).  Mark whatever post
+   * we're currently on as the one we want, until we're able to switch to the new one. */
+  this.wanted_post_id = this.displayed_post_id;
+
+  this.lazy_load_post_id = post_id;
+  this.lazy_load_timer = window.setTimeout(function() {
+    if(this.lazy_load_post_id != post_id)
+      this.error = "huh";
+    this.lazy_load_timer = null;
+    this.set_post(post_id);
+  }.bind(this), ms);
 }
 

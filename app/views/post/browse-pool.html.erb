@@ -1,10 +1,22 @@
+<div id="debug" style="position: fixed; bottom: 0px; background-color: #000;"></div>
+
+<!-- The z-index should be on top of all notes.  -->
+<div id="post-browser" style="width: 100%; height: 210px; background-color: #222; position: fixed; top: 0px; left: 0px; overflow: visible; z-index: 11;">
+  <ul class="post-browser-posts">
+    <li class="post-padding" style="background: #F0F; margin: 0 0px 0 0px; width: 0;">&nbsp;</li>
+  </ul>
+</div>
+
 <div id="post-content"></div>
+
 <script type="text/javascript">
-  var pool = <%= @pool.to_json %>;
-  var pool_posts = <%= @pool.pool_posts.to_json %>;
-  <% @pool.pool_posts.each do |pool_post| %>
-    Post.register(<%= pool_post.post.to_json %>);
+  <% @posts.each do |post| -%>
+    Post.register(<%= post.to_json %>);
   <% end %>
-  var browser = new PoolBrowser(pool, pool_posts);
+  var pool_browser = new PoolBrowser();
+
+  var post_ids = <%= @posts.map { |post| post.id }.to_json %>;
+  var pool = <%= (@pool || nil).to_json %>;
+  thumbnail_view = new ThumbnailView($("post-browser"), post_ids, pool);
 </script>
 

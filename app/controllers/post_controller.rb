@@ -377,21 +377,31 @@ class PostController < ApplicationController
       else
         @following_pool_post = PoolPost.find(:first, :conditions => ["post_id = ?", @post.id]) rescue nil
       end
-      if params.has_key?(:browse_pool_id) then
-        @browsing_pool_post = PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", params[:browse_pool_id], @post.id]) rescue nil
+      if params.has_key?(:browser) then
+        @post_browser = true
       end
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
       set_title @post.title_tags.tr("_", " ")
-      render :layout => @browsing_pool_post? "empty": "default"
+      render :layout => @post_browser? "empty": "default"
     rescue ActiveRecord::RecordNotFound
       render :action => "show_empty", :status => 404
     end
   end
 
-  define_method("browse-pool") do  
-    @pool = Pool.find(params[:id], :include => [:pool_posts => :post])
-    set_title(@pool.pretty_name)
+  def browse
+    tags = params[:tags].to_s
+    q = Tag.parse_query(tags)
+
+    sql = Post.generate_sql(q, :limit => 1000)
+    @posts = Post.find_by_sql(sql)
+
+    if q.has_key?(:pool)
+      @pool = Pool.find(q[:pool])
+    end
+
+    set_title "/" + tags.tr("_", " ")
+    render :action => "browse-pool" # XXX rename
   end
 
   def view

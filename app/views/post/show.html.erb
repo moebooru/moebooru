@@ -2,7 +2,7 @@
   <% if @post.nil? %>
     <h2>Nobody here but us chickens!</h2>
   <% else %>
-    <% if @post.can_be_seen_by?(@current_user) %>
+    <% if @post.can_be_seen_by?(@current_user) and not @post_browser %>
       <script type="text/javascript"> Post.register(<%= @post.to_json %>) </script>
     <% end %>
 
@@ -37,7 +37,7 @@
 
         RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
 
-        <% if not @browsing_pool_post %>
+        <% if not @post_browser %>
         if (Cookie.get('resize_image') == '1') {
           Post.resize_image()
         }

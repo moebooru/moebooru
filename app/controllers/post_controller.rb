@@ -401,7 +401,6 @@ class PostController < ApplicationController
     end
 
     set_title "/" + tags.tr("_", " ")
-    render :action => "browse-pool" # XXX rename
   end
 
   def view

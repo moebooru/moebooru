@@ -293,3 +293,18 @@ clone_event = function(orig)
   }
 }
 
+Object.extend(String.prototype, {
+  subst: function(subs) {
+    var text = this;
+    for(var s in subs)
+    {
+      var r = new RegExp("\\${" + s + "}", "g");
+      var to = subs[s];
+      if(!to) to = "";
+      text = text.replace(r, to);
+    }
+
+    return text;
+  }
+});
+

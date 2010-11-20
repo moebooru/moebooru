@@ -1144,7 +1144,7 @@ Post = {
 
   /*
    * Register a function to be called once the image in post/show has finished loading.
-   * function(success, event)
+   * function(success, post_id, event)
    * success - true on onload, false on onerror
    */
   finished_loading_handlers: [],
@@ -1152,9 +1152,9 @@ Post = {
   {
     this.finished_loading_handlers.push(func);
   },
-  image_finished_loading: function(success, event)
+  image_finished_loading: function(success, post_id, event)
   {
     for(var i = 0; i < this.finished_loading_handlers.length; ++i)
-      this.finished_loading_handlers[i](success, event);
+      this.finished_loading_handlers[i](success, post_id, event);
   }
 }

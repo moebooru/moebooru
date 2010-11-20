@@ -15,8 +15,8 @@ ThumbnailView = function(container, post_ids, pool)
   Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
 
 
-  OnKey(65, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.scroll(true); }.bind(this));
-  OnKey(83, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.scroll(false); }.bind(this));
+  OnKey(65, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.scroll(true, false); }.bind(this));
+  OnKey(83, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.scroll(false, false); }.bind(this));
 
   this.ignore_hash_changes_until = 0;
   Element.observe(window, "hashchange", this.hashchange_event);
@@ -122,7 +122,7 @@ ThumbnailView.prototype.mouse_wheel_event = function(event)
     val = -event.detail;
   }
 
-  this.scroll(val >= 0);
+  this.scroll(val >= 0, true);
 }
 
 ThumbnailView.prototype.post_id_idx = function(post_id)
@@ -135,7 +135,7 @@ ThumbnailView.prototype.post_id_idx = function(post_id)
   return -1;
 }
 
-ThumbnailView.prototype.scroll = function(up)
+ThumbnailView.prototype.scroll = function(up, lazy)
 {
   var current_post_id = this.focused_post_id;
   if(current_post_id == null)
@@ -161,9 +161,14 @@ ThumbnailView.prototype.scroll = function(up)
   var new_post_id = this.post_ids[new_idx];
   this.focus_post(new_post_id);
 
-  /* Ask the pool browser to load the new post, with a delay in case we're
-   * scrolling quickly. */
-  pool_browser.lazily_load(new_post_id);
+  if(lazy)
+  {
+    /* Ask the pool browser to load the new post, with a delay in case we're
+     * scrolling quickly. */
+    pool_browser.lazily_load(new_post_id);
+  } else {
+    pool_browser.set_post(new_post_id);
+  }
 }
 
 ThumbnailView.prototype.focus_post = function(post_id)

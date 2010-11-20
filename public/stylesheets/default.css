@@ -1429,6 +1429,18 @@ span.stars .star-3 { color:#ff0; }
   white-space: nowrap;
 }
 
+.post-browser-posts .inner {
+  overflow: hidden;
+}
+
+.post-browser-posts .expanded {
+  z-index: 30;
+}
+
+.post-browser-posts .expanded .inner {
+  overflow: visible;
+}
+
 .post-browser-posts li {
   list-style-type: none;
   position: relative;

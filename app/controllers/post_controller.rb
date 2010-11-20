@@ -286,23 +286,26 @@ class PostController < ApplicationController
       @searching_pool = Pool.find_by_id(q[:pool])
     end
     
+    from_api = (params[:format] == "json" || params[:format] == "xml")
+
     @posts = WillPaginate::Collection.new(page, limit, count)
     offset = @posts.offset
-    posts_to_load = @posts.per_page * 2
+    posts_to_load = @posts.per_page
+
+    # For forward preloading:
+    posts_to_load += @posts.per_page if not from_api
 
     # If we're not on the first page, load the previous page for prefetching.  Prefetching
     # the previous page when the user is scanning forward should be free, since it'll already
     # be in cache, so this makes scanning the index from back to front as responsive as from
     # front to back.
-    if page && page > 1 then
+    if not from_api and page and page > 1 then
       offset -= @posts.per_page
       posts_to_load += @posts.per_page
     end
 
     @showing_holds_only = q.has_key?(:show_holds_only) && q[:show_holds_only]
-
-    from_api = (params[:format] == "json" || params[:format] == "xml")
-    results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => @posts.per_page * 3))
+    results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
     @preload = []
     if page && page > 1 then
       @preload = results[0, limit] || []

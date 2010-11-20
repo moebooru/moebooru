@@ -1424,6 +1424,28 @@ span.stars .star-3 { color:#ff0; }
   font-weight: normal;
 }
 
+.post-browser-posts {
+  list-style-type: none;
+  white-space: nowrap;
+}
+
+.post-browser-posts li {
+  list-style-type: none;
+  position: relative;
+
+  margin: 5px;
+  display: inline-block;
+  vertical-align: bottom;
+
+  /* inline-block hack for IE: */
+  zoom: 1;
+  *display: inline;
+}
+
+.post-browser-posts img.preview {
+  border: 2px solid black;
+}
+
 .avatar-crop {
 	float: left;
 	margin-left: 1em;

@@ -393,7 +393,7 @@ class PostController < ApplicationController
     tags = params[:tags].to_s
     q = Tag.parse_query(tags)
 
-    sql = Post.generate_sql(q, :limit => 1000)
+    sql = Post.generate_sql(q, :limit => 100)
     @posts = Post.find_by_sql(sql)
 
     if q.has_key?(:pool)

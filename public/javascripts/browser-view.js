@@ -110,6 +110,15 @@ BrowserView.prototype.load_post_html = function(post_id)
 
     onSuccess: function(resp)
     {
+      /* getAllHeaders() returns null when the user presses escape in FF.  This should
+       * actually fire onFailure. */
+      if(resp.getAllHeaders() == null)
+      {
+        resp.request.options.onFailure(resp);
+        Ajax.Responders.dispatch("onFailure", resp.request, resp);
+        return;
+      }
+
       resp = resp.responseText;
 
       /* If this is the post that we currently want displayed, switch to it.

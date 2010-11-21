@@ -377,7 +377,7 @@ ThumbnailView.prototype.center_on_post = function(post_id)
 
     /* We need at least this.container.offsetWidth/2 in each direction.  Load more than that,
      * so we start loading thumbnails before they're needed. */
-    var minimum_distance = this.container.offsetWidth/2 * 2;
+    var minimum_distance = this.container.offsetWidth * 4;
     var maximum_distance = minimum_distance + 500;
     while(true)
     {

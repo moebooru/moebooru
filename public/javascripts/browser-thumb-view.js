@@ -359,6 +359,14 @@ ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
 
 ThumbnailView.prototype.center_on_post = function(post_id)
 {
+  this.centered_post_id = post_id;
+
+  /* If we're not expanded, we can't figure out how to center it since we'll have no width.
+   * Also, don't cause thumbnails to be loaded if we're hidden.  Just set centered_post_id,
+   * and we'll come back here when we're displayed. */
+  if(!this.thumb_container_shown)
+    return;
+
   var post_idx = this.post_id_idx(post_id);
 
   /* Clear the padding before calculating the new padding. */
@@ -447,8 +455,6 @@ ThumbnailView.prototype.center_on_post = function(post_id)
     shift_pixels_right += document.documentElement.scrollLeft;
 
   node.setStyle({marginLeft: shift_pixels_right + "px"});
-
-  this.centered_post_id = post_id;
 }
 
 ThumbnailView.prototype.expand_post = function(post_id)
@@ -574,6 +580,11 @@ ThumbnailView.prototype.show_thumb_bar = function(shown)
 {
   this.thumb_container_shown = shown;
   this.container.show(shown);
+
+  /* If the centered post was changed while we were hidden, it wasn't applied by
+   * center_on_post, so do it now. */
+  if(shown)
+    this.center_on_post(this.centered_post_id)
 }
 
 ThumbnailView.prototype.toggle_thumb_bar = function()
@@ -593,17 +604,17 @@ ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
 
 ThumbnailView.prototype.displayed_image_finished_loading = function(success, post_id, event)
 {
+  /* If the image that just finished loading isn't actually the one being displayed,
+   * ignore it. */
+  if(this.view.displayed_post_id != post_id)
+    return;
+
   /*
    * The image in the post we're displaying is finished loading.
    *
    * Preload the next and previous posts.  Normally, one or the other of these will
    * already be in cache.
-   *
-   * XXX: doesn't always make sense: the browser may be getting ready to switch to something else
-   * XXX: don't do this until we've actually loaded a second post that we would have preloaded
-   * (handle that within this.view)
    */
-  // var post_id = this.displayed_post_id;
   var post_ids_to_preload = [];
   var adjacent_post_id = this.get_adjacent_post_id_wrapped(post_id, true);
   if(adjacent_post_id != null)

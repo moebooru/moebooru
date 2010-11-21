@@ -316,3 +316,20 @@ function createElement(type, className, html)
   return element;
 }
 
+/* Prototype calls onSuccess instead of onFailure when the user cancelled the AJAX
+ * request.  Fix that with a monkey patch, so we don't have to track changes inside
+ * prototype.js. */
+Ajax.Request.prototype.successBase = Ajax.Request.prototype.success;
+Ajax.Request.prototype.success = function()
+{
+  try {
+    if(this.transport.getAllResponseHeaders() == null)
+      return false;
+  } catch (e) {
+    /* FF throws an exception if we call getAllResponseHeaders on a cancelled request. */
+    return false;
+  }
+
+  return this.successBase();
+}
+

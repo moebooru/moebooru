@@ -1424,6 +1424,17 @@ span.stars .star-3 { color:#ff0; }
   font-weight: normal;
 }
 
+#post-browser {
+  width: 100%;
+  height: 210px;
+  background-color: #222;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  overflow: visible;
+  z-index: 11;
+}
+
 .post-browser-posts {
   list-style-type: none;
   white-space: nowrap;

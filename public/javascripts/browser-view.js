@@ -34,10 +34,12 @@ BrowserView = function()
   /* The post that's currently actually being displayed. */
   this.displayed_post_id = null;
 
-  this.cache_session_id = (new Date()).valueOf();
   this.post_node_cache = new Hash;
   this.post_html_cache = new Hash;
   this.html_preloads = new Hash;
+
+  /* Keep track of the LRU displayed posts, and use it to expire post_node_cache. */
+  this.displayed_post_lru = [];
 
   this.error = "";
   this.log_data = "";
@@ -147,7 +149,6 @@ BrowserView.prototype.load_post_html = function(post_id)
         var post = Post.posts.get(post_id);
         preload_container.preload(post.sample_url);
         resp.request.sample_preload = preload_container;
-        this.log("preloading");
       }
     }.bind(this),
 
@@ -184,6 +185,18 @@ BrowserView.prototype.load_post_html = function(post_id)
 /* Begin preloading the HTML and images for the given post IDs. */
 BrowserView.prototype.preload = function(post_ids)
 {
+  /* We're being asked to preload post_ids.  Only do this if it seems to make sense: if
+   * the user is actually traversing posts that are being preloaded.  Look at the previous
+   * call to preload().  If it didn't include the current post, then skip the preload. */
+  var last_preload_request = this.last_preload_request || [];
+  this.last_preload_request = post_ids;
+  if(last_preload_request.indexOf(this.wanted_post_id) == -1)
+  {
+    this.log("skipped-preload(" + post_ids.join(",") + ")");
+    return;
+  }
+  this.log("preload(" + post_ids.join(",") + ")");
+  
   var new_preload_container = Preload.create_preload_container();
   for(var i = 0; i < post_ids.length; ++i)
   {
@@ -224,12 +237,34 @@ BrowserView.prototype.clear_container = function()
   content.removeChild(old_container);
 }
 
+/* Remove entries from post_node_cache that havn't been viewed in a while. */
+BrowserView.prototype.expire_node_cache = function()
+{
+  var max_node_cache = 10;
+  if(max_node_cache >= this.displayed_post_lru.length)
+    return;
+
+  var entries_to_keep = this.displayed_post_lru.length - max_node_cache;
+  var posts_to_expire = this.displayed_post_lru.slice(0, entries_to_keep);
+  this.displayed_post_lru = this.displayed_post_lru.slice(entries_to_keep);
+  for(var i = 0; i < posts_to_expire.length; ++i)
+  {
+    var post_id = posts_to_expire[i];
+    this.post_node_cache.unset(post_id);
+    // this.log("expired(" + post_id + ")")
+  }
+}
+
 BrowserView.prototype.set_post_content = function(data, post_id)
 {
   /* Clear the previous post, if any. */
   this.clear_container();
 
   this.displayed_post_id = post_id;
+
+  this.displayed_post_lru = this.displayed_post_lru.without(post_id);
+  this.displayed_post_lru.push(post_id);
+  this.expire_node_cache();
 
   var content = $("post-content");
 
@@ -269,7 +304,7 @@ BrowserView.prototype.set_post_content = function(data, post_id)
 
 BrowserView.prototype.get_url_for_post_page = function(post_id)
 {
-  return "/post/show/" + post_id + "?browser=1&cache=" + this.cache_session_id;
+  return "/post/show/" + post_id + "?browser=1";
 }
 
 BrowserView.prototype.set_post = function(post_id)

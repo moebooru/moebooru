@@ -139,6 +139,7 @@ class PoolController < ApplicationController
         end
         render :xml => xml
       end
+      fmt.json {render :json => @pool.to_json}
     end
   end
 

@@ -77,6 +77,9 @@ ThumbnailView.prototype.document_keypress_event = function(e) {
     return;
   if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
     return;
+  var target = e.target;
+  if(target.tagName == "INPUT" || target.tagName == "TEXTAREA")
+    return;
 
   this.toggle_thumb_bar();
   e.stop();
@@ -146,7 +149,7 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
     val = -event.detail;
   }
 
-  this.scroll(val >= 0, true);
+  this.scroll(val >= 0);
 }
 
 ThumbnailView.prototype.post_id_idx = function(post_id)
@@ -181,12 +184,14 @@ ThumbnailView.prototype.show_next_post = function(up)
 
   if(new_idx < 0)
   {
-    notice("Continued from the end");
+    if(!this.thumb_container_shown)
+      notice("Continued from the end");
     new_idx = this.post_ids.length - 1;
   }
   else if(new_idx >= this.post_ids.length)
   {
-    notice("Starting over from the beginning");
+    if(!this.thumb_container_shown)
+      notice("Starting over from the beginning");
     new_idx = 0;
   }
 
@@ -205,17 +210,9 @@ ThumbnailView.prototype.scroll = function(up)
 
   /* Wrap the new index. */
   if(new_idx < 0)
-  {
-    if(!this.thumb_container_shown)
-      notice("Continued from the end");
     new_idx = this.post_ids.length - 1;
-  }
   else if(new_idx >= this.post_ids.length)
-  {
-    if(!this.thumb_container_shown)
-      notice("Starting over from the beginning");
     new_idx = 0;
-  }
 
   var new_post_id = this.post_ids[new_idx];
   this.center_on_post_for_scroll(new_post_id);
@@ -264,13 +261,14 @@ ThumbnailView.prototype.remove_post = function(right)
   if(right)
   {
     --this.posts_populated[1];
-    node.removeChild(node.lastChild);
+    var node_to_remove = node.lastChild;
   }
   else
   {
     ++this.posts_populated[0];
-    node.removeChild(node.firstChild);
+    var node_to_remove = node.firstChild;
   }
+  node.removeChild(node_to_remove);
   return true;
 }
 
@@ -515,7 +513,7 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   var crop_left = (width - visible_width) / 2;
 
   var div =
-    '<div class="inner" style="width: ${block_size_x}px; height: ${block_size_y}px;">' + 
+    '<div class="inner" style="width: ${block_size_x}px; height: ${block_size_y}px;">' +
       '<a class="thumb" href="${target_url}">' +
         '<img src="${preview_url}" style="display: none; margin-left: -${crop_left}px;" alt="" class="${image_class}" width="${width}" height="${height}" onload="$(this).show();">'
       '</a>' +
@@ -530,6 +528,7 @@ ThumbnailView.prototype.create_thumb = function(post_id)
     height: height,
     image_class: "preview"
   });
+    
   var li_class = "post-thumb";
   li_class += " creator-id-" + post.creator_id;
   if(post.status == "flagged") li_class += " flagged";
@@ -538,13 +537,13 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   if(post.status == "pending") li_class += " pending";
 
   var item = createElement("li", li_class, div);
-  item.id = "p" + post_id;
 
+  item.className = li_class;
+  item.id = "p" + post_id;
   item.post_id = post_id;
 
   // We need to specify a width on the <li>, since IE7 won't figure it out on its own.
   item.setStyle({width: block_size[0] + "px"});
-
   return item;
 }
 

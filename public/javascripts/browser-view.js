@@ -39,8 +39,6 @@ BrowserView = function()
   this.post_html_cache = new Hash;
   this.html_preloads = new Hash;
 
-//  this.set_post(this.get_current_post_id());
-
   this.error = "";
   this.log_data = "";
   this.set_debug();
@@ -70,6 +68,20 @@ BrowserView.prototype.set_debug = function()
   this.debug_timer = window.setTimeout(this.set_debug.bind(this), 100);
 }
 
+/* If the wanted_post_id needs to be load and isn't already being loaded, see
+ * if we should request it. */
+BrowserView.prototype.request_wanted_post = function()
+{
+  if(this.wanted_post_id == this.displayed_post_id)
+    return;
+
+  /* If there's a request in flight for the wanted post, then we've already done this. */
+  if(this.html_preloads.get(this.wanted_post_id))
+    return;
+
+  this.load_post_html(post_id);
+}
+
 /* If post_id isn't cached and isn't already being loaded, start loading it. */
 BrowserView.prototype.load_post_html = function(post_id)
 {
@@ -95,6 +107,15 @@ BrowserView.prototype.load_post_html = function(post_id)
     return;
   }
 
+  if(this.html_preloads.size() >= 3)
+  {
+    /* We have too many requests in flight already.  Don't start a new one.  If this is
+     * a request for the post we want to display, we'll check to see if we should start
+     * it again when existing requests finish. */
+    this.log("max-loads");
+    return;
+  }
+
   var url = this.get_url_for_post_page(post_id);
   var request = new Ajax.Request(url, {
     method: "get",
@@ -106,32 +127,45 @@ BrowserView.prototype.load_post_html = function(post_id)
       /* Always remove the request from html_preloads, regardless of whether it succeeded
        * or not. */
       this.html_preloads.unset(post_id);
+
+      /* If wanted_post_id isn't being requested, see if we can request it now that we have fewer requests
+       * active.  Do this after removing ourself from html_preloads, so the in-flight count is up to date,
+       * and only do this on success so we don't cause endless requests on error. */
+      if(resp.request.success())
+        this.request_wanted_post();
+    }.bind(this),
+
+    onCreate: function(resp)
+    {
+      /* When we start preloading the HTML and it's for the wanted post, start preloading the
+       * image at the same time.  Attach the preload request to this request object, so it'll
+       * last as long as the object; if the request completes without being set as the displayed
+       * post, we'll let go of the preload object and allow it to expire, too. */
+      if(post_id == this.wanted_post_id)
+      {
+        var preload_container = Preload.create_preload_container();
+        var post = Post.posts.get(post_id);
+        preload_container.preload(post.sample_url);
+        resp.request.sample_preload = preload_container;
+        this.log("preloading");
+      }
     }.bind(this),
 
     onSuccess: function(resp)
     {
-      /* getAllHeaders() returns null when the user presses escape in FF.  This should
-       * actually fire onFailure. */
-      if(resp.getAllHeaders() == null)
-      {
-        resp.request.options.onFailure(resp);
-        Ajax.Responders.dispatch("onFailure", resp.request, resp);
-        return;
-      }
-
-      resp = resp.responseText;
+      var html = resp.responseText;
 
       /* If this is the post that we currently want displayed, switch to it.
        * There's no need to cache the text in post_html_cache in this case,
        * since we're already converting it to an element. */
       if(post_id == this.wanted_post_id)
       {
-        this.set_post_content(resp, post_id);
+        this.set_post_content(html, post_id);
         return;
       }
 
       /* Otherwise, just cache the data for later. */
-      this.post_html_cache.set(post_id, resp);
+      this.post_html_cache.set(post_id, html);
     }.bind(this),
 
     onFailure: function(resp)
@@ -271,6 +305,7 @@ BrowserView.prototype.set_post_if_cached = function(post_id)
 {
   if(!this.is_post_id_cached(post_id))
     return false;
+
   this.set_post(post_id);
   return true;
 }

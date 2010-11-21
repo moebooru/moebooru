@@ -288,8 +288,6 @@ BrowserView.prototype.lazily_load = function(post_id)
 {
   this.cancel_lazily_load();
 
-//  if(this.set_post_if_cached(post_id))
-//    return;
   var ms = this.is_post_id_cached(post_id)? 50:500;
 
   /* Once lazily_load is called with a new post, we should consistently stay on the current

@@ -1,21 +1,33 @@
-ThumbnailView = function(container, post_ids, pool)
+/*
+ * Handle the thumbnail view, and navigation for the main view.
+ *
+ * Handle a large number (thousands) of entries cleanly.  Thumbnail nodes are created
+ * as needed, and destroyed when they scroll off screen.  This gives us constant
+ * startup time, loads thumbnails on demand, allows preloading thumbnails in advance
+ * by creating more nodes in advance, and keeps memory usage constant.
+ */
+ThumbnailView = function(container, post_ids, pool, view)
 {
   this.container = container;
   this.post_ids = post_ids;
+  this.pool = pool;
+  this.view = view;
   this.expanded_post_id = null;
   this.centered_post_id = null;
-  this.pool = pool;
   this.last_mouse_x = 0;
   this.last_mouse_y = 0;
   this.thumb_container_shown = true;
 
-  this.hashchange_event = this.hashchange_event.bindAsEventListener(this);
-  this.thumbnail_click_event = this.thumbnail_click_event.bindAsEventListener(this);
-  this.thumbnail_dblclick_event = this.thumbnail_dblclick_event.bindAsEventListener(this);
-  this.mouse_wheel_event = this.mouse_wheel_event.bindAsEventListener(this);
+  /* The [first, end) range of posts that are currently inside .post-browser-posts. */
+  this.posts_populated = [0, 0];
 
-  this.container.observe("DOMMouseScroll", this.mouse_wheel_event);
-  this.container.observe("mousewheel", this.mouse_wheel_event);
+  this.hashchange_event = this.hashchange_event.bindAsEventListener(this);
+  this.container_click_event = this.container_click_event.bindAsEventListener(this);
+  this.container_dblclick_event = this.container_dblclick_event.bindAsEventListener(this);
+  this.container_mouse_wheel_event = this.container_mouse_wheel_event.bindAsEventListener(this);
+
+  this.container.observe("DOMMouseScroll", this.container_mouse_wheel_event);
+  this.container.observe("mousewheel", this.container_mouse_wheel_event);
 
   Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
 
@@ -32,22 +44,16 @@ ThumbnailView = function(container, post_ids, pool)
   this.ignore_hash_changes_until = 0;
   Element.observe(window, "hashchange", this.hashchange_event);
 
-  this.document_mousemove_event = this.document_mousemove_event.bindAsEventListener(this);
-  this.container.observe("mousemove", this.document_mousemove_event);
+  this.container_mousemove_event = this.container_mousemove_event.bindAsEventListener(this);
+  this.container.observe("mousemove", this.container_mousemove_event);
 
   this.container_mouseover_event = this.container_mouseover_event.bindAsEventListener(this);
-  this.container_mouseout_event = this.container_mouseout_event.bindAsEventListener(this);
   this.container.observe("mouseover", this.container_mouseover_event);
-  this.container.observe("mouseout", this.container_mouseout_event);
 
-  for(var i = 0; i < post_ids.length; ++i)
-  {
-    var thumb = this.create_thumb(post_ids[i]);
-    container.down(".post-browser-posts").appendChild(thumb);
-  }
+  this.container.observe("click", this.container_click_event);
+  this.container.observe("dblclick", this.container_dblclick_event);
 
   var initial_post_id = this.get_current_post_id();
-
   this.center_on_post(initial_post_id);
   this.focus_post(initial_post_id);
   this.set_active_post(initial_post_id);
@@ -61,10 +67,6 @@ ThumbnailView.prototype.container_mouseover_event = function(event)
   var post_id = li.post_id;
 
   this.expand_post(post_id);
-}
-
-ThumbnailView.prototype.container_mouseout_event = function(event)
-{
 }
 
 ThumbnailView.prototype.document_keypress_event = function(e) {
@@ -105,6 +107,9 @@ ThumbnailView.prototype.hashchange_event = function(e)
   this.set_active_post(new_post_id);
 }
 
+/* Return the post ID that's currently being displayed in the main view, based
+ * on the URL hash.  If the post indicated by the hash is unknown or invalid,
+ * return the first one available. */
 ThumbnailView.prototype.get_current_post_id = function()
 {
   var hash = document.location.hash;
@@ -118,14 +123,16 @@ ThumbnailView.prototype.get_current_post_id = function()
   return post_id;
 }
 
-ThumbnailView.prototype.document_mousemove_event = function(e) {
-  var x = e.pointerX();
+/* Track the mouse cursor when it's within the container. */
+ThumbnailView.prototype.container_mousemove_event = function(e)
+{
+  var x = e.pointerX() - document.documentElement.scrollLeft;
   var y = e.pointerY() - document.documentElement.scrollTop;
   this.last_mouse_x = x;
   this.last_mouse_y = y;
 }
 
-ThumbnailView.prototype.mouse_wheel_event = function(event)
+ThumbnailView.prototype.container_mouse_wheel_event = function(event)
 {
   event.preventDefault();
 
@@ -160,9 +167,9 @@ ThumbnailView.prototype.set_active_post = function(post_id, lazy)
   {
     /* Ask the pool browser to load the new post, with a delay in case we're
      * scrolling quickly. */
-    pool_browser.lazily_load(post_id);
+    this.view.lazily_load(post_id);
   } else {
-    pool_browser.set_post(post_id);
+    this.view.set_post(post_id);
   }
 }
 
@@ -197,15 +204,16 @@ ThumbnailView.prototype.scroll = function(up)
   var new_idx = current_idx + (up? -1:+1);
 
   /* Wrap the new index. */
-  // XXX: only notice() if we're not expanded
   if(new_idx < 0)
   {
-    notice("Continued from the end");
+    if(!this.thumb_container_shown)
+      notice("Continued from the end");
     new_idx = this.post_ids.length - 1;
   }
   else if(new_idx >= this.post_ids.length)
   {
-    notice("Starting over from the beginning");
+    if(!this.thumb_container_shown)
+      notice("Starting over from the beginning");
     new_idx = 0;
   }
 
@@ -232,6 +240,8 @@ ThumbnailView.prototype.center_on_post_for_scroll = function(post_id)
    * one we're hovering over, eg. if the mouse is over the edge of a landscape image, and
    * after scrolling the mouse is centered over the same image.  Explicitly figure out which
    * item we're hovering over and expand it.
+   *
+   * This doesn't work correctly in IE7; elementFromPoint is returning the wrong element.
    */
   var element = document.elementFromPoint(this.last_mouse_x, this.last_mouse_y);
   if(element)
@@ -245,8 +255,170 @@ ThumbnailView.prototype.center_on_post_for_scroll = function(post_id)
   }
 }
 
+ThumbnailView.prototype.remove_post = function(right)
+{
+  if(this.posts_populated[0] == this.posts_populated[1])
+    return false; /* none to remove */
+
+  var node = this.container.down(".post-browser-posts");
+  if(right)
+  {
+    --this.posts_populated[1];
+    node.removeChild(node.lastChild);
+  }
+  else
+  {
+    ++this.posts_populated[0];
+    node.removeChild(node.firstChild);
+  }
+  return true;
+}
+
+/* Add the next thumbnail to the left or right side. */
+ThumbnailView.prototype.add_post_to_display = function(right)
+{
+  var node = this.container.down(".post-browser-posts");
+  if(right)
+  {
+    var post_idx_to_populate = this.posts_populated[1];
+    if(post_idx_to_populate == this.post_ids.length)
+      return false;
+    ++this.posts_populated[1];
+
+    var thumb = this.create_thumb(this.post_ids[post_idx_to_populate]);
+    node.insertBefore(thumb, null);
+  }
+  else
+  {
+    if(this.posts_populated[0] == 0)
+      return false;
+    --this.posts_populated[0];
+    var post_idx_to_populate = this.posts_populated[0];
+    var thumb = this.create_thumb(this.post_ids[post_idx_to_populate]);
+    node.insertBefore(thumb, node.firstChild);
+  }
+  return true;
+}
+
+/* Fill the container so post_id is visible. */
+ThumbnailView.prototype.populate_post = function(post_idx)
+{
+  if(this.is_post_idx_shown(post_idx))
+    return;
+
+  /* If post_idx is on the immediate border of what's already displayed, add it incrementally, and
+   * we'll cull extra posts later.  Otherwise, clear all of the posts and populate from scratch. */
+  if(post_idx == this.posts_populated[1])
+  {
+    this.add_post_to_display(true);
+    return;
+  }
+  else if(post_idx == this.posts_populated[0])
+  {
+    this.add_post_to_display(false);
+    return;
+  }
+
+  /* post_idx isn't on the boundary, so we're jumping posts rather than scrolling.
+   * Clear the container and start over. */ 
+  while(this.remove_post(true))
+    ;
+
+  var node = this.container.down(".post-browser-posts");
+
+  var thumb = this.create_thumb(this.post_ids[post_idx]);
+  node.appendChild(thumb);
+  this.posts_populated[0] = post_idx;
+  this.posts_populated[1] = post_idx + 1;
+}
+
+ThumbnailView.prototype.is_post_idx_shown = function(post_idx)
+{
+  // var idx = this.post_id_idx(post_id);
+  if(post_idx >= this.posts_populated[1])
+    return false;
+  return post_idx >= this.posts_populated[0];
+}
+
+/* Return the total width of all thumbs to the left or right of post_id, not
+ * including post_id itself. */
+ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
+{
+  var post = $("p" + post_id);
+  if(right)
+  {
+    var rightmost_node = post.parentNode.lastChild;
+    if(rightmost_node == post)
+      return 0;
+    var right_edge = rightmost_node.offsetLeft + rightmost_node.offsetWidth;
+    return right_edge - post.offsetLeft - post.offsetWidth;
+  }
+  else
+  {
+    return post.offsetLeft;
+  }
+}
+
 ThumbnailView.prototype.center_on_post = function(post_id)
 {
+  var post_idx = this.post_id_idx(post_id);
+
+  /* Clear the padding before calculating the new padding. */
+  var node = this.container.down(".post-browser-posts");
+  node.setStyle({marginLeft: 0});
+
+  this.populate_post(post_idx);
+
+  /* Make sure that we have enough posts populated around the one we're centering
+   * on to fill the display.  If we have too many nodes, remove some. */
+  for(var direction = 0; direction < 2; ++direction)
+  {
+    var right = !!direction;
+
+    /* We need at least this.container.offsetWidth/2 in each direction.  Load more than that,
+     * so we start loading thumbnails before they're needed. */
+    var minimum_distance = this.container.offsetWidth/2 * 2;
+    var maximum_distance = minimum_distance + 500;
+    while(true)
+    {
+      var added = false;
+      var width = this.get_width_adjacent_to_post(post_id, right);
+      if(width < minimum_distance)
+      {
+        /* We need another post.  Stop if there are no more posts to add. */
+        if(!this.add_post_to_display(right))
+          break;
+        added = false;
+      }
+      else if(width > maximum_distance)
+      {
+        /* We have a lot of posts off-screen.  Remove one. */
+        this.remove_post(right);
+
+        /* Sanity check: we should never add and remove in the same direction.  If this
+         * happens, the distance between minimum_distance and maximum_distance may be less
+         * than the width of a single thumbnail. */
+        if(added)
+        {
+          alert("error");
+          break;
+        }
+      }
+      else
+      {
+        break;
+      }
+    }
+  }
+
+  var n = this.container.down(".post-browser-posts").firstChild;
+  var count = 0;
+  while(n)
+  {
+    ++count;
+    n = n.nextElementSibling;
+  }
+
   /* 
    * We have to jump some hoops to scroll the thumbs correctly.  We should be able to
    * set the container to overflow-x: hidden and just change scrollLeft to scroll the
@@ -254,12 +426,10 @@ ThumbnailView.prototype.center_on_post = function(post_id)
    * to draw outside of the container, and most browsers don't handle "overflow: hidden visible",
    * mysteriously changing it to "auto visible".
    *
-   * Since the container is set to visible, we can't scroll it that way.  Instead, we've
-   * inserted a padding entry at the beginning.  To scroll the whole list, we'll change
-   * its marginLeft.  Setting a negative margin works the way we want, causing the list to
-   * scroll to the left.
+   * Since the container is set to visible, we can't scroll it that way.  Instead, we'll change
+   * the marginLeft of the <UL> itself to move the list around.  Setting a negative margin works
+   * the way we want, causing the list to scroll to the left.
    */
-  var padding = this.container.down(".post-padding");
 
   var thumb = $("p" + post_id);
   var img = thumb.down(".preview");
@@ -268,9 +438,6 @@ ThumbnailView.prototype.center_on_post = function(post_id)
    * item, so we always have empty space on the sides for expanded landscape thumbnails to
    * be visible. */
   var center_on_position = this.container.offsetWidth/2;
-
-  /* Clear the padding before calculating the new padding. */
-  padding.setStyle({marginLeft: 0});
 
   var shift_pixels_right = center_on_position - img.width/2 - img.cumulative_offset_range_x(img.up("UL"));
 
@@ -281,7 +448,7 @@ ThumbnailView.prototype.center_on_post = function(post_id)
   if(window.opera)
     shift_pixels_right += document.documentElement.scrollLeft;
 
-  padding.setStyle({marginLeft: shift_pixels_right + "px"});
+  node.setStyle({marginLeft: shift_pixels_right + "px"});
 
   this.centered_post_id = post_id;
 }
@@ -291,7 +458,8 @@ ThumbnailView.prototype.expand_post = function(post_id)
   if(this.expanded_post_id != null)
   {
     var old_thumb = $("p" + this.expanded_post_id);
-    old_thumb.removeClassName("expanded");
+    if(old_thumb)
+      old_thumb.removeClassName("expanded");
   }
 
   this.expanded_post_id = post_id;
@@ -349,7 +517,7 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   var div =
     '<div class="inner" style="width: ${block_size_x}px; height: ${block_size_y}px;">' + 
       '<a class="thumb" href="${target_url}">' +
-        '<img src="about:blank" thumb:src="${preview_url}" style="margin-left: -${crop_left}px;" alt="" class="${image_class}" width="${width}" height="${height}">'
+        '<img src="${preview_url}" style="display: none; margin-left: -${crop_left}px;" alt="" class="${image_class}" width="${width}" height="${height}" onload="$(this).show();">'
       '</a>' +
     '</div>';
   div = div.subst({
@@ -377,22 +545,29 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   // We need to specify a width on the <li>, since IE7 won't figure it out on its own.
   item.setStyle({width: block_size[0] + "px"});
 
-  item.down("A.thumb").observe("click", this.thumbnail_click_event);
-  item.down("A.thumb").observe("dblclick", this.thumbnail_dblclick_event);
-
   return item;
 }
 
-ThumbnailView.prototype.thumbnail_click_event = function(event)
+/* Handle clicks and doubleclicks on thumbnails.  These events are handled by
+ * the container, so we don't need to put event handlers on every thumb. */
+ThumbnailView.prototype.container_click_event = function(event)
 {
+  var li = event.target.up(".post-thumb");
+  if(li == null)
+    return;
+
   event.preventDefault();
-  var li = event.target.up("LI");
   this.focus_post(li.post_id);
   this.set_active_post(li.post_id);
 }
 
-ThumbnailView.prototype.thumbnail_dblclick_event = function(event)
+ThumbnailView.prototype.container_dblclick_event = function(event)
 {
+  var li = event.target.up(".post-thumb");
+  if(li == null)
+    return;
+
+  event.preventDefault();
   this.show_thumb_bar(false)
 }
 
@@ -426,6 +601,8 @@ ThumbnailView.prototype.displayed_image_finished_loading = function(success, pos
    * already be in cache.
    *
    * XXX: doesn't always make sense: the browser may be getting ready to switch to something else
+   * XXX: don't do this until we've actually loaded a second post that we would have preloaded
+   * (handle that within this.view)
    */
   // var post_id = this.displayed_post_id;
   var post_ids_to_preload = [];
@@ -435,6 +612,6 @@ ThumbnailView.prototype.displayed_image_finished_loading = function(success, pos
   var adjacent_post_id = this.get_adjacent_post_id_wrapped(post_id, false);
   if(adjacent_post_id != null)
     post_ids_to_preload.push(adjacent_post_id);
-  pool_browser.preload(post_ids_to_preload);
+  this.view.preload(post_ids_to_preload);
 }
 

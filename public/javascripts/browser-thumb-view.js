@@ -1,7 +1,7 @@
 PostLoader = function()
 {
   this.need_more_post_data = this.need_more_post_data.bindAsEventListener(this);
-  document.observe("thumbs:need-more-thumbs", this.need_more_post_data);
+  document.observe("viewer:need-more-thumbs", this.need_more_post_data);
 
   this.hashchange_tags = this.hashchange_tags.bind(this);
   UrlHash.observe("tags", this.hashchange_tags);
@@ -45,6 +45,8 @@ PostLoader.prototype.server_load_pool = function(pool_id)
 PostLoader.prototype.server_load_posts = function(limit, extending)
 {
   var tags = UrlHash.get("tags") || "";
+  this.result.tags = tags;
+
   var search = tags + " limit:" + limit;
   this.result.extending = extending;
 
@@ -79,8 +81,6 @@ PostLoader.prototype.request_finished = function()
   if(this.current_ajax_requests.length)
     return;
 
-  Post.unregister_all();
-
   var new_post_ids = [];
   for(var i = 0; i < this.result.posts.length; ++i)
   {
@@ -89,10 +89,13 @@ PostLoader.prototype.request_finished = function()
     new_post_ids.push(post.id);
   }
 
+  document.fire("viewer:displayed-pool-changed", { pool: this.result.pool });
+  document.fire("viewer:searched-tags-changed", { tags: this.result.tags });
+
   /* Tell the thumbnail viewer whether it should allow scrolling over the left side. */
   var can_be_extended_further = !this.result.extending && !this.result.pool;
 
-  document.fire("post:loaded-posts", {
+  document.fire("viewer:loaded-posts", {
     post_ids: new_post_ids,
     pool: this.result.pool,
     extending: this.result.extending,
@@ -110,9 +113,6 @@ PostLoader.prototype.load = function(extending)
   this.result = {};
 
   var tags = UrlHash.get("tags") || "";
-
-  // XXX: not really our job, and will break pool titles
-  document.title = "/" + tags.replace(/_/g, " ");
 
   /* See if we have a pool search.  This only checks for pool:id searches, not pool:*name* searches;
    * we want to know if we're displaying posts only from a single pool. */
@@ -214,7 +214,7 @@ ThumbnailView = function(container, view)
   this.container.observe("dblclick", this.container_dblclick_event);
 
   this.loaded_posts_event = this.loaded_posts_event.bindAsEventListener(this);
-  document.observe("post:loaded-posts", this.loaded_posts_event);
+  document.observe("viewer:loaded-posts", this.loaded_posts_event);
 
   var post_loader = new PostLoader();
   post_loader.load();
@@ -272,8 +272,10 @@ ThumbnailView.prototype.init = function(post_ids, pool, extending, can_be_extend
   else
   {
     var initial_post_id = this.get_current_post_id();
-    this.center_on_post(initial_post_id);
-    this.focus_post(initial_post_id);
+    if(this.post_ids.indexOf(initial_post_id) == -1)
+      this.center_on_post(this.post_ids[0]);
+    else
+      this.center_on_post(initial_post_id);
     this.set_active_post(initial_post_id);
   }
 }
@@ -319,20 +321,18 @@ ThumbnailView.prototype.hashchange_post_id = function()
   }
 
   this.center_on_post(new_post_id);
-  this.focus_post(new_post_id);
-  this.set_active_post(new_post_id);
+  this.set_active_post(new_post_id, true);
 }
 
 /* Return the post ID that's currently being displayed in the main view, based
- * on the URL hash.  If the post indicated by the hash is unknown or invalid,
- * return the first one available. */
+ * on the URL hash.  If no post is specified, return -1. */
 ThumbnailView.prototype.get_current_post_id = function()
 {
   var post_id = UrlHash.get("post-id");
-  post_id = parseInt(post_id);
-  if(this.post_id_idx(post_id) == -1)
+  if(post_id == null)
     return this.post_ids[0];
 
+  post_id = parseInt(post_id);
   return post_id;
 }
 
@@ -360,11 +360,6 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
   this.scroll(val >= 0);
 }
 
-ThumbnailView.prototype.post_id_idx = function(post_id)
-{
-  return this.post_ids.indexOf(post_id);
-}
-
 ThumbnailView.prototype.set_active_post = function(post_id, lazy)
 {
   this.active_post_id = post_id;
@@ -382,7 +377,12 @@ ThumbnailView.prototype.set_active_post = function(post_id, lazy)
 ThumbnailView.prototype.show_next_post = function(up)
 {
   var active_post_id = this.active_post_id;
-  var current_idx = this.post_id_idx(active_post_id);
+  var current_idx = this.post_ids.indexOf(active_post_id);
+
+  /* If the displayed post isn't in the thumbnails and we're changing posts, start
+   * at the beginning. */
+  if(current_idx == -1)
+    current_idx = 0;
   var new_idx = current_idx + (up? -1:+1);
 
   if(new_idx < 0)
@@ -406,7 +406,6 @@ ThumbnailView.prototype.show_next_post = function(up)
   var new_post_id = this.post_ids[new_idx];
   this.center_on_post(new_post_id);
   this.expand_post(new_post_id);
-  this.focus_post(new_post_id);
   this.set_active_post(new_post_id, true);
 }
 
@@ -414,7 +413,7 @@ ThumbnailView.prototype.show_next_post = function(up)
 ThumbnailView.prototype.scroll = function(up)
 {
   var current_post_id = this.centered_post_id;
-  var current_idx = this.post_id_idx(current_post_id);
+  var current_idx = this.post_ids.indexOf(current_post_id);
   var new_idx = current_idx + (up? -1:+1);
 
   /* Wrap the new index. */
@@ -555,7 +554,6 @@ ThumbnailView.prototype.populate_post = function(post_idx)
 
 ThumbnailView.prototype.is_post_idx_shown = function(post_idx)
 {
-  // var idx = this.post_id_idx(post_id);
   if(post_idx >= this.posts_populated[1])
     return false;
   return post_idx >= this.posts_populated[0];
@@ -580,16 +578,21 @@ ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
   }
 }
 
+/* Center the thumbnail strip on post_id.  If post_id isn't in the display, do nothing.
+ * Fire viewer:need-more-thumbs if we're scrolling near the edge of the list. */
 ThumbnailView.prototype.center_on_post = function(post_id)
 {
-  this.centered_post_id = post_id;
+  var post_idx = this.post_ids.indexOf(post_id);
+  if(post_idx == -1)
+    return; /* post_id isn't one of our posts */
 
-  var post_idx = this.post_id_idx(post_id);
   if(post_idx > this.post_ids.length*3/4)
   {
     /* We're coming near the end of the loaded posts, so load more. */
-    document.fire("thumbs:need-more-thumbs", { view: this });
+    document.fire("viewer:need-more-thumbs", { view: this });
   }
+
+  this.centered_post_id = post_id;
 
   /* If we're not expanded, we can't figure out how to center it since we'll have no width.
    * Also, don't cause thumbnails to be loaded if we're hidden.  Just set centered_post_id,
@@ -746,27 +749,6 @@ ThumbnailView.prototype.expand_post = function(post_id)
   thumb.addClassName("expanded");
 }
 
-ThumbnailView.prototype.focus_post = function(post_id)
-{
-  /* If we're browsing a pool, set the title. */
-  if(this.pool)
-  {
-    var post = Post.posts.get(post_id);
-    title = this.pool.name.replace(/_/g, " ");
-
-    if(post.pool_post)
-    {
-      var sequence = post.pool_post.sequence;
-      title += " ";
-      if(sequence.match(/^[0-9]/))
-        title += "#";
-      title += sequence;
-    }
-
-    document.title = title;
-  }
-}
-
 ThumbnailView.prototype.create_thumb = function(post_id)
 {
   var post = Post.posts.get(post_id);
@@ -831,7 +813,6 @@ ThumbnailView.prototype.container_click_event = function(event)
     return;
 
   event.preventDefault();
-  this.focus_post(li.post_id);
   this.set_active_post(li.post_id);
 }
 
@@ -865,7 +846,7 @@ ThumbnailView.prototype.toggle_thumb_bar = function()
 /* Return the next or previous post, wrapping around if necessary. */
 ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
 {
-  var idx = this.post_id_idx(post_id);
+  var idx = this.post_ids.indexOf(post_id);
   idx += next? +1:-1;
   idx = (idx + this.post_ids.length) % this.post_ids.length;
   return this.post_ids[idx];

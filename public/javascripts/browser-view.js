@@ -293,6 +293,8 @@ BrowserView.prototype.set_post_content = function(data, post_id)
   Post.scale_and_fit_image();
 
   Post.init_post_show(post_id);
+
+  document.fire("viewer:displayed-post-changed", { post_id: post_id });
 }
 
 BrowserView.prototype.get_url_for_post_page = function(post_id)
@@ -366,5 +368,55 @@ BrowserView.prototype.lazily_load = function(post_id)
     this.lazy_load_timer = null;
     this.set_post(post_id);
   }.bind(this), ms);
+}
+
+/* Update the window title when the display changes. */
+WindowTitleHandler = function()
+{
+  this.searched_tags = "";
+  this.post_id = null;
+  this.pool = null;
+
+  document.observe("viewer:searched-tags-changed", function(e) {
+    this.searched_tags = e.memo.tags;
+    this.update();
+  }.bindAsEventListener(this));
+
+  document.observe("viewer:displayed-post-changed", function(e) {
+    this.post_id = e.memo.post_id;
+    this.update();
+  }.bindAsEventListener(this));
+
+  document.observe("viewer:displayed-pool-changed", function(e) {
+    this.pool = e.memo.pool;
+    this.update();
+  }.bindAsEventListener(this));
+
+  this.update();
+}
+
+WindowTitleHandler.prototype.update = function()
+{
+  var post = Post.posts.get(this.post_id);
+
+  if(this.pool)
+  {
+    var title = this.pool.name.replace(/_/g, " ");
+
+    if(post && post.pool_post)
+    {
+      var sequence = post.pool_post.sequence;
+      title += " ";
+      if(sequence.match(/^[0-9]/))
+        title += "#";
+      title += sequence;
+    }
+
+    document.title = title;
+    return;
+  }
+
+  var title = "/" + this.searched_tags.replace(/_/g, " ");
+  document.title = title;
 }
 

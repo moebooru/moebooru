@@ -27,7 +27,7 @@ DebugWindow.prototype.hashchange_debug = function()
     return;
 
   this.shown = debug;
-  $("debug").show(this.shown);
+  this.container.show(this.shown);
 
   if(this.shown)
     this.set_debug();

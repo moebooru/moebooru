@@ -282,7 +282,7 @@ class PostController < ApplicationController
     end
     
     @ambiguous_tags = Tag.select_ambiguous(split_tags)
-    if q.has_key?(:pool) then
+    if q.has_key?(:pool) and q[:pool].is_a?(Integer) then
       @searching_pool = Pool.find_by_id(q[:pool])
     end
     

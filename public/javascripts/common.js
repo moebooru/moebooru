@@ -388,7 +388,11 @@ WindowDragElement.prototype.mousemove_event = function(event)
   this.last_mouse_y = y;
   if(!this.dragging)
     return;
-  this.dragged = true;
+  if(!this.dragged)
+  {
+    this.dragged = true;
+    document.body.addClassName("dragging");
+  }
 
   var diff_x = x - this.anchor_x;
   var diff_y = y - this.anchor_y;
@@ -425,7 +429,12 @@ WindowDragElement.prototype.mouseup_event = function(event)
   if(!event.isLeftClick())
     return;
 
-  this.dragging = false;
+  if(this.dragging)
+  {
+    this.dragging = false;
+    document.body.removeClassName("dragging");
+  }
+
   Event.stopObserving(document, "mouseup", this.mouseup_event);
   Event.stopObserving(document, "mousemove", this.mousemove_event);
   Event.stopObserving(document, "selectstart", this.selectstart_event);

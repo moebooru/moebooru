@@ -20,6 +20,10 @@ body {
   margin: 0;
 }
 
+body.dragging {
+  cursor: pointer !important;
+}
+
 .action-post-show > body {
   background: #000;
 }

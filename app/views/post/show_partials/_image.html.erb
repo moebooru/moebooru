@@ -45,7 +45,9 @@
       Note.updateNoteCount()
       Note.show()
 
-      $("image").observe("click", function(e) { Note.toggle(); }.bindAsEventListener());
+      new WindowDragElement($("image"));
+
+      $("image").observe("click", function(e) { if(!e.stopped) Note.toggle(); }.bindAsEventListener());
     </script>
   </div>
 <% end %>

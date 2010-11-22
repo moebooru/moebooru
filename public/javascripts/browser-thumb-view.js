@@ -5,6 +5,8 @@ PostLoader = function()
 
   this.hashchange_tags = this.hashchange_tags.bind(this);
   UrlHash.observe("tags", this.hashchange_tags);
+
+  this.load(false);
 }
 
 PostLoader.prototype.need_more_post_data = function()
@@ -44,8 +46,7 @@ PostLoader.prototype.server_load_pool = function(pool_id)
 
 PostLoader.prototype.server_load_posts = function(limit, extending)
 {
-  var tags = UrlHash.get("tags") || "";
-  this.result.tags = tags;
+  var tags = this.result.tags;
 
   var search = tags + " limit:" + limit;
   this.result.extending = extending;
@@ -82,18 +83,21 @@ PostLoader.prototype.request_finished = function()
     return;
 
   var new_post_ids = [];
-  for(var i = 0; i < this.result.posts.length; ++i)
+  if(this.result.posts)
   {
-    var post = this.result.posts[i];
-    Post.register(post);
-    new_post_ids.push(post.id);
+    for(var i = 0; i < this.result.posts.length; ++i)
+    {
+      var post = this.result.posts[i];
+      Post.register(post);
+      new_post_ids.push(post.id);
+    }
   }
 
   document.fire("viewer:displayed-pool-changed", { pool: this.result.pool });
   document.fire("viewer:searched-tags-changed", { tags: this.result.tags });
 
   /* Tell the thumbnail viewer whether it should allow scrolling over the left side. */
-  var can_be_extended_further = !this.result.extending && !this.result.pool;
+  var can_be_extended_further = new_post_ids.length > 0 && !this.result.extending && !this.result.pool;
 
   document.fire("viewer:loaded-posts", {
     post_ids: new_post_ids,
@@ -109,23 +113,40 @@ PostLoader.prototype.request_finished = function()
 /* If extending is true, load a larger set of posts. */
 PostLoader.prototype.load = function(extending)
 {
-  this.loaded_extended_results = extending;
-  this.result = {};
+  /* If neither a search nor a post-id is specified, set a default search. */
+  if(!extending && UrlHash.get("tags") == null && UrlHash.get("post-id") == null)
+  {
+    UrlHash.set({tags: ""});
 
-  var tags = UrlHash.get("tags") || "";
+    /* We'll receive another hashchange message for setting "tags".  Don't load now or we'll
+     * end up loading twice. */
+    return;
+  }
+
+  this.loaded_extended_results = extending;
+
+  /* Discard any running AJAX requests. */
+  this.current_ajax_requests = [];
+
+  this.result = {};
+  this.result.tags = UrlHash.get("tags");
+
+  if(this.result.tags == null)
+  {
+    /* If no search is specified, don't run one; return empty results. */
+    this.request_finished();
+    return;
+  }
 
   /* See if we have a pool search.  This only checks for pool:id searches, not pool:*name* searches;
    * we want to know if we're displaying posts only from a single pool. */
   var pool_id = null;
-  tags.split(" ").each(function(tag) {
+  this.result.tags.split(" ").each(function(tag) {
     var m = tag.match(/^pool:(\d+)/);
     if(!m)
       return;
     pool_id = parseInt(m[1]);
   });
-
-  /* Discard any running AJAX requests. */
-  this.current_ajax_requests = [];
 
   /* If we're loading from a pool, load the pool's data. */
   if(pool_id != null)
@@ -169,7 +190,6 @@ ThumbnailView = function(container, view)
   this.container = container;
   this.view = view;
   this.post_ids = null; /* set by init() */
-  this.pool = null; /* set by init() */
   this.expanded_post_id = null;
   this.centered_post_id = null;
   this.last_mouse_x = 0;
@@ -215,26 +235,22 @@ ThumbnailView = function(container, view)
 
   this.loaded_posts_event = this.loaded_posts_event.bindAsEventListener(this);
   document.observe("viewer:loaded-posts", this.loaded_posts_event);
-
-  var post_loader = new PostLoader();
-  post_loader.load();
 }
 
 ThumbnailView.prototype.loaded_posts_event = function(event)
 {
-  this.init(event.memo.post_ids, event.memo.pool, event.memo.extending, event.memo.can_be_extended_further);
+  this.init(event.memo.post_ids, event.memo.extending, event.memo.can_be_extended_further);
 }
 
 /* Show the given posts.  If extending is true, post_ids are meant to extend a previous
  * search; attempt to continue where we left off. */
-ThumbnailView.prototype.init = function(post_ids, pool, extending, can_be_extended_further)
+ThumbnailView.prototype.init = function(post_ids, extending, can_be_extended_further)
 {
   var old_post_ids = this.post_ids || [];
   var old_centered_post_idx = old_post_ids.indexOf(this.centered_post_id);
   this.remove_all_posts();
 
   this.post_ids = post_ids;
-  this.pool = pool;
   this.allow_wrapping = !can_be_extended_further;
 
   if(extending)
@@ -362,6 +378,9 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
 
 ThumbnailView.prototype.set_active_post = function(post_id, lazy)
 {
+  if(post_id == null)
+    return;
+
   this.active_post_id = post_id;
 
   if(lazy)

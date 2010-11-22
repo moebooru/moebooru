@@ -1,7 +1,14 @@
 UrlHashHandler = function()
 {
   this.observers = new Hash();
-  this.last_hash = this.parse(this.get_raw_hash());
+  this.normalize = function(h) { }
+  this.denormalize = function(h) { }
+
+  this.current_hash = this.parse(this.get_raw_hash());
+  this.normalize(this.current_hash);
+
+  /* The last value received by the hashchange event: */
+  this.last_hashchange = this.current_hash.clone();
 
   this.hashchange_event = this.hashchange_event.bindAsEventListener(this);
 
@@ -10,8 +17,6 @@ UrlHashHandler = function()
 
 UrlHashHandler.prototype.fire_observers = function(old_hash, new_hash)
 {
-  var old_keys = old_hash.keys();
-  var new_keys = this.last_hash.keys();
   var all_keys = old_hash.keys();
   all_keys = all_keys.concat(new_hash.keys());
   all_keys = all_keys.uniq();
@@ -37,11 +42,43 @@ UrlHashHandler.prototype.fire_observers = function(old_hash, new_hash)
   });
 }
 
+/*
+ * Set handlers to normalize and denormalize the URL hash.
+ *
+ * Denormalizing a URL hash can convert the URL hash to something clearer for URLs.  Normalizing
+ * it reverses any denormalization, giving names to parameters.
+ *
+ * For example, if a normalized URL is
+ *
+ * http://www.example.com/app#show?id=1
+ *
+ * where the hash is {"": "show", id: "1"}, a denormalized URL may be
+ *
+ * http://www.example.com/app#show/1
+ *
+ * The denormalize callback will only be called with normalized input.  The normalize callback
+ * may receive any combination of normalized or denormalized input.
+ */
+UrlHashHandler.prototype.set_normalize = function(norm, denorm)
+{
+  this.normalize = norm;
+  this.denormalize = denorm;
+  
+  this.normalize(this.current_hash);
+  this.set_all(this.current_hash.clone());
+}
+
 UrlHashHandler.prototype.hashchange_event = function(event)
 {
-  var old_hash = this.last_hash;
-  var new_hash = this.parse(this.get_raw_hash());
-  this.last_hash = new_hash;
+  var old_hash = this.last_hashchange.clone();
+  this.normalize(old_hash);
+
+  var raw = this.get_raw_hash();
+  var new_hash = this.parse(raw);
+  this.normalize(new_hash);
+
+  this.current_hash = new_hash.clone();
+  this.last_hashchange = new_hash.clone();
 
   this.fire_observers(old_hash, new_hash);
 }
@@ -59,11 +96,13 @@ UrlHashHandler.prototype.parse = function(hash)
     hash = hash.substr(1);
 
   var hash_path = hash.split("?", 1)[0];
+  var hash_query = hash.substr(hash_path.length+1);
+
+  hash_path = window.decodeURIComponent(hash_path);
 
   var query_params = new Hash();
   query_params.set("", hash_path);
 
-  var hash_query = hash.substr(hash_path.length+1);
   if(hash_query != "")
   {
     var hash_query_values = hash_query.split("&");
@@ -85,7 +124,10 @@ UrlHashHandler.prototype.construct = function(hash)
   var s = "#";
   var path = hash.get("");
   if(path != null)
-    s += window.encodeURIComponent(path);
+  {
+    path = path.replace(/\?/g, "%3f").replace(/%/g, "%25");
+    s += path;
+  }
 
   var params = [];
   hash.each(function(k) {
@@ -117,7 +159,7 @@ UrlHashHandler.prototype.get_raw_hash = function()
 
 UrlHashHandler.prototype.get = function(key)
 {
-  return this.last_hash.get(key);
+  return this.current_hash.get(key);
 }
 
 /*
@@ -127,14 +169,24 @@ UrlHashHandler.prototype.get = function(key)
  */
 UrlHashHandler.prototype.set = function(hash)
 {
-  var old_hash = this.last_hash;
+  var new_hash = this.current_hash.merge(hash);
+  this.normalize(new_hash);
+  this.set_all(new_hash);
+}
 
-  var query_params = this.last_hash;
-  query_params = query_params.merge(hash);
+UrlHashHandler.prototype.set_all = function(query_params)
+{
+  query_params = query_params.clone();
+
+  this.normalize(query_params);
+  this.current_hash = query_params.clone();
+
+  this.denormalize(query_params);
 
   var new_hash = this.construct(query_params);
   window.location.hash = new_hash;
 }
+
 
 UrlHashHandler.prototype.observe = function(key, func)
 {

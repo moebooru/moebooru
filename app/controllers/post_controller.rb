@@ -393,17 +393,6 @@ class PostController < ApplicationController
   end
 
   def browse
-    tags = params[:tags].to_s
-    q = Tag.parse_query(tags)
-
-    sql = Post.generate_sql(q, :limit => 1000)
-    @posts = Post.find_by_sql(sql)
-
-    if q.has_key?(:pool)
-      @pool = Pool.find(q[:pool])
-    end
-
-    set_title "/" + tags.tr("_", " ")
   end
 
   def view

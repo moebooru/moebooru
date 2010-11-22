@@ -1,4 +1,4 @@
-<div id="debug" style="position: fixed; bottom: 0px; background-color: #000;"></div>
+<div id="debug" style="position: fixed; bottom: 0px; background-color: #000; display: none;"></div>
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
 
 <!-- The z-index should be on top of all notes.  -->
@@ -9,13 +9,8 @@
 <div id="post-content"></div>
 
 <script type="text/javascript">
-  <% @posts.each do |post| -%>
-    Post.register(<%= post.to_json %>);
-  <% end %>
+  debug = new DebugWindow($("debug"));
   var view = new BrowserView();
-
-  var post_ids = <%= @posts.map { |post| post.id }.to_json %>;
-  var pool = <%= (@pool || nil).to_json %>;
-  thumbnail_view = new ThumbnailView($("post-browser"), post_ids, pool, view);
+  var thumbnail_view = new ThumbnailView($("post-browser"), view);
 </script>
 

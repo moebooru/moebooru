@@ -29,6 +29,7 @@ body.dragging {
 }
 .action-post-browse > body {
   background: #000;
+  overflow: hidden;
 }
 
 a:link {

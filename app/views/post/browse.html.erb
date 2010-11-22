@@ -1,4 +1,4 @@
-<div id="debug-box" style="position: fixed; bottom: 0px; background-color: #000; display: none;"></div>
+<div id="debug-box" style="position: fixed; bottom: 0px; max-height: 50%; background-color: #000; display: none;"></div>
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
 
 <!-- The z-index should be on top of all notes.  -->
@@ -10,7 +10,51 @@
 
 <script type="text/javascript">
   var debug = new DebugWindow($("debug-box"));
+
+  UrlHash.set_normalize(function(h)
+  {
+    // Normalize:
+    // post_id/search
+//    h.set("", "foo");
+    var path = h.get("");
+    if(path != null)
+    {
+      var post_id = path.split("/", 1)[0];
+      h.set("", null);
+      if(post_id != "")
+        h.set("post-id", post_id);
+      if(path[post_id.length] == "/")
+        h.set("tags", path.substr(post_id.length + 1));
+      // alert(post_id.length + ", " + post_id + " ... " + tags);
+    }
+    return h;
+  },
+  function(h)
+  {
+    // Denormalize; the input will always be normalized.
+    var str = "";
+
+    var post_id = h.get("post-id");
+    if(post_id != null)
+    {
+      str += post_id;
+      h.set("post-id", null);
+    }
+    var tags = h.get("tags");
+    if(tags != null)
+    {
+      str += "/" + tags;
+      h.set("tags", null);
+    }
+
+    h.set("", str);
+
+    
+    return h;
+  });
   var view = new BrowserView();
   var thumbnail_view = new ThumbnailView($("post-browser"), view);
+  new WindowTitleHandler();
+  new PostLoader();
 </script>
 

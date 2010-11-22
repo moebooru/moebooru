@@ -125,6 +125,8 @@ UrlHashHandler.prototype.construct = function(hash)
   var path = hash.get("");
   if(path != null)
   {
+    /* For the path portion, we only need to escape the params separator ? and the escape
+     * character % itself.  Don't use encodeURIComponent; it'll encode far more than necessary. */
     path = path.replace(/\?/g, "%3f").replace(/%/g, "%25");
     s += path;
   }

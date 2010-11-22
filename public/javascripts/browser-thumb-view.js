@@ -205,9 +205,14 @@ ThumbnailView = function(container, view)
   this.container_click_event = this.container_click_event.bindAsEventListener(this);
   this.container_dblclick_event = this.container_dblclick_event.bindAsEventListener(this);
   this.container_mouse_wheel_event = this.container_mouse_wheel_event.bindAsEventListener(this);
+  this.document_mouse_wheel_event = this.document_mouse_wheel_event.bindAsEventListener(this);
+  this.document_dblclick_event = this.document_dblclick_event.bindAsEventListener(this);
 
   this.container.observe("DOMMouseScroll", this.container_mouse_wheel_event);
   this.container.observe("mousewheel", this.container_mouse_wheel_event);
+
+  document.observe("DOMMouseScroll", this.document_mouse_wheel_event);
+  document.observe("mousewheel", this.document_mouse_wheel_event);
 
   Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
 
@@ -223,6 +228,8 @@ ThumbnailView = function(container, view)
 
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
   UrlHash.observe("post-id", this.hashchange_post_id);
+
+  Element.observe(document, "dblclick", this.document_dblclick_event);
 
   this.container_mousemove_event = this.container_mousemove_event.bindAsEventListener(this);
   this.container.observe("mousemove", this.container_mousemove_event);
@@ -363,7 +370,7 @@ ThumbnailView.prototype.container_mousemove_event = function(e)
 
 ThumbnailView.prototype.container_mouse_wheel_event = function(event)
 {
-  event.preventDefault();
+  event.stop();
 
   var val;
   if(event.wheelDelta)
@@ -374,6 +381,31 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
   }
 
   this.scroll(val >= 0);
+}
+
+ThumbnailView.prototype.document_mouse_wheel_event = function(event)
+{
+  event.preventDefault();
+
+  var val;
+  if(event.wheelDelta)
+  {
+    val = event.wheelDelta;
+  } else if (event.detail) {
+    val = -event.detail;
+  }
+
+  this.show_next_post(val >= 0);
+}
+
+/* Double-clicking the image shows the UI. */
+ThumbnailView.prototype.document_dblclick_event = function(event)
+{
+  if(event.target.id != "image")
+    return;
+
+  event.stop();
+  this.toggle_thumb_bar();
 }
 
 ThumbnailView.prototype.set_active_post = function(post_id, lazy)
@@ -403,6 +435,9 @@ ThumbnailView.prototype.show_next_post = function(up)
   if(current_idx == -1)
     current_idx = 0;
   var new_idx = current_idx + (up? -1:+1);
+
+  if(this.post_ids.length == 0)
+    return;
 
   if(new_idx < 0)
   {

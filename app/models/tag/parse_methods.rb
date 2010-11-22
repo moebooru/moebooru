@@ -63,7 +63,7 @@ module TagParseMethods
       q = Hash.new {|h, k| h[k] = []}
 
       scan_query(query).each do |token|
-        if token =~ /^[qse]$/
+        if token =~ /^([qse])$/
           q[:rating] = $1
           next
         end

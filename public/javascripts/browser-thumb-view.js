@@ -1,3 +1,160 @@
+PostLoader = function()
+{
+  this.need_more_post_data = this.need_more_post_data.bindAsEventListener(this);
+  document.observe("thumbs:need-more-thumbs", this.need_more_post_data);
+
+  this.hashchange_tags = this.hashchange_tags.bind(this);
+  UrlHash.observe("tags", this.hashchange_tags);
+}
+
+PostLoader.prototype.need_more_post_data = function()
+{
+  /* We'll receive this message often once we're close to needing more posts.  Only
+   * start loading more data the first time. */
+  if(this.loaded_extended_results)
+    return;
+
+//  debug.log("more-data");
+  this.load(true);
+}
+
+
+PostLoader.prototype.server_load_pool = function(pool_id)
+{
+  new Ajax.Request("/pool/show.json", {
+    parameters: { id: pool_id },
+    method: "get",
+    onCreate: function(resp) {
+      this.current_ajax_requests.push(resp.request);
+    }.bind(this),
+
+    onComplete: function(resp) {
+      this.current_ajax_requests = this.current_ajax_requests.without(resp.request);
+      this.request_finished();
+    }.bind(this),
+
+    onSuccess: function(resp) {
+      if(this.current_ajax_requests.indexOf(resp.request) == -1)
+        return;
+
+      this.result.pools = resp.responseJSON;
+    }.bind(this)
+  });
+}
+
+PostLoader.prototype.server_load_posts = function(limit, extending)
+{
+  var tags = UrlHash.get("tags") || "";
+  var search = tags + " limit:" + limit;
+  this.result.extending = extending;
+
+  new Ajax.Request("/post/index.json", {
+    parameters: { tags: search },
+    method: "get",
+
+    onCreate: function(resp) {
+      this.current_ajax_requests.push(resp.request);
+    }.bind(this),
+
+    onComplete: function(resp) {
+      this.current_ajax_requests = this.current_ajax_requests.without(resp.request);
+      this.request_finished();
+    }.bind(this),
+
+    onSuccess: function(resp) {
+      if(this.current_ajax_requests.indexOf(resp.request) == -1)
+        return;
+    
+      this.result.posts = resp.responseJSON;
+    }.bind(this),
+
+    onFailure: function(resp) {
+      notice("Error " + resp.status + " loading posts");
+    }.bind(this)
+  });
+}
+
+PostLoader.prototype.request_finished = function()
+{
+  if(this.current_ajax_requests.length)
+    return;
+
+  Post.unregister_all();
+
+  var new_post_ids = [];
+  for(var i = 0; i < this.result.posts.length; ++i)
+  {
+    var post = this.result.posts[i];
+    Post.register(post);
+    new_post_ids.push(post.id);
+  }
+
+  /* Tell the thumbnail viewer whether it should allow scrolling over the left side. */
+  var can_be_extended_further = !this.result.extending && !this.result.pool;
+
+  document.fire("post:loaded-posts", {
+    post_ids: new_post_ids,
+    pool: this.result.pool,
+    extending: this.result.extending,
+    can_be_extended_further: can_be_extended_further
+  });
+
+  this.result = null;
+}
+
+
+/* If extending is true, load a larger set of posts. */
+PostLoader.prototype.load = function(extending)
+{
+  this.loaded_extended_results = extending;
+  this.result = {};
+
+  var tags = UrlHash.get("tags") || "";
+
+  // XXX: not really our job, and will break pool titles
+  document.title = "/" + tags.replace(/_/g, " ");
+
+  /* See if we have a pool search.  This only checks for pool:id searches, not pool:*name* searches;
+   * we want to know if we're displaying posts only from a single pool. */
+  var pool_id = null;
+  tags.split(" ").each(function(tag) {
+    if(tag.substr(0, 5) != "pool:")
+      return;
+    pool_id = parseInt(tag.substr(5));
+  });
+
+  /* Discard any running AJAX requests. */
+  this.current_ajax_requests = [];
+
+  /* If we're loading from a pool, load the pool's data. */
+  if(pool_id != null)
+    this.server_load_pool(pool_id);
+
+  this.result.extending = extending;
+
+  /* Load the posts to display.  If we're loading a pool, load all posts (up to 1000);
+   * otherwise set a limit. */
+  var limit = extending? 1000:100;
+  if(pool_id != null)
+    limit = 1000;
+  this.server_load_posts(limit, extending);
+}
+
+PostLoader.prototype.hashchange_tags = function()
+{
+  this.load(false);
+}
+
+   
+  
+  
+  
+  
+  
+  
+  
+  
+  
 /*
  * Handle the thumbnail view, and navigation for the main view.
  *
@@ -6,22 +163,22 @@
  * startup time, loads thumbnails on demand, allows preloading thumbnails in advance
  * by creating more nodes in advance, and keeps memory usage constant.
  */
-ThumbnailView = function(container, post_ids, pool, view)
+ThumbnailView = function(container, view)
 {
   this.container = container;
-  this.post_ids = post_ids;
-  this.pool = pool;
   this.view = view;
+  this.post_ids = null; /* set by init() */
+  this.pool = null; /* set by init() */
   this.expanded_post_id = null;
   this.centered_post_id = null;
   this.last_mouse_x = 0;
   this.last_mouse_y = 0;
   this.thumb_container_shown = true;
+  this.allow_wrapping = true;
 
   /* The [first, end) range of posts that are currently inside .post-browser-posts. */
   this.posts_populated = [0, 0];
 
-  this.hashchange_event = this.hashchange_event.bindAsEventListener(this);
   this.container_click_event = this.container_click_event.bindAsEventListener(this);
   this.container_dblclick_event = this.container_dblclick_event.bindAsEventListener(this);
   this.container_mouse_wheel_event = this.container_mouse_wheel_event.bindAsEventListener(this);
@@ -41,8 +198,8 @@ ThumbnailView = function(container, post_ids, pool, view)
   this.document_keypress_event = this.document_keypress_event.bindAsEventListener(this);
   Element.observe(document, "keypress", this.document_keypress_event);
 
-  this.ignore_hash_changes_until = 0;
-  Element.observe(window, "hashchange", this.hashchange_event);
+  this.hashchange_post_id = this.hashchange_post_id.bind(this);
+  UrlHash.observe("post-id", this.hashchange_post_id);
 
   this.container_mousemove_event = this.container_mousemove_event.bindAsEventListener(this);
   this.container.observe("mousemove", this.container_mousemove_event);
@@ -53,10 +210,69 @@ ThumbnailView = function(container, post_ids, pool, view)
   this.container.observe("click", this.container_click_event);
   this.container.observe("dblclick", this.container_dblclick_event);
 
-  var initial_post_id = this.get_current_post_id();
-  this.center_on_post(initial_post_id);
-  this.focus_post(initial_post_id);
-  this.set_active_post(initial_post_id);
+  this.loaded_posts_event = this.loaded_posts_event.bindAsEventListener(this);
+  document.observe("post:loaded-posts", this.loaded_posts_event);
+
+  var post_loader = new PostLoader();
+  post_loader.load();
+}
+
+ThumbnailView.prototype.loaded_posts_event = function(event)
+{
+  this.init(event.memo.post_ids, event.memo.pool, event.memo.extending, event.memo.can_be_extended_further);
+}
+
+/* Show the given posts.  If extending is true, post_ids are meant to extend a previous
+ * search; attempt to continue where we left off. */
+ThumbnailView.prototype.init = function(post_ids, pool, extending, can_be_extended_further)
+{
+  var old_post_ids = this.post_ids || [];
+  var old_centered_post_idx = old_post_ids.indexOf(this.centered_post_id);
+  this.remove_all_posts();
+
+  this.post_ids = post_ids;
+  this.pool = pool;
+  this.allow_wrapping = !can_be_extended_further;
+
+  if(extending)
+  {
+    /*
+     * We're extending a previous search with more posts.  The new post list we get may
+     * not line up with the old one: the post we're focused on may no longer be in the
+     * search, or may be at a different index.
+     *
+     * Find a nearby post in the new results.  Start searching at the post we're already
+     * centered on.  If that doesn't match, move outwards from there.  Only look forward
+     * a little bit, or we may match a post that was never seen and jump forward too far
+     * in the results.
+     */
+    var post_id_search_order = sort_array_by_distance(old_post_ids.slice(0, old_centered_post_idx+3), old_centered_post_idx);
+    var initial_post_id = null;
+    for(var i = 0; i < post_id_search_order.length; ++i)
+    {
+      var post_id_to_search = post_id_search_order[i];
+      var post = Post.posts.get(post_id_to_search);
+      if(post != null)
+      {
+        initial_post_id = post.id;
+        break;
+      }
+    }
+    debug.log("center-on-" + initial_post_id);
+
+    /* If we didn't find anything that matched, go back to the start. */
+    if(initial_post_id == null)
+      initial_post_id = new_post_ids[0];
+
+    this.center_on_post(initial_post_id);
+  }
+  else
+  {
+    var initial_post_id = this.get_current_post_id();
+    this.center_on_post(initial_post_id);
+    this.focus_post(initial_post_id);
+    this.set_active_post(initial_post_id);
+  }
 }
 
 ThumbnailView.prototype.container_mouseover_event = function(event)
@@ -86,24 +302,18 @@ ThumbnailView.prototype.document_keypress_event = function(e) {
 }
 
 
-ThumbnailView.prototype.hashchange_event = function(e)
+ThumbnailView.prototype.hashchange_post_id = function()
 {
   var new_post_id = this.get_current_post_id();
 
-  /*
-   * There's an annoying bug in FF: the hashchange event isn't delivered immediately
-   * when the hash changes, but queued and sent later.  This causes ugly race conditions;
-   * we can't tell whether hash changes are coming from the user requesting a state
-   * change, or if they're from us updating the current--and now possibly out-of-date--state.
-   * The effect of this is that quick changes to the active post can be lost, leaving us
-   * on a different post than was requested.
-   *
-   * Work around this with a hack: after setting a new hash, ignore changes to the hash for
-   * a little while.  The events are dispatched after we return from whatever event we're
-   * handling.
-   */
-  if((new Date()).valueOf() < this.ignore_hash_changes_until)
+  /* If we're already displaying this post, ignore the hashchange.  Don't center on the
+   * post if this is just a side-effect of clicking a post, rather than the user actually
+   * changing the hash. */
+  if(new_post_id == this.view.displayed_post_id)
+  {
+    debug.log("ignored-hashchange");
     return;
+  }
 
   this.center_on_post(new_post_id);
   this.focus_post(new_post_id);
@@ -115,11 +325,8 @@ ThumbnailView.prototype.hashchange_event = function(e)
  * return the first one available. */
 ThumbnailView.prototype.get_current_post_id = function()
 {
-  var hash = document.location.hash;
-  if(!hash)
-    return this.post_ids[0];
-  hash = hash.substr(1);
-  var post_id = parseInt(hash);
+  var post_id = UrlHash.get("post-id");
+  post_id = parseInt(post_id);
   if(this.post_id_idx(post_id) == -1)
     return this.post_ids[0];
 
@@ -143,8 +350,6 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
   if(event.wheelDelta)
   {
     val = event.wheelDelta;
-    if (window.opera)
-      val = -val;
   } else if (event.detail) {
     val = -event.detail;
   }
@@ -154,12 +359,7 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
 
 ThumbnailView.prototype.post_id_idx = function(post_id)
 {
-  for(var i = 0; i < this.post_ids.length; ++i)
-  {
-    if(this.post_ids[i] == post_id)
-      return i;
-  }
-  return -1;
+  return this.post_ids.indexOf(post_id);
 }
 
 ThumbnailView.prototype.set_active_post = function(post_id, lazy)
@@ -184,12 +384,17 @@ ThumbnailView.prototype.show_next_post = function(up)
 
   if(new_idx < 0)
   {
+    /* Only allow wrapping over the edge if we've already expanded the results. */
+    if(!this.allow_wrapping)
+      return;
     if(!this.thumb_container_shown)
       notice("Continued from the end");
     new_idx = this.post_ids.length - 1;
   }
   else if(new_idx >= this.post_ids.length)
   {
+    if(!this.allow_wrapping)
+      return;
     if(!this.thumb_container_shown)
       notice("Starting over from the beginning");
     new_idx = 0;
@@ -198,6 +403,7 @@ ThumbnailView.prototype.show_next_post = function(up)
   var new_post_id = this.post_ids[new_idx];
   this.center_on_post(new_post_id);
   this.expand_post(new_post_id);
+  this.focus_post(new_post_id);
   this.set_active_post(new_post_id, true);
 }
 
@@ -210,9 +416,18 @@ ThumbnailView.prototype.scroll = function(up)
 
   /* Wrap the new index. */
   if(new_idx < 0)
+  {
+    /* Only allow scrolling over the left edge if we've already expanded the results. */
+    if(!this.allow_wrapping)
+      return;
     new_idx = this.post_ids.length - 1;
+  }
   else if(new_idx >= this.post_ids.length)
+  {
+    if(!this.allow_wrapping)
+      return;
     new_idx = 0;
+  }
 
   var new_post_id = this.post_ids[new_idx];
   this.center_on_post_for_scroll(new_post_id);
@@ -272,6 +487,12 @@ ThumbnailView.prototype.remove_post = function(right)
   return true;
 }
 
+ThumbnailView.prototype.remove_all_posts = function()
+{
+  while(this.remove_post(true))
+    ;
+}
+
 /* Add the next thumbnail to the left or right side. */
 ThumbnailView.prototype.add_post_to_display = function(right)
 {
@@ -319,8 +540,7 @@ ThumbnailView.prototype.populate_post = function(post_idx)
 
   /* post_idx isn't on the boundary, so we're jumping posts rather than scrolling.
    * Clear the container and start over. */ 
-  while(this.remove_post(true))
-    ;
+  this.remove_all_posts();
 
   var node = this.container.down(".post-browser-posts");
 
@@ -361,13 +581,19 @@ ThumbnailView.prototype.center_on_post = function(post_id)
 {
   this.centered_post_id = post_id;
 
+  var post_idx = this.post_id_idx(post_id);
+  if(post_idx > this.post_ids.length*3/4)
+  {
+    /* We're coming near the end of the loaded posts, so load more. */
+    document.fire("thumbs:need-more-thumbs", { view: this });
+  }
+
   /* If we're not expanded, we can't figure out how to center it since we'll have no width.
    * Also, don't cause thumbnails to be loaded if we're hidden.  Just set centered_post_id,
    * and we'll come back here when we're displayed. */
   if(!this.thumb_container_shown)
     return;
 
-  var post_idx = this.post_id_idx(post_id);
 
   /* Clear the padding before calculating the new padding. */
   var node = this.container.down(".post-browser-posts");
@@ -493,9 +719,6 @@ ThumbnailView.prototype.focus_post = function(post_id)
 
     document.title = title;
   }
-
-  this.ignore_hash_changes_until = (new Date()).valueOf() + 100;
-  document.location.hash = post_id;
 }
 
 ThumbnailView.prototype.create_thumb = function(post_id)

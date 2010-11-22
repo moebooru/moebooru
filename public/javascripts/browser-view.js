@@ -42,19 +42,11 @@ BrowserView = function()
   this.displayed_post_lru = [];
 
   this.error = "";
-  this.log_data = "";
-  this.set_debug();
+
+  debug.add_hook(this.get_debug.bind(this));
 }
 
-BrowserView.prototype.log = function(s)
-{
-  this.log_data += " " + s;
-  var max_length = 200;
-  if(this.log_data.length > max_length)
-    this.log_data = this.log_data.substr(this.log_data.length-max_length, max_length);
-}
-
-BrowserView.prototype.set_debug = function()
+BrowserView.prototype.get_debug = function()
 {
   var s = "wanted: " + this.wanted_post_id + ", displayed: " + this.displayed_post_id;
   var preload_keys = this.html_preloads.keys();
@@ -64,10 +56,7 @@ BrowserView.prototype.set_debug = function()
     s += ", lazy load pending";
   if(this.error != "")
     s += ", error: " + this.error;
-  s += " -- " + this.log_data;
-
-  $("debug").update(s);
-  this.debug_timer = window.setTimeout(this.set_debug.bind(this), 100);
+  return s;
 }
 
 /* If the wanted_post_id needs to be load and isn't already being loaded, see
@@ -114,7 +103,7 @@ BrowserView.prototype.load_post_html = function(post_id)
     /* We have too many requests in flight already.  Don't start a new one.  If this is
      * a request for the post we want to display, we'll check to see if we should start
      * it again when existing requests finish. */
-    this.log("max-loads");
+    debug.log("max-loads");
     return;
   }
 
@@ -192,10 +181,10 @@ BrowserView.prototype.preload = function(post_ids)
   this.last_preload_request = post_ids;
   if(last_preload_request.indexOf(this.wanted_post_id) == -1)
   {
-    this.log("skipped-preload(" + post_ids.join(",") + ")");
+    debug.log("skipped-preload(" + post_ids.join(",") + ")");
     return;
   }
-  this.log("preload(" + post_ids.join(",") + ")");
+  debug.log("preload(" + post_ids.join(",") + ")");
   
   var new_preload_container = Preload.create_preload_container();
   for(var i = 0; i < post_ids.length; ++i)
@@ -251,7 +240,7 @@ BrowserView.prototype.expire_node_cache = function()
   {
     var post_id = posts_to_expire[i];
     this.post_node_cache.unset(post_id);
-    // this.log("expired(" + post_id + ")")
+    // debug.log("expired(" + post_id + ")")
   }
 }
 
@@ -261,6 +250,7 @@ BrowserView.prototype.set_post_content = function(data, post_id)
   this.clear_container();
 
   this.displayed_post_id = post_id;
+  UrlHash.set({"post-id": post_id});
 
   this.displayed_post_lru = this.displayed_post_lru.without(post_id);
   this.displayed_post_lru.push(post_id);

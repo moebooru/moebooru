@@ -37,7 +37,7 @@ PostLoader.prototype.server_load_pool = function(pool_id)
       if(this.current_ajax_requests.indexOf(resp.request) == -1)
         return;
 
-      this.result.pools = resp.responseJSON;
+      this.result.pool = resp.responseJSON;
     }.bind(this)
   });
 }

@@ -134,10 +134,13 @@ BrowserView.prototype.load_post_html = function(post_id)
        * post, we'll let go of the preload object and allow it to expire, too. */
       if(post_id == this.wanted_post_id)
       {
-        var preload_container = Preload.create_preload_container();
         var post = Post.posts.get(post_id);
-        preload_container.preload(post.sample_url);
-        resp.request.sample_preload = preload_container;
+        if(post)
+        {
+          var preload_container = Preload.create_preload_container();
+          preload_container.preload(post.sample_url);
+          resp.request.sample_preload = preload_container;
+        }
       }
     }.bind(this),
 

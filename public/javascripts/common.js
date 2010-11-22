@@ -357,3 +357,83 @@ sort_array_by_distance = function(list, idx)
   return ret;
 }
 
+/* When element is dragged, the document moves around it. */
+WindowDragElement = function(element)
+{
+  this.mousemove_event = this.mousemove_event.bindAsEventListener(this);
+  this.mousedown_event = this.mousedown_event.bindAsEventListener(this);
+  this.mouseup_event = this.mouseup_event.bindAsEventListener(this);
+  this.click_event = this.click_event.bindAsEventListener(this);
+  this.selectstart_event = this.selectstart_event.bindAsEventListener(this);
+
+  this.last_mouse_x = null;
+  this.last_mouse_y = null;
+  this.dragging = false;
+
+  element.observe("mousedown", this.mousedown_event);
+  element.observe("click", this.click_event);
+}
+
+WindowDragElement.prototype.mousemove_event = function(event)
+{
+  event.stop();
+  
+  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+
+  var x = event.pointerX() - scrollLeft;
+  var y = event.pointerY() - scrollTop;
+
+  this.last_mouse_x = x;
+  this.last_mouse_y = y;
+  if(!this.dragging)
+    return;
+  this.dragged = true;
+
+  var diff_x = x - this.anchor_x;
+  var diff_y = y - this.anchor_y;
+
+  var scrollLeft = this.scroll_anchor_x - diff_x;
+  var scrollTop = this.scroll_anchor_y - diff_y;
+  scrollTo(scrollLeft, scrollTop);
+}
+
+WindowDragElement.prototype.mousedown_event = function(event)
+{
+  Event.observe(document, "mouseup", this.mouseup_event);
+  Event.observe(document, "mousemove", this.mousemove_event);
+  Event.observe(document, "selectstart", this.selectstart_event);
+
+  this.dragging = true;
+  this.dragged = false;
+
+  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+
+  this.scroll_anchor_x = scrollLeft;
+  this.scroll_anchor_y = scrollTop;
+  this.anchor_x = event.pointerX() - scrollLeft;
+  this.anchor_y = event.pointerY() - scrollTop;
+  event.preventDefault();
+}
+
+WindowDragElement.prototype.mouseup_event = function(event)
+{
+  this.dragging = false;
+  Event.stopObserving(document, "mouseup", this.mouseup_event);
+  Event.stopObserving(document, "mousemove", this.mousemove_event);
+  Event.stopObserving(document, "selectstart", this.selectstart_event);
+}
+
+WindowDragElement.prototype.click_event = function(event)
+{
+  /* If this click was part of a drag, cancel the click. */
+  if(this.dragged)
+    event.stop();
+}
+
+WindowDragElement.prototype.selectstart_event = function(event)
+{
+  event.stop();
+}
+

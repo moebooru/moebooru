@@ -306,13 +306,24 @@ class PostController < ApplicationController
 
     @showing_holds_only = q.has_key?(:show_holds_only) && q[:show_holds_only]
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
+
     @preload = []
     if page && page > 1 then
       @preload = results[0, limit] || []
       results = results[limit..-1] || []
     end
-    @posts.replace(results[0..limit-1])
     @preload += results[limit..-1] || []
+
+    results = results[0..limit-1]
+
+    # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
+    # can be enabled by specifying filter=1.
+    if not from_api or params[:filter] == "1" then
+      results = results.delete_if { |post| not post.can_be_seen_by?(@current_user) }
+      @preload = @preload.delete_if { |post| not post.can_be_seen_by?(@current_user) }
+    end
+
+    @posts.replace(results)
 
     respond_to do |fmt|
       fmt.html do        

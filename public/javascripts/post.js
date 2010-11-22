@@ -370,6 +370,10 @@ Post = {
     this.posts.set(post.id, post)
   },
 
+  unregister_all: function() {
+    this.posts = new Hash();
+  },
+
   blacklists: [],
 
   is_blacklisted: function(post_id) {

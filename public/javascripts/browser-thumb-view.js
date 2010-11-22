@@ -118,9 +118,10 @@ PostLoader.prototype.load = function(extending)
    * we want to know if we're displaying posts only from a single pool. */
   var pool_id = null;
   tags.split(" ").each(function(tag) {
-    if(tag.substr(0, 5) != "pool:")
+    var m = tag.match(/^pool:(\d+)/);
+    if(!m)
       return;
-    pool_id = parseInt(tag.substr(5));
+    pool_id = parseInt(m[1]);
   });
 
   /* Discard any running AJAX requests. */

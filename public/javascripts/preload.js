@@ -34,6 +34,7 @@ Preload = {
       var imgTag = document.createElement("img");
       imgTag.src = url;
       this.appendChild(imgTag);
+      return imgTag;
     }.bind(container);
 
     container.destroy = function(element) {

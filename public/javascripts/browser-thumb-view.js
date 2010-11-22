@@ -727,6 +727,9 @@ ThumbnailView.prototype.preload_thumbs = function()
 
 ThumbnailView.prototype.expand_post = function(post_id)
 {
+  if(!this.thumb_container_shown)
+    return;
+
   if(this.expanded_post_id != null)
   {
     var old_thumb = $("p" + this.expanded_post_id);

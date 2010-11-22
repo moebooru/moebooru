@@ -1,4 +1,4 @@
-<div id="debug" style="position: fixed; bottom: 0px; background-color: #000; display: none;"></div>
+<div id="debug-box" style="position: fixed; bottom: 0px; background-color: #000; display: none;"></div>
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
 
 <!-- The z-index should be on top of all notes.  -->
@@ -9,7 +9,7 @@
 <div id="post-content"></div>
 
 <script type="text/javascript">
-  debug = new DebugWindow($("debug"));
+  var debug = new DebugWindow($("debug-box"));
   var view = new BrowserView();
   var thumbnail_view = new ThumbnailView($("post-browser"), view);
 </script>

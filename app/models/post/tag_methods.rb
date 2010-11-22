@@ -152,10 +152,14 @@ module PostTagMethods
       self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
     end
 
-    metatags, self.new_tags = new_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent|child):/}
+    metatags, self.new_tags = new_tags.partition {|x| x=~ /^((?:-pool|pool|rating|parent|child):|[qse])/}
     
     transaction do
       metatags.each do |metatag|
+        if metatag =~ /^([qse])/
+          metatag = "rating:#{$1}"
+        end
+
         case metatag
         when /^pool:(.+)/
           begin

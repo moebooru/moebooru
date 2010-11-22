@@ -152,7 +152,7 @@ module PostTagMethods
       self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
     end
 
-    metatags, self.new_tags = new_tags.partition {|x| x=~ /^((?:-pool|pool|rating|parent|child):|[qse])/}
+    metatags, self.new_tags = new_tags.partition {|x| x=~ /^((?:-pool|pool|rating|parent|child):|[qse]$)/}
     
     transaction do
       metatags.each do |metatag|

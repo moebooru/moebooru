@@ -400,6 +400,9 @@ WindowDragElement.prototype.mousemove_event = function(event)
 
 WindowDragElement.prototype.mousedown_event = function(event)
 {
+  if(!event.isLeftClick())
+    return;
+
   Event.observe(document, "mouseup", this.mouseup_event);
   Event.observe(document, "mousemove", this.mousemove_event);
   Event.observe(document, "selectstart", this.selectstart_event);
@@ -419,6 +422,9 @@ WindowDragElement.prototype.mousedown_event = function(event)
 
 WindowDragElement.prototype.mouseup_event = function(event)
 {
+  if(!event.isLeftClick())
+    return;
+
   this.dragging = false;
   Event.stopObserving(document, "mouseup", this.mouseup_event);
   Event.stopObserving(document, "mousemove", this.mousemove_event);

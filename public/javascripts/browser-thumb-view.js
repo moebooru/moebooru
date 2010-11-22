@@ -49,7 +49,7 @@ PostLoader.prototype.server_load_posts = function(limit, extending)
   this.result.extending = extending;
 
   new Ajax.Request("/post/index.json", {
-    parameters: { tags: search },
+    parameters: { tags: search, filter: 1 },
     method: "get",
 
     onCreate: function(resp) {
@@ -175,6 +175,8 @@ ThumbnailView = function(container, view)
   this.last_mouse_y = 0;
   this.thumb_container_shown = true;
   this.allow_wrapping = true;
+  this.thumb_preloads = new Hash();
+  this.thumb_preload_container = Preload.create_preload_container();
 
   /* The [first, end) range of posts that are currently inside .post-browser-posts. */
   this.posts_populated = [0, 0];
@@ -607,9 +609,9 @@ ThumbnailView.prototype.center_on_post = function(post_id)
   {
     var right = !!direction;
 
-    /* We need at least this.container.offsetWidth/2 in each direction.  Load more than that,
-     * so we start loading thumbnails before they're needed. */
-    var minimum_distance = this.container.offsetWidth * 4;
+    /* We need at least this.container.offsetWidth/2 in each direction.  Load a little more, to
+     * reduce flicker. */
+    var minimum_distance = this.container.offsetWidth*3/4;
     var maximum_distance = minimum_distance + 500;
     while(true)
     {
@@ -643,13 +645,7 @@ ThumbnailView.prototype.center_on_post = function(post_id)
     }
   }
 
-  var n = this.container.down(".post-browser-posts").firstChild;
-  var count = 0;
-  while(n)
-  {
-    ++count;
-    n = n.nextElementSibling;
-  }
+  this.preload_thumbs();
 
   /* 
    * We have to jump some hoops to scroll the thumbs correctly.  We should be able to
@@ -681,6 +677,52 @@ ThumbnailView.prototype.center_on_post = function(post_id)
     shift_pixels_right += document.documentElement.scrollLeft;
 
   node.setStyle({marginLeft: shift_pixels_right + "px"});
+}
+
+/* Preload thumbs on the boundary of what's actually displayed. */
+ThumbnailView.prototype.preload_thumbs = function()
+{
+  var post_ids = [];
+  for(var i = 0; i < 5; ++i)
+  {
+    var preload_post_idx = this.posts_populated[0] - i - 1;
+    if(preload_post_idx >= 0)
+      post_ids.push(this.post_ids[preload_post_idx]);
+
+    var preload_post_idx = this.posts_populated[1] + i;
+    if(preload_post_idx < this.post_ids.length)
+      post_ids.push(this.post_ids[preload_post_idx]);
+  }
+
+  /* Remove any preloaded thumbs that are no longer in the preload list. */
+  var to_remove = [];
+  this.thumb_preloads.each(function(e) {
+    var post_id = parseInt(e[0]);
+    var element = e[1];
+    if(post_ids.indexOf(post_id) != -1)
+      return;
+    to_remove.push(post_id);
+  });
+
+  for(var i = 0; i < to_remove.length; ++i)
+  {
+    var post_id = to_remove[i];
+    var element = this.thumb_preloads.get(post_id);
+    this.thumb_preloads.unset(post_id);
+    this.thumb_preload_container.removeChild(element);
+  }
+
+  /* Add new preloads. */
+  for(var i = 0; i < post_ids.length; ++i)
+  {
+    var post_id = post_ids[i];
+    if(this.thumb_preloads.get(post_id) != null)
+      continue;
+
+    var post = Post.posts.get(post_id);
+    var element = this.thumb_preload_container.preload(post.preview_url);
+    this.thumb_preloads.set(post_id, element);
+  }
 }
 
 ThumbnailView.prototype.expand_post = function(post_id)

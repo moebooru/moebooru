@@ -156,7 +156,7 @@ module PostTagMethods
     
     transaction do
       metatags.each do |metatag|
-        if metatag =~ /^([qse])/
+        if metatag =~ /^([qse])$/
           metatag = "rating:#{$1}"
         end
 

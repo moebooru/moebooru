@@ -342,6 +342,10 @@ ThumbnailView.prototype.document_keypress_event = function(e) {
     this.show_next_post(true);
   else if(key == Event.KEY_PAGEDOWN)
     this.show_next_post(false);
+  else if(key == Event.KEY_LEFT)
+    this.scroll(true);
+  else if(key == Event.KEY_RIGHT)
+    this.scroll(false);
   else
     return;
   e.stop();
@@ -484,6 +488,10 @@ ThumbnailView.prototype.show_next_post = function(up)
 /* Scroll the thumbnail view left or right.  Don't change the displayed post. */
 ThumbnailView.prototype.scroll = function(up)
 {
+  /* There's no point in scrolling the list if it's not visible. */
+  if(!this.thumb_container_shown)
+    return;
+
   var current_post_id = this.centered_post_id;
   var current_idx = this.post_ids.indexOf(current_post_id);
   var new_idx = current_idx + (up? -1:+1);

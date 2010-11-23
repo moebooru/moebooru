@@ -1,3 +1,7 @@
+<!--[if lt IE 9]>
+<div style="margin-bottom: 1em;"> Setting an avatar with Internet Explorer will not work.</div>
+<![endif]-->
+
 <div id="set-avatar" class="page">
   <div class="avatar-crop">
     <%= image_tag(@post.sample_url, :id => "image", :width => @post.get_sample_width, :height => @post.get_sample_height) %>
@@ -21,9 +25,7 @@
           </div>
         </div>
         <div class="avatar-submit">
-          <%= submit_tag "Set avatar" %> <br> Setting an avatar with Internet Explorer will not work.
-	  <br>
- 	  Setting an avatar with Internet Explorer will not work.
+          <%= submit_tag "Set avatar" %>
         </div>
       </div>
     </div>

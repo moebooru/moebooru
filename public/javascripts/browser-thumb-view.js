@@ -196,7 +196,7 @@ ThumbnailView = function(container, view)
   this.thumb_container_shown = true;
   this.allow_wrapping = true;
   this.thumb_preloads = new Hash();
-  this.thumb_preload_container = Preload.create_preload_container();
+  this.thumb_preload_container = new PreloadContainer();
 
   /* The [first, end) range of posts that are currently inside .post-browser-posts. */
   this.posts_populated = [0, 0];
@@ -208,8 +208,8 @@ ThumbnailView = function(container, view)
   this.container.observe("DOMMouseScroll", this.container_mouse_wheel_event);
   this.container.observe("mousewheel", this.container_mouse_wheel_event);
 
-  Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
-
+  this.displayed_image_loaded_event = this.displayed_image_loaded_event.bindAsEventListener(this);
+  document.observe("viewer:displayed-image-loaded", this.displayed_image_loaded_event);
   document.observe("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
   document.observe("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
   document.observe("viewer:toggle-thumb-bar", function(e) { this.toggle_thumb_bar(); }.bindAsEventListener(this));
@@ -308,12 +308,12 @@ ThumbnailView.prototype.hashchange_post_id = function()
    * changing the hash. */
   if(new_post_id == this.view.displayed_post_id)
   {
-    debug.log("ignored-hashchange");
+//    debug.log("ignored-hashchange");
     return;
   }
 
   this.center_on_post(new_post_id);
-  this.set_active_post(new_post_id, true);
+  this.set_active_post(new_post_id);
 }
 
 /* Return the post ID that's currently being displayed in the main view, based
@@ -715,7 +715,7 @@ ThumbnailView.prototype.preload_thumbs = function()
     var post_id = to_remove[i];
     var element = this.thumb_preloads.get(post_id);
     this.thumb_preloads.unset(post_id);
-    this.thumb_preload_container.removeChild(element);
+    this.thumb_preload_container.cancel_preload(element);
   }
 
   /* Add new preloads. */
@@ -854,12 +854,10 @@ ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
   return this.post_ids[idx];
 }
 
-ThumbnailView.prototype.displayed_image_finished_loading = function(success, post_id, event)
+ThumbnailView.prototype.displayed_image_loaded_event = function(event)
 {
-  /* If the image that just finished loading isn't actually the one being displayed,
-   * ignore it. */
-  if(this.view.displayed_post_id != post_id)
-    return;
+  var post_id = event.memo.post_id;
+  debug.log("image-loaded:" + event.memo.post_id);
 
   /*
    * The image in the post we're displaying is finished loading.

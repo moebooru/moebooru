@@ -1,3 +1,43 @@
+PreloadContainer = function()
+{
+  this.container = document.createElement("div");
+  this.container.style.display = "none";
+  document.body.appendChild(this.container);
+
+  this.active_preloads = 0;
+
+  this.on_image_complete_event = this.on_image_complete_event.bindAsEventListener(this);
+}
+
+PreloadContainer.prototype.cancel_preload = function(req)
+{
+  this.container.removeChild(req);
+}
+
+PreloadContainer.prototype.preload = function(url)
+{
+  ++this.active_preloads;
+
+  var imgTag = document.createElement("img");
+  imgTag.observe("load", this.on_image_complete_event);
+  imgTag.observe("error", this.on_image_complete_event);
+  imgTag.src = url;
+
+  this.container.appendChild(imgTag);
+  return imgTag;
+}
+
+PreloadContainer.prototype.destroy = function()
+{
+  document.body.removeChild(this.container);
+}
+
+PreloadContainer.prototype.on_image_complete_event = function(event)
+{
+  --this.active_preloads;
+}
+
+
 Preload = {
   /*
    * Thumbnail preloading.
@@ -24,30 +64,11 @@ Preload = {
   preload_started: false,
   onload_event_initialized: false,
 
-  create_preload_container: function()
-  {
-    var container = document.createElement("div");
-    container.style.display = "none";
-    document.body.appendChild(container);
-
-    container.preload = function(url) {
-      var imgTag = document.createElement("img");
-      imgTag.src = url;
-      this.appendChild(imgTag);
-      return imgTag;
-    }.bind(container);
-
-    container.destroy = function(element) {
-      document.body.removeChild(this);
-    }.bind(container);
-
-    return container;
-  },
-
   get_default_preload_container: function()
   {
     if(!this.preload_container)
-      this.preload_container = this.create_preload_container();
+      this.preload_container = new PreloadContainer();
+
     return this.preload_container;
   },
   init: function()

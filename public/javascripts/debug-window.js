@@ -2,7 +2,7 @@ DebugWindow = function(container)
 {
   this.container = container;
   this.shown = false;
-  this.log_data = " ";
+  this.log_data = [];
   this.hooks = [];
 
   this.set_debug = this.set_debug.bind(this);
@@ -14,10 +14,10 @@ DebugWindow = function(container)
 
 DebugWindow.prototype.log = function(s)
 {
-  this.log_data += "<br>" + s;
-  var max_length = 5000;
-  if(this.log_data.length > max_length)
-    this.log_data = this.log_data.substr(this.log_data.length-max_length, max_length);
+  this.log_data.push(s);
+  var lines = 30;
+  if(this.log_data.length > lines)
+    this.log_data = this.log_data.slice(1, lines+1);
   this.update();
 }
 
@@ -47,7 +47,7 @@ DebugWindow.prototype.update = function()
     var func = this.hooks[i];
     s += func();
   }
-  s += " -- " + this.log_data;
+  s += " -- " + this.log_data.join("<br>");
 
   if(s == this.shown_debug)
     return;

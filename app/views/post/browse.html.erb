@@ -12,7 +12,9 @@
   <ul class="post-browser-posts"></ul>
 </div>
 
-<div id="post-content"></div>
+<div id="post-content" style="width: 100%; text-align: center;">
+  <img class="image">
+</div>
 
 <script type="text/javascript">
   var debug = new DebugWindow($("debug-box"));
@@ -64,7 +66,7 @@ document.observe("dom:loaded", function()
   }
 
   UrlHash.set_normalize(normalize_hash, denormalize_hash);
-  var view = new BrowserView();
+  var view = new BrowserView($("post-content"));
   var thumbnail_view = new ThumbnailView($("post-browser"), view);
   new WindowTitleHandler();
   new PostLoader();
@@ -74,7 +76,7 @@ document.observe("dom:loaded", function()
   var container = $("post-browser");
   var update = function()
   {
-    var tags = container.down(".tags-form").tags.value = UrlHash.get("tags");
+    container.down(".tags-form").tags.value = UrlHash.get("tags") || "";
   }
 
   update();
@@ -99,6 +101,7 @@ document.observe("dom:loaded", function()
     return true;
   });
 
+  new WindowDragElement($("post-main-content").down(".image"));
 
 });
 </script>

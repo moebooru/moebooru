@@ -25,8 +25,10 @@
  *   to be careful about expiring the cache.
  */
 
-BrowserView = function()
+BrowserView = function(container)
 {
+  this.container = container;
+
   /* The post that we currently want to display.  This will be either one of the
    * current html_preloads, or be the displayed_post_id. */
   this.wanted_post_id = null;
@@ -34,144 +36,28 @@ BrowserView = function()
   /* The post that's currently actually being displayed. */
   this.displayed_post_id = null;
 
-  this.post_node_cache = new Hash;
-  this.post_html_cache = new Hash;
-  this.html_preloads = new Hash;
-
-  /* Keep track of the LRU displayed posts, and use it to expire post_node_cache. */
-  this.displayed_post_lru = [];
-
-  this.error = "";
+  this.current_ajax_request = null;
+  this.last_preload_request = [];
+  this.last_preload_request_active = false;
 
   debug.add_hook(this.get_debug.bind(this));
+
+  this.image_loaded_event = this.image_loaded_event.bindAsEventListener(this);
+  this.img = this.container.down(".image");
+  this.img.observe("load", this.image_loaded_event);
+}
+
+BrowserView.prototype.image_loaded_event = function(event)
+{
+  document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id });
 }
 
 BrowserView.prototype.get_debug = function()
 {
   var s = "wanted: " + this.wanted_post_id + ", displayed: " + this.displayed_post_id;
-  var preload_keys = this.html_preloads.keys();
-  if(preload_keys.length > 0)
-    s += ", loading " + preload_keys;
   if(this.lazy_load_timer)
     s += ", lazy load pending";
-  if(this.error != "")
-    s += ", error: " + this.error;
   return s;
-}
-
-/* If the wanted_post_id needs to be load and isn't already being loaded, see
- * if we should request it. */
-BrowserView.prototype.request_wanted_post = function()
-{
-  if(this.wanted_post_id == this.displayed_post_id)
-    return;
-
-  /* If there's a request in flight for the wanted post, then we've already done this. */
-  if(this.html_preloads.get(this.wanted_post_id))
-    return;
-
-  this.load_post_html(post_id);
-}
-
-/* If post_id isn't cached and isn't already being loaded, start loading it. */
-BrowserView.prototype.load_post_html = function(post_id)
-{
-  /* If the post's node is cached, then there's never any reason to load its HTML again. */
-  if(this.post_node_cache.get(post_id))
-    return;
-
-  var data = this.post_html_cache.get(post_id);
-  if(data != null)
-  {
-    /* This post's HTML is already loaded. */
-    if(this.wanted_post_id == post_id)
-    {
-      this.post_html_cache.unset(post_id);
-      this.set_post_content(data, post_id);
-    }
-    return;
-  }
-  
-  if(this.html_preloads.get(post_id) != null)
-  {
-    /* This post is already being loaded. */
-    return;
-  }
-
-  if(this.html_preloads.size() >= 3)
-  {
-    /* We have too many requests in flight already.  Don't start a new one.  If this is
-     * a request for the post we want to display, we'll check to see if we should start
-     * it again when existing requests finish. */
-    debug.log("max-loads");
-    return;
-  }
-
-  var url = this.get_url_for_post_page(post_id);
-  var request = new Ajax.Request(url, {
-    method: "get",
-    evalJSON: false,
-    evalJS: false,
-    parameters: null,
-    onComplete: function(resp)
-    {
-      /* Always remove the request from html_preloads, regardless of whether it succeeded
-       * or not. */
-      this.html_preloads.unset(post_id);
-
-      /* If wanted_post_id isn't being requested, see if we can request it now that we have fewer requests
-       * active.  Do this after removing ourself from html_preloads, so the in-flight count is up to date,
-       * and only do this on success so we don't cause endless requests on error. */
-      if(resp.request.success())
-        this.request_wanted_post();
-    }.bind(this),
-
-    onCreate: function(resp)
-    {
-      /* When we start preloading the HTML and it's for the wanted post, start preloading the
-       * image at the same time.  Attach the preload request to this request object, so it'll
-       * last as long as the object; if the request completes without being set as the displayed
-       * post, we'll let go of the preload object and allow it to expire, too. */
-      if(post_id == this.wanted_post_id)
-      {
-        var post = Post.posts.get(post_id);
-        if(post)
-        {
-          var preload_container = Preload.create_preload_container();
-          preload_container.preload(post.sample_url);
-          resp.request.sample_preload = preload_container;
-        }
-      }
-    }.bind(this),
-
-    onSuccess: function(resp)
-    {
-      var html = resp.responseText;
-
-      /* If this is the post that we currently want displayed, switch to it.
-       * There's no need to cache the text in post_html_cache in this case,
-       * since we're already converting it to an element. */
-      if(post_id == this.wanted_post_id)
-      {
-        this.set_post_content(html, post_id);
-        return;
-      }
-
-      /* Otherwise, just cache the data for later. */
-      this.post_html_cache.set(post_id, html);
-    }.bind(this),
-
-    onFailure: function(resp)
-    {
-      if(this.wanted_post_id == post_id)
-      {
-        /* The post the user wants to see failed to load. */
-        notice("Error "  + resp.status + " loading post");
-      }
-    }.bind(this)
-  });
-
-  this.html_preloads.set(post_id, request);
 }
 
 /* Begin preloading the HTML and images for the given post IDs. */
@@ -180,22 +66,21 @@ BrowserView.prototype.preload = function(post_ids)
   /* We're being asked to preload post_ids.  Only do this if it seems to make sense: if
    * the user is actually traversing posts that are being preloaded.  Look at the previous
    * call to preload().  If it didn't include the current post, then skip the preload. */
-  var last_preload_request = this.last_preload_request || [];
+  var last_preload_request = this.last_preload_request;
   this.last_preload_request = post_ids;
   if(last_preload_request.indexOf(this.wanted_post_id) == -1)
   {
     debug.log("skipped-preload(" + post_ids.join(",") + ")");
+    this.last_preload_request_active = false;
     return;
   }
+  this.last_preload_request_active = true;
   debug.log("preload(" + post_ids.join(",") + ")");
   
-  var new_preload_container = Preload.create_preload_container();
+  var new_preload_container = new PreloadContainer();
   for(var i = 0; i < post_ids.length; ++i)
   {
     var post_id = post_ids[i];
-
-    this.load_post_html(post_id);
-
     var post = Post.posts.get(post_id);
     new_preload_container.preload(post.sample_url);
   }
@@ -209,90 +94,82 @@ BrowserView.prototype.preload = function(post_ids)
   this.preload_container = new_preload_container;
 }
 
-BrowserView.prototype.clear_container = function()
+
+BrowserView.prototype.load_post_id_data = function(post_id)
 {
-  var content = $("post-content");
-  var old_container = content.down(".post-content-container");
-  if(!old_container)
+  debug.log("load needed");
+
+  // If we already have a request in flight, don't start another; wait for the
+  // first to finish.
+  if(this.current_ajax_request != null)
     return;
 
-  /* We're no longer displaying the post, but we'll keep a reference to the container
-   * in post_node_cache.  Clear the image source attribute, to help hint the browser that
-   * we don't need to keep the image around.  We'll restore it if we display the post
-   * again. */
-  var img = old_container.down("#image");
-  if(img)
-  {
-    img.saved_src = img.src;
-    img.src = "about:blank";
-  }
-  content.removeChild(old_container);
+  new Ajax.Request("/post/index.json", {
+    parameters: { tags: "id:" + post_id, filter: 1 },
+    method: "get",
+
+    onCreate: function(resp) {
+      this.current_ajax_request = resp.request;
+    }.bind(this),
+
+    onComplete: function(resp) {
+      if(this.current_ajax_request == resp.request)
+        this.current_ajax_request = null;
+
+      if(!resp.request.success() && post_id == this.wanted_post_id)
+        return;
+
+      /* This will either load the post we just finished, or request data for the
+       * one we want. */
+      this.set_post_content(this.wanted_post_id);
+    }.bind(this),
+
+    onSuccess: function(resp) {
+      if(this.current_ajax_request != resp.request)
+        return;
+
+      var post = resp.responseJSON[0];
+      Post.register(post);
+    }.bind(this),
+
+    onFailure: function(resp) {
+      notice("Error " + resp.status + " loading post");
+    }.bind(this)
+  });
 }
 
-/* Remove entries from post_node_cache that havn't been viewed in a while. */
-BrowserView.prototype.expire_node_cache = function()
+BrowserView.prototype.set_post_content = function(post_id)
 {
-  var max_node_cache = 10;
-  if(max_node_cache >= this.displayed_post_lru.length)
+  if(post_id == this.displayed_post_id)
     return;
 
-  var entries_to_keep = this.displayed_post_lru.length - max_node_cache;
-  var posts_to_expire = this.displayed_post_lru.slice(0, entries_to_keep);
-  this.displayed_post_lru = this.displayed_post_lru.slice(entries_to_keep);
-  for(var i = 0; i < posts_to_expire.length; ++i)
+  var post = Post.posts.get(post_id);
+  if(post == null)
   {
-    var post_id = posts_to_expire[i];
-    this.post_node_cache.unset(post_id);
-    // debug.log("expired(" + post_id + ")")
+    this.load_post_id_data(post_id);
+    return;
   }
-}
-
-BrowserView.prototype.set_post_content = function(data, post_id)
-{
-  /* Clear the previous post, if any. */
-  this.clear_container();
 
   this.displayed_post_id = post_id;
+
+  /* Clear the previous post, if any. */
+  this.img.src = "about:blank";
+
   UrlHash.set({"post-id": post_id});
 
-  this.displayed_post_lru = this.displayed_post_lru.without(post_id);
-  this.displayed_post_lru.push(post_id);
-  this.expire_node_cache();
-
-  var content = $("post-content");
-
-  if(typeof(data) == typeof "")
+  if(post)
   {
-    /* The argument is a string, so it's a new, raw block of HTML.  We need to create
-     * its node. */
-    var post_content_container = $(document.createElement("DIV"));
-    post_content_container.className = "post-content-container";
+    this.img.hide();
+    this.img.width = post.sample_width;
+    this.img.height = post.sample_height;
+    this.img.src = post.sample_url;
+    this.img.show();
 
-    content.appendChild(post_content_container);
-
-    /* This is like post_content_container.update(data), but we don't defer scripts, since
-     * that breaks things (eg. resized_notice gets moved around later, after we've already
-     * aligned the viewport). */
-    post_content_container.innerHTML = data.stripScripts();
-    data.evalScripts(data);
-
-    InitTextAreas();
-
-    this.post_node_cache.set(post_id, post_content_container);
+    Post.scale_and_fit_image(this.img);
   }
-  else
-  {
-    /* The argument is the node that we created previously.  Just insert it. */
-    var img = data.down(".image");
-    if(img)
-      img.src = img.saved_src;
-    
-    content.appendChild(data);
-  }
-
-  Post.scale_and_fit_image();
 
   Post.init_post_show(post_id);
+// InitTextAreas();
 
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 }
@@ -309,35 +186,9 @@ BrowserView.prototype.set_post = function(post_id)
 
   this.wanted_post_id = post_id;
 
-  /* If the post is already displayed, then we don't need to do anything else. */
-  if(post_id == this.displayed_post_id)
-    return;
-
-  var post_content_container = this.post_node_cache.get(post_id);
-  if(post_content_container)
-  {
-    this.set_post_content(post_content_container, post_id);
-    return;
-  }
-
   /* We don't have the node cached.  Open the page from HTML cache or start
    * loading the page as necessary. */
-  this.load_post_html(post_id);
-}
-
-BrowserView.prototype.is_post_id_cached = function(post_id)
-{
-  return this.post_node_cache.get(post_id) != null || this.post_html_cache.get(post_id) != null;
-}
-
-/* If post_id is already cached, set it and return true.  Otherwise, return false and do nothing. */
-BrowserView.prototype.set_post_if_cached = function(post_id)
-{
-  if(!this.is_post_id_cached(post_id))
-    return false;
-
-  this.set_post(post_id);
-  return true;
+  this.set_post_content(post_id);
 }
 
 BrowserView.prototype.cancel_lazily_load = function()
@@ -353,7 +204,11 @@ BrowserView.prototype.lazily_load = function(post_id)
 {
   this.cancel_lazily_load();
 
-  var ms = this.is_post_id_cached(post_id)? 50:500;
+  /* If we already started the preload for the requested post, then use a small timeout. */
+  var is_cached = this.last_preload_request_active && this.last_preload_request.indexOf(post_id) != -1;
+
+  var ms = is_cached? 50:500;
+  debug.log("post:" + post_id + ":" + is_cached + ":" + ms);
 
   /* Once lazily_load is called with a new post, we should consistently stay on the current
    * post or change to the new post.  We shouldn't change to a post that was previously
@@ -363,8 +218,6 @@ BrowserView.prototype.lazily_load = function(post_id)
 
   this.lazy_load_post_id = post_id;
   this.lazy_load_timer = window.setTimeout(function() {
-    if(this.lazy_load_post_id != post_id)
-      this.error = "huh";
     this.lazy_load_timer = null;
     this.set_post(post_id);
   }.bind(this), ms);

@@ -45,12 +45,6 @@ BrowserView = function(container)
   this.image_loaded_event = this.image_loaded_event.bindAsEventListener(this);
   this.img = this.container.down(".image");
   this.img.observe("load", this.image_loaded_event);
-
-  /* We normally have scrollbars disabled.  This currently causes redraw problems
-   * in Chrome 7.0.  Reenable scrolling for that browser; it's less obnoxious than
-   * the redraw glitching. */
-  if(navigator.userAgent.indexOf('Chrome/7.0') != -1)
-    document.body.setStyle({overflow: "auto"});
 }
 
 BrowserView.prototype.image_loaded_event = function(event)
@@ -126,7 +120,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
        * treat this as a failure. */
       var posts = resp.responseJSON;
       this.success = posts.length > 0;
-      if(!success)
+      if(!this.success)
       {
         this.failed = true;
         debug.log("requested post " + post_id + " doesn't exist");
@@ -144,7 +138,14 @@ BrowserView.prototype.load_post_id_data = function(post_id)
       /* If the request failed and we were requesting wanted_post_id, don't keep trying. */
       var success = resp.request.success() && this.success;
       if(!success && post_id == this.wanted_post_id)
+      {
+        /* As a special case, if the post we requested doesn't exist and we aren't displaying
+         * anything at all, force the thumb bar open so we don't show nothing at all. */
+        if(this.displayed_post_id == null)
+          document.fire("viewer:force-thumb-bar");
+
         return;
+      }
 
       /* This will either load the post we just finished, or request data for the
        * one we want. */
@@ -174,6 +175,8 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   /* Clear the previous post, if any. */
   this.img.src = "about:blank";
+  this.img.original_width = null;
+  this.img.original_height = null;
 
   if(post)
   {
@@ -183,7 +186,7 @@ BrowserView.prototype.set_post_content = function(post_id)
     this.img.src = post.sample_url;
     this.img.show();
 
-    Post.scale_and_fit_image(this.img);
+    this.scale_and_position_image();
   }
 
   Post.init_post_show(post_id);
@@ -192,9 +195,38 @@ BrowserView.prototype.set_post_content = function(post_id)
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 }
 
-BrowserView.prototype.get_url_for_post_page = function(post_id)
+BrowserView.prototype.scale_and_position_image = function()
 {
-  return "/post/show/" + post_id + "?browser=1";
+  var img = this.img;
+  if(img.original_width == null)
+  {
+    img.original_width = img.width;
+    img.original_height = img.height;
+  }
+
+  var window_size = document.viewport.getDimensions();
+  var client_width = window_size.width;
+  var client_height = window_size.height;
+
+  /* Zoom the image to fit the viewport. */
+  var ratio = client_width / img.original_width;
+  if (img.original_height * ratio > client_height)
+    ratio = client_height / img.original_height;
+  if(ratio < 1)
+  {
+    img.width = img.original_width * ratio;
+    img.height = img.original_height * ratio;
+  }
+
+  img.setStyle({left: "0px", top: "0px"});
+
+  var window_size = document.viewport.getDimensions();
+  var offset = img.cumulativeOffset();
+  var left_spacing = (window_size.width - img.offsetWidth) / 2;
+  var top_spacing = (window_size.height - img.offsetHeight) / 2;
+  var scroll_x = offset.left - left_spacing;
+  var scroll_y = offset.top - top_spacing;
+  img.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
 }
 
 BrowserView.prototype.set_post = function(post_id)

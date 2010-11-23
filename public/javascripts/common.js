@@ -363,8 +363,10 @@ sort_array_by_distance = function(list, idx)
   return ret;
 }
 
-/* When element is dragged, the document moves around it. */
-WindowDragElement = function(element)
+/* When element is dragged, the document moves around it.  If scroll_element is true, the
+ * element should be positioned (eg. position: absolute), and the element itself will be
+ * scrolled. */
+WindowDragElement = function(element, scroll_element)
 {
   this.mousemove_event = this.mousemove_event.bindAsEventListener(this);
   this.mousedown_event = this.mousedown_event.bindAsEventListener(this);
@@ -372,6 +374,8 @@ WindowDragElement = function(element)
   this.click_event = this.click_event.bindAsEventListener(this);
   this.selectstart_event = this.selectstart_event.bindAsEventListener(this);
 
+  this.element = element;
+  this.scroll_element = scroll_element;
   this.last_mouse_x = null;
   this.last_mouse_y = null;
   this.dragging = false;
@@ -423,9 +427,18 @@ WindowDragElement.prototype.mousemove_event = function(event)
   var diff_x = x - this.anchor_x;
   var diff_y = y - this.anchor_y;
 
-  var scrollLeft = this.scroll_anchor_x - diff_x;
-  var scrollTop = this.scroll_anchor_y - diff_y;
-  scrollTo(scrollLeft, scrollTop);
+  if(this.scroll_element)
+  {
+    var scrollLeft = this.scroll_anchor_x + diff_x;
+    var scrollTop = this.scroll_anchor_y + diff_y;
+    this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
+  }
+  else
+  {
+    var scrollLeft = this.scroll_anchor_x - diff_x;
+    var scrollTop = this.scroll_anchor_y - diff_y;
+    scrollTo(scrollLeft, scrollTop);
+  }
 }
 
 WindowDragElement.prototype.mousedown_event = function(event)
@@ -445,8 +458,17 @@ WindowDragElement.prototype.mousedown_event = function(event)
   var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
   var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
 
-  this.scroll_anchor_x = scrollLeft;
-  this.scroll_anchor_y = scrollTop;
+  if(this.scroll_element)
+  {
+    this.scroll_anchor_x = this.element.offsetLeft;
+    this.scroll_anchor_y = this.element.offsetTop;
+  }
+  else
+  {
+    this.scroll_anchor_x = scrollLeft;
+    this.scroll_anchor_y = scrollTop;
+  }
+
   this.anchor_x = event.pointerX() - scrollLeft;
   this.anchor_y = event.pointerY() - scrollTop;
   event.preventDefault();

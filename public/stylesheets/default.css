@@ -1432,11 +1432,15 @@ span.stars .star-3 { color:#ff0; }
 .post-browser {
   width: 100%;
   background-color: #222;
-  position: fixed;
+  position: absolute;
   top: 0px;
   left: 0px;
   overflow: visible;
   z-index: 11;
+}
+
+#post-content .image {
+  position: absolute;
 }
 
 .browser-top-bar {
@@ -1448,10 +1452,14 @@ span.stars .star-3 { color:#ff0; }
   padding: 0px 0 0 0;
 }
 
+.post-browser-posts-container {
+  height: 210px;
+}
+
 .post-browser-posts {
   list-style-type: none;
   white-space: nowrap;
-  height: 210px;
+  height: 100%;
   margin: 0;
 }
 

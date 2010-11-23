@@ -261,6 +261,7 @@ ThumbnailView = function(container, view)
   document.observe("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
   document.observe("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
   document.observe("viewer:toggle-thumb-bar", function(e) { this.toggle_thumb_bar(); }.bindAsEventListener(this));
+  document.observe("viewer:force-thumb-bar", function(e) { this.show_thumb_bar(!e.memo.hide); }.bindAsEventListener(this));
 
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
   UrlHash.observe("post-id", this.hashchange_post_id);
@@ -996,6 +997,16 @@ InputHandler.prototype.handle_keypress = function(e)
   if(target.tagName == "INPUT" || target.tagName == "TEXTAREA")
     return false;
 
+  if(key == 63) // ?, f
+  {
+    debug.log("xxx");
+    document.fire("viewer:show-help");
+    return true;
+  }
+
+  if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
+    return false;
+
   if(key == 32) // space
     document.fire("viewer:toggle-thumb-bar");
   else if(key == 65 || key == 97) // A, b
@@ -1020,9 +1031,6 @@ InputHandler.prototype.handle_keypress = function(e)
 InputHandler.prototype.document_keypress_event = function(e)
 {
   //alert(e.charCode + ", " + e.keyCode);
-  if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
-    return;
-
   if(this.handle_keypress(e))
     e.stop();
 }

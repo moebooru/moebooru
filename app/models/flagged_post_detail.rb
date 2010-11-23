@@ -38,6 +38,6 @@ class FlaggedPostDetail < ActiveRecord::Base
   end
 
   def to_xml(options = {})
-    return api_attributes.to_xml(options.merge(:root => "flagged_post_detail"))
+    return api_attributes.to_xml(options.reverse_merge(:root => "flagged_post_detail"))
   end
 end

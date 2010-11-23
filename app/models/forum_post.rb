@@ -110,7 +110,7 @@ class ForumPost < ActiveRecord::Base
     end
 
     def to_xml(options = {})
-      api_attributes.to_xml(options.merge(:root => "forum_post"))
+      api_attributes.to_xml(options.reverse_merge(:root => "forum_post"))
     end
   end
   

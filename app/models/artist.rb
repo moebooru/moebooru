@@ -198,7 +198,7 @@ class Artist < ActiveRecord::Base
     def to_xml(options = {})
       attribs = api_attributes
       attribs[:urls] = attribs[:urls].join(" ")
-      attribs.to_xml(options.merge(:root => "artist"))
+      attribs.to_xml(options.reverse_merge(:root => "artist"))
     end
 
     def to_json(*args)

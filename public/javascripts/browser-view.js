@@ -253,7 +253,7 @@ WindowTitleHandler.prototype.update = function()
 
   if(this.pool)
   {
-    var title = this.pool.name.replace(/_/g, " ");
+    var title = "Browse " + this.pool.name.replace(/_/g, " ");
 
     if(post && post.pool_post)
     {
@@ -268,7 +268,7 @@ WindowTitleHandler.prototype.update = function()
     return;
   }
 
-  var title = "/" + this.searched_tags.replace(/_/g, " ");
+  var title = "Browse /" + this.searched_tags.replace(/_/g, " ");
   document.title = title;
 }
 

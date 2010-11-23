@@ -678,12 +678,13 @@ Post = {
     var scroll_y = offset.top - top_spacing;
     return [scroll_x, scroll_y];
   },
-  center_image: function()
+  center_image: function(img)
   {
     /* Make sure we have enough space to scroll far enough to center the image.  Set a
      * minimum size on the body to give us more space on the right and bottom, and add
      * a padding to the image to give more space on the top and left. */
-    var img = $("image");
+    if(!img)
+      img = $("image");
     if(!img)
       return;
 
@@ -712,9 +713,10 @@ Post = {
     window.scroll(target_offset[0], target_offset[1]);
   },
 
-  scale_and_fit_image: function()
+  scale_and_fit_image: function(img)
   {
-    var img = $("image");
+    if(!img)
+      img = $("image");
     if(!img)
       return;
 
@@ -737,7 +739,7 @@ Post = {
       img.height = img.original_height * ratio;
     }
 
-    this.center_image();
+    this.center_image(img);
 
     Post.adjust_notes();
   },

@@ -118,24 +118,37 @@ BrowserView.prototype.load_post_id_data = function(post_id)
       this.current_ajax_request = resp.request;
     }.bind(this),
 
+    onSuccess: function(resp) {
+      if(this.current_ajax_request != resp.request)
+        return;
+
+      /* If no posts were returned, then the post ID we're looking up doesn't exist;
+       * treat this as a failure. */
+      var posts = resp.responseJSON;
+      this.success = posts.length > 0;
+      if(!success)
+      {
+        this.failed = true;
+        debug.log("requested post " + post_id + " doesn't exist");
+        return;
+      }
+
+      var post = posts[0];
+      Post.register(post);
+    }.bind(this),
+
     onComplete: function(resp) {
       if(this.current_ajax_request == resp.request)
         this.current_ajax_request = null;
 
-      if(!resp.request.success() && post_id == this.wanted_post_id)
+      /* If the request failed and we were requesting wanted_post_id, don't keep trying. */
+      var success = resp.request.success() && this.success;
+      if(!success && post_id == this.wanted_post_id)
         return;
 
       /* This will either load the post we just finished, or request data for the
        * one we want. */
       this.set_post_content(this.wanted_post_id);
-    }.bind(this),
-
-    onSuccess: function(resp) {
-      if(this.current_ajax_request != resp.request)
-        return;
-
-      var post = resp.responseJSON[0];
-      Post.register(post);
     }.bind(this),
 
     onFailure: function(resp) {

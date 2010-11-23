@@ -1,4 +1,3 @@
-<div id="debug-box" style="position: fixed; bottom: 0px; max-height: 50%; background-color: #000; display: none;"></div>
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
 
 <!-- The z-index should be on top of all notes.  -->
@@ -17,7 +16,7 @@
 </div>
 
 <script type="text/javascript">
-  var debug = new DebugWindow($("debug-box"));
+  var debug = new DebugWindow();
 
 document.observe("dom:loaded", function()
 {

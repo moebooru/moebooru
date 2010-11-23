@@ -370,8 +370,28 @@ WindowDragElement = function(element)
   this.last_mouse_y = null;
   this.dragging = false;
 
-  element.observe("mousedown", this.mousedown_event);
-  element.observe("click", this.click_event);
+  /*
+   * Starting drag on mousedown works in most browsers, but has an annoying side-
+   * effect: we need to stop the event to prevent any browser drag operations from
+   * happening, and that'll also prevent clicking the element from focusing the
+   * window.
+   *
+   * Using dragstart doesn't have that problem, but doesn't work in Opera.
+   *
+   * Finally, we may or may not get a click event after mouseup.  This is a pain:
+   * if we get a click event, we need to cancel it if we dragged, but we may not
+   * get a click event at all; detecting whether a click event came from the drag
+   * or not is difficult.  Cancelling mouseup has no effect.  FF, IE7 and Opera still
+   * send the click event if their dragstart or mousedown event is cancelled; WebKit
+   * doesn't.
+   */
+  if(window.opera)
+    element.observe("mousedown", this.mousedown_event);
+  else
+    element.observe("dragstart", this.mousedown_event);
+
+  if(!Prototype.Browser.WebKit)
+    element.observe("click", this.click_event);
 }
 
 WindowDragElement.prototype.mousemove_event = function(event)
@@ -404,7 +424,9 @@ WindowDragElement.prototype.mousemove_event = function(event)
 
 WindowDragElement.prototype.mousedown_event = function(event)
 {
-  if(!event.isLeftClick())
+  /* Only check if this is a left click if we're using the mousedown event; IE7
+   * doesn't set the button property on dragstart. */
+  if(event.type == "mousedown" && !event.isLeftClick())
     return;
 
   Event.observe(document, "mouseup", this.mouseup_event);
@@ -445,6 +467,7 @@ WindowDragElement.prototype.click_event = function(event)
   /* If this click was part of a drag, cancel the click. */
   if(this.dragged)
     event.stop();
+  this.dragged = false;
 }
 
 WindowDragElement.prototype.selectstart_event = function(event)

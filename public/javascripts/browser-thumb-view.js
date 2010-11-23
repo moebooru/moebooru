@@ -118,27 +118,30 @@ PostLoader.prototype.request_finished = function()
   if(this.current_ajax_requests.length)
     return;
 
+  /* Event handlers for the events we fire below might make requests back to us.  Save and
+   * clear this.result before firing the events, so that behaves properly. */
+  var result = this.result;
+  this.result = null;
+
   var new_post_ids = [];
-  if(this.result.posts)
+  if(result.posts)
   {
-    for(var i = 0; i < this.result.posts.length; ++i)
-      new_post_ids.push(this.result.posts[i].id);
+    for(var i = 0; i < result.posts.length; ++i)
+      new_post_ids.push(result.posts[i].id);
   }
 
-  document.fire("viewer:displayed-pool-changed", { pool: this.result.pool });
-  document.fire("viewer:searched-tags-changed", { tags: this.result.tags });
+  document.fire("viewer:displayed-pool-changed", { pool: result.pool });
+  document.fire("viewer:searched-tags-changed", { tags: result.tags });
 
   /* Tell the thumbnail viewer whether it should allow scrolling over the left side. */
-  var can_be_extended_further = new_post_ids.length > 0 && !this.result.extending && !this.result.pool;
+  var can_be_extended_further = new_post_ids.length > 0 && !result.extending && !result.pool;
 
   document.fire("viewer:loaded-posts", {
     post_ids: new_post_ids,
-    pool: this.result.pool,
-    extending: this.result.extending,
+    pool: result.pool,
+    extending: result.extending,
     can_be_extended_further: can_be_extended_further
   });
-
-  this.result = null;
 }
 
 /* If extending is true, load a larger set of posts. */

@@ -56,6 +56,6 @@ module PostApiMethods
   end
 
   def to_xml(options = {})
-    return api_attributes.to_xml(options.merge(:root => "post"))
+    return api_attributes.to_xml(options.reverse_merge(:root => "post"))
   end
 end

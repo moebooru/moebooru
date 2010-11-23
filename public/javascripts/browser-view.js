@@ -151,11 +151,10 @@ BrowserView.prototype.set_post_content = function(post_id)
   }
 
   this.displayed_post_id = post_id;
+  UrlHash.set({"post-id": post_id});
 
   /* Clear the previous post, if any. */
   this.img.src = "about:blank";
-
-  UrlHash.set({"post-id": post_id});
 
   if(post)
   {

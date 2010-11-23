@@ -45,6 +45,12 @@ BrowserView = function(container)
   this.image_loaded_event = this.image_loaded_event.bindAsEventListener(this);
   this.img = this.container.down(".image");
   this.img.observe("load", this.image_loaded_event);
+
+  /* We normally have scrollbars disabled.  This currently causes redraw problems
+   * in Chrome 7.0.  Reenable scrolling for that browser; it's less obnoxious than
+   * the redraw glitching. */
+  if(navigator.userAgent.indexOf('Chrome/7.0') != -1)
+    document.body.setStyle({overflow: "auto"});
 }
 
 BrowserView.prototype.image_loaded_event = function(event)

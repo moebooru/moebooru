@@ -691,7 +691,6 @@ Post = {
     /* Any existing padding (possibly from a previous call to this function) will be
      * included in cumulativeOffset and throw things off, so clear it. */
     img.setStyle({paddingLeft: 0, paddingTop: 0});
-    $(document.body).setStyle({minWidth: 0, minHeight: 0});
 
     var target_offset = Post.get_scroll_offset_to_center(img);
     var padding_left = -target_offset[0];

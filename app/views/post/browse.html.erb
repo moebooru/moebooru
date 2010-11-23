@@ -11,11 +11,12 @@
 <script type="text/javascript">
   var debug = new DebugWindow($("debug-box"));
 
-  UrlHash.set_normalize(function(h)
+document.observe("dom:loaded", function()
+{
+  var normalize_hash = function(h)
   {
     // Normalize:
     // post_id/search
-//    h.set("", "foo");
     var path = h.get("");
     if(path != null)
     {
@@ -25,11 +26,16 @@
         h.set("post-id", post_id);
       if(path[post_id.length] == "/")
         h.set("tags", path.substr(post_id.length + 1));
-      // alert(post_id.length + ", " + post_id + " ... " + tags);
     }
+
+    // Validate parameters.
+    var post_id = h.get("post-id");
+    if(post_id != null && isNaN(parseInt(post_id)))
+      h.set("post-id", null);
     return h;
-  },
-  function(h)
+  }
+
+  var denormalize_hash = function(h)
   {
     // Denormalize; the input will always be normalized.
     var str = "";
@@ -48,13 +54,14 @@
     }
 
     h.set("", str);
-
-    
     return h;
   });
+
+  UrlHash.set_normalize(normalize_hash, denormalize_hash);
   var view = new BrowserView();
   var thumbnail_view = new ThumbnailView($("post-browser"), view);
   new WindowTitleHandler();
   new PostLoader();
+});
 </script>
 

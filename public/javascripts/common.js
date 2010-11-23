@@ -333,6 +333,12 @@ Ajax.Request.prototype.success = function()
   return this.successBase();
 }
 
+/* Work around a Prototype bug; it discards exceptions instead of letting them fall back
+ * to the browser where they'll be logged. */
+Ajax.Responders.register({
+  onException: function(request, exception) { (function() { throw exception; }).defer(); }
+});
+
 /*
  * Return the values of list starting at idx and moving outwards.
  *

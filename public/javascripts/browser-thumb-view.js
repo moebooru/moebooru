@@ -137,6 +137,7 @@ PostLoader.prototype.request_finished = function()
   var can_be_extended_further = new_post_ids.length > 0 && !result.extending && !result.pool;
 
   document.fire("viewer:loaded-posts", {
+    tags: result.tags, /* this will be null if no search was actually performed (eg. URL with a post-id and no tags) */
     post_ids: new_post_ids,
     pool: result.pool,
     extending: result.extending,
@@ -235,7 +236,7 @@ ThumbnailView = function(container, view)
 {
   this.container = container;
   this.view = view;
-  this.post_ids = null; /* set by init() */
+  this.post_ids = null; /* set by loaded_posts_event */
   this.expanded_post_id = null;
   this.centered_post_id = null;
   this.last_mouse_x = 0;
@@ -277,23 +278,20 @@ ThumbnailView = function(container, view)
   document.observe("viewer:loaded-posts", this.loaded_posts_event);
 }
 
-ThumbnailView.prototype.loaded_posts_event = function(event)
-{
-  this.init(event.memo.post_ids, event.memo.extending, event.memo.can_be_extended_further);
-}
-
 /* Show the given posts.  If extending is true, post_ids are meant to extend a previous
  * search; attempt to continue where we left off. */
-ThumbnailView.prototype.init = function(post_ids, extending, can_be_extended_further)
+ThumbnailView.prototype.loaded_posts_event = function(event)
 {
+  var post_ids = event.memo.post_ids;
+
   var old_post_ids = this.post_ids || [];
   var old_centered_post_idx = old_post_ids.indexOf(this.centered_post_id);
   this.remove_all_posts();
 
   this.post_ids = post_ids;
-  this.allow_wrapping = !can_be_extended_further;
+  this.allow_wrapping = !event.memo.can_be_extended_further;
 
-  if(extending)
+  if(event.memo.extending)
   {
     /*
      * We're extending a previous search with more posts.  The new post list we get may
@@ -334,6 +332,17 @@ ThumbnailView.prototype.init = function(post_ids, extending, can_be_extended_fur
       this.center_on_post(initial_post_id);
     this.set_active_post(initial_post_id);
   }
+
+  if(event.memo.tags == null)
+  {
+    /* If tags is null then no search has been done, which means we're on a URL
+     * with a post ID and no search, eg. "/post/browse#12345".  Hide the thumb
+     * bar, so we'll just show the post. */
+    this.show_thumb_bar(false);
+  }
+
+  this.container.down(".post-browser-no-results").show(this.post_ids.length == 0);
+  this.container.down(".post-browser-posts").show(this.post_ids.length != 0);
 }
 
 ThumbnailView.prototype.container_mouseover_event = function(event)

@@ -1,6 +1,5 @@
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
 
-<!-- The z-index should be on top of all notes.  -->
 <div id="post-browser" class="post-browser">
   <div class="browser-top-bar">
     <form action="#" class="tags-form" method="get" style="display: inline;">
@@ -8,7 +7,10 @@
       <input style="display: none;" type="submit">
     </form>
   </div>
-  <ul class="post-browser-posts"></ul>
+  <div class="post-browser-posts-container">
+    <ul class="post-browser-posts"></ul>
+    <div class="post-browser-no-results" style="display: none; text-align: center; font-size: 200%;">No search results.</div>
+  </div>
 </div>
 
 <div id="post-content" style="width: 100%; text-align: center;">
@@ -95,6 +97,7 @@ document.observe("dom:loaded", function()
     update();
   });
   document.observe("viewer:focus-tag-box", function(e) {
+    thumbnail_view.show_thumb_bar(true);
     container.down(".tags-form").tags.focus();
     container.down(".tags-form").tags.select();
     return true;

@@ -827,10 +827,14 @@ ThumbnailView.prototype.create_thumb = function(post_id)
     visible_width = width;
   var crop_left = (width - visible_width) / 2;
 
+  /* Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  We
+   * do this with visibility: hidden rather than display: none, or the size of the image
+   * won't be defined, which breaks center_on_post. */
   var div =
     '<div class="inner" style="width: ${block_size_x}px; height: ${block_size_y}px;">' +
       '<a class="thumb" href="${target_url}">' +
-        '<img src="${preview_url}" style="display: none; margin-left: -${crop_left}px;" alt="" class="${image_class}" width="${width}" height="${height}" onload="$(this).show();">'
+        '<img src="${preview_url}" style="visibility: hidden; margin-left: -${crop_left}px;" alt="" class="${image_class}"' +
+          'width="${width}" height="${height}" onload="$(this).setStyle({visibility: \'visible\'});">' +
       '</a>' +
     '</div>';
   div = div.subst({

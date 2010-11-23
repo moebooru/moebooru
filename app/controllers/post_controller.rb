@@ -391,13 +391,9 @@ class PostController < ApplicationController
       else
         @following_pool_post = PoolPost.find(:first, :conditions => ["post_id = ?", @post.id]) rescue nil
       end
-      if params.has_key?(:browser) then
-        @post_browser = true
-      end
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
       set_title @post.title_tags.tr("_", " ")
-      render :layout => @post_browser? "empty": "default"
     rescue ActiveRecord::RecordNotFound
       render :action => "show_empty", :status => 404
     end

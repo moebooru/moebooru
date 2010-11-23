@@ -37,11 +37,9 @@
 
         RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
 
-        <% if not @post_browser %>
         if (Cookie.get('resize_image') == '1') {
           Post.resize_image()
         }
-        <% end %>
 
         var anchored_to_comment = window.location.hash == "#comments";
         if(window.location.hash.match(/^#c[0-9]+$/))
@@ -54,7 +52,7 @@
 
         Post.init_post_show(<%= @post.id %>);
 
-        <% if not @following_pool_post.nil? and not @post_browser %>
+        <% if not @following_pool_post.nil? %>
           OnKey(65, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.prev_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
           OnKey(83, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.next_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
 

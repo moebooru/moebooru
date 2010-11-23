@@ -187,6 +187,11 @@ UrlHashHandler.prototype.set_all = function(query_params)
 
   var new_hash = this.construct(query_params);
   window.location.hash = new_hash;
+
+  /* Explicitly fire the hashchange event, so it's handled quickly even if the browser
+   * doesn't support the event.  It's harmless if we get this event multiple times due
+   * to the browser delivering it normally due to our change. */
+  this.hashchange_event(null);
 }
 
 

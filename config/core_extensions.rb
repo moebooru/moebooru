@@ -32,22 +32,57 @@ class String
 end
 
 class Hash
-  def included(m)
-    m.alias_method :to_xml_orig, :to_xml
-  end
+  alias_method :to_xml_orig, :to_xml
   
   def to_xml(options = {})
-    if false == options.delete(:no_children)
-      to_xml_orig(options)
+    options[:indent] ||= 2
+    options[:root] ||= "hash"
+    dasherize = !options.has_key?(:dasherize) || options[:dasherize]
+    root = options.delete(:root).to_s
+    root = root.dasherize if dasherize
+
+    # Treat simple values as attributes, and complex values as children.
+    # { :a=>1, :b=>[1] }
+    attrs = {}
+    children = []
+    self.each do |key, value|
+      if value.respond_to?(:to_xml) or value.is_a?(Array) then
+        # If an array child is empty, omit the node entirely.
+        next if value.is_a?(Array) and value.empty?
+        children << [key, value]
+      else
+        attrs[key] = value
+      end
+    end
+
+    options.reverse_merge!({:builder => Builder::XmlMarkup.new(:indent => options[:indent])})
+    if not options[:skip_instruct]
+      options[:skip_instruct] = true
+      options[:builder].instruct!
+    end
+
+    if children.empty? then
+      options[:builder].tag!(root, attrs)
     else
-      options[:indent] ||= 2
-      options[:no_children] ||= true
-      options[:root] ||= "hash"
-      dasherize = !options.has_key?(:dasherize) || options[:dasherize]
-      root = dasherize ? options[:root].dasherize : options[:root]
-      options.reverse_merge!({:builder => Builder::XmlMarkup.new(:indent => options[:indent]), :root => root})
-      options[:builder].instruct! unless options.delete(:skip_instruct)
-      options[:builder].tag!(root, self)
+      options[:builder].tag!(root, attrs) {
+        children.each do |key, child|
+          child.to_xml(options.merge(:root => key.to_s))
+        end
+      }
+    end
+  end
+end
+
+class Array
+  alias_method :to_xml_orig, :to_xml
+
+  def to_xml(options = {})
+    options[:builder] ||= Builder::XmlMarkup.new
+    root = options.delete(:root) || "array"
+    options[:builder].tag!(root) do
+      self.each do |value|
+        value.to_xml(options)
+      end
     end
   end
 end

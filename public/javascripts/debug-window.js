@@ -14,10 +14,11 @@ DebugWindow = function(container)
 
 DebugWindow.prototype.log = function(s)
 {
-  this.log_data += " " + s;
-  var max_length = 200;
+  this.log_data += "<br>" + s;
+  var max_length = 5000;
   if(this.log_data.length > max_length)
     this.log_data = this.log_data.substr(this.log_data.length-max_length, max_length);
+  this.update();
 }
 
 DebugWindow.prototype.hashchange_debug = function()
@@ -38,10 +39,8 @@ DebugWindow.prototype.add_hook = function(func)
   this.hooks.push(func);
 }
 
-DebugWindow.prototype.set_debug = function()
+DebugWindow.prototype.update = function()
 {
-  this.debug_timer = window.setTimeout(this.set_debug, 100);
-
   var s = "";
   for(var i = 0; i < this.hooks.length; ++i)
   {
@@ -55,5 +54,11 @@ DebugWindow.prototype.set_debug = function()
 
   this.shown_debug = s;
   this.container.update(s);
+}
+
+DebugWindow.prototype.set_debug = function()
+{
+  this.debug_timer = window.setTimeout(this.set_debug, 100);
+  this.update();
 }
 

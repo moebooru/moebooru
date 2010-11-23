@@ -204,44 +204,18 @@ ThumbnailView = function(container, view)
   this.container_click_event = this.container_click_event.bindAsEventListener(this);
   this.container_dblclick_event = this.container_dblclick_event.bindAsEventListener(this);
   this.container_mouse_wheel_event = this.container_mouse_wheel_event.bindAsEventListener(this);
-  this.document_mouse_wheel_event = this.document_mouse_wheel_event.bindAsEventListener(this);
-  this.document_dblclick_event = this.document_dblclick_event.bindAsEventListener(this);
 
   this.container.observe("DOMMouseScroll", this.container_mouse_wheel_event);
   this.container.observe("mousewheel", this.container_mouse_wheel_event);
 
-  document.observe("DOMMouseScroll", this.document_mouse_wheel_event);
-  document.observe("mousewheel", this.document_mouse_wheel_event);
-
   Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
 
-  /*
-   * Keypresses are aggrevating:
-   *
-   * Opera can only stop key events from keypress, not keydown.
-   *
-   * Chrome only sends keydown for non-alpha keys, not keypress.
-   *
-   * Firefox sends keypress for non-alpha keys, but the keyCode value is always 0.
-   *
-   * Alpha keys can always be detected with keydown.  Don't use keypress; Opera only provides
-   * charCode to that event, and it's affected by the caps state, which we don't want.
-   *
-   * Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
-   * keydown in other browsers.
-   */
-  OnKey(65, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.show_next_post(true); return true; }.bind(this));
-  OnKey(83, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.show_next_post(false); return true; }.bind(this));
-
-  var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
-  this.document_keypress_event = this.document_keypress_event.bindAsEventListener(this);
-
-  Element.observe(document, keypress_event_name, this.document_keypress_event);
+  document.observe("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
+  document.observe("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
+  document.observe("viewer:toggle-thumb-bar", function(e) { this.toggle_thumb_bar(); }.bindAsEventListener(this));
 
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
   UrlHash.observe("post-id", this.hashchange_post_id);
-
-  Element.observe(document, "dblclick", this.document_dblclick_event);
 
   this.container_mousemove_event = this.container_mousemove_event.bindAsEventListener(this);
   this.container.observe("mousemove", this.container_mousemove_event);
@@ -325,33 +299,6 @@ ThumbnailView.prototype.container_mouseover_event = function(event)
   this.expand_post(post_id);
 }
 
-ThumbnailView.prototype.document_keypress_event = function(e) {
-  var key = e.charCode;
-  if(!key)
-    key = e.keyCode; /* Opera */
-  //alert(e.charCode + ", " + e.keyCode);
-  if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
-    return;
-  var target = e.target;
-  if(target.tagName == "INPUT" || target.tagName == "TEXTAREA")
-    return;
-
-  if(key == 32) // space
-    this.toggle_thumb_bar();
-  else if(key == Event.KEY_PAGEUP)
-    this.show_next_post(true);
-  else if(key == Event.KEY_PAGEDOWN)
-    this.show_next_post(false);
-  else if(key == Event.KEY_LEFT)
-    this.scroll(true);
-  else if(key == Event.KEY_RIGHT)
-    this.scroll(false);
-  else
-    return;
-  e.stop();
-}
-
-
 ThumbnailView.prototype.hashchange_post_id = function()
 {
   var new_post_id = this.get_current_post_id();
@@ -402,32 +349,7 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
     val = -event.detail;
   }
 
-  this.scroll(val >= 0);
-}
-
-ThumbnailView.prototype.document_mouse_wheel_event = function(event)
-{
-  event.preventDefault();
-
-  var val;
-  if(event.wheelDelta)
-  {
-    val = event.wheelDelta;
-  } else if (event.detail) {
-    val = -event.detail;
-  }
-
-  this.show_next_post(val >= 0);
-}
-
-/* Double-clicking the image shows the UI. */
-ThumbnailView.prototype.document_dblclick_event = function(event)
-{
-  if(event.target.id != "image")
-    return;
-
-  event.stop();
-  this.toggle_thumb_bar();
+  document.fire("viewer:scroll", { left: val >= 0 });
 }
 
 ThumbnailView.prototype.set_active_post = function(post_id, lazy)
@@ -447,7 +369,7 @@ ThumbnailView.prototype.set_active_post = function(post_id, lazy)
   }
 }
 
-ThumbnailView.prototype.show_next_post = function(up)
+ThumbnailView.prototype.show_next_post = function(prev)
 {
   var active_post_id = this.active_post_id;
   var current_idx = this.post_ids.indexOf(active_post_id);
@@ -456,7 +378,7 @@ ThumbnailView.prototype.show_next_post = function(up)
    * at the beginning. */
   if(current_idx == -1)
     current_idx = 0;
-  var new_idx = current_idx + (up? -1:+1);
+  var new_idx = current_idx + (prev? -1:+1);
 
   if(this.post_ids.length == 0)
     return;
@@ -486,7 +408,7 @@ ThumbnailView.prototype.show_next_post = function(up)
 }
 
 /* Scroll the thumbnail view left or right.  Don't change the displayed post. */
-ThumbnailView.prototype.scroll = function(up)
+ThumbnailView.prototype.scroll = function(left)
 {
   /* There's no point in scrolling the list if it's not visible. */
   if(!this.thumb_container_shown)
@@ -494,7 +416,7 @@ ThumbnailView.prototype.scroll = function(up)
 
   var current_post_id = this.centered_post_id;
   var current_idx = this.post_ids.indexOf(current_post_id);
-  var new_idx = current_idx + (up? -1:+1);
+  var new_idx = current_idx + (left? -1:+1);
 
   /* Wrap the new index. */
   if(new_idx < 0)
@@ -954,4 +876,122 @@ ThumbnailView.prototype.displayed_image_finished_loading = function(success, pos
     post_ids_to_preload.push(adjacent_post_id);
   this.view.preload(post_ids_to_preload);
 }
+
+
+/* This handler handles global keypress bindings, and fires viewer: events. */
+function InputHandler()
+{
+  this.document_keypress_event = this.document_keypress_event.bindAsEventListener(this);
+  this.document_focus_event = this.document_focus_event.bindAsEventListener(this);
+  this.document_dblclick_event = this.document_dblclick_event.bindAsEventListener(this);
+  this.document_mouse_wheel_event = this.document_mouse_wheel_event.bindAsEventListener(this);
+
+  /* Track the focused element, so we can clear focus on KEY_ESC. */
+  this.focused_element = null;
+  document.addEventListener("focus", this.document_focus_event, true);
+  document.onfocusin = this.document_focus_event;
+
+  /*
+   * Keypresses are aggrevating:
+   *
+   * Opera can only stop key events from keypress, not keydown.
+   *
+   * Chrome only sends keydown for non-alpha keys, not keypress.
+   *
+   * In Firefox, keypress's keyCode value for non-alpha keys is always 0.
+   *
+   * Alpha keys can always be detected with keydown.  Don't use keypress; Opera only provides
+   * charCode to that event, and it's affected by the caps state, which we don't want.
+   *
+   * Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
+   * keydown in other browsers.
+   */
+  var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
+  Element.observe(document, keypress_event_name, this.document_keypress_event);
+
+  Element.observe(document, "dblclick", this.document_dblclick_event);
+
+  Element.observe(document, "DOMMouseScroll", this.document_mouse_wheel_event);
+  Element.observe(document, "mousewheel", this.document_mouse_wheel_event);
+}
+
+InputHandler.prototype.document_focus_event = function(e)
+{
+  this.focused_element = e.target;
+}
+
+InputHandler.prototype.handle_keypress = function(e)
+{
+  var key = e.charCode;
+  if(!key)
+    key = e.keyCode; /* Opera */
+  if(key == Event.KEY_ESC)
+  {
+    if(this.focused_element && this.focused_element.blur)
+    {
+      this.focused_element.blur();
+      return true;
+    }
+  }
+
+  var target = e.target;
+  if(target.tagName == "INPUT" || target.tagName == "TEXTAREA")
+    return false;
+
+  if(key == 32) // space
+    document.fire("viewer:toggle-thumb-bar");
+  else if(key == 65 || key == 97) // A, b
+    document.fire("viewer:show-next-post", { prev: true });
+  else if(key == 83 || key == 115) // S, s
+    document.fire("viewer:show-next-post", { prev: false });
+  else if(key == 70 || key == 102) // F, f
+    document.fire("viewer:focus-tag-box");
+  else if(key == Event.KEY_PAGEUP)
+    document.fire("viewer:show-next-post", { prev: true });
+  else if(key == Event.KEY_PAGEDOWN)
+    document.fire("viewer:show-next-post", { prev: false });
+  else if(key == Event.KEY_LEFT)
+    document.fire("viewer:scroll", { left: true });
+  else if(key == Event.KEY_RIGHT)
+    document.fire("viewer:scroll", { left: false });
+  else
+    return false;
+  return true;
+}
+
+InputHandler.prototype.document_keypress_event = function(e)
+{
+  //alert(e.charCode + ", " + e.keyCode);
+  if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
+    return;
+
+  if(this.handle_keypress(e))
+    e.stop();
+}
+
+/* Double-clicking the image shows the UI. */
+InputHandler.prototype.document_dblclick_event = function(event)
+{
+  if(event.target.id != "image")
+    return;
+
+  event.stop();
+  document.fire("viewer:toggle-thumb-bar");
+}
+
+InputHandler.prototype.document_mouse_wheel_event = function(event)
+{
+  event.stop();
+
+  var val;
+  if(event.wheelDelta)
+  {
+    val = event.wheelDelta;
+  } else if (event.detail) {
+    val = -event.detail;
+  }
+
+  document.fire("viewer:show-next-post", { prev: val >= 0 });
+}
+
 

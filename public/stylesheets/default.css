@@ -1429,9 +1429,8 @@ span.stars .star-3 { color:#ff0; }
   font-weight: normal;
 }
 
-#post-browser {
+.post-browser {
   width: 100%;
-  height: 210px;
   background-color: #222;
   position: fixed;
   top: 0px;
@@ -1440,9 +1439,20 @@ span.stars .star-3 { color:#ff0; }
   z-index: 11;
 }
 
+.browser-top-bar {
+  text-align: center;
+}
+
+.post-browser-tags-form {
+  margin-top: 5px;
+  padding: 0px 0 0 0;
+}
+
 .post-browser-posts {
   list-style-type: none;
   white-space: nowrap;
+  height: 210px;
+  margin: 0;
 }
 
 .post-browser-posts .inner {

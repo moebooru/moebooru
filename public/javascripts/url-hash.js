@@ -92,7 +92,7 @@ UrlHashHandler.prototype.parse = function(hash)
 {
   if(hash == null)
     hash = "";
-  if(hash[0] == "#")
+  if(hash.substr(0, 1) == "#")
     hash = hash.substr(1);
 
   var hash_path = hash.split("?", 1)[0];

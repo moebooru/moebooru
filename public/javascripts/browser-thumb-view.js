@@ -109,7 +109,6 @@ PostLoader.prototype.request_finished = function()
   this.result = null;
 }
 
-
 /* If extending is true, load a larger set of posts. */
 PostLoader.prototype.load = function(extending)
 {
@@ -216,15 +215,28 @@ ThumbnailView = function(container, view)
 
   Post.observe_finished_loading(this.displayed_image_finished_loading.bind(this));
 
-  OnKey(65, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.show_next_post(true); }.bind(this));
-  OnKey(83, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.show_next_post(false); }.bind(this));
-//  OnKey(32, { AlwaysAllowOpera: true }, function(e) { this.toggle_thumb_bar(); }.bind(this));
+  /*
+   * Keypresses are aggrevating:
+   *
+   * Opera can only stop key events from keypress, not keydown.
+   *
+   * Chrome only sends keydown for non-alpha keys, not keypress.
+   *
+   * Firefox sends keypress for non-alpha keys, but the keyCode value is always 0.
+   *
+   * Alpha keys can always be detected with keydown.  Don't use keypress; Opera only provides
+   * charCode to that event, and it's affected by the caps state, which we don't want.
+   *
+   * Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
+   * keydown in other browsers.
+   */
+  OnKey(65, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.show_next_post(true); return true; }.bind(this));
+  OnKey(83, { AlwaysAllowOpera: true, allowRepeat: true }, function(e) { this.show_next_post(false); return true; }.bind(this));
 
-  /* We need to watch for space presses during keypress rather than keydown, since
-   * for some reason cancelling during the keydown event won't prevent the browser
-   * default behavior like it probably should. */
+  var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
   this.document_keypress_event = this.document_keypress_event.bindAsEventListener(this);
-  Element.observe(document, "keypress", this.document_keypress_event);
+
+  Element.observe(document, keypress_event_name, this.document_keypress_event);
 
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
   UrlHash.observe("post-id", this.hashchange_post_id);
@@ -315,17 +327,23 @@ ThumbnailView.prototype.container_mouseover_event = function(event)
 
 ThumbnailView.prototype.document_keypress_event = function(e) {
   var key = e.charCode;
-  if(key == null)
+  if(!key)
     key = e.keyCode; /* Opera */
-  if (key != 32)
-    return;
+  //alert(e.charCode + ", " + e.keyCode);
   if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
     return;
   var target = e.target;
   if(target.tagName == "INPUT" || target.tagName == "TEXTAREA")
     return;
 
-  this.toggle_thumb_bar();
+  if(key == 32) // space
+    this.toggle_thumb_bar();
+  else if(key == Event.KEY_PAGEUP)
+    this.show_next_post(true);
+  else if(key == Event.KEY_PAGEDOWN)
+    this.show_next_post(false);
+  else
+    return;
   e.stop();
 }
 

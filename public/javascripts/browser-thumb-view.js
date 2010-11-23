@@ -6,6 +6,9 @@ PostLoader = function()
   this.hashchange_tags = this.hashchange_tags.bind(this);
   UrlHash.observe("tags", this.hashchange_tags);
 
+  this.cached_posts = new Hash();
+  this.cached_pools = new Hash();
+
   this.load(false);
 }
 
@@ -16,15 +19,28 @@ PostLoader.prototype.need_more_post_data = function()
   if(this.loaded_extended_results)
     return;
 
-//  debug.log("more-data");
-  this.load(true);
+  this.load(true, false);
 }
 
 
-PostLoader.prototype.server_load_pool = function(pool_id)
+PostLoader.prototype.server_load_pool = function()
 {
+  if(this.result.pool_id == null)
+    return;
+
+  if(!this.result.disable_cache)
+  {
+    var pool = this.cached_pools.get(this.result.pool_id);
+    if(pool)
+    {
+      this.result.pool = pool;
+      this.request_finished();
+      return;
+    }
+  }
+
   new Ajax.Request("/pool/show.json", {
-    parameters: { id: pool_id },
+    parameters: { id: this.result.pool_id },
     method: "get",
     onCreate: function(resp) {
       this.current_ajax_requests.push(resp.request);
@@ -40,16 +56,30 @@ PostLoader.prototype.server_load_pool = function(pool_id)
         return;
 
       this.result.pool = resp.responseJSON;
+      this.cached_pools.set(this.result.pool_id, this.result.pool);
     }.bind(this)
   });
 }
 
-PostLoader.prototype.server_load_posts = function(limit, extending)
+PostLoader.prototype.server_load_posts = function()
 {
   var tags = this.result.tags;
+  var search = tags + " limit:" + this.result.post_limit;
 
-  var search = tags + " limit:" + limit;
-  this.result.extending = extending;
+  if(!this.result.disable_cache)
+  {
+    var results = this.cached_posts.get(search);
+    if(results)
+    {
+      this.result.posts = results;
+
+      /* Don't Post.register the results when serving out of cache.  They're already
+       * registered, and the data in the post registry may be more current than the
+       * cached search results. */
+      this.request_finished();
+      return;
+    }
+  }
 
   new Ajax.Request("/post/index.json", {
     parameters: { tags: search, filter: 1 },
@@ -68,7 +98,13 @@ PostLoader.prototype.server_load_posts = function(limit, extending)
       if(this.current_ajax_requests.indexOf(resp.request) == -1)
         return;
     
-      this.result.posts = resp.responseJSON;
+      var posts = resp.responseJSON;
+      this.result.posts = posts;
+
+      for(var i = 0; i < posts.length; ++i)
+        Post.register(posts[i]);
+
+      this.cached_posts.set(search, this.result.posts);
     }.bind(this),
 
     onFailure: function(resp) {
@@ -86,11 +122,7 @@ PostLoader.prototype.request_finished = function()
   if(this.result.posts)
   {
     for(var i = 0; i < this.result.posts.length; ++i)
-    {
-      var post = this.result.posts[i];
-      Post.register(post);
-      new_post_ids.push(post.id);
-    }
+      new_post_ids.push(this.result.posts[i].id);
   }
 
   document.fire("viewer:displayed-pool-changed", { pool: this.result.pool });
@@ -110,7 +142,7 @@ PostLoader.prototype.request_finished = function()
 }
 
 /* If extending is true, load a larger set of posts. */
-PostLoader.prototype.load = function(extending)
+PostLoader.prototype.load = function(extending, disable_cache)
 {
   /* If neither a search nor a post-id is specified, set a default search. */
   if(!extending && UrlHash.get("tags") == null && UrlHash.get("post-id") == null)
@@ -129,6 +161,8 @@ PostLoader.prototype.load = function(extending)
 
   this.result = {};
   this.result.tags = UrlHash.get("tags");
+  this.result.disable_cache = disable_cache;
+  this.result.extending = extending;
 
   if(this.result.tags == null)
   {
@@ -148,8 +182,7 @@ PostLoader.prototype.load = function(extending)
   });
 
   /* If we're loading from a pool, load the pool's data. */
-  if(pool_id != null)
-    this.server_load_pool(pool_id);
+  this.result.pool_id = pool_id;
 
   this.result.extending = extending;
 
@@ -158,12 +191,23 @@ PostLoader.prototype.load = function(extending)
   var limit = extending? 1000:100;
   if(pool_id != null)
     limit = 1000;
-  this.server_load_posts(limit, extending);
+  this.result.post_limit = limit;
+
+
+  /* Make sure that request_finished doesn't consider this request complete until we've
+   * actually started every request. */
+  this.current_ajax_requests.push(null);
+
+  this.server_load_pool();
+  this.server_load_posts();
+
+  this.current_ajax_requests = this.current_ajax_requests.without(null);
+  this.request_finished();
 }
 
 PostLoader.prototype.hashchange_tags = function()
 {
-  this.load(false);
+  this.load(false, false);
 }
 
    

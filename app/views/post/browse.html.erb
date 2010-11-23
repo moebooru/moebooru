@@ -24,7 +24,7 @@ document.observe("dom:loaded", function()
       h.set("", null);
       if(post_id != "")
         h.set("post-id", post_id);
-      if(path[post_id.length] == "/")
+      if(path.substr(post_id.length, 1) == "/")
         h.set("tags", path.substr(post_id.length + 1));
     }
 

@@ -19,6 +19,7 @@ PreloadContainer.prototype.preload = function(url)
   ++this.active_preloads;
 
   var imgTag = document.createElement("img");
+  imgTag = $(imgTag);
   imgTag.observe("load", this.on_image_complete_event);
   imgTag.observe("error", this.on_image_complete_event);
   imgTag.src = url;

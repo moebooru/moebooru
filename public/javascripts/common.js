@@ -336,6 +336,27 @@ Ajax.Responders.register({
 });
 
 /*
+ * Exceptions thrown from event handlers tend to get lost.  Sometimes they trigger
+ * window.onerror, but not reliably.  Catch exceptions out of event handlers and
+ * throw them from a deferred context, so they'll make it up to the browser to be
+ * logged.
+ *
+ * This depends on bindAsEventListener actually only being used for event listeners,
+ * since it eats exceptions.
+ */
+Function.prototype.bindAsEventListener = function()
+{
+  var __method = this, args = $A(arguments), object = args.shift();
+  return function(event) {
+    try {
+      return __method.apply(object, [event || window.event].concat(args));
+    } catch(exception) {
+      (function() { throw exception; }).defer();
+    }
+  }
+}
+
+/*
  * Return the values of list starting at idx and moving outwards.
  *
  * sort_array_by_distance([0,1,2,3,4,5,6,7,8,9], 5)

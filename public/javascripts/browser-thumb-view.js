@@ -277,6 +277,13 @@ ThumbnailView = function(container, view)
 
   this.loaded_posts_event = this.loaded_posts_event.bindAsEventListener(this);
   document.observe("viewer:loaded-posts", this.loaded_posts_event);
+
+  /* Prevent the default behavior of left-clicking on the expanded thumbnail overlay.  It's
+   * handled by container_click_event. */
+  this.container.down(".browser-thumb-hover-overlay").observe("click", function(event) {
+    if(event.isLeftClick())
+      event.preventDefault();
+  }.bindAsEventListener(this));
 }
 
 /* Show the given posts.  If extending is true, post_ids are meant to extend a previous
@@ -322,15 +329,15 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
     if(initial_post_id == null)
       initial_post_id = new_post_ids[0];
 
-    this.center_on_post(initial_post_id);
+    this.center_on_post_for_scroll(initial_post_id);
   }
   else
   {
     var initial_post_id = this.get_current_post_id();
     if(this.post_ids.indexOf(initial_post_id) == -1)
-      this.center_on_post(this.post_ids[0]);
+      this.center_on_post_for_scroll(this.post_ids[0]);
     else
-      this.center_on_post(initial_post_id);
+      this.center_on_post_for_scroll(initial_post_id);
     this.set_active_post(initial_post_id);
   }
 
@@ -369,7 +376,7 @@ ThumbnailView.prototype.hashchange_post_id = function()
     return;
   }
 
-  this.center_on_post(new_post_id);
+  this.center_on_post_for_scroll(new_post_id);
   this.set_active_post(new_post_id);
 }
 
@@ -459,8 +466,7 @@ ThumbnailView.prototype.show_next_post = function(prev)
   }
 
   var new_post_id = this.post_ids[new_idx];
-  this.center_on_post(new_post_id);
-  this.expand_post(new_post_id);
+  this.center_on_post_for_scroll(new_post_id);
   this.set_active_post(new_post_id, true);
 }
 
@@ -494,6 +500,7 @@ ThumbnailView.prototype.scroll = function(left)
   this.center_on_post_for_scroll(new_post_id);
 }
 
+/* Hide the hovered post, if any, call center_on_post(post_id), then */
 /* This calls center_on_post, and also unexpands and reexpands posts correctly to avoid flicker. */
 ThumbnailView.prototype.center_on_post_for_scroll = function(post_id)
 {
@@ -508,13 +515,13 @@ ThumbnailView.prototype.center_on_post_for_scroll = function(post_id)
 
   /*
    * Now that we've re-centered, we need to expand the correct image.  Usually, we can just
-   * wait for the mouseover event to fire, which will expand the element we're hovering over
-   * after centering on the new post.  However, in some cases we won't actually change which
-   * one we're hovering over, eg. if the mouse is over the edge of a landscape image, and
-   * after scrolling the mouse is centered over the same image.  Explicitly figure out which
-   * item we're hovering over and expand it.
+   * wait for the mouseover event to fire, since we hid the expanded thumb overlay and the
+   * image underneith it is now under the mouse.  However, browsers are badly broken here.
+   * Opera doesn't fire mouseover events when the element under the cursor is hidden.  FF
+   * fires the mouseover on hide, but misses the mouseout when the new overlay is shown, so
+   * the next time it's hidden mouseover events are lost.
    *
-   * This doesn't work correctly in IE7; elementFromPoint is returning the wrong element.
+   * Explicitly figure out which item we're hovering over and expand it.
    */
   var element = document.elementFromPoint(this.last_mouse_x, this.last_mouse_y);
   if(element)
@@ -622,32 +629,20 @@ ThumbnailView.prototype.is_post_idx_shown = function(post_idx)
  * including post_id itself. */
 ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
 {
-  var width = 0;
   var post = $("p" + post_id);
-
-  /* Count half of the width of post_id itself as in the left side, and half in
-   * the right side.  If it has an odd width, count the extra pixel as being in
-   * the left side. */
-  if(right)
-    width += post.offsetWidth/2;
-  else
-    width += (post.offsetWidth+1)/2;
-
   if(right)
   {
     var rightmost_node = post.parentNode.lastChild;
-    if(rightmost_node != post)
-    {
-      var right_edge = rightmost_node.offsetLeft + rightmost_node.offsetWidth;
-      var center_post_right_edge = post.offsetLeft + post.offsetWidth;
-      width += right_edge - center_post_right_edge
-    }
+    if(rightmost_node == post)
+      return 0;
+    var right_edge = rightmost_node.offsetLeft + rightmost_node.offsetWidth;
+    var center_post_right_edge = post.offsetLeft + post.offsetWidth;
+    return right_edge - center_post_right_edge
   }
   else
   {
-    width += post.offsetLeft;
+    return post.offsetLeft;
   }
-  return width;
 }
 
 /* Center the thumbnail strip on post_id.  If post_id isn't in the display, do nothing.
@@ -672,18 +667,6 @@ ThumbnailView.prototype.center_on_post = function(post_id)
   if(!this.thumb_container_shown)
     return;
 
-  if(this.posts_populated[0] != this.posts_populated[1])
-  {
-    var i = this.posts_populated[1]-1;
-    var thumb = $("p" + this.post_ids[i]);
-    thumb.setStyle({width: "auto"});
-    thumb.removeClassName("clipped-thumb");
-  }
-
-  /* Clear the padding before calculating the new padding. */
-  var node = this.container.down(".post-browser-posts");
-  node.setStyle({marginLeft: 0});
-
   this.populate_post(post_idx);
 
   /* Make sure that we have enough posts populated around the one we're centering
@@ -694,14 +677,12 @@ ThumbnailView.prototype.center_on_post = function(post_id)
 
     /* We need at least this.container.offsetWidth/2 in each direction.  Load a little more, to
      * reduce flicker. */
-    var minimum_distance = this.container.offsetWidth/2;
+    var minimum_distance = this.container.offsetWidth;
     var maximum_distance = minimum_distance + 500;
     while(true)
     {
       var added = false;
       var width = this.get_width_adjacent_to_post(post_id, right);
-      // XXX: this adds precisely, but we need to remove precisely too for the cropping
-      // logic below to work
       if(width < minimum_distance)
       {
         /* We need another post.  Stop if there are no more posts to add. */
@@ -732,18 +713,6 @@ ThumbnailView.prototype.center_on_post = function(post_id)
 
   this.preload_thumbs();
 
-  /* 
-   * We have to jump some hoops to scroll the thumbs correctly.  We should be able to
-   * set the container to overflow-x: hidden and just change scrollLeft to scroll the
-   * contents.  Unfortunately, we also need overflow-y: visible to allow expanded thumbs
-   * to draw outside of the container, and most browsers don't handle "overflow: hidden visible",
-   * mysteriously changing it to "auto visible".
-   *
-   * Since the container is set to visible, we can't scroll it that way.  Instead, we'll change
-   * the marginLeft of the <UL> itself to move the list around.  Setting a negative margin works
-   * the way we want, causing the list to scroll to the left.
-   */
-
   var thumb = $("p" + post_id);
   var img = thumb.down(".preview");
 
@@ -760,43 +729,10 @@ ThumbnailView.prototype.center_on_post = function(post_id)
    * this bug, in which case we can remove this and expect people to upgrade.  */
   if(window.opera)
     shift_pixels_right += document.documentElement.scrollLeft;
+  shift_pixels_right = Math.round(shift_pixels_right);
 
-  /* We need the real width of .post-browser-posts.  Setting marginLeft will expand it, so
-   * grab it now. */
-  var ul_width = node.offsetWidth;
-
-  node.setStyle({marginLeft: shift_pixels_right + "px"});
-
-  /* 
-   * The rightmost thumb will extend off the right side of the screen.  We need overflow-y: visible,
-   * so expanded thumbnails are visible outside of the container.  No browsers currently support
-   * "overflow: hidden visible".  Without being able to set overflow-x: hidden, the thumbs are visible
-   * off the right edge.
-   *
-   * So, we have this frustrating hack.  The rightmost thumb's LI container is set to overflow: hidden
-   * and gets its width set to the amount actually visible.  This keeps it from extending off the screen,
-   * but also means the rightmost thumb can't be expanded.
-   *
-   * The right margin also needs to be disabled, or it'll also extend off the screen.
-   *
-   * Since we're careful to only load as many thumbs as required to fill the screen, we only need to
-   * do this to the rightmost thumb.
-   *
-   * The .clipped-thumb class handles the margin and overflow.
-   */
-  if(this.posts_populated[0] != this.posts_populated[1])
-  {
-    var post_idx = this.posts_populated[1]-1;
-    var post_id = this.post_ids[post_idx];
-    var thumb = $("p" + post_id);
-
-    if(ul_width > thumb.offsetLeft)
-    {
-      var width = ul_width - thumb.offsetLeft;
-      thumb.setStyle({ width: width + "px" });
-    }
-    thumb.addClassName("clipped-thumb");
-  }
+  var node = this.container.down(".post-browser-posts");
+  node.setStyle({left: shift_pixels_right + "px", position: "relative"});
 }
 
 /* Preload thumbs on the boundary of what's actually displayed. */
@@ -850,19 +786,28 @@ ThumbnailView.prototype.expand_post = function(post_id)
   if(!this.thumb_container_shown)
     return;
 
+  var overlay = this.container.down(".browser-thumb-hover-overlay");
   if(this.expanded_post_id != null)
   {
-    var old_thumb = $("p" + this.expanded_post_id);
-    if(old_thumb)
-      old_thumb.removeClassName("expanded");
+    overlay.hide();
+    overlay.down("IMG").src = "about:blank";
   }
 
   this.expanded_post_id = post_id;
   if(post_id == null)
     return;
 
-  var thumb = $("p" + post_id);
-  thumb.addClassName("expanded");
+  var post = Post.posts.get(post_id);
+
+  /* This doesn't always align properly in Firefox if full-page zooming is being used. */
+  var hover_thumb = $("p" + post.id).down("IMG");
+  var thumb_offset = hover_thumb.cumulativeOffset();
+  overlay.style.left = thumb_offset[0] + "px";
+  overlay.style.top = thumb_offset[1] + "px";
+
+  overlay.href = "/post/show/" + post.id;
+  overlay.down("IMG").src = post.preview_url;
+  overlay.show();
 }
 
 ThumbnailView.prototype.create_thumb = function(post_id)
@@ -883,7 +828,7 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   var visible_width = block_size[0];
   if(width < visible_width)
     visible_width = width;
-  var crop_left = (width - visible_width) / 2;
+  var crop_left = Math.round((width - visible_width) / 2);
 
   /* Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  We
    * do this with visibility: hidden rather than display: none, or the size of the image
@@ -929,18 +874,28 @@ ThumbnailView.prototype.create_thumb = function(post_id)
  * the container, so we don't need to put event handlers on every thumb. */
 ThumbnailView.prototype.container_click_event = function(event)
 {
+  if(event.target.up(".browser-thumb-hover-overlay"))
+  {
+    /* The hover overlay was clicked.  When the user clicks a thumbnail, this is
+     * usually what happens, since the hover overlay covers the actual thumbnail. */
+    this.set_active_post(this.expanded_post_id);
+    event.preventDefault();
+    return;
+  }
+
   var li = event.target.up(".post-thumb");
   if(li == null)
     return;
 
+  /* An actual thumbnail was clicked.  This can happen if we don't have the expanded
+   * thumbnails for some reason. */
   event.preventDefault();
   this.set_active_post(li.post_id);
 }
 
 ThumbnailView.prototype.container_dblclick_event = function(event)
 {
-  var li = event.target.up(".post-thumb");
-  if(li == null)
+  if(event.target.up(".post-thumb") == null && event.target.up(".browser-thumb-hover-overlay") == null)
     return;
 
   event.preventDefault();
@@ -955,7 +910,7 @@ ThumbnailView.prototype.show_thumb_bar = function(shown)
   /* If the centered post was changed while we were hidden, it wasn't applied by
    * center_on_post, so do it now. */
   if(shown)
-    this.center_on_post(this.centered_post_id)
+    this.center_on_post_for_scroll(this.centered_post_id)
 }
 
 ThumbnailView.prototype.toggle_thumb_bar = function()

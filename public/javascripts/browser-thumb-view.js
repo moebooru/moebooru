@@ -947,7 +947,7 @@ function InputHandler()
 
   /* Track the focused element, so we can clear focus on KEY_ESC. */
   this.focused_element = null;
-  document.addEventListener("focus", this.document_focus_event, true);
+  Element.observe(document, "focus", this.document_focus_event, true);
   document.onfocusin = this.document_focus_event;
 
   /*

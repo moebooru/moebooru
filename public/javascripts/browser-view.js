@@ -222,8 +222,6 @@ BrowserView.prototype.set_post_content = function(post_id)
     this.scale_and_position_image();
   }
 
-  debug.log(this.container.down(".post-view-larger"));
-
   // XXX: this is just for voting, handle that separately
   // Post.init_post_show(post_id);
 

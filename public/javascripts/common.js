@@ -362,45 +362,47 @@ sort_array_by_distance = function(list, idx)
 /* When element is dragged, the document moves around it.  If scroll_element is true, the
  * element should be positioned (eg. position: absolute), and the element itself will be
  * scrolled. */
-WindowDragElement = function(element, scroll_element)
+DragElement = function(element, ondrag, onstartdrag, onenddrag)
 {
   this.mousemove_event = this.mousemove_event.bindAsEventListener(this);
   this.mousedown_event = this.mousedown_event.bindAsEventListener(this);
+  this.dragstart_event = this.dragstart_event.bindAsEventListener(this);
   this.mouseup_event = this.mouseup_event.bindAsEventListener(this);
   this.click_event = this.click_event.bindAsEventListener(this);
   this.selectstart_event = this.selectstart_event.bindAsEventListener(this);
 
+  this.ondrag = ondrag;
+  this.onstartdrag = onstartdrag;
+  this.onenddrag = onenddrag;
+
   this.element = element;
-  this.scroll_element = scroll_element;
-  this.last_mouse_x = null;
-  this.last_mouse_y = null;
   this.dragging = false;
 
   /*
    * Starting drag on mousedown works in most browsers, but has an annoying side-
    * effect: we need to stop the event to prevent any browser drag operations from
    * happening, and that'll also prevent clicking the element from focusing the
-   * window.
+   * window.  Stop the actual drag in dragstart.  We won't get mousedown in
+   * Opera, but we don't need to stop it there either.
    *
-   * Using dragstart doesn't have that problem, but doesn't work in Opera.
-   *
-   * Finally, we may or may not get a click event after mouseup.  This is a pain:
-   * if we get a click event, we need to cancel it if we dragged, but we may not
-   * get a click event at all; detecting whether a click event came from the drag
-   * or not is difficult.  Cancelling mouseup has no effect.  FF, IE7 and Opera still
-   * send the click event if their dragstart or mousedown event is cancelled; WebKit
-   * doesn't.
+   * Sometimes drag events can leak through, and attributes like -moz-user-select may
+   * be needed to prevent it.
    */
-  if(window.opera)
-    element.observe("mousedown", this.mousedown_event);
-  else
-    element.observe("dragstart", this.mousedown_event);
+  element.observe("mousedown", this.mousedown_event);
+  element.observe("dragstart", this.dragstart_event);
 
+  /*
+   * We may or may not get a click event after mouseup.  This is a pain: if we get a
+   * click event, we need to cancel it if we dragged, but we may not get a click event
+   * at all; detecting whether a click event came from the drag or not is difficult.
+   * Cancelling mouseup has no effect.  FF, IE7 and Opera still send the click event
+   * if their dragstart or mousedown event is cancelled; WebKit doesn't.
+   */
   if(!Prototype.Browser.WebKit)
     element.observe("click", this.click_event);
 }
 
-WindowDragElement.prototype.mousemove_event = function(event)
+DragElement.prototype.mousemove_event = function(event)
 {
   event.stop();
   
@@ -410,24 +412,132 @@ WindowDragElement.prototype.mousemove_event = function(event)
   var x = event.pointerX() - scrollLeft;
   var y = event.pointerY() - scrollTop;
 
-  this.last_mouse_x = x;
-  this.last_mouse_y = y;
   if(!this.dragging)
     return;
   if(!this.dragged)
   {
     this.dragged = true;
     document.body.addClassName("dragging");
+
+    if(this.onstartdrag)
+      this.onstartdrag(this);
   }
 
-  var diff_x = x - this.anchor_x;
-  var diff_y = y - this.anchor_y;
+  var anchored_x = x - this.anchor_x;
+  var anchored_y = y - this.anchor_y;
+
+  var relative_x = x - this.last_x;
+  var relative_y = y - this.last_y;
+  this.last_x = x;
+  this.last_y = y;
+
+  if(this.ondrag)
+  {
+    this.ondrag({
+      dragger: this,
+      x: x,
+      y: y,
+      aX: anchored_x,
+      aY: anchored_y,
+      dX: relative_x,
+      dY: relative_y,
+      event: event
+    });
+  }
+}
+
+DragElement.prototype.mousedown_event = function(event)
+{
+  if(!event.isLeftClick())
+    return;
+
+  Event.observe(document, "mouseup", this.mouseup_event);
+  Event.observe(document, "mousemove", this.mousemove_event);
+  Event.observe(document, "selectstart", this.selectstart_event);
+
+  this.dragging = true;
+  this.dragged = false;
+
+  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+
+  this.anchor_x = event.pointerX() - scrollLeft;
+  this.anchor_y = event.pointerY() - scrollTop;
+  this.last_x = this.anchor_x;
+  this.last_y = this.anchor_y;
+}
+
+DragElement.prototype.mouseup_event = function(event)
+{
+  if(!event.isLeftClick())
+    return;
+
+  if(this.dragging)
+  {
+    this.dragging = false;
+    document.body.removeClassName("dragging");
+
+    if(this.onenddrag)
+      this.onenddrag(this);
+  }
+
+  Event.stopObserving(document, "mouseup", this.mouseup_event);
+  Event.stopObserving(document, "mousemove", this.mousemove_event);
+  Event.stopObserving(document, "selectstart", this.selectstart_event);
+}
+
+DragElement.prototype.click_event = function(event)
+{
+  /* If this click was part of a drag, cancel the click. */
+  if(this.dragged)
+    event.stop();
+  this.dragged = false;
+}
+
+DragElement.prototype.dragstart_event = function(event)
+{
+  event.preventDefault();
+}
+
+DragElement.prototype.selectstart_event = function(event)
+{
+  event.stop();
+}
+
+/* When element is dragged, the document moves around it.  If scroll_element is true, the
+ * element should be positioned (eg. position: absolute), and the element itself will be
+ * scrolled. */
+WindowDragElement = function(element, scroll_element)
+{
+  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
+
+  this.element = element;
+  this.scroll_element = scroll_element;
+}
+
+WindowDragElement.prototype.startdrag = function()
+{
+  if(this.scroll_element)
+  {
+    this.scroll_anchor_x = this.element.offsetLeft;
+    this.scroll_anchor_y = this.element.offsetTop;
+  }
+  else
+  {
+    var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+    var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+    this.scroll_anchor_x = scrollLeft;
+    this.scroll_anchor_y = scrollTop;
+  }
+}
+
+WindowDragElement.prototype.ondrag = function(e)
+{
+  var scrollLeft = this.scroll_anchor_x + e.aX;
+  var scrollTop = this.scroll_anchor_y + e.aY;
 
   if(this.scroll_element)
   {
-    var scrollLeft = this.scroll_anchor_x + diff_x;
-    var scrollTop = this.scroll_anchor_y + diff_y;
-
     /* Don't allow dragging the image off the screen; there'll be no way to
      * get it back. */
     var window_size = document.viewport.getDimensions();
@@ -442,71 +552,7 @@ WindowDragElement.prototype.mousemove_event = function(event)
   }
   else
   {
-    var scrollLeft = this.scroll_anchor_x - diff_x;
-    var scrollTop = this.scroll_anchor_y - diff_y;
     scrollTo(scrollLeft, scrollTop);
   }
-}
-
-WindowDragElement.prototype.mousedown_event = function(event)
-{
-  /* Only check if this is a left click if we're using the mousedown event; IE7
-   * doesn't set the button property on dragstart. */
-  if(event.type == "mousedown" && !event.isLeftClick())
-    return;
-
-  Event.observe(document, "mouseup", this.mouseup_event);
-  Event.observe(document, "mousemove", this.mousemove_event);
-  Event.observe(document, "selectstart", this.selectstart_event);
-
-  this.dragging = true;
-  this.dragged = false;
-
-  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
-  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
-
-  if(this.scroll_element)
-  {
-    this.scroll_anchor_x = this.element.offsetLeft;
-    this.scroll_anchor_y = this.element.offsetTop;
-  }
-  else
-  {
-    this.scroll_anchor_x = scrollLeft;
-    this.scroll_anchor_y = scrollTop;
-  }
-
-  this.anchor_x = event.pointerX() - scrollLeft;
-  this.anchor_y = event.pointerY() - scrollTop;
-  event.preventDefault();
-}
-
-WindowDragElement.prototype.mouseup_event = function(event)
-{
-  if(!event.isLeftClick())
-    return;
-
-  if(this.dragging)
-  {
-    this.dragging = false;
-    document.body.removeClassName("dragging");
-  }
-
-  Event.stopObserving(document, "mouseup", this.mouseup_event);
-  Event.stopObserving(document, "mousemove", this.mousemove_event);
-  Event.stopObserving(document, "selectstart", this.selectstart_event);
-}
-
-WindowDragElement.prototype.click_event = function(event)
-{
-  /* If this click was part of a drag, cancel the click. */
-  if(this.dragged)
-    event.stop();
-  this.dragged = false;
-}
-
-WindowDragElement.prototype.selectstart_event = function(event)
-{
-  event.stop();
 }
 

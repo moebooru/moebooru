@@ -400,6 +400,7 @@ class PostController < ApplicationController
   end
 
   def browse
+    render :layout => "bare"
   end
 
   def view

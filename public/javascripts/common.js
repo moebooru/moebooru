@@ -90,6 +90,16 @@ Object.extend(Element.Methods, {
     else
       return $(element).hide();
   },
+  setClassName: function(element, className, enabled) {
+    if(enabled)
+      return $(element).addClassName(className);
+    else
+      return $(element).removeClassName(className);
+  },
+  pickClassName: function(element, classNameEnabled, classNameDisabled, enabled) {
+    $(element).setClassName(classNameEnabled, enabled);
+    $(element).setClassName(classNameDisabled, !enabled);
+  },
   isParentNode: function(element, parentNode) {
     while(element) {
       if(element == parentNode)

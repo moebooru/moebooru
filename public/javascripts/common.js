@@ -556,3 +556,24 @@ WindowDragElement.prototype.ondrag = function(e)
   }
 }
 
+number_to_human_size = function(bytes)
+{
+  var units = ["byte", "KB", "MB", "GB", "TB"];
+
+  var i = 0;
+  while(true)
+  {
+    if(bytes < 1024)
+      break;
+    if(i == units.length - 1)
+      break;
+    bytes /= 1024.0;
+    ++i;
+  }
+
+  var unit = units[i];
+  if(i == 0 && bytes != 1)
+    unit += "s";
+  return bytes.toFixed(i == 0? 0:1) + " " + unit;
+}
+

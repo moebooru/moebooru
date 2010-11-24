@@ -417,7 +417,7 @@ DragElement.prototype.mousemove_event = function(event)
   if(!this.dragged)
   {
     this.dragged = true;
-    document.body.addClassName("dragging");
+    $(document.body).addClassName("dragging");
 
     if(this.onstartdrag)
       this.onstartdrag(this);
@@ -475,7 +475,7 @@ DragElement.prototype.mouseup_event = function(event)
   if(this.dragging)
   {
     this.dragging = false;
-    document.body.removeClassName("dragging");
+    $(document.body).removeClassName("dragging");
 
     if(this.onenddrag)
       this.onenddrag(this);

@@ -358,9 +358,8 @@ ThumbnailView.prototype.container_mouseover_event = function(event)
   var li = event.target.up(".post-thumb");
   if(!li)
     return;
-  var post_id = li.post_id;
 
-  this.expand_post(post_id);
+  this.expand_post(li.post_id);
 }
 
 ThumbnailView.prototype.hashchange_post_id = function()
@@ -500,15 +499,9 @@ ThumbnailView.prototype.scroll = function(left)
   this.center_on_post_for_scroll(new_post_id);
 }
 
-/* Hide the hovered post, if any, call center_on_post(post_id), then */
-/* This calls center_on_post, and also unexpands and reexpands posts correctly to avoid flicker. */
+/* Hide the hovered post, if any, call center_on_post(post_id), then hover over the correct post again. */
 ThumbnailView.prototype.center_on_post_for_scroll = function(post_id)
 {
-  /*
-   * Centering on a new post is likely to change which one we're hovering over.  Unexpand
-   * the current post before scrolling, so the post doesn't flicker expanded in a new position
-   * before being un-expanded by the mouseover event.
-   */
   this.expand_post(null);
 
   this.center_on_post(post_id);
@@ -528,10 +521,7 @@ ThumbnailView.prototype.center_on_post_for_scroll = function(post_id)
   {
     var li = element.up(".post-thumb");
     if(li)
-    {
-      var post_id = li.post_id;
-      this.expand_post(post_id);
-    }
+      this.expand_post(li.post_id);
   }
 }
 
@@ -713,26 +703,16 @@ ThumbnailView.prototype.center_on_post = function(post_id)
 
   this.preload_thumbs();
 
-  var thumb = $("p" + post_id);
-  var img = thumb.down(".preview");
-
   /* We always center the thumb.  Don't clamp to the edge when we're near the first or last
    * item, so we always have empty space on the sides for expanded landscape thumbnails to
    * be visible. */
+  var thumb = $("p" + post_id);
   var center_on_position = this.container.offsetWidth/2;
-
-  var shift_pixels_right = center_on_position - img.width/2 - img.cumulative_offset_range_x(img.up("UL"));
-
-  /* As of build 3516 (10.63), Opera is handling offsetLeft for elements inside fixed containers
-   * incorrectly: they're affected by the scroll position, even though the nodes aren't.  This
-   * is annoying to work around; let's just subtract out the error.  This will break if Opera fixes
-   * this bug, in which case we can remove this and expect people to upgrade.  */
-  if(window.opera)
-    shift_pixels_right += document.documentElement.scrollLeft;
+  var shift_pixels_right = center_on_position - thumb.offsetWidth/2 - thumb.offsetLeft;
   shift_pixels_right = Math.round(shift_pixels_right);
 
   var node = this.container.down(".post-browser-posts");
-  node.setStyle({left: shift_pixels_right + "px", position: "relative"});
+  node.setStyle({left: shift_pixels_right + "px"});
 }
 
 /* Preload thumbs on the boundary of what's actually displayed. */

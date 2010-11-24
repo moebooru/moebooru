@@ -622,19 +622,32 @@ ThumbnailView.prototype.is_post_idx_shown = function(post_idx)
  * including post_id itself. */
 ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
 {
+  var width = 0;
   var post = $("p" + post_id);
+
+  /* Count half of the width of post_id itself as in the left side, and half in
+   * the right side.  If it has an odd width, count the extra pixel as being in
+   * the left side. */
+  if(right)
+    width += post.offsetWidth/2;
+  else
+    width += (post.offsetWidth+1)/2;
+
   if(right)
   {
     var rightmost_node = post.parentNode.lastChild;
-    if(rightmost_node == post)
-      return 0;
-    var right_edge = rightmost_node.offsetLeft + rightmost_node.offsetWidth;
-    return right_edge - post.offsetLeft - post.offsetWidth;
+    if(rightmost_node != post)
+    {
+      var right_edge = rightmost_node.offsetLeft + rightmost_node.offsetWidth;
+      var center_post_right_edge = post.offsetLeft + post.offsetWidth;
+      width += right_edge - center_post_right_edge
+    }
   }
   else
   {
-    return post.offsetLeft;
+    width += post.offsetLeft;
   }
+  return width;
 }
 
 /* Center the thumbnail strip on post_id.  If post_id isn't in the display, do nothing.
@@ -659,6 +672,13 @@ ThumbnailView.prototype.center_on_post = function(post_id)
   if(!this.thumb_container_shown)
     return;
 
+  if(this.posts_populated[0] != this.posts_populated[1])
+  {
+    var i = this.posts_populated[1]-1;
+    var thumb = $("p" + this.post_ids[i]);
+    thumb.setStyle({width: "auto"});
+    thumb.removeClassName("clipped-thumb");
+  }
 
   /* Clear the padding before calculating the new padding. */
   var node = this.container.down(".post-browser-posts");
@@ -674,12 +694,14 @@ ThumbnailView.prototype.center_on_post = function(post_id)
 
     /* We need at least this.container.offsetWidth/2 in each direction.  Load a little more, to
      * reduce flicker. */
-    var minimum_distance = this.container.offsetWidth*3/4;
+    var minimum_distance = this.container.offsetWidth/2;
     var maximum_distance = minimum_distance + 500;
     while(true)
     {
       var added = false;
       var width = this.get_width_adjacent_to_post(post_id, right);
+      // XXX: this adds precisely, but we need to remove precisely too for the cropping
+      // logic below to work
       if(width < minimum_distance)
       {
         /* We need another post.  Stop if there are no more posts to add. */
@@ -739,7 +761,42 @@ ThumbnailView.prototype.center_on_post = function(post_id)
   if(window.opera)
     shift_pixels_right += document.documentElement.scrollLeft;
 
+  /* We need the real width of .post-browser-posts.  Setting marginLeft will expand it, so
+   * grab it now. */
+  var ul_width = node.offsetWidth;
+
   node.setStyle({marginLeft: shift_pixels_right + "px"});
+
+  /* 
+   * The rightmost thumb will extend off the right side of the screen.  We need overflow-y: visible,
+   * so expanded thumbnails are visible outside of the container.  No browsers currently support
+   * "overflow: hidden visible".  Without being able to set overflow-x: hidden, the thumbs are visible
+   * off the right edge.
+   *
+   * So, we have this frustrating hack.  The rightmost thumb's LI container is set to overflow: hidden
+   * and gets its width set to the amount actually visible.  This keeps it from extending off the screen,
+   * but also means the rightmost thumb can't be expanded.
+   *
+   * The right margin also needs to be disabled, or it'll also extend off the screen.
+   *
+   * Since we're careful to only load as many thumbs as required to fill the screen, we only need to
+   * do this to the rightmost thumb.
+   *
+   * The .clipped-thumb class handles the margin and overflow.
+   */
+  if(this.posts_populated[0] != this.posts_populated[1])
+  {
+    var post_idx = this.posts_populated[1]-1;
+    var post_id = this.post_ids[post_idx];
+    var thumb = $("p" + post_id);
+
+    if(ul_width > thumb.offsetLeft)
+    {
+      var width = ul_width - thumb.offsetLeft;
+      thumb.setStyle({ width: width + "px" });
+    }
+    thumb.addClassName("clipped-thumb");
+  }
 }
 
 /* Preload thumbs on the boundary of what's actually displayed. */
@@ -861,6 +918,10 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   item.className = li_class;
   item.id = "p" + post_id;
   item.post_id = post_id;
+
+  var inner = item.down(".inner");
+  inner.actual_width = block_size[0];
+  inner.actual_height = block_size[1];
   return item;
 }
 
@@ -1003,8 +1064,9 @@ InputHandler.prototype.handle_keypress = function(e)
 
   if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
     return false;
-
-  if(key == 32) // space
+  if(key == Event.KEY_BACKSPACE)
+    document.fire("viewer:set-post-ui", { toggle: true });
+  else if(key == 32) // space
     document.fire("viewer:toggle-thumb-bar");
   else if(key == 65 || key == 97) // A, b
     document.fire("viewer:show-next-post", { prev: true });

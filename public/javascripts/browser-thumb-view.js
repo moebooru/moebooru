@@ -861,9 +861,6 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   item.className = li_class;
   item.id = "p" + post_id;
   item.post_id = post_id;
-
-  // We need to specify a width on the <li>, since IE7 won't figure it out on its own.
-  item.setStyle({width: block_size[0] + "px"});
   return item;
 }
 

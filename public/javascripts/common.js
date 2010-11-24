@@ -431,6 +431,17 @@ WindowDragElement.prototype.mousemove_event = function(event)
   {
     var scrollLeft = this.scroll_anchor_x + diff_x;
     var scrollTop = this.scroll_anchor_y + diff_y;
+
+    /* Don't allow dragging the image off the screen; there'll be no way to
+     * get it back. */
+    var window_size = document.viewport.getDimensions();
+    var min_visible = Math.min(100, this.element.offsetWidth);
+    scrollLeft = Math.max(scrollLeft, min_visible - this.element.offsetWidth);
+    scrollLeft = Math.min(scrollLeft, window_size.width - min_visible);
+
+    var min_visible = Math.min(100, this.element.offsetHeight);
+    scrollTop = Math.max(scrollTop, min_visible - this.element.offsetHeight);
+    scrollTop = Math.min(scrollTop, window_size.height - min_visible);
     this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
   }
   else

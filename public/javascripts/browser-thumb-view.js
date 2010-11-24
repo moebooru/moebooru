@@ -860,19 +860,11 @@ ThumbnailView.prototype.create_thumb = function(post_id)
 
   var width = post.actual_preview_width;
   var height = post.actual_preview_height;
-/*
-  var block_size = [width, 200];
-  var crop_left = 0;
-*/
+
   /* This crops blocks that are too wide, but doesn't pad them if they're too
    * narrow, since that creates odd spacing. */
-  var block_size = [200, 200];
-  if(width < block_size[0])
-    block_size[0] = width;
-  var visible_width = block_size[0];
-  if(width < visible_width)
-    visible_width = width;
-  var crop_left = Math.round((width - visible_width) / 2);
+  var block_size = [Math.min(width, 200), 200];
+  var crop_left = Math.round((width - block_size[0]) / 2);
 
   /* Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  We
    * do this with visibility: hidden rather than display: none, or the size of the image
@@ -958,10 +950,7 @@ ThumbnailView.prototype.show_thumb_bar = function(shown)
   /* If the centered post was changed while we were hidden, it wasn't applied by
    * center_on_post, so do it now. */
   if(shown)
-  {
-    this.centered_post_offset = 0;
     this.center_on_post_for_scroll(this.centered_post_idx)
-  }
 }
 
 ThumbnailView.prototype.toggle_thumb_bar = function()

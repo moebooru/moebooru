@@ -40,12 +40,43 @@ BrowserView = function(container)
   this.last_preload_request = [];
   this.last_preload_request_active = false;
 
+  /* True if the post UI is visible.  The viewer:set-post-ui changes this. */
+  this.post_ui_visible = true;
+
   debug.add_hook(this.get_debug.bind(this));
 
   this.image_loaded_event = this.image_loaded_event.bindAsEventListener(this);
   this.img = this.container.down(".image");
   this.img.observe("load", this.image_loaded_event);
+
+  this.set_post_ui_event = this.set_post_ui_event.bindAsEventListener(this);
+  Event.observe(document, "viewer:set-post-ui", this.set_post_ui_event);
+
+  /* Image controls: */
+  this.click_image_zoom_event = this.click_image_zoom_event.bindAsEventListener(this);
+  this.container.down(".post-view-larger").observe("click", this.click_image_zoom_event);
 }
+
+/*
+ * viewer:set-post-ui
+ * { toggle: true } or
+ * { set: boolean }
+ */
+BrowserView.prototype.set_post_ui_event = function(event)
+{
+  var new_value = this.post_ui_visible;
+  if(event.memo.toggle)
+    new_value = !this.post_ui_visible;
+  else
+    new_value = event.memo.set;
+  if(new_value == this.post_ui_visible)
+    return;
+
+  this.post_ui_visible = new_value;
+
+  this.container.down(".post-info").show(this.post_ui_visible && this.displayed_post_id);
+}
+
 
 BrowserView.prototype.image_loaded_event = function(event)
 {
@@ -166,6 +197,10 @@ BrowserView.prototype.set_post_content = function(post_id)
   var post = Post.posts.get(post_id);
   if(post == null)
   {
+    if(this.displayed_post_id == null)
+    {
+      this.container.down(".post-info").hide();
+    }
     this.load_post_id_data(post_id);
     return;
   }
@@ -175,8 +210,6 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   /* Clear the previous post, if any. */
   this.img.src = "about:blank";
-  this.img.original_width = null;
-  this.img.original_height = null;
 
   if(post)
   {
@@ -189,38 +222,70 @@ BrowserView.prototype.set_post_content = function(post_id)
     this.scale_and_position_image();
   }
 
-  Post.init_post_show(post_id);
-// InitTextAreas();
+  debug.log(this.container.down(".post-view-larger"));
+
+  // XXX: this is just for voting, handle that separately
+  // Post.init_post_show(post_id);
 
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
+
+  this.container.down(".post-view-larger").pickClassName("enabled", "disabled", post.jpeg_url != post.sample_url);
+  this.container.down(".post-info").show(this.post_ui_visible);
 }
 
-BrowserView.prototype.scale_and_position_image = function()
+BrowserView.prototype.click_image_zoom_event = function(e)
 {
-  var img = this.img;
-  if(img.original_width == null)
+  e.stop();
+  var post = Post.posts.get(this.displayed_post_id);
+  if(post == null)
+    return;
+
+  if(post.jpeg_url == post.sample_url)
   {
-    img.original_width = img.width;
-    img.original_height = img.height;
+    /* There's no larger version to display. */
+    return;
   }
 
-  var window_size = document.viewport.getDimensions();
-  var client_width = window_size.width;
-  var client_height = window_size.height;
-
-  /* Zoom the image to fit the viewport. */
-  var ratio = client_width / img.original_width;
-  if (img.original_height * ratio > client_height)
-    ratio = client_height / img.original_height;
-  if(ratio < 1)
+  /* Toggle between the sample and JPEG version. */
+  if(this.img.src != post.jpeg_url)
   {
-    img.width = img.original_width * ratio;
-    img.height = img.original_height * ratio;
+    this.img.src = post.jpeg_url;
+    this.img.width = post.jpeg_width;
+    this.img.height = post.jpeg_height;
+    this.scale_and_position_image(true);
+  }
+  else
+  {
+    this.img.width = post.sample_width;
+    this.img.height = post.sample_height;
+    this.img.src = post.sample_url;
+    this.scale_and_position_image(false);
+  }
+}
+
+BrowserView.prototype.scale_and_position_image = function(position_only)
+{
+  var img = this.img;
+  var original_width = img.width;
+  var original_height = img.height;
+
+  var window_size = document.viewport.getDimensions();
+
+  if(!position_only)
+  {
+    /* Zoom the image to fit the viewport. */
+    var ratio = window_size.width / original_width;
+    if (original_height * ratio > window_size.height)
+      ratio = window_size.height / original_height;
+    if(ratio < 1)
+    {
+      img.width = original_width * ratio;
+      img.height = original_height * ratio;
+    }
   }
 
   img.setStyle({left: "0px", top: "0px"});
 
-  var window_size = document.viewport.getDimensions();
   var offset = img.cumulativeOffset();
   var left_spacing = (window_size.width - img.offsetWidth) / 2;
   var top_spacing = (window_size.height - img.offsetHeight) / 2;

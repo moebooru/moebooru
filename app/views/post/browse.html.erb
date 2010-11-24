@@ -13,15 +13,19 @@
   </div>
 </div>
 
-<div id="post-content" style="width: 100%; text-align: center;">
+<div id="post-content" style="width: 100%;">
   <img id="image" class="image">
+  <div class="post-info" style="display: none;">
+    <a href="#" class="post-view-larger">View larger version</a>
+  </div>
 </div>
 
 <script type="text/javascript">
-  var debug = new DebugWindow();
+  var debug;
 
 document.observe("dom:loaded", function()
 {
+  debug = new DebugWindow();
   var normalize_hash = function(h)
   {
     // Normalize:

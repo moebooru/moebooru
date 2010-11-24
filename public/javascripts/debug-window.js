@@ -17,6 +17,7 @@ DebugWindow.prototype.create_container = function()
     return;
 
   var div = document.createElement("DIV");
+  div = $(div);
   div.className = "debug-box";
   div.setStyle({position: "fixed", bottom: "100px", maxHeight: "50%", backgroundColor: "#000"});
   document.body.appendChild(div);

@@ -1,12 +1,10 @@
+<% content_for("html_header") do %>
+  <meta name="viewport" content="target-densityDpi=350; minimum-scale=1; maximum-scale=1; initial-scale=1;">
+<% end %>
+
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
 
 <div id="post-browser" class="post-browser">
-  <div class="browser-top-bar">
-    <form action="#" class="tags-form" method="get" style="display: inline;">
-      <input class="post-browser-tags-form" name="tags" size="20" type="text">
-      <input style="display: none;" type="submit">
-    </form>
-  </div>
   <a style="display: none;" class="browser-thumb-hover-overlay" href="#">
     <img src="about:blank" alt="">
   </a>
@@ -15,21 +13,34 @@
     <ul class="post-browser-posts"></ul>
     <div class="post-browser-no-results" style="display: none; text-align: center; font-size: 200%;">No search results.</div>
   </div>
+
+  <div class="browser-top-bar">
+    <form action="#" class="tags-form" method="get" style="display: inline;">
+      <input class="post-browser-tags-form" name="tags" size="20" type="text">
+      <input style="display: none;" type="submit">
+    </form>
+  </div>
 </div>
 
 <div id="post-content" style="width: 100%;">
   <img id="image" class="image">
   <div class="post-info" style="display: none;">
-    <a href="#" class="post-view-larger">View larger version</a>
+    <ul>
+      <li><a href="#" class="post-view-larger">View larger version</a></li>
+      <li><a href="#" class="download-image">Download image (<span class="download-image-desc"></span>)</a></li>
+      <li><a href="#" class="download-jpeg">Download larger version (<span class="download-jpeg-desc"></span>)</a></li>
+      <li><a href="#" class="download-png">Download PNG (<span class="download-png-desc"></span>)</a></li>
   </div>
 </div>
 
 <script type="text/javascript">
-  var debug;
+var debug;
 
 document.observe("dom:loaded", function()
 {
   debug = new DebugWindow();
+  InitializeFullScreenBrowserHandlers();
+
   var normalize_hash = function(h)
   {
     // Normalize:
@@ -75,43 +86,67 @@ document.observe("dom:loaded", function()
   }
 
   UrlHash.set_normalize(normalize_hash, denormalize_hash);
-  var view = new BrowserView($("post-content"));
-  var thumbnail_view = new ThumbnailView($("post-browser"), view);
-  new WindowTitleHandler();
-  new PostLoader();
 
-  new InputHandler();
-
-  var container = $("post-browser");
-  var update = function()
+  function initialize_browser()
   {
-    container.down(".tags-form").tags.value = UrlHash.get("tags") || "";
+    var view = new BrowserView($("post-content"));
+    var thumbnail_view = new ThumbnailView($("post-browser"), view);
+    new WindowTitleHandler();
+    new PostLoader();
+
+    new InputHandler();
+
+    var container = $("post-browser");
+    var update = function()
+    {
+      container.down(".tags-form").tags.value = UrlHash.get("tags") || "";
+    }
+
+    update();
+
+    container.down(".tags-form").observe("submit", function(e)
+    {
+      e.stop();
+
+      var tags_element = container.down(".tags-form").tags;
+      tags_element.blur();
+
+      var tags = tags_element.value;
+      UrlHash.set({tags: tags});
+    });
+
+    UrlHash.observe("tags", function() {
+      update();
+    });
+    document.observe("viewer:focus-tag-box", function(e) {
+      thumbnail_view.show_thumb_bar(true);
+      container.down(".tags-form").tags.focus();
+      container.down(".tags-form").tags.select();
+      return true;
+    });
+
+    new WindowDragElement($("post-content").down(".image"), true);
   }
 
-  update();
-
-  container.down(".tags-form").observe("submit", function(e)
+  if(AndroidDetectWindowSize.required())
   {
-    e.stop();
+    /* We need to figure out the window size.  Do this before starting up the browser,
+     * to speed it up. */
+    var trigger_initialization = function(e)
+    {
+      document.stopObserving("resize", trigger_initialization);
+      initialize_browser.defer();
+    }
+    document.observe("resize", trigger_initialization);
 
-    var tags_element = container.down(".tags-form").tags;
-    tags_element.blur();
-
-    var tags = tags_element.value;
-    UrlHash.set({tags: tags});
-  });
-
-  UrlHash.observe("tags", function() {
-    update();
-  });
-  document.observe("viewer:focus-tag-box", function(e) {
-    thumbnail_view.show_thumb_bar(true);
-    container.down(".tags-form").tags.focus();
-    container.down(".tags-form").tags.select();
-    return true;
-  });
-
-  new WindowDragElement($("post-content").down(".image"), true);
+    /* This will always fire resize at least once. */
+    new AndroidDetectWindowSize();
+  }
+  else
+  {
+    /* Normal initialization. */
+    initialize_browser();
+  }
 });
 </script>
 

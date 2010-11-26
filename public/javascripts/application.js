@@ -4327,46 +4327,46 @@ Element.addMethods();
 //  Justin Palmer (http://encytemedia.com/)
 //  Mark Pilgrim (http://diveintomark.org/)
 //  Martin Bialasinki
-//
+// 
 // script.aculo.us is freely distributable under the terms of an MIT-style license.
-// For details, see the script.aculo.us web site: http://script.aculo.us/
+// For details, see the script.aculo.us web site: http://script.aculo.us/ 
 
-// converts rgb() and #xxx to #xxxxxx format,
-// returns self (or first argument) if not convertable
-String.prototype.parseColor = function() {
+// converts rgb() and #xxx to #xxxxxx format,  
+// returns self (or first argument) if not convertable  
+String.prototype.parseColor = function() {  
   var color = '#';
-  if (this.slice(0,4) == 'rgb(') {
-    var cols = this.slice(4,this.length-1).split(',');
-    var i=0; do { color += parseInt(cols[i]).toColorPart() } while (++i<3);
-  } else {
-    if (this.slice(0,1) == '#') {
-      if (this.length==4) for(var i=1;i<4;i++) color += (this.charAt(i) + this.charAt(i)).toLowerCase();
-      if (this.length==7) color = this.toLowerCase();
-    }
-  }
-  return (color.length==7 ? color : (arguments[0] || this));
+  if (this.slice(0,4) == 'rgb(') {  
+    var cols = this.slice(4,this.length-1).split(',');  
+    var i=0; do { color += parseInt(cols[i]).toColorPart() } while (++i<3);  
+  } else {  
+    if (this.slice(0,1) == '#') {  
+      if (this.length==4) for(var i=1;i<4;i++) color += (this.charAt(i) + this.charAt(i)).toLowerCase();  
+      if (this.length==7) color = this.toLowerCase();  
+    }  
+  }  
+  return (color.length==7 ? color : (arguments[0] || this));  
 };
 
 /*--------------------------------------------------------------------------*/
 
-Element.collectTextNodes = function(element) {
+Element.collectTextNodes = function(element) {  
   return $A($(element).childNodes).collect( function(node) {
-    return (node.nodeType==3 ? node.nodeValue :
+    return (node.nodeType==3 ? node.nodeValue : 
       (node.hasChildNodes() ? Element.collectTextNodes(node) : ''));
   }).flatten().join('');
 };
 
-Element.collectTextNodesIgnoreClass = function(element, className) {
+Element.collectTextNodesIgnoreClass = function(element, className) {  
   return $A($(element).childNodes).collect( function(node) {
-    return (node.nodeType==3 ? node.nodeValue :
-      ((node.hasChildNodes() && !Element.hasClassName(node,className)) ?
+    return (node.nodeType==3 ? node.nodeValue : 
+      ((node.hasChildNodes() && !Element.hasClassName(node,className)) ? 
         Element.collectTextNodesIgnoreClass(node, className) : ''));
   }).flatten().join('');
 };
 
 Element.setContentZoom = function(element, percent) {
-  element = $(element);
-  element.setStyle({fontSize: (percent/100) + 'em'});
+  element = $(element);  
+  element.setStyle({fontSize: (percent/100) + 'em'});   
   if (Prototype.Browser.WebKit) window.scrollBy(0,0);
   return element;
 };
@@ -4394,23 +4394,28 @@ var Effect = {
   Transitions: {
     linear: Prototype.K,
     sinoidal: function(pos) {
-      return (-Math.cos(pos*Math.PI)/2) + .5;
+      return (-Math.cos(pos*Math.PI)/2) + 0.5;
     },
     reverse: function(pos) {
       return 1-pos;
     },
     flicker: function(pos) {
-      var pos = ((-Math.cos(pos*Math.PI)/4) + .75) + Math.random()/4;
+      var pos = ((-Math.cos(pos*Math.PI)/4) + 0.75) + Math.random()/4;
       return pos > 1 ? 1 : pos;
     },
     wobble: function(pos) {
-      return (-Math.cos(pos*Math.PI*(9*pos))/2) + .5;
+      return (-Math.cos(pos*Math.PI*(9*pos))/2) + 0.5;
     },
-    pulse: function(pos, pulses) {
-      return (-Math.cos((pos*((pulses||5)-.5)*2)*Math.PI)/2) + .5;
+    pulse: function(pos, pulses) { 
+      pulses = pulses || 5; 
+      return (
+        ((pos % (1/pulses)) * pulses).round() == 0 ? 
+              ((pos * pulses * 2) - (pos * pulses * 2).floor()) : 
+          1 - ((pos * pulses * 2) - (pos * pulses * 2).floor())
+        );
     },
-    spring: function(pos) {
-      return 1 - (Math.cos(pos * 4.5 * Math.PI) * Math.exp(-pos * 6));
+    spring: function(pos) { 
+      return 1 - (Math.cos(pos * 4.5 * Math.PI) * Math.exp(-pos * 6)); 
     },
     none: function(pos) {
       return 0;
@@ -4431,14 +4436,14 @@ var Effect = {
   tagifyText: function(element) {
     var tagifyStyle = 'position:relative';
     if (Prototype.Browser.IE) tagifyStyle += ';zoom:1';
-
+    
     element = $(element);
     $A(element.childNodes).each( function(child) {
       if (child.nodeType==3) {
         child.nodeValue.toArray().each( function(character) {
           element.insertBefore(
             new Element('span', {style: tagifyStyle}).update(
-              character == ' ' ? String.fromCharCode(160) : character),
+              character == ' ' ? String.fromCharCode(160) : character), 
               child);
         });
         Element.remove(child);
@@ -4447,13 +4452,13 @@ var Effect = {
   },
   multiple: function(element, effect) {
     var elements;
-    if (((typeof element == 'object') ||
-        Object.isFunction(element)) &&
+    if (((typeof element == 'object') || 
+        Object.isFunction(element)) && 
        (element.length))
       elements = element;
     else
       elements = $(element).childNodes;
-
+      
     var options = Object.extend({
       speed: 0.1,
       delay: 0.0
@@ -4475,7 +4480,7 @@ var Effect = {
     var options = Object.extend({
       queue: { position:'end', scope:(element.id || 'global'), limit: 1 }
     }, arguments[2] || { });
-    Effect[element.visible() ?
+    Effect[element.visible() ? 
       Effect.PAIRS[effect][1] : Effect.PAIRS[effect][0]](element, options);
   }
 };
@@ -4487,20 +4492,20 @@ Effect.DefaultOptions.transition = Effect.Transitions.sinoidal;
 Effect.ScopedQueue = Class.create(Enumerable, {
   initialize: function() {
     this.effects  = [];
-    this.interval = null;
+    this.interval = null;    
   },
   _each: function(iterator) {
     this.effects._each(iterator);
   },
   add: function(effect) {
     var timestamp = new Date().getTime();
-
-    var position = Object.isString(effect.options.queue) ?
+    
+    var position = Object.isString(effect.options.queue) ? 
       effect.options.queue : effect.options.queue.position;
-
+    
     switch(position) {
       case 'front':
-        // move unstarted effects after this effect
+        // move unstarted effects after this effect  
         this.effects.findAll(function(e){ return e.state=='idle' }).each( function(e) {
             e.startOn  += effect.finishOn;
             e.finishOn += effect.finishOn;
@@ -4514,13 +4519,13 @@ Effect.ScopedQueue = Class.create(Enumerable, {
         timestamp = this.effects.pluck('finishOn').max() || timestamp;
         break;
     }
-
+    
     effect.startOn  += timestamp;
     effect.finishOn += timestamp;
 
     if (!effect.options.queue.limit || (this.effects.length < effect.options.queue.limit))
       this.effects.push(effect);
-
+    
     if (!this.interval)
       this.interval = setInterval(this.loop.bind(this), 15);
   },
@@ -4533,7 +4538,7 @@ Effect.ScopedQueue = Class.create(Enumerable, {
   },
   loop: function() {
     var timePos = new Date().getTime();
-    for(var i=0, len=this.effects.length;i<len;i++)
+    for(var i=0, len=this.effects.length;i<len;i++) 
       this.effects[i] && this.effects[i].loop(timePos);
   }
 });
@@ -4542,7 +4547,7 @@ Effect.Queues = {
   instances: $H(),
   get: function(queueName) {
     if (!Object.isString(queueName)) return queueName;
-
+    
     return this.instances.get(queueName) ||
       this.instances.set(queueName, new Effect.ScopedQueue());
   }
@@ -4567,35 +4572,23 @@ Effect.Base = Class.create({
     this.fromToDelta  = this.options.to-this.options.from;
     this.totalTime    = this.finishOn-this.startOn;
     this.totalFrames  = this.options.fps*this.options.duration;
-
-    this.render = (function() {
-      function dispatch(effect, eventName) {
-        if (effect.options[eventName + 'Internal'])
-          effect.options[eventName + 'Internal'](effect);
-        if (effect.options[eventName])
-          effect.options[eventName](effect);
-      }
-
-      return function(pos) {
-        if (this.state === "idle") {
-          this.state = "running";
-          dispatch(this, 'beforeSetup');
-          if (this.setup) this.setup();
-          dispatch(this, 'afterSetup');
-        }
-        if (this.state === "running") {
-          pos = (this.options.transition(pos) * this.fromToDelta) + this.options.from;
-          this.position = pos;
-          dispatch(this, 'beforeUpdate');
-          if (this.update) this.update(pos);
-          dispatch(this, 'afterUpdate');
-        }
-      };
-    })();
-
+    
+    eval('this.render = function(pos){ '+
+      'if (this.state=="idle"){this.state="running";'+
+      codeForEvent(this.options,'beforeSetup')+
+      (this.setup ? 'this.setup();':'')+ 
+      codeForEvent(this.options,'afterSetup')+
+      '};if (this.state=="running"){'+
+      'pos=this.options.transition(pos)*'+this.fromToDelta+'+'+this.options.from+';'+
+      'this.position=pos;'+
+      codeForEvent(this.options,'beforeUpdate')+
+      (this.update ? 'this.update(pos);':'')+
+      codeForEvent(this.options,'afterUpdate')+
+      '}}');
+    
     this.event('beforeStart');
     if (!this.options.sync)
-      Effect.Queues.get(Object.isString(this.options.queue) ?
+      Effect.Queues.get(Object.isString(this.options.queue) ? 
         'global' : this.options.queue.scope).add(this);
   },
   loop: function(timePos) {
@@ -4604,9 +4597,9 @@ Effect.Base = Class.create({
         this.render(1.0);
         this.cancel();
         this.event('beforeFinish');
-        if (this.finish) this.finish();
+        if (this.finish) this.finish(); 
         this.event('afterFinish');
-        return;
+        return;  
       }
       var pos   = (timePos - this.startOn) / this.totalTime,
           frame = (pos * this.totalFrames).round();
@@ -4618,7 +4611,7 @@ Effect.Base = Class.create({
   },
   cancel: function() {
     if (!this.options.sync)
-      Effect.Queues.get(Object.isString(this.options.queue) ?
+      Effect.Queues.get(Object.isString(this.options.queue) ? 
         'global' : this.options.queue.scope).remove(this);
     this.state = 'finished';
   },
@@ -4656,10 +4649,10 @@ Effect.Parallel = Class.create(Effect.Base, {
 Effect.Tween = Class.create(Effect.Base, {
   initialize: function(object, from, to) {
     object = Object.isString(object) ? $(object) : object;
-    var args = $A(arguments), method = args.last(),
+    var args = $A(arguments), method = args.last(), 
       options = args.length == 5 ? args[3] : null;
     this.method = Object.isFunction(method) ? method.bind(object) :
-      Object.isFunction(object[method]) ? object[method].bind(object) :
+      Object.isFunction(object[method]) ? object[method].bind(object) : 
       function(value) { object[method] = value };
     this.start(Object.extend({ from: from, to: to }, options || { }));
   },
@@ -4723,7 +4716,7 @@ Effect.Move = Class.create(Effect.Base, {
 
 // for backwards compatibility
 Effect.MoveBy = function(element, toTop, toLeft) {
-  return new Effect.Move(element,
+  return new Effect.Move(element, 
     Object.extend({ x: toLeft, y: toTop }, arguments[3] || { }));
 };
 
@@ -4745,15 +4738,15 @@ Effect.Scale = Class.create(Effect.Base, {
   setup: function() {
     this.restoreAfterFinish = this.options.restoreAfterFinish || false;
     this.elementPositioning = this.element.getStyle('position');
-
+    
     this.originalStyle = { };
     ['top','left','width','height','fontSize'].each( function(k) {
       this.originalStyle[k] = this.element.style[k];
     }.bind(this));
-
+      
     this.originalTop  = this.element.offsetTop;
     this.originalLeft = this.element.offsetLeft;
-
+    
     var fontSize = this.element.getStyle('font-size') || '100%';
     ['em','px','%','pt'].each( function(fontSizeType) {
       if (fontSize.indexOf(fontSizeType)>0) {
@@ -4761,9 +4754,9 @@ Effect.Scale = Class.create(Effect.Base, {
         this.fontSizeType = fontSizeType;
       }
     }.bind(this));
-
+    
     this.factor = (this.options.scaleTo - this.options.scaleFrom)/100;
-
+    
     this.dims = null;
     if (this.options.scaleMode=='box')
       this.dims = [this.element.offsetHeight, this.element.offsetWidth];
@@ -4838,16 +4831,17 @@ Effect.Highlight = Class.create(Effect.Base, {
 
 Effect.ScrollTo = function(element) {
   var options = arguments[1] || { },
-  scrollOffsets = document.viewport.getScrollOffsets(),
-  elementOffsets = $(element).cumulativeOffset();
+    scrollOffsets = document.viewport.getScrollOffsets(),
+    elementOffsets = $(element).cumulativeOffset(),
+    max = (window.height || document.body.scrollHeight) - document.viewport.getHeight();  
 
   if (options.offset) elementOffsets[1] += options.offset;
 
   return new Effect.Tween(null,
     scrollOffsets.top,
-    elementOffsets[1],
+    elementOffsets[1] > max ? max : elementOffsets[1],
     options,
-    function(p){ scrollTo(scrollOffsets.left, p.round()); }
+    function(p){ scrollTo(scrollOffsets.left, p.round()) }
   );
 };
 
@@ -4859,9 +4853,9 @@ Effect.Fade = function(element) {
   var options = Object.extend({
     from: element.getOpacity() || 1.0,
     to:   0.0,
-    afterFinishInternal: function(effect) {
+    afterFinishInternal: function(effect) { 
       if (effect.options.to!=0) return;
-      effect.element.hide().setStyle({opacity: oldOpacity});
+      effect.element.hide().setStyle({opacity: oldOpacity}); 
     }
   }, arguments[1] || { });
   return new Effect.Opacity(element,options);
@@ -4877,15 +4871,15 @@ Effect.Appear = function(element) {
     effect.element.forceRerendering();
   },
   beforeSetup: function(effect) {
-    effect.element.setOpacity(effect.options.from).show();
+    effect.element.setOpacity(effect.options.from).show(); 
   }}, arguments[1] || { });
   return new Effect.Opacity(element,options);
 };
 
 Effect.Puff = function(element) {
   element = $(element);
-  var oldStyle = {
-    opacity: element.getInlineOpacity(),
+  var oldStyle = { 
+    opacity: element.getInlineOpacity(), 
     position: element.getStyle('position'),
     top:  element.style.top,
     left: element.style.left,
@@ -4893,12 +4887,12 @@ Effect.Puff = function(element) {
     height: element.style.height
   };
   return new Effect.Parallel(
-   [ new Effect.Scale(element, 200,
-      { sync: true, scaleFromCenter: true, scaleContent: true, restoreAfterFinish: true }),
-     new Effect.Opacity(element, { sync: true, to: 0.0 } ) ],
-     Object.extend({ duration: 1.0,
+   [ new Effect.Scale(element, 200, 
+      { sync: true, scaleFromCenter: true, scaleContent: true, restoreAfterFinish: true }), 
+     new Effect.Opacity(element, { sync: true, to: 0.0 } ) ], 
+     Object.extend({ duration: 1.0, 
       beforeSetupInternal: function(effect) {
-        Position.absolutize(effect.effects[0].element);
+        Position.absolutize(effect.effects[0].element)
       },
       afterFinishInternal: function(effect) {
          effect.effects[0].element.hide().setStyle(oldStyle); }
@@ -4910,12 +4904,12 @@ Effect.BlindUp = function(element) {
   element = $(element);
   element.makeClipping();
   return new Effect.Scale(element, 0,
-    Object.extend({ scaleContent: false,
-      scaleX: false,
+    Object.extend({ scaleContent: false, 
+      scaleX: false, 
       restoreAfterFinish: true,
       afterFinishInternal: function(effect) {
         effect.element.hide().undoClipping();
-      }
+      } 
     }, arguments[1] || { })
   );
 };
@@ -4923,15 +4917,15 @@ Effect.BlindUp = function(element) {
 Effect.BlindDown = function(element) {
   element = $(element);
   var elementDimensions = element.getDimensions();
-  return new Effect.Scale(element, 100, Object.extend({
-    scaleContent: false,
+  return new Effect.Scale(element, 100, Object.extend({ 
+    scaleContent: false, 
     scaleX: false,
     scaleFrom: 0,
     scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
     restoreAfterFinish: true,
     afterSetup: function(effect) {
-      effect.element.makeClipping().setStyle({height: '0px'}).show();
-    },
+      effect.element.makeClipping().setStyle({height: '0px'}).show(); 
+    },  
     afterFinishInternal: function(effect) {
       effect.element.undoClipping();
     }
@@ -4946,16 +4940,16 @@ Effect.SwitchOff = function(element) {
     from: 0,
     transition: Effect.Transitions.flicker,
     afterFinishInternal: function(effect) {
-      new Effect.Scale(effect.element, 1, {
+      new Effect.Scale(effect.element, 1, { 
         duration: 0.3, scaleFromCenter: true,
         scaleX: false, scaleContent: false, restoreAfterFinish: true,
-        beforeSetup: function(effect) {
+        beforeSetup: function(effect) { 
           effect.element.makePositioned().makeClipping();
         },
         afterFinishInternal: function(effect) {
           effect.element.hide().undoClipping().undoPositioned().setStyle({opacity: oldOpacity});
         }
-      });
+      })
     }
   }, arguments[1] || { }));
 };
@@ -4967,16 +4961,16 @@ Effect.DropOut = function(element) {
     left: element.getStyle('left'),
     opacity: element.getInlineOpacity() };
   return new Effect.Parallel(
-    [ new Effect.Move(element, {x: 0, y: 100, sync: true }),
+    [ new Effect.Move(element, {x: 0, y: 100, sync: true }), 
       new Effect.Opacity(element, { sync: true, to: 0.0 }) ],
     Object.extend(
       { duration: 0.5,
         beforeSetup: function(effect) {
-          effect.effects[0].element.makePositioned();
+          effect.effects[0].element.makePositioned(); 
         },
         afterFinishInternal: function(effect) {
           effect.effects[0].element.hide().undoPositioned().setStyle(oldStyle);
-        }
+        } 
       }, arguments[1] || { }));
 };
 
@@ -5004,7 +4998,7 @@ Effect.Shake = function(element) {
     new Effect.Move(effect.element,
       { x: -distance, y: 0, duration: split, afterFinishInternal: function(effect) {
         effect.element.undoPositioned().setStyle(oldStyle);
-  }}); }}); }}); }}); }}); }});
+  }}) }}) }}) }}) }}) }});
 };
 
 Effect.SlideDown = function(element) {
@@ -5012,9 +5006,9 @@ Effect.SlideDown = function(element) {
   // SlideDown need to have the content of the element wrapped in a container element with fixed height!
   var oldInnerBottom = element.down().getStyle('bottom');
   var elementDimensions = element.getDimensions();
-  return new Effect.Scale(element, 100, Object.extend({
-    scaleContent: false,
-    scaleX: false,
+  return new Effect.Scale(element, 100, Object.extend({ 
+    scaleContent: false, 
+    scaleX: false, 
     scaleFrom: window.opera ? 0 : 1,
     scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
     restoreAfterFinish: true,
@@ -5022,11 +5016,11 @@ Effect.SlideDown = function(element) {
       effect.element.makePositioned();
       effect.element.down().makePositioned();
       if (window.opera) effect.element.setStyle({top: ''});
-      effect.element.makeClipping().setStyle({height: '0px'}).show();
+      effect.element.makeClipping().setStyle({height: '0px'}).show(); 
     },
     afterUpdateInternal: function(effect) {
       effect.element.down().setStyle({bottom:
-        (effect.dims[0] - effect.element.clientHeight) + 'px' });
+        (effect.dims[0] - effect.element.clientHeight) + 'px' }); 
     },
     afterFinishInternal: function(effect) {
       effect.element.undoClipping().undoPositioned();
@@ -5040,8 +5034,8 @@ Effect.SlideUp = function(element) {
   var oldInnerBottom = element.down().getStyle('bottom');
   var elementDimensions = element.getDimensions();
   return new Effect.Scale(element, window.opera ? 0 : 1,
-   Object.extend({ scaleContent: false,
-    scaleX: false,
+   Object.extend({ scaleContent: false, 
+    scaleX: false, 
     scaleMode: 'box',
     scaleFrom: 100,
     scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
@@ -5051,7 +5045,7 @@ Effect.SlideUp = function(element) {
       effect.element.down().makePositioned();
       if (window.opera) effect.element.setStyle({top: ''});
       effect.element.makeClipping().show();
-    },
+    },  
     afterUpdateInternal: function(effect) {
       effect.element.down().setStyle({bottom:
         (effect.dims[0] - effect.element.clientHeight) + 'px' });
@@ -5064,15 +5058,15 @@ Effect.SlideUp = function(element) {
   );
 };
 
-// Bug in opera makes the TD containing this element expand for a instance after finish
+// Bug in opera makes the TD containing this element expand for a instance after finish 
 Effect.Squish = function(element) {
-  return new Effect.Scale(element, window.opera ? 1 : 0, {
+  return new Effect.Scale(element, window.opera ? 1 : 0, { 
     restoreAfterFinish: true,
     beforeSetup: function(effect) {
-      effect.element.makeClipping();
-    },
+      effect.element.makeClipping(); 
+    },  
     afterFinishInternal: function(effect) {
-      effect.element.hide().undoClipping();
+      effect.element.hide().undoClipping(); 
     }
   });
 };
@@ -5092,13 +5086,13 @@ Effect.Grow = function(element) {
     width: element.style.width,
     opacity: element.getInlineOpacity() };
 
-  var dims = element.getDimensions();
+  var dims = element.getDimensions();    
   var initialMoveX, initialMoveY;
   var moveX, moveY;
-
+  
   switch (options.direction) {
     case 'top-left':
-      initialMoveX = initialMoveY = moveX = moveY = 0;
+      initialMoveX = initialMoveY = moveX = moveY = 0; 
       break;
     case 'top-right':
       initialMoveX = dims.width;
@@ -5123,11 +5117,11 @@ Effect.Grow = function(element) {
       moveY = -dims.height / 2;
       break;
   }
-
+  
   return new Effect.Move(element, {
     x: initialMoveX,
     y: initialMoveY,
-    duration: 0.01,
+    duration: 0.01, 
     beforeSetup: function(effect) {
       effect.element.hide().makeClipping().makePositioned();
     },
@@ -5136,17 +5130,17 @@ Effect.Grow = function(element) {
         [ new Effect.Opacity(effect.element, { sync: true, to: 1.0, from: 0.0, transition: options.opacityTransition }),
           new Effect.Move(effect.element, { x: moveX, y: moveY, sync: true, transition: options.moveTransition }),
           new Effect.Scale(effect.element, 100, {
-            scaleMode: { originalHeight: dims.height, originalWidth: dims.width },
+            scaleMode: { originalHeight: dims.height, originalWidth: dims.width }, 
             sync: true, scaleFrom: window.opera ? 1 : 0, transition: options.scaleTransition, restoreAfterFinish: true})
         ], Object.extend({
              beforeSetup: function(effect) {
-               effect.effects[0].element.setStyle({height: '0px'}).show();
+               effect.effects[0].element.setStyle({height: '0px'}).show(); 
              },
              afterFinishInternal: function(effect) {
-               effect.effects[0].element.undoClipping().undoPositioned().setStyle(oldStyle);
+               effect.effects[0].element.undoClipping().undoPositioned().setStyle(oldStyle); 
              }
            }, options)
-      );
+      )
     }
   });
 };
@@ -5168,7 +5162,7 @@ Effect.Shrink = function(element) {
 
   var dims = element.getDimensions();
   var moveX, moveY;
-
+  
   switch (options.direction) {
     case 'top-left':
       moveX = moveY = 0;
@@ -5185,19 +5179,19 @@ Effect.Shrink = function(element) {
       moveX = dims.width;
       moveY = dims.height;
       break;
-    case 'center':
+    case 'center':  
       moveX = dims.width / 2;
       moveY = dims.height / 2;
       break;
   }
-
+  
   return new Effect.Parallel(
     [ new Effect.Opacity(element, { sync: true, to: 0.0, from: 1.0, transition: options.opacityTransition }),
       new Effect.Scale(element, window.opera ? 1 : 0, { sync: true, transition: options.scaleTransition, restoreAfterFinish: true}),
       new Effect.Move(element, { x: moveX, y: moveY, sync: true, transition: options.moveTransition })
-    ], Object.extend({
+    ], Object.extend({            
          beforeStartInternal: function(effect) {
-           effect.effects[0].element.makePositioned().makeClipping();
+           effect.effects[0].element.makePositioned().makeClipping(); 
          },
          afterFinishInternal: function(effect) {
            effect.effects[0].element.hide().undoClipping().undoPositioned().setStyle(oldStyle); }
@@ -5207,14 +5201,12 @@ Effect.Shrink = function(element) {
 
 Effect.Pulsate = function(element) {
   element = $(element);
-  var options    = arguments[1] || { },
-    oldOpacity = element.getInlineOpacity(),
-    transition = options.transition || Effect.Transitions.linear,
-    reverser   = function(pos){
-      return 1 - transition((-Math.cos((pos*(options.pulses||5)*2)*Math.PI)/2) + .5);
-    };
-
-  return new Effect.Opacity(element,
+  var options    = arguments[1] || { };
+  var oldOpacity = element.getInlineOpacity();
+  var transition = options.transition || Effect.Transitions.sinoidal;
+  var reverser   = function(pos){ return transition(1-Effect.Transitions.pulse(pos, options.pulses)) };
+  reverser.bind(transition);
+  return new Effect.Opacity(element, 
     Object.extend(Object.extend({  duration: 2.0, from: 0,
       afterFinishInternal: function(effect) { effect.element.setStyle({opacity: oldOpacity}); }
     }, options), {transition: reverser}));
@@ -5228,12 +5220,12 @@ Effect.Fold = function(element) {
     width: element.style.width,
     height: element.style.height };
   element.makeClipping();
-  return new Effect.Scale(element, 5, Object.extend({
+  return new Effect.Scale(element, 5, Object.extend({   
     scaleContent: false,
     scaleX: false,
     afterFinishInternal: function(effect) {
-    new Effect.Scale(element, 1, {
-      scaleContent: false,
+    new Effect.Scale(element, 1, { 
+      scaleContent: false, 
       scaleY: false,
       afterFinishInternal: function(effect) {
         effect.element.hide().undoClipping().setStyle(oldStyle);
@@ -5248,7 +5240,7 @@ Effect.Morph = Class.create(Effect.Base, {
     var options = Object.extend({
       style: { }
     }, arguments[1] || { });
-
+    
     if (!Object.isString(options.style)) this.style = $H(options.style);
     else {
       if (options.style.include(':'))
@@ -5266,18 +5258,18 @@ Effect.Morph = Class.create(Effect.Base, {
           effect.transforms.each(function(transform) {
             effect.element.style[transform.style] = '';
           });
-        };
+        }
       }
     }
     this.start(options);
   },
-
+  
   setup: function(){
     function parseColor(color){
       if (!color || ['rgba(0, 0, 0, 0)','transparent'].include(color)) color = '#ffffff';
       color = color.parseColor();
       return $R(0,2).map(function(i){
-        return parseInt( color.slice(i*2+1,i*2+3), 16 );
+        return parseInt( color.slice(i*2+1,i*2+3), 16 ) 
       });
     }
     this.transforms = this.style.map(function(pair){
@@ -5297,9 +5289,9 @@ Effect.Morph = Class.create(Effect.Base, {
       }
 
       var originalValue = this.element.getStyle(property);
-      return {
-        style: property.camelize(),
-        originalValue: unit=='color' ? parseColor(originalValue) : parseFloat(originalValue || 0),
+      return { 
+        style: property.camelize(), 
+        originalValue: unit=='color' ? parseColor(originalValue) : parseFloat(originalValue || 0), 
         targetValue: unit=='color' ? parseColor(value) : value,
         unit: unit
       };
@@ -5310,13 +5302,13 @@ Effect.Morph = Class.create(Effect.Base, {
           transform.unit != 'color' &&
           (isNaN(transform.originalValue) || isNaN(transform.targetValue))
         )
-      );
+      )
     });
   },
   update: function(position) {
     var style = { }, transform, i = this.transforms.length;
     while(i--)
-      style[(transform = this.transforms[i]).style] =
+      style[(transform = this.transforms[i]).style] = 
         transform.unit=='color' ? '#'+
           (Math.round(transform.originalValue[0]+
             (transform.targetValue[0]-transform.originalValue[0])*position)).toColorPart() +
@@ -5325,7 +5317,7 @@ Effect.Morph = Class.create(Effect.Base, {
           (Math.round(transform.originalValue[2]+
             (transform.targetValue[2]-transform.originalValue[2])*position)).toColorPart() :
         (transform.originalValue +
-          (transform.targetValue - transform.originalValue) * position).toFixed(3) +
+          (transform.targetValue - transform.originalValue) * position).toFixed(3) + 
             (transform.unit === null ? '' : transform.unit);
     this.element.setStyle(style, true);
   }
@@ -5362,7 +5354,7 @@ Effect.Transform = Class.create({
 });
 
 Element.CSS_PROPERTIES = $w(
-  'backgroundColor backgroundPosition borderBottomColor borderBottomStyle ' +
+  'backgroundColor backgroundPosition borderBottomColor borderBottomStyle ' + 
   'borderBottomWidth borderLeftColor borderLeftStyle borderLeftWidth ' +
   'borderRightColor borderRightStyle borderRightWidth borderSpacing ' +
   'borderTopColor borderTopStyle borderTopWidth bottom clip color ' +
@@ -5371,7 +5363,7 @@ Element.CSS_PROPERTIES = $w(
   'maxWidth minHeight minWidth opacity outlineColor outlineOffset ' +
   'outlineWidth paddingBottom paddingLeft paddingRight paddingTop ' +
   'right textIndent top width wordSpacing zIndex');
-
+  
 Element.CSS_LENGTH = /^(([\+\-]?[0-9\.]+)(em|ex|px|in|cm|mm|pt|pc|\%))|0$/;
 
 String.__parseStyleElement = document.createElement('div');
@@ -5383,11 +5375,11 @@ String.prototype.parseStyle = function(){
     String.__parseStyleElement.innerHTML = '<div style="' + this + '"></div>';
     style = String.__parseStyleElement.childNodes[0].style;
   }
-
+  
   Element.CSS_PROPERTIES.each(function(property){
-    if (style[property]) styleRules.set(property, style[property]);
+    if (style[property]) styleRules.set(property, style[property]); 
   });
-
+  
   if (Prototype.Browser.IE && this.include('opacity'))
     styleRules.set('opacity', this.match(/opacity:\s*((?:0|1)?(?:\.\d*)?)/)[1]);
 
@@ -5413,7 +5405,7 @@ if (document.defaultView && document.defaultView.getComputedStyle) {
     if (!styles.opacity) styles.opacity = element.getOpacity();
     return styles;
   };
-}
+};
 
 Effect.Methods = {
   morph: function(element, style) {
@@ -5422,7 +5414,7 @@ Effect.Methods = {
     return element;
   },
   visualEffect: function(element, effect, options) {
-    element = $(element);
+    element = $(element)
     var s = effect.dasherize().camelize(), klass = s.charAt(0).toUpperCase() + s.substring(1);
     new Effect[klass](element, options);
     return element;
@@ -5436,16 +5428,16 @@ Effect.Methods = {
 
 $w('fade appear grow shrink fold blindUp blindDown slideUp slideDown '+
   'pulsate shake puff squish switchOff dropOut').each(
-  function(effect) {
+  function(effect) { 
     Effect.Methods[effect] = function(element, options){
       element = $(element);
       Effect[effect.charAt(0).toUpperCase() + effect.substring(1)](element, options);
       return element;
-    };
+    }
   }
 );
 
-$w('getInlineOpacity forceRerendering setContentZoom collectTextNodes collectTextNodesIgnoreClass getStyles').each(
+$w('getInlineOpacity forceRerendering setContentZoom collectTextNodes collectTextNodesIgnoreClass getStyles').each( 
   function(f) { Effect.Methods[f] = Element[f]; }
 );
 
@@ -5453,8 +5445,8 @@ Element.addMethods(Effect.Methods);
 
 
 // Copyright (c) 2005-2008 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
-//           (c) 2005-2008 Sammi Williams (http://www.oriontransfer.co.nz, sammi@oriontransfer.co.nz)
-//
+//           (c) 2005-2007 Sammi Williams (http://www.oriontransfer.co.nz, sammi@oriontransfer.co.nz)
+// 
 // script.aculo.us is freely distributable under the terms of an MIT-style license.
 // For details, see the script.aculo.us web site: http://script.aculo.us/
 
@@ -5486,7 +5478,7 @@ var Droppables = {
         options._containers.push($(containment));
       }
     }
-
+    
     if(options.accept) options.accept = [options.accept].flatten();
 
     Element.makePositioned(element); // fix IE
@@ -5494,34 +5486,34 @@ var Droppables = {
 
     this.drops.push(options);
   },
-
+  
   findDeepestChild: function(drops) {
     deepest = drops[0];
-
+      
     for (i = 1; i < drops.length; ++i)
       if (Element.isParent(drops[i].element, deepest.element))
         deepest = drops[i];
-
+    
     return deepest;
   },
 
   isContained: function(element, drop) {
     var containmentNode;
     if(drop.tree) {
-      containmentNode = element.treeNode;
+      containmentNode = element.treeNode; 
     } else {
       containmentNode = element.parentNode;
     }
     return drop._containers.detect(function(c) { return containmentNode == c });
   },
-
+  
   isAffected: function(point, element, drop) {
     return (
       (drop.element!=element) &&
       ((!drop._containers) ||
         this.isContained(element, drop)) &&
       ((!drop.accept) ||
-        (Element.classNames(element).detect(
+        (Element.classNames(element).detect( 
           function(v) { return drop.accept.include(v) } ) )) &&
       Position.within(drop.element, point[0], point[1]) );
   },
@@ -5541,12 +5533,12 @@ var Droppables = {
   show: function(point, element) {
     if(!this.drops.length) return;
     var drop, affected = [];
-
+    
     this.drops.each( function(drop) {
       if(Droppables.isAffected(point, element, drop))
         affected.push(drop);
     });
-
+        
     if(affected.length>0)
       drop = Droppables.findDeepestChild(affected);
 
@@ -5555,7 +5547,7 @@ var Droppables = {
       Position.within(drop.element, point[0], point[1]);
       if(drop.onHover)
         drop.onHover(element, drop.element, Position.overlap(drop.overlap, drop.element));
-
+      
       if (drop != this.last_active) Droppables.activate(drop);
     }
   },
@@ -5566,8 +5558,8 @@ var Droppables = {
 
     if (this.isAffected([Event.pointerX(event), Event.pointerY(event)], element, this.last_active))
       if (this.last_active.onDrop) {
-        this.last_active.onDrop(element, this.last_active.element, event);
-        return true;
+        this.last_active.onDrop(element, this.last_active.element, event); 
+        return true; 
       }
   },
 
@@ -5575,25 +5567,25 @@ var Droppables = {
     if(this.last_active)
       this.deactivate(this.last_active);
   }
-};
+}
 
 var Draggables = {
   drags: [],
   observers: [],
-
+  
   register: function(draggable) {
     if(this.drags.length == 0) {
       this.eventMouseUp   = this.endDrag.bindAsEventListener(this);
       this.eventMouseMove = this.updateDrag.bindAsEventListener(this);
       this.eventKeypress  = this.keyPress.bindAsEventListener(this);
-
+      
       Event.observe(document, "mouseup", this.eventMouseUp);
       Event.observe(document, "mousemove", this.eventMouseMove);
       Event.observe(document, "keypress", this.eventKeypress);
     }
     this.drags.push(draggable);
   },
-
+  
   unregister: function(draggable) {
     this.drags = this.drags.reject(function(d) { return d==draggable });
     if(this.drags.length == 0) {
@@ -5602,24 +5594,24 @@ var Draggables = {
       Event.stopObserving(document, "keypress", this.eventKeypress);
     }
   },
-
+  
   activate: function(draggable) {
-    if(draggable.options.delay) {
-      this._timeout = setTimeout(function() {
-        Draggables._timeout = null;
-        window.focus();
-        Draggables.activeDraggable = draggable;
-      }.bind(this), draggable.options.delay);
+    if(draggable.options.delay) { 
+      this._timeout = setTimeout(function() { 
+        Draggables._timeout = null; 
+        window.focus(); 
+        Draggables.activeDraggable = draggable; 
+      }.bind(this), draggable.options.delay); 
     } else {
       window.focus(); // allows keypress events if window isn't currently focused, fails for Safari
       this.activeDraggable = draggable;
     }
   },
-
+  
   deactivate: function() {
     this.activeDraggable = null;
   },
-
+  
   updateDrag: function(event) {
     if(!this.activeDraggable) return;
     var pointer = [Event.pointerX(event), Event.pointerY(event)];
@@ -5627,36 +5619,36 @@ var Draggables = {
     // the same coordinates, prevent needless redrawing (moz bug?)
     if(this._lastPointer && (this._lastPointer.inspect() == pointer.inspect())) return;
     this._lastPointer = pointer;
-
+    
     this.activeDraggable.updateDrag(event, pointer);
   },
-
+  
   endDrag: function(event) {
-    if(this._timeout) {
-      clearTimeout(this._timeout);
-      this._timeout = null;
+    if(this._timeout) { 
+      clearTimeout(this._timeout); 
+      this._timeout = null; 
     }
     if(!this.activeDraggable) return;
     this._lastPointer = null;
     this.activeDraggable.endDrag(event);
     this.activeDraggable = null;
   },
-
+  
   keyPress: function(event) {
     if(this.activeDraggable)
       this.activeDraggable.keyPress(event);
   },
-
+  
   addObserver: function(observer) {
     this.observers.push(observer);
     this._cacheObserverCallbacks();
   },
-
+  
   removeObserver: function(element) {  // element instead of observer fixes mem leaks
     this.observers = this.observers.reject( function(o) { return o.element==element });
     this._cacheObserverCallbacks();
   },
-
+  
   notify: function(eventName, draggable, event) {  // 'onStart', 'onEnd', 'onDrag'
     if(this[eventName+'Count'] > 0)
       this.observers.each( function(o) {
@@ -5664,7 +5656,7 @@ var Draggables = {
       });
     if(draggable.options[eventName]) draggable.options[eventName](draggable, event);
   },
-
+  
   _cacheObserverCallbacks: function() {
     ['onStart','onEnd','onDrag'].each( function(eventName) {
       Draggables[eventName+'Count'] = Draggables.observers.select(
@@ -5672,7 +5664,7 @@ var Draggables = {
       ).length;
     });
   }
-};
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -5688,12 +5680,12 @@ var Draggable = Class.create({
       },
       endeffect: function(element) {
         var toOpacity = Object.isNumber(element._opacity) ? element._opacity : 1.0;
-        new Effect.Opacity(element, {duration:0.2, from:0.7, to:toOpacity,
+        new Effect.Opacity(element, {duration:0.2, from:0.7, to:toOpacity, 
           queue: {scope:'_draggable', position:'end'},
-          afterFinish: function(){
-            Draggable._dragging[element] = false
+          afterFinish: function(){ 
+            Draggable._dragging[element] = false 
           }
-        });
+        }); 
       },
       zindex: 1000,
       revert: false,
@@ -5704,57 +5696,57 @@ var Draggable = Class.create({
       snap: false,  // false, or xy or [x,y] or function(x,y){ return [x,y] }
       delay: 0
     };
-
+    
     if(!arguments[1] || Object.isUndefined(arguments[1].endeffect))
       Object.extend(defaults, {
         starteffect: function(element) {
           element._opacity = Element.getOpacity(element);
           Draggable._dragging[element] = true;
-          new Effect.Opacity(element, {duration:0.2, from:element._opacity, to:0.7});
+          new Effect.Opacity(element, {duration:0.2, from:element._opacity, to:0.7}); 
         }
       });
-
+    
     var options = Object.extend(defaults, arguments[1] || { });
 
     this.element = $(element);
-
+    
     if(options.handle && Object.isString(options.handle))
       this.handle = this.element.down('.'+options.handle, 0);
-
+    
     if(!this.handle) this.handle = $(options.handle);
     if(!this.handle) this.handle = this.element;
-
+    
     if(options.scroll && !options.scroll.scrollTo && !options.scroll.outerHTML) {
       options.scroll = $(options.scroll);
       this._isScrollChild = Element.childOf(this.element, options.scroll);
     }
 
-    Element.makePositioned(this.element); // fix IE
+    Element.makePositioned(this.element); // fix IE    
 
     this.options  = options;
-    this.dragging = false;
+    this.dragging = false;   
 
     this.eventMouseDown = this.initDrag.bindAsEventListener(this);
     Event.observe(this.handle, "mousedown", this.eventMouseDown);
-
+    
     Draggables.register(this);
   },
-
+  
   destroy: function() {
     Event.stopObserving(this.handle, "mousedown", this.eventMouseDown);
     Draggables.unregister(this);
   },
-
+  
   currentDelta: function() {
     return([
       parseInt(Element.getStyle(this.element,'left') || '0'),
       parseInt(Element.getStyle(this.element,'top') || '0')]);
   },
-
+  
   initDrag: function(event) {
     if(!Object.isUndefined(Draggable._dragging[this.element]) &&
       Draggable._dragging[this.element]) return;
-    if(Event.isLeftClick(event)) {
+    if(Event.isLeftClick(event)) {    
       // abort on form elements, fixes a Firefox issue
       var src = Event.element(event);
       if((tag_name = src.tagName.toUpperCase()) && (
@@ -5763,34 +5755,34 @@ var Draggable = Class.create({
         tag_name=='OPTION' ||
         tag_name=='BUTTON' ||
         tag_name=='TEXTAREA')) return;
-
+        
       var pointer = [Event.pointerX(event), Event.pointerY(event)];
       var pos     = Position.cumulativeOffset(this.element);
       this.offset = [0,1].map( function(i) { return (pointer[i] - pos[i]) });
-
+      
       Draggables.activate(this);
       Event.stop(event);
     }
   },
-
+  
   startDrag: function(event) {
     this.dragging = true;
     if(!this.delta)
       this.delta = this.currentDelta();
-
+    
     if(this.options.zindex) {
       this.originalZ = parseInt(Element.getStyle(this.element,'z-index') || 0);
       this.element.style.zIndex = this.options.zindex;
     }
-
+    
     if(this.options.ghosting) {
       this._clone = this.element.cloneNode(true);
-      this._originallyAbsolute = (this.element.getStyle('position') == 'absolute');
-      if (!this._originallyAbsolute)
+      this.element._originallyAbsolute = (this.element.getStyle('position') == 'absolute');
+      if (!this.element._originallyAbsolute)
         Position.absolutize(this.element);
       this.element.parentNode.insertBefore(this._clone, this.element);
     }
-
+    
     if(this.options.scroll) {
       if (this.options.scroll == window) {
         var where = this._getWindowScroll(this.options.scroll);
@@ -5801,28 +5793,28 @@ var Draggable = Class.create({
         this.originalScrollTop = this.options.scroll.scrollTop;
       }
     }
-
+    
     Draggables.notify('onStart', this, event);
-
+        
     if(this.options.starteffect) this.options.starteffect(this.element);
   },
-
+  
   updateDrag: function(event, pointer) {
     if(!this.dragging) this.startDrag(event);
-
+    
     if(!this.options.quiet){
       Position.prepare();
       Droppables.show(pointer, this.element);
     }
-
+    
     Draggables.notify('onDrag', this, event);
-
+    
     this.draw(pointer);
     if(this.options.change) this.options.change(this);
-
+    
     if(this.options.scroll) {
       this.stopScrolling();
-
+      
       var p;
       if (this.options.scroll == window) {
         with(this._getWindowScroll(this.options.scroll)) { p = [ left, top, left+width, top+height ]; }
@@ -5840,16 +5832,16 @@ var Draggable = Class.create({
       if(pointer[1] > (p[3]-this.options.scrollSensitivity)) speed[1] = pointer[1]-(p[3]-this.options.scrollSensitivity);
       this.startScrolling(speed);
     }
-
+    
     // fix AppleWebKit rendering
     if(Prototype.Browser.WebKit) window.scrollBy(0,0);
-
+    
     Event.stop(event);
   },
-
+  
   finishDrag: function(event, success) {
     this.dragging = false;
-
+    
     if(this.options.quiet){
       Position.prepare();
       var pointer = [Event.pointerX(event), Event.pointerY(event)];
@@ -5857,24 +5849,24 @@ var Draggable = Class.create({
     }
 
     if(this.options.ghosting) {
-      if (!this._originallyAbsolute)
+      if (!this.element._originallyAbsolute)
         Position.relativize(this.element);
-      delete this._originallyAbsolute;
+      delete this.element._originallyAbsolute;
       Element.remove(this._clone);
       this._clone = null;
     }
 
-    var dropped = false;
-    if(success) {
-      dropped = Droppables.fire(event, this.element);
-      if (!dropped) dropped = false;
+    var dropped = false; 
+    if(success) { 
+      dropped = Droppables.fire(event, this.element); 
+      if (!dropped) dropped = false; 
     }
     if(dropped && this.options.onDropped) this.options.onDropped(this.element);
     Draggables.notify('onEnd', this, event);
 
     var revert = this.options.revert;
     if(revert && Object.isFunction(revert)) revert = revert(this.element);
-
+    
     var d = this.currentDelta();
     if(revert && this.options.reverteffect) {
       if (dropped == 0 || revert != 'failure')
@@ -5887,67 +5879,67 @@ var Draggable = Class.create({
     if(this.options.zindex)
       this.element.style.zIndex = this.originalZ;
 
-    if(this.options.endeffect)
+    if(this.options.endeffect) 
       this.options.endeffect(this.element);
-
+      
     Draggables.deactivate(this);
     Droppables.reset();
   },
-
+  
   keyPress: function(event) {
     if(event.keyCode!=Event.KEY_ESC) return;
     this.finishDrag(event, false);
     Event.stop(event);
   },
-
+  
   endDrag: function(event) {
     if(!this.dragging) return;
     this.stopScrolling();
     this.finishDrag(event, true);
     Event.stop(event);
   },
-
+  
   draw: function(point) {
     var pos = Position.cumulativeOffset(this.element);
     if(this.options.ghosting) {
       var r   = Position.realOffset(this.element);
       pos[0] += r[0] - Position.deltaX; pos[1] += r[1] - Position.deltaY;
     }
-
+    
     var d = this.currentDelta();
     pos[0] -= d[0]; pos[1] -= d[1];
-
+    
     if(this.options.scroll && (this.options.scroll != window && this._isScrollChild)) {
       pos[0] -= this.options.scroll.scrollLeft-this.originalScrollLeft;
       pos[1] -= this.options.scroll.scrollTop-this.originalScrollTop;
     }
-
-    var p = [0,1].map(function(i){
-      return (point[i]-pos[i]-this.offset[i])
+    
+    var p = [0,1].map(function(i){ 
+      return (point[i]-pos[i]-this.offset[i]) 
     }.bind(this));
-
+    
     if(this.options.snap) {
       if(Object.isFunction(this.options.snap)) {
         p = this.options.snap(p[0],p[1],this);
       } else {
       if(Object.isArray(this.options.snap)) {
         p = p.map( function(v, i) {
-          return (v/this.options.snap[i]).round()*this.options.snap[i] }.bind(this));
+          return (v/this.options.snap[i]).round()*this.options.snap[i] }.bind(this))
       } else {
         p = p.map( function(v) {
-          return (v/this.options.snap).round()*this.options.snap }.bind(this));
+          return (v/this.options.snap).round()*this.options.snap }.bind(this))
       }
     }}
-
+    
     var style = this.element.style;
     if((!this.options.constraint) || (this.options.constraint=='horizontal'))
       style.left = p[0] + "px";
     if((!this.options.constraint) || (this.options.constraint=='vertical'))
       style.top  = p[1] + "px";
-
+    
     if(style.visibility=="hidden") style.visibility = ""; // fix gecko rendering
   },
-
+  
   stopScrolling: function() {
     if(this.scrollInterval) {
       clearInterval(this.scrollInterval);
@@ -5955,14 +5947,14 @@ var Draggable = Class.create({
       Draggables._lastScrollPointer = null;
     }
   },
-
+  
   startScrolling: function(speed) {
     if(!(speed[0] || speed[1])) return;
     this.scrollSpeed = [speed[0]*this.options.scrollSpeed,speed[1]*this.options.scrollSpeed];
     this.lastScrolled = new Date();
     this.scrollInterval = setInterval(this.scroll.bind(this), 10);
   },
-
+  
   scroll: function() {
     var current = new Date();
     var delta = current - this.lastScrolled;
@@ -5978,7 +5970,7 @@ var Draggable = Class.create({
       this.options.scroll.scrollLeft += this.scrollSpeed[0] * delta / 1000;
       this.options.scroll.scrollTop  += this.scrollSpeed[1] * delta / 1000;
     }
-
+    
     Position.prepare();
     Droppables.show(Draggables._lastPointer, this.element);
     Draggables.notify('onDrag', this);
@@ -5992,10 +5984,10 @@ var Draggable = Class.create({
         Draggables._lastScrollPointer[1] = 0;
       this.draw(Draggables._lastScrollPointer);
     }
-
+    
     if(this.options.change) this.options.change(this);
   },
-
+  
   _getWindowScroll: function(w) {
     var T, L, W, H;
     with (w.document) {
@@ -6014,7 +6006,7 @@ var Draggable = Class.create({
         H = documentElement.clientHeight;
       } else {
         W = body.offsetWidth;
-        H = body.offsetHeight;
+        H = body.offsetHeight
       }
     }
     return { top: T, left: L, width: W, height: H };
@@ -6031,11 +6023,11 @@ var SortableObserver = Class.create({
     this.observer  = observer;
     this.lastValue = Sortable.serialize(this.element);
   },
-
+  
   onStart: function() {
     this.lastValue = Sortable.serialize(this.element);
   },
-
+  
   onEnd: function() {
     Sortable.unmark();
     if(this.lastValue != Sortable.serialize(this.element))
@@ -6045,11 +6037,11 @@ var SortableObserver = Class.create({
 
 var Sortable = {
   SERIALIZE_RULE: /^[^_\-](?:[A-Za-z0-9\-\_]*)[_](.*)$/,
-
+  
   sortables: { },
-
+  
   _findRootElement: function(element) {
-    while (element.tagName.toUpperCase() != "BODY") {
+    while (element.tagName.toUpperCase() != "BODY") {  
       if(element.id && Sortable.sortables[element.id]) return element;
       element = element.parentNode;
     }
@@ -6060,23 +6052,22 @@ var Sortable = {
     if(!element) return;
     return Sortable.sortables[element.id];
   },
-
+  
   destroy: function(element){
-    element = $(element);
-    var s = Sortable.sortables[element.id];
-
+    var s = Sortable.options(element);
+    
     if(s) {
       Draggables.removeObserver(s.element);
       s.droppables.each(function(d){ Droppables.remove(d) });
       s.draggables.invoke('destroy');
-
+      
       delete Sortable.sortables[s.element.id];
     }
   },
 
   create: function(element) {
     element = $(element);
-    var options = Object.extend({
+    var options = Object.extend({ 
       element:     element,
       tag:         'li',       // assumes li children, override with tag: 'tagname'
       dropOnEmpty: false,
@@ -6090,17 +6081,17 @@ var Sortable = {
       delay:       0,
       hoverclass:  null,
       ghosting:    false,
-      quiet:       false,
+      quiet:       false, 
       scroll:      false,
       scrollSensitivity: 20,
       scrollSpeed: 15,
       format:      this.SERIALIZE_RULE,
-
-      // these take arrays of elements or ids and can be
+      
+      // these take arrays of elements or ids and can be 
       // used for better initialization performance
       elements:    false,
       handles:     false,
-
+      
       onChange:    Prototype.emptyFunction,
       onUpdate:    Prototype.emptyFunction
     }, arguments[1] || { });
@@ -6137,24 +6128,24 @@ var Sortable = {
     if(options.zindex)
       options_for_draggable.zindex = options.zindex;
 
-    // build options for the droppables
+    // build options for the droppables  
     var options_for_droppable = {
       overlap:     options.overlap,
       containment: options.containment,
       tree:        options.tree,
       hoverclass:  options.hoverclass,
       onHover:     Sortable.onHover
-    };
-
+    }
+    
     var options_for_tree = {
       onHover:      Sortable.onEmptyHover,
       overlap:      options.overlap,
       containment:  options.containment,
       hoverclass:   options.hoverclass
-    };
+    }
 
     // fix for gecko engine
-    Element.cleanWhitespace(element);
+    Element.cleanWhitespace(element); 
 
     options.draggables = [];
     options.droppables = [];
@@ -6167,14 +6158,14 @@ var Sortable = {
 
     (options.elements || this.findElements(element, options) || []).each( function(e,i) {
       var handle = options.handles ? $(options.handles[i]) :
-        (options.handle ? $(e).select('.' + options.handle)[0] : e);
+        (options.handle ? $(e).select('.' + options.handle)[0] : e); 
       options.draggables.push(
         new Draggable(e, Object.extend(options_for_draggable, { handle: handle })));
       Droppables.add(e, options_for_droppable);
       if(options.tree) e.treeNode = element;
-      options.droppables.push(e);
+      options.droppables.push(e);      
     });
-
+    
     if(options.tree) {
       (Sortable.findTreeElements(element, options) || []).each( function(e) {
         Droppables.add(e, options_for_tree);
@@ -6196,7 +6187,7 @@ var Sortable = {
     return Element.findChildren(
       element, options.only, options.tree ? true : false, options.tag);
   },
-
+  
   findTreeElements: function(element, options) {
     return Element.findChildren(
       element, options.only, options.tree ? true : false, options.treeTag);
@@ -6213,7 +6204,7 @@ var Sortable = {
         var oldParentNode = element.parentNode;
         element.style.visibility = "hidden"; // fix gecko rendering
         dropon.parentNode.insertBefore(element, dropon);
-        if(dropon.parentNode!=oldParentNode)
+        if(dropon.parentNode!=oldParentNode) 
           Sortable.options(oldParentNode).onChange(element);
         Sortable.options(dropon.parentNode).onChange(element);
       }
@@ -6224,26 +6215,26 @@ var Sortable = {
         var oldParentNode = element.parentNode;
         element.style.visibility = "hidden"; // fix gecko rendering
         dropon.parentNode.insertBefore(element, nextElement);
-        if(dropon.parentNode!=oldParentNode)
+        if(dropon.parentNode!=oldParentNode) 
           Sortable.options(oldParentNode).onChange(element);
         Sortable.options(dropon.parentNode).onChange(element);
       }
     }
   },
-
+  
   onEmptyHover: function(element, dropon, overlap) {
     var oldParentNode = element.parentNode;
     var droponOptions = Sortable.options(dropon);
-
+        
     if(!Element.isParent(dropon, element)) {
       var index;
-
+      
       var children = Sortable.findElements(dropon, {tag: droponOptions.tag, only: droponOptions.only});
       var child = null;
-
+            
       if(children) {
         var offset = Element.offsetSize(dropon, droponOptions.overlap) * (1.0 - overlap);
-
+        
         for (index = 0; index < children.length; index += 1) {
           if (offset - Element.offsetSize (children[index], droponOptions.overlap) >= 0) {
             offset -= Element.offsetSize (children[index], droponOptions.overlap);
@@ -6256,9 +6247,9 @@ var Sortable = {
           }
         }
       }
-
+      
       dropon.insertBefore(element, child);
-
+      
       Sortable.options(oldParentNode).onChange(element);
       droponOptions.onChange(element);
     }
@@ -6271,34 +6262,34 @@ var Sortable = {
   mark: function(dropon, position) {
     // mark on ghosting only
     var sortable = Sortable.options(dropon.parentNode);
-    if(sortable && !sortable.ghosting) return;
+    if(sortable && !sortable.ghosting) return; 
 
     if(!Sortable._marker) {
-      Sortable._marker =
+      Sortable._marker = 
         ($('dropmarker') || Element.extend(document.createElement('DIV'))).
           hide().addClassName('dropmarker').setStyle({position:'absolute'});
       document.getElementsByTagName("body").item(0).appendChild(Sortable._marker);
-    }
+    }    
     var offsets = Position.cumulativeOffset(dropon);
     Sortable._marker.setStyle({left: offsets[0]+'px', top: offsets[1] + 'px'});
-
+    
     if(position=='after')
-      if(sortable.overlap == 'horizontal')
+      if(sortable.overlap == 'horizontal') 
         Sortable._marker.setStyle({left: (offsets[0]+dropon.clientWidth) + 'px'});
       else
         Sortable._marker.setStyle({top: (offsets[1]+dropon.clientHeight) + 'px'});
-
+    
     Sortable._marker.show();
   },
-
+  
   _tree: function(element, options, parent) {
     var children = Sortable.findElements(element, options) || [];
-
+  
     for (var i = 0; i < children.length; ++i) {
       var match = children[i].id.match(options.format);
 
       if (!match) continue;
-
+      
       var child = {
         id: encodeURIComponent(match ? match[1] : null),
         element: element,
@@ -6306,16 +6297,16 @@ var Sortable = {
         children: [],
         position: parent.children.length,
         container: $(children[i]).down(options.treeTag)
-      };
-
+      }
+      
       /* Get the element containing the children and recurse over it */
       if (child.container)
-        this._tree(child.container, options, child);
-
+        this._tree(child.container, options, child)
+      
       parent.children.push (child);
     }
 
-    return parent;
+    return parent; 
   },
 
   tree: function(element) {
@@ -6328,15 +6319,15 @@ var Sortable = {
       name: element.id,
       format: sortableOptions.format
     }, arguments[1] || { });
-
+    
     var root = {
       id: null,
       parent: null,
       children: [],
       container: element,
       position: 0
-    };
-
+    }
+    
     return Sortable._tree(element, options, root);
   },
 
@@ -6352,7 +6343,7 @@ var Sortable = {
   sequence: function(element) {
     element = $(element);
     var options = Object.extend(this.options(element), arguments[1] || { });
-
+    
     return $(this.findElements(element, options) || []).map( function(item) {
       return item.id.match(options.format) ? item.id.match(options.format)[1] : '';
     });
@@ -6361,14 +6352,14 @@ var Sortable = {
   setSequence: function(element, new_sequence) {
     element = $(element);
     var options = Object.extend(this.options(element), arguments[2] || { });
-
+    
     var nodeMap = { };
     this.findElements(element, options).each( function(n) {
         if (n.id.match(options.format))
             nodeMap[n.id.match(options.format)[1]] = [n, n.parentNode];
         n.parentNode.removeChild(n);
     });
-
+   
     new_sequence.each(function(ident) {
       var n = nodeMap[ident];
       if (n) {
@@ -6377,16 +6368,16 @@ var Sortable = {
       }
     });
   },
-
+  
   serialize: function(element) {
     element = $(element);
     var options = Object.extend(Sortable.options(element), arguments[1] || { });
     var name = encodeURIComponent(
       (arguments[1] && arguments[1].name) ? arguments[1].name : element.id);
-
+    
     if (options.tree) {
       return Sortable.tree(element, arguments[1]).children.map( function (item) {
-        return [name + Sortable._constructIndex(item) + "[id]=" +
+        return [name + Sortable._constructIndex(item) + "[id]=" + 
                 encodeURIComponent(item.id)].concat(item.children.map(arguments.callee));
       }).flatten().join('&');
     } else {
@@ -6395,16 +6386,16 @@ var Sortable = {
       }).join('&');
     }
   }
-};
+}
 
 // Returns true if child is contained within element
 Element.isParent = function(child, element) {
   if (!child.parentNode || child == element) return false;
   if (child.parentNode == element) return true;
   return Element.isParent(child.parentNode, element);
-};
+}
 
-Element.findChildren = function(element, only, recursive, tagName) {
+Element.findChildren = function(element, only, recursive, tagName) {   
   if(!element.hasChildNodes()) return null;
   tagName = tagName.toUpperCase();
   if(only) only = [only].flatten();
@@ -6420,32 +6411,32 @@ Element.findChildren = function(element, only, recursive, tagName) {
   });
 
   return (elements.length>0 ? elements.flatten() : []);
-};
+}
 
 Element.offsetSize = function (element, type) {
   return element['offset' + ((type=='vertical' || type=='height') ? 'Height' : 'Width')];
-};
+}
 
 
 // Copyright (c) 2005-2008 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
-//           (c) 2005-2008 Ivan Krstic (http://blogs.law.harvard.edu/ivan)
-//           (c) 2005-2008 Jon Tirsen (http://www.tirsen.com)
+//           (c) 2005-2007 Ivan Krstic (http://blogs.law.harvard.edu/ivan)
+//           (c) 2005-2007 Jon Tirsen (http://www.tirsen.com)
 // Contributors:
 //  Richard Livsey
 //  Rahul Bhargava
 //  Rob Wills
-//
+// 
 // script.aculo.us is freely distributable under the terms of an MIT-style license.
 // For details, see the script.aculo.us web site: http://script.aculo.us/
 
-// Autocompleter.Base handles all the autocompletion functionality
+// Autocompleter.Base handles all the autocompletion functionality 
 // that's independent of the data source for autocompletion. This
 // includes drawing the autocompletion menu, observing keyboard
 // and mouse events, and similar.
 //
-// Specific autocompleters need to provide, at the very least,
+// Specific autocompleters need to provide, at the very least, 
 // a getUpdatedChoices function that will be invoked every time
-// the text inside the monitored textbox changes. This method
+// the text inside the monitored textbox changes. This method 
 // should get the text for which to provide autocompletion by
 // invoking this.getToken(), NOT by directly accessing
 // this.element.value. This is to allow incremental tokenized
@@ -6459,23 +6450,23 @@ Element.offsetSize = function (element, type) {
 // will incrementally autocomplete with a comma as the token.
 // Additionally, ',' in the above example can be replaced with
 // a token array, e.g. { tokens: [',', '\n'] } which
-// enables autocompletion on multiple tokens. This is most
-// useful when one of the tokens is \n (a newline), as it
+// enables autocompletion on multiple tokens. This is most 
+// useful when one of the tokens is \n (a newline), as it 
 // allows smart autocompletion after linebreaks.
 
 if(typeof Effect == 'undefined')
   throw("controls.js requires including script.aculo.us' effects.js library");
 
-var Autocompleter = { };
+var Autocompleter = { }
 Autocompleter.Base = Class.create({
   baseInitialize: function(element, update, options) {
-    element          = $(element);
-    this.element     = element;
-    this.update      = $(update);
-    this.hasFocus    = false;
-    this.changed     = false;
-    this.active      = false;
-    this.index       = 0;
+    element          = $(element)
+    this.element     = element; 
+    this.update      = $(update);  
+    this.hasFocus    = false; 
+    this.changed     = false; 
+    this.active      = false; 
+    this.index       = 0;     
     this.entryCount  = 0;
     this.oldElementValue = this.element.value;
 
@@ -6488,28 +6479,28 @@ Autocompleter.Base = Class.create({
     this.options.tokens       = this.options.tokens || [];
     this.options.frequency    = this.options.frequency || 0.4;
     this.options.minChars     = this.options.minChars || 1;
-    this.options.onShow       = this.options.onShow ||
-      function(element, update){
+    this.options.onShow       = this.options.onShow || 
+      function(element, update){ 
         if(!update.style.position || update.style.position=='absolute') {
           update.style.position = 'absolute';
           Position.clone(element, update, {
-            setHeight: false,
+            setHeight: false, 
             offsetTop: element.offsetHeight
           });
         }
         Effect.Appear(update,{duration:0.15});
       };
-    this.options.onHide = this.options.onHide ||
+    this.options.onHide = this.options.onHide || 
       function(element, update){ new Effect.Fade(update,{duration:0.15}) };
 
-    if(typeof(this.options.tokens) == 'string')
+    if(typeof(this.options.tokens) == 'string') 
       this.options.tokens = new Array(this.options.tokens);
     // Force carriage returns as token delimiters anyway
     if (!this.options.tokens.include('\n'))
       this.options.tokens.push('\n');
 
     this.observer = null;
-
+    
     this.element.setAttribute('autocomplete','off');
 
     Element.hide(this.update);
@@ -6520,10 +6511,10 @@ Autocompleter.Base = Class.create({
 
   show: function() {
     if(Element.getStyle(this.update, 'display')=='none') this.options.onShow(this.element, this.update);
-    if(!this.iefix &&
+    if(!this.iefix && 
       (Prototype.Browser.IE) &&
       (Element.getStyle(this.update, 'position')=='absolute')) {
-      new Insertion.After(this.update,
+      new Insertion.After(this.update, 
        '<iframe id="' + this.update.id + '_iefix" '+
        'style="display:none;position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);" ' +
        'src="javascript:false;" frameborder="0" scrolling="no"></iframe>');
@@ -6531,7 +6522,7 @@ Autocompleter.Base = Class.create({
     }
     if(this.iefix) setTimeout(this.fixIEOverlapping.bind(this), 50);
   },
-
+  
   fixIEOverlapping: function() {
     Position.clone(this.update, this.iefix, {setTop:(!this.update.style.height)});
     this.iefix.style.zIndex = 1;
@@ -6579,15 +6570,15 @@ Autocompleter.Base = Class.create({
          Event.stop(event);
          return;
       }
-     else
-       if(event.keyCode==Event.KEY_TAB || event.keyCode==Event.KEY_RETURN ||
+     else 
+       if(event.keyCode==Event.KEY_TAB || event.keyCode==Event.KEY_RETURN || 
          (Prototype.Browser.WebKit > 0 && event.keyCode == 0)) return;
 
     this.changed = true;
     this.hasFocus = true;
 
     if(this.observer) clearTimeout(this.observer);
-      this.observer =
+      this.observer = 
         setTimeout(this.onObserverEvent.bind(this), this.options.frequency*1000);
   },
 
@@ -6599,35 +6590,35 @@ Autocompleter.Base = Class.create({
 
   onHover: function(event) {
     var element = Event.findElement(event, 'LI');
-    if(this.index != element.autocompleteIndex)
+    if(this.index != element.autocompleteIndex) 
     {
         this.index = element.autocompleteIndex;
         this.render();
     }
     Event.stop(event);
   },
-
+  
   onClick: function(event) {
     var element = Event.findElement(event, 'LI');
     this.index = element.autocompleteIndex;
     this.selectEntry();
     this.hide();
   },
-
+  
   onBlur: function(event) {
     // needed to make click events working
     setTimeout(this.hide.bind(this), 250);
     this.hasFocus = false;
-    this.active = false;
-  },
-
+    this.active = false;     
+  }, 
+  
   render: function() {
     if(this.entryCount > 0) {
       for (var i = 0; i < this.entryCount; i++)
-        this.index==i ?
-          Element.addClassName(this.getEntry(i),"selected") :
+        this.index==i ? 
+          Element.addClassName(this.getEntry(i),"selected") : 
           Element.removeClassName(this.getEntry(i),"selected");
-      if(this.hasFocus) {
+      if(this.hasFocus) { 
         this.show();
         this.active = true;
       }
@@ -6636,27 +6627,27 @@ Autocompleter.Base = Class.create({
       this.hide();
     }
   },
-
+  
   markPrevious: function() {
-    if(this.index > 0) this.index--;
+    if(this.index > 0) this.index--
       else this.index = this.entryCount-1;
     this.getEntry(this.index).scrollIntoView(true);
   },
-
+  
   markNext: function() {
-    if(this.index < this.entryCount-1) this.index++;
+    if(this.index < this.entryCount-1) this.index++
       else this.index = 0;
     this.getEntry(this.index).scrollIntoView(false);
   },
-
+  
   getEntry: function(index) {
     return this.update.firstChild.childNodes[index];
   },
-
+  
   getCurrentEntry: function() {
     return this.getEntry(this.index);
   },
-
+  
   selectEntry: function() {
     this.active = false;
     this.updateElement(this.getCurrentEntry());
@@ -6673,7 +6664,7 @@ Autocompleter.Base = Class.create({
       if(nodes.length>0) value = Element.collectTextNodes(nodes[0], this.options.select);
     } else
       value = Element.collectTextNodesIgnoreClass(selectedElement, 'informal');
-
+    
     var bounds = this.getTokenBounds();
     if (bounds[0] != -1) {
       var newValue = this.element.value.substr(0, bounds[0]);
@@ -6686,7 +6677,7 @@ Autocompleter.Base = Class.create({
     }
     this.oldElementValue = this.element.value;
     this.element.focus();
-
+    
     if (this.options.afterUpdateElement)
       this.options.afterUpdateElement(this.element, selectedElement);
   },
@@ -6698,20 +6689,20 @@ Autocompleter.Base = Class.create({
       Element.cleanWhitespace(this.update.down());
 
       if(this.update.firstChild && this.update.down().childNodes) {
-        this.entryCount =
+        this.entryCount = 
           this.update.down().childNodes.length;
         for (var i = 0; i < this.entryCount; i++) {
           var entry = this.getEntry(i);
           entry.autocompleteIndex = i;
           this.addObservers(entry);
         }
-      } else {
+      } else { 
         this.entryCount = 0;
       }
 
       this.stopIndicator();
       this.index = 0;
-
+      
       if(this.entryCount==1 && this.options.autoSelect) {
         this.selectEntry();
         this.hide();
@@ -6727,7 +6718,7 @@ Autocompleter.Base = Class.create({
   },
 
   onObserverEvent: function() {
-    this.changed = false;
+    this.changed = false;   
     this.tokenBounds = null;
     if(this.getToken().length>=this.options.minChars) {
       this.getUpdatedChoices();
@@ -6780,16 +6771,16 @@ Ajax.Autocompleter = Class.create(Autocompleter.Base, {
 
   getUpdatedChoices: function() {
     this.startIndicator();
-
-    var entry = encodeURIComponent(this.options.paramName) + '=' +
+    
+    var entry = encodeURIComponent(this.options.paramName) + '=' + 
       encodeURIComponent(this.getToken());
 
     this.options.parameters = this.options.callback ?
       this.options.callback(this.element, entry) : entry;
 
-    if(this.options.defaultParams)
+    if(this.options.defaultParams) 
       this.options.parameters += '&' + this.options.defaultParams;
-
+    
     new Ajax.Request(this.url, this.options);
   },
 
@@ -6811,7 +6802,7 @@ Ajax.Autocompleter = Class.create(Autocompleter.Base, {
 // - choices - How many autocompletion choices to offer
 //
 // - partialSearch - If false, the autocompleter will match entered
-//                    text only at the beginning of strings in the
+//                    text only at the beginning of strings in the 
 //                    autocomplete array. Defaults to true, which will
 //                    match text at the beginning of any *word* in the
 //                    strings in the autocomplete array. If you want to
@@ -6828,7 +6819,7 @@ Ajax.Autocompleter = Class.create(Autocompleter.Base, {
 // - ignoreCase - Whether to ignore case when autocompleting.
 //                 Defaults to true.
 //
-// It's possible to pass in a custom function as the 'selector'
+// It's possible to pass in a custom function as the 'selector' 
 // option, if you prefer to write your own autocompletion logic.
 // In that case, the other options above will not apply unless
 // you support them.
@@ -6856,20 +6847,20 @@ Autocompleter.Local = Class.create(Autocompleter.Base, {
         var entry     = instance.getToken();
         var count     = 0;
 
-        for (var i = 0; i < instance.options.array.length &&
-          ret.length < instance.options.choices ; i++) {
+        for (var i = 0; i < instance.options.array.length &&  
+          ret.length < instance.options.choices ; i++) { 
 
           var elem = instance.options.array[i];
-          var foundPos = instance.options.ignoreCase ?
-            elem.toLowerCase().indexOf(entry.toLowerCase()) :
+          var foundPos = instance.options.ignoreCase ? 
+            elem.toLowerCase().indexOf(entry.toLowerCase()) : 
             elem.indexOf(entry);
 
           while (foundPos != -1) {
-            if (foundPos == 0 && elem.length != entry.length) {
-              ret.push("<li><strong>" + elem.substr(0, entry.length) + "</strong>" +
+            if (foundPos == 0 && elem.length != entry.length) { 
+              ret.push("<li><strong>" + elem.substr(0, entry.length) + "</strong>" + 
                 elem.substr(entry.length) + "</li>");
               break;
-            } else if (entry.length >= instance.options.partialChars &&
+            } else if (entry.length >= instance.options.partialChars && 
               instance.options.partialSearch && foundPos != -1) {
               if (instance.options.fullSearch || /\s/.test(elem.substr(foundPos-1,1))) {
                 partial.push("<li>" + elem.substr(0, foundPos) + "<strong>" +
@@ -6879,14 +6870,14 @@ Autocompleter.Local = Class.create(Autocompleter.Base, {
               }
             }
 
-            foundPos = instance.options.ignoreCase ?
-              elem.toLowerCase().indexOf(entry.toLowerCase(), foundPos + 1) :
+            foundPos = instance.options.ignoreCase ? 
+              elem.toLowerCase().indexOf(entry.toLowerCase(), foundPos + 1) : 
               elem.indexOf(entry, foundPos + 1);
 
           }
         }
         if (partial.length)
-          ret = ret.concat(partial.slice(0, instance.options.choices - ret.length));
+          ret = ret.concat(partial.slice(0, instance.options.choices - ret.length))
         return "<ul>" + ret.join('') + "</ul>";
       }
     }, options || { });
@@ -6903,7 +6894,7 @@ Field.scrollFreeActivate = function(field) {
   setTimeout(function() {
     Field.activate(field);
   }, 1);
-};
+}
 
 Ajax.InPlaceEditor = Class.create({
   initialize: function(element, url, options) {
@@ -7033,7 +7024,7 @@ Ajax.InPlaceEditor = Class.create({
     this.triggerCallback('onEnterHover');
   },
   getText: function() {
-    return this.element.innerHTML.unescapeHTML();
+    return this.element.innerHTML;
   },
   handleAJAXFailure: function(transport) {
     this.triggerCallback('onFailure', transport);
@@ -7209,7 +7200,7 @@ Ajax.InPlaceCollectionEditor = Class.create(Ajax.InPlaceEditor, {
       onSuccess: function(transport) {
         var js = transport.responseText.strip();
         if (!/^\[.*\]$/.test(js)) // TODO: improve sanity check
-          throw('Server returned an invalid collection representation.');
+          throw 'Server returned an invalid collection representation.';
         this._collection = eval(js);
         this.checkForExternalText();
       }.bind(this),
@@ -7366,7 +7357,7 @@ Ajax.InPlaceCollectionEditor.DefaultOptions = {
   loadingCollectionText: 'Loading options...'
 };
 
-// Delayed observer, like Form.Element.Observer,
+// Delayed observer, like Form.Element.Observer, 
 // but waits for delay after last key input
 // Ideal for live-search fields
 
@@ -7376,7 +7367,7 @@ Form.Element.DelayedObserver = Class.create({
     this.element   = $(element);
     this.callback  = callback;
     this.timer     = null;
-    this.lastValue = $F(this.element);
+    this.lastValue = $F(this.element); 
     Event.observe(this.element,'keyup',this.delayedListener.bindAsEventListener(this));
   },
   delayedListener: function(event) {
@@ -7390,1717 +7381,6 @@ Form.Element.DelayedObserver = Class.create({
     this.callback(this.element, $F(this.element));
   }
 });
-
-function detect_max_window_size(onchange)
-{
-  this.onchange = onchange;
-
-  /* This is shown to make sure we can scroll the address bar off. */
-  this.padding = document.createElement("DIV");
-  this.padding.setStyle({width: "5000px", height: "5000px"});
-  this.padding.hide();
-  document.documentElement.appendChild(this.padding);
-
-  this.window_size = [0, 0];
-  this.finish = this.finish.bind(this);
-  this.event_onresize = this.event_onresize.bindAsEventListener(this);
-
-  this.finish_timer = null;
-  this.active = false;
-
-  window.addEventListener("resize", this.event_onresize, false);
-
-  this.event_onresize();
-}
-
-detect_max_window_size.prototype.begin = function()
-{
-  if(this.active)
-    return;
-
-  var initial_window_size = this.current_window_size();
-  if(this.window_size && initial_window_size[0] == this.window_size[0] && initial_window_size[1] == this.window_size[1])
-  {
-    this.log("skipped");
-    return;
-  }
-
-  this.log("begin");
-  this.window_size = initial_window_size;
-  this.padding.show();
-  this.active = true;
-  window.removeEventListener("resize", this.event_onresize, false);
-
-  if(this.finish_timer != null)
-    this.finish_timer = window.clearTimeout(this.finish_timer);
-  this.finish_timer = window.setTimeout(this.finish, 250);
-
-  window.scrollTo(0, 1);
-}
-
-detect_max_window_size.prototype.log = function(s)
-{
-  debug.log(s);
-}
-
-detect_max_window_size.prototype.end = function()
-{
-  if(!this.active)
-    return;
-  this.active = false;
-
-  this.padding.hide();
-  window.addEventListener("resize", this.event_onresize, false);
-}
-
-detect_max_window_size.prototype.current_window_size = function()
-{
-  return [window.innerWidth, window.innerHeight];
-}
-
-detect_max_window_size.prototype.finish = function()
-{
-  if(!this.active)
-    return;
-  debug.log("finish()");
-  this.end();
-
-  this.window_size[0] = Math.max(this.window_size[0], window.innerWidth);
-  this.window_size[1] = Math.max(this.window_size[1], window.innerHeight);
-
-  /* If the orientation's been changed, start over. */
-  var was_landscape = this.window_size[0] > this.window_size[1];
-  var is_landscape = window.innerWidth > window.innerHeight;
-  if(was_landscape != is_landscape)
-  {
-    this.log("restart: orientation changed");
-    this.end();
-    this.begin();
-    return;
-  }
-
-  if(this.onchange)
-    this.onchange(this.window_size);
-}
-
-detect_max_window_size.prototype.event_onresize = function(e)
-{
-  /* A resize event starts a new detection cycle, if we're not already in one. */
-  if(!this.active)
-  {
-    this.log("resize");
-    this.begin();
-  }
-}
-
-
-
-PostLoader = function()
-{
-  this.need_more_post_data = this.need_more_post_data.bindAsEventListener(this);
-  document.observe("viewer:need-more-thumbs", this.need_more_post_data);
-
-  this.hashchange_tags = this.hashchange_tags.bind(this);
-  UrlHash.observe("tags", this.hashchange_tags);
-
-  this.cached_posts = new Hash();
-  this.cached_pools = new Hash();
-
-  this.load(false);
-}
-
-PostLoader.prototype.need_more_post_data = function()
-{
-  /* We'll receive this message often once we're close to needing more posts.  Only
-   * start loading more data the first time. */
-  if(this.loaded_extended_results)
-    return;
-
-  this.load(true, false);
-}
-
-
-PostLoader.prototype.server_load_pool = function()
-{
-  if(this.result.pool_id == null)
-    return;
-
-  if(!this.result.disable_cache)
-  {
-    var pool = this.cached_pools.get(this.result.pool_id);
-    if(pool)
-    {
-      this.result.pool = pool;
-      this.request_finished();
-      return;
-    }
-  }
-
-  new Ajax.Request("/pool/show.json", {
-    parameters: { id: this.result.pool_id },
-    method: "get",
-    onCreate: function(resp) {
-      this.current_ajax_requests.push(resp.request);
-    }.bind(this),
-
-    onComplete: function(resp) {
-      this.current_ajax_requests = this.current_ajax_requests.without(resp.request);
-      this.request_finished();
-    }.bind(this),
-
-    onSuccess: function(resp) {
-      if(this.current_ajax_requests.indexOf(resp.request) == -1)
-        return;
-
-      this.result.pool = resp.responseJSON;
-      this.cached_pools.set(this.result.pool_id, this.result.pool);
-    }.bind(this)
-  });
-}
-
-PostLoader.prototype.server_load_posts = function()
-{
-  var tags = this.result.tags;
-  var search = tags + " limit:" + this.result.post_limit;
-
-  if(!this.result.disable_cache)
-  {
-    var results = this.cached_posts.get(search);
-    if(results)
-    {
-      this.result.posts = results;
-
-      /* Don't Post.register the results when serving out of cache.  They're already
-       * registered, and the data in the post registry may be more current than the
-       * cached search results. */
-      this.request_finished();
-      return;
-    }
-  }
-
-  new Ajax.Request("/post/index.json", {
-    parameters: { tags: search, filter: 1 },
-    method: "get",
-
-    onCreate: function(resp) {
-      this.current_ajax_requests.push(resp.request);
-    }.bind(this),
-
-    onComplete: function(resp) {
-      this.current_ajax_requests = this.current_ajax_requests.without(resp.request);
-      this.request_finished();
-    }.bind(this),
-
-    onSuccess: function(resp) {
-      if(this.current_ajax_requests.indexOf(resp.request) == -1)
-        return;
-    
-      var posts = resp.responseJSON;
-      this.result.posts = posts;
-
-      for(var i = 0; i < posts.length; ++i)
-        Post.register(posts[i]);
-
-      this.cached_posts.set(search, this.result.posts);
-    }.bind(this),
-
-    onFailure: function(resp) {
-      notice("Error " + resp.status + " loading posts");
-    }.bind(this)
-  });
-}
-
-PostLoader.prototype.request_finished = function()
-{
-  if(this.current_ajax_requests.length)
-    return;
-
-  /* Event handlers for the events we fire below might make requests back to us.  Save and
-   * clear this.result before firing the events, so that behaves properly. */
-  var result = this.result;
-  this.result = null;
-
-  var new_post_ids = [];
-  if(result.posts)
-  {
-    for(var i = 0; i < result.posts.length; ++i)
-      new_post_ids.push(result.posts[i].id);
-  }
-
-  document.fire("viewer:displayed-pool-changed", { pool: result.pool });
-  document.fire("viewer:searched-tags-changed", { tags: result.tags });
-
-  /* Tell the thumbnail viewer whether it should allow scrolling over the left side. */
-  var can_be_extended_further = new_post_ids.length > 0 && !result.extending && !result.pool;
-
-  document.fire("viewer:loaded-posts", {
-    tags: result.tags, /* this will be null if no search was actually performed (eg. URL with a post-id and no tags) */
-    post_ids: new_post_ids,
-    pool: result.pool,
-    extending: result.extending,
-    can_be_extended_further: can_be_extended_further
-  });
-}
-
-/* If extending is true, load a larger set of posts. */
-PostLoader.prototype.load = function(extending, disable_cache)
-{
-  /* If neither a search nor a post-id is specified, set a default search. */
-  if(!extending && UrlHash.get("tags") == null && UrlHash.get("post-id") == null)
-  {
-    UrlHash.set({tags: ""});
-
-    /* We'll receive another hashchange message for setting "tags".  Don't load now or we'll
-     * end up loading twice. */
-    return;
-  }
-
-  this.loaded_extended_results = extending;
-
-  /* Discard any running AJAX requests. */
-  this.current_ajax_requests = [];
-
-  this.result = {};
-  this.result.tags = UrlHash.get("tags");
-  this.result.disable_cache = disable_cache;
-  this.result.extending = extending;
-
-  if(this.result.tags == null)
-  {
-    /* If no search is specified, don't run one; return empty results. */
-    this.request_finished();
-    return;
-  }
-
-  /* See if we have a pool search.  This only checks for pool:id searches, not pool:*name* searches;
-   * we want to know if we're displaying posts only from a single pool. */
-  var pool_id = null;
-  this.result.tags.split(" ").each(function(tag) {
-    var m = tag.match(/^pool:(\d+)/);
-    if(!m)
-      return;
-    pool_id = parseInt(m[1]);
-  });
-
-  /* If we're loading from a pool, load the pool's data. */
-  this.result.pool_id = pool_id;
-
-  this.result.extending = extending;
-
-  /* Load the posts to display.  If we're loading a pool, load all posts (up to 1000);
-   * otherwise set a limit. */
-  var limit = extending? 1000:100;
-  if(pool_id != null)
-    limit = 1000;
-  this.result.post_limit = limit;
-
-
-  /* Make sure that request_finished doesn't consider this request complete until we've
-   * actually started every request. */
-  this.current_ajax_requests.push(null);
-
-  this.server_load_pool();
-  this.server_load_posts();
-
-  this.current_ajax_requests = this.current_ajax_requests.without(null);
-  this.request_finished();
-}
-
-PostLoader.prototype.hashchange_tags = function()
-{
-  this.load(false, false);
-}
-
- 
-  
-  
-  
-  
-/*
- * Handle the thumbnail view, and navigation for the main view.
- *
- * Handle a large number (thousands) of entries cleanly.  Thumbnail nodes are created
- * as needed, and destroyed when they scroll off screen.  This gives us constant
- * startup time, loads thumbnails on demand, allows preloading thumbnails in advance
- * by creating more nodes in advance, and keeps memory usage constant.
- */
-ThumbnailView = function(container, view)
-{
-  this.container = container;
-  this.view = view;
-  this.post_ids = null; /* set by loaded_posts_event */
-  this.expanded_post_id = null;
-  this.centered_post_idx = null;
-  this.centered_post_offset = 0;
-  this.last_mouse_x = 0;
-  this.last_mouse_y = 0;
-  this.thumb_container_shown = true;
-  this.allow_wrapping = true;
-  this.thumb_preloads = new Hash();
-  this.thumb_preload_container = new PreloadContainer();
-
-  /* The [first, end) range of posts that are currently inside .post-browser-posts. */
-  this.posts_populated = [0, 0];
-
-  this.container_click_event = this.container_click_event.bindAsEventListener(this);
-  this.container_dblclick_event = this.container_dblclick_event.bindAsEventListener(this);
-  this.container_mouse_wheel_event = this.container_mouse_wheel_event.bindAsEventListener(this);
-
-  this.container.observe("DOMMouseScroll", this.container_mouse_wheel_event);
-  this.container.observe("mousewheel", this.container_mouse_wheel_event);
-
-  this.displayed_image_loaded_event = this.displayed_image_loaded_event.bindAsEventListener(this);
-  document.observe("viewer:displayed-image-loaded", this.displayed_image_loaded_event);
-  document.observe("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
-  document.observe("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
-  document.observe("viewer:toggle-thumb-bar", function(e) { this.toggle_thumb_bar(); }.bindAsEventListener(this));
-  document.observe("viewer:force-thumb-bar", function(e) { this.show_thumb_bar(!e.memo.hide); }.bindAsEventListener(this));
-
-  this.hashchange_post_id = this.hashchange_post_id.bind(this);
-  UrlHash.observe("post-id", this.hashchange_post_id);
-
-  new DragElement(this.container, this.container_ondrag.bind(this));
-
-//  this.document_resize_event = this.document_resize_event.bindAsEventListener(this);
-//  Event.observe(window, "resize", this.document_resize_event);
-
-  this.container_mousemove_event = this.container_mousemove_event.bindAsEventListener(this);
-  this.container.observe("mousemove", this.container_mousemove_event);
-
-  this.container_mouseover_event = this.container_mouseover_event.bindAsEventListener(this);
-  this.container.observe("mouseover", this.container_mouseover_event);
-
-  this.container.observe("click", this.container_click_event);
-  this.container.observe("dblclick", this.container_dblclick_event);
-
-  this.loaded_posts_event = this.loaded_posts_event.bindAsEventListener(this);
-  document.observe("viewer:loaded-posts", this.loaded_posts_event);
-
-  /* Prevent the default behavior of left-clicking on the expanded thumbnail overlay.  It's
-   * handled by container_click_event. */
-  this.container.down(".browser-thumb-hover-overlay").observe("click", function(event) {
-    if(event.isLeftClick())
-      event.preventDefault();
-  }.bindAsEventListener(this));
-
-  new ObserveResizeEvent(this.window_resized.bind(this));
-  this.window_resized();
-}
-
-ThumbnailView.prototype.window_resized = function()
-{
-  debug.log("window_resized");
-  if(this.thumb_container_shown)
-    this.center_on_post_for_scroll(this.centered_post_idx);
-
-  // XXX: Android only
-//  window.scrollTo(0, 1);
-}
-
-/* Show the given posts.  If extending is true, post_ids are meant to extend a previous
- * search; attempt to continue where we left off. */
-ThumbnailView.prototype.loaded_posts_event = function(event)
-{
-  var post_ids = event.memo.post_ids;
-
-  var old_post_ids = this.post_ids || [];
-  var old_centered_post_idx = this.centered_post_idx;
-  this.remove_all_posts();
-
-  this.post_ids = post_ids;
-  this.allow_wrapping = !event.memo.can_be_extended_further;
-
-  if(event.memo.extending)
-  {
-    /*
-     * We're extending a previous search with more posts.  The new post list we get may
-     * not line up with the old one: the post we're focused on may no longer be in the
-     * search, or may be at a different index.
-     *
-     * Find a nearby post in the new results.  Start searching at the post we're already
-     * centered on.  If that doesn't match, move outwards from there.  Only look forward
-     * a little bit, or we may match a post that was never seen and jump forward too far
-     * in the results.
-     */
-    var post_id_search_order = sort_array_by_distance(old_post_ids.slice(0, old_centered_post_idx+3), old_centered_post_idx);
-    var initial_post_id = null;
-    for(var i = 0; i < post_id_search_order.length; ++i)
-    {
-      var post_id_to_search = post_id_search_order[i];
-      var post = Post.posts.get(post_id_to_search);
-      if(post != null)
-      {
-        initial_post_id = post.id;
-        break;
-      }
-    }
-    debug.log("center-on-" + initial_post_id);
-
-    /* If we didn't find anything that matched, go back to the start. */
-    if(initial_post_id == null)
-    {
-      this.centered_post_offset = 0;
-      initial_post_id = new_post_ids[0];
-    }
-
-    var initial_post_idx = this.post_ids.indexOf(initial_post_id);
-    this.center_on_post_for_scroll(initial_post_idx);
-  }
-  else
-  {
-    var initial_post_id = this.get_current_post_id();
-    var initial_post_idx = this.post_ids.indexOf(initial_post_id)
-    if(initial_post_idx == -1)
-      initial_post_idx = 0;
-    this.centered_post_offset = 0;
-    this.center_on_post_for_scroll(initial_post_idx);
-    this.set_active_post(initial_post_id);
-  }
-
-  if(event.memo.tags == null)
-  {
-    /* If tags is null then no search has been done, which means we're on a URL
-     * with a post ID and no search, eg. "/post/browse#12345".  Hide the thumb
-     * bar, so we'll just show the post. */
-    this.show_thumb_bar(false);
-  }
-
-  this.container.down(".post-browser-no-results").show(this.post_ids.length == 0);
-  this.container.down(".post-browser-posts").show(this.post_ids.length != 0);
-}
-
-ThumbnailView.prototype.container_ondrag = function(e)
-{
-  this.centered_post_offset -= e.dX;
-  this.center_on_post_for_scroll(this.centered_post_idx);
-}
-
-ThumbnailView.prototype.container_mouseover_event = function(event)
-{
-  var li = event.target.up(".post-thumb");
-  if(!li)
-    return;
-
-  this.expand_post(li.post_id);
-}
-
-ThumbnailView.prototype.hashchange_post_id = function()
-{
-  var new_post_id = this.get_current_post_id();
-
-  /* If we're already displaying this post, ignore the hashchange.  Don't center on the
-   * post if this is just a side-effect of clicking a post, rather than the user actually
-   * changing the hash. */
-  if(new_post_id == this.view.displayed_post_id)
-  {
-//    debug.log("ignored-hashchange");
-    return;
-  }
-
-  this.centered_post_offset = 0;
-  var new_post_idx = this.post_ids.indexOf(new_post_id);
-  this.center_on_post_for_scroll(new_post_idx);
-  this.set_active_post(new_post_id);
-}
-
-/* Return the post ID that's currently being displayed in the main view, based
- * on the URL hash.  If no post is specified, return -1. */
-ThumbnailView.prototype.get_current_post_id = function()
-{
-  var post_id = UrlHash.get("post-id");
-  if(post_id == null)
-    return this.post_ids[0];
-
-  post_id = parseInt(post_id);
-  return post_id;
-}
-
-/* Track the mouse cursor when it's within the container. */
-ThumbnailView.prototype.container_mousemove_event = function(e)
-{
-  var x = e.pointerX() - document.documentElement.scrollLeft;
-  var y = e.pointerY() - document.documentElement.scrollTop;
-  this.last_mouse_x = x;
-  this.last_mouse_y = y;
-}
-
-ThumbnailView.prototype.container_mouse_wheel_event = function(event)
-{
-  event.stop();
-
-  var val;
-  if(event.wheelDelta)
-  {
-    val = event.wheelDelta;
-  } else if (event.detail) {
-    val = -event.detail;
-  }
-
-  document.fire("viewer:scroll", { left: val >= 0 });
-}
-
-ThumbnailView.prototype.set_active_post = function(post_id, lazy)
-{
-  if(post_id == null)
-    return;
-
-  this.active_post_id = post_id;
-
-  if(lazy)
-  {
-    /* Ask the pool browser to load the new post, with a delay in case we're
-     * scrolling quickly. */
-    this.view.lazily_load(post_id);
-  } else {
-    this.view.set_post(post_id);
-  }
-}
-
-ThumbnailView.prototype.show_next_post = function(prev)
-{
-  var active_post_id = this.active_post_id;
-  var current_idx = this.post_ids.indexOf(active_post_id);
-
-  /* If the displayed post isn't in the thumbnails and we're changing posts, start
-   * at the beginning. */
-  if(current_idx == -1)
-    current_idx = 0;
-  var new_idx = current_idx + (prev? -1:+1);
-
-  if(this.post_ids.length == 0)
-    return;
-
-  if(new_idx < 0)
-  {
-    /* Only allow wrapping over the edge if we've already expanded the results. */
-    if(!this.allow_wrapping)
-      return;
-    if(!this.thumb_container_shown)
-      notice("Continued from the end");
-    new_idx = this.post_ids.length - 1;
-  }
-  else if(new_idx >= this.post_ids.length)
-  {
-    if(!this.allow_wrapping)
-      return;
-    if(!this.thumb_container_shown)
-      notice("Starting over from the beginning");
-    new_idx = 0;
-  }
-
-  this.centered_post_offset = 0;
-  this.center_on_post_for_scroll(new_idx);
-
-  var new_post_id = this.post_ids[new_idx];
-  this.set_active_post(new_post_id, true);
-}
-
-/* Scroll the thumbnail view left or right.  Don't change the displayed post. */
-ThumbnailView.prototype.scroll = function(left)
-{
-  /* There's no point in scrolling the list if it's not visible. */
-  if(!this.thumb_container_shown)
-    return;
-  var new_idx = this.centered_post_idx;
-
-  /* If we're not centered on the post, and we're moving towards the center,
-   * don't jump past the post. */
-  if(this.centered_post_offset > 0 && left)
-    ;
-  else if(this.centered_post_offset < 0 && !left)
-    ;
-  else
-    new_idx += (left? -1:+1);
-
-  // Snap to the nearest post.
-  this.centered_post_offset = 0;
-
-  /* Wrap the new index. */
-  if(new_idx < 0)
-  {
-    /* Only allow scrolling over the left edge if we've already expanded the results. */
-    if(!this.allow_wrapping)
-      new_idx = 0;
-    else
-      new_idx = this.post_ids.length - 1;
-  }
-  else if(new_idx >= this.post_ids.length)
-  {
-    if(!this.allow_wrapping)
-      new_idx = this.post_ids.length - 1;
-    else
-      new_idx = 0;
-  }
-
-  this.center_on_post_for_scroll(new_idx);
-}
-
-/* Hide the hovered post, if any, call center_on_post(post_id), then hover over the correct post again. */
-ThumbnailView.prototype.center_on_post_for_scroll = function(post_idx)
-{
-  this.expand_post(null);
-
-  this.center_on_post(post_idx);
-
-  /*
-   * Now that we've re-centered, we need to expand the correct image.  Usually, we can just
-   * wait for the mouseover event to fire, since we hid the expanded thumb overlay and the
-   * image underneith it is now under the mouse.  However, browsers are badly broken here.
-   * Opera doesn't fire mouseover events when the element under the cursor is hidden.  FF
-   * fires the mouseover on hide, but misses the mouseout when the new overlay is shown, so
-   * the next time it's hidden mouseover events are lost.
-   *
-   * Explicitly figure out which item we're hovering over and expand it.
-   */
-  var element = document.elementFromPoint(this.last_mouse_x, this.last_mouse_y);
-  element = $(element);
-  if(element)
-  {
-    var li = element.up(".post-thumb");
-    if(li)
-      this.expand_post(li.post_id);
-  }
-}
-
-ThumbnailView.prototype.remove_post = function(right)
-{
-  if(this.posts_populated[0] == this.posts_populated[1])
-    return false; /* none to remove */
-
-  var node = this.container.down(".post-browser-posts");
-  if(right)
-  {
-    --this.posts_populated[1];
-    var node_to_remove = node.lastChild;
-  }
-  else
-  {
-    ++this.posts_populated[0];
-    var node_to_remove = node.firstChild;
-  }
-  node.removeChild(node_to_remove);
-  return true;
-}
-
-ThumbnailView.prototype.remove_all_posts = function()
-{
-  while(this.remove_post(true))
-    ;
-}
-
-/* Add the next thumbnail to the left or right side. */
-ThumbnailView.prototype.add_post_to_display = function(right)
-{
-  var node = this.container.down(".post-browser-posts");
-  if(right)
-  {
-    var post_idx_to_populate = this.posts_populated[1];
-    if(post_idx_to_populate == this.post_ids.length)
-      return false;
-    ++this.posts_populated[1];
-
-    var thumb = this.create_thumb(this.post_ids[post_idx_to_populate]);
-    node.insertBefore(thumb, null);
-  }
-  else
-  {
-    if(this.posts_populated[0] == 0)
-      return false;
-    --this.posts_populated[0];
-    var post_idx_to_populate = this.posts_populated[0];
-    var thumb = this.create_thumb(this.post_ids[post_idx_to_populate]);
-    node.insertBefore(thumb, node.firstChild);
-  }
-  return true;
-}
-
-/* Fill the container so post_id is visible. */
-ThumbnailView.prototype.populate_post = function(post_idx)
-{
-  if(this.is_post_idx_shown(post_idx))
-    return;
-
-  /* If post_idx is on the immediate border of what's already displayed, add it incrementally, and
-   * we'll cull extra posts later.  Otherwise, clear all of the posts and populate from scratch. */
-  if(post_idx == this.posts_populated[1])
-  {
-    this.add_post_to_display(true);
-    return;
-  }
-  else if(post_idx == this.posts_populated[0])
-  {
-    this.add_post_to_display(false);
-    return;
-  }
-
-  /* post_idx isn't on the boundary, so we're jumping posts rather than scrolling.
-   * Clear the container and start over. */ 
-  this.remove_all_posts();
-
-  var node = this.container.down(".post-browser-posts");
-
-  var thumb = this.create_thumb(this.post_ids[post_idx]);
-  node.appendChild(thumb);
-  this.posts_populated[0] = post_idx;
-  this.posts_populated[1] = post_idx + 1;
-}
-
-ThumbnailView.prototype.is_post_idx_shown = function(post_idx)
-{
-  if(post_idx >= this.posts_populated[1])
-    return false;
-  return post_idx >= this.posts_populated[0];
-}
-
-/* Return the total width of all thumbs to the left or right of post_id, not
- * including post_id itself. */
-ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
-{
-  var post = $("p" + post_id);
-  if(right)
-  {
-    var rightmost_node = post.parentNode.lastChild;
-    if(rightmost_node == post)
-      return 0;
-    var right_edge = rightmost_node.offsetLeft + rightmost_node.offsetWidth;
-    var center_post_right_edge = post.offsetLeft + post.offsetWidth;
-    return right_edge - center_post_right_edge
-  }
-  else
-  {
-    return post.offsetLeft;
-  }
-}
-
-/* Center the thumbnail strip on post_id.  If post_id isn't in the display, do nothing.
- * Fire viewer:need-more-thumbs if we're scrolling near the edge of the list. */
-ThumbnailView.prototype.center_on_post = function(post_idx)
-{
-  if(!this.post_ids)
-  {
-    debug.log("unexpected: center_on_post has no post_ids");
-    return;
-  }
-
-  var post_id = this.post_ids[post_idx];
-  if(Post.posts.get(post_id) == null)
-    return;
-
-  if(post_idx > this.post_ids.length*3/4)
-  {
-    /* We're coming near the end of the loaded posts, so load more. */
-    document.fire("viewer:need-more-thumbs", { view: this });
-  }
-
-  this.centered_post_idx = post_idx;
-
-  /* If we're not expanded, we can't figure out how to center it since we'll have no width.
-   * Also, don't cause thumbnails to be loaded if we're hidden.  Just set centered_post_id,
-   * and we'll come back here when we're displayed. */
-  if(!this.thumb_container_shown)
-    return;
-
-  /* If centered_post_offset is high enough to put the actual center post somewhere else,
-   * adjust it towards zero and change centered_post_idx.  This keeps centered_post_idx
-   * pointing at the item that's actually centered. */
-  while(1)
-  {
-    var center_post_id = this.post_ids[this.centered_post_idx];
-    var post = $("p" + center_post_id);
-    if(!post)
-      break;
-    var pos = post.offsetWidth/2 + this.centered_post_offset;
-    if(pos >= 0 && pos < post.offsetWidth)
-      break;
-
-    var next_post_idx = this.centered_post_idx + (this.centered_post_offset > 0? +1:-1);
-    var next_post_id = this.post_ids[next_post_idx];
-
-    var next_post = $("p" + next_post_id);
-    if(next_post == null)
-      break;
-
-    var current_post_center = post.offsetLeft + post.offsetWidth/2;
-    var next_post_center = next_post.offsetLeft + next_post.offsetWidth/2;
-    var distance = next_post_center - current_post_center;
-    this.centered_post_offset -= distance;
-    this.centered_post_idx = next_post_idx;
-
-    post_idx = this.centered_post_idx;
-    break;
-  }
-
-  this.populate_post(post_idx);
-
-//  this.container.setStyle({maxWidth: window.innerWidth+"px"});
-debug.log("-> " + document.body.offsetWidth + ", " + window.innerWidth + ", " + window.innerHeight);
-  /* Make sure that we have enough posts populated around the one we're centering
-   * on to fill the display.  If we have too many nodes, remove some. */
-  var post_id = this.post_ids[post_idx];
-  for(var direction = 0; direction < 2; ++direction)
-  {
-    var right = !!direction;
-
-    /* We need at least this.container.offsetWidth/2 in each direction.  Load a little more, to
-     * reduce flicker. */
-    var minimum_distance = this.container.offsetWidth/2;
-    var maximum_distance = minimum_distance + 500;
-    while(true)
-    {
-      var added = false;
-      var width = this.get_width_adjacent_to_post(post_id, right);
-
-      /* If we're offset to the right then we need more data to the left, and vice versa. */
-      width += this.centered_post_offset * (right? -1:+1);
-      if(width < 0)
-        width = 1;
-
-      if(width < minimum_distance)
-      {
-        /* We need another post.  Stop if there are no more posts to add. */
-        if(!this.add_post_to_display(right))
-          break;
-        added = false;
-      }
-      else if(width > maximum_distance)
-      {
-        /* We have a lot of posts off-screen.  Remove one. */
-        this.remove_post(right);
-
-        /* Sanity check: we should never add and remove in the same direction.  If this
-         * happens, the distance between minimum_distance and maximum_distance may be less
-         * than the width of a single thumbnail. */
-        if(added)
-        {
-          alert("error");
-          break;
-        }
-      }
-      else
-      {
-        break;
-      }
-    }
-  }
-
-  this.preload_thumbs();
-
-  /* We always center the thumb.  Don't clamp to the edge when we're near the first or last
-   * item, so we always have empty space on the sides for expanded landscape thumbnails to
-   * be visible. */
-  var thumb = $("p" + post_id);
-  var center_on_position = this.container.offsetWidth/2;
-
-  var shift_pixels_right = center_on_position - thumb.offsetWidth/2 - thumb.offsetLeft;
-  shift_pixels_right -= this.centered_post_offset;
-  shift_pixels_right = Math.round(shift_pixels_right);
-
-  var node = this.container.down(".post-browser-posts");
-  node.setStyle({left: shift_pixels_right + "px"});
-}
-
-/* Preload thumbs on the boundary of what's actually displayed. */
-ThumbnailView.prototype.preload_thumbs = function()
-{
-  var post_ids = [];
-  for(var i = 0; i < 5; ++i)
-  {
-    var preload_post_idx = this.posts_populated[0] - i - 1;
-    if(preload_post_idx >= 0)
-      post_ids.push(this.post_ids[preload_post_idx]);
-
-    var preload_post_idx = this.posts_populated[1] + i;
-    if(preload_post_idx < this.post_ids.length)
-      post_ids.push(this.post_ids[preload_post_idx]);
-  }
-
-  /* Remove any preloaded thumbs that are no longer in the preload list. */
-  var to_remove = [];
-  this.thumb_preloads.each(function(e) {
-    var post_id = parseInt(e[0]);
-    var element = e[1];
-    if(post_ids.indexOf(post_id) != -1)
-      return;
-    to_remove.push(post_id);
-  });
-
-  for(var i = 0; i < to_remove.length; ++i)
-  {
-    var post_id = to_remove[i];
-    var element = this.thumb_preloads.get(post_id);
-    this.thumb_preloads.unset(post_id);
-    this.thumb_preload_container.cancel_preload(element);
-  }
-
-  /* Add new preloads. */
-  for(var i = 0; i < post_ids.length; ++i)
-  {
-    var post_id = post_ids[i];
-    if(this.thumb_preloads.get(post_id) != null)
-      continue;
-
-    var post = Post.posts.get(post_id);
-    var element = this.thumb_preload_container.preload(post.preview_url);
-    this.thumb_preloads.set(post_id, element);
-  }
-}
-
-ThumbnailView.prototype.expand_post = function(post_id)
-{
-  if(!this.thumb_container_shown)
-    return;
-
-  var overlay = this.container.down(".browser-thumb-hover-overlay");
-  overlay.hide();
-  overlay.down("IMG").src = "about:blank";
-
-  this.expanded_post_id = post_id;
-  if(post_id == null)
-    return;
-
-  var post = Post.posts.get(post_id);
-
-  /* This doesn't always align properly in Firefox if full-page zooming is being used. */
-  var thumb = $("p" + post_id);
-  var hover_thumb = thumb.down("IMG");
-  var thumb_offset = hover_thumb.cumulativeOffset();
-  var container_offset = this.container.cumulativeOffset();
-  thumb_offset[0] -= container_offset[0];
-  thumb_offset[1] -= container_offset[1];
-  if(hover_thumb.offsetHeight > thumb.offsetHeight)
-    thumb_offset[1] -= hover_thumb.offsetHeight - thumb.offsetHeight;
-  overlay.style.top = thumb_offset[1] + "px";
-  overlay.style.left = thumb_offset[0] + "px";
-
-  /* If the hover thumbnail overflows the right edge of the viewport, it'll extend the document and
-   * allow scrolling to the right, which we don't want.  overflow: hidden doesn't fix this, since this
-   * element is absolutely positioned.  Set the max-width to clip the right side of the thumbnail if
-   * necessary. */
-  var max_width = document.viewport.getDimensions().width - thumb_offset[0];
-  overlay.style.maxWidth = max_width + "px";
-
-  overlay.href = "/post/show/" + post.id;
-  overlay.down("IMG").src = post.preview_url;
-  overlay.show();
-}
-
-ThumbnailView.prototype.create_thumb = function(post_id)
-{
-  var post = Post.posts.get(post_id);
-
-  var width = post.actual_preview_width;
-  var height = post.actual_preview_height;
-
-  /* This crops blocks that are too wide, but doesn't pad them if they're too
-   * narrow, since that creates odd spacing. */
-  var block_size = [Math.min(width, 200), 200];
-  var crop_left = Math.round((width - block_size[0]) / 2);
-
-  /* Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  We
-   * do this with visibility: hidden rather than display: none, or the size of the image
-   * won't be defined, which breaks center_on_post. */
-  var div =
-    '<div class="inner" style="width: ${block_size_x}px; height: ${block_size_y}px;">' +
-      '<a class="thumb" href="${target_url}">' +
-        '<img src="${preview_url}" style="visibility: hidden; margin-left: -${crop_left}px;" alt="" class="${image_class}"' +
-          'width="${width}" height="${height}" onload="$(this).setStyle({visibility: \'visible\'});">' +
-      '</a>' +
-    '</div>';
-  div = div.subst({
-    block_size_x: block_size[0],
-    block_size_y: block_size[1],
-    target_url: "/post/show/" + post.id,
-    preview_url: post.preview_url,
-    crop_left: crop_left,
-    width: width,
-    height: height,
-    image_class: "preview"
-  });
-    
-  var li_class = "post-thumb";
-  li_class += " creator-id-" + post.creator_id;
-  if(post.status == "flagged") li_class += " flagged";
-  if(post.has_children) li_class += " has-children";
-  if(post.parent_id) li_class += " has-parent";
-  if(post.status == "pending") li_class += " pending";
-
-  var item = createElement("li", li_class, div);
-
-  item.className = li_class;
-  item.id = "p" + post_id;
-  item.post_id = post_id;
-
-  var inner = item.down(".inner");
-  inner.actual_width = block_size[0];
-  inner.actual_height = block_size[1];
-  return item;
-}
-
-/* Handle clicks and doubleclicks on thumbnails.  These events are handled by
- * the container, so we don't need to put event handlers on every thumb. */
-ThumbnailView.prototype.container_click_event = function(event)
-{
-  /* Ignore the click if it was stopped by the DragElement. */
-  if(event.stopped)
-  {
-    debug.log("click was stopped");
-    return;
-  }
-
-  if(event.target.up(".browser-thumb-hover-overlay"))
-  {
-    /* The hover overlay was clicked.  When the user clicks a thumbnail, this is
-     * usually what happens, since the hover overlay covers the actual thumbnail. */
-    this.set_active_post(this.expanded_post_id);
-    event.preventDefault();
-    return;
-  }
-
-  var li = event.target.up(".post-thumb");
-  if(li == null)
-    return;
-
-  /* An actual thumbnail was clicked.  This can happen if we don't have the expanded
-   * thumbnails for some reason. */
-  event.preventDefault();
-  this.set_active_post(li.post_id);
-}
-
-ThumbnailView.prototype.container_dblclick_event = function(event)
-{
-  if(!event.isLeftClick())
-    return;
-
-  if(event.target.up(".post-thumb") == null && event.target.up(".browser-thumb-hover-overlay") == null)
-    return;
-
-  event.preventDefault();
-  this.show_thumb_bar(false)
-}
-
-ThumbnailView.prototype.show_thumb_bar = function(shown)
-{
-  this.thumb_container_shown = shown;
-  this.container.show(shown);
-
-  /* If the centered post was changed while we were hidden, it wasn't applied by
-   * center_on_post, so do it now. */
-  if(shown)
-    this.center_on_post_for_scroll(this.centered_post_idx)
-}
-
-ThumbnailView.prototype.toggle_thumb_bar = function()
-{
-  this.show_thumb_bar(!this.thumb_container_shown);
-}
-
-
-/* Return the next or previous post, wrapping around if necessary. */
-ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
-{
-  var idx = this.post_ids.indexOf(post_id);
-  idx += next? +1:-1;
-  idx = (idx + this.post_ids.length) % this.post_ids.length;
-  return this.post_ids[idx];
-}
-
-ThumbnailView.prototype.displayed_image_loaded_event = function(event)
-{
-  var post_id = event.memo.post_id;
-  debug.log("image-loaded:" + event.memo.post_id);
-
-  /*
-   * The image in the post we're displaying is finished loading.
-   *
-   * Preload the next and previous posts.  Normally, one or the other of these will
-   * already be in cache.
-   */
-  var post_ids_to_preload = [];
-  var adjacent_post_id = this.get_adjacent_post_id_wrapped(post_id, true);
-  if(adjacent_post_id != null)
-    post_ids_to_preload.push(adjacent_post_id);
-  var adjacent_post_id = this.get_adjacent_post_id_wrapped(post_id, false);
-  if(adjacent_post_id != null)
-    post_ids_to_preload.push(adjacent_post_id);
-  this.view.preload(post_ids_to_preload);
-}
-
-
-/* This handler handles global keypress bindings, and fires viewer: events. */
-function InputHandler()
-{
-  this.document_keypress_event = this.document_keypress_event.bindAsEventListener(this);
-  this.document_focus_event = this.document_focus_event.bindAsEventListener(this);
-  this.document_dblclick_event = this.document_dblclick_event.bindAsEventListener(this);
-  this.document_mouse_wheel_event = this.document_mouse_wheel_event.bindAsEventListener(this);
-
-  /* Track the focused element, so we can clear focus on KEY_ESC. */
-  this.focused_element = null;
-  Element.observe(document, "focus", this.document_focus_event, true);
-  document.onfocusin = this.document_focus_event;
-
-  /*
-   * Keypresses are aggrevating:
-   *
-   * Opera can only stop key events from keypress, not keydown.
-   *
-   * Chrome only sends keydown for non-alpha keys, not keypress.
-   *
-   * In Firefox, keypress's keyCode value for non-alpha keys is always 0.
-   *
-   * Alpha keys can always be detected with keydown.  Don't use keypress; Opera only provides
-   * charCode to that event, and it's affected by the caps state, which we don't want.
-   *
-   * Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
-   * keydown in other browsers.
-   */
-  var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
-  Element.observe(document, keypress_event_name, this.document_keypress_event);
-
-  Element.observe(document, "dblclick", this.document_dblclick_event);
-
-  Element.observe(document, "DOMMouseScroll", this.document_mouse_wheel_event);
-  Element.observe(document, "mousewheel", this.document_mouse_wheel_event);
-}
-
-InputHandler.prototype.document_focus_event = function(e)
-{
-  this.focused_element = e.target;
-}
-
-InputHandler.prototype.handle_keypress = function(e)
-{
-  var key = e.charCode;
-  if(!key)
-    key = e.keyCode; /* Opera */
-  if(key == Event.KEY_ESC)
-  {
-    if(this.focused_element && this.focused_element.blur)
-    {
-      this.focused_element.blur();
-      return true;
-    }
-  }
-
-  var target = e.target;
-  if(target.tagName == "INPUT" || target.tagName == "TEXTAREA")
-    return false;
-
-  if(key == 63) // ?, f
-  {
-    debug.log("xxx");
-    document.fire("viewer:show-help");
-    return true;
-  }
-
-  if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
-    return false;
-  if(key == Event.KEY_BACKSPACE)
-    document.fire("viewer:set-post-ui", { toggle: true });
-  else if(key == 32) // space
-    document.fire("viewer:toggle-thumb-bar");
-  else if(key == 65 || key == 97) // A, b
-    document.fire("viewer:show-next-post", { prev: true });
-  else if(key == 83 || key == 115) // S, s
-    document.fire("viewer:show-next-post", { prev: false });
-  else if(key == 70 || key == 102) // F, f
-    document.fire("viewer:focus-tag-box");
-  else if(key == Event.KEY_PAGEUP)
-    document.fire("viewer:show-next-post", { prev: true });
-  else if(key == Event.KEY_PAGEDOWN)
-    document.fire("viewer:show-next-post", { prev: false });
-  else if(key == Event.KEY_LEFT)
-    document.fire("viewer:scroll", { left: true });
-  else if(key == Event.KEY_RIGHT)
-    document.fire("viewer:scroll", { left: false });
-  else
-    return false;
-  return true;
-}
-
-InputHandler.prototype.document_keypress_event = function(e)
-{
-  //alert(e.charCode + ", " + e.keyCode);
-  if(this.handle_keypress(e))
-    e.stop();
-}
-
-/* Double-clicking the image shows the UI. */
-InputHandler.prototype.document_dblclick_event = function(event)
-{
-  if(!event.isLeftClick())
-    return;
-
-  if(event.target.id != "image")
-    return;
-
-  event.stop();
-  document.fire("viewer:toggle-thumb-bar");
-}
-
-InputHandler.prototype.document_mouse_wheel_event = function(event)
-{
-  event.stop();
-
-  var val;
-  if(event.wheelDelta)
-  {
-    val = event.wheelDelta;
-  } else if (event.detail) {
-    val = -event.detail;
-  }
-
-  document.fire("viewer:show-next-post", { prev: val >= 0 });
-}
-
-
-
-
-/*
- * We have a few competing goals:
- *
- * First, be as responsive as possible.  Preload nearby post HTML and their images.
- *
- * If data in a post page changes, eg. if the user votes, then coming back to the page
- * later should retain the changes.  This means either requesting the page again, or
- * retaining the document node and reusing it, so we preserve the changes that were
- * made in-place.
- *
- * Don't use too much memory.  If we keep every document node in memory as we use it,
- * the images will probably be kept around too.  Release older nodes, so the browser
- * is more likely to release images that havn't been used in a while.
- *
- * We do the following:
- * - When we load a new post, it's formatted and its scripts are evaluated normally.
- * - When we're replacing the displayed post, its node is stashed away in a node cache.
- * - If we come back to the post while it's in the node cache, we'll use the node directly.
- * - HTML and images for posts are preloaded.  We don't use a simple mechanism like
- *   Preload.preload_raw, because Opera's caching is broken for XHR and it'll always
- *   do a slow revalidation.
- * - We don't depend on browser caching for HTML.  That would require us to expire a
- *   page when we switch away from it if we've made any changes (eg. voting), so we
- *   don't pull an out-of-date page next time.  This is slower, and would require us
- *   to be careful about expiring the cache.
- */
-
-BrowserView = function(container)
-{
-  this.container = container;
-
-  /* The post that we currently want to display.  This will be either one of the
-   * current html_preloads, or be the displayed_post_id. */
-  this.wanted_post_id = null;
-
-  /* The post that's currently actually being displayed. */
-  this.displayed_post_id = null;
-
-  this.current_ajax_request = null;
-  this.last_preload_request = [];
-  this.last_preload_request_active = false;
-
-  /* True if the post UI is visible.  The viewer:set-post-ui event changes this. */
-  this.post_ui_visible = false;
-
-  debug.add_hook(this.get_debug.bind(this));
-
-  this.image_loaded_event = this.image_loaded_event.bindAsEventListener(this);
-  this.img = this.container.down(".image");
-  this.img.observe("load", this.image_loaded_event);
-
-
-  new ObserveResizeEvent(this.window_resized.bind(this));
-//  this.window_resized();
-
-  this.set_post_ui_event = this.set_post_ui_event.bindAsEventListener(this);
-  Event.observe(document, "viewer:set-post-ui", this.set_post_ui_event);
-
-  /* Image controls: */
-  this.click_image_zoom_event = this.click_image_zoom_event.bindAsEventListener(this);
-  this.container.down(".post-view-larger").observe("click", this.click_image_zoom_event);
-}
-
-/*
- * viewer:set-post-ui
- * { toggle: true } or
- * { set: boolean }
- */
-BrowserView.prototype.set_post_ui_event = function(event)
-{
-  var new_value = this.post_ui_visible;
-  if(event.memo.toggle)
-    new_value = !this.post_ui_visible;
-  else
-    new_value = event.memo.set;
-  if(new_value == this.post_ui_visible)
-    return;
-
-  this.post_ui_visible = new_value;
-
-  this.container.down(".post-info").show(this.post_ui_visible && this.displayed_post_id);
-}
-
-
-BrowserView.prototype.image_loaded_event = function(event)
-{
-  document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id });
-}
-
-BrowserView.prototype.get_debug = function()
-{
-  var s = "wanted: " + this.wanted_post_id + ", displayed: " + this.displayed_post_id;
-  if(this.lazy_load_timer)
-    s += ", lazy load pending";
-  return s;
-}
-
-/* Begin preloading the HTML and images for the given post IDs. */
-BrowserView.prototype.preload = function(post_ids)
-{
-  /* We're being asked to preload post_ids.  Only do this if it seems to make sense: if
-   * the user is actually traversing posts that are being preloaded.  Look at the previous
-   * call to preload().  If it didn't include the current post, then skip the preload. */
-  var last_preload_request = this.last_preload_request;
-  this.last_preload_request = post_ids;
-  if(last_preload_request.indexOf(this.wanted_post_id) == -1)
-  {
-    debug.log("skipped-preload(" + post_ids.join(",") + ")");
-    this.last_preload_request_active = false;
-    return;
-  }
-  this.last_preload_request_active = true;
-  debug.log("preload(" + post_ids.join(",") + ")");
-  
-  var new_preload_container = new PreloadContainer();
-  for(var i = 0; i < post_ids.length; ++i)
-  {
-    var post_id = post_ids[i];
-    var post = Post.posts.get(post_id);
-    new_preload_container.preload(post.sample_url);
-  }
-
-  /* If we already were preloading images, we created the new preloads before
-   * deleting the old ones.  That way, any images that are still being preloaded
-   * won't be deleted and recreated, possibly causing the download to be interrupted
-   * and resumed. */
-  if(this.preload_container)
-    this.preload_container.destroy();
-  this.preload_container = new_preload_container;
-}
-
-
-BrowserView.prototype.load_post_id_data = function(post_id)
-{
-  debug.log("load needed");
-
-  // If we already have a request in flight, don't start another; wait for the
-  // first to finish.
-  if(this.current_ajax_request != null)
-    return;
-
-  new Ajax.Request("/post/index.json", {
-    parameters: { tags: "id:" + post_id, filter: 1 },
-    method: "get",
-
-    onCreate: function(resp) {
-      this.current_ajax_request = resp.request;
-    }.bind(this),
-
-    onSuccess: function(resp) {
-      if(this.current_ajax_request != resp.request)
-        return;
-
-      /* If no posts were returned, then the post ID we're looking up doesn't exist;
-       * treat this as a failure. */
-      var posts = resp.responseJSON;
-      this.success = posts.length > 0;
-      if(!this.success)
-      {
-        this.failed = true;
-        debug.log("requested post " + post_id + " doesn't exist");
-        return;
-      }
-
-      var post = posts[0];
-      Post.register(post);
-    }.bind(this),
-
-    onComplete: function(resp) {
-      if(this.current_ajax_request == resp.request)
-        this.current_ajax_request = null;
-
-      /* If the request failed and we were requesting wanted_post_id, don't keep trying. */
-      var success = resp.request.success() && this.success;
-      if(!success && post_id == this.wanted_post_id)
-      {
-        /* As a special case, if the post we requested doesn't exist and we aren't displaying
-         * anything at all, force the thumb bar open so we don't show nothing at all. */
-        if(this.displayed_post_id == null)
-          document.fire("viewer:force-thumb-bar");
-
-        return;
-      }
-
-      /* This will either load the post we just finished, or request data for the
-       * one we want. */
-      this.set_post_content(this.wanted_post_id);
-    }.bind(this),
-
-    onFailure: function(resp) {
-      notice("Error " + resp.status + " loading post");
-    }.bind(this)
-  });
-}
-
-BrowserView.prototype.set_post_content = function(post_id)
-{
-  if(post_id == this.displayed_post_id)
-    return;
-
-  var post = Post.posts.get(post_id);
-  if(post == null)
-  {
-    if(this.displayed_post_id == null)
-    {
-      this.container.down(".post-info").hide();
-    }
-    this.load_post_id_data(post_id);
-    return;
-  }
-
-  this.displayed_post_id = post_id;
-  UrlHash.set({"post-id": post_id});
-
-  /* Clear the previous post, if any. */
-  this.img.src = "about:blank";
-
-  if(post)
-  {
-    this.img.hide();
-    this.img.original_width = post.sample_width;
-    this.img.original_height = post.sample_height;
-    this.img.src = post.sample_url;
-    this.img.show();
-
-    debug.log("set_post_content");
-    this.scale_and_position_image();
-  }
-
-  // XXX: this is just for voting, handle that separately
-  // Post.init_post_show(post_id);
-
-  document.fire("viewer:displayed-post-changed", { post_id: post_id });
-
-  this.container.down(".post-view-larger").pickClassName("enabled", "disabled", post.jpeg_url != post.sample_url);
-  this.container.down(".post-info").show(this.post_ui_visible);
-  this.container.down(".post-view-larger").href = "/post/show/" + post.id;
-
-  var has_sample = (post.sample_url != post.file_url);
-  var has_jpeg = (post.jpeg_url != post.file_url);
-  this.container.down(".download-image").show(!has_sample);
-  this.container.down(".download-image").href = post.sample_url;
-  this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.sample_file_size));
-  this.container.down(".download-jpeg").show(has_sample);
-  this.container.down(".download-jpeg").href = has_jpeg? post.jpeg_url: post.file_url;
-  this.container.down(".download-jpeg-desc").setTextContent(number_to_human_size(has_jpeg? post.jpeg_file_size: post.file_size));
-  this.container.down(".download-png").show(has_jpeg);
-  this.container.down(".download-png").href = post.file_url;
-  this.container.down(".download-png-desc").setTextContent(number_to_human_size(post.file_size));
-
-
-
-
-}
-
-BrowserView.prototype.window_resized = function()
-{
-  debug.log("resize");
-  this.scale_and_position_image(true);
-}
-
-BrowserView.prototype.click_image_zoom_event = function(e)
-{
-  e.stop();
-  var post = Post.posts.get(this.displayed_post_id);
-  if(post == null)
-    return;
-
-  if(post.jpeg_url == post.sample_url)
-  {
-    /* There's no larger version to display. */
-    return;
-  }
-
-  /* Toggle between the sample and JPEG version. */
-  if(this.img.src != post.jpeg_url)
-  {
-    this.img.src = post.jpeg_url;
-    this.img.original_width = post.jpeg_width;
-    this.img.original_height = post.jpeg_height;
-  }
-  else
-  {
-    this.img.src = post.sample_url;
-    this.img.original_width = post.sample_width;
-    this.img.original_height = post.sample_height;
-  }
-
-  this.scale_and_position_image();
-}
-
-BrowserView.prototype.scale_and_position_image = function(resizing)
-{
-  var img = this.img;
-  if(!img)
-    return;
-  var original_width = img.original_width;
-  var original_height = img.original_height;
-
-  var window_size = {};
-  // XXX
-  if(window.innerWidth != null)
-  {
-    window_size.width = window.innerWidth;
-    window_size.height = window.innerHeight;
-  }
-  else
-  {
-    /* IE: */
-    window_size.width = document.documentElement.clientWidth;
-    window_size.height = document.documentElement.clientHeight;
-  }
-
-  var post = Post.posts.get(this.displayed_post_id);
-  if(!post)
-  {
-    debug.log("unexpected: displayed post " + this.displayed_post_id + " unknown");
-    return;
-  }
-  var show_large_image = this.img.src == post.jpeg_url;
-  if(show_large_image)
-  {
-    img.width = img.original_width;
-    img.height = img.original_height;
-  }
-  else
-  {
-    /* Zoom the image to fit the viewport. */
-    var ratio = window_size.width / original_width;
-    if (original_height * ratio > window_size.height)
-      ratio = window_size.height / original_height;
-    ratio = Math.min(ratio, 1.0);
-    img.width = original_width * ratio;
-    img.height = original_height * ratio;
-  }
-
-  /* If we're resizing and showing the full-size image, don't snap the position
-   * back to the default. */
-  if(resizing && show_large_image)
-    return;
-
-  var offset = img.cumulativeOffset();
-  offset.top -= img.offsetTop;
-  offset.left -= img.offsetLeft;
-  var left_spacing = (window_size.width - img.offsetWidth) / 2;
-  var top_spacing = (window_size.height - img.offsetHeight) / 2;
-  var scroll_x = offset.left - left_spacing;
-  var scroll_y = offset.top - top_spacing;
-  img.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
-}
-
-BrowserView.prototype.set_post = function(post_id)
-{
-  /* If there was a lazy load pending, cancel it. */
-  this.cancel_lazily_load();
-
-  this.wanted_post_id = post_id;
-
-  /* We don't have the node cached.  Open the page from HTML cache or start
-   * loading the page as necessary. */
-  this.set_post_content(post_id);
-}
-
-BrowserView.prototype.cancel_lazily_load = function()
-{
-  if(this.lazy_load_timer == null)
-    return;
-
-   window.clearTimeout(this.lazy_load_timer);
-   this.lazy_load_timer = null;
-}
-
-BrowserView.prototype.lazily_load = function(post_id)
-{
-  this.cancel_lazily_load();
-
-  /* If we already started the preload for the requested post, then use a small timeout. */
-  var is_cached = this.last_preload_request_active && this.last_preload_request.indexOf(post_id) != -1;
-
-  var ms = is_cached? 50:500;
-  debug.log("post:" + post_id + ":" + is_cached + ":" + ms);
-
-  /* Once lazily_load is called with a new post, we should consistently stay on the current
-   * post or change to the new post.  We shouldn't change to a post that was previously
-   * requested by lazily_load (due to a background request completing).  Mark whatever post
-   * we're currently on as the one we want, until we're able to switch to the new one. */
-  this.wanted_post_id = this.displayed_post_id;
-
-  this.lazy_load_post_id = post_id;
-  this.lazy_load_timer = window.setTimeout(function() {
-    this.lazy_load_timer = null;
-    this.set_post(post_id);
-  }.bind(this), ms);
-}
-
-/* Update the window title when the display changes. */
-WindowTitleHandler = function()
-{
-  this.searched_tags = "";
-  this.post_id = null;
-  this.pool = null;
-
-  document.observe("viewer:searched-tags-changed", function(e) {
-    this.searched_tags = e.memo.tags || "";
-    this.update();
-  }.bindAsEventListener(this));
-
-  document.observe("viewer:displayed-post-changed", function(e) {
-    this.post_id = e.memo.post_id;
-    this.update();
-  }.bindAsEventListener(this));
-
-  document.observe("viewer:displayed-pool-changed", function(e) {
-    this.pool = e.memo.pool;
-    this.update();
-  }.bindAsEventListener(this));
-
-  this.update();
-}
-
-WindowTitleHandler.prototype.update = function()
-{
-  var post = Post.posts.get(this.post_id);
-
-  if(this.pool)
-  {
-    var title = "Browse " + this.pool.name.replace(/_/g, " ");
-
-    if(post && post.pool_post)
-    {
-      var sequence = post.pool_post.sequence;
-      title += " ";
-      if(sequence.match(/^[0-9]/))
-        title += "#";
-      title += sequence;
-    }
-
-    document.title = title;
-    return;
-  }
-
-  var title = "Browse /" + this.searched_tags.replace(/_/g, " ");
-  document.title = title;
-}
-
 
 
 // script.aculo.us builder.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
@@ -9311,14 +7591,6 @@ Comment = {
         notice("Error deleting comment: " + resp.reason)
       }
     })
-  },
-
-  show_translated: function(id, translated) {
-    var element = $("c" + id);
-    element.down(".body").show(translated);
-    element.down(".untranslated-body").show(!translated);
-    element.down(".show-translated").show(translated);
-    element.down(".show-untranslated").show(!translated);
   }
 }
 
@@ -9414,32 +7686,6 @@ Object.extend(Element.Methods, {
       return $(element).showBase();
     else
       return $(element).hide();
-  },
-  setClassName: function(element, className, enabled) {
-    if(enabled)
-      return $(element).addClassName(className);
-    else
-      return $(element).removeClassName(className);
-  },
-  pickClassName: function(element, classNameEnabled, classNameDisabled, enabled) {
-    $(element).setClassName(classNameEnabled, enabled);
-    $(element).setClassName(classNameDisabled, !enabled);
-  },
-  isParentNode: function(element, parentNode) {
-    while(element) {
-      if(element == parentNode)
-        return true;
-      element = element.parentNode;
-    }
-    return false;
-  },
-  setTextContent: function(element, text)
-  {
-    if(element.innerText)
-      element.innerText = text;
-    else
-      element.textContent = text;
-    return element;
   }
 });
 Element.addMethods()
@@ -9509,7 +7755,7 @@ function OnKey(key, options, press, release)
       return;
     if (e.ctrlKey != !!options.ctrlKey)
       return;
-    if (!options.allowRepeat && KeysDown[e.keyCode])
+    if(KeysDown[e.keyCode])
       return;
 
     KeysDown[e.keyCode] = true
@@ -9533,23 +7779,12 @@ function InitTextAreas()
     if(!form)
       return;
 
-    if(elem.set_login_handler)
-      return;
-    elem.set_login_handler = true;
-
     OnKey(13, { ctrlKey: true, AllowInputFields: true, AllowTextAreaFields: true, Element: elem}, function(f) {
       $(form).submitWithLogin();
     });
   });
 }
 
-function InitAdvancedEditing()
-{
-  if(Cookie.get("show_advanced_editing") != "1")
-    return;
-
-  $(document.documentElement).removeClassName("hide-advanced-editing");
-}
 
 /* When we resume a user submit after logging in, we want to run submit events, as
  * if the submit had happened normally again, but submit() doesn't do this.  Run
@@ -9614,425 +7849,6 @@ clone_event = function(orig)
   }
 }
 
-Object.extend(String.prototype, {
-  subst: function(subs) {
-    var text = this;
-    for(var s in subs)
-    {
-      var r = new RegExp("\\${" + s + "}", "g");
-      var to = subs[s];
-      if(to == null) to = "";
-      text = text.replace(r, to);
-    }
-
-    return text;
-  }
-});
-
-function createElement(type, className, html)
-{
-  var element = $(document.createElement(type));
-  element.className = className;
-  element.innerHTML = html;
-  return element;
-}
-
-/* Prototype calls onSuccess instead of onFailure when the user cancelled the AJAX
- * request.  Fix that with a monkey patch, so we don't have to track changes inside
- * prototype.js. */
-Ajax.Request.prototype.successBase = Ajax.Request.prototype.success;
-Ajax.Request.prototype.success = function()
-{
-  try {
-    if(this.transport.getAllResponseHeaders() == null)
-      return false;
-  } catch (e) {
-    /* FF throws an exception if we call getAllResponseHeaders on a cancelled request. */
-    return false;
-  }
-
-  return this.successBase();
-}
-
-/* Work around a Prototype bug; it discards exceptions instead of letting them fall back
- * to the browser where they'll be logged. */
-Ajax.Responders.register({
-  onException: function(request, exception) { (function() { throw exception; }).defer(); }
-});
-
-/*
- * Exceptions thrown from event handlers tend to get lost.  Sometimes they trigger
- * window.onerror, but not reliably.  Catch exceptions out of event handlers and
- * throw them from a deferred context, so they'll make it up to the browser to be
- * logged.
- *
- * This depends on bindAsEventListener actually only being used for event listeners,
- * since it eats exceptions.
- */
-Function.prototype.bindAsEventListener = function()
-{
-  var __method = this, args = $A(arguments), object = args.shift();
-  return function(event) {
-    try {
-      return __method.apply(object, [event || window.event].concat(args));
-    } catch(exception) {
-      (function() { throw exception; }).defer();
-    }
-  }
-}
-
-/*
- * Return the values of list starting at idx and moving outwards.
- *
- * sort_array_by_distance([0,1,2,3,4,5,6,7,8,9], 5)
- * [5,4,6,3,7,2,8,1,9,0]
- */
-sort_array_by_distance = function(list, idx)
-{
-  var ret = [];
-  ret.push(list[idx]);
-  for(var distance = 1; ; ++distance)
-  {
-    var length = ret.length;
-    if(idx-distance >= 0)
-      ret.push(list[idx-distance]);
-    if(idx+distance < list.length)
-      ret.push(list[idx+distance]);
-    if(length == ret.length)
-      break;
-  }
-
-  return ret;
-}
-
-/* When element is dragged, the document moves around it.  If scroll_element is true, the
- * element should be positioned (eg. position: absolute), and the element itself will be
- * scrolled. */
-DragElement = function(element, ondrag, onstartdrag, onenddrag)
-{
-  this.mousemove_event = this.mousemove_event.bindAsEventListener(this);
-  this.mousedown_event = this.mousedown_event.bindAsEventListener(this);
-  this.dragstart_event = this.dragstart_event.bindAsEventListener(this);
-  this.mouseup_event = this.mouseup_event.bindAsEventListener(this);
-  this.click_event = this.click_event.bindAsEventListener(this);
-  this.selectstart_event = this.selectstart_event.bindAsEventListener(this);
-
-  this.touchmove_event = this.touchmove_event.bindAsEventListener(this);
-  this.touchstart_event = this.touchstart_event.bindAsEventListener(this);
-  this.touchend_event = this.touchend_event.bindAsEventListener(this);
-
-  this.move_timer_update = this.move_timer_update.bind(this);
-
-  this.ondrag = ondrag;
-  this.onstartdrag = onstartdrag;
-  this.onenddrag = onenddrag;
-
-  this.element = element;
-  this.dragging = false;
-
-  /*
-   * Starting drag on mousedown works in most browsers, but has an annoying side-
-   * effect: we need to stop the event to prevent any browser drag operations from
-   * happening, and that'll also prevent clicking the element from focusing the
-   * window.  Stop the actual drag in dragstart.  We won't get mousedown in
-   * Opera, but we don't need to stop it there either.
-   *
-   * Sometimes drag events can leak through, and attributes like -moz-user-select may
-   * be needed to prevent it.
-   */
-  element.observe("mousedown", this.mousedown_event);
-  element.observe("dragstart", this.dragstart_event);
-
-  element.observe("touchstart", this.touchstart_event);
-  element.observe("touchmove", this.touchmove_event);
-
-  /*
-   * We may or may not get a click event after mouseup.  This is a pain: if we get a
-   * click event, we need to cancel it if we dragged, but we may not get a click event
-   * at all; detecting whether a click event came from the drag or not is difficult.
-   * Cancelling mouseup has no effect.  FF, IE7 and Opera still send the click event
-   * if their dragstart or mousedown event is cancelled; WebKit doesn't.
-   */
-  if(!Prototype.Browser.WebKit)
-    element.observe("click", this.click_event);
-}
-
-// XXX
-/* Stop all touchmove events on the document, to prevent dragging the window around. */
-if(0)
-Element.observe(document, "touchmove", function(event) {
-  debug.log("document touchstart cancel");
-  event.preventDefault();
-});
-
-DragElement.prototype.handle_move_event = function(event, x, y)
-{
-  if(!this.dragging)
-    return;
-  if(!this.dragged)
-  {
-    this.dragged = true;
-    $(document.body).addClassName("dragging");
-
-    if(this.onstartdrag)
-      this.onstartdrag(this);
-  }
-
-  if(!this.ondrag)
-    return;
-
-  this.last_event_params = {
-    x: x,
-    y: y
-  };
-
-  if(this.dragging_by_touch)
-  {
-    /* Touch events on Android tend to queue up when they come in faster than we
-     * can process.  Set a timer, so we discard multiple events in quick succession. */
-    // XXX: Android only, probably not needed on iPhone
-    if(this.move_timer == null)
-      this.move_timer = window.setTimeout(this.move_timer_update, 10);
-  }
-  else
-  {
-    this.move_timer_update();
-  }
-}
-
-DragElement.prototype.move_timer_update = function(event)
-{
-  this.move_timer = null;
-
-  if(this.last_event_params == null)
-    return;
-
-  var x = this.last_event_params.x;
-  var y = this.last_event_params.y;
-  this.last_event_params = null;
-
-  var anchored_x = x - this.anchor_x;
-  var anchored_y = y - this.anchor_y;
-
-  var relative_x = x - this.last_x;
-  var relative_y = y - this.last_y;
-  this.last_x = x;
-  this.last_y = y;
-
-  if(this.ondrag)
-    this.ondrag({
-      dragger: this,
-      x: x,
-      y: y,
-      aX: anchored_x,
-      aY: anchored_y,
-      dX: relative_x,
-      dY: relative_y
-    });
-}
-
-DragElement.prototype.mousemove_event = function(event)
-{
-  event.stop();
-  
-  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
-  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
-
-  var x = event.pointerX() - scrollLeft;
-  var y = event.pointerY() - scrollTop;
-  this.handle_move_event(event, x, y);
-}
-
-DragElement.prototype.touchmove_event = function(event)
-{
-  event.preventDefault();
-
-  var touch = event.touches.item(0);
-  var x = touch.screenX;
-  var y = touch.screenY;
-
-  this.handle_move_event(event, x, y);
-}
-
-DragElement.prototype.start_dragging = function(event, touch, x, y)
-{
-  /* If we've been started with a touch event, only listen for touch events.  If we've
-   * been started with a mouse event, only listen for mouse events.  We may receive
-   * both sets of events, and the anchor coordinates for the two may not be compatible. */
-  Event.observe(document, "selectstart", this.selectstart_event);
-  if(touch)
-  {
-    Event.observe(document, "touchend", this.touchend_event);
-    Event.observe(document, "touchmove", this.touchmove_event);
-  }
-  else
-  {
-    Event.observe(document, "mouseup", this.mouseup_event);
-    Event.observe(document, "mousemove", this.mousemove_event);
-  }
-
-  this.dragging = true;
-  this.dragged = false;
-  this.dragging_by_touch = touch;
-
-  this.anchor_x = x;
-  this.anchor_y = y;
-  this.last_x = this.anchor_x;
-  this.last_y = this.anchor_y;
-  debug.log("start_dragging anchor: " + x + ", " + y);
-}
-
-DragElement.prototype.touchstart_event = function(event)
-{
-  /* We need to preventDefault in touchstart to prevent the browser from dragging
-   * the window around. */
-//  debug.log("touchstart");
-//  event.preventDefault();
-
-  var touch = event.touches.item(0);
-  var x = touch.screenX;
-  var y = touch.screenY;
-  debug.log("touchstart: " + x + ", " + y);
-  
-  this.start_dragging(event, true, x, y);
-}
-
-DragElement.prototype.mousedown_event = function(event)
-{
-  if(!event.isLeftClick())
-    return;
-
-  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
-  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
-  var x = event.pointerX() - scrollLeft;
-  var y = event.pointerY() - scrollTop;
-
-  this.start_dragging(event, false, x, y);
-}
-
-DragElement.prototype.touchend_event = function(event)
-{
-  this.stop_dragging(event);
-}
-
-DragElement.prototype.mouseup_event = function(event)
-{
-  if(!event.isLeftClick())
-    return;
-
-  this.stop_dragging(event);
-}
-
-DragElement.prototype.stop_dragging = function(event)
-{
-  if(this.dragging)
-  {
-    this.dragging = false;
-    $(document.body).removeClassName("dragging");
-
-    if(this.onenddrag)
-      this.onenddrag(this);
-  }
-
-  Event.stopObserving(document, "mouseup", this.mouseup_event);
-  Event.stopObserving(document, "mousemove", this.mousemove_event);
-  Event.stopObserving(document, "selectstart", this.selectstart_event);
-  Event.stopObserving(document, "touchmove", this.touchmove_event);
-  Event.stopObserving(document, "touchend", this.touchend_event);
-}
-
-DragElement.prototype.click_event = function(event)
-{
-  /* If this click was part of a drag, cancel the click. */
-  if(this.dragged)
-    event.stop();
-  this.dragged = false;
-}
-
-DragElement.prototype.dragstart_event = function(event)
-{
-  event.preventDefault();
-}
-
-DragElement.prototype.selectstart_event = function(event)
-{
-  event.stop();
-}
-
-/* When element is dragged, the document moves around it.  If scroll_element is true, the
- * element should be positioned (eg. position: absolute), and the element itself will be
- * scrolled. */
-WindowDragElement = function(element, scroll_element)
-{
-  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
-
-  this.element = element;
-  this.scroll_element = scroll_element;
-}
-
-WindowDragElement.prototype.startdrag = function()
-{
-  if(this.scroll_element)
-  {
-    this.scroll_anchor_x = this.element.offsetLeft;
-    this.scroll_anchor_y = this.element.offsetTop;
-  }
-  else
-  {
-    var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
-    var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
-    this.scroll_anchor_x = scrollLeft;
-    this.scroll_anchor_y = scrollTop;
-  }
-}
-
-WindowDragElement.prototype.ondrag = function(e)
-{
-  var scrollLeft = this.scroll_anchor_x + e.aX;
-  var scrollTop = this.scroll_anchor_y + e.aY;
-
-  if(this.scroll_element)
-  {
-    /* Don't allow dragging the image off the screen; there'll be no way to
-     * get it back. */
-    var window_size = document.viewport.getDimensions();
-    var min_visible = Math.min(100, this.element.offsetWidth);
-    scrollLeft = Math.max(scrollLeft, min_visible - this.element.offsetWidth);
-    scrollLeft = Math.min(scrollLeft, window_size.width - min_visible);
-
-    var min_visible = Math.min(100, this.element.offsetHeight);
-    scrollTop = Math.max(scrollTop, min_visible - this.element.offsetHeight);
-    scrollTop = Math.min(scrollTop, window_size.height - min_visible);
-
-    this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
-  }
-  else
-  {
-    scrollTo(scrollLeft, scrollTop);
-  }
-}
-
-number_to_human_size = function(bytes)
-{
-  var units = ["byte", "KB", "MB", "GB", "TB"];
-
-  var i = 0;
-  while(true)
-  {
-    if(bytes < 1024)
-      break;
-    if(i == units.length - 1)
-      break;
-    bytes /= 1024.0;
-    ++i;
-  }
-
-  var unit = units[i];
-  if(i == 0 && bytes != 1)
-    unit += "s";
-  return bytes.toFixed(i == 0? 0:1) + " " + unit;
-}
-
 
 
 Cookie = {
@@ -10088,12 +7904,6 @@ Cookie = {
     
     if (this.get("has_mail") == "1") {
       $("has-mail-notice").show()
-    }
-  
-    var posts_flagged = this.get("posts_flagged");
-    if (posts_flagged && parseInt(posts_flagged) > "0") {
-      if($("moderate"))
-        $("moderate").addClassName("posts-flagged")
     }
   
     if (this.get("forum_updated") == "1") {
@@ -11466,110 +9276,6 @@ Object.extend( Object.extend( Cropper.ImgWithPreview.prototype, Cropper.Img.prot
 });
 
 
-DebugWindow = function()
-{
-  this.shown = false;
-  this.log_data = [];
-  this.hooks = [];
-
-  this.set_debug = this.set_debug.bind(this);
-
-  this.hashchange_debug = this.hashchange_debug.bind(this);
-  UrlHash.observe("debug", this.hashchange_debug);
-  this.hashchange_debug();
-}
-
-DebugWindow.prototype.create_container = function()
-{
-  if(this.container)
-    return;
-
-  var div = document.createElement("DIV");
-  div = $(div);
-  div.className = "debug-box";
-  div.setStyle({position: "fixed", top: "0px", height: "50%", backgroundColor: "#000", fontSize: "250%"});
-  document.body.appendChild(div);
-  this.container = div;
-
-  this.shown_debug = "";
-}
-
-DebugWindow.prototype.destroy_container = function()
-{
-  if(!this.container)
-    return;
-  document.body.removeChild(this.container);
-  this.container = null;
-}
-
-DebugWindow.prototype.log = function(s)
-{
-  this.log_data.push(s);
-  var lines = 15;
-  if(this.log_data.length > lines)
-    this.log_data = this.log_data.slice(1, lines+1);
-  this.update.defer();
-}
-
-DebugWindow.prototype.hashchange_debug = function()
-{
-  var debug = UrlHash.get("debug");
-  if(debug == null)
-    debug = "1";
-  debug = (debug == "1");
-
-  if(debug == this.shown)
-    return;
-
-  this.shown = debug;
-  if(debug)
-    this.create_container();
-  else
-    this.destroy_container();
-
-  this.update();
-
-  if(!this.debug_timer)
-    this.set_debug();
-}
-
-DebugWindow.prototype.add_hook = function(func)
-{
-  this.hooks.push(func);
-}
-
-DebugWindow.prototype.update = function()
-{
-  if(!this.container)
-    return;
-
-  var s = "";
-  for(var i = 0; i < this.hooks.length; ++i)
-  {
-    var func = this.hooks[i];
-    s += func() + "<br>";
-  }
-  s += this.log_data.join("<br>");
-
-  if(s == this.shown_debug)
-    return;
-
-  this.shown_debug = s;
-  this.container.update(s);
-}
-
-DebugWindow.prototype.set_debug = function()
-{
-  this.debug_timer = null;
-  if(!this.shown)
-    return;
-
-  this.debug_timer = window.setTimeout(this.set_debug, 100);
-  this.update();
-}
-
-
-
 Dmail = {
   respond: function(to) {
     $("dmail_to_name").value = to
@@ -11620,8 +9326,6 @@ Forum = {
     new Ajax.Request("/forum/mark_all_read", {
       onComplete: function() {
         $$("span.forum-topic").invoke("removeClassName", "unread-topic")
-        $$("div.forum-update").invoke("removeClassName", "forum-update")
-        main_menu.mark_forum_posts_read();
         notice("Marked all topics as read")
       }
     })
@@ -11874,6 +9578,7 @@ History = {
 
 
 InlineImage = {
+  images: new Hash,
   mouse_down: null,
   zoom_levels:
   [
@@ -11887,78 +9592,89 @@ InlineImage = {
       return 1 / InlineImage.zoom_levels[-level];
   },
 
-  register: function(id, data)
+  register: function(id, inline)
   {
-    var container = $(id);
-    data.html_id = id;
-    container.inline_image = data;
-    
-    /* initted is set to true after the image has been opened and the large images
-     * inside have been created by expand(). */
-    data.initted = false;
-    data.expanded = false;
-    data.toggled_from = null;
-    data.current = -1;
-    data.zoom_level = 0;
-
-    {
-      var ui_html = "";
-      if(data.images.length > 1)
-      {
-        for(var idx = 0; idx < data.images.length; ++idx)
-        {
-          // html_id looks like "inline-123-456".  Mark the button for each individual image as "inline-123-456-2".
-          var button_id = data.html_id + "-" + idx;
-          var text = data.images[idx].description.escapeHTML();
-          if(text == "")
-            text = "#" + (idx + 1);
-
-          ui_html += "<a href='#' id='" + button_id + "' class='select-image' onclick='InlineImage.show_image_no(\"" + data.html_id + "\", " + idx + "); return false;'>" + text + "</a>";
-        }
-      }
-      ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", +1); return false;'>+</a>";
-      ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", -1); return false;'>-</a>";
-      var zoom_id = data.html_id + "-zoom";
-      ui_html += "<a href='#' id='" + zoom_id + "' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", 0); return false;'>100%</a>";
-      ui_html += "<a href='#' class='select-image' onclick='InlineImage.close(\"" + data.html_id + "\"); return false;'>Close</a>";
-
-      ui_html += "<a href='/inline/edit/" + data.id + "' class='edit-link'>Image&nbsp;#" + data.id + "</a>";
-
-      container.down(".expanded-image-ui").innerHTML = ui_html;
-    }
-
-    container.down(".inline-thumb").observe("click", function(e) {
-      e.stop();
-      InlineImage.expand(data.html_id);
-    });
-    container.observe("dblclick", function(e) {
-      e.stop();
-    });
-
-    var viewer_img = container.down(".main-inline-image");
-
-    /* If the expanded image has more than one image to choose from, clicking it will
-     * temporarily show the next image.  Only show a pointer cursor if this is available. */
-    if(data.images.length > 1)
-      viewer_img.addClassName("clickable");
-
-    viewer_img.observe("mousedown", function(e) {
-      if(e.button != 0)
-        return;
-
-      data.toggled_from = data.current;
-      var idx = (data.current + 1) % data.images.length;
-      InlineImage.show_image_no(data.html_id, idx);
-      InlineImage.mouse_down = data;
-
-      /* We need to stop the event, so dragging the mouse after clicking won't turn it
-       * into a drag in Firefox.  If that happens, we won't get the mouseup. */
-      e.stop();
-    });
+    inline.html_id = id;
+    inline.div = $(id);
+    InlineImage.images.set(id, inline);
   },
 
   init: function()
   {
+    InlineImage.images.each(function(data) {
+      data[1].initted = false;
+      data[1].expanded = false;
+      data[1].toggled_from = null;
+      data[1].current = -1;
+      data[1].zoom_level = 0;
+    });
+
+    var images = $$(".inline-image");
+    images.each(function(div) {
+      var id = div.id;
+      var data = InlineImage.images.get(id);
+
+      if(data.div.initted)
+	return;
+
+      data.div.initted = true;
+
+      {
+        var ui_html = "";
+        if(data.images.length > 1)
+        {
+          for(var idx = 0; idx < data.images.length; ++idx)
+          {
+            // html_id looks like "inline-123-456".  Mark the button for each individual image as "inline-123-456-2".
+            var button_id = data.html_id + "-" + idx;
+            var text = data.images[idx].description.escapeHTML();
+            if(text == "")
+              text = "#" + (idx + 1);
+
+            ui_html += "<a href='#' id='" + button_id + "' class='select-image' onclick='InlineImage.show_image_no(\"" + data.html_id + "\", " + idx + "); return false;'>" + text + "</a>";
+          }
+        }
+        ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", +1); return false;'>+</a>";
+        ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", -1); return false;'>-</a>";
+        var zoom_id = data.html_id + "-zoom";
+        ui_html += "<a href='#' id='" + zoom_id + "' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", 0); return false;'>100%</a>";
+        ui_html += "<a href='#' class='select-image' onclick='InlineImage.close(\"" + data.html_id + "\"); return false;'>Close</a>";
+
+        ui_html += "<a href='/inline/edit/" + data.id + "' class='edit-link'>Image&nbsp;#" + data.id + "</a>";
+
+        data.div.down(".expanded-image-ui").innerHTML = ui_html;
+      }
+
+      div.down(".inline-thumb").observe("click", function(e) {
+        e.stop();
+        InlineImage.expand(data.html_id);
+      });
+      div.observe("dblclick", function(e) {
+        e.stop();
+      });
+
+      var viewer_img = data.div.down(".main-inline-image");
+
+      /* If the expanded image has more than one image to choose from, clicking it will
+       * temporarily show the next image.  Only show a pointer cursor if this is available. */
+      if(data.images.length > 1)
+        viewer_img.addClassName("clickable");
+
+      viewer_img.observe("mousedown", function(e) {
+        if(e.button != 0)
+          return;
+
+        data.toggled_from = data.current;
+        var idx = (data.current + 1) % data.images.length;
+        InlineImage.show_image_no(data.html_id, idx);
+        InlineImage.mouse_down = data;
+
+        /* We need to stop the event, so dragging the mouse after clicking won't turn it
+         * into a drag in Firefox.  If that happens, we won't get the mouseup. */
+        e.stop();
+      });
+    });
+
     /* Mouseup events aren't necessarily sent to the same element that received the mousedown,
      * so we need to track which element received a mousedown and handle mouseup globally. */
     document.observe("mouseup", function(e) {
@@ -11978,8 +9694,7 @@ InlineImage = {
 
   expand: function(id)
   {
-    var container = $(id);
-    var data = container.inline_image;
+    var data = InlineImage.images.get(id);
     data.expanded = true;
 
     if(!data.initted)
@@ -12003,30 +9718,28 @@ InlineImage = {
         img_html += "<img src='" + src + "' id='" + img_id + "' width=" + width + " height=" + height + " style='display: none;'>";
       }
 
-      var viewer_img = container.down(".main-inline-image");
+      var viewer_img = data.div.down(".main-inline-image");
       viewer_img.innerHTML = img_html;
     }
 
-    container.down(".inline-thumb").hide();
+    data.div.down(".inline-thumb").hide();
     InlineImage.show_image_no(data.html_id, 0);
-    container.down(".expanded-image").show();
+    data.div.down(".expanded-image").show();
 
-    // container.down(".expanded-image").scrollIntoView();
+    // data.div.down(".expanded-image").scrollIntoView();
   },
 
   close: function(id)
   {
-    var container = $(id);
-    var data = container.inline_image;
+    var data = InlineImage.images.get(id);
     data.expanded = false;
-    container.down(".expanded-image").hide();
-    container.down(".inline-thumb").show();
+    data.div.down(".expanded-image").hide();
+    data.div.down(".inline-thumb").show();
   },
 
   show_image_no: function(id, idx)
   {
-    var container = $(id);
-    var data = container.inline_image;
+    var data = InlineImage.images.get(id);
     var images = data["images"];
     var image = images[idx];
     var zoom = InlineImage.get_zoom(data.zoom_level);
@@ -12079,8 +9792,7 @@ InlineImage = {
 
   zoom: function(id, dir)
   {
-    var container = $(id);
-    var data = container.inline_image;
+    var data = InlineImage.images.get(id);
     if(dir == 0)
       data.zoom_level = 0; // reset
     else
@@ -12102,561 +9814,6 @@ InlineImage = {
 }
 
 
-var align_element_to_menu = function(submenu, menu_item_elem)
-{
-  /* Align the top of the dropdown to the bottom-left of the menu link. */
-  var offset = menu_item_elem.cumulativeOffset();
-  var left = offset.left - 3;
-
-  {
-    /* If this would result in the menu falling off the right side of the screen,
-     * push it left. */
-    var right_edge = submenu.offsetWidth + offset.left;
-    var right_overlap = right_edge - document.body.offsetWidth;
-    if(right_overlap > 0)
-      left -= right_overlap;
-  }
-
-  submenu.style.left = left + "px";
-
-  /* offset.top is the top of the menu item text. */
-  var bottom = offset.top;
-
-  /* We want to align to the bottom, not the top, so add the height of the text. */
-  if(menu_item_elem.getBoundingClientRect)
-  {
-    /* This is needed in Chrome, where the scrollHeight of our text item is always 0. */
-    var height = menu_item_elem.getBoundingClientRect().bottom - menu_item_elem.getBoundingClientRect().top;
-    bottom += height;
-  }
-  else
-  {
-    bottom += menu_item_elem.scrollHeight;
-  }
-  submenu.style.top = bottom + "px";
-}
-
-function MainMenu(container, def)
-{
-  this.container = container;
-  this.def = def;
-  this.submenu = null;
-  this.shown_def = null;
-  this.focused_menu_item = null;
-  this.dropdownTimer = null;
-  this.dragging = null;
-  this.dragging_over = null;
-
-  this.document_mouseup_event = this.document_mouseup.bindAsEventListener(this);
-  this.document_click_event = this.document_click.bindAsEventListener(this);
-  this.mousemove_during_dropdown_timer_event = this.mousemove_during_dropdown_timer.bindAsEventListener(this);
-}
-
-MainMenu.prototype.get_elem_for_top_item = function(item)
-{
-    return this.container.down(".top-item-" + item.name);
-}
-
-/* This must be called to initialize the menus. */
-MainMenu.prototype.init = function()
-{
-  for(var i = 0; i < this.def.length; ++i)
-  {
-    var item = this.def[i];
-    var elem = this.get_elem_for_top_item(item);
-
-    /* Remove any empty submenus. */
-    if(item.sub && !item.sub.length)
-      item.sub = null;
-
-    /* The submenu, if open, is a child of elem.  Bind these events to the top
-     * menu link, not to elem.  (We don't really need to do this anymore, but
-     * it doesn't hurt.) */
-    var a = elem.down("a");
-
-    /* Implement the dropdown timer.  Start counting when the mouse goes down, and stop if
-     * the mouse comes up for any reason.  This prevents the dropdown from flickering open
-     * every time a top-level link is clicked. */
-    a.observe("mousedown", this.top_menu_mousedown.bindAsEventListener(this, item));
-    a.observe("click", this.top_menu_click.bindAsEventListener(this));
-    a.observe("mouseover", this.top_menu_mouseover.bindAsEventListener(this, item));
-
-    /* IE8 needs this one to prevent dragging: */
-    a.observe("dragstart", function(event) { event.stop(); }.bindAsEventListener(this));
-  }
-
-  var bound_remove_submenu = this.remove_submenu.bindAsEventListener(this);
-  Element.observe(window, "blur", bound_remove_submenu);
-  Element.observe(window, "pageshow", bound_remove_submenu);
-  Element.observe(window, "pagehide", bound_remove_submenu);
-}
-
-MainMenu.prototype.get_submenu = function(name)
-{
-  for(var i = 0; i < this.def.length; ++i)
-  {
-    if(this.def[i].name == name)
-      return this.def[i];
-  }
-  return null;
-}
-
-MainMenu.prototype.show_submenu = function(parent_menu_element, def)
-{
-  if(this.shown_def == def)
-    return;
-  this.remove_submenu();
-
-  if(!def.sub)
-  {
-    this.shown_def = def;
-    return;
-  }
-
-  var menu_item_elem = this.get_elem_for_top_item(def);
-  menu_item_elem.addClassName("selected-menu");
-
-  this.shown_def = def;
-
-  /* Create the dropdown menu. */
-  var html = "";
-  var id = "";
-  if(def.html_id)
-    id = 'id="' + def.html_id + '" ';
-  html += "<div " + id + "class='dropdown-menu'>";
-        
-  for(var i = 0; i < def.sub.length; ++i)
-  {
-    var item = def.sub[i];
-
-    /* IE8 acts funny if we test item.separator directly when it's undefined. */
-    if(item.separator == true)
-    {
-      html += '<div class="separator"></div>';
-      continue;
-    }
-
-    var class_names = "submenu";
-    class_names += " submenu-item-" + i;
-    if(item.class_names)
-      class_names += " " + item.class_names.join(" ");
-
-    
-    html += "<a class='" + class_names + "' href=\"" + (item.dest || "#") + "\">";
-    html += item.label.replace(" ", "&nbsp;", "g");
-    html += "</a>";
-  }
-  html += "</div>";
-
-  /* Create the menu. */
-  this.submenu = document.createElement("div");
-  /* Note that we should be positioning relative to the viewport; our relative parent
-   * should be document.body.  However, don't parent our submenu directly to the body,
-   * since that breaks on some pages in IE8. */
-  this.container.insertBefore(this.submenu, this.container.firstChild);
-  $(this.submenu).replace(html);
-  this.submenu = this.container.down(".dropdown-menu");
-
-  align_element_to_menu(this.submenu, menu_item_elem);
-
-  var bound_remove_submenu = this.remove_submenu.bind(this);
-  var menu_item_mouseover_event = function(event) {
-    this.hovering_over_item(event.target);
-  }.bindAsEventListener(this);
-
-  var menu_item_mouseout_event = function(event) {
-    this.hovering_over_item(null);
-  }.bindAsEventListener(this);
-
-  /* Bind events to the new submenu. */
-  for(var i = 0; i < def.sub.length; ++i)
-  {
-    var elem = this.submenu.down(".submenu-item-" + i);
-    if(!elem)
-      continue;
-
-    var item = def.sub[i];
-    if(item.func)
-    {
-      elem.observe("click", function(event, item)
-      {
-        event.stop();
-        item.func(event, this, def, item);
-      }.bindAsEventListener(this, item));
-    }
-
-    /* If this menu item requires a login, attach the login handler. */
-    if(item.login)
-      elem.observe("click", User.run_login_onclick);
-
-    /* Keep track of which menu item we're hovering over. */
-    elem.observe("mouseover", menu_item_mouseover_event);
-    elem.observe("mouseout", menu_item_mouseout_event);
-  }
-}
-
-MainMenu.prototype.remove_submenu = function()
-{
-  if(this.submenu)
-  {
-    this.submenu.parentNode.removeChild(this.submenu);
-    this.submenu = null;
-  }
-
-  if(this.shown_def)
-  {
-    var menu_item_elem = this.get_elem_for_top_item(this.shown_def);
-    menu_item_elem.removeClassName("selected-menu");
-    this.shown_def = null;
-  }
-}
-
-MainMenu.prototype.stop_dropdown_timer = function()
-{
-  if(!this.dropdownTimer)
-    return;
-
-  clearTimeout(this.dropdownTimer);
-  this.dropdownTimer = null;
-
-  document.stopObserving("mousemove", this.mousemove_during_dropdown_timer_event);
-}
-
-MainMenu.prototype.hovering_over_item = function(element)
-{
-  if(this.focused_menu_item)
-    this.focused_menu_item.removeClassName("focused-menu-item");
-
-  /* Keep track of which menu item we're hovering over. */
-  this.focused_menu_item = element;
-
-  /* Mark the hovered item.  For some reason, :hover CSS rules don't work while
-   * a mouse button is depressed in Chrome and Safari. */
-  if(element)
-    element.addClassName("focused-menu-item");
-}
-
-/* Stop the drag, either because the mouse button was released or some other
- * event cancelled it.  Close the menu and clean up. */
-MainMenu.prototype.stop_drag = function()
-{
-  if(!this.dragging)
-    return;
-  this.dragging = null;
-  this.dragging_over = null;
-  this.hovering_over_item(null);
-
-  document.stopObserving("mouseup", this.document_mouseup_event);
-  document.stopObserving("click", this.document_click_event);
-
-  this.stop_dropdown_timer();
-  this.remove_submenu();
-};
-
-MainMenu.prototype.top_menu_mousedown = function(event, def)
-{
-  if(!event.isLeftClick())
-    return;
-
-  // preventDefault here will stop the mousedown from starting a drag, which will cancel
-  // the click in mouse browsers and do other things we don't want.  Don't use stop();
-  // if we call stopPropagation we'll also stop clicks.
-  event.preventDefault();
-      
-  /* Stop the previous drag event, which probably shouldn't still be active. */
-  this.stop_drag();
-
-  document.observe("mouseup", this.document_mouseup_event);
-  document.observe("click", this.document_click_event);
-
-  this.dragging = [event.clientX, event.clientY];
-  this.dragging_over = def;
-
-  /* Start the timer before we show the dropdown automatically, and set up the
-   * mousemove event to show the dropdown immediately if we're dragged before that
-   * happens. */
-  document.observe("mousemove", this.mousemove_during_dropdown_timer_event);
-  this.dropdownTimer = window.setTimeout(function()
-  {
-    if(this.dragging_over)
-      this.show_submenu(event.target, this.dragging_over);
-  }.bind(this), 250);
-}
-
-/*
- * We received a click while the mouse was already held down.  This probably means the
- * user right- or middle-clicked a menu item while holding the menu open with the left
- * mouse button.  In this case, let the browser do whatever it's going to do (probably
- * open the menu item in a new window), and simply close the menu so releasing the left
- * button doesn't activate the item a second time.
- *
- * Ordinary menu selections are handled in document_mouseup.
- */
-MainMenu.prototype.document_click = function(event)
-{
-  if(event.isLeftClick())
-    return;
-  this.stop_drag();
-}
-
-MainMenu.prototype.document_mouseup = function(event)
-{
-  if(!event.isLeftClick())
-    return;
-
-  if(this.dropdownTimer)
-  {
-    clearTimeout(this.dropdownTimer);
-    this.dropdownTimer = null;
-  }
-
-  var menu_was_shown = this.shown_def;
-  var hovered_menu_item = this.focused_menu_item;
-  this.stop_drag();
-  if(!menu_was_shown)
-    return;
-
-  /* We'll only get this event if the menu was opened.  Prevent the click from
-   * occuring if the menu was opened.  Just stopping the event won't do it. */
-  event.stop();
-  this.cancel_next_click = true;
-
-  /* Tricky: we can't be absolutely certain that this mouseup will result in a
-   * click event.  Clear cancel_next_click if the event doesn't arrive. */
-  (function() { this.cancel_next_click = false; }.bind(this)).defer();
-
-  if(!hovered_menu_item)
-    return;
-
-  /* Simulate a click, so JS anchors work properly. */
-  if(document.createEvent)
-  {
-    var ev = document.createEvent("MouseEvents");
-    ev.initMouseEvent("click", true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-    if(hovered_menu_item.dispatchEvent(ev) && !ev.stopped)
-      window.location.href = hovered_menu_item.href;
-  }
-  else
-  {
-    /* IE.  Don't use hovered_menu_item.click(); it won't work in IE7. */
-    if(hovered_menu_item.fireEvent("onclick"))
-      window.location.href = hovered_menu_item.href;
-  }
-};
-
-MainMenu.prototype.mousemove_during_dropdown_timer = function(event)
-{
-  event.returnValue = false;
-  event.preventDefault();
-
-  if(!this.dropdownTimer)
-    return;
-
-  /* If we've dragged downward before the menu is shown, show it. */
-  if(event.clientY - this.dragging[1] < 3)
-    return;
-
-  /* Dragging opens the dropdown immediately, so stop the dropdown timer if
-   * it's running. */
-  this.stop_dropdown_timer();
-
-  this.show_submenu(event.target, this.dragging_over);
-};
-
-MainMenu.prototype.top_menu_click = function(event)
-{
-  this.stop_drag();
-
-  if(this.cancel_next_click)
-  {
-    /* If a click arrives after the dropdown menu was opened, ignore it.  Note that by
-     * the time we get here, the dropdown menu will usually have already been closed by
-     * mouseup, so we can't just check this.shown_def. */
-    this.cancel_next_click = false;
-    event.stop();
-  }
-}
-
-MainMenu.prototype.top_menu_mouseover = function(event, def)
-{
-  if(this.dragging)
-  {
-    /* We're dragging, and the mouse moved from one menu item to another before
-     * the item was displayed.  Update, so we show the new item. */
-    this.dragging_over = def;
-  }
-
-  /* If we hover over a top-level menu item while the dropdown is open,
-   * show the new menu. */
-  if(!this.shown_def)
-    return;
-  this.show_submenu(event.target, def);
-}
-
-MainMenu.prototype.add_forum_posts_to_submenu = function()
-{
-  var menu = this.get_submenu("forum").sub;
-  if(!menu)
-    return;
-
-  var forum_posts = Cookie.get("current_forum_posts");
-  if(!forum_posts)
-    return;
-  var forum_posts = forum_posts.evalJSON();
-  if(!forum_posts.length)
-    return;
-
-  var any_unread = false;
-  for(var i = 0; i < forum_posts.length; ++i)
-    if(forum_posts[i][2])
-      any_unread = true;
-  if(any_unread)
-    menu.push({ label: "Mark&nbsp;all&nbsp;read", func: Forum.mark_all_read });
-
-  menu.push({ separator: true });
-
-  for(var i = 0; i < forum_posts.length; ++i)
-  {
-    /* [title, id, unread, last_page_no] */
-    var fp = forum_posts[i];
-    var dest = "/forum/show/" + fp[1];
-    if(parseInt(fp[3]) > "1")
-	    dest += "?page=" + fp[3];
-    menu.push({
-      label: fp[0], dest: dest, class_names: ["forum-topic"]
-    });
-
-    /* Bold the item if it's unread. */
-    if(fp[2])
-      menu[menu.length-1].class_names.push("unread-topic");
-  }
-}
-
-MainMenu.prototype.mark_forum_posts_read = function()
-{
-  var menu = this.get_submenu("forum").sub;
-  if(!menu)
-    return;
-
-  for(var i = 0; i < menu.length; ++i)
-  {
-    if(!menu[i].class_names)
-      continue;
-    menu[i].class_names = menu[i].class_names.reject(function(x) { return x == "unread-topic"; });
-  }
-}
-
-/* This shows a popup search box, contained within container like a submenu, aligned
- * to the specified element (normally a menu item).  The popup will destroy itself when
- * finished. */
-function QuickSearch(container, html, align_to)
-{
-  html = "<div class='dropdown-menu'>" + html + "</div>";
-
-  this.container = container;
-
-  this.hide_event = this.hide_event.bindAsEventListener(this);
-  this.on_document_keydown_event = this.on_document_keydown_event.bindAsEventListener(this);
-  this.document_mousedown_event = this.document_mousedown_event.bindAsEventListener(this);
-
-  /* Create the contents. */
-  this.submenu = document.createElement("div");
-
-  /* Note that we should be positioning relative to the viewport; our relative parent
-   * should be document.body.  However, don't parent our submenu directly to the body,
-   * since that breaks on some pages in IE8. */
-  this.container.insertBefore(this.submenu, this.container.firstChild);
-  $(this.submenu).replace(html);
-  this.submenu = this.container.down(".dropdown-menu");
-
-  align_element_to_menu(this.submenu, align_to);
-
-  /* We watch for escape presses on the document instead of the element, so even if
-   * the element doesn't receive focus for some reason, pressing escape still closes
-   * it. */
-  document.observe("keydown", this.on_document_keydown_event);
-  document.observe("mousedown", this.document_mousedown_event);
-
-  Element.observe(window, "pageshow", this.hide_event);
-  Element.observe(window, "pagehide", this.hide_event);
-
-  /* This stuff is specific to the actual content of the box: focus the form, and
-   * hide it on submit. */
-  this.submenu.down(".default").focus();
-  this.submenu.select("form").each(function(e) {
-    e.observe("submit", this.hide_event);
-  }.bind(this));
-}
-
-QuickSearch.prototype.on_document_keydown_event = function(event) {
-  if (event.keyCode == Event.KEY_ESC)
-    this.hide();
-}
-
-QuickSearch.prototype.document_mousedown_event = function(event)
-{
-  if($(event.target).isParentNode(this.submenu))
-    return;
-  this.hide();
-}
-
-QuickSearch.prototype.hide_event = function(event)
-{
-  this.hide();
-};
-
-QuickSearch.prototype.hide = function()
-{
-  if(!this.submenu)
-    return;
-
-  /* Remove the menu from the document.  We need to work around a FF3.6 bug here: if
-   * we simply remove the item from the document while a form dropdown box is open,
-   * the dropdown won't disappear.  We need to hide() first to cause it to be dropped,
-   * and defer removing the element until after we return in order to let it take
-   * effect. */
-  this.submenu.hide();
-  (function(elem) {
-    elem.parentNode.removeChild(elem);
-  }).curry(this.submenu).defer();
-
-  this.submenu = null;
-  document.stopObserving("keydown", this.on_document_keydown_event);
-  document.stopObserving("mousedown", this.document_mousedown_event);
-  Element.stopObserving(window, "blur", this.hide_event);
-  Element.stopObserving(window, "pageshow", this.hide_event);
-  Element.stopObserving(window, "pagehide", this.hide_event);
-}
-
-/* Create functions that can be used as the func parameter to a menu item to
- * open quick searches. */
-function MakeSearchHandler(search_path, id, submit_button_text)
-{
-  var ShowSearch = function(event, menu, def, item)
-  {
-    var html = "";
-    html += '<form action="' + search_path + '" method="get">';
-    html += '<input id="' + id + '" name="' + id + '" size="30" type="text" class="default">';
-    html += '<br>';
-    html += '<input style="margin-top: 0.25em;" type="submit" value="' + submit_button_text + '">';
-    html += '</form>';
-
-    new QuickSearch(menu.container, html, menu.get_elem_for_top_item(def));
-  }
-  return ShowSearch;
-}
-
-ShowPostSearch = MakeSearchHandler("/post", "tags", "Search posts");
-ShowCommentSearch = MakeSearchHandler("/comment/search", "query", "Search comments");
-ShowNoteSearch = MakeSearchHandler("/note/search", "query", "Search notes");
-ShowArtistSearch = MakeSearchHandler("/artist", "name", "Search artists");
-ShowTagSearch = MakeSearchHandler("/tag", "name", "Search tags");
-ShowPoolSearch = MakeSearchHandler("/pool", "query", "Search pools");
-ShowWikiSearch = MakeSearchHandler("/wiki", "query", "Search wiki");
-ShowForumSearch = MakeSearchHandler("/forum/search", "query", "Search forums");
-
-
-
 // The following are instance methods and variables
 var Note = Class.create({
   initialize: function(id, is_new, raw_body) {
@@ -12666,7 +9823,6 @@ var Note = Class.create({
     
     this.id = id
     this.is_new = is_new
-    this.document_observers = [];
 
     // Cache the elements
     this.elements = {
@@ -12897,32 +10053,15 @@ var Note = Class.create({
     }
   },
 
-  addDocumentObserver: function(name, func)
-  {
-    document.observe(name, func);
-    this.document_observers.push([name, func]);
-  },
-
-  clearDocumentObservers: function(name, handler)
-  {
-    for(var i = 0; i < this.document_observers.length; ++i)
-    {
-      var observer = this.document_observers[i];
-      document.stopObserving(observer[0], observer[1]);
-    }
-
-    this.document_observers = [];
-  },
-
   // Start dragging the note
   dragStart: function(e) {
     if (Note.debug) {
       console.debug("Note#dragStart (id=%d)", this.id)
     }
     
-    this.addDocumentObserver("mousemove", this.drag.bindAsEventListener(this))
-    this.addDocumentObserver("mouseup", this.dragStop.bindAsEventListener(this))
-    this.addDocumentObserver("selectstart", function() {return false})
+    document.observe("mousemove", this.drag.bindAsEventListener(this))
+    document.observe("mouseup", this.dragStop.bindAsEventListener(this))
+    document.observe("selectstart", function() {return false})
 
     this.cursorStartX = e.pointerX()
     this.cursorStartY = e.pointerY()
@@ -12940,7 +10079,7 @@ var Note = Class.create({
       console.debug("Note#dragStop (id=%d)", this.id)
     }
     
-    this.clearDocumentObservers()
+    document.stopObserving()
 
     this.cursorStartX = null
     this.cursorStartY = null
@@ -13000,9 +10139,9 @@ var Note = Class.create({
       return
     }
 
-    this.addDocumentObserver("mousemove", this.editDrag.bindAsEventListener(this))
-    this.addDocumentObserver("mouseup", this.editDragStop.bindAsEventListener(this))
-    this.addDocumentObserver("selectstart", function() {return false})
+    document.observe("mousemove", this.editDrag.bindAsEventListener(this))
+    document.observe("mouseup", this.editDragStop.bindAsEventListener(this))
+    document.observe("selectstart", function() {return false})
 
     this.elements.editBox = $('edit-box');
     this.cursorStartX = e.pointerX()
@@ -13017,7 +10156,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#editDragStop (id=%d)", this.id)
     }
-    this.clearDocumentObservers()
+    document.stopObserving()
 
     this.cursorStartX = null
     this.cursorStartY = null
@@ -13053,9 +10192,9 @@ var Note = Class.create({
     this.boundsY = new ClipRange(10, this.elements.image.clientHeight - this.boxStartY - 5)
     this.dragging = true
 
-    this.clearDocumentObservers()
-    this.addDocumentObserver("mousemove", this.resize.bindAsEventListener(this))
-    this.addDocumentObserver("mouseup", this.resizeStop.bindAsEventListener(this))
+    document.stopObserving()
+    document.observe("mousemove", this.resize.bindAsEventListener(this))
+    document.observe("mouseup", this.resizeStop.bindAsEventListener(this))
     
     e.stop()
     this.bodyHide()
@@ -13067,7 +10206,7 @@ var Note = Class.create({
       console.debug("Note#resizeStop (id=%d)", this.id)
     }
     
-    this.clearDocumentObservers()
+    document.stopObserving()
 
     this.boxCursorStartX = null
     this.boxCursorStartY = null
@@ -13250,7 +10389,7 @@ var Note = Class.create({
     if (this.is_new) {
       notice("This note has no history")
     } else {
-      location.pathname = '/history?search=notes:' + this.id
+      location.pathname = '/note/history/' + this.id
     }
     
     e.stop()
@@ -13428,7 +10567,7 @@ Pool = {
         if (resp.success) {
           notice("Post removed from pool")
           if($("p" + post_id))
-            $("p" + post_id).addClassName("deleted");
+            $("p" + post_id).remove()            
           if($("pool" + pool_id))
             $("pool" + pool_id).remove()            
         } else {
@@ -13436,72 +10575,6 @@ Pool = {
         }          
       }
     })
-  },
-
-  transfer_post: function(old_post_id, new_post_id, pool_id, sequence)
-  {
-    Post.update_batch(
-      [{ id: old_post_id, tags: "-pool:" + pool_id, old_tags: "" },
-       { id: new_post_id, tags: "pool:" + pool_id + ":" + sequence, old_tags: "" }],
-      function() {
-        notice("Pool post transferred to parent")
-
-	/* We might be on the parent or child, which will do different things to
-	 * the pool status display.  Just reload the page. */
-	document.location.reload();
-      }
-    );
-  },
-
-  detach_post: function(post_id, pool_id, is_parent)
-  {
-    Post.update_batch(
-      [{ id: post_id, tags: "-pool:" + pool_id, old_tags: "" }],
-      function() {
-        notice("Post detached")
-        if(is_parent) {
-          var elem = $("pool-detach-" + pool_id + "-" + post_id);
-          if(elem)
-            elem.remove()
-        } else {
-          if($("pool" + pool_id))
-            $("pool" + pool_id).remove()
-        }
-      }
-    );
-  },
-
-  /* This matches PoolPost.pretty_sequence. */
-  post_pretty_sequence: function(sequence)
-  {
-    if(sequence.match(/^[0-9]+.*/))
-      return "#" + sequence;
-    else
-      return "\"" + sequence + "\"";
-  },
-
-  change_sequence: function(post_id, pool_id, old_sequence)
-  {
-    new_sequence = prompt("Please enter the new page number:", old_sequence);
-    if(new_sequence == null)
-      return;
-    if(new_sequence.indexOf(" ") != -1)
-    {
-      notice("Invalid page number");
-      return;
-    }
-
-    Post.update_batch(
-      [{ id: post_id, tags: "pool:" + pool_id + ":" + new_sequence, old_tags: "" }],
-      function() {
-        notice("Post updated")
-        var elem = $("pool-seq-" + pool_id);
-        if(!Object.isUndefined(elem.innerText))
-          elem.innerText = Pool.post_pretty_sequence(new_sequence);
-        else
-          elem.textContent = Pool.post_pretty_sequence(new_sequence);
-      }
-    );
   }
 }
 
@@ -13543,7 +10616,7 @@ Post = {
         if (resp.success) {
           notice("Post approved")
           if ($("p" + post_id)) {
-            $("p" + post_id).removeClassName("pending")
+            $("p" + post_id).down("img").removeClassName("pending")
           }
           if ($("pending-notice")) {
             $("pending-notice").hide()
@@ -13624,16 +10697,16 @@ Post = {
   update_styles: function(post)
   {
     var e = $("p" + post.id);
-    if(!e) return;
+    var img = e.down("IMG");
     if(post["has_children"])
-      e.addClassName("has-children");
+      img.addClassName("has-children");
     else
-      e.removeClassName("has-children");
+      img.removeClassName("has-children");
 
     if(post["parent_id"])
-      e.addClassName("has-parent");
+      img.addClassName("has-parent");
     else
-      e.removeClassName("has-parent");
+      img.removeClassName("has-parent");
   },
 
   update: function(post_id, params, finished) {
@@ -13832,7 +10905,7 @@ Post = {
 
       onSuccess: function(req) {
         notice("Post was flagged for deletion")
-        $("p" + id).addClassName("flagged")
+        $("p" + id).down("img").addClassName("flagged")
       }
     })
   },
@@ -13878,10 +10951,6 @@ Post = {
     this.posts.set(post.id, post)
   },
 
-  unregister_all: function() {
-    this.posts = new Hash();
-  },
-
   blacklists: [],
 
   is_blacklisted: function(post_id) {
@@ -13922,28 +10991,8 @@ Post = {
       count += bld
       if (Post.blacklist_options.replace)
       {
-        if(bld)
-        {
-          thumb.src = "about:blank";
-
-          /* Trying to work around Firefox displaying the old thumb.src briefly before loading
-           * the blacklisted thumbnail, even though they're applied at the same time: */
-          var f = function(event)
-          {
-            var img = event.target;
-            img.stopObserving("load");
-            img.stopObserving("error");
-            img.src = "/blacklisted-preview.png";
-            img.removeClassName("javascript-hide");
-          }
-          thumb.observe("load", f)
-          thumb.observe("error", f)
-        }
-        else
-        {
-          thumb.src = post.preview_url;
-          thumb.removeClassName("javascript-hide");
-        }
+        thumb.src = bld ? "/blacklisted-preview.png" : post.preview_url
+        thumb.removeClassName("javascript-hide");
       }
       else
       {
@@ -14176,90 +11225,6 @@ Post = {
     }
   },
   
-  get_scroll_offset_to_center: function(element)
-  {
-    var window_size = document.viewport.getDimensions();
-    var offset = element.cumulativeOffset();
-    var left_spacing = (window_size.width - element.offsetWidth) / 2;
-    var top_spacing = (window_size.height - element.offsetHeight) / 2;
-    var scroll_x = offset.left - left_spacing;
-    var scroll_y = offset.top - top_spacing;
-    return [scroll_x, scroll_y];
-  },
-  center_image: function(img)
-  {
-    /* Make sure we have enough space to scroll far enough to center the image.  Set a
-     * minimum size on the body to give us more space on the right and bottom, and add
-     * a padding to the image to give more space on the top and left. */
-    if(!img)
-      img = $("image");
-    if(!img)
-      return;
-
-    /* Any existing padding (possibly from a previous call to this function) will be
-     * included in cumulativeOffset and throw things off, so clear it. */
-    img.setStyle({paddingLeft: 0, paddingTop: 0});
-
-    var target_offset = Post.get_scroll_offset_to_center(img);
-    var padding_left = -target_offset[0];
-    if(padding_left < 0) padding_left = 0;
-    img.setStyle({paddingLeft: padding_left + "px"});
-
-    var padding_top = -target_offset[1];
-    if(padding_top < 0) padding_top = 0;
-    img.setStyle({paddingTop: padding_top + "px"});
-
-    var window_size = document.viewport.getDimensions();
-    var required_width = target_offset[0] + window_size.width;
-    var required_height = target_offset[1] + window_size.height;
-    $(document.body).setStyle({minWidth: required_width + "px", minHeight: required_height + "px"});
-
-    /* Resizing the body may shift the image to the right, since it's centered in the content.
-     * Recalculate offsets with the new cumulativeOffset. */
-    var target_offset = Post.get_scroll_offset_to_center(img);
-    window.scroll(target_offset[0], target_offset[1]);
-  },
-
-  scale_and_fit_image: function(img)
-  {
-    if(!img)
-      img = $("image");
-    if(!img)
-      return;
-
-    if(img.original_width == null)
-    {
-      img.original_width = img.width;
-      img.original_height = img.height;
-    }
-    var window_size = document.viewport.getDimensions();
-    var client_width = window_size.width;
-    var client_height = window_size.height;
-
-    /* Zoom the image to fit the viewport. */
-    var ratio = client_width / img.original_width;
-    if (img.original_height * ratio > client_height)
-      ratio = client_height / img.original_height;
-    if(ratio < 1)
-    {
-      img.width = img.original_width * ratio;
-      img.height = img.original_height * ratio;
-    }
-
-    this.center_image(img);
-
-    Post.adjust_notes();
-  },
-
-  adjust_notes: function() {
-    if (!window.Note)
-      return;
-    for (var i=0; i<window.Note.all.length; ++i) {
-      window.Note.all[i].adjustScale()
-    }
-  },
-
-
   highres: function() {
     var img = $("image");
     
@@ -14329,12 +11294,12 @@ Post = {
     });
   },
 
-  init_hover_thumb: function(hover, post_id, thumb, container)
+  init_hover_thumb: function(hover, post_id, thumb)
   {
     /* Hover thumbs trigger rendering bugs in IE7. */
     if(Prototype.Browser.IE)
       return;
-    hover.observe("mouseover", function(e) { Post.hover_thumb_mouse_over(post_id, hover, thumb, container); });
+    hover.observe("mouseover", function(e) { Post.hover_thumb_mouse_over(post_id, hover, thumb); });
     hover.observe("mouseout", function(e) { if(e.relatedTarget == thumb) return; Post.hover_thumb_mouse_out(thumb); });
     if(!thumb.hover_init) {
       thumb.hover_init = true;
@@ -14343,12 +11308,12 @@ Post = {
 
   },
 
-  hover_thumb_mouse_over: function(post_id, AlignItem, image, container)
+  hover_thumb_mouse_over: function(post_id, AlignItem, image)
   {
     var post = Post.posts.get(post_id);
     image.hide();
 
-    var offset = AlignItem.cumulativeOffset();
+    var offset = AlignItem.viewportOffset();
     image.style.width = "auto";
     image.style.height = "auto";
     if(Post.is_blacklisted(post_id))
@@ -14360,26 +11325,12 @@ Post = {
       image.src = post.preview_url;
       if(post.status != "deleted")
       {
-        image.style.width = post.actual_preview_width + "px";
-        image.style.height = post.actual_preview_height + "px";
+        image.style.width = post.preview_width + "px";
+        image.style.height = post.preview_height + "px";
       }
     }
 
-    var container_top = container.cumulativeOffset().top;
-    var container_bottom = container_top + container.getHeight() - 1;
-
-    /* Normally, align to the item we're hovering over.  If the image overflows over
-     * the bottom edge of the container, shift it upwards to stay in the container,
-     * unless the container's too small and that would put it over the top. */
-    var y = offset.top-2; /* -2 for top 2px border */
-    if(y + image.getHeight() > container_bottom)
-    {
-      var bottom_aligned_y = container_bottom - image.getHeight() - 4; /* 4 for top 2px and bottom 2px borders */
-      if(bottom_aligned_y >= container_top)
-        y = bottom_aligned_y;
-    }
-
-    image.style.top = y + "px";
+    image.style.top = offset.top-3 + "px";
     image.show();
   },
 
@@ -14404,15 +11355,6 @@ Post = {
     })
   },
 
-  hover_info_pin: function(post_id)
-  {
-    var post = null;
-    if(post_id != null)
-      post = Post.posts.get(post_id);    
-    Post.hover_info_pinned_post = post;
-    Post.hover_info_update();
-  },
-
   hover_info_mouseover: function(post_id)
   {
     var post = Post.posts.get(post_id);    
@@ -14422,7 +11364,7 @@ Post = {
     Post.hover_info_update();
   },
 
-  hover_info_mouseout: function()
+  hover_info_mouseout: function(post_id)
   {
     if(Post.hover_info_hovered_post == null)
       return;
@@ -14433,29 +11375,21 @@ Post = {
   hover_info_hovered_post: null,
   hover_info_displayed_post: null,
   hover_info_shift_held: false,
-  hover_info_pinned_post: null, /* pinned by something like the edit menu; shift state and mouseover is ignored */
 
   hover_info_update: function()
   {
-    var post = Post.hover_info_pinned_post;
-    if(!post)
-    {
-      post = Post.hover_info_hovered_post;
-      if(!Post.hover_info_shift_held)
-        post = null;
-    }
+    var post = Post.hover_info_hovered_post;
+    if(!Post.hover_info_shift_held)
+      post = null;
 
     if(Post.hover_info_displayed_post == post)
       return;
     Post.hover_info_displayed_post = post;
 
     var hover = $("index-hover-info");
-    var overlay = $("index-hover-overlay");
     if(!post)
     {
       hover.hide();
-      overlay.hide();
-      overlay.down("IMG").src = "about:blank";
       return;
     }
     hover.down("#hover-dimensions").innerHTML = post.width + "x" + post.height;
@@ -14480,20 +11414,6 @@ Post = {
       hover.down("#hover-not-shown").hide();
     else
       hover.down("#hover-not-shown").show();
-    hover.down("#hover-is-parent").show(post.has_children);
-    hover.down("#hover-is-child").show(post.parent_id != null);
-    hover.down("#hover-is-pending").show(post.status == "pending");
-    hover.down("#hover-is-flagged").show(post.status == "flagged");
-    var set_text_content = function(element, text)
-    {
-      (element.innerText || element).textContent = text;
-    }
-
-    if(post.status == "flagged")
-    {
-      hover.down("#hover-flagged-reason").setTextContent(post.flag_detail.reason);
-      hover.down("#hover-flagged-by").setTextContent(post.flag_detail.flagged_by);
-    }
 
     hover.down("#hover-file-size").innerHTML = number_to_human_size(post.file_size);
     hover.down("#hover-author").innerHTML = post.author;
@@ -14506,8 +11426,8 @@ Post = {
     var hover_width = hover.scrollWidth;
     var hover_height = hover.scrollHeight;
 
-    var hover_thumb = $("p" + post.id).down("IMG");
-    var thumb_offset = hover_thumb.cumulativeOffset();
+    var hover_thumb = $("p" + post.id);
+    var thumb_offset = hover_thumb.positionedOffset();
     var thumb_center_x = thumb_offset[0] + hover_thumb.scrollWidth/2;
     var thumb_top_y = thumb_offset[1];
     var x = thumb_center_x - hover_width/2;
@@ -14520,16 +11440,6 @@ Post = {
     if(x + hover_width > client_width) x = client_width - hover_width;
     hover.style.left = x + "px";
     hover.style.top = y + "px";
-
-    overlay.down("IMG").src = post.preview_url;
-    
-    /* This doesn't always align properly in Firefox if full-page zooming is being
-     * used. */
-    var x = thumb_center_x - post.actual_preview_width/2;
-    var y = thumb_offset[1];
-    overlay.style.left = x + "px";
-    overlay.style.top = y + "px";
-    overlay.show();
   },
 
   hover_info_shift_down: function()
@@ -14564,7 +11474,6 @@ Post = {
 
     document.observe("blur", function(e) { Post.hover_info_shift_up(); });
 
-    var overlay = $("index-hover-overlay");
     Post.posts.each(function(p) {
       var post_id = p[0]
       var post = p[1]
@@ -14573,11 +11482,10 @@ Post = {
       if(span == null)
         return;
 
-      span.down("A").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
-      span.down("A").observe("mouseout", function(e) { if(e.relatedTarget.isParentNode(overlay)) return; Post.hover_info_mouseout(); });
+      span.down("SPAN").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
+      span.down("SPAN").observe("mouseout", function(e) { Post.hover_info_mouseout(post_id); });
     });
 
-    overlay.observe("mouseout", function(e) { Post.hover_info_mouseout(); });
   },
 
   highlight_posts_with_tag: function(tag)
@@ -14594,67 +11502,6 @@ Post = {
         thumb.removeClassName("highlighted-post");
       }
     });
-  },
-
-  reparent_post: function(post_id, old_parent_id, has_grandparent, finished)
-  {
-    /* If the parent has a parent, this is too complicated to handle automatically. */
-    if(has_grandparent)
-    {
-      alert("The parent post has a parent, so this post can't be automatically reparented.");
-      return;
-    }
-
-    /*
-     * Request a list of child posts.
-     * The parent post itself will be returned by parent:.  This is expected; it'll cause us
-     * to parent the post to itself, which unparents it from the old parent.
-     */
-    var change_requests = [];
-    new Ajax.Request("/post/index.json", {
-      parameters: { tags: "parent:" + old_parent_id },
-      
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-	for(var i = 0; i < resp.length; ++i)
-	  change_requests.push({ id: resp[i].id, tags: "parent:" + post_id, old_tags: "" });
-
-	/* We have the list of changes to make in change_requests.  Send a batch
-	 * request. */
-	Post.update_batch(change_requests, function() { document.location.reload() });
-      }
-    });
-  },
-
-  // XXX: remove
-  get_url_for_post_in_pool: function(post_id, pool_id)
-  {
-    return "/post/show/" + post_id + "?pool_id=" + pool_id;
-  },
-  jump_to_post_in_pool: function(post_id, pool_id)
-  {
-    if(post_id == null)
-    {
-      notice("No more posts in this pool");
-      return;
-    }
-    window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id);
-  },
-
-  init_post_show: function(post_id)
-  {
-    this.displayed_post_id = post_id;
-
-    /* This may be called multiple times to change the post_id; update displayed_post_id
-     * each time but only set up events once. */
-    if(this.post_show_initialized)
-      return;
-    this.post_show_initialized = true;
-
-    OnKey(192, null, function(e) { Post.vote(this.displayed_post_id, +0); return true; }.bindAsEventListener(this)); // `
-    OnKey(49, null, function(e) { Post.vote(this.displayed_post_id, +1); return true; }.bindAsEventListener(this));
-    OnKey(50, null, function(e) { Post.vote(this.displayed_post_id, +2); return true; }.bindAsEventListener(this));
-    OnKey(51, null, function(e) { Post.vote(this.displayed_post_id, +3); return true; }.bindAsEventListener(this));
   }
 }
 
@@ -14662,11 +11509,8 @@ Post = {
 PostModeMenu = {
   mode: "view",
 
-  init: function(pool_id) {
+  init: function() {
     try {	/* This part doesn't work on IE7; for now, let's allow execution to continue so at least some initialization is run */
-
-    /* If pool_id isn't null, it's the pool that we're currently searching for. */
-    this.pool_id = pool_id;
 
     var color_element = $("mode-box")
     this.original_style = { border: color_element.getStyle("border") }
@@ -14744,8 +11588,6 @@ PostModeMenu = {
       return {background: "#A3A"}
     } else if (s == "reparent-quick") {
       return {background: "#CCA"}
-    } else if (s == "remove-from-pool") {
-      return {background: "#CCA"}
     } else if (s == 'reparent') {
       return {background: "#0C0"}
     } else if (s == 'dupe') {
@@ -14790,7 +11632,12 @@ PostModeMenu = {
     }
 
     if (s.value == "edit") {
-      post_quick_edit.show(post_id);
+      var post = Post.posts.get(post_id)
+      $("id").value = post_id
+      $("post[old_tags]").value = post.tags.join(" ")
+      $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
+      $("quick-edit").show()
+      $("post_tags").focus()
     } else if (s.value == 'vote') {
       Post.vote(this.vote_score, post_id, {})
     } else if (s.value == 'rating-q') {
@@ -14817,8 +11664,6 @@ PostModeMenu = {
       Post.approve(post_id)
     } else if (s.value == 'add-to-pool') {
       Pool.add_post(post_id, 0)
-    } else if (s.value == "remove-from-pool") {
-      Pool.remove_post(post_id, PostModeMenu.pool_id);
     }
 
     event.stopPropagation();
@@ -15015,7 +11860,7 @@ TagScript = {
       }
     } else if (command == "[reset]") {
       return []
-    } else if (command[0] == "-" && command.indexOf(":") == -1) {
+    } else if (command[0] == "-") {
       return tags.reject(function(x) {return x == command.substr(1, 100)})
     } else {
       tags.push(command)
@@ -15023,7 +11868,7 @@ TagScript = {
     }
   },
 
-  run: function(post_ids, tag_script, finished) {
+  run: function(post_ids, tag_script) {
     if(!Object.isArray(post_ids))
       post_ids = $A([post_ids]);
 
@@ -15046,72 +11891,9 @@ TagScript = {
     });
 
     notice("Updating " + posts.length + (post_ids.length == 1? " post": " posts") );
-    Post.update_batch(posts, finished);
+    Post.update_batch(posts);
   }
 }
-
-function PostQuickEdit(container)
-{
-  this.container = container;
-  this.submit_event = this.submit_event.bindAsEventListener(this);
-
-  this.container.down("form").observe("submit", this.submit_event);
-  this.container.down(".cancel").observe("click", function(e) {
-    e.preventDefault();
-    this.hide();
-  }.bindAsEventListener(this));
-  this.container.down("#post_tags").observe("keydown", function(e) {
-    if(e.keyCode == Event.KEY_ESC)
-    {
-      e.stop();
-      this.hide();
-      return;
-    }
-
-    if(e.keyCode != Event.KEY_RETURN)
-      return;
-    this.submit_event(e);
-  }.bindAsEventListener(this));
-}
-
-PostQuickEdit.prototype.show = function(post_id)
-{
-  Post.hover_info_pin(post_id);
-
-  var post = Post.posts.get(post_id);
-  this.container.down("#id").value = post_id;
-  this.container.down("#post_old_tags").value = post.tags.join(" ");
-  this.container.down("#post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1) + " ";
-  this.container.show();
-  this.container.down("#post_tags").focus();
-}
-
-PostQuickEdit.prototype.hide = function()
-{
-  this.container.hide();
-  Post.hover_info_pin(null);
-}
-
-PostQuickEdit.prototype.submit_event = function(e)
-{
-  e.stop();
-  this.hide();
-
-  new Ajax.Request("/post/update.json", {
-    parameters: this.container.down("form").serialize(),
-    onSuccess: function(resp) {
-      var resp = resp.responseJSON;
-      notice("Post updated");
-      this.hide();
-      Post.register(resp.post);
-    },
-    onFailure: function(resp) {
-      var resp = resp.responseJSON;
-      notice("Error: " + resp.reason);
-    }
-  });
-}
-
 
 
 PostTagHistory = {
@@ -15319,47 +12101,6 @@ PostTagHistory = {
 }
 
 
-PreloadContainer = function()
-{
-  this.container = document.createElement("div");
-  this.container.style.display = "none";
-  document.body.appendChild(this.container);
-
-  this.active_preloads = 0;
-
-  this.on_image_complete_event = this.on_image_complete_event.bindAsEventListener(this);
-}
-
-PreloadContainer.prototype.cancel_preload = function(req)
-{
-  this.container.removeChild(req);
-}
-
-PreloadContainer.prototype.preload = function(url)
-{
-  ++this.active_preloads;
-
-  var imgTag = document.createElement("img");
-  imgTag = $(imgTag);
-  imgTag.observe("load", this.on_image_complete_event);
-  imgTag.observe("error", this.on_image_complete_event);
-  imgTag.src = url;
-
-  this.container.appendChild(imgTag);
-  return imgTag;
-}
-
-PreloadContainer.prototype.destroy = function()
-{
-  document.body.removeChild(this.container);
-}
-
-PreloadContainer.prototype.on_image_complete_event = function(event)
-{
-  --this.active_preloads;
-}
-
-
 Preload = {
   /*
    * Thumbnail preloading.
@@ -15382,73 +12123,28 @@ Preload = {
    */
   preload_list: [],
   preload_container: null,
-  preload_raw_urls: [],
-  preload_started: false,
-  onload_event_initialized: false,
-
-  get_default_preload_container: function()
-  {
-    if(!this.preload_container)
-      this.preload_container = new PreloadContainer();
-
-    return this.preload_container;
-  },
-  init: function()
-  {
-    if(this.onload_event_initialized)
-      return;
-
-    this.onload_event_initialized = true;
-    Event.observe(window, "load", function() { Preload.preload_started = true; Preload.start_preload(); } );
-  },
-
-  /* Preload the given URL once window.load has fired. */
   preload: function(url)
   {
-    var container = this.get_default_preload_container();
+    if(!this.preload_container)
+    {
+      this.preload_container = document.createElement("div");
+      this.preload_container.style.display = "none";
+      document.body.appendChild(this.preload_container);
+      Event.observe(window, "load", function() { Preload.start_preload(); } );
+    }
 
-    Preload.init();
-    Preload.preload_list.push([url, container]);
-    Preload.start_preload();
+    Preload.preload_list.push(url);
   },
 
-  /* Load the given URL with an AJAX request.  This is used to load things that aren't
-   * images. */
-  preload_raw: function(url)
-  {
-    Preload.init();
-    Preload.preload_raw_urls.push(url);
-    Preload.start_preload();
-  },
-
-  create_raw_preload: function(url)
-  {
-    return new Ajax.Request(url, {
-      method: "get",
-      evalJSON: false,
-      evalJS: false,
-      parameters: null
-    });
-  },
   start_preload: function()
   {
-    if(!Preload.preload_started)
-      return;
-
+    var preload = this.preload_container;
     for(var i=0; i < Preload.preload_list.length; ++i)
     {
-      var preload = Preload.preload_list[i];
-      var container = preload[1];
-      container.preload(preload[0]);
+      var imgTag = document.createElement("img");
+      imgTag.src = Preload.preload_list[i];
+      preload.appendChild(imgTag);
     }
-    Preload.preload_list.length = [];
-
-    for(var i=0; i < Preload.preload_raw_urls.length; ++i)
-    {
-      var url = Preload.preload_raw_urls[i];
-      Preload.create_raw_preload(url);
-    }
-    Preload.preload_raw_urls = [];
   }
 }
 
@@ -15609,85 +12305,6 @@ RelatedTags = {
     }
   }
 }
-
-
-/*
- * This implementation uses the regular resize event, which is used for non-Android
- * browsers.
- */
-ObserveResizeEventNormal = function(func)
-{
-  this.func = func;
-  this.check_resize = this.check_resize.bindAsEventListener(this);
-  Event.observe(window, "resize", this.check_resize);
-}
-
-ObserveResizeEventNormal.prototype.stop_observing = function()
-{
-  this.func = null;
-  Event.stopObserving(window, "resize", this.check_resize);
-}
-
-ObserveResizeEventNormal.prototype.check_resize = function()
-{
-  if(this.func == null)
-    return;
-
-  this.func();
-}
-
-
-/*
- * Android browsers tend to crash when doing too much from a resize event.  Work around
- * this by checking for window resizes from a timer.
- *
- * resize = new ObserveResizeEventTimer(function() { alert("Window resized"); });
- * resize.stop_observing();
- */
-ObserveResizeEventTimer = function(func)
-{
-  this.func = func;
-  this.check_resize = this.check_resize.bind(this); // XXX: use a bind with an exception trap
-  this.check_resize();
-}
-
-ObserveResizeEventTimer.prototype.stop_observing = function()
-{
-  window.clearTimeout(this.event_timer);
-  this.event_timer = null;
-  this.func = null;
-}
-
-ObserveResizeEventTimer.prototype.get_current_window_size = function()
-{
-  return [window.innerWidth, window.innerHeight];
-}
-
-ObserveResizeEventTimer.prototype.check_resize = function()
-{
-  this.event_timer = window.setTimeout(this.check_resize, 100);
-  if(this.func == null)
-    return;
-
-  var last_window_size = this.last_window_size;
-  var current_window_size = this.get_current_window_size();
-  this.last_window_size = current_window_size;
-  if(last_window_size == null || (last_window_size[0] == current_window_size[0] && last_window_size[1] == current_window_size[1]))
-    return;
-
-  this.func();
-}
-
-//
-// Known U-A's that have the resize event crash and require ObserveResizeEventTimer:
-//
-// Mozilla/5.0 (Linux; U; Android 2.2; en-us; sdk Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1
-
-if(navigator.userAgent.indexOf("Android 2.2") != -1)
-  ObserveResizeEvent = ObserveResizeEventTimer;
-else
-  ObserveResizeEvent = ObserveResizeEventNormal;
- 
 
 
 // script.aculo.us scriptaculous.js v1.8.1, Thu Jan 03 22:07:12 -0500 2008
@@ -16653,249 +13270,23 @@ Test.context = function(name, spec, log){
 };
 
 
-UrlHashHandler = function()
-{
-  this.observers = new Hash();
-  this.normalize = function(h) { }
-  this.denormalize = function(h) { }
-
-  this.current_hash = this.parse(this.get_raw_hash());
-  this.normalize(this.current_hash);
-
-  /* The last value received by the hashchange event: */
-  this.last_hashchange = this.current_hash.clone();
-
-  this.hashchange_event = this.hashchange_event.bindAsEventListener(this);
-
-  Element.observe(window, "hashchange", this.hashchange_event);
-}
-
-UrlHashHandler.prototype.fire_observers = function(old_hash, new_hash)
-{
-  var all_keys = old_hash.keys();
-  all_keys = all_keys.concat(new_hash.keys());
-  all_keys = all_keys.uniq();
-
-  var changed_hash_keys = [];
-  all_keys.each(function(key) {
-      var old_value = old_hash.get(key);
-      var new_value = new_hash.get(key);
-      if(old_value != new_value)
-        changed_hash_keys.push(key);
-  }.bind(this));
-
-  var observers_to_call = [];
-  changed_hash_keys.each(function(key) {
-    var observers = this.observers.get(key);
-    if(observers == null)
-      return;
-    observers_to_call = observers_to_call.concat(observers);
-  }.bind(this));
-
-  observers_to_call.each(function(observer) {
-    observer(changed_hash_keys, old_hash, new_hash);
-  });
-}
-
-/*
- * Set handlers to normalize and denormalize the URL hash.
- *
- * Denormalizing a URL hash can convert the URL hash to something clearer for URLs.  Normalizing
- * it reverses any denormalization, giving names to parameters.
- *
- * For example, if a normalized URL is
- *
- * http://www.example.com/app#show?id=1
- *
- * where the hash is {"": "show", id: "1"}, a denormalized URL may be
- *
- * http://www.example.com/app#show/1
- *
- * The denormalize callback will only be called with normalized input.  The normalize callback
- * may receive any combination of normalized or denormalized input.
- */
-UrlHashHandler.prototype.set_normalize = function(norm, denorm)
-{
-  this.normalize = norm;
-  this.denormalize = denorm;
-  
-  this.normalize(this.current_hash);
-  this.set_all(this.current_hash.clone());
-}
-
-UrlHashHandler.prototype.hashchange_event = function(event)
-{
-  var old_hash = this.last_hashchange.clone();
-  this.normalize(old_hash);
-
-  var raw = this.get_raw_hash();
-  var new_hash = this.parse(raw);
-  this.normalize(new_hash);
-
-  this.current_hash = new_hash.clone();
-  this.last_hashchange = new_hash.clone();
-
-  this.fire_observers(old_hash, new_hash);
-}
-
-/*
- * Parse a hash, returning a Hash.
- *
- * #a/b?c=d&e=f -> {"": 'a/b', c: 'd', e: 'f'}
- */
-UrlHashHandler.prototype.parse = function(hash)
-{
-  if(hash == null)
-    hash = "";
-  if(hash.substr(0, 1) == "#")
-    hash = hash.substr(1);
-
-  var hash_path = hash.split("?", 1)[0];
-  var hash_query = hash.substr(hash_path.length+1);
-
-  hash_path = window.decodeURIComponent(hash_path);
-
-  var query_params = new Hash();
-  query_params.set("", hash_path);
-
-  if(hash_query != "")
-  {
-    var hash_query_values = hash_query.split("&");
-    for(var i = 0; i < hash_query_values.length; ++i)
-    {
-      var keyval = hash_query_values[i]; /* a=b */
-      var key = keyval.split("=", 1)[0];
-      var value = keyval.substr(key.length+1);
-      key = window.decodeURIComponent(key);
-      value = window.decodeURIComponent(value);
-      query_params.set(key, value);
-    }
-  }
-  return query_params;
-}
-
-UrlHashHandler.prototype.construct = function(hash)
-{
-  var s = "#";
-  var path = hash.get("");
-  if(path != null)
-  {
-    /* For the path portion, we only need to escape the params separator ? and the escape
-     * character % itself.  Don't use encodeURIComponent; it'll encode far more than necessary. */
-    path = path.replace(/\?/g, "%3f").replace(/%/g, "%25");
-    s += path;
-  }
-
-  var params = [];
-  hash.each(function(k) {
-    var key = k[0], value = k[1];
-    if(key == "")
-      return;
-    if(value == null)
-      return;
-
-    key = window.encodeURIComponent(key);
-    value = window.encodeURIComponent(value);
-    params.push(key + "=" + value);
-  });
-  if(params.length != 0)
-    s += "?" + params.join("&");
-
-  return s;
-}
-
-UrlHashHandler.prototype.get_raw_hash = function()
-{
-  /*
-   * Firefox doesn't handle window.location.hash correctly; it decodes the contents,
-   * where all other browsers give us the correct data.  http://stackoverflow.com/questions/1703552
-   */
-  var pre_hash_part = window.location.href.split("#", 1)[0];
-  return window.location.href.substr(pre_hash_part.length);
-}
-
-UrlHashHandler.prototype.get = function(key)
-{
-  return this.current_hash.get(key);
-}
-
-/*
- * Set keys in the URL hash.
- *
- * UrlHash.set({id: 50});
- */
-UrlHashHandler.prototype.set = function(hash)
-{
-  var new_hash = this.current_hash.merge(hash);
-  this.normalize(new_hash);
-  this.set_all(new_hash);
-}
-
-UrlHashHandler.prototype.set_all = function(query_params)
-{
-  query_params = query_params.clone();
-
-  this.normalize(query_params);
-  this.current_hash = query_params.clone();
-
-  this.denormalize(query_params);
-
-  var new_hash = this.construct(query_params);
-  window.location.hash = new_hash;
-
-  /* Explicitly fire the hashchange event, so it's handled quickly even if the browser
-   * doesn't support the event.  It's harmless if we get this event multiple times due
-   * to the browser delivering it normally due to our change. */
-  this.hashchange_event(null);
-}
-
-
-UrlHashHandler.prototype.observe = function(key, func)
-{
-  var observers = this.observers.get(key);
-  if(observers == null)
-  {
-    observers = [];
-    this.observers.set(key, observers);
-  }
-
-  if(observers.indexOf(func) != -1)
-    return;
-
-  observers.push(func);
-}
-
-UrlHashHandler.prototype.stopObserving = function(key, func)
-{
-  var observers = this.observers.get(key);
-  if(observers == null)
-    return;
-
-  observers = observers.without(func);
-  this.observers.set(key, observers);
-}
-
-UrlHash = new UrlHashHandler();
-
-
-
 User = {
   disable_samples: function() {
     new Ajax.Request("/user/update.json", {
       parameters: {
-        "user[show_samples]": false
+  "user[show_samples]": false
       },
 
       onComplete: function(resp) {
-        var resp = resp.responseJSON
+  var resp = resp.responseJSON
 
-        if (resp.success) {
-          $("resized_notice").hide();
-          $("samples_disabled").show();
-          Post.highres();
-        } else {
-          notice("Error: " + resp.reason)
-        }
+  if (resp.success) {
+    $("resized_notice").hide();
+    $("samples_disabled").show();
+    Post.highres();
+  } else {
+    notice("Error: " + resp.reason)
+  }
       }
     })
   },
@@ -17102,25 +13493,7 @@ User = {
     /* event is not available when we get to the callback in IE7. */
     var e = clone_event(event);
 
-    if(User.run_login(true, function() {
-        if(target.hasClassName("login-button"))
-        {
-          /* This is a login button, and not an action that happened to need login.  After
-           * a successful login, don't click the button; that'll just go to the login page.
-           * Instead, just reload the current page. */
-          Cookie.put("notice", "You have been logged in.");
-          document.location.reload();
-          return;
-        }
-        target.simulate_anchor_click(e);
-      }))
-      return true;
-
-    /* Login is running, so stop the event.  Don't just return false; call stop(), so
-     * event.stopped is available to the caller if we've been sent this message via
-     * Element.dispatchEvent. */
-    event.stop();
-    return false;
+    return User.run_login(true, function() { target.simulate_anchor_click(e); });
   },
 
   /* Handle login from an onsubmit.  If login is needed, stop the event and resubmit
@@ -17440,24 +13813,6 @@ User = {
         if (resp.success)
         {
           if(success) success(resp);
-        } else {
-          notice("Error: " + resp.reason);
-        }
-      }
-    });
-  },
-
-  set_pool_browse_mode: function(browse_mode) {
-    new Ajax.Request("/user/update.json", {
-      parameters: {
-        "user[pool_browse_mode]": browse_mode
-      },
-
-      onComplete: function(resp) {
-        var resp = resp.responseJSON;
-
-        if (resp.success) {
-          window.location.reload();
         } else {
           notice("Error: " + resp.reason);
         }

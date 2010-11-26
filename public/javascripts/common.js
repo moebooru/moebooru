@@ -380,30 +380,6 @@ sort_array_by_distance = function(list, idx)
   return ret;
 }
 
-/* Return the squared distance between two points. */
-distance_squared = function(x1, y1, x2, y2)
-{
-  return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
-}
-
-/* Return the size of the window. */
-getWindowSize = function()
-{
-  var size = {};
-  if(window.innerWidth != null)
-  {
-    size.width = window.innerWidth;
-    size.height = window.innerHeight;
-  }
-  else
-  {
-    /* IE: */
-    size.width = document.documentElement.clientWidth;
-    size.height = document.documentElement.clientHeight;
-  }
-  return size;
-}
-
 /* When element is dragged, the document moves around it.  If scroll_element is true, the
  * element should be positioned (eg. position: absolute), and the element itself will be
  * scrolled. */
@@ -415,12 +391,6 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
   this.mouseup_event = this.mouseup_event.bindAsEventListener(this);
   this.click_event = this.click_event.bindAsEventListener(this);
   this.selectstart_event = this.selectstart_event.bindAsEventListener(this);
-
-  this.touchmove_event = this.touchmove_event.bindAsEventListener(this);
-  this.touchstart_event = this.touchstart_event.bindAsEventListener(this);
-  this.touchend_event = this.touchend_event.bindAsEventListener(this);
-
-  this.move_timer_update = this.move_timer_update.bind(this);
 
   this.ondrag = ondrag;
   this.onstartdrag = onstartdrag;
@@ -442,9 +412,6 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
   element.observe("mousedown", this.mousedown_event);
   element.observe("dragstart", this.dragstart_event);
 
-  element.observe("touchstart", this.touchstart_event);
-  element.observe("touchmove", this.touchmove_event);
-
   /*
    * We may or may not get a click event after mouseup.  This is a pain: if we get a
    * click event, we need to cancel it if we dragged, but we may not get a click event
@@ -456,16 +423,26 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
     element.observe("click", this.click_event);
 }
 
-DragElement.prototype.move_timer_update = function(event)
+DragElement.prototype.mousemove_event = function(event)
 {
-  this.move_timer = null;
+  event.stop();
+  
+  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
 
-  if(this.last_event_params == null)
+  var x = event.pointerX() - scrollLeft;
+  var y = event.pointerY() - scrollTop;
+
+  if(!this.dragging)
     return;
+  if(!this.dragged)
+  {
+    this.dragged = true;
+    $(document.body).addClassName("dragging");
 
-  var x = this.last_event_params.x;
-  var y = this.last_event_params.y;
-  this.last_event_params = null;
+    if(this.onstartdrag)
+      this.onstartdrag(this);
+  }
 
   var anchored_x = x - this.anchor_x;
   var anchored_y = y - this.anchor_y;
@@ -476,6 +453,7 @@ DragElement.prototype.move_timer_update = function(event)
   this.last_y = y;
 
   if(this.ondrag)
+  {
     this.ondrag({
       dragger: this,
       x: x,
@@ -483,73 +461,9 @@ DragElement.prototype.move_timer_update = function(event)
       aX: anchored_x,
       aY: anchored_y,
       dX: relative_x,
-      dY: relative_y
+      dY: relative_y,
+      event: event
     });
-}
-
-DragElement.prototype.mousemove_event = function(event)
-{
-  event.stop();
-  
-  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
-  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
-
-  var x = event.pointerX() - scrollLeft;
-  var y = event.pointerY() - scrollTop;
-  this.handle_move_event(event, x, y);
-}
-
-DragElement.prototype.touchmove_event = function(event)
-{
-  event.preventDefault();
-
-  var touch = event.touches.item(0);
-  var x = touch.screenX;
-  var y = touch.screenY;
-
-  this.handle_move_event(event, x, y);
-}
-
-DragElement.prototype.handle_move_event = function(event, x, y)
-{
-  if(!this.dragging)
-    return;
-
-  if(!this.dragged)
-  {
-    var distance = Math.pow(x - this.anchor_x, 2) + Math.pow(y - this.anchor_y, 2);
-    if(distance < 100) // 10 pixels
-      return;
-  }
-
-  if(!this.dragged)
-  {
-    this.dragged = true;
-    $(document.body).addClassName("dragging");
-
-    if(this.onstartdrag)
-      this.onstartdrag(this);
-  }
-
-  if(!this.ondrag)
-    return;
-
-  this.last_event_params = {
-    x: x,
-    y: y
-  };
-
-  if(this.dragging_by_touch)
-  {
-    /* Touch events on Android tend to queue up when they come in faster than we
-     * can process.  Set a timer, so we discard multiple events in quick succession. */
-    // XXX: Android only, probably not needed on iPhone
-    if(this.move_timer == null)
-      this.move_timer = window.setTimeout(this.move_timer_update, 10);
-  }
-  else
-  {
-    this.move_timer_update();
   }
 }
 
@@ -558,60 +472,20 @@ DragElement.prototype.mousedown_event = function(event)
   if(!event.isLeftClick())
     return;
 
-  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
-  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
-  var x = event.pointerX() - scrollLeft;
-  var y = event.pointerY() - scrollTop;
-
-  this.start_dragging(event, false, x, y);
-}
-
-DragElement.prototype.touchstart_event = function(event)
-{
-  /* We need to preventDefault in touchstart to prevent the browser from dragging
-   * the window around. */
-//  debug.log("touchstart");
-//  event.preventDefault();
-
-  var touch = event.touches.item(0);
-  var x = touch.screenX;
-  var y = touch.screenY;
-  debug.log("touchstart: " + x + ", " + y);
-  
-  this.start_dragging(event, true, x, y);
-}
-
-DragElement.prototype.start_dragging = function(event, touch, x, y)
-{
-  /* If we've been started with a touch event, only listen for touch events.  If we've
-   * been started with a mouse event, only listen for mouse events.  We may receive
-   * both sets of events, and the anchor coordinates for the two may not be compatible. */
+  Event.observe(document, "mouseup", this.mouseup_event);
+  Event.observe(document, "mousemove", this.mousemove_event);
   Event.observe(document, "selectstart", this.selectstart_event);
-  if(touch)
-  {
-    Event.observe(document, "touchend", this.touchend_event);
-    Event.observe(document, "touchmove", this.touchmove_event);
-  }
-  else
-  {
-    Event.observe(document, "mouseup", this.mouseup_event);
-    Event.observe(document, "mousemove", this.mousemove_event);
-  }
 
   this.dragging = true;
   this.dragged = false;
-  this.dragging_by_touch = touch;
 
-  this.anchor_x = x;
-  this.anchor_y = y;
+  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+
+  this.anchor_x = event.pointerX() - scrollLeft;
+  this.anchor_y = event.pointerY() - scrollTop;
   this.last_x = this.anchor_x;
   this.last_y = this.anchor_y;
-  debug.log("start_dragging anchor: " + x + ", " + y);
-}
-
-DragElement.prototype.touchend_event = function(event)
-{
-  this.stop_dragging(event);
 }
 
 DragElement.prototype.mouseup_event = function(event)
@@ -619,11 +493,6 @@ DragElement.prototype.mouseup_event = function(event)
   if(!event.isLeftClick())
     return;
 
-  this.stop_dragging(event);
-}
-
-DragElement.prototype.stop_dragging = function(event)
-{
   if(this.dragging)
   {
     this.dragging = false;
@@ -636,8 +505,6 @@ DragElement.prototype.stop_dragging = function(event)
   Event.stopObserving(document, "mouseup", this.mouseup_event);
   Event.stopObserving(document, "mousemove", this.mousemove_event);
   Event.stopObserving(document, "selectstart", this.selectstart_event);
-  Event.stopObserving(document, "touchmove", this.touchmove_event);
-  Event.stopObserving(document, "touchend", this.touchend_event);
 }
 
 DragElement.prototype.click_event = function(event)

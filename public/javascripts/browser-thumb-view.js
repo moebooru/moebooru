@@ -123,14 +123,12 @@ PostLoader.prototype.request_finished = function()
   var result = this.result;
   this.result = null;
 
-  /* If result.posts is null, server_load_posts hit an error.  It already displayed an
-   * error, so just stop. */
-  if(result.posts == null)
-    return;
-
   var new_post_ids = [];
-  for(var i = 0; i < result.posts.length; ++i)
-    new_post_ids.push(result.posts[i].id);
+  if(result.posts)
+  {
+    for(var i = 0; i < result.posts.length; ++i)
+      new_post_ids.push(result.posts[i].id);
+  }
 
   document.fire("viewer:displayed-pool-changed", { pool: result.pool });
   document.fire("viewer:searched-tags-changed", { tags: result.tags });
@@ -159,8 +157,6 @@ PostLoader.prototype.load = function(extending, disable_cache)
      * end up loading twice. */
     return;
   }
-
-  debug.log("PostLoader.load(" + extending + ", " + disable_cache + ")");
 
   this.loaded_extended_results = extending;
 
@@ -223,6 +219,7 @@ PostLoader.prototype.hashchange_tags = function()
   
   
   
+  
 /*
  * Handle the thumbnail view, and navigation for the main view.
  *
@@ -268,9 +265,6 @@ ThumbnailView = function(container, view)
 
   new DragElement(this.container, this.container_ondrag.bind(this));
 
-  this.window_resize_event = this.window_resize_event.bindAsEventListener(this);
-  Element.observe(window, "resize", this.window_resize_event);
-
   this.container_mousemove_event = this.container_mousemove_event.bindAsEventListener(this);
   this.container.observe("mousemove", this.container_mousemove_event);
 
@@ -289,12 +283,6 @@ ThumbnailView = function(container, view)
     if(event.isLeftClick())
       event.preventDefault();
   }.bindAsEventListener(this));
-}
-
-ThumbnailView.prototype.window_resize_event = function(e)
-{
-  if(this.thumb_container_shown)
-    this.center_on_post_for_scroll(this.centered_post_idx);
 }
 
 /* Show the given posts.  If extending is true, post_ids are meant to extend a previous
@@ -553,7 +541,6 @@ ThumbnailView.prototype.center_on_post_for_scroll = function(post_idx)
    * Explicitly figure out which item we're hovering over and expand it.
    */
   var element = document.elementFromPoint(this.last_mouse_x, this.last_mouse_y);
-  element = $(element);
   if(element)
   {
     var li = element.up(".post-thumb");
@@ -676,16 +663,7 @@ ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
  * Fire viewer:need-more-thumbs if we're scrolling near the edge of the list. */
 ThumbnailView.prototype.center_on_post = function(post_idx)
 {
-  if(!this.post_ids)
-  {
-    debug.log("unexpected: center_on_post has no post_ids");
-    return;
-  }
-
   var post_id = this.post_ids[post_idx];
-  if(Post.posts.get(post_id) == null)
-    return;
-
   if(post_idx > this.post_ids.length*3/4)
   {
     /* We're coming near the end of the loaded posts, so load more. */
@@ -859,16 +837,10 @@ ThumbnailView.prototype.expand_post = function(post_id)
   var post = Post.posts.get(post_id);
 
   /* This doesn't always align properly in Firefox if full-page zooming is being used. */
-  var thumb = $("p" + post_id);
-  var hover_thumb = thumb.down("IMG");
+  var hover_thumb = $("p" + post_id).down("IMG");
   var thumb_offset = hover_thumb.cumulativeOffset();
-  var container_offset = this.container.cumulativeOffset();
-  thumb_offset[0] -= container_offset[0];
-  thumb_offset[1] -= container_offset[1];
-  if(hover_thumb.offsetHeight > thumb.offsetHeight)
-    thumb_offset[1] -= hover_thumb.offsetHeight - thumb.offsetHeight;
-  overlay.style.top = thumb_offset[1] + "px";
   overlay.style.left = thumb_offset[0] + "px";
+  overlay.style.top = thumb_offset[1] + "px";
 
   /* If the hover thumbnail overflows the right edge of the viewport, it'll extend the document and
    * allow scrolling to the right, which we don't want.  overflow: hidden doesn't fix this, since this
@@ -963,9 +935,6 @@ ThumbnailView.prototype.container_click_event = function(event)
 
 ThumbnailView.prototype.container_dblclick_event = function(event)
 {
-  if(event.button)
-    return;
-
   if(event.target.up(".post-thumb") == null && event.target.up(".browser-thumb-hover-overlay") == null)
     return;
 
@@ -1002,6 +971,7 @@ ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
 ThumbnailView.prototype.displayed_image_loaded_event = function(event)
 {
   var post_id = event.memo.post_id;
+  debug.log("image-loaded:" + event.memo.post_id);
 
   /*
    * The image in the post we're displaying is finished loading.
@@ -1122,12 +1092,6 @@ InputHandler.prototype.document_keypress_event = function(e)
 /* Double-clicking the image shows the UI. */
 InputHandler.prototype.document_dblclick_event = function(event)
 {
-  /* Watch out: Firefox fires dblclick events for all buttons, with the standard
-   * button maps, but IE only fires it for left click and doesn't set button at
-   * all, so event.isLeftClick won't work. */
-  if(event.button)
-    return;
-
   if(event.target.id != "image")
     return;
 

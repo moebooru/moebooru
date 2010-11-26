@@ -3,6 +3,7 @@ DebugWindow = function()
   this.shown = false;
   this.log_data = [];
   this.hooks = [];
+  this.counter = 0;
 
   this.set_debug = this.set_debug.bind(this);
 
@@ -19,7 +20,7 @@ DebugWindow.prototype.create_container = function()
   var div = document.createElement("DIV");
   div = $(div);
   div.className = "debug-box";
-  div.setStyle({position: "fixed", bottom: "100px", maxHeight: "50%", backgroundColor: "#000"});
+  div.setStyle({position: "fixed", top: "0px", height: "50%", backgroundColor: "#000", fontSize: "250%"});
   document.body.appendChild(div);
   this.container = div;
 
@@ -36,16 +37,21 @@ DebugWindow.prototype.destroy_container = function()
 
 DebugWindow.prototype.log = function(s)
 {
-  this.log_data.push(s);
-  var lines = 30;
+  ++this.counter;
+  this.log_data.push(this.counter + ": " + s);
+  var lines = 10;
   if(this.log_data.length > lines)
     this.log_data = this.log_data.slice(1, lines+1);
-  this.update();
+  this.update.defer();
 }
 
 DebugWindow.prototype.hashchange_debug = function()
 {
-  var debug = UrlHash.get("debug") == "1";
+  var debug = UrlHash.get("debug");
+  if(debug == null)
+    debug = "0";
+  debug = (debug == "1");
+
   if(debug == this.shown)
     return;
 
@@ -75,9 +81,9 @@ DebugWindow.prototype.update = function()
   for(var i = 0; i < this.hooks.length; ++i)
   {
     var func = this.hooks[i];
-    s += func();
+    s += func() + "<br>";
   }
-  s += " -- " + this.log_data.join("<br>");
+  s += this.log_data.join("<br>");
 
   if(s == this.shown_debug)
     return;

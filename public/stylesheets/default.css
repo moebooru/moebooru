@@ -1434,7 +1434,7 @@ span.stars .star-3 { color:#ff0; }
   width: 100%;
   background-color: #222;
   position: absolute;
-  top: 0px;
+  bottom: 0px;
   left: 0px;
   overflow: visible;
   z-index: 11;
@@ -1449,14 +1449,13 @@ span.stars .star-3 { color:#ff0; }
 }
 
 .post-browser-tags-form {
-  margin-top: 5px;
+  margin-bottom: 5px;
   padding: 0px 0 0 0;
 }
 
 .post-browser-posts-container {
   height: 210px;
-/*  height: 500px;*/
-/*  overflow: hidden;*/
+  overflow: hidden;
 }
 
 .post-browser-posts {
@@ -1464,6 +1463,7 @@ span.stars .star-3 { color:#ff0; }
   white-space: nowrap;
   height: 100%;
   margin: 0;
+  position: relative;
 }
 
 .post-browser-posts .inner {
@@ -1486,20 +1486,25 @@ span.stars .star-3 { color:#ff0; }
 .browser-thumb-hover-overlay {
   position: absolute;
   z-index: 2; /* over the regular post images */
+  overflow: hidden; /* needed to crop the right edge when overflowing the viewport */
 }
 .browser-thumb-hover-overlay > img {
   vertical-align: top;
-  border-width: 0 2px 2px 2px;
+  border-width: 2px 2px 2px 2px;
   border-style: solid;
   border-color: #000;
-  margin-left: -2px;
 }
+
 .post-info {
   position: absolute;
   bottom: 0px;
   width: 25%;
   height: 500px;
   background-color: #005;
+}
+
+.post-info ul {
+  list-style-type: none;
 }
 
 #post-content A.disabled {

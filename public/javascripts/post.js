@@ -1117,6 +1117,8 @@ Post = {
       }
     });
   },
+
+  // XXX: remove
   get_url_for_post_in_pool: function(post_id, pool_id)
   {
     return "/post/show/" + post_id + "?pool_id=" + pool_id;

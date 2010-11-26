@@ -40,14 +40,17 @@ BrowserView = function(container)
   this.last_preload_request = [];
   this.last_preload_request_active = false;
 
-  /* True if the post UI is visible.  The viewer:set-post-ui changes this. */
-  this.post_ui_visible = true;
+  /* True if the post UI is visible.  The viewer:set-post-ui event changes this. */
+  this.post_ui_visible = false;
 
   debug.add_hook(this.get_debug.bind(this));
 
   this.image_loaded_event = this.image_loaded_event.bindAsEventListener(this);
   this.img = this.container.down(".image");
   this.img.observe("load", this.image_loaded_event);
+
+  this.window_resize_event = this.window_resize_event.bindAsEventListener(this);
+  Event.observe(window, "resize", this.window_resize_event);
 
   this.set_post_ui_event = this.set_post_ui_event.bindAsEventListener(this);
   Event.observe(document, "viewer:set-post-ui", this.set_post_ui_event);
@@ -214,11 +217,12 @@ BrowserView.prototype.set_post_content = function(post_id)
   if(post)
   {
     this.img.hide();
-    this.img.width = post.sample_width;
-    this.img.height = post.sample_height;
+    this.img.original_width = post.sample_width;
+    this.img.original_height = post.sample_height;
     this.img.src = post.sample_url;
     this.img.show();
 
+    // debug.log("set_post_content");
     this.scale_and_position_image();
   }
 
@@ -229,6 +233,25 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   this.container.down(".post-view-larger").pickClassName("enabled", "disabled", post.jpeg_url != post.sample_url);
   this.container.down(".post-info").show(this.post_ui_visible);
+  this.container.down(".post-view-larger").href = "/post/show/" + post.id;
+
+  var has_sample = (post.sample_url != post.file_url);
+  var has_jpeg = (post.jpeg_url != post.file_url);
+  this.container.down(".download-image").show(!has_sample);
+  this.container.down(".download-image").href = post.sample_url;
+  this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.sample_file_size));
+  this.container.down(".download-jpeg").show(has_sample);
+  this.container.down(".download-jpeg").href = has_jpeg? post.jpeg_url: post.file_url;
+  this.container.down(".download-jpeg-desc").setTextContent(number_to_human_size(has_jpeg? post.jpeg_file_size: post.file_size));
+  this.container.down(".download-png").show(has_jpeg);
+  this.container.down(".download-png").href = post.file_url;
+  this.container.down(".download-png-desc").setTextContent(number_to_human_size(post.file_size));
+}
+
+BrowserView.prototype.window_resize_event = function()
+{
+  debug.log("view resize");
+  this.scale_and_position_image(true);
 }
 
 BrowserView.prototype.click_image_zoom_event = function(e)
@@ -248,43 +271,60 @@ BrowserView.prototype.click_image_zoom_event = function(e)
   if(this.img.src != post.jpeg_url)
   {
     this.img.src = post.jpeg_url;
-    this.img.width = post.jpeg_width;
-    this.img.height = post.jpeg_height;
-    this.scale_and_position_image(true);
+    this.img.original_width = post.jpeg_width;
+    this.img.original_height = post.jpeg_height;
   }
   else
   {
-    this.img.width = post.sample_width;
-    this.img.height = post.sample_height;
     this.img.src = post.sample_url;
-    this.scale_and_position_image(false);
+    this.img.original_width = post.sample_width;
+    this.img.original_height = post.sample_height;
   }
+
+  this.scale_and_position_image();
 }
 
-BrowserView.prototype.scale_and_position_image = function(position_only)
+BrowserView.prototype.scale_and_position_image = function(resizing)
 {
   var img = this.img;
-  var original_width = img.width;
-  var original_height = img.height;
+  if(!img)
+    return;
+  var original_width = img.original_width;
+  var original_height = img.original_height;
 
-  var window_size = document.viewport.getDimensions();
+  var post = Post.posts.get(this.displayed_post_id);
+  if(!post)
+  {
+    debug.log("unexpected: displayed post " + this.displayed_post_id + " unknown");
+    return;
+  }
 
-  if(!position_only)
+  var window_size = getWindowSize();
+  var show_large_image = this.img.src == post.jpeg_url;
+  if(show_large_image)
+  {
+    img.width = img.original_width;
+    img.height = img.original_height;
+  }
+  else
   {
     /* Zoom the image to fit the viewport. */
     var ratio = window_size.width / original_width;
     if (original_height * ratio > window_size.height)
       ratio = window_size.height / original_height;
-    if(ratio < 1)
-    {
-      img.width = original_width * ratio;
-      img.height = original_height * ratio;
-    }
+    ratio = Math.min(ratio, 1.0);
+    img.width = original_width * ratio;
+    img.height = original_height * ratio;
   }
 
-  img.setStyle({left: "0px", top: "0px"});
+  /* If we're resizing and showing the full-size image, don't snap the position
+   * back to the default. */
+  if(resizing && show_large_image)
+    return;
 
   var offset = img.cumulativeOffset();
+  offset.top -= img.offsetTop;
+  offset.left -= img.offsetLeft;
   var left_spacing = (window_size.width - img.offsetWidth) / 2;
   var top_spacing = (window_size.height - img.offsetHeight) / 2;
   var scroll_x = offset.left - left_spacing;
@@ -344,7 +384,7 @@ WindowTitleHandler = function()
   this.pool = null;
 
   document.observe("viewer:searched-tags-changed", function(e) {
-    this.searched_tags = e.memo.tags;
+    this.searched_tags = e.memo.tags || "";
     this.update();
   }.bindAsEventListener(this));
 

@@ -10,15 +10,15 @@
   <%= javascript_include_tag :all, :cache => "application" %>
   <%= CONFIG["custom_html_headers"] %>
   <script type="text/javascript">
-  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-  document.write("\<script src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'>\<\/script>" );
-  </script>
-  <script type="text/javascript">
-  if(typeof(_gat) != "undefined") {
-    var pageTracker = _gat._getTracker("UA-291955-3");
-    pageTracker._initData();
-    pageTracker._trackPageview();
-  }
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-291955-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
   </script>
 </head>
 <body>

@@ -315,6 +315,8 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
     ratio = Math.min(ratio, 1.0);
     img.width = original_width * ratio;
     img.height = original_height * ratio;
+    debug.log("zoom: " + window_size.width + "x" + window_size.height + ", " + original_width + "x" + original_height + ", " +
+        "ratio " + ratio + " = " + img.width + "x" + img.height);
   }
 
   /* If we're resizing and showing the full-size image, don't snap the position

@@ -109,6 +109,7 @@ PostLoader.prototype.server_load_posts = function()
 
     onFailure: function(resp) {
       notice("Error " + resp.status + " loading posts");
+      this.result.error = true;
     }.bind(this)
   });
 }
@@ -123,14 +124,19 @@ PostLoader.prototype.request_finished = function()
   var result = this.result;
   this.result = null;
 
-  /* If result.posts is null, server_load_posts hit an error.  It already displayed an
-   * error, so just stop. */
-  if(result.posts == null)
+  /* If server_load_posts hit an error, it already displayed it; stop. */
+  if(result.error != null)
     return;
 
+  /* If we have no search tags (result.tags == null, result.posts == null), then we're just
+   * displaying a post with no search, eg. "/post/browse#12345".  We'll still fire off the
+   * same code path to make the post display in the view. */
   var new_post_ids = [];
-  for(var i = 0; i < result.posts.length; ++i)
-    new_post_ids.push(result.posts[i].id);
+  if(result.posts != null)
+  {
+    for(var i = 0; i < result.posts.length; ++i)
+      new_post_ids.push(result.posts[i].id);
+  }
 
   document.fire("viewer:displayed-pool-changed", { pool: result.pool });
   document.fire("viewer:searched-tags-changed", { tags: result.tags });
@@ -348,12 +354,16 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
   }
   else
   {
+    /* A new search has completed.  If the displayed post exists in the new search,
+     * center on it. */
     var initial_post_id = this.get_current_post_id();
     var initial_post_idx = this.post_ids.indexOf(initial_post_id)
     if(initial_post_idx == -1)
       initial_post_idx = 0;
     this.centered_post_offset = 0;
     this.center_on_post_for_scroll(initial_post_idx);
+
+    debug.log("Search completed; displaying post " + initial_post_id);
     this.set_active_post(initial_post_id);
   }
 
@@ -1001,6 +1011,10 @@ ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
 
 ThumbnailView.prototype.displayed_image_loaded_event = function(event)
 {
+  /* If we don't have a loaded search, then we don't have any nearby posts to preload. */
+  if(this.post_ids == null)
+    return;
+
   var post_id = event.memo.post_id;
 
   /*

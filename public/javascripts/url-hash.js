@@ -110,6 +110,12 @@ UrlHashHandler.prototype.parse = function(hash)
     {
       var keyval = hash_query_values[i]; /* a=b */
       var key = keyval.split("=", 1)[0];
+
+      /* If the key is blank, eg. "#path?a=b&=d", then ignore the value.  It'll overwrite
+       * the path, which is confusing and never what's wanted. */
+      if(key == "")
+        continue;
+
       var value = keyval.substr(key.length+1);
       key = window.decodeURIComponent(key);
       value = window.decodeURIComponent(value);

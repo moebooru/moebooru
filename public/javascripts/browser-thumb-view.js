@@ -1,7 +1,6 @@
 PostLoader = function()
 {
-  this.need_more_post_data = this.need_more_post_data.bindAsEventListener(this);
-  document.observe("viewer:need-more-thumbs", this.need_more_post_data);
+  document.on("viewer:need-more-thumbs", this.need_more_post_data.bindAsEventListener(this));
 
   this.hashchange_tags = this.hashchange_tags.bind(this);
   UrlHash.observe("tags", this.hashchange_tags);
@@ -255,43 +254,31 @@ ThumbnailView = function(container, view)
   /* The [first, end) range of posts that are currently inside .post-browser-posts. */
   this.posts_populated = [0, 0];
 
-  this.container_click_event = this.container_click_event.bindAsEventListener(this);
-  this.container_dblclick_event = this.container_dblclick_event.bindAsEventListener(this);
-  this.container_mouse_wheel_event = this.container_mouse_wheel_event.bindAsEventListener(this);
+  this.container.on("DOMMouseScroll", this.container_mouse_wheel_event.bindAsEventListener(this));
+  this.container.on("mousewheel", this.container_mouse_wheel_event.bindAsEventListener(this));
 
-  this.container.observe("DOMMouseScroll", this.container_mouse_wheel_event);
-  this.container.observe("mousewheel", this.container_mouse_wheel_event);
-
-  this.displayed_image_loaded_event = this.displayed_image_loaded_event.bindAsEventListener(this);
-  document.observe("viewer:displayed-image-loaded", this.displayed_image_loaded_event);
-  document.observe("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
-  document.observe("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
-  document.observe("viewer:toggle-thumb-bar", function(e) { this.toggle_thumb_bar(); }.bindAsEventListener(this));
-  document.observe("viewer:force-thumb-bar", function(e) { this.show_thumb_bar(!e.memo.hide); }.bindAsEventListener(this));
+  document.on("viewer:displayed-image-loaded", this.displayed_image_loaded_event.bindAsEventListener(this));
+  document.on("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
+  document.on("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
+  document.on("viewer:toggle-thumb-bar", function(e) { this.toggle_thumb_bar(); }.bindAsEventListener(this));
+  document.on("viewer:force-thumb-bar", function(e) { this.show_thumb_bar(!e.memo.hide); }.bindAsEventListener(this));
+  document.on("viewer:loaded-posts", this.loaded_posts_event.bindAsEventListener(this));
 
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
   UrlHash.observe("post-id", this.hashchange_post_id);
 
-  new DragElement(this.container, this.container_ondrag.bind(this));
+//  new DragElement(this.container, this.container_ondrag.bind(this));
 
-  this.window_resize_event = this.window_resize_event.bindAsEventListener(this);
-  Element.observe(window, "resize", this.window_resize_event);
+  Element.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
 
-  this.container_mousemove_event = this.container_mousemove_event.bindAsEventListener(this);
-  this.container.observe("mousemove", this.container_mousemove_event);
-
-  this.container_mouseover_event = this.container_mouseover_event.bindAsEventListener(this);
-  this.container.observe("mouseover", this.container_mouseover_event);
-
-  this.container.observe("click", this.container_click_event);
-  this.container.observe("dblclick", this.container_dblclick_event);
-
-  this.loaded_posts_event = this.loaded_posts_event.bindAsEventListener(this);
-  document.observe("viewer:loaded-posts", this.loaded_posts_event);
+  this.container.on("mousemove", this.container_mousemove_event.bindAsEventListener(this));
+  this.container.on("mouseover", this.container_mouseover_event.bindAsEventListener(this));
+  this.container.on("click", this.container_click_event.bindAsEventListener(this));
+  this.container.on("dblclick", this.container_dblclick_event.bindAsEventListener(this));
 
   /* Prevent the default behavior of left-clicking on the expanded thumbnail overlay.  It's
    * handled by container_click_event. */
-  this.container.down(".browser-thumb-hover-overlay").observe("click", function(event) {
+  this.container.down(".browser-thumb-hover-overlay").on("click", function(event) {
     if(event.isLeftClick())
       event.preventDefault();
   }.bindAsEventListener(this));
@@ -1037,14 +1024,11 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
 /* This handler handles global keypress bindings, and fires viewer: events. */
 function InputHandler()
 {
-  this.document_keypress_event = this.document_keypress_event.bindAsEventListener(this);
   this.document_focus_event = this.document_focus_event.bindAsEventListener(this);
-  this.document_dblclick_event = this.document_dblclick_event.bindAsEventListener(this);
-  this.document_mouse_wheel_event = this.document_mouse_wheel_event.bindAsEventListener(this);
 
   /* Track the focused element, so we can clear focus on KEY_ESC. */
   this.focused_element = null;
-  Element.observe(document, "focus", this.document_focus_event, true);
+  document.addEventListener("focus", this.document_focus_event, true);
   document.onfocusin = this.document_focus_event;
 
   /*
@@ -1063,12 +1047,10 @@ function InputHandler()
    * keydown in other browsers.
    */
   var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
-  Element.observe(document, keypress_event_name, this.document_keypress_event);
-
-  Element.observe(document, "dblclick", this.document_dblclick_event);
-
-  Element.observe(document, "DOMMouseScroll", this.document_mouse_wheel_event);
-  Element.observe(document, "mousewheel", this.document_mouse_wheel_event);
+  document.on(keypress_event_name, this.document_keypress_event.bindAsEventListener(this));
+  document.on("dblclick", this.document_dblclick_event.bindAsEventListener(this));
+  document.on("DOMMouseScroll", this.document_mouse_wheel_event.bindAsEventListener(this));
+  document.on("mousewheel", this.document_mouse_wheel_event.bindAsEventListener(this));
 }
 
 InputHandler.prototype.document_focus_event = function(e)

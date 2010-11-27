@@ -1025,11 +1025,13 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
 function InputHandler()
 {
   this.document_focus_event = this.document_focus_event.bindAsEventListener(this);
+  this.document_focusin_event = this.document_focusin_event.bindAsEventListener(this);
 
   /* Track the focused element, so we can clear focus on KEY_ESC. */
   this.focused_element = null;
-  document.addEventListener("focus", this.document_focus_event, true);
-  document.onfocusin = this.document_focus_event;
+  if(document.addEventListener)
+    document.addEventListener("focus", this.document_focus_event, true);
+  document.observe("focusin", this.document_focusin_event);
 
   /*
    * Keypresses are aggrevating:
@@ -1056,6 +1058,11 @@ function InputHandler()
 InputHandler.prototype.document_focus_event = function(e)
 {
   this.focused_element = e.target;
+}
+
+InputHandler.prototype.document_focusin_event = function(event)
+{
+  this.focused_element = event.srcElement;
 }
 
 InputHandler.prototype.handle_keypress = function(e)

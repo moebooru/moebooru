@@ -387,7 +387,7 @@ ThumbnailView.prototype.container_ondrag = function(e)
 
 ThumbnailView.prototype.container_mouseover_event = function(event)
 {
-  var li = event.target.up(".post-thumb");
+  var li = $(event.target).up(".post-thumb");
   if(!li)
     return;
 
@@ -952,7 +952,7 @@ ThumbnailView.prototype.container_click_event = function(event)
   if(event.stopped)
     return;
 
-  if(event.target.up(".browser-thumb-hover-overlay"))
+  if($(event.target).up(".browser-thumb-hover-overlay"))
   {
     /* The hover overlay was clicked.  When the user clicks a thumbnail, this is
      * usually what happens, since the hover overlay covers the actual thumbnail. */
@@ -961,7 +961,7 @@ ThumbnailView.prototype.container_click_event = function(event)
     return;
   }
 
-  var li = event.target.up(".post-thumb");
+  var li = $(event.target).up(".post-thumb");
   if(li == null)
     return;
 
@@ -976,7 +976,7 @@ ThumbnailView.prototype.container_dblclick_event = function(event)
   if(event.button)
     return;
 
-  if(event.target.up(".post-thumb") == null && event.target.up(".browser-thumb-hover-overlay") == null)
+  if($(event.target).up(".post-thumb") == null && $(event.target).up(".browser-thumb-hover-overlay") == null)
     return;
 
   event.preventDefault();
@@ -1142,7 +1142,7 @@ InputHandler.prototype.document_dblclick_event = function(event)
   if(event.button)
     return;
 
-  if(event.target.id != "image")
+  if($(event.target).id != "image")
     return;
 
   event.stop();

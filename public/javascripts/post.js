@@ -1067,7 +1067,7 @@ Post = {
         return;
 
       span.down("A").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
-      span.down("A").observe("mouseout", function(e) { if(e.relatedTarget.isParentNode(overlay)) return; Post.hover_info_mouseout(); });
+      span.down("A").observe("mouseout", function(e) { if(e.relatedTarget && e.relatedTarget.isParentNode(overlay)) return; Post.hover_info_mouseout(); });
     });
 
     overlay.observe("mouseout", function(e) { Post.hover_info_mouseout(); });

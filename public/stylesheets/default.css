@@ -1340,7 +1340,7 @@ a.directlink:hover > .directlink-info {
 	position: absolute;
 	z-index: 2; /* over the regular post images */
 }
-.post-hover-overlay > img {
+.post-hover-overlay > a > img {
         vertical-align: top;
         border-width: 0 2px 2px 2px;
         border-style: solid;

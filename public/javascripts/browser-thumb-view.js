@@ -909,7 +909,7 @@ ThumbnailView.prototype.create_thumb = function(post_id)
    * won't be defined, which breaks center_on_post. */
   var div =
     '<div class="inner" style="width: ${block_size_x}px; height: ${block_size_y}px;">' +
-      '<a class="thumb" href="${target_url}">' +
+      '<a class="thumb" href="${target_url}" tabindex="-1">' +
         '<img src="${preview_url}" style="visibility: hidden; margin-left: -${crop_left}px;" alt="" class="${image_class}"' +
           'width="${width}" height="${height}" onload="$(this).setStyle({visibility: \'visible\'});">' +
       '</a>' +

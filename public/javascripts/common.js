@@ -568,11 +568,6 @@ DragElement.prototype.mousedown_event = function(event)
 
 DragElement.prototype.touchstart_event = function(event)
 {
-  /* We need to preventDefault in touchstart to prevent the browser from dragging
-   * the window around. */
-//  debug.log("touchstart");
-//  event.preventDefault();
-
   var touch = event.touches.item(0);
   var x = touch.screenX;
   var y = touch.screenY;

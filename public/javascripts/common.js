@@ -682,11 +682,11 @@ WindowDragElement.prototype.startdrag = function()
 
 WindowDragElement.prototype.ondrag = function(e)
 {
-  var scrollLeft = this.scroll_anchor_x + e.aX;
-  var scrollTop = this.scroll_anchor_y + e.aY;
-
   if(this.scroll_element)
   {
+    var scrollLeft = this.scroll_anchor_x + e.aX;
+    var scrollTop = this.scroll_anchor_y + e.aY;
+
     /* Don't allow dragging the image off the screen; there'll be no way to
      * get it back. */
     var window_size = document.viewport.getDimensions();
@@ -701,6 +701,8 @@ WindowDragElement.prototype.ondrag = function(e)
   }
   else
   {
+    var scrollLeft = this.scroll_anchor_x - e.aX;
+    var scrollTop = this.scroll_anchor_y - e.aY;
     scrollTo(scrollLeft, scrollTop);
   }
 }

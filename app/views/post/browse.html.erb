@@ -1,5 +1,14 @@
 <% content_for("html_header") do %>
-  <meta name="viewport" content="target-densityDpi=350; minimum-scale=1; maximum-scale=1; initial-scale=1;">
+  <% if @viewport_device == "iPhone" then %>
+    <meta name="viewport" content="width=device-width; initial-scale=0.5; maximum-scale=0.5; user-scalable=0;">  
+  <% elsif @viewport_device == "iPad" then %>
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">  
+  <% else %>
+    <meta name="viewport" content="target-densityDpi=350; minimum-scale=1; maximum-scale=1; initial-scale=1;">
+  <% end %>
+
+  <meta name="apple-mobile-web-app-capable" content="yes" >  
+  <meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" >
 <% end %>
 
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>

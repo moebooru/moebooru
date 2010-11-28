@@ -504,8 +504,8 @@ DragElement.prototype.touchmove_event = function(event)
   event.preventDefault();
 
   var touch = event.touches.item(0);
-  var x = touch.screenX;
-  var y = touch.screenY;
+  var x = touch.pageX;
+  var y = touch.pageY;
 
   this.handle_move_event(event, x, y);
 }
@@ -569,8 +569,8 @@ DragElement.prototype.mousedown_event = function(event)
 DragElement.prototype.touchstart_event = function(event)
 {
   var touch = event.touches.item(0);
-  var x = touch.screenX;
-  var y = touch.screenY;
+  var x = touch.pageX;
+  var y = touch.pageY;
   debug.log("touchstart: " + x + ", " + y);
   
   this.start_dragging(event, true, x, y);

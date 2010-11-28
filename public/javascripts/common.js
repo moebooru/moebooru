@@ -689,7 +689,7 @@ WindowDragElement.prototype.ondrag = function(e)
 
     /* Don't allow dragging the image off the screen; there'll be no way to
      * get it back. */
-    var window_size = document.viewport.getDimensions();
+    var window_size = getWindowSize();
     var min_visible = Math.min(100, this.element.offsetWidth);
     scrollLeft = Math.max(scrollLeft, min_visible - this.element.offsetWidth);
     scrollLeft = Math.min(scrollLeft, window_size.width - min_visible);

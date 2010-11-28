@@ -186,7 +186,7 @@ AndroidDetectWindowSize.prototype.event_onresize = function(e)
  *
  * - The conditions for a double click won't match the ones of the platform.
  *
- * This is needed on Android's WebKit; untested on iPhone.
+ * This is needed on Android and iPhone's WebKit.
  */
 
 function EmulateDoubleClick()
@@ -240,9 +240,9 @@ EmulateDoubleClick.prototype.touchstart_event = function(event)
 }
 
 /* 
- * Android's WebKit has serious problems with the click event: it delays them for
- * the entire double-click timeout, and if a double-click happens it doesn't deliver
- * the click at all.  This makes clicks unresponsive, and it has this behavior even
+ * Mobile WebKit has serious problems with the click event: it delays them for the
+ * entire double-click timeout, and if a double-click happens it doesn't deliver the
+ * click at all.  This makes clicks unresponsive, and it has this behavior even
  * when the page can't be zoomed, which means nothing happens at all.
  *
  * Generate click events from touchend events to bypass this mess.
@@ -325,6 +325,12 @@ var InitializeFullScreenBrowserHandlers = function()
     new ResponsiveSingleClick();
     new EmulateDoubleClick();
     PreventDragScrolling();
+  }
+  else if((navigator.userAgent.indexOf("iPhone") != -1 || navigator.userAgent.indexOf("iPad") != -1)
+      && navigator.userAgent.indexOf("WebKit") != -1)
+  {
+    new ResponsiveSingleClick();
+    new EmulateDoubleClick();
   }
 }
 

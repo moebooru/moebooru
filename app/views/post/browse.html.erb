@@ -139,7 +139,7 @@ document.observe("dom:loaded", function()
       return true;
     });
 
-    new WindowDragElement($("post-content").down(".image"), true);
+    new WindowDragElementAbsolute($("post-content").down(".image"));
   }
 
   if(AndroidDetectWindowSize.required())

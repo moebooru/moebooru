@@ -591,7 +591,6 @@ DragElement.prototype.touchstart_event = function(event)
   var touch = event.touches.item(0);
   var x = touch.pageX;
   var y = touch.pageY;
-  debug.log("touchstart: " + x + ", " + y);
   
   this.start_dragging(event, true, x, y);
 }
@@ -621,7 +620,6 @@ DragElement.prototype.start_dragging = function(event, touch, x, y)
   this.anchor_y = y;
   this.last_x = this.anchor_x;
   this.last_y = this.anchor_y;
-  debug.log("start_dragging anchor: " + x + ", " + y);
 }
 
 DragElement.prototype.touchend_event = function(event)
@@ -676,55 +674,55 @@ DragElement.prototype.selectstart_event = function(event)
 /* When element is dragged, the document moves around it.  If scroll_element is true, the
  * element should be positioned (eg. position: absolute), and the element itself will be
  * scrolled. */
-WindowDragElement = function(element, scroll_element)
+WindowDragElement = function(element)
 {
-  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
-
   this.element = element;
-  this.scroll_element = scroll_element;
+  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
 }
 
 WindowDragElement.prototype.startdrag = function()
 {
-  if(this.scroll_element)
-  {
-    this.scroll_anchor_x = this.element.offsetLeft;
-    this.scroll_anchor_y = this.element.offsetTop;
-  }
-  else
-  {
-    var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
-    var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
-    this.scroll_anchor_x = scrollLeft;
-    this.scroll_anchor_y = scrollTop;
-  }
+  this.scroll_anchor_x = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  this.scroll_anchor_y = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
 }
 
 WindowDragElement.prototype.ondrag = function(e)
 {
-  if(this.scroll_element)
-  {
-    var scrollLeft = this.scroll_anchor_x + e.aX;
-    var scrollTop = this.scroll_anchor_y + e.aY;
+  var scrollLeft = this.scroll_anchor_x - e.aX;
+  var scrollTop = this.scroll_anchor_y - e.aY;
+  scrollTo(scrollLeft, scrollTop);
+}
 
-    /* Don't allow dragging the image off the screen; there'll be no way to
-     * get it back. */
-    var window_size = getWindowSize();
-    var min_visible = Math.min(100, this.element.offsetWidth);
-    scrollLeft = Math.max(scrollLeft, min_visible - this.element.offsetWidth);
-    scrollLeft = Math.min(scrollLeft, window_size.width - min_visible);
+/* element should be positioned (eg. position: absolute).  When the element is dragged,
+ * scroll it around. */
+WindowDragElementAbsolute = function(element)
+{
+  this.element = element;
+  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
+}
 
-    var min_visible = Math.min(100, this.element.offsetHeight);
-    scrollTop = Math.max(scrollTop, min_visible - this.element.offsetHeight);
-    scrollTop = Math.min(scrollTop, window_size.height - min_visible);
-    this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
-  }
-  else
-  {
-    var scrollLeft = this.scroll_anchor_x - e.aX;
-    var scrollTop = this.scroll_anchor_y - e.aY;
-    scrollTo(scrollLeft, scrollTop);
-  }
+WindowDragElementAbsolute.prototype.startdrag = function()
+{
+  this.scroll_anchor_x = this.element.offsetLeft;
+  this.scroll_anchor_y = this.element.offsetTop;
+}
+
+WindowDragElementAbsolute.prototype.ondrag = function(e)
+{
+  var scrollLeft = this.scroll_anchor_x + e.aX;
+  var scrollTop = this.scroll_anchor_y + e.aY;
+
+  /* Don't allow dragging the image off the screen; there'll be no way to
+   * get it back. */
+  var window_size = getWindowSize();
+  var min_visible = Math.min(100, this.element.offsetWidth);
+  scrollLeft = Math.max(scrollLeft, min_visible - this.element.offsetWidth);
+  scrollLeft = Math.min(scrollLeft, window_size.width - min_visible);
+
+  var min_visible = Math.min(100, this.element.offsetHeight);
+  scrollTop = Math.max(scrollTop, min_visible - this.element.offsetHeight);
+  scrollTop = Math.min(scrollTop, window_size.height - min_visible);
+  this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
 }
 
 number_to_human_size = function(bytes)

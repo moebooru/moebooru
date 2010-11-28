@@ -197,6 +197,8 @@ BrowserView.prototype.set_post_content = function(post_id)
   if(post_id == this.displayed_post_id)
     return;
 
+  this.viewing_larger_version = false;
+
   var post = Post.posts.get(post_id);
   if(post == null)
   {
@@ -268,7 +270,8 @@ BrowserView.prototype.click_image_zoom_event = function(e)
   }
 
   /* Toggle between the sample and JPEG version. */
-  if(this.img.src != post.jpeg_url)
+  this.viewing_larger_version = !this.viewing_larger_version;
+  if(this.viewing_larger_version)
   {
     this.img.src = post.jpeg_url;
     this.img.original_width = post.jpeg_width;
@@ -300,8 +303,7 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
   }
 
   var window_size = getWindowSize();
-  var show_large_image = this.img.src == post.jpeg_url;
-  if(show_large_image)
+  if(this.viewing_larger_version)
   {
     img.width = img.original_width;
     img.height = img.original_height;
@@ -319,7 +321,7 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
 
   /* If we're resizing and showing the full-size image, don't snap the position
    * back to the default. */
-  if(resizing && show_large_image)
+  if(resizing && this.viewing_larger_version)
     return;
 
   var offset = img.cumulativeOffset();

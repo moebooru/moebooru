@@ -378,6 +378,18 @@ ThumbnailView.prototype.container_mouseover_event = function(event)
   if(!li)
     return;
 
+  /*
+   * iPhone WebKit seems to have a bug: if we put a new div on top of the position of a mouseover
+   * event, covering up the thing that was originally being touched, the click event for the
+   * original item is never delivered.  This means that if we show the expanded thumbnail on top
+   * of images on mouseover (delivered on touch), we won't get the actual click for the thumbnail.
+   *
+   * Thumbs on click for touchpads doesn't make much sense anyway--touching the thumb causes it
+   * to be loaded.  Just disable hover thumbnails for touchscreens.
+   */
+  if(Prototype.BrowserFeatures.Touchscreen)
+    return;
+
   this.expand_post(li.post_id);
 }
 

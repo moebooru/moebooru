@@ -303,21 +303,17 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
   }
 
   var window_size = getWindowSize();
-  if(this.viewing_larger_version)
-  {
-    img.width = img.original_width;
-    img.height = img.original_height;
-  }
-  else
+  var ratio = 1.0;
+  if(!this.viewing_larger_version)
   {
     /* Zoom the image to fit the viewport. */
     var ratio = window_size.width / original_width;
     if (original_height * ratio > window_size.height)
       ratio = window_size.height / original_height;
-    ratio = Math.min(ratio, 1.0);
-    img.width = original_width * ratio;
-    img.height = original_height * ratio;
   }
+//  ratio = Math.min(ratio, 1.0);
+  img.width = original_width * ratio;
+  img.height = original_height * ratio;
 
   /* If we're resizing and showing the full-size image, don't snap the position
    * back to the default. */

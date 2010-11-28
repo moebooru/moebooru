@@ -86,11 +86,11 @@ AndroidDetectWindowSize.prototype.begin = function()
   var initial_window_size = this.current_window_size();
   if(this.window_size && initial_window_size[0] == this.window_size[0] && initial_window_size[1] == this.window_size[1])
   {
-    this.log("skipped");
+    debug.log("skipped");
     return;
   }
 
-  this.log("begin");
+  debug.log("begin");
   document.body.setStyle({overflow: "auto"});
   this.window_size = initial_window_size;
   this.padding.show();
@@ -102,11 +102,6 @@ AndroidDetectWindowSize.prototype.begin = function()
   this.finish_timer = window.setTimeout(this.finish, 250);
 
   window.scrollTo(0, 1);
-}
-
-AndroidDetectWindowSize.prototype.log = function(s)
-{
-  debug.log(s);
 }
 
 AndroidDetectWindowSize.prototype.end = function()
@@ -140,7 +135,7 @@ AndroidDetectWindowSize.prototype.finish = function()
   var is_landscape = window.innerWidth > window.innerHeight;
   if(was_landscape != is_landscape)
   {
-    this.log("restart: orientation changed");
+    debug.log("restart: orientation changed");
     this.end();
     this.begin();
     return;
@@ -152,7 +147,6 @@ AndroidDetectWindowSize.prototype.finish = function()
   document.body.setStyle({width: this.window_size[0] + "px", height: (this.window_size[1]+1) + "px"});
 
   this.dispatch_resize_event();
-  document.fire("viewer:resize");
 }
 
 AndroidDetectWindowSize.prototype.event_onresize = function(e)
@@ -170,7 +164,7 @@ AndroidDetectWindowSize.prototype.event_onresize = function(e)
   /* A resize event starts a new detection cycle, if we're not already in one. */
   if(!this.active)
   {
-    this.log("resize");
+    debug.log("resize");
     this.begin();
   }
 }

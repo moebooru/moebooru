@@ -404,6 +404,9 @@ getWindowSize = function()
   return size;
 }
 
+Prototype.Browser.AndroidWebKit = (navigator.userAgent.indexOf("Android") != -1 && navigator.userAgent.indexOf("WebKit") != -1);
+
+
 /* When element is dragged, the document moves around it.  If scroll_element is true, the
  * element should be positioned (eg. position: absolute), and the element itself will be
  * scrolled. */
@@ -539,11 +542,10 @@ DragElement.prototype.handle_move_event = function(event, x, y)
     y: y
   };
 
-  if(this.dragging_by_touch)
+  if(this.dragging_by_touch && Prototype.Browser.AndroidWebKit)
   {
     /* Touch events on Android tend to queue up when they come in faster than we
      * can process.  Set a timer, so we discard multiple events in quick succession. */
-    // XXX: Android only, probably not needed on iPhone
     if(this.move_timer == null)
       this.move_timer = window.setTimeout(this.move_timer_update, 10);
   }

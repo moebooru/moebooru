@@ -32,7 +32,11 @@
 </div>
 
 <div id="post-content" style="width: 100%;">
-  <img id="image" class="image">
+  <!-- Make sure the image is cropped to the viewport.  This happens already for most browsers,
+       since body is overflow: hidden, but iPhone's browser doesn't handle that correctly. -->
+  <div style="width: 100%; height: 100%; position: absolute; x: 0; y: 0; overflow: hidden;">
+    <img id="image" class="image">
+  </div>
   <div class="post-info" style="display: none;">
     <ul>
       <li><a href="#" class="post-view-larger">View larger version</a></li>

@@ -324,7 +324,6 @@ var InitializeFullScreenBrowserHandlers = function()
   {
     new ResponsiveSingleClick();
     new EmulateDoubleClick();
-    PreventDragScrolling();
   }
   else if((navigator.userAgent.indexOf("iPhone") != -1 || navigator.userAgent.indexOf("iPad") != -1)
       && navigator.userAgent.indexOf("WebKit") != -1)
@@ -332,5 +331,7 @@ var InitializeFullScreenBrowserHandlers = function()
     new ResponsiveSingleClick();
     new EmulateDoubleClick();
   }
+
+  PreventDragScrolling();
 }
 

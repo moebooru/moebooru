@@ -267,7 +267,7 @@ ThumbnailView = function(container, view)
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
   UrlHash.observe("post-id", this.hashchange_post_id);
 
-//  new DragElement(this.container, this.container_ondrag.bind(this));
+  new DragElement(this.container, this.container_ondrag.bind(this));
 
   Element.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
 

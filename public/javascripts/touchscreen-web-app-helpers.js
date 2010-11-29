@@ -335,3 +335,42 @@ var InitializeFullScreenBrowserHandlers = function()
   PreventDragScrolling();
 }
 
+SwipeHandler = function(element)
+{
+  this.element = element;
+  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
+}
+
+SwipeHandler.prototype.startdrag = function()
+{
+  this.swiped_horizontal = false;
+  this.swiped_vertical = false;
+}
+
+SwipeHandler.prototype.ondrag = function(e)
+{
+  if(!this.swiped_horizontal)
+  {
+    // XXX: need a guessed DPI
+    if(Math.abs(e.aX) > 100)
+    {
+      this.element.fire("swipe:horizontal", {right: e.aX > 0});
+      this.swiped_horizontal = true;
+    }
+  }
+
+  if(!this.swiped_vertical)
+  {
+    if(Math.abs(e.aY) > 100)
+    {
+      this.element.fire("swipe:vertical", {down: e.aY > 0});
+      this.swiped_vertical = true;
+    }
+  }
+}
+
+SwipeHandler.prototype.destroy = function()
+{
+  this.dragger.destroy();
+}
+

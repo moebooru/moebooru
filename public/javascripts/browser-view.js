@@ -60,6 +60,14 @@ BrowserView = function(container)
   this.container.down(".post-view-larger").observe("click", this.click_image_zoom_event);
 
   this.image_dragger = new WindowDragElementAbsolute(this.container.down(".image"));
+
+  /* On touchscreen devices, enable swipe to change screens.  On desktop devices we use
+   * dragging to scroll the image around, so don't do both. */
+  if(Prototype.BrowserFeatures.Touchscreen)
+  {
+    this.image_swipe = new SwipeHandler(this.container.down(".image"));
+    this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
+  }
 }
 
 /*
@@ -194,12 +202,22 @@ BrowserView.prototype.load_post_id_data = function(post_id)
   });
 }
 
+BrowserView.prototype.set_viewing_larger_version = function(b)
+{
+  this.viewing_larger_version = b;
+
+  /* When we're on the regular version and we're on a touchscreen, disable drag
+   * scrolling so we can use it to switch images instead. */
+  if(Prototype.BrowserFeatures.Touchscreen && this.image_dragger)
+    this.image_dragger.set_disabled(!b);
+}
+
 BrowserView.prototype.set_post_content = function(post_id)
 {
   if(post_id == this.displayed_post_id)
     return;
 
-  this.viewing_larger_version = false;
+  this.set_viewing_larger_version(false);
 
   var post = Post.posts.get(post_id);
   if(post == null)
@@ -272,7 +290,7 @@ BrowserView.prototype.click_image_zoom_event = function(e)
   }
 
   /* Toggle between the sample and JPEG version. */
-  this.viewing_larger_version = !this.viewing_larger_version;
+  this.set_viewing_larger_version(!this.viewing_larger_version);
   if(this.viewing_larger_version)
   {
     this.img.src = post.jpeg_url;

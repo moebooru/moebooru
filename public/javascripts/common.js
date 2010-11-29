@@ -41,6 +41,11 @@ function number_to_human_size(size, precision)
   return text;
 }
 
+scale = function(x, l1, h1, l2, h2)
+{
+  return ((x - l1) * (h2 - l2) / (h1 - l1) + l2);
+}
+
 var ClearNoticeTimer;
 function start_notice_timer() {
   if(ClearNoticeTimer)

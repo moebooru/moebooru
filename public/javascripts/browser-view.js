@@ -348,11 +348,6 @@ BrowserView.prototype.set_post_info = function()
   this.container.down(".rating").setTextContent(ratings[post.rating]);
 
   this.container.down(".post-score").setTextContent(post.score);
-
-//    <li>Rating: <span class="rating"></span></li>
-//    <li>Score: <span id="post-score"></span></li>
-
-
   this.container.down(".post-view-larger").show(post.jpeg_url != post.sample_url);
   this.container.down(".post-info").show(this.post_ui_visible);
   this.container.down(".post-view-larger").href = "/post/show/" + post.id;
@@ -361,7 +356,7 @@ BrowserView.prototype.set_post_info = function()
   var has_jpeg = (post.jpeg_url != post.file_url);
   this.container.down(".download-image").show(post.file_url != null && !has_sample);
   this.container.down(".download-image").href = post.file_url;
-  this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.sample_file_size));
+  this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.file_size));
   this.container.down(".download-jpeg").show(has_sample);
   this.container.down(".download-jpeg").href = has_jpeg? post.jpeg_url: post.file_url;
   this.container.down(".download-jpeg-desc").setTextContent(number_to_human_size(has_jpeg? post.jpeg_file_size: post.file_size));

@@ -314,7 +314,7 @@ ThumbnailView = function(container, view)
      * so these numbers aren't actually real pixels, and this scales based on the DPI
      * and size of the screen rather than the pixel count. */
     this.config.thumb_scale = scale(width, 320, 640, 0.5, 1.0);
-  debug.log("Unclamped thumb scale: " + this.config.thumb_scale);
+    debug.log("Unclamped thumb scale: " + this.config.thumb_scale);
 
     /* Clamp to [0.5,1.0]. */
     this.config.thumb_scale = Math.min(this.config.thumb_scale, 1.0);
@@ -330,7 +330,6 @@ ThumbnailView = function(container, view)
   debug.log("Thumb scale: " + this.config.thumb_scale);
 
   this.config_changed();
-
 }
 
 ThumbnailView.prototype.window_resize_event = function(e)

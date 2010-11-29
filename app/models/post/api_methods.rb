@@ -31,7 +31,8 @@ module PostApiMethods
       :parent_id => parent_id, 
       :status => status,
       :width => width,
-      :height => height
+      :height => height,
+      :is_held => is_held,
     }
 
     if status == "flagged" or status == "deleted"

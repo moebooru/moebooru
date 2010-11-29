@@ -330,8 +330,9 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
     var ratio = window_size.width / original_width;
     if (original_height * ratio > window_size.height)
       ratio = window_size.height / original_height;
+    ratio = Math.min(ratio, 1.0);
   }
-//  ratio = Math.min(ratio, 1.0);
+
   img.width = original_width * ratio;
   img.height = original_height * ratio;
 

@@ -366,7 +366,10 @@ Post = {
           if(post)
             post.score = resp.score;
           if(container.vote_post_id == post_id)
+          {
             container.current_vote = score;
+            Post.vote_set_stars(resp.vote, false, container);
+          }
 
           if(Post.vote_changed_func)
             Post.vote_changed_func(post_id, resp, container);
@@ -386,8 +389,6 @@ Post = {
 
     if($("post-score-" + resp.post_id))
       $("post-score-" + resp.post_id).update(resp.score)
-
-    Post.vote_set_stars(resp.vote, false, container);
 
     if ($("favorited-by")) {
       $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))

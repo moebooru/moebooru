@@ -173,10 +173,6 @@ module PostHelper
     return html
   end
 
-  def get_tag_types(posts)
-    return Tag.batch_get_tag_types(posts)
-  end
-
   def get_service_icon(service)
     ExternalPost.get_service_icon(service)
   end

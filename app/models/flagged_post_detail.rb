@@ -2,6 +2,9 @@ class FlaggedPostDetail < ActiveRecord::Base
   belongs_to :post
   belongs_to :user
   
+  # If this is set, the user who owns this record won't be included in the API.
+  attr_accessor :hide_user
+
   def author
     return User.find_name(self.user_id)
   end
@@ -25,10 +28,13 @@ class FlaggedPostDetail < ActiveRecord::Base
     ret = {
       :post_id => post_id,
       :reason => reason,
-      :user_id => user_id,
-      :flagged_by => flagged_by,
       :created_at => created_at,
     }
+
+    if not hide_user then
+      ret[:user_id] = user_id
+      ret[:flagged_by] = flagged_by
+    end
 
     return ret
   end

@@ -41,6 +41,56 @@ function number_to_human_size(size, precision)
   return text;
 }
 
+function time_ago_in_words(from_time, to_time)
+{
+  if(to_time == null)
+    to_time = Date.now();
+
+  var from_time = from_time.valueOf();
+  var to_time = to_time.valueOf();
+  distance_in_seconds = Math.abs((to_time - from_time)/1000).round();
+  distance_in_minutes = (distance_in_seconds/60).round();
+
+  if(distance_in_minutes <= 1)
+    return "1 minute";
+
+  if(distance_in_minutes <= 44)
+    return distance_in_minutes + " minutes";
+
+  if(distance_in_minutes <= 89)
+    return "1 hour";
+
+  if(distance_in_minutes <= 1439)
+  {
+    var hours = distance_in_minutes / 60;
+    hours = (hours - 0.5).round(); // round down
+    return hours + " hours";
+  }
+
+  if(distance_in_minutes <= 2879)
+    return "1 day";
+
+  if(distance_in_minutes <= 43199)
+  {
+    var days = distance_in_minutes / 1440;
+    days = (days - 0.5).round(); // round down
+    return days + " days";
+  }
+
+  if(distance_in_minutes <= 86399)
+    return "1 month";
+
+  if(distance_in_minutes <= 525959)
+  {
+    var months = distance_in_minutes / 43200;
+    months = (months - 0.5).round(); // round down
+    return months + " months";
+  }
+
+  var years = (distance_in_minutes / 525960).toFixed(1);
+  return years + " years";
+}
+
 scale = function(x, l1, h1, l2, h2)
 {
   return ((x - l1) * (h2 - l2) / (h1 - l1) + l2);

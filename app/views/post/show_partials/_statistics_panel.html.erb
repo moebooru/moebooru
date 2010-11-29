@@ -1,4 +1,4 @@
-<div id="stats">
+<div id="stats" class="vote-container">
   <h5>Statistics</h5>
   <ul>
     <li>Id: <%= @post.id %></li>
@@ -20,15 +20,18 @@
 
     <li>
       Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>
-      <%= vote_widget(@post, @current_user) %>
+      <%= vote_widget(@current_user) %>
     </li>
-
-    <% content_for("post_cookie_javascripts") do %>
-    <script type="text/javascript">
-      Post.init_vote(<%= @post.id %>, <%= @vote or "null" %>)
-    </script>
-    <% end %>
     
     <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
   </ul>
 </div>
+
+<% content_for("post_cookie_javascripts") do %>
+<script type="text/javascript">
+  Post.init_vote_widgets();
+  Post.init_vote(<%= @post.id %>, <%= @vote or "null" %>, $("stats"));
+  Post.init_vote_hotkeys(<%= @post.id %>, $("stats"));
+</script>
+<% end %>
+

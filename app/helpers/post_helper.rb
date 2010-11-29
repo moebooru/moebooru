@@ -151,33 +151,22 @@ module PostHelper
     return %{<span class="vote-desc" id="vote-desc-#{post.id}"></span>}
   end
 
-  def vote_widget(post, user, options = {})
+  def vote_widget(user)
     html = []
     
-    html << %{<span class="stars" id="stars-#{post.id}">}
+    html << %{<span class="stars">}
     
-    if user.is_anonymous?
-      current_user_vote = -100
-    else
-      current_user_vote = PostVotes.find_by_ids(user.id, post.id).score rescue 0
-    end
-    
-    #(CONFIG["vote_sum_min"]..CONFIG["vote_sum_max"]).each do |vote|
     if !user.is_anonymous?
-      html << link_to_function('↶', "Post.vote(#{post.id}, 0)", :class => "star", :onmouseover => "Post.vote_mouse_over('Remove vote', #{post.id}, 0)", :onmouseout => "Post.vote_mouse_out('', #{post.id}, 0)")
-      html << " "
+      html << %{<a class="star remove-vote" href="#">↶</a> }
 
       (1..3).each do |vote|
         star = '<span class="score-on">★</span><span class="score-off score-visible">☆</span>'
-        
-        desc = CONFIG["vote_descriptions"][vote]
-
-        html << link_to_function(star, "Post.vote(#{post.id}, #{vote})", :class => "star star-#{vote}", :id => "star-#{vote}-#{post.id}", :onmouseover => "Post.vote_mouse_over('#{desc}', #{post.id}, #{vote})", :onmouseout => "Post.vote_mouse_out('#{desc}', #{post.id}, #{vote})")
+        html << %{<a href="#" class="star star-#{vote}">#{star}</a>}
       end
 
-      html << " (" + link_to_function('vote up', "Post.vote(#{post.id}, Post.posts.get(#{post.id}).vote + 1)", :class => "star") + ")"
+      html << %{ (<a class="star vote-up" href="#">vote up</a>)}
     else
-      html << "(" + link_to_function('vote up', "Post.vote(#{post.id}, +1)", :class => "star") + ")"
+      html << %{(<a class="star vote-up-anonymous" href="#">vote up</a>)}
     end
     
     html << %{</span>}

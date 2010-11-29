@@ -211,7 +211,10 @@ Post = {
      });
   },
 
-  vote_set_stars: function(post_id, vote, temp) {
+
+  vote_set_stars: function(vote, temp, container) {
+    container = Post.get_vote_container(container);
+
     if(!temp && $("add-to-favs"))
     {
       if (vote >= 3) {
@@ -223,14 +226,12 @@ Post = {
       }
     }
 
-    // TODO: cache the stars so we don't have to do a dom query every time
-    var stars = $("stars-" + post_id).select("a")
+    var stars = container.down(".stars").select("a")
     stars.each(function(star) {
-      var matches = star.id.match(/^star-(-?\d+)-(\d+)$/)
+      var matches = star.className.match(/^.* star-(\d+)$/)
       if(!matches)
         return;
       var star_vote = parseInt(matches[1])
-      var post_id = parseInt(matches[2])
       var on = star.down(".score-on")
       var off = star.down(".score-off")
 
@@ -247,32 +248,105 @@ Post = {
     })
   },
 
-  vote_mouse_over: function(desc, post_id, vote) {
-    Post.vote_set_stars(post_id, vote, true);
-    $("vote-desc-" + post_id).update(desc)
+  vote_mouse_over: function(desc, container, vote) {
+    container = Post.get_vote_container(container);
+    Post.vote_set_stars(vote, true, container);
+    container.down(".vote-desc").update(desc);
   },
 	
-  vote_mouse_out: function(desc, post_id, vote) {
-    var post = Post.posts.get(post_id)
-    Post.vote_set_stars(post_id, post.vote);
-    $("vote-desc-" + post_id).update()
+  vote_mouse_out: function(desc, container, vote) {
+    container = Post.get_vote_container(container);
+    Post.vote_set_stars(container.current_vote, false, container);
+    container.down(".vote-desc").update();
   },
 
-  init_vote: function(post_id, vote) {
-    var post = Post.posts.get(post_id)
-    if(!post)
-      return
-    post.vote = vote
-    Post.vote_set_stars(post_id, post.vote);
+  init_vote: function(post_id, vote, container) {
+    container = Post.get_vote_container(container);
+    container.vote_post_id = post_id;
+    container.current_vote = vote;
+    Post.vote_set_stars(vote, false, container);
   },
 
-  vote: function(post_id, score) {
+  init_vote_hotkeys: function(post_id, container)
+  {
+    OnKey(192, null, function(e) { Post.vote(container, +0); return true; }.bindAsEventListener(this)); // `
+    OnKey(49, null, function(e) { Post.vote(container, +1); return true; }.bindAsEventListener(this));
+    OnKey(50, null, function(e) { Post.vote(container, +2); return true; }.bindAsEventListener(this));
+    OnKey(51, null, function(e) { Post.vote(container, +3); return true; }.bindAsEventListener(this));
+  },
+
+  get_vote_container: function(stars)
+  {
+    if(!stars.hasClassName("vote-container"))
+      stars = stars.up(".vote-container");
+    if(!stars)
+      throw "Couldn't find .vote-container element";
+    return stars;
+  },
+
+  get_vote_post_id: function(stars)
+  {
+    stars = Post.get_vote_container(stars);
+    return stars.vote_post_id;
+  },
+
+  init_vote_widgets: function() {
+    var vote_descs =
+    {
+      "0": "Neutral",
+      "1": "Good",
+      "2": "Great",
+      "3": "Favorite"
+    };
+
+    $$(".stars").each(function(stars)
+    {
+      if(stars.initialized_widget)
+        return;
+      stars.initialized_widget = true;
+
+      if(stars.down(".remove-vote"))
+      {
+        stars.down(".remove-vote").on("mouseover", function(e) { Post.vote_mouse_over('Remove vote', e.target, 0); });
+        stars.down(".remove-vote").on("mouseout", function(e) { Post.vote_mouse_out('Remove vote', e.target, 0); });
+        stars.down(".remove-vote").on("click", function(e) { e.stop(); Post.widget_vote(e.target, 0); });
+      }
+
+      if(stars.down(".vote-up-anonymous"))
+        stars.down(".vote-up-anonymous").on("click", function(e) { e.stop(); Post.widget_vote(e.target, +1); });
+
+      if(stars.down(".vote-up"))
+        stars.down(".vote-up").on("click", function(e) { e.stop(); Post.widget_vote_up(e.target); });
+
+      stars.select(".star").each(function(s) {
+        var vote_match = s.className.match(/.* star-(\d+)/);
+        if(!vote_match)
+          return;
+        var vote = parseInt(vote_match[1]);
+
+        var desc = vote_descs[vote];
+        s.on("click", function(e) { e.stop(); Post.widget_vote(e.target, vote); });
+        s.on("mouseover", function(e) { Post.vote_mouse_over(desc, e.target, vote); });
+        s.on("mouseout", function(e) { Post.vote_mouse_out(desc, e.target, vote); });
+      });
+    });
+  },
+
+  widget_vote_up: function(container) {
+    container = Post.get_vote_container(container);
+    return Post.vote(container, container.current_vote + 1);
+  },
+  widget_vote: function(container, score) {
+    return Post.vote(container, score);
+  },
+
+  vote: function(container, score) {
     if(score > 3)
       return;
     
+    container = Post.get_vote_container(container);
+    var post_id = Post.get_vote_post_id(container);
     notice("Voting...")
-
-    var post = Post.posts.get(post_id)
 
     options = {
             "id": post_id,
@@ -286,19 +360,20 @@ Post = {
         var resp = resp.responseJSON
 
         if (resp.success) {
-          $("post-score-" + resp.post_id).update(resp.score)
-          var post = Post.posts.get(resp.post_id)
-          if(post)
-            post.vote = resp.vote
-          Post.vote_set_stars(resp.post_id, resp.vote)
-          notice("Vote saved")
+          if(container.vote_post_id == post_id)
+          {
+            $("post-score-" + resp.post_id).update(resp.score)
 
-          if ($("favorited-by")) {
-            $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))
+            container.current_vote = score;
+            Post.vote_set_stars(resp.vote, false, container);
+
+            if ($("favorited-by")) {
+              $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))
+            }
           }
+          notice("Vote saved")
         } else {
           notice(resp.reason)
-          post.current_vote = old_vote
         }
       }
     })
@@ -1140,21 +1215,5 @@ Post = {
       return;
     }
     window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id);
-  },
-
-  init_post_show: function(post_id)
-  {
-    this.displayed_post_id = post_id;
-
-    /* This may be called multiple times to change the post_id; update displayed_post_id
-     * each time but only set up events once. */
-    if(this.post_show_initialized)
-      return;
-    this.post_show_initialized = true;
-
-    OnKey(192, null, function(e) { Post.vote(this.displayed_post_id, +0); return true; }.bindAsEventListener(this)); // `
-    OnKey(49, null, function(e) { Post.vote(this.displayed_post_id, +1); return true; }.bindAsEventListener(this));
-    OnKey(50, null, function(e) { Post.vote(this.displayed_post_id, +2); return true; }.bindAsEventListener(this));
-    OnKey(51, null, function(e) { Post.vote(this.displayed_post_id, +3); return true; }.bindAsEventListener(this));
   }
 }

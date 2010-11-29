@@ -14,9 +14,9 @@
             <span class="info"><strong>Date</strong> <%= compact_time(post.created_at) %></span>
             <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
             <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
-            <span class="info"><strong>Score</strong>
+            <span class="info vote-container"><strong>Score</strong>
               <span id="post-score-<%= post.id %>"><%= post.score %></span>
-              <%= vote_widget(post, @current_user) %>
+              <%= vote_widget(@current_user) %>
 	      <%= vote_tooltip_widget(post) %>
             </span>
 
@@ -50,9 +50,11 @@
   <% end %>
 
   <script type="text/javascript">
+    Post.init_vote_widgets();
     <% @posts.each do |post| %>
       Post.register(<%= post.to_json %>)
-      Post.init_vote(<%= post.id %>, <%= @votes[post.id] or "null" %>)
+      var container = $("comments-for-p<%= post.id %>").down(".vote-container");
+      Post.init_vote(<%= post.id %>, <%= @votes[post.id] or "null" %>, container)
     <% end %>
     Post.init_blacklisted({replace: true})
   </script>

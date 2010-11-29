@@ -400,23 +400,6 @@ class PostController < ApplicationController
   end
 
   def browse
-    # iPhone has nothing like Android's target-densityDpi (which may not be the right approach
-    # anyway), and it doesn't support changing the meta-viewport in JavaScript (it reads it at
-    # load and then any changes are ignored).
-    #
-    # Mozilla/5.0 (iPad; U; CPU OS 4_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile/8C134
-    # Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile/8C134
-    #
-    # We can't tell iPhone from iPhone Retina this way, but that doesn't seem to matter.
-    user_agent = request.env["HTTP_USER_AGENT"]
-    if user_agent =~ /^Mozilla\/5\.0 \(iPhone.*/ then
-      @viewport_device = "iPhone"
-    elsif user_agent =~ /^Mozilla\/5\.0 \(iPad.*/ then
-      @viewport_device = "iPad"
-    else
-      @viewport_device = "other"
-    end
-
     render :layout => "bare"
   end
 

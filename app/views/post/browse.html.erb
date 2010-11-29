@@ -1,12 +1,20 @@
 <% content_for("html_header") do %>
-  <% if @viewport_device == "iPhone" or @viewport_device == "iPad" then %>
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">  
-  <% else %>
-    <meta name="viewport" content="target-densityDpi=150; minimum-scale=1; maximum-scale=1; initial-scale=1;">
-  <% end %>
+  <script type="text/javascript">
+    if(navigator.platform == "iPhone" || navigator.platform == "iPad")
+      document.write('<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">');
+    else
+      document.write('<meta name="viewport" content="target-densityDpi=150; user-scalable=0;">');
+
+    if(navigator.platform == "iPad")
+      document.write('<link rel="apple-touch-startup-image" href="/images/iphone-startup-ipad.png">');
+    else
+      document.write('<link rel="apple-touch-startup-image" href="/images/iphone-startup.png">');
+  </script>
 
   <meta name="apple-mobile-web-app-capable" content="yes" >  
-  <meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" >
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <link rel="apple-touch-icon" href="/images/iphone-icon.png">
 <% end %>
 
 <div id="debug2" style="position: fixed; bottom: 100px; background-color: #000;"></div>
@@ -37,10 +45,36 @@
   </div>
   <div class="post-info" style="display: none;">
     <ul>
+
+      <li>Post #<span class="post-id"></span></li>
+      <li>Posted: <span class="posted-at"></span><span class="posted-by"> by <a href="#"></a></span></li>
+      <li class="post-dimensions">Size: <span></span></li>
+      <li class="post-source">Source: <a href="#"></a></li>
+      <li>Rating: <span class="rating"></span></li>
+      <li id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <%= vote_tooltip_widget() %></li>
+
+      <li class="status-deleted"> 
+        This post was deleted.
+        <span class="by-container">By: <a href="#" class="by"></a></span>
+        Reason: <span class="reason"></span>.
+      </li>
       <li><a href="#" class="post-view-larger">View larger version</a></li>
       <li><a href="#" class="download-image">Download image (<span class="download-image-desc"></span>)</a></li>
       <li><a href="#" class="download-jpeg">Download larger version (<span class="download-jpeg-desc"></span>)</a></li>
       <li><a href="#" class="download-png">Download PNG (<span class="download-png-desc"></span>)</a></li>
+      <li><a href="#" class="post-show-link">View regular post page</a></li>
+      <li class="parent-post">This post has a <a href="#">parent post</a><span class="reparent-post advanced-editing"><a href="#"> (make this post the parent)</a>.
+      </li>
+      <li class="child-posts">This post has <a href="#">child posts</a>.</li>
+      <li class="flagged-info">This post was flagged for deletion by <a href="#" class="by"></a>.  Reason: <span class="reason"></span>.</li>
+      <li class="status-pending">This post is pending moderator approval.</li>
+      <li class="status-held">
+        This post has been temporarily held from the index by the poster.
+        <span class="activate-post">
+          <a href="#">(activate it)</a>
+        </span>
+      </li>
+
     </ul>
   </div>
 </div>
@@ -51,6 +85,8 @@ var debug;
 document.observe("dom:loaded", function()
 {
   debug = new DebugWindow();
+
+  InitAdvancedEditing();
   InitializeFullScreenBrowserHandlers();
 
   var normalize_hash = function(h)

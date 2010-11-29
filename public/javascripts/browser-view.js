@@ -41,7 +41,12 @@ BrowserView = function(container)
   this.last_preload_request_active = false;
 
   /* True if the post UI is visible.  The viewer:set-post-ui event changes this. */
-  this.post_ui_visible = false;
+  this.post_ui_visible = true;
+
+  /* Disable the post UI by default on touchscreens; we don't have an interface
+   * to toggle it. */
+  if(Prototype.BrowserFeatures.Touchscreen)
+    this.post_ui_visible = false;
 
   debug.add_hook(this.get_debug.bind(this));
 
@@ -58,6 +63,45 @@ BrowserView = function(container)
   /* Image controls: */
   this.click_image_zoom_event = this.click_image_zoom_event.bindAsEventListener(this);
   this.container.down(".post-view-larger").observe("click", this.click_image_zoom_event);
+
+  this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
+  this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
+  this.container.down(".activate-post").on("click", function(e) {
+    e.stop();
+
+    var post_id = this.displayed_post_id;
+    Post.update(post_id, { "post[is_held]": false }, function(post)
+    {
+      if(post.is_held)
+      {
+        notice("Couldn't activate post");
+        return;
+      }
+      notice("Activated post");
+      this.refresh_post_info(post_id);
+    }.bind(this));
+  }.bindAsEventListener(this));
+
+  this.container.down(".reparent-post").on("click", function(e) {
+    e.stop();
+
+    if(!confirm("Make this post the parent?"))
+      return;
+
+    var post_id = this.displayed_post_id;
+    var post = Post.posts.get(post_id);
+    if(post == null)
+      return;
+
+    var complete = function()
+    {
+      this.refresh_post_info(post_id);
+    }.bind(this);
+
+    Post.reparent_post(post_id, post.parent_id, false, complete);
+  }.bindAsEventListener(this));
+
+  Post.init_vote_widgets(function(post_id) { notice("Vote saved"); this.refresh_post_info(post_id); }.bind(this));
 
   this.image_dragger = new WindowDragElementAbsolute(this.container.down(".image"));
 
@@ -212,6 +256,7 @@ BrowserView.prototype.set_viewing_larger_version = function(b)
     this.image_dragger.set_disabled(!b);
 }
 
+/* Display post_id. */
 BrowserView.prototype.set_post_content = function(post_id)
 {
   if(post_id == this.displayed_post_id)
@@ -222,10 +267,10 @@ BrowserView.prototype.set_post_content = function(post_id)
   var post = Post.posts.get(post_id);
   if(post == null)
   {
+    /* The post we've been asked to display isn't loaded.  Request a load and come back. */
     if(this.displayed_post_id == null)
-    {
       this.container.down(".post-info").hide();
-    }
+
     this.load_post_id_data(post_id);
     return;
   }
@@ -235,6 +280,9 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   /* Clear the previous post, if any. */
   this.img.src = "about:blank";
+
+  // XXX: initial vote
+  Post.init_vote(post.id, 0, $("vote-container"));
 
   if(post)
   {
@@ -248,19 +296,73 @@ BrowserView.prototype.set_post_content = function(post_id)
     this.scale_and_position_image();
   }
 
-  // XXX: this is just for voting, handle that separately
-  // Post.init_post_show(post_id);
-
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 
-  this.container.down(".post-view-larger").pickClassName("enabled", "disabled", post.jpeg_url != post.sample_url);
+  this.set_post_info();
+}
+
+/* If post_id is currently being displayed, update changed post info. */
+BrowserView.prototype.refresh_post_info = function(post_id)
+{
+  if(this.displayed_post_id != post_id)
+    return;
+  this.set_post_info();
+}
+
+/* Set the post info box for the currently displayed post. */
+BrowserView.prototype.set_post_info = function()
+{
+  var post = Post.posts.get(this.displayed_post_id);
+  if(!post)
+    return;
+
+  this.container.down(".post-id").setTextContent(post.id);
+  this.container.down(".posted-by").show(post.creator_id != null);
+  this.container.down(".posted-at").setTextContent("foo"); // XXX
+  if(post.creator_id != null)
+  {
+    this.container.down(".posted-by").down("A").href = "/user/show/" + post.creator_id;
+    this.container.down(".posted-by").down("A").setTextContent(post.author);
+  }
+
+  this.container.down(".post-dimensions").down("SPAN").setTextContent(post.width + "x" + post.height);
+  this.container.down(".post-source").show(post.source != "");
+  if(post.source != "")
+  {
+    var text = post.source;
+    var url = post.source;
+
+    var m = url.match(/.*pixiv\.net\/img\/(\w+)\/(\d+)\.\w+$/);
+    if(m)
+    {
+      text = "pixiv #" + m[2] + " (" + m[1] + ")";
+      url = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + m[2];
+    }
+    else if(post.source.substr(0, 7) == "http://")
+      text = text.substr(7, 20) + "...";
+
+    this.container.down(".post-source").down("A").href = url;
+    this.container.down(".post-source").down("A").setTextContent(text);
+
+  }
+
+  var ratings = {s: "Safe", q: "Questionable", e: "Explicit"};
+  this.container.down(".rating").setTextContent(ratings[post.rating]);
+
+  this.container.down(".post-score").setTextContent(post.score);
+
+//    <li>Rating: <span class="rating"></span></li>
+//    <li>Score: <span id="post-score"></span></li>
+
+
+  this.container.down(".post-view-larger").show(post.jpeg_url != post.sample_url);
   this.container.down(".post-info").show(this.post_ui_visible);
   this.container.down(".post-view-larger").href = "/post/show/" + post.id;
 
   var has_sample = (post.sample_url != post.file_url);
   var has_jpeg = (post.jpeg_url != post.file_url);
-  this.container.down(".download-image").show(!has_sample);
-  this.container.down(".download-image").href = post.sample_url;
+  this.container.down(".download-image").show(post.file_url != null && !has_sample);
+  this.container.down(".download-image").href = post.file_url;
   this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.sample_file_size));
   this.container.down(".download-jpeg").show(has_sample);
   this.container.down(".download-jpeg").href = has_jpeg? post.jpeg_url: post.file_url;
@@ -268,6 +370,56 @@ BrowserView.prototype.set_post_content = function(post_id)
   this.container.down(".download-png").show(has_jpeg);
   this.container.down(".download-png").href = post.file_url;
   this.container.down(".download-png-desc").setTextContent(number_to_human_size(post.file_size));
+  this.container.down(".post-show-link").href = "/post/show/" + post.id;
+
+  /* For links that are handled by click events, try to set the href so that copying the
+   * link will give a similar effect.  For example, clicking parent-post will call set_post
+   * to display it, and the href links to /post/browse#12345. */
+  var parent_post = this.container.down(".parent-post");
+  parent_post.show(post.parent_id != null);
+  if(post.parent_id)
+    parent_post.down("A").href = "/post/browse#" + post.parent_id;
+
+  var child_posts = this.container.down(".child-posts");
+  child_posts.show(post.has_children);
+  if(post.has_children)
+    child_posts.down("A").href = "/post/browse#/parent:" + post.id;
+
+  var flagged = this.container.down(".flagged-info");
+  flagged.show(post.status == "flagged");
+  if(post.status == "flagged")
+  {
+    var by = flagged.down(".by");
+    by.setTextContent(post.flag_detail.flagged_by);
+    by.href = "/user/show/" + post.flag_detail.user_id;
+
+    var reason = flagged.down(".reason");
+    reason.setTextContent(post.flag_detail.reason);
+  }
+
+  var pending = this.container.down(".status-pending");
+  pending.show(post.status == "pending");
+
+  var deleted = this.container.down(".status-deleted");
+  deleted.show(post.status == "deleted");
+  if(post.status == "deleted")
+  {
+    var by_container = deleted.down(".by-container");
+    by_container.show(post.flag_detail.flagged_by != null);
+
+    var by = by_container.down(".by");
+    by.setTextContent(post.flag_detail.flagged_by);
+    by.href = "/user/show/" + post.flag_detail.user_id;
+
+    var reason = deleted.down(".reason");
+    reason.setTextContent(post.flag_detail.reason);
+  }
+
+  this.container.down(".status-held").show(post.is_held);
+  // XXX: or mod
+  var has_permission = User.get_current_user_id() == post.creator_id;
+  this.container.down(".activate-post").show(has_permission);
+
 }
 
 BrowserView.prototype.window_resize_event = function()
@@ -444,4 +596,23 @@ WindowTitleHandler.prototype.update = function()
   var title = "Browse /" + this.searched_tags.replace(/_/g, " ");
   document.title = title;
 }
+
+BrowserView.prototype.parent_post_click_event = function(event)
+{
+  event.stop();
+
+  var post = Post.posts.get(this.displayed_post_id);
+  if(post == null || post.parent_id == null)
+    return;
+
+  this.set_post(post.parent_id);
+}
+
+BrowserView.prototype.child_posts_click_event = function(event)
+{
+  event.stop();
+
+  UrlHash.set({tags: "parent:" + this.displayed_post_id});
+}
+
 

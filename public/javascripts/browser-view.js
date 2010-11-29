@@ -58,6 +58,8 @@ BrowserView = function(container)
   /* Image controls: */
   this.click_image_zoom_event = this.click_image_zoom_event.bindAsEventListener(this);
   this.container.down(".post-view-larger").observe("click", this.click_image_zoom_event);
+
+  this.image_dragger = new WindowDragElementAbsolute(this.container.down(".image"));
 }
 
 /*

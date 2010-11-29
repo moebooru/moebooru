@@ -903,7 +903,6 @@ function InputHandler()
    */
   var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
   document.on(keypress_event_name, this.document_keypress_event.bindAsEventListener(this));
-  document.on("dblclick", this.document_dblclick_event.bindAsEventListener(this));
   document.on("DOMMouseScroll", this.document_mouse_wheel_event.bindAsEventListener(this));
   document.on("mousewheel", this.document_mouse_wheel_event.bindAsEventListener(this));
 }
@@ -975,22 +974,6 @@ InputHandler.prototype.document_keypress_event = function(e)
   //alert(e.charCode + ", " + e.keyCode);
   if(this.handle_keypress(e))
     e.stop();
-}
-
-/* Double-clicking the image shows the UI. */
-InputHandler.prototype.document_dblclick_event = function(event)
-{
-  /* Watch out: Firefox fires dblclick events for all buttons, with the standard
-   * button maps, but IE only fires it for left click and doesn't set button at
-   * all, so event.isLeftClick won't work. */
-  if(event.button)
-    return;
-
-  if(!$(event.target).hasClassName("main-image"))
-    return;
-
-  event.stop();
-  document.fire("viewer:toggle-thumb-bar");
 }
 
 InputHandler.prototype.document_mouse_wheel_event = function(event)

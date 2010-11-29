@@ -56,6 +56,18 @@ BrowserView = function(container)
   this.set_post_ui_event = this.set_post_ui_event.bindAsEventListener(this);
   Event.observe(document, "viewer:set-post-ui", this.set_post_ui_event);
 
+  /* Double-clicking the main image toggles the thumb bar. */
+  this.container.down(".image-container").on("dblclick", ".main-image", function(event) {
+    /* Watch out: Firefox fires dblclick events for all buttons, with the standard
+     * button maps, but IE only fires it for left click and doesn't set button at
+     * all, so event.isLeftClick won't work. */
+    if(event.button)
+      return;
+
+    event.stop();
+    document.fire("viewer:toggle-thumb-bar");
+  }.bindAsEventListener(this));
+
   /* Image controls: */
   document.on("viewer:view-large-toggle", function(e) { this.toggle_view_large_image(); }.bindAsEventListener(this));
   this.container.down(".post-view-larger").on("click", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));

@@ -109,13 +109,7 @@ BrowserView = function(container)
 
   Post.init_vote_widgets(function(post_id) { notice("Vote saved"); this.refresh_post_info(post_id); }.bind(this));
 
-  /* On touchscreen devices, enable swipe to change screens.  On desktop devices we use
-   * dragging to scroll the image around, so don't do both. */
-  if(Prototype.BrowserFeatures.Touchscreen)
-  {
-    this.image_swipe = new SwipeHandler(this.container.down(".image"));
-    this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
-  }
+  this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
 }
 
 /*
@@ -291,9 +285,12 @@ BrowserView.prototype.set_post_content = function(post_id)
    */
   if(this.img != null)
   {
-    this.image_dragger.destroy();
     this.img.stopObserving();
     this.img.parentNode.removeChild(this.img);
+    if(this.image_swipe)
+      this.image_swipe.destroy()
+    if(this.image_dragger)
+      this.image_dragger.destroy();
   }
 
   this.img = document.createElement("IMG");
@@ -304,7 +301,12 @@ BrowserView.prototype.set_post_content = function(post_id)
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
   this.container.down(".image-container").appendChild(this.img);
 
-  this.image_dragger = new WindowDragElementAbsolute(this.img);
+  /* On touchscreen devices, enable swipe to change screens.  On desktop devices we use
+   * dragging to scroll the image around, so don't do both. */
+  if(Prototype.BrowserFeatures.Touchscreen)
+    this.image_swipe = new SwipeHandler(this.img);
+  else
+    this.image_dragger = new WindowDragElementAbsolute(this.img);
 
   // debug.log("set_post_content");
   this.scale_and_position_image();

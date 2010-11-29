@@ -1110,11 +1110,21 @@ Post = {
       onComplete: function(resp) {
         var resp = resp.responseJSON
 	for(var i = 0; i < resp.length; ++i)
+	{
+          var post = resp[i];
+          if(post.id != post_id && post.parent_id != null)
+          {
+            alert("The parent post has a parent, so this post can't be automatically reparented.");
+            return;
+          }
 	  change_requests.push({ id: resp[i].id, tags: "parent:" + post_id, old_tags: "" });
+        }
 
 	/* We have the list of changes to make in change_requests.  Send a batch
 	 * request. */
-	Post.update_batch(change_requests, function() { document.location.reload() });
+        if(finished == null)
+          finished = function() { document.location.reload() };
+	Post.update_batch(change_requests, finished);
       }
     });
   },

@@ -44,7 +44,11 @@ module TagTypeMethods
       }
 
       # Run the query.
-      tag_types = CACHE.get_multi(post_tags.to_a)
+      begin
+        tag_types = CACHE.get_multi(post_tags.to_a)
+      rescue MemCache::MemCacheError
+        tag_types = {}
+      end
 
       # Strip off "tag_type:" from the result keys.
       results = {}

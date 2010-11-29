@@ -468,11 +468,11 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
    * Sometimes drag events can leak through, and attributes like -moz-user-select may
    * be needed to prevent it.
    */
-  element.observe("mousedown", this.mousedown_event);
-  element.observe("dragstart", this.dragstart_event);
+  this.handlers.push(element.on("mousedown", this.mousedown_event));
+  this.handlers.push(element.on("dragstart", this.dragstart_event));
 
-  element.observe("touchstart", this.touchstart_event);
-  element.observe("touchmove", this.touchmove_event);
+  this.handlers.push(element.on("touchstart", this.touchstart_event));
+  this.handlers.push(element.on("touchmove", this.touchmove_event));
 
   /*
    * We may or may not get a click event after mouseup.  This is a pain: if we get a
@@ -482,12 +482,22 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
    * if their dragstart or mousedown event is cancelled; WebKit doesn't.
    */
   if(!Prototype.Browser.WebKit)
-    element.observe("click", this.click_event);
+    this.handlers.push(element.on("click", this.click_event));
+}
+
+DragElement.prototype.destroy = function()
+{
+  this.stop_dragging();
+  this.handlers.each(function(h) { debug.log(h); h.stop(); });
+  this.handlers = [];
 }
 
 DragElement.prototype.move_timer_update = function(event)
 {
   this.move_timer = null;
+
+  if(!this.ondrag)
+    return;
 
   if(this.last_event_params == null)
     return;
@@ -563,15 +573,19 @@ DragElement.prototype.handle_move_event = function(event, x, y)
 
   if(!this.dragged)
   {
+    if(this.onstartdrag)
+    {
+      /* Call the onstartdrag callback.  If it returns true, cancel the drag. */
+      if(this.onstartdrag(this))
+      {
+        this.dragging = false;
+        return;
+      }
+    }
+
     this.dragged = true;
     $(document.body).addClassName("dragging");
-
-    if(this.onstartdrag)
-      this.onstartdrag(this);
   }
-
-  if(!this.ondrag)
-    return;
 
   this.last_event_params = {
     x: x,
@@ -653,7 +667,7 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
 
 DragElement.prototype.touchend_event = function(event)
 {
-  this.stop_dragging(event);
+  this.stop_dragging();
 }
 
 DragElement.prototype.mouseup_event = function(event)
@@ -661,10 +675,10 @@ DragElement.prototype.mouseup_event = function(event)
   if(!event.isLeftClick())
     return;
 
-  this.stop_dragging(event);
+  this.stop_dragging();
 }
 
-DragElement.prototype.stop_dragging = function(event)
+DragElement.prototype.stop_dragging = function()
 {
   if(this.dragging)
   {
@@ -675,7 +689,7 @@ DragElement.prototype.stop_dragging = function(event)
       this.onenddrag(this);
   }
 
-  this.drag_handlers.each(function(h) { debug.log(h); h.stop(); });
+  this.drag_handlers.each(function(h) { h.stop(); });
   this.drag_handlers = [];
 }
 
@@ -724,13 +738,20 @@ WindowDragElement.prototype.ondrag = function(e)
 WindowDragElementAbsolute = function(element)
 {
   this.element = element;
+  this.disabled = false;
   this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
 }
 
+WindowDragElementAbsolute.prototype.set_disabled = function(b) { this.disabled = b; }
+
 WindowDragElementAbsolute.prototype.startdrag = function()
 {
+  if(this.disabled)
+    return true; /* cancel */
+
   this.scroll_anchor_x = this.element.offsetLeft;
   this.scroll_anchor_y = this.element.offsetTop;
+  return false;
 }
 
 WindowDragElementAbsolute.prototype.ondrag = function(e)
@@ -751,4 +772,8 @@ WindowDragElementAbsolute.prototype.ondrag = function(e)
   this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
 }
 
+WindowDragElementAbsolute.prototype.destroy = function()
+{
+  this.dragger.destroy();
+}
 

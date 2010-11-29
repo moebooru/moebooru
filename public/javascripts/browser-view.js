@@ -50,11 +50,10 @@ BrowserView = function(container)
 
   debug.add_hook(this.get_debug.bind(this));
 
-  this.window_resize_event = this.window_resize_event.bindAsEventListener(this);
-  Event.observe(window, "resize", this.window_resize_event);
+  Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
 
-  this.set_post_ui_event = this.set_post_ui_event.bindAsEventListener(this);
-  Event.observe(document, "viewer:set-post-ui", this.set_post_ui_event);
+  document.on("viewer:set-post-ui", this.set_post_ui_event.bindAsEventListener(this));
+  document.on("viewer:vote", function(event) { Post.vote($("vote-container"), event.memo.score); });
 
   /* Double-clicking the main image toggles the thumb bar. */
   this.container.down(".image-container").on("dblclick", ".main-image", function(event) {

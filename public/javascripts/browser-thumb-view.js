@@ -948,6 +948,14 @@ InputHandler.prototype.handle_keypress = function(e)
     document.fire("viewer:set-post-ui", { toggle: true });
   else if(key == 32) // space
     document.fire("viewer:toggle-thumb-bar");
+  else if(key == 49) // 1
+    document.fire("viewer:vote", { score: 1 });
+  else if(key == 50) // 2
+    document.fire("viewer:vote", { score: 2 });
+  else if(key == 51) // 3
+    document.fire("viewer:vote", { score: 3 });
+  else if(key == 96) // `
+    document.fire("viewer:vote", { score: 0 });
   else if(key == 65 || key == 97) // A, b
     document.fire("viewer:show-next-post", { prev: true });
   else if(key == 83 || key == 115) // S, s

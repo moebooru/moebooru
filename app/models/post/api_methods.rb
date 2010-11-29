@@ -3,7 +3,7 @@ module PostApiMethods
     ret = {
       :id => id, 
       :tags => cached_tags, 
-      :created_at => created_at, 
+      :created_at => created_at.to_s, 
       :creator_id => user_id, 
       :author => author,
       :change => change_seq,

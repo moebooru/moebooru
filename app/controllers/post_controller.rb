@@ -319,7 +319,7 @@ class PostController < ApplicationController
     # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
     # can be enabled by specifying filter=1.
     if not from_api or params[:filter] == "1" then
-      results = results.delete_if { |post| not post.can_be_seen_by?(@current_user) }
+      results = results.delete_if { |post| not post.can_be_seen_by?(@current_user, :show_deleted => true) }
       @preload = @preload.delete_if { |post| not post.can_be_seen_by?(@current_user) }
     end
 

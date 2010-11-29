@@ -913,6 +913,9 @@ ThumbnailView.prototype.expand_post = function(post_id)
     return;
 
   var post = Post.posts.get(post_id);
+  if(post.status == "deleted")
+    return;
+
   var thumb = $("p" + post_id);
 
   var bottom = this.container.down(".browser-bottom-bar").offsetHeight;

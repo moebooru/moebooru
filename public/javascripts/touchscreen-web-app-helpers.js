@@ -187,6 +187,10 @@ AndroidDetectWindowSize.prototype.event_onresize = function(e)
  * - The conditions for a double click won't match the ones of the platform.
  *
  * This is needed on Android and iPhone's WebKit.
+ *
+ * Note that this triggers a minor bug on Android: after firing a dblclick event,
+ * we no longer receive mousemove events until the touch is released, which means
+ * PreventDragScrolling can't cancel dragging.
  */
 
 function EmulateDoubleClick()

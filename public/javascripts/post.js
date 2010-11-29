@@ -290,7 +290,9 @@ Post = {
     return stars.vote_post_id;
   },
 
-  init_vote_widgets: function() {
+  init_vote_widgets: function(changed_func)
+  {
+    Post.vote_changed_func = changed_func;
     var vote_descs =
     {
       "0": "Neutral",
@@ -360,23 +362,37 @@ Post = {
         var resp = resp.responseJSON
 
         if (resp.success) {
+          var post = Post.posts.get(post_id);
+          if(post)
+            post.score = resp.score;
           if(container.vote_post_id == post_id)
-          {
-            $("post-score-" + resp.post_id).update(resp.score)
-
             container.current_vote = score;
-            Post.vote_set_stars(resp.vote, false, container);
 
-            if ($("favorited-by")) {
-              $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))
-            }
-          }
-          notice("Vote saved")
+          if(Post.vote_changed_func)
+            Post.vote_changed_func(post_id, resp, container);
+          else
+            Post.vote_default_update(post_id, resp, container);
         } else {
           notice(resp.reason)
         }
       }
     })
+  },
+
+  vote_default_update: function(post_id, resp, container)
+  {
+    if(container.vote_post_id != post_id)
+      return;
+
+    if($("post-score-" + resp.post_id))
+      $("post-score-" + resp.post_id).update(resp.score)
+
+    Post.vote_set_stars(resp.vote, false, container);
+
+    if ($("favorited-by")) {
+      $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))
+    }
+    notice("Vote saved");
   },
 
   flag: function(id) {

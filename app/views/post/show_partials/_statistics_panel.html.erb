@@ -16,7 +16,7 @@
         <li>Source: <%= @post.source %></li>
       <% end %>
     <% end %>
-    <li>Rating: <%= @post.pretty_rating %> <%= vote_tooltip_widget(@post) %></li>
+    <li>Rating: <%= @post.pretty_rating %> <%= vote_tooltip_widget() %></li>
 
     <li>
       Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>

@@ -4,8 +4,7 @@ DebugWindow = function()
   this.log_data = [];
   this.hooks = [];
   this.counter = 0;
-
-  this.set_debug = this.set_debug.bind(this);
+  this.update = this.update.bind(this);
 
   this.hashchange_debug = this.hashchange_debug.bind(this);
   UrlHash.observe("debug", this.hashchange_debug);
@@ -42,7 +41,8 @@ DebugWindow.prototype.log = function(s)
   var lines = 10;
   if(this.log_data.length > lines)
     this.log_data = this.log_data.slice(1, lines+1);
-  this.update.defer();
+  if(this.shown)
+    this.update.defer();
 }
 
 DebugWindow.prototype.hashchange_debug = function()
@@ -62,9 +62,6 @@ DebugWindow.prototype.hashchange_debug = function()
     this.destroy_container();
 
   this.update();
-
-  if(!this.debug_timer)
-    this.set_debug();
 }
 
 DebugWindow.prototype.add_hook = function(func)
@@ -90,15 +87,5 @@ DebugWindow.prototype.update = function()
 
   this.shown_debug = s;
   this.container.update(s);
-}
-
-DebugWindow.prototype.set_debug = function()
-{
-  this.debug_timer = null;
-  if(!this.shown)
-    return;
-
-  this.debug_timer = window.setTimeout(this.set_debug, 100);
-  this.update();
 }
 

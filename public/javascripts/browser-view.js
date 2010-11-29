@@ -50,10 +50,6 @@ BrowserView = function(container)
 
   debug.add_hook(this.get_debug.bind(this));
 
-  this.image_loaded_event = this.image_loaded_event.bindAsEventListener(this);
-  this.img = this.container.down(".image");
-  this.img.observe("load", this.image_loaded_event);
-
   this.window_resize_event = this.window_resize_event.bindAsEventListener(this);
   Event.observe(window, "resize", this.window_resize_event);
 
@@ -101,8 +97,6 @@ BrowserView = function(container)
   }.bindAsEventListener(this));
 
   Post.init_vote_widgets(function(post_id) { notice("Vote saved"); this.refresh_post_info(post_id); }.bind(this));
-
-  this.image_dragger = new WindowDragElementAbsolute(this.container.down(".image"));
 
   /* On touchscreen devices, enable swipe to change screens.  On desktop devices we use
    * dragging to scroll the image around, so don't do both. */
@@ -276,23 +270,36 @@ BrowserView.prototype.set_post_content = function(post_id)
   this.displayed_post_id = post_id;
   UrlHash.set({"post-id": post_id});
 
-  /* Clear the previous post, if any. */
-  this.img.src = "about:blank";
+  /*
+   * Clear the previous post, if any.  Don't keep the old IMG around; create a new one, or
+   * we may trigger long-standing memory leaks in WebKit, eg.:
+   * https://bugs.webkit.org/show_bug.cgi?id=31253
+   *
+   * This also helps us avoid briefly displaying the old image with the new dimensions, which
+   * can otherwise take some hoop jumping to prevent.
+   */
+  if(this.img != null)
+  {
+    this.image_dragger.destroy();
+    this.img.stopObserving();
+    this.img.parentNode.removeChild(this.img);
+  }
+
+  this.img = document.createElement("IMG");
+  this.img.className = "image";
+  this.img.src = post.sample_url;
+  this.img.original_width = post.sample_width;
+  this.img.original_height = post.sample_height;
+  this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
+  this.container.down(".image-container").appendChild(this.img);
+
+  this.image_dragger = new WindowDragElementAbsolute(this.container.down(".image"));
+
+  // debug.log("set_post_content");
+  this.scale_and_position_image();
 
   // XXX: initial vote
   Post.init_vote(post.id, 0, $("vote-container"));
-
-  if(post)
-  {
-    this.img.hide();
-    this.img.original_width = post.sample_width;
-    this.img.original_height = post.sample_height;
-    this.img.src = post.sample_url;
-    this.img.show();
-
-    // debug.log("set_post_content");
-    this.scale_and_position_image();
-  }
 
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 
@@ -425,6 +432,8 @@ BrowserView.prototype.toggle_view_large_image = function()
 {
   var post = Post.posts.get(this.displayed_post_id);
   if(post == null)
+    return;
+  if(this.img == null)
     return;
 
   if(post.jpeg_url == post.sample_url)

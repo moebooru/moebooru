@@ -35,6 +35,12 @@ module PostApiMethods
       :is_held => is_held,
     }
 
+    if status == "deleted"
+      ret.delete(:sample_url)
+      ret.delete(:jpeg_url)
+      ret.delete(:file_url)
+    end
+
     if status == "flagged" or status == "deleted"
       ret[:flag_detail] = flag_detail
 

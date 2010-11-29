@@ -527,9 +527,19 @@ DragElement.prototype.mousemove_event = function(event)
 
 DragElement.prototype.touchmove_event = function(event)
 {
+  /* Ignore touches other than the one we started with. */
+  var touch = null;
+  for(var i = 0; i < event.touches.length; ++i)
+  {
+    touch = event.touches.item(i);
+    if(touch.identifier == this.dragging_touch_identifier)
+      break;
+  }
+  if(touch == null)
+    return;
+
   event.preventDefault();
 
-  var touch = event.touches.item(0);
   var x = touch.pageX;
   var y = touch.pageY;
 
@@ -588,19 +598,29 @@ DragElement.prototype.mousedown_event = function(event)
   var x = event.pointerX() - scrollLeft;
   var y = event.pointerY() - scrollTop;
 
-  this.start_dragging(event, false, x, y);
+  this.start_dragging(event, false, x, y, 0);
 }
 
 DragElement.prototype.touchstart_event = function(event)
 {
-  var touch = event.touches.item(0);
+  /* If we have multiple touches, find the first one that actually refers to us. */
+  var touch = null;
+  for(var i = 0; i < event.touches.length; ++i)
+  {
+    touch = event.touches.item(i);
+    if(touch.target.isParentNode(this.element))
+      break;
+  }
+  if(touch == null)
+    return;
+
   var x = touch.pageX;
   var y = touch.pageY;
   
-  this.start_dragging(event, true, x, y);
+  this.start_dragging(event, true, x, y, touch.identifier);
 }
 
-DragElement.prototype.start_dragging = function(event, touch, x, y)
+DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identifier)
 {
   /* If we've been started with a touch event, only listen for touch events.  If we've
    * been started with a mouse event, only listen for mouse events.  We may receive
@@ -620,6 +640,7 @@ DragElement.prototype.start_dragging = function(event, touch, x, y)
   this.dragging = true;
   this.dragged = false;
   this.dragging_by_touch = touch;
+  this.dragging_touch_identifier = touch_identifier;
 
   this.anchor_x = x;
   this.anchor_y = y;

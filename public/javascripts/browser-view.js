@@ -316,7 +316,7 @@ BrowserView.prototype.set_post_info = function()
 
   this.container.down(".post-id").setTextContent(post.id);
   this.container.down(".posted-by").show(post.creator_id != null);
-  this.container.down(".posted-at").setTextContent("foo"); // XXX
+  this.container.down(".posted-at").setTextContent(time_ago_in_words(new Date(post.created_at)));
   if(post.creator_id != null)
   {
     this.container.down(".posted-by").down("A").href = "/user/show/" + post.creator_id;

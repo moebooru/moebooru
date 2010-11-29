@@ -986,7 +986,7 @@ InputHandler.prototype.document_dblclick_event = function(event)
   if(event.button)
     return;
 
-  if($(event.target).id != "image")
+  if(!$(event.target).hasClassName("main-image"))
     return;
 
   event.stop();

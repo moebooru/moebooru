@@ -286,14 +286,14 @@ BrowserView.prototype.set_post_content = function(post_id)
   }
 
   this.img = document.createElement("IMG");
-  this.img.className = "image";
+  this.img.className = "main-image";
   this.img.src = post.sample_url;
   this.img.original_width = post.sample_width;
   this.img.original_height = post.sample_height;
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
   this.container.down(".image-container").appendChild(this.img);
 
-  this.image_dragger = new WindowDragElementAbsolute(this.container.down(".image"));
+  this.image_dragger = new WindowDragElementAbsolute(this.img);
 
   // debug.log("set_post_content");
   this.scale_and_position_image();

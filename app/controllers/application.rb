@@ -313,6 +313,8 @@ class ApplicationController < ActionController::Base
   end
   
   def init_cookies
+    return if params[:format] == "xml" || params[:format] == "json"
+
     forum_posts = ForumPost.find(:all, :order => "updated_at DESC", :limit => 10, :conditions => "parent_id IS NULL")
     cookies["current_forum_posts"] = forum_posts.map { |fp|
       if @current_user.is_anonymous?

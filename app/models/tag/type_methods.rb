@@ -36,6 +36,34 @@ module TagTypeMethods
       end
     end
 
+    # Get all tag types for the given list of posts.
+    def batch_get_tag_types(posts)
+      post_tags = Set.new
+      posts.each { |post|
+        post_tags.merge(post.cached_tags.split.map { |p| "tag_type:#{p}"} )
+      }
+
+      # Run the query.
+      tag_types = CACHE.get_multi(post_tags.to_a)
+
+      # Strip off "tag_type:" from the result keys.
+      results = {}
+      tag_types.each { |key, value| results[key[9..-1]] = value }
+
+      # Find which keys we didn't get from cache and fill them in.  This will also
+      # populate the cache.
+      got_keys = Set.new(tag_types.keys)
+
+      needed_keys = post_tags - got_keys
+      needed_keys.each { |key|
+        key =~ /tag_type:(.*)/
+        tag_name = $1
+        results[tag_name] = type_name(tag_name)
+      }
+
+      return results
+    end
+
     # Given an array of tags, remove tags to reduce the joined length to <= max_len.
     def compact_tags(tags, max_len)
       return tags if tags.length < max_len

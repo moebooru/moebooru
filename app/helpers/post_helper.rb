@@ -174,11 +174,7 @@ module PostHelper
   end
 
   def get_tag_types(posts)
-    post_tags = []
-    posts.each { |post| post_tags += post.cached_tags.split(/ /) }
-    tag_types = {}
-    post_tags.uniq.each { |tag| tag_types[tag] = Tag.type_name(tag) }
-    return tag_types
+    return Tag.batch_get_tag_types(posts)
   end
 
   def get_service_icon(service)

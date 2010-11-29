@@ -455,6 +455,9 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
   this.element = element;
   this.dragging = false;
 
+  this.drag_handlers = [];
+  this.handlers = [];
+
   /*
    * Starting drag on mousedown works in most browsers, but has an annoying side-
    * effect: we need to stop the event to prevent any browser drag operations from
@@ -625,16 +628,16 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
   /* If we've been started with a touch event, only listen for touch events.  If we've
    * been started with a mouse event, only listen for mouse events.  We may receive
    * both sets of events, and the anchor coordinates for the two may not be compatible. */
-  Event.observe(document, "selectstart", this.selectstart_event);
+  this.drag_handlers.push(document.on("selectstart", this.selectstart_event));
   if(touch)
   {
-    Event.observe(document, "touchend", this.touchend_event);
-    Event.observe(document, "touchmove", this.touchmove_event);
+    this.drag_handlers.push(document.on("touchend", this.touchend_event));
+    this.drag_handlers.push(document.on("touchmove", this.touchmove_event));
   }
   else
   {
-    Event.observe(document, "mouseup", this.mouseup_event);
-    Event.observe(document, "mousemove", this.mousemove_event);
+    this.drag_handlers.push(document.on("mouseup", this.mouseup_event));
+    this.drag_handlers.push(document.on("mousemove", this.mousemove_event));
   }
 
   this.dragging = true;
@@ -672,11 +675,8 @@ DragElement.prototype.stop_dragging = function(event)
       this.onenddrag(this);
   }
 
-  Event.stopObserving(document, "mouseup", this.mouseup_event);
-  Event.stopObserving(document, "mousemove", this.mousemove_event);
-  Event.stopObserving(document, "selectstart", this.selectstart_event);
-  Event.stopObserving(document, "touchmove", this.touchmove_event);
-  Event.stopObserving(document, "touchend", this.touchend_event);
+  this.drag_handlers.each(function(h) { debug.log(h); h.stop(); });
+  this.drag_handlers = [];
 }
 
 DragElement.prototype.click_event = function(event)

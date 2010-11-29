@@ -282,6 +282,55 @@ ThumbnailView = function(container, view)
     if(event.isLeftClick())
       event.preventDefault();
   }.bindAsEventListener(this));
+
+  /*
+   * For Android browsers, we're set to 150 DPI, which (in theory) scales us to a consistent UI size
+   * based on the screen DPI.  This means that we can determine the physical screen size from the
+   * window resolution: 150x150 is 1"x1".  Set a thumbnail scale based on this.  On a 320x480 HVGA
+   * phone screen the thumbnails are about 2x too big, so set thumb_scale to 0.5.
+   *
+   * For iOS browsers, there's no way to set the viewport based on the DPI, so it's fixed at 1x.
+   * (Note that on Retina screens the browser lies: even though we request 1x, it's actually at
+   * 0.5x and our screen dimensions work as if we're on the lower-res iPhone screen.  We can mostly
+   * ignore this.)  CSS inches aren't implemented (the DPI is fixed at 96), so that doesn't help us.
+   * Fall back on special-casing individual iOS devices.
+   */
+  this.config = { };
+  if(navigator.userAgent.indexOf("iPad") != -1)
+  {
+    this.config.thumb_scale = 1.0;
+  }
+  else if(navigator.userAgent.indexOf("iPhone") != -1)
+  {
+    this.config.thumb_scale = 0.5;
+  }
+  else if(navigator.userAgent.indexOf("Android") != -1)
+  {
+    /* We may be in landscape or portrait; use out the narrower dimension. */
+    var width = Math.min(window.innerWidth, window.innerHeight);
+
+    /* Scale a 320-width screen to 0.5, up to 1.0 for a 640-width screen.  Remember
+     * that this width is already scaled by the DPI of the screen due to target-densityDpi,
+     * so these numbers aren't actually real pixels, and this scales based on the DPI
+     * and size of the screen rather than the pixel count. */
+    this.config.thumb_scale = scale(width, 320, 640, 0.5, 1.0);
+  debug.log("Unclamped thumb scale: " + this.config.thumb_scale);
+
+    /* Clamp to [0.5,1.0]. */
+    this.config.thumb_scale = Math.min(this.config.thumb_scale, 1.0);
+    this.config.thumb_scale = Math.max(this.config.thumb_scale, 0.5);
+
+    debug.log(window.innerWidth + "x" + window.innerHeight);
+  }
+  else
+  {
+    /* Unknown device, or not a mobile device. */
+    this.config.thumb_scale = 1.0;
+  }
+  debug.log("Thumb scale: " + this.config.thumb_scale);
+
+  this.config_changed();
+
 }
 
 ThumbnailView.prototype.window_resize_event = function(e)
@@ -535,7 +584,8 @@ ThumbnailView.prototype.scroll = function(left)
 /* Hide the hovered post, if any, call center_on_post(post_id), then hover over the correct post again. */
 ThumbnailView.prototype.center_on_post_for_scroll = function(post_idx)
 {
-  this.expand_post(null);
+  if(this.thumb_container_shown)
+    this.expand_post(null);
 
   this.center_on_post(post_idx);
 
@@ -549,13 +599,16 @@ ThumbnailView.prototype.center_on_post_for_scroll = function(post_idx)
    *
    * Explicitly figure out which item we're hovering over and expand it.
    */
-  var element = document.elementFromPoint(this.last_mouse_x, this.last_mouse_y);
-  element = $(element);
-  if(element)
+  if(this.thumb_container_shown)
   {
-    var li = element.up(".post-thumb");
-    if(li)
-      this.expand_post(li.post_id);
+    var element = document.elementFromPoint(this.last_mouse_x, this.last_mouse_y);
+    element = $(element);
+    if(element)
+    {
+      var li = element.up(".post-thumb");
+      if(li)
+        this.expand_post(li.post_id);
+    }
   }
 }
 
@@ -861,24 +914,18 @@ ThumbnailView.prototype.expand_post = function(post_id)
     return;
 
   var post = Post.posts.get(post_id);
-
-  /* This doesn't always align properly in Firefox if full-page zooming is being used. */
   var thumb = $("p" + post_id);
-  var hover_thumb = thumb.down("IMG");
-  var thumb_offset = hover_thumb.cumulativeOffset();
-  var container_offset = this.container.cumulativeOffset();
-  thumb_offset[0] -= container_offset[0];
-  thumb_offset[1] -= container_offset[1];
-  if(hover_thumb.offsetHeight > thumb.offsetHeight)
-    thumb_offset[1] -= hover_thumb.offsetHeight - thumb.offsetHeight;
-  overlay.style.top = thumb_offset[1] + "px";
-  overlay.style.left = thumb_offset[0] + "px";
+
+  var bottom = this.container.down(".browser-bottom-bar").offsetHeight;
+  overlay.style.bottom = bottom + "px";
+  var left = thumb.cumulativeOffset().left - post.actual_preview_width/2 + thumb.offsetWidth/2;
+  overlay.style.left = left + "px";
 
   /* If the hover thumbnail overflows the right edge of the viewport, it'll extend the document and
    * allow scrolling to the right, which we don't want.  overflow: hidden doesn't fix this, since this
    * element is absolutely positioned.  Set the max-width to clip the right side of the thumbnail if
    * necessary. */
-  var max_width = document.viewport.getDimensions().width - thumb_offset[0];
+  var max_width = document.viewport.getDimensions().width - left;
   overlay.style.maxWidth = max_width + "px";
 
   overlay.href = "/post/show/" + post.id;
@@ -890,32 +937,19 @@ ThumbnailView.prototype.create_thumb = function(post_id)
 {
   var post = Post.posts.get(post_id);
 
-  var width = post.actual_preview_width;
-  var height = post.actual_preview_height;
-
-  /* This crops blocks that are too wide, but doesn't pad them if they're too
-   * narrow, since that creates odd spacing. */
-  var block_size = [Math.min(width, 200), 200];
-  var crop_left = Math.round((width - block_size[0]) / 2);
-
   /* Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  We
    * do this with visibility: hidden rather than display: none, or the size of the image
    * won't be defined, which breaks center_on_post. */
   var div =
-    '<div class="inner" style="width: ${block_size_x}px; height: ${block_size_y}px;">' +
+    '<div class="inner">' +
       '<a class="thumb" href="${target_url}" tabindex="-1">' +
-        '<img src="${preview_url}" style="visibility: hidden; margin-left: -${crop_left}px;" alt="" class="${image_class}"' +
-          'width="${width}" height="${height}" onload="$(this).setStyle({visibility: \'visible\'});">' +
+        '<img src="${preview_url}" style="visibility: hidden;" alt="" class="${image_class}"' +
+          'onload="$(this).setStyle({visibility: \'visible\'});">' +
       '</a>' +
     '</div>';
   div = div.subst({
-    block_size_x: block_size[0],
-    block_size_y: block_size[1],
     target_url: "/post/show/" + post.id,
     preview_url: post.preview_url,
-    crop_left: crop_left,
-    width: width,
-    height: height,
     image_class: "preview"
   });
     
@@ -932,10 +966,51 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   item.id = "p" + post_id;
   item.post_id = post_id;
 
-  var inner = item.down(".inner");
+  this.set_thumb_dimensions(post, item);
+  return item;
+}
+
+ThumbnailView.prototype.set_thumb_dimensions = function(post, li)
+{
+  var width = post.actual_preview_width * this.config.thumb_scale;
+  var height = post.actual_preview_height * this.config.thumb_scale;
+
+  /* This crops blocks that are too wide, but doesn't pad them if they're too
+   * narrow, since that creates odd spacing. 
+   *
+   * If the height of this block is changed, adjust .post-browser-posts-container in
+   * config_changed. */
+  var block_size = [Math.min(width, 200 * this.config.thumb_scale), 200 * this.config.thumb_scale];
+  var crop_left = Math.round((width - block_size[0]) / 2);
+
+  var inner = li.down(".inner");
   inner.actual_width = block_size[0];
   inner.actual_height = block_size[1];
-  return item;
+  inner.setStyle({width: block_size[0] + "px", height: block_size[1] + "px"});
+
+  var img = inner.down("img");
+  img.width = width;
+  img.height = height;
+  img.setStyle({marginLeft: -crop_left + "px"});
+}
+
+ThumbnailView.prototype.config_changed = function()
+{
+  /* Adjust the size of the container to fit the thumbs at the current scale.  They're the
+   * height of the thumb block, plus ten pixels for padding at the top and bottom. */
+  var container_height = 200*this.config.thumb_scale + 10;
+  this.container.down(".post-browser-posts-container").setStyle({height: container_height + "px"});
+
+  for(var post_idx = this.posts_populated[0]; post_idx != this.posts_populated[1]; ++post_idx)
+  {
+    var post_id = this.post_ids[post_idx];
+    debug.log(post_idx + ", " + post_id);
+    var post = Post.posts.get(post_id);
+    var li = $("p" + post_id);
+    this.set_thumb_dimensions(post, li);
+  }
+
+  this.center_on_post_for_scroll(this.centered_post_idx);
 }
 
 /* Handle clicks and doubleclicks on thumbnails.  These events are handled by
@@ -984,8 +1059,7 @@ ThumbnailView.prototype.show_thumb_bar = function(shown)
 
   /* If the centered post was changed while we were hidden, it wasn't applied by
    * center_on_post, so do it now. */
-  if(shown)
-    this.center_on_post_for_scroll(this.centered_post_idx)
+  this.center_on_post_for_scroll(this.centered_post_idx);
 }
 
 ThumbnailView.prototype.toggle_thumb_bar = function()

@@ -1,10 +1,8 @@
 <% content_for("html_header") do %>
-  <% if @viewport_device == "iPhone" then %>
-    <meta name="viewport" content="width=device-width; initial-scale=0.5; maximum-scale=0.5; user-scalable=0;">  
-  <% elsif @viewport_device == "iPad" then %>
+  <% if @viewport_device == "iPhone" or @viewport_device == "iPad" then %>
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">  
   <% else %>
-    <meta name="viewport" content="target-densityDpi=350; minimum-scale=1; maximum-scale=1; initial-scale=1;">
+    <meta name="viewport" content="target-densityDpi=150; minimum-scale=1; maximum-scale=1; initial-scale=1;">
   <% end %>
 
   <meta name="apple-mobile-web-app-capable" content="yes" >  
@@ -23,7 +21,7 @@
     <div class="post-browser-no-results" style="display: none; text-align: center; font-size: 200%;">No search results.</div>
   </div>
 
-  <div class="browser-top-bar">
+  <div class="browser-bottom-bar">
     <form action="#" class="tags-form" method="get" style="display: inline;">
       <input class="post-browser-tags-form" name="tags" size="20" type="text">
       <input style="display: none;" type="submit">

@@ -210,7 +210,6 @@ BrowserView.prototype.load_post_id_data = function(post_id)
       this.success = posts.length > 0;
       if(!this.success)
       {
-        this.failed = true;
         debug.log("requested post " + post_id + " doesn't exist");
         return;
       }

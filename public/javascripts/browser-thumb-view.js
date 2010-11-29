@@ -955,6 +955,8 @@ InputHandler.prototype.handle_keypress = function(e)
     document.fire("viewer:show-next-post", { prev: false });
   else if(key == 70 || key == 102) // F, f
     document.fire("viewer:focus-tag-box");
+  else if(key == 86 || key == 118) // V, v
+    document.fire("viewer:view-large-toggle");
   else if(key == Event.KEY_PAGEUP)
     document.fire("viewer:show-next-post", { prev: true });
   else if(key == Event.KEY_PAGEDOWN)

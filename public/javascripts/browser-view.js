@@ -61,9 +61,8 @@ BrowserView = function(container)
   Event.observe(document, "viewer:set-post-ui", this.set_post_ui_event);
 
   /* Image controls: */
-  this.click_image_zoom_event = this.click_image_zoom_event.bindAsEventListener(this);
-  this.container.down(".post-view-larger").observe("click", this.click_image_zoom_event);
-
+  document.on("viewer:view-large-toggle", function(e) { this.toggle_view_large_image(); }.bindAsEventListener(this));
+  this.container.down(".post-view-larger").on("click", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
   this.container.down(".activate-post").on("click", function(e) {
@@ -427,9 +426,8 @@ BrowserView.prototype.window_resize_event = function()
   this.scale_and_position_image(true);
 }
 
-BrowserView.prototype.click_image_zoom_event = function(e)
+BrowserView.prototype.toggle_view_large_image = function()
 {
-  e.stop();
   var post = Post.posts.get(this.displayed_post_id);
   if(post == null)
     return;

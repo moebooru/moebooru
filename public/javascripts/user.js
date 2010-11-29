@@ -582,6 +582,14 @@ User = {
         }
       }
     });
+  },
+
+  get_current_user_id: function()
+  {
+    var user_id = Cookie.get("user_id");
+    if(!user_id || user_id == "")
+      return 0;
+    return parseInt(user_id);
   }
 }
 

@@ -944,6 +944,7 @@ InputHandler.prototype.handle_keypress = function(e)
 
   if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
     return false;
+  var grave_keycode = Prototype.Browser.WebKit? 192: 96;
   if(key == Event.KEY_BACKSPACE)
     document.fire("viewer:set-post-ui", { toggle: true });
   else if(key == 32) // space
@@ -954,7 +955,7 @@ InputHandler.prototype.handle_keypress = function(e)
     document.fire("viewer:vote", { score: 2 });
   else if(key == 51) // 3
     document.fire("viewer:vote", { score: 3 });
-  else if(key == 96) // `
+  else if(key == grave_keycode) // `
     document.fire("viewer:vote", { score: 0 });
   else if(key == 65 || key == 97) // A, b
     document.fire("viewer:show-next-post", { prev: true });

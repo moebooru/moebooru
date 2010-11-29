@@ -566,17 +566,17 @@ WindowTitleHandler = function()
   this.post_id = null;
   this.pool = null;
 
-  document.observe("viewer:searched-tags-changed", function(e) {
+  document.on("viewer:searched-tags-changed", function(e) {
     this.searched_tags = e.memo.tags || "";
     this.update();
   }.bindAsEventListener(this));
 
-  document.observe("viewer:displayed-post-changed", function(e) {
+  document.on("viewer:displayed-post-changed", function(e) {
     this.post_id = e.memo.post_id;
     this.update();
   }.bindAsEventListener(this));
 
-  document.observe("viewer:displayed-pool-changed", function(e) {
+  document.on("viewer:displayed-pool-changed", function(e) {
     this.pool = e.memo.pool;
     this.update();
   }.bindAsEventListener(this));

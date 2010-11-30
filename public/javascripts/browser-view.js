@@ -72,6 +72,14 @@ BrowserView = function(container)
   this.container.down(".post-view-larger").on("click", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
+
+  var tag_span = this.container.down(".post-tags");
+  tag_span.on("click", ".post-tag", function(e, element) {
+    e.stop();
+    var tag = element.tag_name;
+    UrlHash.set({tags: tag});
+  });
+
   this.container.down(".activate-post").on("click", function(e) {
     e.stop();
 
@@ -404,6 +412,35 @@ BrowserView.prototype.set_post_info = function()
   child_posts.show(post.has_children);
   if(post.has_children)
     child_posts.down("A").href = "/post/browse#/parent:" + post.id;
+
+
+  /* Create the tag links. */
+  var tag_span = this.container.down(".post-tags");
+  var tags_by_type = Post.get_post_tags_by_type(post);
+  var first = true;
+  while(tag_span.firstChild)
+    tag_span.removeChild(tag_span.firstChild);
+
+  tags_by_type.each(function(t) {
+      var type = t[0];
+      var tags = t[1];
+      var html = '<span class="tag-type-#{tag_type}"><a href="#">${tag}</a></span>'
+      var span = document.createElement("SPAN", "");
+      span.className = "tag-type-" + type;
+
+      tags.each(function(tag) {
+        var space = document.createTextNode(" ");
+        span.appendChild(space);
+
+        var a = document.createElement("A", "");
+        a.href = "/post/browse#/" + tag;
+        a.tag_name = tag;
+        a.className = "post-tag .tag-type-" + type;
+        a.setTextContent(tag);
+        span.appendChild(a);
+      });
+      tag_span.appendChild(span);
+  });
 
   var flagged = this.container.down(".flagged-info");
   flagged.show(post.status == "flagged");

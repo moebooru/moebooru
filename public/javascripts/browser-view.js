@@ -74,7 +74,7 @@ BrowserView = function(container)
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
 
   /* Hide moderator controls for regular users (they won't work anyway): */
-  var is_moderator = User.get_current_user_level() >= 40 && false;
+  var is_moderator = User.get_current_user_level() >= 40;
   this.container.select(".moderator-only").each(function(elem) { elem.show(is_moderator); });
 
   var tag_span = this.container.down(".post-tags");
@@ -84,13 +84,13 @@ BrowserView = function(container)
     UrlHash.set({tags: tag});
   }.bindAsEventListener(this));
 
-  this.container.down(".flagged-approve-post").on("click", function(e) {
+  this.container.down(".post-approve").on("click", function(e) {
     e.stop();
     var post_id = this.displayed_post_id;
     Post.approve(post_id, false, function() { this.refresh_post_info(post_id); }.bind(this));
   }.bindAsEventListener(this));
 
-  this.container.down(".flagged-delete-post").on("click", function(e) {
+  this.container.down(".post-delete").on("click", function(e) {
     e.stop();
     var post = Post.posts.get(this.displayed_post_id);
     var default_reason = "";
@@ -482,6 +482,10 @@ BrowserView.prototype.set_post_info = function()
 
   var flag_post = this.container.down(".flag-post");
   flag_post.show(post.status == "active");
+
+  this.container.down(".post-approve").show(post.status == "flagged" || post.status == "pending");
+  this.container.down(".post-delete").show(post.status != "deleted");
+  this.container.down(".post-undelete").show(post.status == "deleted");
 
   var flagged = this.container.down(".flagged-info");
   flagged.show(post.status == "flagged");

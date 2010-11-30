@@ -52,23 +52,26 @@
       <li id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <%= vote_tooltip_widget() %></li>
 
       <li>Tags: <span class="post-tags color-tag-types"></span></li>
+      <li class="moderator-only">
+        <a href="#" class="post-delete">delete</a>
+        <a href="#" class="post-approve">approve</a>
+        <a href="#" class="post-undelete">undelete</a>
+      </li>
       <li class="status-deleted"> 
         This post was deleted.
         <span class="by-container">By: <a href="#" class="by"></a></span>
         Reason: <span class="reason"></span>.
-        <a href="#" class="post-undelete moderator-only">Undelete this post</a>
       </li>
       <li><a href="#" class="post-view-larger">View larger version</a></li>
       <li><a href="#" class="download-image">Download image (<span class="download-image-desc"></span>)</a></li>
       <li><a href="#" class="download-jpeg">Download larger version (<span class="download-jpeg-desc"></span>)</a></li>
       <li><a href="#" class="download-png">Download PNG (<span class="download-png-desc"></span>)</a></li>
       <li><a href="#" class="post-show-link">View regular post page</a></li>
-      <li class="parent-post">This post has a <a href="#">parent post</a><span class="reparent-post advanced-editing"><a href="#"> (make this post the parent)</a>.
+      <li class="parent-post">This post has a <a href="#">parent post</a><span class="reparent-post advanced-editing"><a href="#"> (make this post the parent)</a></span>.
       </li>
       <li class="child-posts">This post has <a href="#">child posts</a>.</li>
       <li class="flagged-info">
         This post was flagged for deletion by <a href="#" class="by"></a>.  Reason: <span class="reason"></span>.
-        <span class="approve-post-container moderator-only">(<a href="#" class="flagged-approve-post">approve</a>, <a href="#" class="flagged-delete-post">delete</a>)</span>
       </li>
       <li class="status-pending">This post is pending moderator approval.</li>
       <li class="status-held">

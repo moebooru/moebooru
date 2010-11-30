@@ -82,7 +82,7 @@ BrowserView = function(container)
     e.stop();
     var tag = element.tag_name;
     UrlHash.set({tags: tag});
-  }.bindAsEventListener(this));
+  }.bind(this));
 
   this.container.down(".post-approve").on("click", function(e) {
     e.stop();
@@ -462,7 +462,6 @@ BrowserView.prototype.set_post_info = function()
   tags_by_type.each(function(t) {
       var type = t[0];
       var tags = t[1];
-      var html = '<span class="tag-type-#{tag_type}"><a href="#">${tag}</a></span>'
       var span = document.createElement("SPAN", "");
       span.className = "tag-type-" + type;
 
@@ -473,7 +472,7 @@ BrowserView.prototype.set_post_info = function()
         var a = document.createElement("A", "");
         a.href = "/post/browse#/" + tag;
         a.tag_name = tag;
-        a.className = "post-tag .tag-type-" + type;
+        a.className = "post-tag tag-type-" + type;
         a.setTextContent(tag);
         span.appendChild(a);
       });

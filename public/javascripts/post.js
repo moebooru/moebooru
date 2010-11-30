@@ -398,7 +398,7 @@ Post = {
     notice("Vote saved");
   },
 
-  flag: function(id) {
+  flag: function(id, finished) {
     var reason = prompt("Why should this post be flagged for deletion?", "")
 
     if (!reason) {
@@ -418,7 +418,13 @@ Post = {
 
       onSuccess: function(req) {
         notice("Post was flagged for deletion")
-        $("p" + id).addClassName("flagged")
+        var resp = req.responseJSON;
+        Post.register(resp.post)
+        Post.register_tags(resp.tags);
+        if(finished)
+          finished(id);
+        else
+          $("p" + id).addClassName("flagged")
       }
     })
   },

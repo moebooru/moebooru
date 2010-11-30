@@ -78,7 +78,15 @@ BrowserView = function(container)
     e.stop();
     var tag = element.tag_name;
     UrlHash.set({tags: tag});
-  });
+  }.bindAsEventListener(this));
+
+  this.container.down(".flag-post").on("click", function(e) {
+    e.stop();
+    var post_id = this.displayed_post_id;
+    Post.flag(post_id, function(post_id) {
+      this.refresh_post_info(post_id);
+    }.bind(this));
+  }.bindAsEventListener(this));
 
   this.container.down(".activate-post").on("click", function(e) {
     e.stop();
@@ -441,6 +449,9 @@ BrowserView.prototype.set_post_info = function()
       });
       tag_span.appendChild(span);
   });
+
+  var flag_post = this.container.down(".flag-post");
+  flag_post.show(post.status == "active");
 
   var flagged = this.container.down(".flagged-info");
   flagged.show(post.status == "flagged");

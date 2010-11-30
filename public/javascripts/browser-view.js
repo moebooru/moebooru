@@ -73,9 +73,9 @@ BrowserView = function(container)
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
 
-  /* Hide moderator controls for regular users (they won't work anyway): */
-  var is_moderator = User.user_is_moderator();
-  this.container.select(".moderator-only").each(function(elem) { elem.show(is_moderator); });
+  /* Hide member-only and moderator-only controls: */
+  document.body.pickClassName("is-member", "not-member", User.is_member_or_higher());
+  document.body.pickClassName("is-moderator", "not-moderator", User.is_mod_or_higher());
 
   var tag_span = this.container.down(".post-tags");
   tag_span.on("click", ".post-tag", function(e, element) {
@@ -588,7 +588,7 @@ BrowserView.prototype.set_post_info = function()
   }
 
   this.container.down(".status-held").show(post.is_held);
-  var has_permission = User.get_current_user_id() == post.creator_id || User.user_is_moderator();
+  var has_permission = User.get_current_user_id() == post.creator_id || User.is_mod_or_higher();
   this.container.down(".activate-post").show(has_permission);
 }
 

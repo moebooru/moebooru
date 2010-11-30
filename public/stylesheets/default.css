@@ -20,9 +20,9 @@ body {
   margin: 0;
 }
 
-body.dragging {
-  cursor: pointer !important;
-}
+body.dragging { cursor: pointer !important; }
+body.not-moderator .moderator-only { display: none !important; }
+body.not-member .member-only { display: none !important; }
 
 .action-post-show > body {
   background: #000;

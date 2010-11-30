@@ -608,7 +608,12 @@ User = {
     return parseInt(user_info[1]);
   },
 
-  user_is_moderator: function()
+  is_member_or_higher: function()
+  {
+    return User.get_current_user_level() >= 20;
+  },
+
+  is_mod_or_higher: function()
   {
     return User.get_current_user_level() >= 40;
   }

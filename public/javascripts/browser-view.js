@@ -80,6 +80,33 @@ BrowserView = function(container)
     UrlHash.set({tags: tag});
   }.bindAsEventListener(this));
 
+  // XXX: mod ".moderator-only"
+  this.container.down(".flagged-approve-post").on("click", function(e) {
+    e.stop();
+    var post_id = this.displayed_post_id;
+    Post.approve(post_id, false, function() { this.refresh_post_info(post_id); }.bind(this));
+  }.bindAsEventListener(this));
+
+  this.container.down(".flagged-delete-post").on("click", function(e) {
+    e.stop();
+    var post = Post.posts.get(this.displayed_post_id);
+    var default_reason = "";
+    if(post.flag_detail)
+      default_reason = post.flag_detail.reason;
+
+    var reason = prompt("Reason:", default_reason);
+    if(!reason || reason == "")
+      return;
+    var post_id = this.displayed_post_id;
+    Post.approve(post_id, reason, function() { this.refresh_post_info(post_id); }.bind(this));
+  }.bindAsEventListener(this));
+
+  this.container.down(".post-undelete").on("click", function(e) {
+    e.stop();
+    var post_id = this.displayed_post_id;
+    Post.undelete(post_id, function() { this.refresh_post_info(post_id); }.bind(this));
+  }.bindAsEventListener(this));
+  
   this.container.down(".flag-post").on("click", function(e) {
     e.stop();
     var post_id = this.displayed_post_id;

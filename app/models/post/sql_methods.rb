@@ -89,8 +89,9 @@ module PostSqlMethods
         if q[:show_deleted_only]
           conds << "p.status = 'deleted'"
         end
-      else
-          conds << "p.status <> 'deleted'"
+      elsif not q.has_key?(:post_id)
+        # If a specific post_id isn't specified, default to filtering deleted posts.
+        conds << "p.status <> 'deleted'"
       end
 
       if q.has_key?(:parent_id) && q[:parent_id].is_a?(Integer)

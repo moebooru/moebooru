@@ -165,7 +165,7 @@ Object.extend(Element.Methods, {
   },
   setTextContent: function(element, text)
   {
-    if(element.innerText)
+    if(element.innerText != null)
       element.innerText = text;
     else
       element.textContent = text;

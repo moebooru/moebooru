@@ -1497,9 +1497,9 @@ span.stars .star-3 { color:#ff0; }
 
 .post-info {
   position: absolute;
-  bottom: 0px;
+  top: 0px;
   width: 25%;
-  height: 500px;
+  height: auto;
   background-color: #005;
 }
 

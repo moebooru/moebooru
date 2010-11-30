@@ -700,7 +700,7 @@ ThumbnailView.prototype.expand_post = function(post_id)
   var max_width = document.viewport.getDimensions().width - left;
   overlay.style.maxWidth = max_width + "px";
 
-  overlay.href = "/post/show/" + post.id;
+  overlay.href = "/post/browse#" + post.id;
   overlay.down("IMG").src = post.preview_url;
   overlay.show();
 }
@@ -720,7 +720,7 @@ ThumbnailView.prototype.create_thumb = function(post_id)
       '</a>' +
     '</div>';
   div = div.subst({
-    target_url: "/post/show/" + post.id,
+    target_url: "/post/browse#" + post.id,
     preview_url: post.preview_url,
     image_class: "preview"
   });

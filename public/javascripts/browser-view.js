@@ -48,7 +48,7 @@ BrowserView = function(container)
   if(Prototype.BrowserFeatures.Touchscreen)
     this.post_ui_visible = false;
 
-  debug.add_hook(this.get_debug.bind(this));
+  debug.handler.add_hook(this.get_debug.bind(this));
 
   Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
 
@@ -69,7 +69,7 @@ BrowserView = function(container)
 
   /* Image controls: */
   document.on("viewer:view-large-toggle", function(e) { this.toggle_view_large_image(); }.bindAsEventListener(this));
-  this.container.down(".post-view-larger").on("click", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
+  this.container.down(".post-info").on("click", ".zoom-icon-in,.zoom-icon-out,.post-dimensions", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
 
@@ -84,8 +84,20 @@ BrowserView = function(container)
     UrlHash.set({tags: tag});
   }.bind(this));
 
+  /* These two links do the same thing, but one is shown to approve a pending post
+   * and the other is shown to unflag a flagged post, so they prompt differently. */
   this.container.down(".post-approve").on("click", function(e) {
     e.stop();
+    if(!confirm("Approve this post?"))
+      return;
+    var post_id = this.displayed_post_id;
+    Post.approve(post_id, false, function() { this.refresh_post_info(post_id); }.bind(this));
+  }.bindAsEventListener(this));
+
+  this.container.down(".post-unflag").on("click", function(e) {
+    e.stop();
+    if(!confirm("Unflag this post?"))
+      return;
     var post_id = this.displayed_post_id;
     Post.approve(post_id, false, function() { this.refresh_post_info(post_id); }.bind(this));
   }.bindAsEventListener(this));
@@ -106,11 +118,13 @@ BrowserView = function(container)
 
   this.container.down(".post-undelete").on("click", function(e) {
     e.stop();
+    if(!confirm("Undelete this post?"))
+      return;
     var post_id = this.displayed_post_id;
     Post.undelete(post_id, function() { this.refresh_post_info(post_id); }.bind(this));
   }.bindAsEventListener(this));
   
-  this.container.down(".flag-post").on("click", function(e) {
+  this.container.down(".flag-button").on("click", function(e) {
     e.stop();
     var post_id = this.displayed_post_id;
     Post.flag(post_id, function(post_id) {
@@ -122,6 +136,8 @@ BrowserView = function(container)
     e.stop();
 
     var post_id = this.displayed_post_id;
+    if(!confirm("Activate this post?"))
+      return;
     Post.update(post_id, { "post[is_held]": false }, function(post)
     {
       if(post.is_held)
@@ -300,6 +316,12 @@ BrowserView.prototype.set_viewing_larger_version = function(b)
 {
   this.viewing_larger_version = b;
 
+  var post = Post.posts.get(this.displayed_post_id);
+  var can_zoom = post != null && post.jpeg_url != post.sample_url;
+  this.container.down(".zoom-icon-none").show(!can_zoom);
+  this.container.down(".zoom-icon-in").show(can_zoom && !this.viewing_larger_version);
+  this.container.down(".zoom-icon-out").show(can_zoom && this.viewing_larger_version);
+
   /* When we're on the regular version and we're on a touchscreen, disable drag
    * scrolling so we can use it to switch images instead. */
   if(Prototype.BrowserFeatures.Touchscreen && this.image_dragger)
@@ -311,8 +333,6 @@ BrowserView.prototype.set_post_content = function(post_id)
 {
   if(post_id == this.displayed_post_id)
     return;
-
-  this.set_viewing_larger_version(false);
 
   var post = Post.posts.get(post_id);
   if(post == null)
@@ -327,6 +347,9 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   this.displayed_post_id = post_id;
   UrlHash.set({"post-id": post_id});
+
+  debug.log("setting");
+  this.set_viewing_larger_version(false);
 
   /*
    * Clear the previous post, if any.  Don't keep the old IMG around; create a new one, or
@@ -395,6 +418,7 @@ BrowserView.prototype.set_post_info = function()
     return;
 
   this.container.down(".post-id").setTextContent(post.id);
+  this.container.down(".post-id-link").href = "/post/show/" + post.id;
   this.container.down(".posted-by").show(post.creator_id != null);
   this.container.down(".posted-at").setTextContent(time_ago_in_words(new Date(post.created_at*1000)));
 
@@ -404,24 +428,42 @@ BrowserView.prototype.set_post_info = function()
     this.container.down(".posted-by").down("A").setTextContent(post.author);
   }
 
-  this.container.down(".post-dimensions").down("SPAN").setTextContent(post.width + "x" + post.height);
+  this.container.down(".post-dimensions").setTextContent(post.width + "x" + post.height);
   this.container.down(".post-source").show(post.source != "");
   if(post.source != "")
   {
     var text = post.source;
-    var url = post.source;
+    var url = null;
 
-    var m = url.match(/.*pixiv\.net\/img\/(\w+)\/(\d+)\.\w+$/);
+    var m = post.source.match(/.*pixiv\.net\/img\/(\w+)\/(\d+)\.\w+$/);
     if(m)
     {
       text = "pixiv #" + m[2] + " (" + m[1] + ")";
       url = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + m[2];
     }
     else if(post.source.substr(0, 7) == "http://")
-      text = text.substr(7, 20) + "...";
+    {
+      text = text.substr(7);
+      if(text.substr(0, 4) == "www.")
+        text = text.substr(4);
+      if(text.length > 20)
+        text = text.substr(0, 20) + "...";
+      url = post.source;
+    }
 
-    this.container.down(".post-source").down("A").href = url;
-    this.container.down(".post-source").down("A").setTextContent(text);
+    var source_box = this.container.down(".post-source");
+
+    source_box.down("A").show(url != null);
+    source_box.down("SPAN").show(url == null);
+    if(url)
+    {
+      source_box.down("A").href = url;
+      source_box.down("A").setTextContent(text);
+    }
+    else
+    {
+      source_box.down("SPAN").setTextContent(text);
+    }
 
   }
 
@@ -429,22 +471,42 @@ BrowserView.prototype.set_post_info = function()
   this.container.down(".rating").setTextContent(ratings[post.rating]);
 
   this.container.down(".post-score").setTextContent(post.score);
-  this.container.down(".post-view-larger").show(post.jpeg_url != post.sample_url);
   this.container.down(".post-info").show(this.post_ui_visible);
-  this.container.down(".post-view-larger").href = "/post/show/" + post.id;
+
+  var file_extension = function(path)
+  {
+    var m = path.match(/.*\.([^.]+)/);
+    if(!m)
+      return "";
+    return m[1];
+  }
 
   var has_sample = (post.sample_url != post.file_url);
   var has_jpeg = (post.jpeg_url != post.file_url);
-  this.container.down(".download-image").show(post.file_url != null && !has_sample);
-  this.container.down(".download-image").href = post.file_url;
-  this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.file_size));
+  var has_image = post.file_url != null && !has_sample;
+
+  this.container.down(".download-image").show(has_image);
+  if(has_image)
+  {
+    this.container.down(".download-image").href = post.file_url;
+    this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.file_size) + " " + file_extension(post.file_url.toUpperCase()));
+  }
+
   this.container.down(".download-jpeg").show(has_sample);
-  this.container.down(".download-jpeg").href = has_jpeg? post.jpeg_url: post.file_url;
-  this.container.down(".download-jpeg-desc").setTextContent(number_to_human_size(has_jpeg? post.jpeg_file_size: post.file_size));
+  if(has_sample)
+  {
+    this.container.down(".download-jpeg").href = has_jpeg? post.jpeg_url: post.file_url;
+    var image_desc = number_to_human_size(has_jpeg? post.jpeg_file_size: post.file_size) /*+ " " + post.jpeg_width + "x" + post.jpeg_height*/ + " JPG";
+    this.container.down(".download-jpeg-desc").setTextContent(image_desc);
+  }
+
   this.container.down(".download-png").show(has_jpeg);
-  this.container.down(".download-png").href = post.file_url;
-  this.container.down(".download-png-desc").setTextContent(number_to_human_size(post.file_size));
-  this.container.down(".post-show-link").href = "/post/show/" + post.id;
+  if(has_jpeg)
+  {
+    this.container.down(".download-png").href = post.file_url;
+    var png_desc = number_to_human_size(post.file_size) /*+ " " + post.width + "x" + post.height*/ + " " + file_extension(post.file_url.toUpperCase());
+    this.container.down(".download-png-desc").setTextContent(png_desc);
+  }
 
   /* For links that are handled by click events, try to set the href so that copying the
    * link will give a similar effect.  For example, clicking parent-post will call set_post
@@ -488,7 +550,7 @@ BrowserView.prototype.set_post_info = function()
       tag_span.appendChild(span);
   });
 
-  var flag_post = this.container.down(".flag-post");
+  var flag_post = this.container.down(".flag-button");
   flag_post.show(post.status == "active");
 
   this.container.down(".post-approve").show(post.status == "flagged" || post.status == "pending");

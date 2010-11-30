@@ -19,7 +19,7 @@ DebugWindow.prototype.create_container = function()
   var div = document.createElement("DIV");
   div = $(div);
   div.className = "debug-box";
-  div.setStyle({position: "fixed", top: "0px", height: "25%", backgroundColor: "#000", fontSize: "50%"});
+  div.setStyle({position: "fixed", top: "0px", height: "25%", backgroundColor: "#000", fontSize: "100%"});
   document.body.appendChild(div);
   this.container = div;
 
@@ -87,5 +87,24 @@ DebugWindow.prototype.update = function()
 
   this.shown_debug = s;
   this.container.update(s);
+}
+
+/*
+ * Return a function, debug(), which logs to a debug window.  The actual debug
+ * handler is an attribute of the function.
+ *
+ * var debug = NewDebug();
+ * debug("text");
+ * debug.handler.add_hook();
+ *
+ * debug.log() is a temporary alias for debug() (which itself is an alias to debug.handler.log).
+ */
+NewDebug = function()
+{
+  var debug_handler = new DebugWindow();
+  var debug = debug_handler.log.bind(debug_handler);
+  debug.handler = debug_handler;
+  debug.log = debug;
+  return debug;
 }
 

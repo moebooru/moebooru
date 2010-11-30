@@ -117,12 +117,17 @@ class PostController < ApplicationController
               post.approve!(@current_user.id)
             elsif params[:commit] == "Delete"
               post.destroy_with_reason(params[:reason] || params[:reason2], @current_user)
+
+              # Include post data for the parent: deleted posts aren't counted as children, so
+              # their has_children attribute may change.
+              posts << post.get_parent if not post.parent_id.nil?
             end
             post.reload
             posts << post
           end
         end
       end
+      posts.uniq!
 
       api_data = Post.batch_api_data(posts, :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
 
@@ -791,7 +796,11 @@ class PostController < ApplicationController
   def undelete
     post = Post.find(params[:id])
     post.undelete!
-    respond_to_success("Post was undeleted", :action => "show", :id => params[:id])
+
+    affected_posts = [post]
+    affected_posts << post.get_parent if post.parent_id
+    api_data = Post.batch_api_data(affected_posts, :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
+    respond_to_success("Post was undeleted", {:action => "show", :id => params[:id]}, :api => api_data)
   end
   
   def error

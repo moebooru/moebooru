@@ -147,7 +147,23 @@ PostLoader.prototype.request_finished = function()
   document.fire("viewer:searched-tags-changed", { tags: result.tags });
 
   /* Tell the thumbnail viewer whether it should allow scrolling over the left side. */
-  var can_be_extended_further = new_post_ids.length > 0 && !result.extending && !result.pool;
+  var can_be_extended_further = true;
+
+  /* If we're reading from a pool, we requested a large block already. */
+  if(result.pool)
+    can_be_extended_further = false;
+
+  /* If we're already extending, don't extend further. */
+  if(result.extending)
+    can_be_extended_further = false;
+
+  /* If we received fewer results than we requested we're at the end of the results,
+   * so don't waste time requesting more. */
+  if(new_post_ids.length < result.post_limit)
+  {
+    debug.log("Received posts fewer than requested (" + new_post_ids.length + " < " + result.post_limit + "), clamping");
+    can_be_extended_further = false;
+  }
 
   document.fire("viewer:loaded-posts", {
     tags: result.tags, /* this will be null if no search was actually performed (eg. URL with a post-id and no tags) */

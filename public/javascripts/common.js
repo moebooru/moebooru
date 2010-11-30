@@ -44,7 +44,7 @@ function number_to_human_size(size, precision)
 function time_ago_in_words(from_time, to_time)
 {
   if(to_time == null)
-    to_time = Date.now();
+    to_time = new Date();
 
   var from_time = from_time.valueOf();
   var to_time = to_time.valueOf();

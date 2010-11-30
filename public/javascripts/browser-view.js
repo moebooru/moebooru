@@ -73,6 +73,10 @@ BrowserView = function(container)
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
 
+  /* Hide moderator controls for regular users (they won't work anyway): */
+  var is_moderator = User.get_current_user_level() >= 40 && false;
+  this.container.select(".moderator-only").each(function(elem) { elem.show(is_moderator); });
+
   var tag_span = this.container.down(".post-tags");
   tag_span.on("click", ".post-tag", function(e, element) {
     e.stop();
@@ -80,7 +84,6 @@ BrowserView = function(container)
     UrlHash.set({tags: tag});
   }.bindAsEventListener(this));
 
-  // XXX: mod ".moderator-only"
   this.container.down(".flagged-approve-post").on("click", function(e) {
     e.stop();
     var post_id = this.displayed_post_id;

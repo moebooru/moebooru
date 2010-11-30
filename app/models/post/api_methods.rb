@@ -67,4 +67,11 @@ module PostApiMethods
   def to_xml(options = {})
     return api_attributes.to_xml(options.reverse_merge(:root => "post"))
   end
+
+  def api_data
+    {
+      :post => self,
+      :tags => Tag.batch_get_tag_types([self]),
+    }
+  end
 end

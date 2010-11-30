@@ -145,14 +145,7 @@ class PostController < ApplicationController
       # @post due to after_save changes.
       @post.reload
 
-      if params[:format] == "json" || params[:format] == "xml" then
-        api_data = {
-          :post => @post,
-          :tags => Tag.batch_get_tag_types([@post]),
-        }
-      else
-        api_data = nil
-      end
+      api_data = @post.api_data if params[:format] == "json" || params[:format] == "xml"
       respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => api_data)
     else
       respond_to_error(@post, :action => "show", :id => params[:id])
@@ -554,7 +547,12 @@ class PostController < ApplicationController
     end
 
     post.flag!(params[:reason], @current_user.id)
-    respond_to_success("Post flagged", :action => "show", :id => params[:id])
+
+    # Reload the post to pull in post.flag_reason.
+    post.reload
+
+    api_data = post.api_data if params[:format] == "json" || params[:format] == "xml"
+    respond_to_success("Post flagged", {:action => "show", :id => params[:id]}, :api => api_data)
   end
   
   def random

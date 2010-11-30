@@ -32,15 +32,19 @@ class Post < ActiveRecord::Base
   include PostApiMethods
   include PostMirrorMethods
   
+  def destroy_with_reason(reason, current_user)
+    Post.transaction do
+      self.flag!(reason, current_user.id)
+      if self.flag_detail
+        self.flag_detail.update_attributes(:is_resolved => true)
+      end
+      self.delete
+    end
+  end
+
   def self.destroy_with_reason(id, reason, current_user)
     post = Post.find(id)
-    Post.transaction do
-      post.flag!(reason, current_user.id)
-      if post.flag_detail
-        post.flag_detail.update_attributes(:is_resolved => true)
-      end
-      post.delete
-    end
+    return post.destroy_with_reason(reason, current_user)
   end
 
   def delete

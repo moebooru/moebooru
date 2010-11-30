@@ -74,4 +74,19 @@ module PostApiMethods
       :tags => Tag.batch_get_tag_types([self]),
     }
   end
+
+  module ClassMethods
+    def batch_api_data(posts, options={})
+      result = { :posts => posts }
+      if options[:include_tags] then
+        result[:tags] = Tag.batch_get_tag_types(posts)
+      end
+
+      return result
+    end
+  end
+
+  def self.included(m)
+    m.extend(ClassMethods)
+  end
 end

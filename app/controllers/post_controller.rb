@@ -107,23 +107,29 @@ class PostController < ApplicationController
 
   def moderate
     if request.post?
+      posts = []
+
       Post.transaction do
         if params[:ids]
           params[:ids].keys.each do |post_id|
+            post = Post.find(post_id)
             if params[:commit] == "Approve"
-              post = Post.find(post_id)
               post.approve!(@current_user.id)
             elsif params[:commit] == "Delete"
-              Post.destroy_with_reason(post_id, params[:reason] || params[:reason2], @current_user)
+              post.destroy_with_reason(params[:reason] || params[:reason2], @current_user)
             end
+            post.reload
+            posts << post
           end
         end
       end
 
+      api_data = Post.batch_api_data(posts, :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
+
       if params[:commit] == "Approve"
-        respond_to_success("Post approved", {:action => "moderate"})
+        respond_to_success("Post approved", {:action => "moderate"}, :api => api_data)
       elsif params[:commit] == "Delete"
-        respond_to_success("Post deleted", {:action => "moderate"})
+        respond_to_success("Post deleted", {:action => "moderate"}, :api => api_data)
       end
     else
       if params[:query]
@@ -351,11 +357,8 @@ class PostController < ApplicationController
           return
         end
 
-        result = { :posts => @posts }
-        if params[:include_tags] then
-          result[:tags] = Tag.batch_get_tag_types(@posts)
-        end
-        render :json => result.to_json
+        api_data = Post.batch_api_data(@posts, :include_tags => params[:include_tags] == "1")
+        render :json => api_data.to_json
       }
     end
   end

@@ -81,7 +81,12 @@ PostLoader.prototype.server_load_posts = function()
   }
 
   new Ajax.Request("/post/index.json", {
-    parameters: { tags: search, filter: 1 },
+    parameters: {
+      tags: search,
+      api_version: 2,
+      filter: 1,
+      include_tags: true
+    },
     method: "get",
 
     onCreate: function(resp) {
@@ -97,9 +102,10 @@ PostLoader.prototype.server_load_posts = function()
       if(this.current_ajax_requests.indexOf(resp.request) == -1)
         return;
     
-      var posts = resp.responseJSON;
+      var posts = resp.responseJSON.posts;
       this.result.posts = posts;
 
+      Post.register_tags(resp.responseJSON.tags);
       for(var i = 0; i < posts.length; ++i)
         Post.register(posts[i]);
 

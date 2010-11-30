@@ -191,7 +191,12 @@ BrowserView.prototype.load_post_id_data = function(post_id)
     return;
 
   new Ajax.Request("/post/index.json", {
-    parameters: { tags: "id:" + post_id, filter: 1 },
+    parameters: {
+      tags: "id:" + post_id,
+      api_version: 2,
+      filter: 1,
+      include_tags: true
+    },
     method: "get",
 
     onCreate: function(resp) {
@@ -204,13 +209,15 @@ BrowserView.prototype.load_post_id_data = function(post_id)
 
       /* If no posts were returned, then the post ID we're looking up doesn't exist;
        * treat this as a failure. */
-      var posts = resp.responseJSON;
+      var posts = resp.responseJSON.posts;
       this.success = posts.length > 0;
       if(!this.success)
       {
         debug.log("requested post " + post_id + " doesn't exist");
         return;
       }
+
+      Post.register_tags(resp.responseJSON.tags);
 
       var post = posts[0];
       Post.register(post);

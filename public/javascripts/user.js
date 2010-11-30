@@ -584,12 +584,27 @@ User = {
     });
   },
 
+  get_current_user_info: function()
+  {
+    var user_info = Cookie.get("user_info");
+    if(!user_info)
+      return null;
+    return user_info.split(";");
+  },
   get_current_user_id: function()
   {
-    var user_id = Cookie.get("user_id");
-    if(!user_id || user_id == "")
+    var user_info = User.get_current_user_info();
+    if(!user_info)
       return 0;
-    return parseInt(user_id);
+    return parseInt(user_info[0]);
+  },
+
+  get_current_user_level: function()
+  {
+    var user_info = User.get_current_user_info();
+    if(!user_info)
+      return 0;
+    return parseInt(user_info[1]);
   }
 }
 

@@ -114,6 +114,7 @@ class UserController < ApplicationController
       end
 
       ret[:pass_hash] = user.password_hash
+      ret[:user_info] = user.user_info_cookie
       respond_to_success("Successful", {}, :api => {:response => "success"}.merge(ret))
     end
   end
@@ -132,6 +133,7 @@ class UserController < ApplicationController
       ret[:name] = user.name
       ret[:id] = user.id
       ret[:pass_hash] = user.password_hash
+      ret[:user_info] = user.user_info_cookie
 
       respond_to_success("New account created", {:action => "home"}, :api => {:response => "success"}.merge(ret))
     else

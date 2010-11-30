@@ -330,7 +330,7 @@ class ApplicationController < ActionController::Base
     unless @current_user.is_anonymous?
       cookies["user_id"] = @current_user.id.to_s
 
-      cookies["user_info"] = [@current_user.id, @current_user.level].join(";");
+      cookies["user_info"] = @current_user.user_info_cookie
 
       if @current_user.has_mail?
         cookies["has_mail"] = "1"

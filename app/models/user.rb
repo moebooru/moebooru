@@ -178,6 +178,10 @@ class User < ActiveRecord::Base
     def to_json(*args)
       {:name => name, :blacklisted_tags => blacklisted_tags_array, :id => id}.to_json(*args)
     end
+
+    def user_info_cookie
+      [id, level].join(";");
+    end
   end
 
   def self.find_by_name_nocase(name)

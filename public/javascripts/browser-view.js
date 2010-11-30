@@ -348,7 +348,14 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   this.img = $(document.createElement("IMG"));
   this.img.className = "main-image";
-  this.img.src = post.sample_url;
+  if(post.sample_url != null)
+    this.img.src = post.sample_url;
+  else
+  {
+    /* Having no sample URL is an edge case, usually from deleted posts.  Keep the number
+     * of code paths smaller by creating the IMG anyway, but not showing it. */
+    this.img.hide();
+  }
   this.img.original_width = post.sample_width;
   this.img.original_height = post.sample_height;
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));

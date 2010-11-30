@@ -559,7 +559,7 @@ class PostController < ApplicationController
     # Reload the post to pull in post.flag_reason.
     post.reload
 
-    api_data = post.api_data if params[:format] == "json" || params[:format] == "xml"
+    api_data = Post.batch_api_data([post], :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
     respond_to_success("Post flagged", {:action => "show", :id => params[:id]}, :api => api_data)
   end
   

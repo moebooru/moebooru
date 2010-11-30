@@ -21,31 +21,58 @@ Post = {
 		$("edit-form").action = old_action
 	},
 
-  approve: function(post_id) {
+  make_request: function(path, params, finished)
+  {
+    return new Ajax.Request(path, {
+      parameters: params,
+      
+      onFailure: function(req) {
+        var resp = req.responseJSON;
+	notice("Error: " + resp.reason);
+      },
+
+      onSuccess: function(resp) {
+        var resp = resp.responseJSON
+        Post.register_posts(resp.posts);
+        Post.register_tags(resp.tags);
+        if(finished)
+          finished();
+      }
+    });
+  },
+
+  /* If delete_reason is a string, delete the post with the given reason.  If delete_reason
+   * is null, approve the post.  (XXX: rename to Post.moderate) */
+  approve: function(post_id, delete_reason, finished) {
     notice("Approving post #" + post_id)
     var params = {}
     params["ids[" + post_id + "]"] = "1"
-    params["commit"] = "Approve"
-    
-    new Ajax.Request("/post/moderate.json", {
-      parameters: params,
-      
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-        
-        if (resp.success) {
-          notice("Post approved")
-          if ($("p" + post_id)) {
-            $("p" + post_id).removeClassName("pending")
-          }
-          if ($("pending-notice")) {
-            $("pending-notice").hide()
-          }
-        } else {
-          notice("Error: " + resp.reason)
+    params["commit"] = delete_reason? "Delete":"Approve"
+    if(delete_reason)
+      params["reason"] = delete_reason
+
+    var completion = function()
+    {
+      notice(delete_reason? "Post deleted":"Post approved");
+      if(finished)
+        finished(post_id);
+      else
+      {
+        if ($("p" + post_id)) {
+          $("p" + post_id).removeClassName("pending")
+        }
+        if ($("pending-notice")) {
+          $("pending-notice").hide()
         }
       }
-    })
+    }
+
+    return Post.make_request("/post/moderate.json", params, completion);
+  },
+
+  undelete: function(post_id, finished)
+  {
+    return Post.make_request("/post/undelete.json", {id: post_id}, finished);
   },
 
   applied_list: [],
@@ -419,7 +446,7 @@ Post = {
       onSuccess: function(req) {
         notice("Post was flagged for deletion")
         var resp = req.responseJSON;
-        Post.register(resp.post)
+        Post.register_posts(resp.posts);
         Post.register_tags(resp.tags);
         if(finished)
           finished(id);
@@ -475,6 +502,10 @@ Post = {
     post.match_tags.push("status:" + post.status)
 
     this.posts.set(post.id, post)
+  },
+
+  register_posts: function(posts) {
+    posts.each(function(post) { Post.register(post); });
   },
 
   unregister_all: function() {

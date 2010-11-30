@@ -1,5 +1,6 @@
 Post = {
   posts: new Hash(),
+  tag_types: new Hash(),
 
 	find_similar: function() {
 		var old_source_name = $("post_source").name
@@ -143,6 +144,7 @@ Post = {
 
           // Update the stored post.
           Post.register(resp.post)
+          Post.register_tags(resp.tags);
 
           Post.update_styles(resp.post);
 
@@ -430,40 +432,52 @@ Post = {
     })
   },
 
+  /* 
+   * Group tags by type. 
+   *
+   * Post.get_post_tags_by_type(post)
+   * -> {general: ["tagme"], faults: ["fixme", "crease"]}
+   */
+  get_post_tags_by_type: function(post)
+  {
+    var results = new Hash;
+
+    post.tags.each(function(tag)
+    {
+      var tag_type = Post.tag_types.get(tag);
+
+      /* We can end up not knowing a tag's type due to tag script editing giving us
+       * tags we weren't told the type of. */
+      if(!tag_type)
+        tag_type = "general";
+      var list = results.get(tag_type);
+      if(!list)
+      {
+        list = [];
+        results.set(tag_type, list);
+      }
+      list.push(tag);
+    });
+
+    return results;
+  },
+
   register: function(post) {
     post.tags = post.tags.match(/\S+/g) || []
     post.match_tags = post.tags.clone()
     post.match_tags.push("rating:" + post.rating.charAt(0))
     post.match_tags.push("status:" + post.status)
 
-    if(Post.post_tags)
-    {
-      /* Group tags by type. */
-      post.tags_by_type = new Hash;
-
-      post.tags.each(function(tag)
-      {
-        var tag_type = Post.post_tags[tag];
-
-	/* We can end up not knowing a tag's type due to tag script editing giving us
-	 * tags we weren't told the type of. */
-	if(!tag_type)
-          tag_type = "general";
-        var list = post.tags_by_type.get(tag_type);
-        if(!list)
-        {
-          list = [];
-          post.tags_by_type.set(tag_type, list);
-        }
-        list.push(tag);
-      });
-    };
-
     this.posts.set(post.id, post)
   },
 
   unregister_all: function() {
     this.posts = new Hash();
+  },
+
+  /* Post.register_tags({tagme: "general"}); */
+  register_tags: function(tags) {
+    this.tag_types.update(tags);
   },
 
   blacklists: [],
@@ -1046,7 +1060,8 @@ Post = {
     hover.select("#hover-tags SPAN A").each(function(elem) {
       elem.innerHTML = "";
     });
-    post.tags_by_type.each(function(key) {
+    var tags_by_type = Post.get_post_tags_by_type(post);
+    tags_by_type.each(function(key) {
       var elem = $("hover-tag-" + key[0]);
       var list = []
       key[1].each(function(tag) { list.push(tag); });

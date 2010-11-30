@@ -443,6 +443,7 @@ PostQuickEdit.prototype.submit_event = function(e)
       notice("Post updated");
       this.hide();
       Post.register(resp.post);
+      Post.register_tags(resp.tags);
     }.bindAsEventListener(this),
     onFailure: function(resp) {
       var resp = resp.responseJSON;

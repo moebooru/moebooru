@@ -109,7 +109,8 @@ module PostStatusMethods
   end
   
   def undelete!
-    execute_sql("UPDATE posts SET status = ? WHERE id = ?", "active", id)
+    self.status = 'active'
+    self.save!
     Post.update_has_children(parent_id) if parent_id
   end
 end

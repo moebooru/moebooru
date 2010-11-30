@@ -754,6 +754,7 @@ ThumbnailView.prototype.set_thumb_dimensions = function(post, li)
    * config_changed. */
   var block_size = [Math.min(width, 200 * this.config.thumb_scale), 200 * this.config.thumb_scale];
   var crop_left = Math.round((width - block_size[0]) / 2);
+  var pad_top = Math.max(0, block_size[1] - height);
 
   var inner = li.down(".inner");
   inner.actual_width = block_size[0];
@@ -763,7 +764,7 @@ ThumbnailView.prototype.set_thumb_dimensions = function(post, li)
   var img = inner.down("img");
   img.width = width;
   img.height = height;
-  img.setStyle({marginLeft: -crop_left + "px"});
+  img.setStyle({marginTop: pad_top + "px", marginLeft: -crop_left + "px"});
 }
 
 ThumbnailView.prototype.config_changed = function()

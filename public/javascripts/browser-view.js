@@ -74,7 +74,7 @@ BrowserView = function(container)
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
 
   /* Hide moderator controls for regular users (they won't work anyway): */
-  var is_moderator = User.get_current_user_level() >= 40;
+  var is_moderator = User.user_is_moderator();
   this.container.select(".moderator-only").each(function(elem) { elem.show(is_moderator); });
 
   var tag_span = this.container.down(".post-tags");
@@ -346,7 +346,7 @@ BrowserView.prototype.set_post_content = function(post_id)
       this.image_dragger.destroy();
   }
 
-  this.img = document.createElement("IMG");
+  this.img = $(document.createElement("IMG"));
   this.img.className = "main-image";
   this.img.src = post.sample_url;
   this.img.original_width = post.sample_width;
@@ -389,7 +389,8 @@ BrowserView.prototype.set_post_info = function()
 
   this.container.down(".post-id").setTextContent(post.id);
   this.container.down(".posted-by").show(post.creator_id != null);
-  this.container.down(".posted-at").setTextContent(time_ago_in_words(new Date(post.created_at)));
+  this.container.down(".posted-at").setTextContent(time_ago_in_words(new Date(post.created_at*1000)));
+
   if(post.creator_id != null)
   {
     this.container.down(".posted-by").down("A").href = "/user/show/" + post.creator_id;
@@ -462,14 +463,15 @@ BrowserView.prototype.set_post_info = function()
   tags_by_type.each(function(t) {
       var type = t[0];
       var tags = t[1];
-      var span = document.createElement("SPAN", "");
+      var span = $(document.createElement("SPAN", ""));
+      span = $(span);
       span.className = "tag-type-" + type;
 
       tags.each(function(tag) {
         var space = document.createTextNode(" ");
         span.appendChild(space);
 
-        var a = document.createElement("A", "");
+        var a = $(document.createElement("A", ""));
         a.href = "/post/browse#/" + tag;
         a.tag_name = tag;
         a.className = "post-tag tag-type-" + type;
@@ -517,10 +519,8 @@ BrowserView.prototype.set_post_info = function()
   }
 
   this.container.down(".status-held").show(post.is_held);
-  // XXX: or mod
-  var has_permission = User.get_current_user_id() == post.creator_id;
+  var has_permission = User.get_current_user_id() == post.creator_id || User.user_is_moderator();
   this.container.down(".activate-post").show(has_permission);
-
 }
 
 BrowserView.prototype.window_resize_event = function()

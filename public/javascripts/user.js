@@ -605,6 +605,11 @@ User = {
     if(!user_info)
       return 0;
     return parseInt(user_info[1]);
+  },
+
+  user_is_moderator: function()
+  {
+    return User.get_current_user_level() >= 40;
   }
 }
 

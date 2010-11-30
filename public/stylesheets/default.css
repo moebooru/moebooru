@@ -494,7 +494,7 @@ ul.link-page > li {
   list-style-type: none;
 }
 
-.tag-type-artist > a, #history .tag-type-artist {
+.tag-type-artist > a, #history .tag-type-artist, .color-tag-types .tag-type-artist {
   color: #cccc00;
 }
 
@@ -502,7 +502,7 @@ ul.link-page > li {
   color: #33CFFF;
 }
 
-.tag-type-faults > a, #history .tag-type-faults {
+.tag-type-faults > a, #history .tag-type-faults, .color-tag-types .tag-type-faults {
   color: #FF2020;
 }
 
@@ -510,7 +510,7 @@ ul.link-page > li {
   color: #33CFFF;
 }
 
-.tag-type-circle > a, #history .tag-type-circle {
+.tag-type-circle > a, #history .tag-type-circle, .color-tag-types .tag-type-circle {
   color: #0bb;
 }
 
@@ -518,7 +518,7 @@ ul.link-page > li {
   color: #33CFFF;
 }
 
-.tag-type-character > a, #history .tag-type-character {
+.tag-type-character > a, #history .tag-type-character, .color-tag-types .tag-type-character {
   color: #0A0;
 }
 
@@ -526,7 +526,7 @@ ul.link-page > li {
   color: #33CFFF;
 }
 
-.tag-type-copyright > a, #history .tag-type-copyright {
+.tag-type-copyright > a, #history .tag-type-copyright, .color-tag-types .tag-type-copyright {
   color: #D0D;
 }
 

@@ -102,10 +102,11 @@ User = {
     });
   },
 
-  set_login: function(username, pass_hash)
+  set_login: function(username, pass_hash, user_info)
   {
     Cookie.put("login", username)
     Cookie.put("pass_hash", pass_hash)
+    Cookie.put("user_info", user_info)
   },
 
   check_name_timer: null,
@@ -494,7 +495,7 @@ User = {
           User.create(username, password, null, function(resp) {
             if(resp.response == "success")
             {
-              User.set_login(resp.name, resp.pass_hash);
+              User.set_login(resp.name, resp.pass_hash, resp.user_info);
               User.close(true);
             }
             else if(resp.response == "error")
@@ -521,7 +522,7 @@ User = {
           notice("Incorrect password");
           return;
         }
-        User.set_login(resp.name, resp.pass_hash);
+        User.set_login(resp.name, resp.pass_hash, resp.user_info);
         User.close(true);
       });
     }

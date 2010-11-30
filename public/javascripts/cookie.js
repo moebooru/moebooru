@@ -7,7 +7,7 @@ Cookie = {
     var date = new Date()
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000))
     var expires = "; expires=" + date.toGMTString()
-    document.cookie = name + "=" + value + expires + "; path=/"
+    document.cookie = name + "=" + window.encodeURIComponent(value) + expires + "; path=/"
   },
 
   raw_get: function(name) {

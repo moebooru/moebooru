@@ -144,7 +144,16 @@ class PostController < ApplicationController
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
       @post.reload
-      respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:post => @post})
+
+      if params[:format] == "json" || params[:format] == "xml" then
+        api_data = {
+          :post => @post,
+          :tags => Tag.batch_get_tag_types([@post]),
+        }
+      else
+        api_data = nil
+      end
+      respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => api_data)
     else
       respond_to_error(@post, :action => "show", :id => params[:id])
     end

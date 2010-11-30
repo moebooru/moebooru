@@ -43,20 +43,36 @@ module TagTypeMethods
         post_tags.merge(post.cached_tags.split.map { |p| "tag_type:#{p}"} )
       }
 
-      # Run the query.
+      # Memcache is dropping our connection if we make too make requests at once.  Request
+      # tag types max_tags_per_query at a time.
+      results = {}
+      got_keys = Set.new
+      tags_to_query = post_tags.to_a
+      max_tags_per_query = 1000
+      start_at = 0
       begin
-        tag_types = CACHE.get_multi(post_tags.to_a)
+        while start_at < tags_to_query.length do
+          tag_types = CACHE.get_multi(tags_to_query.slice(start_at, max_tags_per_query))
+          start_at += max_tags_per_query
+
+          # Strip off "tag_type:" from the result keys.
+          tag_types.each { |key, value| results[key[9..-1]] = value }
+
+          # Find which keys we didn't get from cache and fill them in.  This will also
+          # populate the cache.
+          got_keys.merge(tag_types.keys)
+        end
       rescue MemCache::MemCacheError
         tag_types = {}
+      rescue NameError => e
+        # get_multi in activesupport-2.2.2 has a bug in exception handling; it tries to
+        # access "server" out of scope, causing it to raise NameError.  This happens if
+        # the above EPIPE error triggers.  If this happens despite running smaller queries,
+        # log it and reste the memcache connection.
+        logger.warn("Unexpected MemCache error: #{e}")
+        CACHE.reset
+        tag_types = {}
       end
-
-      # Strip off "tag_type:" from the result keys.
-      results = {}
-      tag_types.each { |key, value| results[key[9..-1]] = value }
-
-      # Find which keys we didn't get from cache and fill them in.  This will also
-      # populate the cache.
-      got_keys = Set.new(tag_types.keys)
 
       needed_keys = post_tags - got_keys
       needed_keys.each { |key|

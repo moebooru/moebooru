@@ -85,7 +85,7 @@ PostLoader.prototype.server_load_posts = function()
       tags: search,
       api_version: 2,
       filter: 1,
-      include_tags: true
+      include_tags: 1
     },
     method: "get",
 

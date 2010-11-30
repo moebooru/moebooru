@@ -323,6 +323,11 @@ class PostController < ApplicationController
       @preload = @preload.delete_if { |post| not post.can_be_seen_by?(@current_user) }
     end
 
+    if from_api and params[:api_version] == "2" and params[:format] != "json" then
+      respond_to_error("V2 API is JSON-only", {}, :status => 424)
+      return
+    end
+
     @posts.replace(results)
 
     respond_to do |fmt|
@@ -338,7 +343,18 @@ class PostController < ApplicationController
       fmt.xml do
         render :layout => false
       end
-      fmt.json {render :json => @posts.to_json}
+      fmt.json {
+        if params[:api_version] != "2" then
+          render :json => @posts.to_json
+          return
+        end
+
+        result = { :posts => @posts }
+        if params[:include_tags] then
+          result[:tags] = Tag.batch_get_tag_types(@posts)
+        end
+        render :json => result.to_json
+      }
     end
   end
 

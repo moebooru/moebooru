@@ -443,11 +443,11 @@ PostQuickEdit.prototype.submit_event = function(e)
       notice("Post updated");
       this.hide();
       Post.register(resp.post);
-    },
+    }.bindAsEventListener(this),
     onFailure: function(resp) {
       var resp = resp.responseJSON;
       notice("Error: " + resp.reason);
-    }
+    }.bindAsEventListener(this)
   });
 }
 

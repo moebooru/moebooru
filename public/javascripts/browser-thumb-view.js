@@ -24,8 +24,8 @@ ThumbnailView = function(container, view)
   /* The [first, end) range of posts that are currently inside .post-browser-posts. */
   this.posts_populated = [0, 0];
 
-  this.container.on("DOMMouseScroll", this.container_mouse_wheel_event.bindAsEventListener(this));
-  this.container.on("mousewheel", this.container_mouse_wheel_event.bindAsEventListener(this));
+  document.on("DOMMouseScroll", this.document_mouse_wheel_event.bindAsEventListener(this));
+  document.on("mousewheel", this.document_mouse_wheel_event.bindAsEventListener(this));
 
   document.on("viewer:displayed-image-loaded", this.displayed_image_loaded_event.bindAsEventListener(this));
   document.on("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
@@ -247,7 +247,7 @@ ThumbnailView.prototype.container_mousemove_event = function(e)
   this.last_mouse_y = y;
 }
 
-ThumbnailView.prototype.container_mouse_wheel_event = function(event)
+ThumbnailView.prototype.document_mouse_wheel_event = function(event)
 {
   event.stop();
 
@@ -259,7 +259,10 @@ ThumbnailView.prototype.container_mouse_wheel_event = function(event)
     val = -event.detail;
   }
 
-  document.fire("viewer:scroll", { left: val >= 0 });
+  if(this.thumb_container_shown)
+    document.fire("viewer:scroll", { left: val >= 0 });
+  else
+    document.fire("viewer:show-next-post", { prev: val >= 0 });
 }
 
 ThumbnailView.prototype.set_active_post = function(post_id, lazy)
@@ -908,8 +911,6 @@ function InputHandler()
    */
   var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
   document.on(keypress_event_name, this.document_keypress_event.bindAsEventListener(this));
-  document.on("DOMMouseScroll", this.document_mouse_wheel_event.bindAsEventListener(this));
-  document.on("mousewheel", this.document_mouse_wheel_event.bindAsEventListener(this));
 }
 
 InputHandler.prototype.document_focus_event = function(e)
@@ -987,20 +988,4 @@ InputHandler.prototype.document_keypress_event = function(e)
   if(this.handle_keypress(e))
     e.stop();
 }
-
-InputHandler.prototype.document_mouse_wheel_event = function(event)
-{
-  event.stop();
-
-  var val;
-  if(event.wheelDelta)
-  {
-    val = event.wheelDelta;
-  } else if (event.detail) {
-    val = -event.detail;
-  }
-
-  document.fire("viewer:show-next-post", { prev: val >= 0 });
-}
-
 

@@ -538,7 +538,7 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
 DragElement.prototype.destroy = function()
 {
   this.stop_dragging();
-  this.handlers.each(function(h) { debug.log(h); h.stop(); });
+  this.handlers.each(function(h) { h.stop(); });
   this.handlers = [];
 }
 

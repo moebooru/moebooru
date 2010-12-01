@@ -71,7 +71,7 @@ AndroidDetectWindowSize.required = function()
  * listeners.  This is used after we've completed processing. */
 AndroidDetectWindowSize.prototype.dispatch_resize_event = function()
 {
-  debug.log("dispatch");
+  debug("dispatch");
   var e = document.createEvent("Event");
   e.from_window_size_detection = true;
   e.initEvent("resize", true, true);
@@ -86,11 +86,11 @@ AndroidDetectWindowSize.prototype.begin = function()
   var initial_window_size = this.current_window_size();
   if(this.window_size && initial_window_size[0] == this.window_size[0] && initial_window_size[1] == this.window_size[1])
   {
-    debug.log("skipped");
+    debug("skipped");
     return;
   }
 
-  debug.log("begin");
+  debug("begin");
   document.body.setStyle({overflow: "auto"});
   this.window_size = initial_window_size;
   this.padding.show();
@@ -124,7 +124,7 @@ AndroidDetectWindowSize.prototype.finish = function()
 {
   if(!this.active)
     return;
-  debug.log("finish()");
+  debug("finish()");
   this.end();
 
   this.window_size[0] = Math.max(this.window_size[0], window.innerWidth);
@@ -135,7 +135,7 @@ AndroidDetectWindowSize.prototype.finish = function()
   var is_landscape = window.innerWidth > window.innerHeight;
   if(was_landscape != is_landscape)
   {
-    debug.log("restart: orientation changed");
+    debug("restart: orientation changed");
     this.end();
     this.begin();
     return;
@@ -143,7 +143,7 @@ AndroidDetectWindowSize.prototype.finish = function()
 
   // We need to fudge the height up a pixel, or in many cases we'll end up with a white line
   // at the bottom of the screen.  This seems to be sub-pixel rounding error.
-  debug.log("new window size: " + this.window_size[0] + "x" + this.window_size[1]);
+  debug("new window size: " + this.window_size[0] + "x" + this.window_size[1]);
   document.body.setStyle({width: this.window_size[0] + "px", height: (this.window_size[1]+1) + "px"});
 
   this.dispatch_resize_event();
@@ -154,17 +154,17 @@ AndroidDetectWindowSize.prototype.event_onresize = function(e)
   /* Ignore events that we generated ourselves after completion. */
   if(e.from_window_size_detection)
   {
-    debug.log("ignored");
+    debug("ignored");
     return;
   }
 
-  debug.log("stopping resize event");
+  debug("stopping resize event");
   e.stopPropagation();
 
   /* A resize event starts a new detection cycle, if we're not already in one. */
   if(!this.active)
   {
-    debug.log("resize");
+    debug("resize");
     this.begin();
   }
 }

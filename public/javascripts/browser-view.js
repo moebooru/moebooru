@@ -218,12 +218,12 @@ BrowserView.prototype.preload = function(post_ids)
   this.last_preload_request = post_ids;
   if(last_preload_request.indexOf(this.wanted_post_id) == -1)
   {
-    debug.log("skipped-preload(" + post_ids.join(",") + ")");
+    debug("skipped-preload(" + post_ids.join(",") + ")");
     this.last_preload_request_active = false;
     return;
   }
   this.last_preload_request_active = true;
-  debug.log("preload(" + post_ids.join(",") + ")");
+  debug("preload(" + post_ids.join(",") + ")");
   
   var new_preload_container = new PreloadContainer();
   for(var i = 0; i < post_ids.length; ++i)
@@ -245,7 +245,7 @@ BrowserView.prototype.preload = function(post_ids)
 
 BrowserView.prototype.load_post_id_data = function(post_id)
 {
-  debug.log("load needed");
+  debug("load needed");
 
   // If we already have a request in flight, don't start another; wait for the
   // first to finish.
@@ -275,7 +275,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
       this.success = posts.length > 0;
       if(!this.success)
       {
-        debug.log("requested post " + post_id + " doesn't exist");
+        debug("requested post " + post_id + " doesn't exist");
         return;
       }
 
@@ -610,7 +610,7 @@ BrowserView.prototype.set_post_info = function()
 
 BrowserView.prototype.window_resize_event = function()
 {
-  debug.log("view resize");
+  debug("view resize");
   this.scale_and_position_image(true);
 }
 
@@ -644,7 +644,7 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
   var post = Post.posts.get(this.displayed_post_id);
   if(!post)
   {
-    debug.log("unexpected: displayed post " + this.displayed_post_id + " unknown");
+    debug("unexpected: displayed post " + this.displayed_post_id + " unknown");
     return;
   }
 
@@ -713,7 +713,7 @@ BrowserView.prototype.lazily_load = function(post_id)
   var is_cached = this.last_preload_request_active && this.last_preload_request.indexOf(post_id) != -1;
 
   var ms = is_cached? 50:500;
-  debug.log("post:" + post_id + ":" + is_cached + ":" + ms);
+  debug("post:" + post_id + ":" + is_cached + ":" + ms);
 
   /* Once lazily_load is called with a new post, we should consistently stay on the current
    * post or change to the new post.  We shouldn't change to a post that was previously

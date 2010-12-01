@@ -96,15 +96,12 @@ DebugWindow.prototype.update = function()
  * var debug = NewDebug();
  * debug("text");
  * debug.handler.add_hook();
- *
- * debug.log() is a temporary alias for debug() (which itself is an alias to debug.handler.log).
  */
 NewDebug = function()
 {
   var debug_handler = new DebugWindow();
   var debug = debug_handler.log.bind(debug_handler);
   debug.handler = debug_handler;
-  debug.log = debug;
   return debug;
 }
 

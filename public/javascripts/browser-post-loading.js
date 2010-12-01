@@ -161,7 +161,7 @@ PostLoader.prototype.request_finished = function()
    * so don't waste time requesting more. */
   if(new_post_ids.length < result.post_limit)
   {
-    debug.log("Received posts fewer than requested (" + new_post_ids.length + " < " + result.post_limit + "), clamping");
+    debug("Received posts fewer than requested (" + new_post_ids.length + " < " + result.post_limit + "), clamping");
     can_be_extended_further = false;
   }
 
@@ -187,7 +187,7 @@ PostLoader.prototype.load = function(extending, disable_cache)
     return;
   }
 
-  debug.log("PostLoader.load(" + extending + ", " + disable_cache + ")");
+  debug("PostLoader.load(" + extending + ", " + disable_cache + ")");
 
   this.loaded_extended_results = extending;
 

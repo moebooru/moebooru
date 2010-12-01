@@ -89,20 +89,20 @@ ThumbnailView = function(container, view)
      * so these numbers aren't actually real pixels, and this scales based on the DPI
      * and size of the screen rather than the pixel count. */
     this.config.thumb_scale = scale(width, 320, 640, 0.5, 1.0);
-    debug.log("Unclamped thumb scale: " + this.config.thumb_scale);
+    debug("Unclamped thumb scale: " + this.config.thumb_scale);
 
     /* Clamp to [0.5,1.0]. */
     this.config.thumb_scale = Math.min(this.config.thumb_scale, 1.0);
     this.config.thumb_scale = Math.max(this.config.thumb_scale, 0.5);
 
-    debug.log(window.innerWidth + "x" + window.innerHeight);
+    debug(window.innerWidth + "x" + window.innerHeight);
   }
   else
   {
     /* Unknown device, or not a mobile device. */
     this.config.thumb_scale = 1.0;
   }
-  debug.log("Thumb scale: " + this.config.thumb_scale);
+  debug("Thumb scale: " + this.config.thumb_scale);
 
   this.config_changed();
 
@@ -153,7 +153,7 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
         break;
       }
     }
-    debug.log("center-on-" + initial_post_id);
+    debug("center-on-" + initial_post_id);
 
     /* If we didn't find anything that matched, go back to the start. */
     if(initial_post_id == null)
@@ -176,7 +176,7 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
     this.centered_post_offset = 0;
     this.center_on_post_for_scroll(initial_post_idx);
 
-    debug.log("Search completed; displaying post " + initial_post_id);
+    debug("Search completed; displaying post " + initial_post_id);
     this.set_active_post(initial_post_id);
   }
 
@@ -216,7 +216,7 @@ ThumbnailView.prototype.hashchange_post_id = function()
    * changing the hash. */
   if(new_post_id == this.view.displayed_post_id)
   {
-//    debug.log("ignored-hashchange");
+//    debug("ignored-hashchange");
     return;
   }
 
@@ -508,7 +508,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
 {
   if(!this.post_ids)
   {
-    debug.log("unexpected: center_on_post has no post_ids");
+    debug("unexpected: center_on_post has no post_ids");
     return;
   }
 
@@ -788,7 +788,6 @@ ThumbnailView.prototype.config_changed = function()
   for(var post_idx = this.posts_populated[0]; post_idx != this.posts_populated[1]; ++post_idx)
   {
     var post_id = this.post_ids[post_idx];
-    debug.log(post_idx + ", " + post_id);
     var post = Post.posts.get(post_id);
     var li = $("p" + post_id);
     this.set_thumb_dimensions(post, li);
@@ -943,7 +942,7 @@ InputHandler.prototype.handle_keypress = function(e)
 
   if(key == 63) // ?, f
   {
-    debug.log("xxx");
+    debug("xxx");
     document.fire("viewer:show-help");
     return true;
   }

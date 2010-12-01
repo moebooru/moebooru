@@ -40,19 +40,13 @@ BrowserView = function(container)
   this.last_preload_request = [];
   this.last_preload_request_active = false;
 
-  /* True if the post UI is visible.  The viewer:set-post-ui event changes this. */
+  /* True if the post UI is visible. */
   this.post_ui_visible = true;
-
-  /* Disable the post UI by default on touchscreens; we don't have an interface
-   * to toggle it. */
-  if(Prototype.BrowserFeatures.Touchscreen)
-    this.post_ui_visible = false;
 
   debug.handler.add_hook(this.get_debug.bind(this));
 
   Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
 
-  document.on("viewer:set-post-ui", this.set_post_ui_event.bindAsEventListener(this));
   document.on("viewer:vote", function(event) { Post.vote($("vote-container"), event.memo.score); });
 
   /* Double-clicking the main image toggles the thumb bar. */
@@ -64,12 +58,12 @@ BrowserView = function(container)
       return;
 
     event.stop();
-    document.fire("viewer:toggle-thumb-bar");
+    document.fire("viewer:set-thumb-bar", {toggle: true});
   }.bindAsEventListener(this));
 
   /* Image controls: */
   document.on("viewer:view-large-toggle", function(e) { this.toggle_view_large_image(); }.bindAsEventListener(this));
-  this.container.down(".post-info").on("click", ".zoom-icon-in,.zoom-icon-out,.post-dimensions", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
+  this.container.down(".post-info").on("click", ".toggle-zoom", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
 
@@ -77,15 +71,17 @@ BrowserView = function(container)
    * visible on the bottom of the screen, to tell us how much space is covered up
    * by it. */
   this.thumb_bar_height = 0;
-  document.on("viewer:thumb-bar-height", function(e) {
+  document.on("viewer:thumb-bar-changed", function(e) {
     /* Update the thumb bar height and rescale the image to fit the new area. */
     this.thumb_bar_height = e.memo.height;
+
+    this.set_post_ui(e.memo.shown);
     this.scale_and_position_image(true);
   }.bindAsEventListener(this));
 
   /* Hide member-only and moderator-only controls: */
-  document.body.pickClassName("is-member", "not-member", User.is_member_or_higher());
-  document.body.pickClassName("is-moderator", "not-moderator", User.is_mod_or_higher());
+  $(document.body).pickClassName("is-member", "not-member", User.is_member_or_higher());
+  $(document.body).pickClassName("is-moderator", "not-moderator", User.is_mod_or_higher());
 
   var tag_span = this.container.down(".post-tags");
   tag_span.on("click", ".post-tag", function(e, element) {
@@ -184,23 +180,17 @@ BrowserView = function(container)
   this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
 }
 
-/*
- * viewer:set-post-ui
- * { toggle: true } or
- * { set: boolean }
- */
-BrowserView.prototype.set_post_ui_event = function(event)
+BrowserView.prototype.set_post_ui = function(visible)
 {
-  var new_value = this.post_ui_visible;
-  if(event.memo.toggle)
-    new_value = !this.post_ui_visible;
-  else
-    new_value = event.memo.set;
-  if(new_value == this.post_ui_visible)
+  /* Disable the post UI by default on touchscreens; we don't have an interface
+   * to toggle it. */
+  if(Prototype.BrowserFeatures.Touchscreen)
+    visible = false;
+
+  if(visible == this.post_ui_visible)
     return;
 
-  this.post_ui_visible = new_value;
-
+  this.post_ui_visible = visible;
   this.container.down(".post-info").show(this.post_ui_visible && this.displayed_post_id);
 }
 
@@ -306,7 +296,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
         /* As a special case, if the post we requested doesn't exist and we aren't displaying
          * anything at all, force the thumb bar open so we don't show nothing at all. */
         if(this.displayed_post_id == null)
-          document.fire("viewer:force-thumb-bar");
+          document.fire("viewer:set-thumb-bar", {set: true});
 
         return;
       }
@@ -338,29 +328,8 @@ BrowserView.prototype.set_viewing_larger_version = function(b)
     this.image_dragger.set_disabled(!b);
 }
 
-/* Display post_id. */
-BrowserView.prototype.set_post_content = function(post_id)
+BrowserView.prototype.set_main_image = function(post)
 {
-  if(post_id == this.displayed_post_id)
-    return;
-
-  var post = Post.posts.get(post_id);
-  if(post == null)
-  {
-    /* The post we've been asked to display isn't loaded.  Request a load and come back. */
-    if(this.displayed_post_id == null)
-      this.container.down(".post-info").hide();
-
-    this.load_post_id_data(post_id);
-    return;
-  }
-
-  this.displayed_post_id = post_id;
-  UrlHash.set({"post-id": post_id});
-
-  debug.log("setting");
-  this.set_viewing_larger_version(false);
-
   /*
    * Clear the previous post, if any.  Don't keep the old IMG around; create a new one, or
    * we may trigger long-standing memory leaks in WebKit, eg.:
@@ -381,16 +350,26 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   this.img = $(document.createElement("IMG"));
   this.img.className = "main-image";
-  if(post.sample_url != null)
+
+  if(this.viewing_larger_version && post.jpeg_url)
+  {
+    this.img.src = post.jpeg_url;
+    this.img.original_width = post.jpeg_width;
+    this.img.original_height = post.jpeg_height;
+  }
+  else if(!this.viewing_larger_version && post.sample_url)
+  {
     this.img.src = post.sample_url;
+    this.img.original_width = post.sample_width;
+    this.img.original_height = post.sample_height;
+  }
   else
   {
     /* Having no sample URL is an edge case, usually from deleted posts.  Keep the number
      * of code paths smaller by creating the IMG anyway, but not showing it. */
     this.img.hide();
   }
-  this.img.original_width = post.sample_width;
-  this.img.original_height = post.sample_height;
+
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
   this.container.down(".image-container").appendChild(this.img);
 
@@ -403,6 +382,31 @@ BrowserView.prototype.set_post_content = function(post_id)
 
   // debug.log("set_post_content");
   this.scale_and_position_image();
+}
+
+/* Display post_id. */
+BrowserView.prototype.set_post_content = function(post_id)
+{
+  if(post_id == this.displayed_post_id)
+    return;
+
+  var post = Post.posts.get(post_id);
+  if(post == null)
+  {
+    /* The post we've been asked to display isn't loaded.  Request a load and come back. */
+    if(this.displayed_post_id == null)
+      this.container.down(".post-info").hide();
+
+    this.load_post_id_data(post_id);
+    return;
+  }
+
+  this.displayed_post_id = post_id;
+  UrlHash.set({"post-id": post_id});
+
+  this.set_viewing_larger_version(false);
+
+  this.set_main_image(post);
 
   // XXX: initial vote
   Post.init_vote(post.id, 0, $("vote-container"));
@@ -438,7 +442,7 @@ BrowserView.prototype.set_post_info = function()
     this.container.down(".posted-by").down("A").setTextContent(post.author);
   }
 
-  this.container.down(".post-dimensions").setTextContent(post.width + "x" + post.height);
+  this.container.down(".post-dimensions").setTextContent("Size: " + post.width + "x" + post.height);
   this.container.down(".post-source").show(post.source != "");
   if(post.source != "")
   {
@@ -554,7 +558,10 @@ BrowserView.prototype.set_post_info = function()
         a.href = "/post/browse#/" + tag;
         a.tag_name = tag;
         a.className = "post-tag tag-type-" + type;
-        a.setTextContent(tag);
+
+        /* Break tags with zero-width spaces, so long tags can be wrapped. */
+        var tag_with_breaks = tag.replace(/_/g, "_\u200B");
+        a.setTextContent(tag_with_breaks);
         span.appendChild(a);
       });
       tag_span.appendChild(span);
@@ -624,20 +631,7 @@ BrowserView.prototype.toggle_view_large_image = function()
 
   /* Toggle between the sample and JPEG version. */
   this.set_viewing_larger_version(!this.viewing_larger_version);
-  if(this.viewing_larger_version)
-  {
-    this.img.src = post.jpeg_url;
-    this.img.original_width = post.jpeg_width;
-    this.img.original_height = post.jpeg_height;
-  }
-  else
-  {
-    this.img.src = post.sample_url;
-    this.img.original_width = post.sample_width;
-    this.img.original_height = post.sample_height;
-  }
-
-  this.scale_and_position_image();
+  this.set_main_image(post);
 }
 
 BrowserView.prototype.scale_and_position_image = function(resizing)

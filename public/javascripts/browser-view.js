@@ -380,7 +380,6 @@ BrowserView.prototype.set_main_image = function(post)
   else
     this.image_dragger = new WindowDragElementAbsolute(this.img);
 
-  // debug.log("set_post_content");
   this.scale_and_position_image();
 }
 
@@ -555,7 +554,7 @@ BrowserView.prototype.set_post_info = function()
         span.appendChild(space);
 
         var a = $(document.createElement("A", ""));
-        a.href = "/post/browse#/" + tag;
+        a.href = "/post/browse#/" + window.encodeURIComponent(tag);
         a.tag_name = tag;
         a.className = "post-tag tag-type-" + type;
 

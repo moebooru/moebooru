@@ -30,8 +30,12 @@ ThumbnailView = function(container, view)
   document.on("viewer:displayed-image-loaded", this.displayed_image_loaded_event.bindAsEventListener(this));
   document.on("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
   document.on("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
-  document.on("viewer:toggle-thumb-bar", function(e) { this.toggle_thumb_bar(); }.bindAsEventListener(this));
-  document.on("viewer:force-thumb-bar", function(e) { this.show_thumb_bar(!e.memo.hide); }.bindAsEventListener(this));
+  document.on("viewer:set-thumb-bar", function(e) {
+    if(e.memo.toggle)
+      this.show_thumb_bar(!this.thumb_container_shown);
+    else
+      this.show_thumb_bar(e.memo.set);
+  }.bindAsEventListener(this));
   document.on("viewer:loaded-posts", this.loaded_posts_event.bindAsEventListener(this));
 
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
@@ -44,7 +48,8 @@ ThumbnailView = function(container, view)
   this.container.on("mousemove", this.container_mousemove_event.bindAsEventListener(this));
   this.container.on("mouseover", this.container_mouseover_event.bindAsEventListener(this));
   this.container.on("click", this.container_click_event.bindAsEventListener(this));
-  this.container.on("dblclick", this.container_dblclick_event.bindAsEventListener(this));
+  this.container.on("dblclick", ".post-thumb,.browser-thumb-hover-overlay",
+      this.container_dblclick_event.bindAsEventListener(this));
 
   /* Prevent the default behavior of left-clicking on the expanded thumbnail overlay.  It's
    * handled by container_click_event. */
@@ -101,7 +106,7 @@ ThumbnailView = function(container, view)
 
   this.config_changed();
 
-  /* Send the initial viewer:thumb-bar-height event. */
+  /* Send the initial viewer:thumb-bar-changed event. */
   this.show_thumb_bar(true);
 }
 
@@ -821,11 +826,8 @@ ThumbnailView.prototype.container_dblclick_event = function(event)
   if(event.button)
     return;
 
-  if($(event.target).up(".post-thumb") == null && $(event.target).up(".browser-thumb-hover-overlay") == null)
-    return;
-
   event.preventDefault();
-  this.show_thumb_bar(false)
+  this.show_thumb_bar(false);
 }
 
 ThumbnailView.prototype.show_thumb_bar = function(shown)
@@ -837,16 +839,11 @@ ThumbnailView.prototype.show_thumb_bar = function(shown)
    * center_on_post, so do it now. */
   this.center_on_post_for_scroll(this.centered_post_idx);
 
-  document.fire("viewer:thumb-bar-height", {
+  document.fire("viewer:thumb-bar-changed", {
+    shown: this.thumb_container_shown,
     height: this.thumb_container_shown? this.container.offsetHeight:0
   });
 }
-
-ThumbnailView.prototype.toggle_thumb_bar = function()
-{
-  this.show_thumb_bar(!this.thumb_container_shown);
-}
-
 
 /* Return the next or previous post, wrapping around if necessary. */
 ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
@@ -953,10 +950,8 @@ InputHandler.prototype.handle_keypress = function(e)
   if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
     return false;
   var grave_keycode = Prototype.Browser.WebKit? 192: 96;
-  if(key == Event.KEY_BACKSPACE)
-    document.fire("viewer:set-post-ui", { toggle: true });
-  else if(key == 32) // space
-    document.fire("viewer:toggle-thumb-bar");
+  if(key == 32) // space
+    document.fire("viewer:set-thumb-bar", { toggle: true });
   else if(key == 49) // 1
     document.fire("viewer:vote", { score: 1 });
   else if(key == 50) // 2

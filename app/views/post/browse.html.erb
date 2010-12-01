@@ -45,9 +45,8 @@
     <div style="height: auto; width: 100%;">
       <ul class="post-info-right-edge" style="float: right; text-align: right;">
         <li style="margin-top: 1px; margin-right: 1px;">
-          <span style="cursor: pointer;" class="post-dimensions"></span>
-          <img style="cursor: pointer;" class="zoom-icon-in" src="/images/icon-zoom-in.png" width=20 height=20>
-          <img style="cursor: pointer;" class="zoom-icon-out" src="/images/icon-zoom-out.png" width=20 height=20>
+          <img style="cursor: pointer;" class="toggle-zoom zoom-icon-in" src="/images/icon-zoom-in.png" width=20 height=20>
+          <img style="cursor: pointer;" class="toggle-zoom zoom-icon-out" src="/images/icon-zoom-out.png" width=20 height=20>
           <img style="" class="zoom-icon-none" src="/images/icon-zoom-none.png">
         </li>
         <li>
@@ -60,11 +59,13 @@
     </div>
 
     <div style="padding: 0.5em;">
-    <span style="vertical-align: bottom;">Post #<a href="#" class="post-id-link" target="_blank"><span class="post-id"></span></a></span>
-
+      <div>
+        Post #<a href="#" class="post-id-link" target="_blank"><span class="post-id"></span></a>
+        <span style="margin-left: 1.0em;" class="post-dimensions"></span>
+      </div>
     <div>Posted <span class="posted-at"></span><span class="posted-by"> ago by <a href="#" target="_blank"></a></span></div>
     <div>Rating: <span class="rating"></span></div>
-    <div id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc" style="position: static;"></span></div>
+    <div id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
     <div class="post-source">Source: <a href="#" target="_blank"></a><span></span></div>
 
     <div class="status-deleted"> 

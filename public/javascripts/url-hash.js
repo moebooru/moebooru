@@ -133,7 +133,7 @@ UrlHashHandler.prototype.construct = function(hash)
   {
     /* For the path portion, we only need to escape the params separator ? and the escape
      * character % itself.  Don't use encodeURIComponent; it'll encode far more than necessary. */
-    path = path.replace(/\?/g, "%3f").replace(/%/g, "%25");
+    path = path.replace(/%/g, "%25").replace(/\?/g, "%3f");
     s += path;
   }
 

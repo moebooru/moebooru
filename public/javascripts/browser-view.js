@@ -73,6 +73,16 @@ BrowserView = function(container)
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
 
+  /* We'll receive this message from the thumbnail view when the overlay is
+   * visible on the bottom of the screen, to tell us how much space is covered up
+   * by it. */
+  this.thumb_bar_height = 0;
+  document.on("viewer:thumb-bar-height", function(e) {
+    /* Update the thumb bar height and rescale the image to fit the new area. */
+    this.thumb_bar_height = e.memo.height;
+    this.scale_and_position_image(true);
+  }.bindAsEventListener(this));
+
   /* Hide member-only and moderator-only controls: */
   document.body.pickClassName("is-member", "not-member", User.is_member_or_higher());
   document.body.pickClassName("is-moderator", "not-moderator", User.is_mod_or_higher());
@@ -646,6 +656,13 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
   }
 
   var window_size = getWindowSize();
+
+  /* If the thumb bar is shown, exclude it from the window height and fit the image
+   * in the remainder.  Since the bar is at the bottom, we don't need to do anything to
+   * adjust the top. */
+  window_size.height -= this.thumb_bar_height;
+  window_size.height = Math.max(window_size.height, 0); /* clamp to 0 if there's no space */
+
   var ratio = 1.0;
   if(!this.viewing_larger_version)
   {

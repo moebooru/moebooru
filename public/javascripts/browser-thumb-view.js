@@ -100,6 +100,9 @@ ThumbnailView = function(container, view)
   debug.log("Thumb scale: " + this.config.thumb_scale);
 
   this.config_changed();
+
+  /* Send the initial viewer:thumb-bar-height event. */
+  this.show_thumb_bar(true);
 }
 
 ThumbnailView.prototype.window_resize_event = function(e)
@@ -833,6 +836,10 @@ ThumbnailView.prototype.show_thumb_bar = function(shown)
   /* If the centered post was changed while we were hidden, it wasn't applied by
    * center_on_post, so do it now. */
   this.center_on_post_for_scroll(this.centered_post_idx);
+
+  document.fire("viewer:thumb-bar-height", {
+    height: this.thumb_container_shown? this.container.offsetHeight:0
+  });
 }
 
 ThumbnailView.prototype.toggle_thumb_bar = function()

@@ -712,7 +712,7 @@ BrowserView.prototype.lazily_load = function(post_id)
   /* If we already started the preload for the requested post, then use a small timeout. */
   var is_cached = this.last_preload_request_active && this.last_preload_request.indexOf(post_id) != -1;
 
-  var ms = is_cached? 50:500;
+  var ms = is_cached? 0:500;
   debug("post:" + post_id + ":" + is_cached + ":" + ms);
 
   /* Once lazily_load is called with a new post, we should consistently stay on the current

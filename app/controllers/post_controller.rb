@@ -550,18 +550,38 @@ class PostController < ApplicationController
 
   def flag
     post = Post.find(params[:id])
-    if post.status != "active"
-      respond_to_error("Can only flag active posts", :action => "show", :id => params[:id])
-      return
-    end
+    if params[:unflag] == "1" then
+      # Allow the user who flagged a post to unflag it.
+      #
+      # posts 
+      # "approve" is used both to mean "unflag post" and "approve pending post".
+      if post.status != "flagged" then
+        respond_to_error("Can only unflag flagged posts", :action => "show", :id => params[:id])
+        return
+      end
 
-    post.flag!(params[:reason], @current_user.id)
+      if !@current_user.is_mod_or_higher? and @current_user.id != post.flag_detail.user_id then
+        access_denied()
+        return
+      end
+
+      post.approve!(@current_user.id)
+      message = "Post approved"
+    else
+      if post.status != "active"
+        respond_to_error("Can only flag active posts", :action => "show", :id => params[:id])
+        return
+      end
+
+      post.flag!(params[:reason], @current_user.id)
+      message = "Post flagged"
+    end
 
     # Reload the post to pull in post.flag_reason.
     post.reload
 
     api_data = Post.batch_api_data([post], :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
-    respond_to_success("Post flagged", {:action => "show", :id => params[:id]}, :api => api_data)
+    respond_to_success(message, {:action => "show", :id => params[:id]}, :api => api_data)
   end
   
   def random

@@ -107,7 +107,7 @@ BrowserView = function(container)
     if(!confirm("Unflag this post?"))
       return;
     var post_id = this.displayed_post_id;
-    Post.approve(post_id, false, function() { this.refresh_post_info(post_id); }.bind(this));
+    Post.unflag(post_id, function() { this.refresh_post_info(post_id); }.bind(this));
   }.bindAsEventListener(this));
 
   this.container.down(".post-delete").on("click", function(e) {
@@ -644,6 +644,11 @@ BrowserView.prototype.set_post_info = function()
     var reason = flagged.down(".reason");
     reason.setTextContent(post.flag_detail.reason);
   }
+
+  /* Moderators can unflag images, and the person who flags an image can unflag it himself. */
+  var is_flagger = post.flag_detail && post.flag_detail.user_id == User.get_current_user_id();
+  var can_unflag = flagged && (User.is_mod_or_higher() || is_flagger);
+  flagged.down(".post-unflag").show(can_unflag);
 
   var pending = this.container.down(".status-pending");
   pending.show(post.status == "pending");

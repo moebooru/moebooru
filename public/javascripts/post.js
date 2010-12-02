@@ -425,35 +425,54 @@ Post = {
     notice("Vote saved");
   },
 
-  flag: function(id, finished) {
-    var reason = prompt("Why should this post be flagged for deletion?", "")
-
-    if (!reason) {
-      return false
-    }
-  
-    new Ajax.Request("/post/flag.json", {
-      parameters: {
-        "id": id,
-        "reason": reason
-      },
-    
+  make_request: function(path, params, finished)
+  {
+    return new Ajax.Request(path, {
+      parameters: params,
+      
       onFailure: function(req) {
-        var resp = req.responseJSON
-	notice(resp.reason);
+        var resp = req.responseJSON;
+	notice("Error: " + resp.reason);
       },
 
-      onSuccess: function(req) {
-        notice("Post was flagged for deletion")
-        var resp = req.responseJSON;
+      onSuccess: function(resp) {
+        var resp = resp.responseJSON
         Post.register_posts(resp.posts);
         Post.register_tags(resp.tags);
         if(finished)
-          finished(id);
-        else
-          $("p" + id).addClassName("flagged")
+          finished();
       }
-    })
+    });
+  },
+
+  flag: function(id, finished) {
+    var reason = prompt("Why should this post be flagged for deletion?", "")
+    if (!reason)
+      return false;
+  
+    var complete = function()
+    {
+      notice("Post was flagged for deletion");
+      if(finished)
+        finished(id);
+      else
+        $("p" + id).addClassName("flagged");
+    }
+
+    return Post.make_request("/post/flag.json", { "id": id, "reason": reason }, complete);
+  },
+
+  unflag: function(id, finished) {
+    var complete = function()
+    {
+      notice("Post was approved");
+      if(finished)
+        finished(id);
+      else
+        $("p" + id).removeClassName("flagged");
+    }
+
+    return Post.make_request("/post/flag.json", { id: id, unflag: 1 }, complete);
   },
 
   observe_text_area: function(field_id) {

@@ -10,7 +10,7 @@ ThumbnailView = function(container, view)
 {
   this.container = container;
   this.view = view;
-  this.post_ids = null; /* set by loaded_posts_event */
+  this.post_ids = [];
   this.expanded_post_id = null;
   this.centered_post_idx = null;
   this.centered_post_offset = 0;
@@ -122,7 +122,7 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
 {
   var post_ids = event.memo.post_ids;
 
-  var old_post_ids = this.post_ids || [];
+  var old_post_ids = this.post_ids;
   var old_centered_post_idx = this.centered_post_idx;
   this.remove_all_posts();
 

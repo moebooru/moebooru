@@ -1467,6 +1467,11 @@ span.stars .star-3 { color:#ff0; }
   -moz-user-select: none;
 }
 
+.disable-selection {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
 .post-browser-scroller {
   height: 100%;
   position: relative;

@@ -126,6 +126,9 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
   var old_centered_post_idx = this.centered_post_idx;
   this.remove_all_posts();
 
+  /* Filter blacklisted posts. */
+  // post_ids = post_ids.reject(Post.is_blacklisted);
+
   this.post_ids = post_ids;
   this.allow_wrapping = !event.memo.can_be_extended_further;
 

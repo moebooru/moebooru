@@ -198,7 +198,22 @@ BrowserView = function(container)
   }.bindAsEventListener(this));
   Post.init_vote_widgets(function(post_id) { notice("Vote saved"); this.refresh_post_info(post_id); }.bind(this));
 
+  this.blacklist_override_post_id = null;
+  this.container.down(".show-blacklisted").on("click", function(e) { e.preventDefault(); }.bindAsEventListener(this));
+  this.container.down(".show-blacklisted").on("dblclick", function(e) {
+    e.stop();
+    this.blacklist_override_post_id = this.displayed_post_id;
+    debug("go " + this.displayed_post_id);
+
+    var post = Post.posts.get(this.displayed_post_id);
+    this.set_main_image(post);
+  }.bindAsEventListener(this));
+
+
   this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
+
+  if(Prototype.BrowserFeatures.Touchscreen)
+    this.image_swipe = new SwipeHandler(this.container);
 }
 
 BrowserView.prototype.set_post_ui = function(visible)
@@ -367,11 +382,18 @@ BrowserView.prototype.set_main_image = function(post)
   {
     this.img.stopObserving();
     this.img.parentNode.removeChild(this.img);
-    if(this.image_swipe)
-      this.image_swipe.destroy()
     if(this.image_dragger)
       this.image_dragger.destroy();
+    this.image_dragger = null;
+    this.img = null;
   }
+
+  /* If this post is blacklisted, show a message instead of displaying it. */
+  debug(post.id + "," + this.blacklist_override_post_id);
+  var hide_post = Post.is_blacklisted(post.id) && post.id != this.blacklist_override_post_id;
+  this.container.down(".blacklisted-message").show(hide_post);
+  if(hide_post)
+    return;
 
   this.img = $(document.createElement("IMG"));
   this.img.className = "main-image";
@@ -398,11 +420,9 @@ BrowserView.prototype.set_main_image = function(post)
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
   this.container.down(".image-container").appendChild(this.img);
 
-  /* On touchscreen devices, enable swipe to change screens.  On desktop devices we use
-   * dragging to scroll the image around, so don't do both. */
-  if(Prototype.BrowserFeatures.Touchscreen)
-    this.image_swipe = new SwipeHandler(this.img);
-  else
+  /* If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
+   * dragging too. */
+  if(this.image_swipe == null)
     this.image_dragger = new WindowDragElementAbsolute(this.img);
 
   this.scale_and_position_image();

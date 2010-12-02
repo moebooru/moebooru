@@ -26,6 +26,7 @@
 
   <div class="post-browser-posts-container">
     <div class="post-browser-scroller">
+      <img src="/images/test.jpg" style="position: absolute; left: -500px; top: 20px;">
       <ul class="post-browser-posts"></ul>
     </div>
     <div class="post-browser-no-results" style="display: none; text-align: center; font-size: 200%;">No search results.</div>
@@ -42,7 +43,19 @@
 <div id="post-content" style="width: 100%;">
   <!-- Make sure the image is cropped to the viewport.  This happens already for most browsers,
        since body is overflow: hidden, but iPhone's browser doesn't handle that correctly. -->
-  <div style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: hidden;" class="image-container"></div>
+  <div style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: hidden;" class="image-container">
+    <div class="blacklisted-message disable-selection" style="display: none; text-align: center; margin-top: 5em;">
+      <div style="font-size: 250%;">
+        Image hidden
+      </div>
+      <div style="margin-top: 1em; font-size: 150%;">
+        This post is not displayed due to your account settings.
+      </div>
+      <div style="margin-top: 1em; font-size: 150%;">
+        <a href="#" class="show-blacklisted" style="border: 1px solid #FFF; padding: 0.25em;">Double-click here to display the image</a>
+      </div>
+    </div>
+  </div>
   <div class="post-info" style="display: none;">
     <ul class="post-info-right-edge" style="float: right; text-align: right;">
       <li style="margin-top: 1px; margin-right: 1px;">
@@ -164,6 +177,7 @@ document.observe("dom:loaded", function()
 
   InitAdvancedEditing();
   InitializeFullScreenBrowserHandlers();
+  Post.init_blacklisted();
 
   var normalize_hash = function(h)
   {

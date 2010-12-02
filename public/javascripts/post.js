@@ -522,9 +522,13 @@ Post = {
   is_blacklisted: function(post_id) {
     var post = this.posts.get(post_id)
     var has_tag = function(tag) { return post.match_tags.indexOf(tag) != -1; };
-    return Post.blacklists.any(function(b) {
+
+    var blacklist_applies = function(b)
+    {
       return (b.require.all(has_tag) && !b.exclude.any(has_tag))
-    })
+    }
+
+    return Post.blacklists.any(blacklist_applies);
   },
 
   apply_blacklists: function() {	

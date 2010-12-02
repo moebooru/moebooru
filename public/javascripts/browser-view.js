@@ -434,7 +434,10 @@ BrowserView.prototype.set_main_image = function(post)
   this.img.on("viewer:center-on", function(e) { this.center_image_on(e.memo.x, e.memo.y); }.bindAsEventListener(this));
 
   if(this.viewing_larger_version)
+  {
     this.navigator = new Navigator(this.container.down(".image-navigator"), this.img, post);
+    this.navigator.container.show(this.post_ui_visible);
+  }
 
   this.scale_and_position_image();
 }

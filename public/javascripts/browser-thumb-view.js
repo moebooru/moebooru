@@ -623,7 +623,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
   shift_pixels_right -= this.centered_post_offset;
   shift_pixels_right = Math.round(shift_pixels_right);
 
-  var node = this.container.down(".post-browser-posts");
+  var node = this.container.down(".post-browser-scroller");
   node.setStyle({left: shift_pixels_right + "px"});
 }
 

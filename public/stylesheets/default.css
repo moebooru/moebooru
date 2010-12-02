@@ -1458,12 +1458,16 @@ span.stars .star-3 { color:#ff0; }
   overflow: hidden;
 }
 
+.post-browser-scroller {
+  height: 100%;
+  position: relative;
+}
+
 .post-browser-posts {
   list-style-type: none;
   white-space: nowrap;
   height: 100%;
   margin: 0;
-  position: relative;
 }
 
 .post-browser-posts .inner {

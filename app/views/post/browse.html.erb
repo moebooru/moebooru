@@ -25,7 +25,9 @@
   </a>
 
   <div class="post-browser-posts-container">
-    <ul class="post-browser-posts"></ul>
+    <div class="post-browser-scroller">
+      <ul class="post-browser-posts"></ul>
+    </div>
     <div class="post-browser-no-results" style="display: none; text-align: center; font-size: 200%;">No search results.</div>
   </div>
 
@@ -121,9 +123,9 @@
         <br>
 
         <label for="edit-shown-in-index">Shown in index</label>
-        <input checked="unchecked" id="edit-shown-in-index" class="edit-shown-in-index" name="is_shown_in_index" type="checkbox">
+        <input id="edit-shown-in-index" class="edit-shown-in-index" name="is_shown_in_index" type="checkbox">
 
-        <label for="post_source" style="margin-left: 0.5em;">Source</label>
+        <label for="edit-source" style="margin-left: 0.5em;">Source</label>
         <input class="edit-source" name="source" size="40" tabindex="9" type="text" value="">
 
         <div style="background-color: #003; text-align: right; font-size: 125%;">

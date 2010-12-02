@@ -291,27 +291,26 @@ ThumbnailView.prototype.show_next_post = function(prev)
    * at the beginning. */
   if(current_idx == -1)
     current_idx = 0;
-  var new_idx = current_idx + (prev? -1:+1);
 
   if(this.post_ids.length == 0)
     return;
 
-  if(new_idx < 0)
+  var new_idx = current_idx;
+  new_idx += prev? -1:+1;
+
+  new_idx += this.post_ids.length;
+  new_idx %= this.post_ids.length;
+
+  var wrapped = (prev && new_idx > current_idx) || (!prev && new_idx < current_idx);
+  if(wrapped)
   {
     /* Only allow wrapping over the edge if we've already expanded the results. */
     if(!this.allow_wrapping)
       return;
-    if(!this.thumb_container_shown)
+    if(!this.thumb_container_shown && prev)
       notice("Continued from the end");
-    new_idx = this.post_ids.length - 1;
-  }
-  else if(new_idx >= this.post_ids.length)
-  {
-    if(!this.allow_wrapping)
-      return;
-    if(!this.thumb_container_shown)
+    else if(!this.thumb_container_shown && !prev)
       notice("Starting over from the beginning");
-    new_idx = 0;
   }
 
   this.centered_post_offset = 0;

@@ -520,7 +520,7 @@ Post = {
   blacklists: [],
 
   is_blacklisted: function(post_id) {
-    var post = this.posts.get(post_id)
+    var post = Post.posts.get(post_id)
     var has_tag = function(tag) { return post.match_tags.indexOf(tag) != -1; };
 
     /* This is done manually, since this needs to be fast and Prototype's functions are

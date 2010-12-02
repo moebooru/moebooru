@@ -846,6 +846,8 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
   var top_spacing = (window_size.height - img.offsetHeight) / 2;
   var scroll_x = offset.left - left_spacing;
   var scroll_y = offset.top - top_spacing;
+  if(this.viewing_larger_version)
+    scroll_y = 0;
   img.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
 }
 

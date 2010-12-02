@@ -175,6 +175,27 @@ BrowserView = function(container)
     Post.reparent_post(post_id, post.parent_id, false, complete);
   }.bindAsEventListener(this));
 
+  /* Post editing: */
+  var post_edit = this.container.down(".post-edit");
+  post_edit.down("FORM").on("submit", function(e) { e.stop(); this.edit_save(); }.bindAsEventListener(this));
+  this.container.down(".show-tag-edit").on("click", function(e) { e.stop(); this.edit_show(true); }.bindAsEventListener(this));
+  this.container.down(".edit-save").on("click", function(e) { e.stop(); this.edit_save(); }.bindAsEventListener(this));
+  this.container.down(".edit-cancel").on("click", function(e) { e.stop(); this.edit_show(false); }.bindAsEventListener(this));
+
+  this.edit_post_area_changed = this.edit_post_area_changed.bind(this);
+  post_edit.down(".edit-tags").on("paste", function(e) { this.edit_post_area_changed.defer(); }.bindAsEventListener(this));
+  post_edit.down(".edit-tags").on("keydown", function(e) { this.edit_post_area_changed.defer(); }.bindAsEventListener(this));
+
+  this.container.down(".post-edit").on("keydown", function(e) {
+    if (e.keyCode == Event.KEY_ESC) { e.stop(); this.edit_show(false); }
+    else if (e.keyCode == Event.KEY_RETURN) { e.stop(); this.edit_save(); }
+  }.bindAsEventListener(this));
+
+  /* When the edit-post hotkey is pressed (E), force the post UI open and show editing. */
+  document.on("viewer:edit-post", function(e) {
+    document.fire("viewer:set-thumb-bar", { set: true });
+    this.edit_show(true);
+  }.bindAsEventListener(this));
   Post.init_vote_widgets(function(post_id) { notice("Vote saved"); this.refresh_post_info(post_id); }.bind(this));
 
   this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
@@ -192,6 +213,10 @@ BrowserView.prototype.set_post_ui = function(visible)
 
   this.post_ui_visible = visible;
   this.container.down(".post-info").show(this.post_ui_visible && this.displayed_post_id);
+
+  /* If we're hiding the post UI, cancel the post editor if it's open. */
+  if(!this.post_ui_visible)
+    this.edit_show(false);
 }
 
 
@@ -441,14 +466,14 @@ BrowserView.prototype.set_post_info = function()
     this.container.down(".posted-by").down("A").setTextContent(post.author);
   }
 
-  this.container.down(".post-dimensions").setTextContent("Size: " + post.width + "x" + post.height);
+  this.container.down(".post-dimensions").setTextContent(post.width + "x" + post.height);
   this.container.down(".post-source").show(post.source != "");
   if(post.source != "")
   {
     var text = post.source;
     var url = null;
 
-    var m = post.source.match(/.*pixiv\.net\/img\/(\w+)\/(\d+)\.\w+$/);
+    var m = post.source.match(/^http:\/\/.*pixiv\.net\/img\/(\w+)\/(\d+)\.\w+$/);
     if(m)
     {
       text = "pixiv #" + m[2] + " (" + m[1] + ")";
@@ -481,9 +506,10 @@ BrowserView.prototype.set_post_info = function()
   }
 
   var ratings = {s: "Safe", q: "Questionable", e: "Explicit"};
-  this.container.down(".rating").setTextContent(ratings[post.rating]);
-
+  this.container.down(".post-rating").setTextContent(ratings[post.rating]);
   this.container.down(".post-score").setTextContent(post.score);
+  this.container.down(".post-hidden").show(!post.is_shown_in_index);
+
   this.container.down(".post-info").show(this.post_ui_visible);
 
   var file_extension = function(path)
@@ -606,6 +632,127 @@ BrowserView.prototype.set_post_info = function()
   this.container.down(".status-held").show(post.is_held);
   var has_permission = User.get_current_user_id() == post.creator_id || User.is_mod_or_higher();
   this.container.down(".activate-post").show(has_permission);
+
+  this.edit_show(false);
+}
+
+BrowserView.prototype.edit_show = function(shown)
+{
+  var post = Post.posts.get(this.displayed_post_id);
+  if(!post)
+    shown = false;
+
+  this.edit_shown = shown;
+  this.container.down(".post-tags-box").show(!shown);
+  this.container.down(".post-edit").show(shown);
+  if(!shown)
+    return;
+
+  var tags = post.tags.join(" ") + " ";
+  this.container.down(".edit-tags").old_value = tags;
+  this.container.down(".edit-tags").value = tags;
+  this.container.down(".edit-source").value = post.source;
+  this.container.down(".edit-parent").value = post.parent_id;
+  this.container.down(".edit-shown-in-index").checked = post.is_shown_in_index;
+
+  var rating_class = new Hash({ s: ".edit-safe", q: ".edit-questionable", e: ".edit-explicit" });
+  this.container.down(rating_class.get(post.rating)).checked = true;
+
+  this.edit_post_area_changed();
+
+  this.container.down(".edit-tags").focus();
+}
+
+/* Set the size of the tag edit area to the size of its contents. */
+BrowserView.prototype.edit_post_area_changed = function()
+{
+  var post_edit = this.container.down(".post-edit");
+  var element = post_edit.down(".edit-tags");
+  element.style.height = "0px";
+  element.style.height = element.scrollHeight + "px";
+if(0)
+{
+  var rating = null;
+  var source = null;
+  var parent_id = null;
+  element.value.split(" ").each(function(tag)
+  {
+    /* This mimics what the server side does; it does prevent metatags from using
+     * uppercase in source: metatags. */
+    tag = tag.toLowerCase();
+    /* rating:q or just q: */
+    var m = tag.match(/^(rating:)?([qse])$/);
+    if(m)
+    {
+      rating = m[2];
+      return;
+    }
+
+    var m = tag.match(/^(parent):([0-9]+)$/);
+    if(m)
+    {
+      if(m[1] == "parent")
+        parent_id = m[2];
+    }
+
+    var m = tag.match(/^(source):(.*)$/);
+    if(m)
+    {
+      if(m[1] == "source")
+        source = m[2];
+    }
+  }.bind(this));
+
+  debug("rating: " + rating);
+  debug("source: " + source);
+  debug("parent: " + parent_id);
+}
+}
+
+BrowserView.prototype.edit_save = function()
+{
+  var post_id = this.displayed_post_id;
+  
+  var edit_tags = this.container.down(".edit-tags");
+  var tags = edit_tags.value;
+
+  /* Opera doesn't blur the field automatically, even when we hide it later. */
+  edit_tags.blur();
+
+  /* Find which rating is selected. */
+  var rating_class = new Hash({ s: ".edit-safe", q: ".edit-questionable", e: ".edit-explicit" });
+  var selected_rating = "s";
+  rating_class.each(function(c) {
+    if(this.container.down(c[1]).checked)
+      selected_rating = c[0];
+  }.bind(this));
+
+  /* update_batch will give us updates for any related posts, as well as the one we're
+   * updating. */
+  Post.update_batch([{
+    id: post_id,
+    tags: this.container.down(".edit-tags").value,
+    old_tags: this.container.down(".edit-tags").old_value,
+    source: this.container.down(".edit-source").value,
+    parent_id: this.container.down(".edit-parent").value,
+    is_shown_in_index: this.container.down(".edit-shown-in-index").checked,
+    rating: selected_rating
+  }], function(posts)
+  {
+    notice("Post saved");
+
+    /* If the displayed post is one of the updated ones, refresh it.  This can refresh even
+     * if we're not still showing the post that we saved; for example, if we set a new post
+     * as the parent and when we get here we're showing the parent, we'll refresh it to show
+     * that it now has a child post. */
+    var displayed_post_updated = posts.pluck("id").indexOf(this.displayed_post_id) != -1;
+    if(displayed_post_updated)
+      this.refresh_post_info(this.displayed_post_id);
+
+    /* If we're still showing the post we saved, hide the edit area. */
+    if(this.displayed_post_id == post_id)
+      this.edit_show(false);
+  }.bind(this));
 }
 
 BrowserView.prototype.window_resize_event = function()

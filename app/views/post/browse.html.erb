@@ -59,10 +59,11 @@
     <div style="padding: 0.5em;">
       <div>
         Post #<a href="#" class="post-id-link" target="_blank"><span class="post-id"></span></a>
-        <span style="margin-left: 1.0em;" class="post-dimensions"></span>
+        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-dimensions"></span>
+        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-rating"></span>
+        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-hidden">Hidden</span>
       </div>
     <div>Posted <span class="posted-at"></span><span class="posted-by"> ago by <a href="#" target="_blank"></a></span></div>
-    <div>Rating: <span class="rating"></span></div>
     <div id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
     <div class="post-source">Source: <a href="#" target="_blank"></a><span></span></div>
 
@@ -97,7 +98,40 @@
       </span>
     </div>
 
-    <div style="background-color: #003;"><span class="post-tags color-tag-types"></span></div>
+    <div class="post-tags-box" style="background-color: #003;"><span class="post-tags color-tag-types"></span>
+      <span class="member-only" style="float: right"><a href="#" style="font-style: italic; margin: 0 0.5em;" class="show-tag-edit">edit</a></span>
+    </div>
+
+    <div class="post-edit">
+      <form>
+        <input style="display: none;" type="submit" value="dummy">
+
+        <textarea style="overflow: hidden; width: 100%; padding: 0; border: none;" class="edit-tags no-blur-on-escape" name="tags" rows="1" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+
+        <input id="edit-explicit" class="edit-explicit" name="rating" tabindex="1" type="radio" value="Explicit" checked="checked">
+        <label for="edit-explicit">Explicit</label>
+        <input id="edit-questionable" class="edit-questionable" name="rating" tabindex="2" type="radio" value="Questionable">
+        <label for="edit-questionable">Questionable</label>
+        <input id="edit-safe" class="edit-safe" name="rating" tabindex="3" type="radio" value="Safe">
+        <label for="edit-safe">Safe</label>
+
+            
+        <label for="edit-parent" style="margin-left: 1.0em;">Parent Post</label>
+        <input id="edit-parent" class="edit-parent" name="parent_id" size="10" tabindex="4" type="text">
+        <br>
+
+        <label for="edit-shown-in-index">Shown in index</label>
+        <input checked="unchecked" id="edit-shown-in-index" class="edit-shown-in-index" name="is_shown_in_index" type="checkbox">
+
+        <label for="post_source" style="margin-left: 0.5em;">Source</label>
+        <input class="edit-source" name="source" size="40" tabindex="9" type="text" value="">
+
+        <div style="background-color: #003; text-align: right; font-size: 125%;">
+          <a href="#" class="edit-cancel">Cancel</a>
+          <a href="#" class="edit-save">Save</a>
+        </div>
+      </form>
+    </div>
     </div>
   </div>
 </div>

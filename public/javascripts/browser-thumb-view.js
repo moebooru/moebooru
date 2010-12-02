@@ -929,7 +929,7 @@ InputHandler.prototype.handle_keypress = function(e)
     key = e.keyCode; /* Opera */
   if(key == Event.KEY_ESC)
   {
-    if(this.focused_element && this.focused_element.blur)
+    if(this.focused_element && this.focused_element.blur && !this.focused_element.hasClassName("no-blur-on-escape"))
     {
       this.focused_element.blur();
       return true;
@@ -952,6 +952,8 @@ InputHandler.prototype.handle_keypress = function(e)
   var grave_keycode = Prototype.Browser.WebKit? 192: 96;
   if(key == 32) // space
     document.fire("viewer:set-thumb-bar", { toggle: true });
+  else if(key == Event.KEY_ESC)
+    document.fire("viewer:set-thumb-bar", { toggle: true });
   else if(key == 49) // 1
     document.fire("viewer:vote", { score: 1 });
   else if(key == 50) // 2
@@ -962,6 +964,8 @@ InputHandler.prototype.handle_keypress = function(e)
     document.fire("viewer:vote", { score: 0 });
   else if(key == 65 || key == 97) // A, b
     document.fire("viewer:show-next-post", { prev: true });
+  else if(key == 69 || key == 101) // E, e
+    document.fire("viewer:edit-post");
   else if(key == 83 || key == 115) // S, s
     document.fire("viewer:show-next-post", { prev: false });
   else if(key == 70 || key == 102) // F, f

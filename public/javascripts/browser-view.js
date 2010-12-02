@@ -49,8 +49,8 @@ BrowserView = function(container)
 
   document.on("viewer:vote", function(event) { Post.vote($("vote-container"), event.memo.score); });
 
-  /* Double-clicking the main image toggles the thumb bar. */
-  this.container.down(".image-container").on("dblclick", ".main-image", function(event) {
+  /* Double-clicking the main image, or on nothing, toggles the thumb bar. */
+  this.container.down(".image-container").on("dblclick", ".main-image,.image-container", function(event) {
     /* Watch out: Firefox fires dblclick events for all buttons, with the standard
      * button maps, but IE only fires it for left click and doesn't set button at
      * all, so event.isLeftClick won't work. */

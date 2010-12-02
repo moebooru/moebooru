@@ -1487,6 +1487,19 @@ span.stars .star-3 { color:#ff0; }
   *display: inline;
 }
 
+/* The borders cause odd overflows if the width: 100% inputs are shortened by
+ * the containing box, so disable them.  Disable all of them, not just the ones
+ * that this actually happens to, for consistency. */
+input.edit-item { border: none; }
+textarea.edit-item { border: none; }
+
+.edit-item {
+  padding: 0;
+  margin: 0;
+}
+.edit-tags {
+  padding: 1px;
+}
 .browser-thumb-hover-overlay {
   position: absolute;
   z-index: 2; /* over the regular post images */

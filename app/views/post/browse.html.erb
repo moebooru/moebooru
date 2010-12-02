@@ -104,29 +104,46 @@
       <span class="member-only" style="float: right"><a href="#" style="font-style: italic; margin: 0 0.5em;" class="show-tag-edit">edit</a></span>
     </div>
 
-    <div class="post-edit">
+    <div class="post-edit" style="margin-top: 0.25em;">
       <form>
         <input style="display: none;" type="submit" value="dummy">
 
-        <textarea style="overflow: hidden; width: 100%; padding: 0; border: none;" class="edit-tags no-blur-on-escape" name="tags" rows="1" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+        <textarea style="overflow: hidden; width: 100%;" class="edit-tags edit-item no-blur-on-escape" name="tags" rows="1" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
 
-        <input id="edit-explicit" class="edit-explicit" name="rating" tabindex="1" type="radio" value="Explicit" checked="checked">
-        <label for="edit-explicit">Explicit</label>
-        <input id="edit-questionable" class="edit-questionable" name="rating" tabindex="2" type="radio" value="Questionable">
-        <label for="edit-questionable">Questionable</label>
-        <input id="edit-safe" class="edit-safe" name="rating" tabindex="3" type="radio" value="Safe">
-        <label for="edit-safe">Safe</label>
+        <table style="margin: 0">
+          <tr>
+            <td><label for="edit-questionable">Rating</label></td>
+            <td>
+              <span style="white-space: nowrap;">
+                <input id="edit-explicit" class="edit-explicit edit-item" name="rating" tabindex="1" type="radio" value="Explicit" checked="checked">
+                <label for="edit-explicit">Explicit</label>
+              </span>
+              <span style="white-space: nowrap;">
+                <input id="edit-questionable" class="edit-questionable edit-item" name="rating" tabindex="2" type="radio" value="Questionable">
+                <label for="edit-questionable">Questionable</label>
+              </span>
+              <span style="white-space: nowrap;">
+                <input id="edit-safe" class="edit-safe edit-item" name="rating" tabindex="3" type="radio" value="Safe">
+                <label for="edit-safe">Safe</label>
+              </span>
+            </td>
+          </tr>
 
-            
-        <label for="edit-parent" style="margin-left: 1.0em;">Parent Post</label>
-        <input id="edit-parent" class="edit-parent" name="parent_id" size="10" tabindex="4" type="text">
-        <br>
+          <tr>
+            <td><label for="edit-shown-in-index">Shown in index</label></td>
+            <td><input id="edit-shown-in-index" class="edit-shown-in-index edit-item" name="is_shown_in_index" type="checkbox"></td>
+          </tr>
 
-        <label for="edit-shown-in-index">Shown in index</label>
-        <input id="edit-shown-in-index" class="edit-shown-in-index" name="is_shown_in_index" type="checkbox">
+          <tr>
+            <td><label for="edit-parent">Parent Post</label></td>
+            <td><input id="edit-parent" class="edit-parent edit-item" style="" name="parent_id" size="10" tabindex="4" type="text"></td>
+          </tr>
 
-        <label for="edit-source" style="margin-left: 0.5em;">Source</label>
-        <input id="edit-source" class="edit-source" name="source" size="40" tabindex="9" type="text" value="">
+          <tr>
+            <td><label for="edit-source">Source</label></td>
+            <td><input id="edit-source" class="edit-source edit-item" style="width: 100%;" name="source" tabindex="9" type="text" value=""></td>
+          </tr>
+        </table>
 
         <div style="background-color: #003; text-align: right; font-size: 125%;">
           <a href="#" class="edit-cancel">Cancel</a>

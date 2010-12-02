@@ -302,7 +302,7 @@ TagScript = {
     this.TagEditArea.value = Cookie.get("tag-script")
   },
   save: function() {
-    Cookie.put("tag-script", encodeURIComponent(this.TagEditArea.value))
+    Cookie.put("tag-script", this.TagEditArea.value)
   },
 
   init: function(element, x) {

@@ -523,12 +523,38 @@ Post = {
     var post = this.posts.get(post_id)
     var has_tag = function(tag) { return post.match_tags.indexOf(tag) != -1; };
 
+    /* This is done manually, since this needs to be fast and Prototype's functions are
+     * too slow. */
     var blacklist_applies = function(b)
     {
-      return (b.require.all(has_tag) && !b.exclude.any(has_tag))
+      var require = b.require;
+      var require_len = require.length;
+      for(var j = 0; j < require_len; ++j)
+      {
+        if(!has_tag(require[j]))
+          return false;
+      }
+
+      var exclude = b.exclude;
+      var exclude_len = exclude.length;
+      for(var j = 0; j < exclude_len; ++j)
+      {
+        if(has_tag(exclude[j]))
+          return false;
+      }
+
+      return true;
     }
 
-    return Post.blacklists.any(blacklist_applies);
+    var blacklists = Post.blacklists;
+    var len = blacklists.length;
+    for(var i = 0; i < len; ++i)
+    {
+      var b = blacklists[i];
+      if(blacklist_applies(b))
+        return true;
+    }
+    return false;
   },
 
   apply_blacklists: function() {	

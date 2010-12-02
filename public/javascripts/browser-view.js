@@ -203,8 +203,6 @@ BrowserView = function(container)
   this.container.down(".show-blacklisted").on("dblclick", function(e) {
     e.stop();
     this.blacklist_override_post_id = this.displayed_post_id;
-    debug("go " + this.displayed_post_id);
-
     var post = Post.posts.get(this.displayed_post_id);
     this.set_main_image(post);
   }.bindAsEventListener(this));
@@ -213,7 +211,7 @@ BrowserView = function(container)
   this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
 
   if(Prototype.BrowserFeatures.Touchscreen)
-    this.image_swipe = new SwipeHandler(this.container);
+    this.image_swipe = new SwipeHandler(this.container.down(".image-container"));
 }
 
 BrowserView.prototype.set_post_ui = function(visible)

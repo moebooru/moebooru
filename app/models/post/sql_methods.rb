@@ -245,9 +245,12 @@ module PostSqlMethods
         conds << "p.status = 'flagged'"
       end
 
-      if q.has_key?(:show_holds_only)
-        if q[:show_holds_only]
+      if q.has_key?(:show_holds)
+        if q[:show_holds] == :only
           conds << "p.is_held"
+        elsif q[:show_holds] == :hide
+          conds << "NOT p.is_held"
+        elsif q[:show_holds] == :yes
         end
       else
 	# Hide held posts by default only when not using the API.

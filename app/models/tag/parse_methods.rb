@@ -142,9 +142,11 @@ module TagParseMethods
             q[:shown_in_index] = ($2 == "true")
           elsif $1 == "holds"
             if $2 == "true" or $2 == "only"
-              q[:show_holds_only] = true
+              q[:show_holds] = :only
             elsif $2 == "all"
-              q[:show_holds_only] = false # all posts, held or not
+              q[:show_holds] = :yes # all posts, held or not
+            elsif $2 == "false"
+              q[:show_holds] = :hide
             end
           elsif $1 == "limit"
             q[:limit] = $2

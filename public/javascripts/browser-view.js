@@ -299,7 +299,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
       tags: "id:" + post_id,
       api_version: 2,
       filter: 1,
-      include_tags: true
+      include_tags: "1"
     },
     method: "get",
 
@@ -602,9 +602,19 @@ BrowserView.prototype.set_post_info = function()
   while(tag_span.firstChild)
     tag_span.removeChild(tag_span.firstChild);
 
-  tags_by_type.each(function(t) {
-      var type = t[0];
-      var tags = t[1];
+
+  var types = tags_by_type.keys();
+  var type_order = ["artist", "circle", "copyright", "character", "faults", "general"];
+  types = types.sort(function(a, b) {
+    var a_idx = type_order.indexOf(a);
+    if(a_idx == -1) a_idx = 999;
+    var b_idx = type_order.indexOf(b);
+    if(b_idx == -1) b_idx = 999;
+    return a_idx - b_idx;
+  });
+
+  types.each(function(type) {
+      var tags = tags_by_type.get(type);
       var span = $(document.createElement("SPAN", ""));
       span = $(span);
       span.className = "tag-type-" + type;

@@ -63,7 +63,10 @@ PostLoader.prototype.server_load_pool = function()
 PostLoader.prototype.server_load_posts = function()
 {
   var tags = this.result.tags;
-  var search = tags + " limit:" + this.result.post_limit;
+
+  // Put holds:false at the beginning, so the search can override it.  Put limit: at
+  // the end, so it can't.
+  var search = "holds:false " + tags + " limit:" + this.result.post_limit;
 
   if(!this.result.disable_cache)
   {

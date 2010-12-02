@@ -124,11 +124,9 @@ Post = {
 
         if (resp.success) {
           // Update the stored posts.
+          Post.register_posts(resp.posts);
+          Post.register_tags(resp.tags);
           resp.posts.each(function(post) {
-            /* Only register posts that we already knew about.  We may receive information about
-             * posts that we don't care about (new parent posts that aren't displayed in our index). */
-            if(Post.posts.get(post.id))
-              Post.register(post)
             Post.update_styles(post);
           });
 
@@ -216,7 +214,9 @@ Post = {
   {
     var post_ids = [];
     Post.posts.each(function(pair) {
-      post_ids.push(pair.key);
+      /* Only activate posts that are actually displayed; we may have others registered. */
+      if($("p" + pair.key))
+        post_ids.push(pair.key);
     });
     Post.activate_posts(post_ids, function(resp) {
       if(resp.count == 0)
@@ -1223,6 +1223,8 @@ Post = {
       var post_id = p[0]
       var post = p[1]
       var thumb = $("p" + post.id);
+      if(!thumb)
+        return;
 
       if(tag && post.tags.indexOf(tag) != -1)
       {

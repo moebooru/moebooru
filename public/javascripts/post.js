@@ -514,6 +514,38 @@ Post = {
     return results;
   },
 
+  /* 
+   * Get post tags with their types.
+   *
+   * Post.get_post_tags_with_type(post)
+   * -> [["tagme", "general"], ["fixme", "faults"], ["crease", "faults"]]
+   *
+   * The results will be sorted by type.
+   */
+  get_post_tags_with_type: function(post)
+  {
+    var tag_types = Post.get_post_tags_by_type(post);
+    var types = tag_types.keys();
+
+    var type_order = ["artist", "circle", "copyright", "character", "faults", "general"];
+    types = types.sort(function(a, b) {
+      var a_idx = type_order.indexOf(a);
+      if(a_idx == -1) a_idx = 999;
+      var b_idx = type_order.indexOf(b);
+      if(b_idx == -1) b_idx = 999;
+      return a_idx - b_idx;
+    });
+
+    var results = new Array;
+    types.each(function(type) {
+      var tags = tag_types.get(type);
+      tags.each(function(tag) {
+        results.push([tag, type]);
+      });
+    });
+    return results;
+  },
+
   register: function(post) {
     post.tags = post.tags.match(/\S+/g) || []
     post.match_tags = post.tags.clone()

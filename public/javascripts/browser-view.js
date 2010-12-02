@@ -597,42 +597,32 @@ BrowserView.prototype.set_post_info = function()
 
   /* Create the tag links. */
   var tag_span = this.container.down(".post-tags");
-  var tags_by_type = Post.get_post_tags_by_type(post);
   var first = true;
   while(tag_span.firstChild)
     tag_span.removeChild(tag_span.firstChild);
 
 
-  var types = tags_by_type.keys();
-  var type_order = ["artist", "circle", "copyright", "character", "faults", "general"];
-  types = types.sort(function(a, b) {
-    var a_idx = type_order.indexOf(a);
-    if(a_idx == -1) a_idx = 999;
-    var b_idx = type_order.indexOf(b);
-    if(b_idx == -1) b_idx = 999;
-    return a_idx - b_idx;
-  });
+  var tags_by_type = Post.get_post_tags_with_type(post);
+  tags_by_type.each(function(t) {
+      var tag = t[0];
+      var type = t[1];
 
-  types.each(function(type) {
-      var tags = tags_by_type.get(type);
       var span = $(document.createElement("SPAN", ""));
       span = $(span);
       span.className = "tag-type-" + type;
 
-      tags.each(function(tag) {
-        var space = document.createTextNode(" ");
-        span.appendChild(space);
+      var space = document.createTextNode(" ");
+      span.appendChild(space);
 
-        var a = $(document.createElement("A", ""));
-        a.href = "/post/browse#/" + window.encodeURIComponent(tag);
-        a.tag_name = tag;
-        a.className = "post-tag tag-type-" + type;
+      var a = $(document.createElement("A", ""));
+      a.href = "/post/browse#/" + window.encodeURIComponent(tag);
+      a.tag_name = tag;
+      a.className = "post-tag tag-type-" + type;
 
-        /* Break tags with zero-width spaces, so long tags can be wrapped. */
-        var tag_with_breaks = tag.replace(/_/g, "_\u200B");
-        a.setTextContent(tag_with_breaks);
-        span.appendChild(a);
-      });
+      /* Break tags with zero-width spaces, so long tags can be wrapped. */
+      var tag_with_breaks = tag.replace(/_/g, "_\u200B");
+      a.setTextContent(tag_with_breaks);
+      span.appendChild(a);
       tag_span.appendChild(span);
   });
 
@@ -697,7 +687,13 @@ BrowserView.prototype.edit_show = function(shown)
   if(!shown)
     return;
 
-  var tags = post.tags.join(" ") + " ";
+  /* This returns [tag, tag type].  We only want the tag; we call this so we sort the
+   * tags consistently. */
+  var tags_by_type = Post.get_post_tags_with_type(post);
+  var tags = tags_by_type.pluck(0);
+
+  tags = tags.join(" ") + " ";
+
   this.container.down(".edit-tags").old_value = tags;
   this.container.down(".edit-tags").value = tags;
   this.container.down(".edit-source").value = post.source;

@@ -483,8 +483,12 @@ Prototype.BrowserFeatures.Touchscreen = (function() {
 /* When element is dragged, the document moves around it.  If scroll_element is true, the
  * element should be positioned (eg. position: absolute), and the element itself will be
  * scrolled. */
-DragElement = function(element, ondrag, onstartdrag, onenddrag)
+DragElement = function(element, options)
 {
+  this.options = options || {};
+  if(this.options.snap_pixels == null)
+    this.options.snap_pixels = 10;
+
   this.mousemove_event = this.mousemove_event.bindAsEventListener(this);
   this.mousedown_event = this.mousedown_event.bindAsEventListener(this);
   this.dragstart_event = this.dragstart_event.bindAsEventListener(this);
@@ -497,10 +501,6 @@ DragElement = function(element, ondrag, onstartdrag, onenddrag)
   this.touchend_event = this.touchend_event.bindAsEventListener(this);
 
   this.move_timer_update = this.move_timer_update.bind(this);
-
-  this.ondrag = ondrag;
-  this.onstartdrag = onstartdrag;
-  this.onenddrag = onenddrag;
 
   this.element = element;
   this.dragging = false;
@@ -542,19 +542,21 @@ DragElement.prototype.destroy = function()
   this.handlers = [];
 }
 
-DragElement.prototype.move_timer_update = function(event)
+DragElement.prototype.move_timer_update = function()
 {
   this.move_timer = null;
 
-  if(!this.ondrag)
+  if(!this.options.ondrag)
     return;
 
   if(this.last_event_params == null)
     return;
 
-  var x = this.last_event_params.x;
-  var y = this.last_event_params.y;
+  var last_event_params = this.last_event_params;
   this.last_event_params = null;
+
+  var x = last_event_params.x;
+  var y = last_event_params.y;
 
   var anchored_x = x - this.anchor_x;
   var anchored_y = y - this.anchor_y;
@@ -564,15 +566,16 @@ DragElement.prototype.move_timer_update = function(event)
   this.last_x = x;
   this.last_y = y;
 
-  if(this.ondrag)
-    this.ondrag({
+  if(this.options.ondrag)
+    this.options.ondrag({
       dragger: this,
       x: x,
       y: y,
       aX: anchored_x,
       aY: anchored_y,
       dX: relative_x,
-      dY: relative_y
+      dY: relative_y,
+      latest_event: last_event_params.event
     });
 }
 
@@ -617,16 +620,19 @@ DragElement.prototype.handle_move_event = function(event, x, y)
   if(!this.dragged)
   {
     var distance = Math.pow(x - this.anchor_x, 2) + Math.pow(y - this.anchor_y, 2);
-    if(distance < 100) // 10 pixels
+    var snap_pixels = this.options.snap_pixels;
+    snap_pixels *= snap_pixels;
+
+    if(distance < snap_pixels) // 10 pixels
       return;
   }
 
   if(!this.dragged)
   {
-    if(this.onstartdrag)
+    if(this.options.onstartdrag)
     {
       /* Call the onstartdrag callback.  If it returns true, cancel the drag. */
-      if(this.onstartdrag(this))
+      if(this.options.onstartdrag({ handler: this, latest_event: event }))
       {
         this.dragging = false;
         return;
@@ -639,7 +645,8 @@ DragElement.prototype.handle_move_event = function(event, x, y)
 
   this.last_event_params = {
     x: x,
-    y: y
+    y: y,
+    event: event
   };
 
   if(this.dragging_by_touch && Prototype.Browser.AndroidWebKit)
@@ -735,8 +742,8 @@ DragElement.prototype.stop_dragging = function()
     this.dragging = false;
     $(document.body).removeClassName("dragging");
 
-    if(this.onenddrag)
-      this.onenddrag(this);
+    if(this.options.onenddrag)
+      this.options.onenddrag(this);
   }
 
   this.drag_handlers.each(function(h) { h.stop(); });
@@ -767,7 +774,7 @@ DragElement.prototype.selectstart_event = function(event)
 WindowDragElement = function(element)
 {
   this.element = element;
-  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
+  this.dragger = new DragElement(element, { ondrag: this.ondrag.bind(this), onstartdrag: this.startdrag.bind(this) });
 }
 
 WindowDragElement.prototype.startdrag = function()
@@ -785,11 +792,15 @@ WindowDragElement.prototype.ondrag = function(e)
 
 /* element should be positioned (eg. position: absolute).  When the element is dragged,
  * scroll it around. */
-WindowDragElementAbsolute = function(element)
+WindowDragElementAbsolute = function(element, ondrag_callback)
 {
   this.element = element;
+  this.ondrag_callback = ondrag_callback;
   this.disabled = false;
-  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
+  this.dragger = new DragElement(element, {
+    ondrag: this.ondrag.bind(this),
+    onstartdrag: this.startdrag.bind(this)
+  });
 }
 
 WindowDragElementAbsolute.prototype.set_disabled = function(b) { this.disabled = b; }
@@ -820,6 +831,9 @@ WindowDragElementAbsolute.prototype.ondrag = function(e)
   scrollTop = Math.max(scrollTop, min_visible - this.element.offsetHeight);
   scrollTop = Math.min(scrollTop, window_size.height - min_visible);
   this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
+
+  if(this.ondrag_callback)
+    this.ondrag_callback();
 }
 
 WindowDragElementAbsolute.prototype.destroy = function()

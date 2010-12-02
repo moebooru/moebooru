@@ -44,13 +44,14 @@ BrowserView = function(container)
   this.post_ui_visible = true;
 
   debug.handler.add_hook(this.get_debug.bind(this));
+  this.update_navigator = this.update_navigator.bind(this);
 
   Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
 
   document.on("viewer:vote", function(event) { Post.vote($("vote-container"), event.memo.score); });
 
   /* Double-clicking the main image, or on nothing, toggles the thumb bar. */
-  this.container.down(".image-container").on("dblclick", ".main-image,.image-container", function(event) {
+  this.container.down(".image-container").on("dblclick", ".image-container", function(event) {
     /* Watch out: Firefox fires dblclick events for all buttons, with the standard
      * button maps, but IE only fires it for left click and doesn't set button at
      * all, so event.isLeftClick won't work. */
@@ -74,6 +75,7 @@ BrowserView = function(container)
   document.on("viewer:thumb-bar-changed", function(e) {
     /* Update the thumb bar height and rescale the image to fit the new area. */
     this.thumb_bar_height = e.memo.height;
+    this.update_image_window_size();
 
     this.set_post_ui(e.memo.shown);
     this.scale_and_position_image(true);
@@ -226,6 +228,8 @@ BrowserView.prototype.set_post_ui = function(visible)
 
   this.post_ui_visible = visible;
   this.container.down(".post-info").show(this.post_ui_visible && this.displayed_post_id);
+  if(this.navigator)
+    this.navigator.container.show(visible);
 
   /* If we're hiding the post UI, cancel the post editor if it's open. */
   if(!this.post_ui_visible)
@@ -386,6 +390,10 @@ BrowserView.prototype.set_main_image = function(post)
     this.img = null;
   }
 
+  if(this.navigator)
+    this.navigator.destroy();
+  this.navigator = null;
+
   /* If this post is blacklisted, show a message instead of displaying it. */
   debug(post.id + "," + this.blacklist_override_post_id);
   var hide_post = Post.is_blacklisted(post.id) && post.id != this.blacklist_override_post_id;
@@ -416,12 +424,17 @@ BrowserView.prototype.set_main_image = function(post)
   }
 
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
-  this.container.down(".image-container").appendChild(this.img);
+  this.container.down(".image-box").appendChild(this.img);
 
   /* If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
    * dragging too. */
   if(this.image_swipe == null)
-    this.image_dragger = new WindowDragElementAbsolute(this.img);
+    this.image_dragger = new WindowDragElementAbsolute(this.img, this.update_navigator);
+
+  this.img.on("viewer:center-on", function(e) { this.center_image_on(e.memo.x, e.memo.y); }.bindAsEventListener(this));
+
+  if(this.viewing_larger_version)
+    this.navigator = new Navigator(this.container.down(".image-navigator"), this.img, post);
 
   this.scale_and_position_image();
 }
@@ -776,6 +789,7 @@ BrowserView.prototype.edit_save = function()
 BrowserView.prototype.window_resize_event = function()
 {
   debug("view resize");
+  this.update_image_window_size();
   this.scale_and_position_image(true);
 }
 
@@ -798,6 +812,23 @@ BrowserView.prototype.toggle_view_large_image = function()
   this.set_main_image(post);
 }
 
+/* this.image_window_size is the size of the area where the image is visible. */
+BrowserView.prototype.update_image_window_size = function()
+{
+  this.image_window_size = getWindowSize();
+
+  /* If the thumb bar is shown, exclude it from the window height and fit the image
+   * in the remainder.  Since the bar is at the bottom, we don't need to do anything to
+   * adjust the top. */
+  this.image_window_size.height -= this.thumb_bar_height;
+
+  this.image_window_size.height = Math.max(this.image_window_size.height, 0); /* clamp to 0 if there's no space */
+
+  /* When the window size changes, update the navigator since the cursor will resize to
+   * match. */
+  this.update_navigator();
+}
+
 BrowserView.prototype.scale_and_position_image = function(resizing)
 {
   var img = this.img;
@@ -813,13 +844,7 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
     return;
   }
 
-  var window_size = getWindowSize();
-
-  /* If the thumb bar is shown, exclude it from the window height and fit the image
-   * in the remainder.  Since the bar is at the bottom, we don't need to do anything to
-   * adjust the top. */
-  window_size.height -= this.thumb_bar_height;
-  window_size.height = Math.max(window_size.height, 0); /* clamp to 0 if there's no space */
+  var window_size = this.image_window_size;
 
   var ratio = 1.0;
   if(!this.viewing_larger_version)
@@ -838,16 +863,54 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
   if(resizing && this.viewing_larger_version)
     return;
 
-  var offset = img.cumulativeOffset();
-  offset.top -= img.offsetTop;
-  offset.left -= img.offsetLeft;
-  var left_spacing = (window_size.width - img.offsetWidth) / 2;
-  var top_spacing = (window_size.height - img.offsetHeight) / 2;
-  var scroll_x = offset.left - left_spacing;
-  var scroll_y = offset.top - top_spacing;
+  var x = 0.5;
+  var y = 0.5;
   if(this.viewing_larger_version)
-    scroll_y = 0;
-  img.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
+  {
+    /* Align the image to the top of the screen. */
+    y = this.image_window_size.height/2;
+    y /= this.img.height;
+  }
+
+  this.center_image_on(x, y);
+}
+
+/* x and y are [0,1]. */
+BrowserView.prototype.update_navigator = function()
+{
+  if(!this.navigator)
+    return;
+
+  /* The coordinates of the image located at the top-left corner of the window: */
+  var scroll_x = -this.img.offsetLeft;
+  var scroll_y = -this.img.offsetTop;
+
+  /* The coordinates at the center of the window: */
+  x = scroll_x + this.image_window_size.width/2;
+  y = scroll_y + this.image_window_size.height/2;
+
+  var percent_x = x / this.img.width;
+  var percent_y = y / this.img.height;
+
+  var height_percent = this.image_window_size.height / this.img.height;
+  var width_percent = this.image_window_size.width / this.img.width;
+  this.navigator.image_position_changed(percent_x, percent_y, height_percent, width_percent);
+}
+
+BrowserView.prototype.center_image_on = function(percent_x, percent_y)
+{
+  var x = percent_x * this.img.width;
+  var y = percent_y * this.img.height;
+
+  var scroll_x = x - this.image_window_size.width/2;
+  scroll_x = Math.round(scroll_x);
+
+  var scroll_y = y - this.image_window_size.height/2;
+  scroll_y = Math.round(scroll_y);
+
+  this.img.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
+
+  this.update_navigator();
 }
 
 BrowserView.prototype.set_post = function(post_id)
@@ -960,6 +1023,131 @@ BrowserView.prototype.child_posts_click_event = function(event)
   event.stop();
 
   UrlHash.set({tags: "parent:" + this.displayed_post_id});
+}
+
+
+var Navigator = function(container, target, post)
+{
+  this.container = container;
+  this.target = target;
+  this.img = this.container.down(".image-navigator-img");
+  this.img.src = post.preview_url;
+  this.img.width = post.actual_preview_width;
+  this.img.height = post.actual_preview_height;
+  this.container.show();
+
+  this.handlers = [];
+  this.handlers.push(this.container.on("mousedown", this.mousedown_event.bindAsEventListener(this)));
+
+  this.dragger = new DragElement(this.container, {
+    snap_pixels: 0,
+    onenddrag: this.enddrag.bind(this),
+    ondrag: this.ondrag.bind(this)
+  });
+}
+
+Navigator.prototype.mousedown_event = function(e)
+{
+  var x = e.pointerX();
+  var y = e.pointerY();
+  var coords = this.get_normalized_coords(x, y);
+  this.center_on_position(coords);
+}
+
+Navigator.prototype.enddrag = function(e)
+{
+  this.shift_lock_anchor = null;
+  this.locked_to_x = null;
+}
+
+Navigator.prototype.ondrag = function(e)
+{
+  var coords = this.get_normalized_coords(e.x, e.y);
+  if(e.latest_event.shiftKey != (this.shift_lock_anchor != null))
+  {
+    /* The shift key has been pressed or released. */
+    if(e.latest_event.shiftKey)
+    {
+      /* The shift key was just pressed.  Remember the position we were at when it was
+       * pressed. */
+      this.shift_lock_anchor = [coords[0], coords[1]];
+    }
+    else
+    {
+      /* The shift key was released. */
+      this.shift_lock_anchor = null;
+      this.locked_to_x = null;
+    }
+  }
+
+  this.center_on_position(coords);
+}
+
+Navigator.prototype.image_position_changed = function(percent_x, percent_y, height_percent, width_percent)
+{
+  /* When the image is moved or the visible area is resized, update the cursor rectangle. */
+  var cursor = this.container.down(".navigator-cursor");
+  cursor.setStyle({
+    top: this.img.height * (percent_y - height_percent/2) + "px",
+    left: this.img.width * (percent_x - width_percent/2) + "px",
+    width: this.img.width * width_percent + "px",
+    height: this.img.height * height_percent + "px"
+  });
+}
+
+Navigator.prototype.get_normalized_coords = function(x, y)
+{
+  var offset = this.img.cumulativeOffset();
+  x -= offset.left;
+  y -= offset.top;
+  x /= this.img.width;
+  y /= this.img.height;
+  return [x, y];
+
+}
+
+/* x and y are absolute window coordinates. */
+Navigator.prototype.center_on_position = function(coords)
+{
+  if(this.shift_lock_anchor)
+  {
+    if(this.locked_to_x == null)
+    {
+      /* Only change the coordinate with the greater delta. */
+      var change_x = Math.abs(coords[0] - this.shift_lock_anchor[0]);
+      var change_y = Math.abs(coords[1] - this.shift_lock_anchor[1]);
+
+      /* Only lock to moving vertically or horizontally after we've moved a small distance
+       * from where shift was pressed. */
+      if(change_x > 0.1 || change_y > 0.1)
+        this.locked_to_x = change_x > change_y;
+    }
+
+    /* If we've chosen an axis to lock to, apply it. */
+    if(this.locked_to_x != null)
+    {
+      if(this.locked_to_x)
+        coords[1] = this.shift_lock_anchor[1];
+      else
+        coords[0] = this.shift_lock_anchor[0];
+    }
+  }
+
+  coords[0] = Math.max(0, Math.min(coords[0], 1));
+  coords[1] = Math.max(0, Math.min(coords[1], 1));
+
+  this.target.fire("viewer:center-on", {x: coords[0], y: coords[1]});
+}
+
+
+Navigator.prototype.destroy = function()
+{
+  this.dragger.destroy();
+
+  this.handlers.each(function(h) { h.stop(); });
+  this.dragger = this.handlers = null;
+
+  this.container.hide();
 }
 
 

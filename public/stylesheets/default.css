@@ -1540,6 +1540,16 @@ textarea.edit-item { border: none; }
   list-style-type: none;
 }
 
+.image-navigator
+{
+  border: 1px solid #000;
+}
+
+.navigator-cursor
+{
+  border: 2px solid #0FF;
+}
+
 #post-content A.disabled {
   color: #555;
 }

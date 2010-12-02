@@ -1442,6 +1442,11 @@ span.stars .star-3 { color:#ff0; }
 
 #post-content .main-image {
   position: absolute;
+
+  /* Prevent the image from being selected when double-clicking the container to
+   * toggle fullscreen. */
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 .browser-bottom-bar {
@@ -1456,6 +1461,10 @@ span.stars .star-3 { color:#ff0; }
 .post-browser-posts-container {
   height: 210px;
   overflow: hidden;
+
+  /* Prevent thumbs from being selected when double-clicking the thumb container. */
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 .post-browser-scroller {

@@ -574,6 +574,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
     /* We need at least this.container.offsetWidth/2 in each direction.  Load a little more, to
      * reduce flicker. */
     var minimum_distance = this.container.offsetWidth/2;
+    minimum_distance *= 1.25;
     var maximum_distance = minimum_distance + 500;
     while(true)
     {

@@ -681,6 +681,9 @@ BrowserView.prototype.edit_show = function(shown)
   if(!post)
     shown = false;
 
+  if(!User.is_member_or_higher())
+    shown = false;
+
   this.edit_shown = shown;
   this.container.down(".post-tags-box").show(!shown);
   this.container.down(".post-edit").show(shown);

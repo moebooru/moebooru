@@ -116,7 +116,11 @@ PostLoader.prototype.server_load_posts = function()
     }.bind(this),
 
     onFailure: function(resp) {
-      notice("Error " + resp.status + " loading posts");
+      var error = "error " + resp.status;
+      if(resp.responseJSON)
+        error = resp.responseJSON.reason;
+
+      notice("Error loading posts: " + error);
       this.result.error = true;
     }.bind(this)
   });

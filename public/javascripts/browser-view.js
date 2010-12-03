@@ -210,7 +210,7 @@ BrowserView = function(container)
   }.bindAsEventListener(this));
 
 
-  this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: !e.memo.right }); }.bindAsEventListener(this));
+  this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: e.memo.right }); }.bindAsEventListener(this));
 
   if(Prototype.BrowserFeatures.Touchscreen)
     this.image_swipe = new SwipeHandler(this.container.down(".image-container"));

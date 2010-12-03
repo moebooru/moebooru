@@ -37,6 +37,10 @@ UrlHashHandler.prototype.fire_observers = function(old_hash, new_hash)
     observers_to_call = observers_to_call.concat(observers);
   }.bind(this));
 
+  var universal_observers = this.observers.get(null);
+  if(universal_observers != null)
+    observers_to_call = observers_to_call.concat(universal_observers);
+
   observers_to_call.each(function(observer) {
     observer(changed_hash_keys, old_hash, new_hash);
   });
@@ -165,6 +169,12 @@ UrlHashHandler.prototype.get_raw_hash = function()
   return window.location.href.substr(pre_hash_part.length);
 }
 
+UrlHashHandler.prototype.set_raw_hash = function(hash)
+{
+  var query_params = this.parse(hash);
+  this.set_all(query_params);
+}
+
 UrlHashHandler.prototype.get = function(key)
 {
   return this.current_hash.get(key);
@@ -202,6 +212,7 @@ UrlHashHandler.prototype.set_all = function(query_params)
 }
 
 
+/* Observe changes to the specified key.  If key is null, watch for all changes. */
 UrlHashHandler.prototype.observe = function(key, func)
 {
   var observers = this.observers.get(key);

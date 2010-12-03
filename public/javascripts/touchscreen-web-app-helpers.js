@@ -382,7 +382,7 @@ var InitializeFullScreenBrowserHandlers = function()
 SwipeHandler = function(element)
 {
   this.element = element;
-  this.dragger = new DragElement(element, this.ondrag.bind(this), this.startdrag.bind(this));
+  this.dragger = new DragElement(element, { ondrag: this.ondrag.bind(this), onstartdrag: this.startdrag.bind(this) });
 }
 
 SwipeHandler.prototype.startdrag = function()

@@ -75,7 +75,7 @@ ThumbnailView = function(container, view)
   {
     this.config.thumb_scale = 1.0;
   }
-  else if(navigator.userAgent.indexOf("iPhone") != -1)
+  else if(navigator.userAgent.indexOf("iPhone") != -1 || navigator.userAgent.indexOf("iPod") != -1)
   {
     this.config.thumb_scale = 0.5;
   }
@@ -112,7 +112,6 @@ ThumbnailView = function(container, view)
 
 ThumbnailView.prototype.window_resize_event = function(e)
 {
-  debug("recenter thumbs, stopped: " + e.stopped);
   if(e.stopped)
     return;
   if(this.thumb_container_shown)

@@ -259,12 +259,12 @@ BrowserView.prototype.preload = function(post_ids)
   this.last_preload_request = post_ids;
   if(last_preload_request.indexOf(this.wanted_post_id) == -1)
   {
-    debug("skipped-preload(" + post_ids.join(",") + ")");
+    // debug("skipped-preload(" + post_ids.join(",") + ")");
     this.last_preload_request_active = false;
     return;
   }
   this.last_preload_request_active = true;
-  debug("preload(" + post_ids.join(",") + ")");
+  // debug("preload(" + post_ids.join(",") + ")");
   
   var new_preload_container = new PreloadContainer();
   for(var i = 0; i < post_ids.length; ++i)
@@ -394,7 +394,6 @@ BrowserView.prototype.set_main_image = function(post)
   this.navigator = null;
 
   /* If this post is blacklisted, show a message instead of displaying it. */
-  debug(post.id + "," + this.blacklist_override_post_id);
   var hide_post = Post.is_blacklisted(post.id) && post.id != this.blacklist_override_post_id;
   this.container.down(".blacklisted-message").show(hide_post);
   if(hide_post)
@@ -402,6 +401,19 @@ BrowserView.prototype.set_main_image = function(post)
 
   this.img = $(document.createElement("IMG"));
   this.img.className = "main-image";
+
+  /*
+   * Work around an iPhone bug.  If a touchstart event is sent to this.img, and then
+   * (due to a swipe gesture) we remove the image and replace it with a new one, no
+   * touchend is ever delivered, even though it's the containing box listening to the
+   * event.  Work around this by setting the image to pointer-events: none, so clicks on
+   * the image will actually be sent to the containing box directly.
+   *
+   * Only do this when using the swipe handler.  The drag handler does use events from
+   * the image.
+   */
+  if(this.image_swipe)
+    this.img.setStyle({pointerEvents: "none"});
 
   if(this.viewing_larger_version && post.jpeg_url)
   {
@@ -804,7 +816,6 @@ BrowserView.prototype.edit_save = function()
 
 BrowserView.prototype.window_resize_event = function(e)
 {
-  debug("view resize");
   if(e.stopped)
     return;
   this.update_image_window_size();
@@ -960,7 +971,6 @@ BrowserView.prototype.lazily_load = function(post_id)
   var is_cached = this.last_preload_request_active && this.last_preload_request.indexOf(post_id) != -1;
 
   var ms = is_cached? 0:500;
-  debug("post:" + post_id + ":" + is_cached + ":" + ms);
 
   /* Once lazily_load is called with a new post, we should consistently stay on the current
    * post or change to the new post.  We shouldn't change to a post that was previously

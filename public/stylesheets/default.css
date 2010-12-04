@@ -29,7 +29,6 @@ body.not-member .member-only { display: none !important; }
 }
 .action-post-browse > body {
   background: #000;
-  overflow: hidden;
   padding: 0;
 }
 
@@ -1428,6 +1427,10 @@ span.stars .star-3 { color:#ff0; }
 }
 .del-mode > label {
   font-weight: normal;
+}
+
+#sizing-body {
+  overflow: hidden;
 }
 
 .post-browser {

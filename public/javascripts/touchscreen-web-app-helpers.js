@@ -27,13 +27,12 @@
  * - capture resize events
  * - cancel the resize event; we'll fire it again when we're done
  * - enable a large padding div, to ensure that we can scroll the window downward
- * - switch the body to overflow: auto
  * - window.scrollTo(0, 1) to scroll the address bar off screen, which increases the window
  *   size to the maximum
  * - wait a little while; unbelievably, window.scrollTo on Android animates rather than
  *   snapping to the position as all sane browsers do
  * - set the body to the size of the window
- * - hide the padding div and set the body back to overflow: hidden
+ * - hide the padding div
  * - synthesize a new resize event to continue other event handlers that we originally cancelled
  *
  * resize will always be fired at least once as a result of constructing this class.
@@ -43,7 +42,9 @@
 
 function AndroidDetectWindowSize()
 {
-  /* This is shown to make sure we can scroll the address bar off. */
+  /* This is shown to make sure we can scroll the address bar off.  It goes outside
+   * of #sizing-body, so it's not clipped.  By not changing #sizing-body itself, we
+   * avoid reflowing the entire document more than once, when we finish. */
   this.padding = document.createElement("DIV");
   this.padding.setStyle({width: "5000px", height: "5000px"});
   this.padding.hide();
@@ -54,10 +55,27 @@ function AndroidDetectWindowSize()
   this.event_onresize = this.event_onresize.bindAsEventListener(this);
 
   this.finish_timer = null;
+  this.last_window_orientation = window.orientation;
+
+  window.addEventListener("resize", this.event_onresize, true);
+
   this.active = false;
 
-  /* This will run a detection cycle, which will fire resize and then leave us capturing resize. */
-  this.begin();
+  /* Kick off a detection cycle.  On Android 2.1, we can't do this immediately after onload; for
+   * some reason this triggers some very strange browser bug where the screen will jitter up and
+   * down, as if our scrollTo is competing against the browser trying to scroll somewhere.  For
+   * older browsers, delay before starting.  This is no longer needed on Android 2.2. */
+  var delay_seconds = 0;
+  var m = navigator.userAgent.match(/Android (\d+\.\d+)/);
+  if(m && parseFloat(m[1]) < 2.2)
+  {
+    debug("Delaying bootstrapping due to Android version " + m[1]);
+    delay_seconds = 1;
+  }
+
+  /* When this detection cycle completes, a resize event will be fired so listeners can
+   * act on the detected window size. */
+  this.begin.bind(this).delay(delay_seconds);
 }
 
 /* Return true if Android resize handling is needed. */
@@ -67,13 +85,12 @@ AndroidDetectWindowSize.required = function()
   return navigator.userAgent.indexOf("Android") != -1;
 }
 
-/* Dispatch a resize event that we won't intercept, and which will continue on to regular
- * listeners.  This is used after we've completed processing. */
+/* After we set the window size, dispatch a resize event so other listeners will notice
+ * it. */
 AndroidDetectWindowSize.prototype.dispatch_resize_event = function()
 {
-  debug("dispatch");
+  debug("dispatch final resize event");
   var e = document.createEvent("Event");
-  e.from_window_size_detection = true;
   e.initEvent("resize", true, true);
   document.documentElement.dispatchEvent(e);
 }
@@ -86,22 +103,16 @@ AndroidDetectWindowSize.prototype.begin = function()
   var initial_window_size = this.current_window_size();
   if(this.window_size && initial_window_size[0] == this.window_size[0] && initial_window_size[1] == this.window_size[1])
   {
-    debug("skipped");
+    debug("skipped window size detection");
     return;
   }
 
-  debug("begin");
-  document.body.setStyle({overflow: "auto"});
-  this.window_size = initial_window_size;
-  this.padding.show();
+  debug("begin window size detection, " + initial_window_size[0] + "x" + initial_window_size[1] + " at start");
   this.active = true;
-  window.removeEventListener("resize", this.event_onresize, true);
-
-  if(this.finish_timer != null)
-    this.finish_timer = window.clearTimeout(this.finish_timer);
-  this.finish_timer = window.setTimeout(this.finish, 250);
+  this.padding.show();
 
   window.scrollTo(0, 1);
+  this.finish_timer = window.setTimeout(this.finish, 500);
 }
 
 AndroidDetectWindowSize.prototype.end = function()
@@ -110,9 +121,15 @@ AndroidDetectWindowSize.prototype.end = function()
     return;
   this.active = false;
 
+  if(this.begin_timer != null)
+    window.clearTimeout(this.begin_timer);
+  this.begin_timer = null;
+
+  if(this.finish_timer != null)
+    window.clearTimeout(this.finish_timer);
+  this.finish_timer = null;
+
   this.padding.hide();
-  document.body.setStyle({overflow: "hidden"});
-  window.addEventListener("resize", this.event_onresize, true);
 }
 
 AndroidDetectWindowSize.prototype.current_window_size = function()
@@ -124,48 +141,49 @@ AndroidDetectWindowSize.prototype.finish = function()
 {
   if(!this.active)
     return;
-  debug("finish()");
+  debug("window size detection: finish()");
   this.end();
 
-  this.window_size[0] = Math.max(this.window_size[0], window.innerWidth);
-  this.window_size[1] = Math.max(this.window_size[1], window.innerHeight);
-
-  /* If the orientation's been changed, start over. */
-  var was_landscape = this.window_size[0] > this.window_size[1];
-  var is_landscape = window.innerWidth > window.innerHeight;
-  if(was_landscape != is_landscape)
-  {
-    debug("restart: orientation changed");
-    this.end();
-    this.begin();
-    return;
-  }
+  this.window_size = this.current_window_size();
 
   // We need to fudge the height up a pixel, or in many cases we'll end up with a white line
   // at the bottom of the screen.  This seems to be sub-pixel rounding error.
   debug("new window size: " + this.window_size[0] + "x" + this.window_size[1]);
-  document.body.setStyle({width: this.window_size[0] + "px", height: (this.window_size[1]+1) + "px"});
+  $("sizing-body").setStyle({width: this.window_size[0] + "px", height: (this.window_size[1]) + "px"});
 
   this.dispatch_resize_event();
 }
 
 AndroidDetectWindowSize.prototype.event_onresize = function(e)
 {
-  /* Ignore events that we generated ourselves after completion. */
-  if(e.from_window_size_detection)
+  if(this.last_window_orientation != window.orientation)
   {
-    debug("ignored");
+    e.stop();
+
+    this.last_window_orientation = window.orientation;
+    if(this.active)
+    {
+      /* The orientation changed while we were in the middle of detecting the resolution.
+       * Start over. */
+      debug("Orientation changed while already detecting window size; restarting");
+      this.end();
+    }
+    else
+    {
+      debug("Resize received with an orientation change; beginning");
+    }
+
+    this.begin();
     return;
   }
 
-  debug("stopping resize event");
-  e.stopPropagation();
-
-  /* A resize event starts a new detection cycle, if we're not already in one. */
-  if(!this.active)
+  if(this.active)
   {
-    debug("resize");
-    this.begin();
+    /* Suppress resize events while we're active, since many of them will fire.
+     * Once we finish, we'll fire a single one. */
+    debug("stopping resize event while we're active");
+    e.stop();
+    return;
   }
 }
 

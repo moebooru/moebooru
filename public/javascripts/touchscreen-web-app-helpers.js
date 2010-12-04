@@ -214,9 +214,11 @@ AndroidDetectWindowSize.prototype.event_onresize = function(e)
 function EmulateDoubleClick()
 {
   this.touchstart_event = this.touchstart_event.bindAsEventListener(this);
+  this.touchend_event = this.touchend_event.bindAsEventListener(this);
   this.last_click_event = null;
 
   window.addEventListener("touchstart", this.touchstart_event, false);
+  window.addEventListener("touchend", this.touchend_event, false);
 }
 
 EmulateDoubleClick.prototype.touchstart_event = function(event)
@@ -224,9 +226,19 @@ EmulateDoubleClick.prototype.touchstart_event = function(event)
   var this_click = event;
   var last_click  = this.last_click_event;
 
+  this_click.was_released = false;
+
   this.last_click_event = this_click;
   if(last_click == null)
       return;
+
+  /* If the first tap was never released then this is a multitouch double-tap.
+   * Clear the original tap and don't fire anything. */
+  if(!last_click.was_released)
+  {
+    this.last_click_event = null;
+    return;
+  }
 
   /* Check that not too much time has passed. */
   var time_since_previous = this_click.timeStamp - last_click.timeStamp;
@@ -259,6 +271,16 @@ EmulateDoubleClick.prototype.touchstart_event = function(event)
 
   this.last_click_event = null;
   this_click.target.dispatchEvent(e);
+}
+
+EmulateDoubleClick.prototype.touchend_event = function(event)
+{
+  if(this.last_click_event == null)
+    return;
+
+  var touch = event.changedTouches.item(0);
+  if(touch.identifier == this.last_click_event.changedTouches.item(0).identifier)
+    this.last_click_event.was_released = true;
 }
 
 /* 

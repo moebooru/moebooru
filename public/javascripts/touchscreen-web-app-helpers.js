@@ -215,7 +215,7 @@ function EmulateDoubleClick()
 {
   this.touchstart_event = this.touchstart_event.bindAsEventListener(this);
   this.touchend_event = this.touchend_event.bindAsEventListener(this);
-  this.last_click_event = null;
+  this.last_click = null;
 
   window.addEventListener("touchstart", this.touchstart_event, false);
   window.addEventListener("touchend", this.touchend_event, false);
@@ -223,12 +223,20 @@ function EmulateDoubleClick()
 
 EmulateDoubleClick.prototype.touchstart_event = function(event)
 {
-  var this_click = event;
-  var last_click  = this.last_click_event;
+  var this_touch = event.changedTouches[0];
+  var last_click = this.last_click;
 
-  this_click.was_released = false;
+  /* Don't store event.changedTouches or any of its contents.  Some browsers modify these
+   * objects in-place between events instead of properly returning unique events. */
+  this.last_click = {
+    timeStamp: event.timeStamp,
+    target: event.target,
+    was_released: false,
+    identifier: this_touch.identifier,
+    position: [this_touch.screenX, this_touch.screenY],
+    clientPosition: [this_touch.clientX, this_touch.clientY]
+  }
 
-  this.last_click_event = this_click;
   if(last_click == null)
       return;
 
@@ -236,51 +244,63 @@ EmulateDoubleClick.prototype.touchstart_event = function(event)
    * Clear the original tap and don't fire anything. */
   if(!last_click.was_released)
   {
-    this.last_click_event = null;
+    this.last_click = null;
     return;
   }
 
   /* Check that not too much time has passed. */
-  var time_since_previous = this_click.timeStamp - last_click.timeStamp;
+  var time_since_previous = event.timeStamp - last_click.timeStamp;
   if(time_since_previous > 500)
     return;
 
   /* Check that the clicks aren't too far apart. */
-  var distance = Math.pow(this_click.screenX - last_click.screenX, 2) + Math.pow(this_click.screenY - last_click.screenY, 2);
-  if(distance > 8)
+  var distance = Math.pow(this_touch.screenX - last_click.position[0], 2) + Math.pow(this_touch.screenY - last_click.position[1], 2);
+  if(distance > 500)
     return;
 
-  /* Make sure these attributes match in both clicks: */
-  var properties_to_match = ["ctrlKey", "altKey", "shiftKey", "metaKey", "target", "button"];
-  for(var i = 0; i < properties_to_match.length; ++i)
-  {
-    var name = properties_to_match[i]
-    if(this_click[name] != last_click[name])
-      return;
-  }
+  if(event.target != last_click.target)
+    return;
 
-  /* Synthesize a dblclick event. */
+  /* Synthesize a dblclick event.  Use the coordinates of the first click as the location
+   * and not the second click, since if the position matters the user's first click of
+   * a double-click is probably more precise than the second. */
   var e = document.createEvent("MouseEvent");
   e.initMouseEvent("dblclick", true, true, window, 
                      2,
-                     this_click.screenX, this_click.screenY,
-                     this_click.clientX, this_click.clientY, 
-                     this_click.ctrlKey, this_click.altKey,
-                     this_click.shiftKey, this_click.metaKey, 
-                     this_click.button, null);
+                     last_click.position[0], last_click.position[1],
+                     last_click.clientPosition[0], last_click.clientPosition[1],
+                     false, false,
+                     false, false,
+                     0, null);
 
-  this.last_click_event = null;
-  this_click.target.dispatchEvent(e);
+  this.last_click = null;
+  event.target.dispatchEvent(e);
 }
 
 EmulateDoubleClick.prototype.touchend_event = function(event)
 {
-  if(this.last_click_event == null)
+  if(this.last_click == null)
     return;
 
-  var touch = event.changedTouches.item(0);
-  if(touch.identifier == this.last_click_event.changedTouches.item(0).identifier)
-    this.last_click_event.was_released = true;
+  var last_click_identifier = this.last_click.identifier;
+  if(last_click_identifier == null)
+    return;
+
+  var last_click_position = this.last_click.position;
+  var this_click = event.changedTouches.item(0);
+  if(this_click.identifier == last_click_identifier)
+  {
+    this.last_click.was_released = true;
+
+    /* If the touch moved too far when it was removed, don't fire a doubleclick; for
+     * example, two quick swipe gestures aren't a double-click. */
+    var distance = Math.pow(this_click.screenX - last_click_position[0], 2) + Math.pow(this_click.screenY - last_click_position[1], 2);
+    if(distance > 500)
+    {
+      this.last_click = null;
+      return;
+    }
+  }
 }
 
 /* 

@@ -47,22 +47,6 @@ BrowserView = function(container)
   this.update_navigator = this.update_navigator.bind(this);
 
   Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
-  Event.on(window, "orientationchange", function(e) {
-      /*
-       * When iPhone 4.1 isn't running as a web app, rotating the phone doesn't fire resize;
-       * we need to watch orientationchange or we'll miss them.  Android tends to fire these
-       * events randomly and in bursts, so check if the orientation has actually changed before
-       * doing anything.
-       *
-       * Also note that doing this will, for some reason, trigger the actual resize event, so
-       * we don't need to do this for every resize handler.
-       */
-      if(this.last_orientation == window.orientation)
-        return;
-      this.last_orientation = window.orientation;
-    this.window_resize_event(e);
-  }.bindAsEventListener(this));
-
   document.on("viewer:vote", function(event) { Post.vote($("vote-container"), event.memo.score); });
 
   /* Double-clicking the main image, or on nothing, toggles the thumb bar. */

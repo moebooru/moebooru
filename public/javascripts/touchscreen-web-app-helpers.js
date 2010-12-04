@@ -420,7 +420,7 @@ var InitializeFullScreenBrowserHandlers = function()
     new ResponsiveSingleClick();
     new EmulateDoubleClick();
   }
-  else if((navigator.userAgent.indexOf("iPhone") != -1 || navigator.userAgent.indexOf("iPad") != -1)
+  else if((navigator.userAgent.indexOf("iPhone") != -1 || navigator.userAgent.indexOf("iPad") != -1 || navigator.userAgent.indexOf("iPod") != -1)
       && navigator.userAgent.indexOf("WebKit") != -1)
   {
     new ResponsiveSingleClick();

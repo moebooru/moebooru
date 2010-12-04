@@ -95,7 +95,7 @@ ThumbnailView = function(container, view)
     this.config.thumb_scale = Math.min(this.config.thumb_scale, 1.0);
     this.config.thumb_scale = Math.max(this.config.thumb_scale, 0.5);
 
-    debug(window.innerWidth + "x" + window.innerHeight);
+    debug("startup, window size: " + window.innerWidth + "x" + window.innerHeight);
   }
   else
   {
@@ -112,6 +112,9 @@ ThumbnailView = function(container, view)
 
 ThumbnailView.prototype.window_resize_event = function(e)
 {
+  debug("recenter thumbs, stopped: " + e.stopped);
+  if(e.stopped)
+    return;
   if(this.thumb_container_shown)
     this.center_on_post_for_scroll(this.centered_post_idx);
 }

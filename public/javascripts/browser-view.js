@@ -821,6 +821,8 @@ BrowserView.prototype.edit_save = function()
 BrowserView.prototype.window_resize_event = function(e)
 {
   debug("view resize");
+  if(e.stopped)
+    return;
   this.update_image_window_size();
   this.scale_and_position_image(true);
 }

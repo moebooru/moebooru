@@ -595,11 +595,14 @@ DragElement.prototype.touchmove_event = function(event)
 {
   /* Ignore touches other than the one we started with. */
   var touch = null;
-  for(var i = 0; i < event.touches.length; ++i)
+  for(var i = 0; i < event.changedTouches.length; ++i)
   {
-    touch = event.touches.item(i);
-    if(touch.identifier == this.dragging_touch_identifier)
+    var t = event.changedTouches[i];
+    if(t.identifier == this.dragging_touch_identifier)
+    {
+      touch = t;
       break;
+    }
   }
   if(touch == null)
     return;
@@ -679,11 +682,13 @@ DragElement.prototype.touchstart_event = function(event)
 {
   /* If we have multiple touches, find the first one that actually refers to us. */
   var touch = null;
-  for(var i = 0; i < event.touches.length; ++i)
+  for(var i = 0; i < event.changedTouches.length; ++i)
   {
-    touch = event.touches.item(i);
-    if(touch.target.isParentNode(this.element))
-      break;
+    var t = event.changedTouches[i];
+    if(!t.target.isParentNode(this.element))
+      continue;
+    touch = t;
+    break;
   }
   if(touch == null)
     return;
@@ -696,6 +701,9 @@ DragElement.prototype.touchstart_event = function(event)
 
 DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identifier)
 {
+  if(this.dragging_touch_identifier != null)
+    return;
+
   /* If we've been started with a touch event, only listen for touch events.  If we've
    * been started with a mouse event, only listen for mouse events.  We may receive
    * both sets of events, and the anchor coordinates for the two may not be compatible. */
@@ -703,6 +711,7 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
   if(touch)
   {
     this.drag_handlers.push(document.on("touchend", this.touchend_event));
+    this.drag_handlers.push(document.on("touchcancel", this.touchend_event));
     this.drag_handlers.push(document.on("touchmove", this.touchmove_event));
   }
   else
@@ -724,7 +733,16 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
 
 DragElement.prototype.touchend_event = function(event)
 {
-  this.stop_dragging();
+  /* If our touch was released, stop the drag. */
+  for(var i = 0; i < event.changedTouches.length; ++i)
+  {
+    var t = event.changedTouches[i];
+    if(t.identifier == this.dragging_touch_identifier)
+    {
+      this.stop_dragging();
+      return;
+    }
+  }
 }
 
 DragElement.prototype.mouseup_event = function(event)
@@ -748,6 +766,7 @@ DragElement.prototype.stop_dragging = function()
 
   this.drag_handlers.each(function(h) { h.stop(); });
   this.drag_handlers = [];
+  this.dragging_touch_identifier = null;
 }
 
 DragElement.prototype.click_event = function(event)

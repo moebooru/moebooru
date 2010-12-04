@@ -287,7 +287,7 @@ EmulateDoubleClick.prototype.touchend_event = function(event)
     return;
 
   var last_click_position = this.last_click.position;
-  var this_click = event.changedTouches.item(0);
+  var this_click = event.changedTouches[0];
   if(this_click.identifier == last_click_identifier)
   {
     this.last_click.was_released = true;
@@ -310,8 +310,6 @@ EmulateDoubleClick.prototype.touchend_event = function(event)
  * when the page can't be zoomed, which means nothing happens at all.
  *
  * Generate click events from touchend events to bypass this mess.
- *
- * XXX: This needs to understand multitouch.
  */
 ResponsiveSingleClick = function()
 {
@@ -331,18 +329,31 @@ ResponsiveSingleClick = function()
 
 ResponsiveSingleClick.prototype.touchstart_event = function(event)
 {
-  /* Watch out: in Android 2.1's browser, the event.touches array and the items inside
+  /* If we get a touch while we already have a touch, it's multitouch, which is never
+   * a click, so cancel the click. */
+  if(this.last_touch != null)
+  {
+    debug("Cancelling click (multitouch)");
+    this.last_touch = null;
+    return;
+  }
+
+  /* Watch out: in older versions of WebKit, the event.touches array and the items inside
    * it are actually modified in-place when the user drags.  That means that we can't just
    * save the entire array for comparing in touchend. */
-  var touch = event.touches.item(0);
+  var touch = event.changedTouches[0];
   this.last_touch = [touch.screenX, touch.screenY];
 }
 
 ResponsiveSingleClick.prototype.touchend_event = function(event)
 {
-  var touch = event.changedTouches.item(0);
-  var this_touch = [touch.screenX, touch.screenY];
   var last_touch = this.last_touch;
+  if(last_touch == null)
+    return;
+  this.last_touch = null;
+
+  var touch = event.changedTouches[0];
+  var this_touch = [touch.screenX, touch.screenY];
 
   /* Don't trigger a click if the point has moved too far. */
   var distance = distance_squared(this_touch[0], this_touch[1], last_touch[0], last_touch[1]);
@@ -352,10 +363,10 @@ ResponsiveSingleClick.prototype.touchend_event = function(event)
   var e = document.createEvent("MouseEvent");
   e.initMouseEvent("click", true, true, window, 
                      1,
-                     event.screenX, event.screenY,
-                     event.clientX, event.clientY, 
-                     event.ctrlKey, event.altKey,
-                     event.shiftKey, event.metaKey, 
+                     touch.screenX, touch.screenY,
+                     touch.clientX, touch.clientY, 
+                     false, false,
+                     false, false,
                      0, /* touch clicks are always button 0 - maybe not for multitouch */
                      null);
   e.synthesized_click = true;

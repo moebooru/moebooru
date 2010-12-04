@@ -518,11 +518,17 @@ DragElement = function(element, options)
    * Sometimes drag events can leak through, and attributes like -moz-user-select may
    * be needed to prevent it.
    */
-  this.handlers.push(element.on("mousedown", this.mousedown_event));
-  this.handlers.push(element.on("dragstart", this.dragstart_event));
+  if(!options.no_mouse)
+  {
+    this.handlers.push(element.on("mousedown", this.mousedown_event));
+    this.handlers.push(element.on("dragstart", this.dragstart_event));
+  }
 
-  this.handlers.push(element.on("touchstart", this.touchstart_event));
-  this.handlers.push(element.on("touchmove", this.touchmove_event));
+  if(!options.no_touch)
+  {
+    this.handlers.push(element.on("touchstart", this.touchstart_event));
+    this.handlers.push(element.on("touchmove", this.touchmove_event));
+  }
 
   /*
    * We may or may not get a click event after mouseup.  This is a pain: if we get a
@@ -793,7 +799,11 @@ DragElement.prototype.selectstart_event = function(event)
 WindowDragElement = function(element)
 {
   this.element = element;
-  this.dragger = new DragElement(element, { ondrag: this.ondrag.bind(this), onstartdrag: this.startdrag.bind(this) });
+  this.dragger = new DragElement(element, {
+    no_touch: true,
+    ondrag: this.ondrag.bind(this),
+    onstartdrag: this.startdrag.bind(this)
+  });
 }
 
 WindowDragElement.prototype.startdrag = function()

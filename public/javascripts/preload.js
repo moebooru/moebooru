@@ -1,5 +1,12 @@
+var _preload_image_pool = null;
+
 PreloadContainer = function()
 {
+  /* Initialize the pool the first time we make a container, since we may not
+   * have ImgPoolHandler when the file is loaded. */
+  if(_preload_image_pool == null)
+      _preload_image_pool = new ImgPoolHandler();
+
   this.container = document.createElement("div");
   this.container.style.display = "none";
   document.body.appendChild(this.container);
@@ -9,17 +16,18 @@ PreloadContainer = function()
   this.on_image_complete_event = this.on_image_complete_event.bindAsEventListener(this);
 }
 
-PreloadContainer.prototype.cancel_preload = function(req)
+PreloadContainer.prototype.cancel_preload = function(img)
 {
-  this.container.removeChild(req);
+  img.stopObserving();
+  this.container.removeChild(img);
+  _preload_image_pool.release(img);
 }
 
 PreloadContainer.prototype.preload = function(url)
 {
   ++this.active_preloads;
 
-  var imgTag = document.createElement("img");
-  imgTag = $(imgTag);
+  var imgTag = _preload_image_pool.get();
   imgTag.observe("load", this.on_image_complete_event);
   imgTag.observe("error", this.on_image_complete_event);
   imgTag.src = url;
@@ -28,8 +36,18 @@ PreloadContainer.prototype.preload = function(url)
   return imgTag;
 }
 
+/* Return an array of all preloads. */
+PreloadContainer.prototype.get_all = function()
+{
+  return this.container.childElements();
+}
+
 PreloadContainer.prototype.destroy = function()
 {
+  this.container.select("img").each(function(img) {
+    this.cancel_preload(img);
+  }.bind(this));
+
   document.body.removeChild(this.container);
 }
 

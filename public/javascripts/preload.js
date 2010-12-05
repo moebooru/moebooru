@@ -21,6 +21,8 @@ PreloadContainer.prototype.cancel_preload = function(img)
   img.stopObserving();
   this.container.removeChild(img);
   _preload_image_pool.release(img);
+  if(img.active)
+    --this.active_preloads;
 }
 
 PreloadContainer.prototype.preload = function(url)
@@ -31,6 +33,7 @@ PreloadContainer.prototype.preload = function(url)
   imgTag.observe("load", this.on_image_complete_event);
   imgTag.observe("error", this.on_image_complete_event);
   imgTag.src = url;
+  imgTag.active = true;
 
   this.container.appendChild(imgTag);
   return imgTag;
@@ -44,7 +47,7 @@ PreloadContainer.prototype.get_all = function()
 
 PreloadContainer.prototype.destroy = function()
 {
-  this.container.select("img").each(function(img) {
+  this.get_all().each(function(img) {
     this.cancel_preload(img);
   }.bind(this));
 
@@ -54,6 +57,7 @@ PreloadContainer.prototype.destroy = function()
 PreloadContainer.prototype.on_image_complete_event = function(event)
 {
   --this.active_preloads;
+  event.target.active = false;
 }
 
 

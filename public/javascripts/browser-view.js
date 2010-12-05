@@ -230,7 +230,7 @@ BrowserView.prototype.set_post_ui = function(visible)
   this.post_ui_visible = visible;
   this.container.down(".post-info").show(this.post_ui_visible && this.displayed_post_id);
   if(this.navigator)
-    this.navigator.container.show(visible);
+    this.navigator.set_autohide(!visible);
 
   /* If we're hiding the post UI, cancel the post editor if it's open. */
   if(!this.post_ui_visible)
@@ -452,7 +452,7 @@ BrowserView.prototype.set_main_image = function(post)
   if(this.viewing_larger_version)
   {
     this.navigator = new Navigator(this.container.down(".image-navigator"), this.img, post);
-    this.navigator.container.show(this.post_ui_visible);
+    this.navigator.set_autohide(!this.post_ui_visible);
   }
 
   this.scale_and_position_image();
@@ -1063,6 +1063,7 @@ var Navigator = function(container, target, post)
 {
   this.container = container;
   this.target = target;
+  this.hovering = false;
   this.img = this.container.down(".image-navigator-img");
   this.img.src = post.preview_url;
   this.img.width = post.actual_preview_width;
@@ -1071,12 +1072,32 @@ var Navigator = function(container, target, post)
 
   this.handlers = [];
   this.handlers.push(this.container.on("mousedown", this.mousedown_event.bindAsEventListener(this)));
+  this.handlers.push(this.container.on("mouseover", this.mouseover_event.bindAsEventListener(this)));
+  this.handlers.push(this.container.on("mouseout", this.mouseout_event.bindAsEventListener(this)));
 
   this.dragger = new DragElement(this.container, {
     snap_pixels: 0,
     onenddrag: this.enddrag.bind(this),
     ondrag: this.ondrag.bind(this)
   });
+}
+
+Navigator.prototype.mouseover_event = function(e)
+{
+  if(e.relatedTarget && e.relatedTarget.isParentNode(this.container))
+    return;
+  debug("over " + e.target.className + ", " + this.container.className + ", " + e.target.isParentNode(this.container));
+  this.hovering = true;
+  this.update_visibility();
+}
+
+Navigator.prototype.mouseout_event = function(e)
+{
+  if(e.relatedTarget && e.relatedTarget.isParentNode(this.container))
+    return;
+  debug("out " + e.target.className);
+  this.hovering = false;
+  this.update_visibility();
 }
 
 Navigator.prototype.mousedown_event = function(e)
@@ -1091,6 +1112,7 @@ Navigator.prototype.enddrag = function(e)
 {
   this.shift_lock_anchor = null;
   this.locked_to_x = null;
+  this.update_visibility();
 }
 
 Navigator.prototype.ondrag = function(e)
@@ -1172,6 +1194,18 @@ Navigator.prototype.center_on_position = function(coords)
   this.target.fire("viewer:center-on", {x: coords[0], y: coords[1]});
 }
 
+Navigator.prototype.set_autohide = function(autohide)
+{
+  this.autohide = autohide;
+  this.update_visibility();
+}
+
+Navigator.prototype.update_visibility = function()
+{
+  var box = this.container.down(".image-navigator-box");
+  var visible = !this.autohide || this.hovering || this.dragger.dragging;
+  box.style.visibility = visible? "visible":"hidden";
+}
 
 Navigator.prototype.destroy = function()
 {

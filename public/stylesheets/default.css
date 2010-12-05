@@ -1463,6 +1463,7 @@ span.stars .star-3 { color:#ff0; }
 
 .post-browser-posts-container {
   overflow: hidden;
+  position: relative; /* for positioning post-browser-no-results */
 
   /* Prevent thumbs from being selected when double-clicking the thumb container. */
   -webkit-user-select: none;

@@ -7,7 +7,7 @@ PreloadContainer = function()
   if(_preload_image_pool == null)
       _preload_image_pool = new ImgPoolHandler();
 
-  this.container = document.createElement("div");
+  this.container = $(document.createElement("div"));
   this.container.style.display = "none";
   document.body.appendChild(this.container);
 

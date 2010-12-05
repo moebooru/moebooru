@@ -346,7 +346,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
 
       /* This will either load the post we just finished, or request data for the
        * one we want. */
-      this.set_post_content(this.wanted_post_id);
+      this.set_post(this.wanted_post_id);
     }.bind(this),
 
     onFailure: function(resp) {
@@ -459,8 +459,13 @@ BrowserView.prototype.set_main_image = function(post)
 }
 
 /* Display post_id. */
-BrowserView.prototype.set_post_content = function(post_id)
+BrowserView.prototype.set_post = function(post_id)
 {
+  /* If there was a lazy load pending, cancel it. */
+  this.cancel_lazily_load();
+
+  this.wanted_post_id = post_id;
+
   if(post_id == this.displayed_post_id)
     return;
 
@@ -945,18 +950,6 @@ BrowserView.prototype.center_image_on = function(percent_x, percent_y)
   this.img.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
 
   this.update_navigator();
-}
-
-BrowserView.prototype.set_post = function(post_id)
-{
-  /* If there was a lazy load pending, cancel it. */
-  this.cancel_lazily_load();
-
-  this.wanted_post_id = post_id;
-
-  /* We don't have the node cached.  Open the page from HTML cache or start
-   * loading the page as necessary. */
-  this.set_post_content(post_id);
 }
 
 BrowserView.prototype.cancel_lazily_load = function()

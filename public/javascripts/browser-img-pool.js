@@ -25,11 +25,11 @@ var ImgPoolHandlerWebKit = Class.create({
   {
     if(this.pool.length == 0)
     {
-      debug("No images in pool; creating blank");
+      // debug("No images in pool; creating blank");
       return $(document.createElement("IMG"));
     }
 
-    debug("Returning image from pool");
+    // debug("Returning image from pool");
     return this.pool.pop();
   },
 

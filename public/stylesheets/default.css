@@ -1545,6 +1545,14 @@ textarea.edit-item { border: none; }
 
 .image-navigator
 {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.image-navigator-box
+{
   border: 1px solid #000;
 }
 

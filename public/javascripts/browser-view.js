@@ -40,6 +40,8 @@ BrowserView = function(container)
   this.last_preload_request = [];
   this.last_preload_request_active = false;
 
+  this.image_pool = new ImgPoolHandler();
+
   /* True if the post UI is visible. */
   this.post_ui_visible = true;
 
@@ -386,6 +388,7 @@ BrowserView.prototype.set_main_image = function(post)
     if(this.image_dragger)
       this.image_dragger.destroy();
     this.image_dragger = null;
+    this.image_pool.release(this.img);
     this.img = null;
   }
 
@@ -399,7 +402,7 @@ BrowserView.prototype.set_main_image = function(post)
   if(hide_post)
     return;
 
-  this.img = $(document.createElement("IMG"));
+  this.img = this.image_pool.get();
   this.img.className = "main-image";
 
   /*
@@ -420,12 +423,14 @@ BrowserView.prototype.set_main_image = function(post)
     this.img.src = post.jpeg_url;
     this.img.original_width = post.jpeg_width;
     this.img.original_height = post.jpeg_height;
+    this.img.show();
   }
   else if(!this.viewing_larger_version && post.sample_url)
   {
     this.img.src = post.sample_url;
     this.img.original_width = post.sample_width;
     this.img.original_height = post.sample_height;
+    this.img.show();
   }
   else
   {

@@ -134,6 +134,12 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
   this.post_ids = post_ids;
   this.allow_wrapping = !event.memo.can_be_extended_further;
 
+  /* Show the results box or "no results".  Do this before updating the results box to make sure
+   * the results box isn't hidden when we update, which will make offsetLeft values inside it zero
+   * and break things. */
+  this.container.down(".post-browser-no-results").show(this.post_ids.length == 0);
+  this.container.down(".post-browser-posts").show(this.post_ids.length != 0);
+
   if(event.memo.extending)
   {
     /*
@@ -192,9 +198,6 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
      * bar, so we'll just show the post. */
     this.show_thumb_bar(false);
   }
-
-  this.container.down(".post-browser-no-results").show(this.post_ids.length == 0);
-  this.container.down(".post-browser-posts").show(this.post_ids.length != 0);
 }
 
 ThumbnailView.prototype.container_ondrag = function(e)

@@ -18,8 +18,8 @@ ThumbnailView = function(container, view)
   this.last_mouse_y = 0;
   this.thumb_container_shown = true;
   this.allow_wrapping = true;
-  this.thumb_preloads = new Hash();
   this.thumb_preload_container = new PreloadContainer();
+  this.unused_thumb_pool = [];
 
   /* The [first, end) range of posts that are currently inside .post-browser-posts. */
   this.posts_populated = [0, 0];
@@ -412,7 +412,12 @@ ThumbnailView.prototype.remove_post = function(right)
     ++this.posts_populated[0];
     var node_to_remove = node.firstChild;
   }
-  node.removeChild(node_to_remove);
+
+  /* Remove the thumbnail that's no longer visible, and put it in unused_thumb_pool
+   * so we can reuse it later.  This won't grow out of control, since we'll always use
+   * an item from the pool if available rather than creating a new one. */
+  var item = node.removeChild(node_to_remove);
+  this.unused_thumb_pool.push(item);
   return true;
 }
 
@@ -648,33 +653,31 @@ ThumbnailView.prototype.preload_thumbs = function()
   }
 
   /* Remove any preloaded thumbs that are no longer in the preload list. */
-  var to_remove = [];
-  this.thumb_preloads.each(function(e) {
-    var post_id = parseInt(e[0]);
-    var element = e[1];
-    if(post_ids.indexOf(post_id) != -1)
+  this.thumb_preload_container.get_all().each(function(element) {
+    var post_id = element.post_id;
+    var post_idx = post_ids.indexOf(post_id);
+    if(post_idx != -1)
+    {
+      /* The post is staying loaded.  Clear the value in post_ids, so we don't load it
+       * again down below. */
+      post_ids[post_idx] = null;
       return;
-    to_remove.push(post_id);
-  });
+    }
 
-  for(var i = 0; i < to_remove.length; ++i)
-  {
-    var post_id = to_remove[i];
-    var element = this.thumb_preloads.get(post_id);
-    this.thumb_preloads.unset(post_id);
+    /* The post is no longer being preloaded.  Remove the preload. */
     this.thumb_preload_container.cancel_preload(element);
-  }
+  }.bind(this));
 
   /* Add new preloads. */
   for(var i = 0; i < post_ids.length; ++i)
   {
     var post_id = post_ids[i];
-    if(this.thumb_preloads.get(post_id) != null)
+    if(post_id == null)
       continue;
 
     var post = Post.posts.get(post_id);
     var element = this.thumb_preload_container.preload(post.preview_url);
-    this.thumb_preloads.set(post_id, element);
+    element.post_id = post_id;
   }
 }
 
@@ -725,34 +728,39 @@ ThumbnailView.prototype.create_thumb = function(post_id)
 {
   var post = Post.posts.get(post_id);
 
-  /* Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  We
-   * do this with visibility: hidden rather than display: none, or the size of the image
-   * won't be defined, which breaks center_on_post. */
-  var div =
-    '<div class="inner">' +
-      '<a class="thumb" href="${target_url}" tabindex="-1">' +
-        '<img src="${preview_url}" style="visibility: hidden;" alt="" class="${image_class}"' +
-          'onload="$(this).setStyle({visibility: \'visible\'});">' +
-      '</a>' +
-    '</div>';
-  div = div.subst({
-    target_url: "/post/browse#" + post.id,
-    preview_url: post.preview_url,
-    image_class: "preview"
-  });
+  /*
+   * Reuse thumbnail blocks that are no longer in use, to avoid WebKit memory leaks: it
+   * doesn't like creating and deleting lots of images (or blocks with images inside them).
+   *
+   * Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  This
+   * also keeps us from showing old thumbnails before the new image is loaded.  Use visibility:
+   * hidden, not display: none, or the size of the image won't be defined, which breaks
+   * center_on_post.
+   */
+  if(this.unused_thumb_pool.length == 0)
+  {
+    var div =
+      '<div class="inner">' +
+        '<a class="thumb" tabindex="-1">' +
+          '<img alt="" class="preview" onload="$(this).setStyle({visibility: \'visible\'});">' +
+        '</a>' +
+      '</div>';
+    var item = $(document.createElement("li"));
+    item.innerHTML = div;
+    item.className = "post-thumb";
+  }
+  else
+  {
+    var item = this.unused_thumb_pool.pop();
+  }
     
-  var li_class = "post-thumb";
-  li_class += " creator-id-" + post.creator_id;
-  if(post.status == "flagged") li_class += " flagged";
-  if(post.has_children) li_class += " has-children";
-  if(post.parent_id) li_class += " has-parent";
-  if(post.status == "pending") li_class += " pending";
-
-  var item = createElement("li", li_class, div);
-
-  item.className = li_class;
   item.id = "p" + post_id;
   item.post_id = post_id;
+  item.down("A").href = "/post/browse#" + post.id;
+
+  var img = item.down("IMG");
+  img.style.visibility = "hidden";
+  img.src = post.preview_url;
 
   this.set_thumb_dimensions(post, item);
   return item;

@@ -745,7 +745,7 @@ ThumbnailView.prototype.create_thumb = function(post_id)
     var div =
       '<div class="inner">' +
         '<a class="thumb" tabindex="-1">' +
-          '<img alt="" class="preview" onload="$(this).setStyle({visibility: \'visible\'});">' +
+          '<img alt="" class="preview" onload="this.style.visibility = \'visible\';">' +
         '</a>' +
       '</div>';
     var item = $(document.createElement("li"));
@@ -761,9 +761,15 @@ ThumbnailView.prototype.create_thumb = function(post_id)
   item.post_id = post_id;
   item.down("A").href = "/post/browse#" + post.id;
 
+  /* If the image is already what we want, then leave it alone.  Setting it to what it's
+   * already set to won't necessarily cause onload to be fired, so it'll never be set
+   * back to visible. */
   var img = item.down("IMG");
-  img.style.visibility = "hidden";
-  img.src = post.preview_url;
+  if(img.src != post.preview_url)
+  {
+    img.style.visibility = "hidden";
+    img.src = post.preview_url;
+  }
 
   this.set_thumb_dimensions(post, item);
   return item;

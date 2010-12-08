@@ -324,8 +324,8 @@ class PostController < ApplicationController
     @showing_holds_only = q.has_key?(:show_holds) && q[:show_holds] == :only
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
 
+    @preload = []
     if not from_api then
-      @preload = []
       if page && page > 1 then
         @preload = results[0, limit] || []
         results = results[limit..-1] || []

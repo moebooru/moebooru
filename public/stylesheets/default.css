@@ -1521,6 +1521,11 @@ textarea.edit-item { border: none; }
   position: absolute;
   z-index: 2; /* over the regular post images */
   overflow: hidden; /* needed to crop the right edge when overflowing the viewport */
+
+  /* Don't outline when clicked.  It's unnecessary, and it also causes a problem: when the
+   * hover thumb is cropped to fit the screen (see ThumbnailView.prototype.expand_post), the
+   * outline will expand the image by a pixel, causing the scrollbar to appear. */
+  outline: none;
 }
 .browser-thumb-hover-overlay > img {
   vertical-align: top;

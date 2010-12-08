@@ -24,7 +24,7 @@ module PostHelper
   
   def print_preview(post, options = {})
     is_post = post.instance_of?(Post)
-    unless CONFIG["can_see_post"].call(@current_user, post)
+    if is_post and not CONFIG["can_see_post"].call(@current_user, post)
       return ""
     end
 

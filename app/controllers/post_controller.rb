@@ -307,29 +307,33 @@ class PostController < ApplicationController
     offset = @posts.offset
     posts_to_load = @posts.per_page
 
-    # For forward preloading:
-    posts_to_load += @posts.per_page if not from_api
-
-    # If we're not on the first page, load the previous page for prefetching.  Prefetching
-    # the previous page when the user is scanning forward should be free, since it'll already
-    # be in cache, so this makes scanning the index from back to front as responsive as from
-    # front to back.
-    if not from_api and page and page > 1 then
-      offset -= @posts.per_page
+    if not from_api then
+      # For forward preloading:
       posts_to_load += @posts.per_page
+
+      # If we're not on the first page, load the previous page for prefetching.  Prefetching
+      # the previous page when the user is scanning forward should be free, since it'll already
+      # be in cache, so this makes scanning the index from back to front as responsive as from
+      # front to back.
+      if page and page > 1 then
+        offset -= @posts.per_page
+        posts_to_load += @posts.per_page
+      end
     end
 
     @showing_holds_only = q.has_key?(:show_holds) && q[:show_holds] == :only
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
 
-    @preload = []
-    if page && page > 1 then
-      @preload = results[0, limit] || []
-      results = results[limit..-1] || []
-    end
-    @preload += results[limit..-1] || []
+    if not from_api then
+      @preload = []
+      if page && page > 1 then
+        @preload = results[0, limit] || []
+        results = results[limit..-1] || []
+      end
+      @preload += results[limit..-1] || []
 
-    results = results[0..limit-1]
+      results = results[0..limit-1]
+    end
 
     # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
     # can be enabled by specifying filter=1.

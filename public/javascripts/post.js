@@ -1,6 +1,7 @@
 Post = {
   posts: new Hash(),
   tag_types: new Hash(),
+  votes: new Hash(),
 
 	find_similar: function() {
 		var old_source_name = $("post_source").name
@@ -35,6 +36,7 @@ Post = {
         var resp = resp.responseJSON
         Post.register_posts(resp.posts);
         Post.register_tags(resp.tags);
+        Post.register_votes(resp.votes);
         if(finished)
           finished();
       }
@@ -126,6 +128,7 @@ Post = {
           // Update the stored posts.
           Post.register_posts(resp.posts);
           Post.register_tags(resp.tags);
+          Post.register_votes(resp.votes);
           resp.posts.each(function(post) {
             Post.update_styles(post);
           });
@@ -566,6 +569,11 @@ Post = {
   /* Post.register_tags({tagme: "general"}); */
   register_tags: function(tags) {
     this.tag_types.update(tags);
+  },
+
+  /* Post.register_votes({12345: 1}) */
+  register_votes: function(votes) {
+    this.votes.update(votes);
   },
 
   blacklists: [],

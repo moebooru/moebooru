@@ -128,6 +128,16 @@ Post = {
 
       notice((original_count == 1? "Post": "Posts") + " updated");
 
+      /* Fire posts:update, to allow observers to update their display on change. */
+      var post_ids = new Hash();
+      for(var i = 0; i < resp.posts.length; ++i)
+        post_ids.set(resp.posts[i].id, true);
+
+      document.fire("posts:update", {
+        resp: resp,
+        post_ids: post_ids
+      });
+
       if(finished)
         finished(resp.posts);
     }

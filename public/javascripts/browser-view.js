@@ -99,7 +99,7 @@ BrowserView = function(container)
     if(!confirm("Approve this post?"))
       return;
     var post_id = this.displayed_post_id;
-    Post.approve(post_id, false, function() { this.refresh_post_info(post_id); }.bind(this));
+    Post.approve(post_id, false);
   }.bindAsEventListener(this));
 
   this.container.down(".post-unflag").on("click", function(e) {
@@ -107,7 +107,7 @@ BrowserView = function(container)
     if(!confirm("Unflag this post?"))
       return;
     var post_id = this.displayed_post_id;
-    Post.unflag(post_id, function() { this.refresh_post_info(post_id); }.bind(this));
+    Post.unflag(post_id);
   }.bindAsEventListener(this));
 
   this.container.down(".post-delete").on("click", function(e) {
@@ -121,7 +121,7 @@ BrowserView = function(container)
     if(!reason || reason == "")
       return;
     var post_id = this.displayed_post_id;
-    Post.approve(post_id, reason, function() { this.refresh_post_info(post_id); }.bind(this));
+    Post.approve(post_id, reason);
   }.bindAsEventListener(this));
 
   this.container.down(".post-undelete").on("click", function(e) {
@@ -129,15 +129,13 @@ BrowserView = function(container)
     if(!confirm("Undelete this post?"))
       return;
     var post_id = this.displayed_post_id;
-    Post.undelete(post_id, function() { this.refresh_post_info(post_id); }.bind(this));
+    Post.undelete(post_id);
   }.bindAsEventListener(this));
   
   this.container.down(".flag-button").on("click", function(e) {
     e.stop();
     var post_id = this.displayed_post_id;
-    Post.flag(post_id, function(post_id) {
-      this.refresh_post_info(post_id);
-    }.bind(this));
+    Post.flag(post_id);
   }.bindAsEventListener(this));
 
   this.container.down(".activate-post").on("click", function(e) {
@@ -150,12 +148,9 @@ BrowserView = function(container)
     {
       var post = Post.posts.get(post_id);
       if(post.is_held)
-      {
         notice("Couldn't activate post");
-        return;
-      }
-      notice("Activated post");
-      this.refresh_post_info(post_id);
+      else
+        notice("Activated post");
     }.bind(this));
   }.bindAsEventListener(this));
 
@@ -170,12 +165,7 @@ BrowserView = function(container)
     if(post == null)
       return;
 
-    var complete = function()
-    {
-      this.refresh_post_info(post_id);
-    }.bind(this);
-
-    Post.reparent_post(post_id, post.parent_id, false, complete);
+    Post.reparent_post(post_id, post.parent_id, false);
   }.bindAsEventListener(this));
 
   /* Post editing: */
@@ -199,7 +189,16 @@ BrowserView = function(container)
     document.fire("viewer:set-thumb-bar", { set: true });
     this.edit_show(true);
   }.bindAsEventListener(this));
-  Post.init_vote_widgets(function(post_id) { notice("Vote saved"); this.refresh_post_info(post_id); }.bind(this));
+
+  /* When the post that's currently being displayed is updated by an API call, update
+   * the displayed info. */
+  document.on("posts:update", function(e) {
+    if(e.memo.post_ids.get(this.displayed_post_id) == null)
+      return;
+    this.refresh_post_info(this.displayed_post_id);
+  }.bindAsEventListener(this));
+
+  Post.init_vote_widgets();
 
   this.blacklist_override_post_id = null;
   this.container.down(".show-blacklisted").on("click", function(e) { e.preventDefault(); }.bindAsEventListener(this));
@@ -656,7 +655,7 @@ BrowserView.prototype.set_post_info = function()
 
   var flagged = this.container.down(".flagged-info");
   flagged.show(post.status == "flagged");
-  if(post.status == "flagged")
+  if(post.status == "flagged" && post.flag_detail)
   {
     var by = flagged.down(".by");
     by.setTextContent(post.flag_detail.flagged_by);
@@ -809,14 +808,6 @@ BrowserView.prototype.edit_save = function()
   }], function(posts)
   {
     notice("Post saved");
-
-    /* If the displayed post is one of the updated ones, refresh it.  This can refresh even
-     * if we're not still showing the post that we saved; for example, if we set a new post
-     * as the parent and when we get here we're showing the parent, we'll refresh it to show
-     * that it now has a child post. */
-    var displayed_post_updated = posts.pluck("id").indexOf(this.displayed_post_id) != -1;
-    if(displayed_post_updated)
-      this.refresh_post_info(this.displayed_post_id);
 
     /* If we're still showing the post we saved, hide the edit area. */
     if(this.displayed_post_id == post_id)

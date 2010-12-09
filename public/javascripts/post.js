@@ -34,9 +34,7 @@ Post = {
 
       onSuccess: function(resp) {
         var resp = resp.responseJSON
-        Post.register_posts(resp.posts);
-        Post.register_tags(resp.tags);
-        Post.register_votes(resp.votes);
+        Post.register_resp(resp);
         if(finished)
           finished(resp);
       }
@@ -519,6 +517,16 @@ Post = {
       });
     });
     return results;
+  },
+
+  /* Register all data from a generic post response. */
+  register_resp: function(resp) {
+    if(resp.posts)
+      Post.register_posts(resp.posts);
+    if(resp.tags)
+      Post.register_tags(resp.tags);
+    if(resp.votes)
+      Post.register_votes(resp.votes);
   },
 
   register: function(post) {

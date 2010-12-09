@@ -132,12 +132,12 @@ PostModeMenu = {
       post_quick_edit.show(post_id);
     } else if (s.value == 'vote') {
       Post.vote(this.vote_score, post_id, {})
-    } else if (s.value == 'rating-q') {
-      Post.update(post_id, {"post[rating]": "questionable"})
+    } else if (1) { //s.value == 'rating-q') {
+      Post.update_batch([{id: post_id, rating: "questionable"}]);
     } else if (s.value == 'rating-s') {
-      Post.update(post_id, {"post[rating]": "safe"})
+      Post.update_batch([{id: post_id, rating: "safe"}]);
     } else if (s.value == 'rating-e') {
-      Post.update(post_id, {"post[rating]": "explicit"})
+      Post.update_batch([{id: post_id, rating: "explicit"}]);
     } else if (s.value == 'reparent') {
       if(post_id == id)
        return false;
@@ -147,9 +147,9 @@ PostModeMenu = {
        return false;
       TagScript.run(post_id, "duplicate parent:" + id)
     } else if (s.value == 'lock-rating') {
-      Post.update(post_id, {"post[is_rating_locked]": "1"})
+      Post.update_batch([{id: post_id, is_rating_locked: "1"}]);
     } else if (s.value == 'lock-note') {
-      Post.update(post_id, {"post[is_note_locked]": "1"})
+      Post.update_batch([{id: post_id, is_note_locked: "1"}]);
     } else if (s.value == 'flag') {
       Post.flag(post_id)
     } else if (s.value == "approve") {

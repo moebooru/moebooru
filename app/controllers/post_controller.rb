@@ -129,7 +129,7 @@ class PostController < ApplicationController
       end
       posts.uniq!
 
-      api_data = Post.batch_api_data(posts, :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
+      api_data = Post.batch_api_data(posts, :include_tags => true, :include_votes_for => @current_user.id) if params[:format] == "json" || params[:format] == "xml"
 
       if params[:commit] == "Approve"
         respond_to_success("Post approved", {:action => "moderate"}, :api => api_data)
@@ -203,7 +203,7 @@ class PostController < ApplicationController
     # Updates to one post may affect others, so only generate the return list after we've already
     # updated everything.
     posts = Post.find_by_sql(["SELECT * FROM posts WHERE id IN (?)", ids.map { |id, t| id }])
-    api_data = Post.batch_api_data(posts, :include_tags => true)
+    api_data = Post.batch_api_data(posts, :include_tags => true, :include_votes_for => @current_user.id)
 
     url = params[:url]
     url = {:action => "index"} if not url
@@ -368,7 +368,12 @@ class PostController < ApplicationController
           return
         end
 
-        api_data = Post.batch_api_data(@posts, :include_tags => params[:include_tags] == "1")
+        api_data_params = { :include_tags => params[:include_tags] == "1" }
+        if params[:include_votes] == "1" then
+          api_data_params[:include_votes_for] = @current_user.id
+        end
+        api_data = Post.batch_api_data(@posts, api_data_params)
+
         render :json => api_data.to_json
       }
     end

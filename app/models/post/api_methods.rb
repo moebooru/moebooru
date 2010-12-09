@@ -82,6 +82,22 @@ module PostApiMethods
         result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
       end
 
+      # Allow loading votes along with the posts.
+      #
+      # The post data is cachable and vote data isn't, so keep this data separate from the
+      # main post data to make it easier to cache API output later.
+      if options.include?(:include_votes_for) then
+        post_ids = posts.map { |p| p.id }.join(",")
+
+        sql = "SELECT v.* FROM post_votes v WHERE v.user_id = %i AND v.post_id IN (%s)" % [options[:include_votes_for], post_ids]
+        votes = PostVotes.find_by_sql(sql)
+        vote_map = {}
+        votes.each { |v|
+          vote_map[v.post_id] = v.score
+        }
+        result[:votes] = vote_map
+      end
+
       return result
     end
   end

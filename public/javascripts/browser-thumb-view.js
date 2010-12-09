@@ -136,8 +136,9 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
 
   /* Show the results box or "no results".  Do this before updating the results box to make sure
    * the results box isn't hidden when we update, which will make offsetLeft values inside it zero
-   * and break things. */
-  this.container.down(".post-browser-no-results").show(this.post_ids.length == 0);
+   * and break things.  If the reason we have no posts is because we didn't do a search at all,
+   * don't show no-results. */
+  this.container.down(".post-browser-no-results").show(event.memo.tags != null && this.post_ids.length == 0);
   this.container.down(".post-browser-posts").show(this.post_ids.length != 0);
 
   if(event.memo.extending)

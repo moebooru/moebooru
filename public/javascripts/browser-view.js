@@ -570,6 +570,10 @@ BrowserView.prototype.set_post_info = function()
   var has_jpeg = (post.jpeg_url != post.file_url);
   var has_image = post.file_url != null && !has_sample;
 
+  /* Hide the whole download-links box if there are no downloads available, usually
+   * because of a deleted post. */
+  this.container.down(".download-links").show(has_image || has_sample || has_jpeg);
+
   this.container.down(".download-image").show(has_image);
   if(has_image)
   {

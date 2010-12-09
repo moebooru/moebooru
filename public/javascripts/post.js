@@ -38,7 +38,7 @@ Post = {
         Post.register_tags(resp.tags);
         Post.register_votes(resp.votes);
         if(finished)
-          finished();
+          finished(resp);
       }
     });
   },
@@ -116,30 +116,20 @@ Post = {
       });
     });
 
+    var complete = function(resp)
+    {
+      resp.posts.each(function(post) {
+        Post.update_styles(post);
+      });
+
+      notice((original_count == 1? "Post": "Posts") + " updated");
+
+      if(finished)
+        finished(resp.posts);
+    }
+
     var params = params_array.join("&");
-
-    new Ajax.Request('/post/update_batch.json', {
-      parameters: params,
-
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-
-        if (resp.success) {
-          // Update the stored posts.
-          Post.register_posts(resp.posts);
-          Post.register_tags(resp.tags);
-          Post.register_votes(resp.votes);
-          resp.posts.each(function(post) {
-            Post.update_styles(post);
-          });
-
-          notice((original_count == 1? "Post": "Posts") + " updated");
-
-          if(finished)
-            finished(resp.posts);
-        }
-      }
-    });
+    Post.make_request("/post/update_batch.json", params, complete);
   },
 
   update_styles: function(post)
@@ -426,26 +416,6 @@ Post = {
       $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))
     }
     notice("Vote saved");
-  },
-
-  make_request: function(path, params, finished)
-  {
-    return new Ajax.Request(path, {
-      parameters: params,
-      
-      onFailure: function(req) {
-        var resp = req.responseJSON;
-	notice("Error: " + resp.reason);
-      },
-
-      onSuccess: function(resp) {
-        var resp = resp.responseJSON
-        Post.register_posts(resp.posts);
-        Post.register_tags(resp.tags);
-        if(finished)
-          finished();
-      }
-    });
   },
 
   flag: function(id, finished) {

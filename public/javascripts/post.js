@@ -305,6 +305,31 @@ Post = {
     container.vote_post_id = post_id;
     container.current_vote = vote;
     Post.vote_set_stars(vote, false, container);
+
+    if(container.event_initialized)
+      return;
+    container.event_initialized = true;
+
+    document.on("posts:update", function(e) {
+      var post_id = container.vote_post_id;
+      if(e.memo.post_ids.get(post_id) == null)
+        return;
+
+      var new_vote = Post.votes.get(post_id);
+      container.current_vote = new_vote;
+      Post.vote_set_stars(new_vote, false, container);
+
+      if(container.down("#post-score-" + post_id))
+      {
+        var post = Post.posts.get(post_id);
+        if(post)
+          container.down("#post-score-" + post_id).update(post.score)
+      }
+
+      if(container.down("#favorited-by")) {
+        container.down("#favorited-by").update(Favorite.link_to_users(e.memo.resp.voted_by["3"]))
+      }
+    });
   },
 
   init_vote_hotkeys: function(post_id, container)
@@ -389,37 +414,7 @@ Post = {
     var post_id = Post.get_vote_post_id(container);
     notice("Voting...")
 
-    var finished = function(resp)
-    {
-      if(container.vote_post_id == post_id)
-      {
-        var new_vote = Post.votes.get(post_id);
-        container.current_vote = new_vote;
-        Post.vote_set_stars(new_vote, false, container);
-      }
-
-      notice("Vote saved");
-      Post.vote_default_update(post_id, resp.voted_by, container);
-    }
-
-    Post.make_request("/post/vote.json", { id: post_id, score: score }, finished);
-  },
-
-  vote_default_update: function(post_id, votes, container)
-  {
-    if(container.vote_post_id != post_id)
-      return;
-
-    if($("post-score-" + post_id))
-    {
-      var post = Post.posts.get(post_id);
-      if(post)
-        $("post-score-" + post_id).update(post.score)
-    }
-
-    if ($("favorited-by")) {
-      $("favorited-by").update(Favorite.link_to_users(votes["3"]))
-    }
+    Post.make_request("/post/vote.json", { id: post_id, score: score }, function(resp) { notice("Vote saved"); });
   },
 
   flag: function(id, finished) {

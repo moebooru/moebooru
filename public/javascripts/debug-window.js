@@ -9,6 +9,8 @@ DebugWindow = function()
   this.hashchange_debug = this.hashchange_debug.bind(this);
   UrlHash.observe("debug", this.hashchange_debug);
   this.hashchange_debug();
+
+  this.log("*** Started");
 }
 
 DebugWindow.prototype.create_container = function()
@@ -36,6 +38,17 @@ DebugWindow.prototype.destroy_container = function()
 
 DebugWindow.prototype.log = function(s)
 {
+  /*
+   * Output to the console log, if any.
+   *
+   * In FF4, this goes to the Web Console.  (It doesn't go to the error console; it should.)
+   * On Android, this goes to logcat.
+   * On iPhone, this goes to the intrusive Debug Console if it's turned on (no way to redirect
+   * it outside of the phone).
+   */
+  if(window.console && window.console.log)
+    console.log(s);
+
   ++this.counter;
   this.log_data.push(this.counter + ": " + s);
   var lines = 10;

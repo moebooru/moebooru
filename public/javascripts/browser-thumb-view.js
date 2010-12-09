@@ -174,22 +174,53 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
       initial_post_id = new_post_ids[0];
     }
 
-    var initial_post_idx = this.post_ids.indexOf(initial_post_id);
-    this.center_on_post_for_scroll(initial_post_idx);
+    var center_on_post_idx = this.post_ids.indexOf(initial_post_id);
+    this.center_on_post_for_scroll(center_on_post_idx);
   }
   else
   {
-    /* A new search has completed.  If the displayed post exists in the new search,
-     * center on it. */
-    var initial_post_id = this.get_current_post_id();
-    var initial_post_idx = this.post_ids.indexOf(initial_post_id)
-    if(initial_post_idx == -1)
-      initial_post_idx = 0;
-    this.centered_post_offset = 0;
-    this.center_on_post_for_scroll(initial_post_idx);
+    /*
+     * A new search has completed.
+     *
+     * results_mode can be one of the following:
+     *
+     * "center-on-first"
+     * Don't change the active post.  Center the results on the first result.  This is used
+     * when performing a search by clicking on a tag, where we don't want to center on the
+     * post we're on (since it'll put us at some random spot in the results when the user
+     * probably wants to browse from the beginning), and we don't want to change the displayed
+     * post either.
+     *
+     * "center-on-current"
+     * Don't change the active post.  Center the results on the existing current item,
+     * if possible.  This is used when we want to show a new search without disrupting the
+     * shown post, such as the "child posts" link in post info, and when loading the initial
+     * URL hash when we start up.
+     *
+     * "jump-to-first"
+     * Set the active post to the first result, and center on it.  This is used after making
+     * a search in the tags box.
+     */
+    var results_mode = event.memo.load_options.results_mode || "center-on-current";
 
-    debug("Search completed; displaying post " + initial_post_id);
-    this.set_active_post(initial_post_id);
+    var initial_post_id;
+    if(results_mode == "center-on-first" || results_mode == "jump-to-first")
+      initial_post_id = this.post_ids[0];
+    else
+      initial_post_id = this.get_current_post_id();
+
+    var center_on_post_idx = this.post_ids.indexOf(initial_post_id)
+    if(center_on_post_idx == -1)
+      center_on_post_idx = 0;
+
+    this.centered_post_offset = 0;
+    this.center_on_post_for_scroll(center_on_post_idx);
+
+    /* If no post is currently displayed and we just completed a search, set the current post.
+     * This happens when first initializing; we wait for the first search to complete to retrieve
+     * info about the post we're starting on, instead of making a separate query. */
+    if(results_mode == "jump-to-first" || this.active_post_id == null)
+      this.set_active_post(initial_post_id);
   }
 
   if(event.memo.tags == null)

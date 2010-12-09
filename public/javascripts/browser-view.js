@@ -89,8 +89,7 @@ BrowserView = function(container)
   var tag_span = this.container.down(".post-tags");
   tag_span.on("click", ".post-tag", function(e, element) {
     e.stop();
-    var tag = element.tag_name;
-    UrlHash.set({tags: tag});
+    document.fire("viewer:perform-search", {tags: element.tag_name});
   }.bind(this));
 
   /* These two links do the same thing, but one is shown to approve a pending post
@@ -481,7 +480,7 @@ BrowserView.prototype.set_post = function(post_id)
   }
 
   this.displayed_post_id = post_id;
-  UrlHash.set({"post-id": post_id});
+  UrlHash.set_deferred({"post-id": post_id});
 
   this.set_viewing_larger_version(false);
 
@@ -1048,7 +1047,12 @@ BrowserView.prototype.child_posts_click_event = function(event)
 {
   event.stop();
 
-  UrlHash.set({tags: "parent:" + this.displayed_post_id});
+  /* Search for this post's children.  Set the results mode to center-on-current, so we
+   * focus on the current item. */
+  document.fire("viewer:perform-search", {
+    tags: "parent:" + this.displayed_post_id,
+    results_mode: "center-on-current"
+  });
 }
 
 

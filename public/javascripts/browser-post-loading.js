@@ -1,6 +1,7 @@
 PostLoader = function()
 {
   document.on("viewer:need-more-thumbs", this.need_more_post_data.bindAsEventListener(this));
+  document.on("viewer:perform-search", this.perform_search.bindAsEventListener(this));
 
   this.hashchange_tags = this.hashchange_tags.bind(this);
   UrlHash.observe("tags", this.hashchange_tags);
@@ -8,7 +9,7 @@ PostLoader = function()
   this.cached_posts = new Hash();
   this.cached_pools = new Hash();
 
-  this.load(false);
+  this.load({results_mode: "center-on-current"});
 }
 
 PostLoader.prototype.need_more_post_data = function()
@@ -18,7 +19,7 @@ PostLoader.prototype.need_more_post_data = function()
   if(this.loaded_extended_results)
     return;
 
-  this.load(true, false);
+  this.load({extending: true});
 }
 
 
@@ -161,7 +162,7 @@ PostLoader.prototype.request_finished = function()
     can_be_extended_further = false;
 
   /* If we're already extending, don't extend further. */
-  if(result.extending)
+  if(result.load_options.extending)
     can_be_extended_further = false;
 
   /* If we received fewer results than we requested we're at the end of the results,
@@ -172,20 +173,36 @@ PostLoader.prototype.request_finished = function()
     can_be_extended_further = false;
   }
 
+  /* Now that we have the result, update the URL hash.  Firing loaded-posts may change
+   * the displayed post, causing the post ID in the URL hash to change, so use set_deferred
+   * to help ensure these happen atomically. */
+  UrlHash.set_deferred({tags: result.tags});
+
   document.fire("viewer:loaded-posts", {
     tags: result.tags, /* this will be null if no search was actually performed (eg. URL with a post-id and no tags) */
     post_ids: new_post_ids,
     pool: result.pool,
-    extending: result.extending,
-    can_be_extended_further: can_be_extended_further
+    extending: result.load_options.extending,
+    can_be_extended_further: can_be_extended_further,
+    load_options: result.load_options
   });
 }
 
 /* If extending is true, load a larger set of posts. */
-PostLoader.prototype.load = function(extending, disable_cache)
+PostLoader.prototype.load = function(load_options)
 {
+  if(!load_options)
+    load_options = {}
+
+  var disable_cache = load_options.disable_cache;
+  var extending = load_options.extending;
+
+  var tags = load_options.tags;
+  if(tags == null)
+    tags = UrlHash.get("tags");
+
   /* If neither a search nor a post-id is specified, set a default search. */
-  if(!extending && UrlHash.get("tags") == null && UrlHash.get("post-id") == null)
+  if(!extending && tags == null && UrlHash.get("post-id") == null)
   {
     UrlHash.set({tags: ""});
 
@@ -202,9 +219,9 @@ PostLoader.prototype.load = function(extending, disable_cache)
   this.current_ajax_requests = [];
 
   this.result = {};
-  this.result.tags = UrlHash.get("tags");
+  this.result.load_options = load_options;
+  this.result.tags = tags;
   this.result.disable_cache = disable_cache;
-  this.result.extending = extending;
 
   if(this.result.tags == null)
   {
@@ -225,8 +242,6 @@ PostLoader.prototype.load = function(extending, disable_cache)
 
   /* If we're loading from a pool, load the pool's data. */
   this.result.pool_id = pool_id;
-
-  this.result.extending = extending;
 
   /* Load the posts to display.  If we're loading a pool, load all posts (up to 1000);
    * otherwise set a limit. */
@@ -249,7 +264,23 @@ PostLoader.prototype.load = function(extending, disable_cache)
 
 PostLoader.prototype.hashchange_tags = function()
 {
-  this.load(false, false);
+  var tags = UrlHash.get("tags");
+
+  if(tags == this.last_seen_tags)
+    return;
+  this.last_seen_tags = tags;
+
+  debug("changed tags");
+  this.load();
 }
 
- 
+PostLoader.prototype.perform_search  = function(event)
+{
+  var tags = event.memo.tags;
+  this.last_seen_tags = tags;
+  var results_mode = event.memo.results_mode || "center-on-first";
+  debug("do search: " + tags);
+
+  this.load({tags: tags, results_mode: results_mode});
+}
+

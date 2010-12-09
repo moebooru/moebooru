@@ -299,7 +299,8 @@ BrowserView.prototype.load_post_id_data = function(post_id)
       tags: "id:" + post_id,
       api_version: 2,
       filter: 1,
-      include_tags: "1"
+      include_tags: "1",
+      include_votes: "1"
     },
     method: "get",
 
@@ -313,18 +314,17 @@ BrowserView.prototype.load_post_id_data = function(post_id)
 
       /* If no posts were returned, then the post ID we're looking up doesn't exist;
        * treat this as a failure. */
-      var posts = resp.responseJSON.posts;
-      this.success = posts.length > 0;
+      var resp = resp.responseJSON;
+      this.success = resp.posts.length > 0;
       if(!this.success)
       {
         debug("requested post " + post_id + " doesn't exist");
         return;
       }
 
-      Post.register_tags(resp.responseJSON.tags);
-
-      var post = posts[0];
-      Post.register(post);
+      Post.register_tags(resp.tags);
+      Post.register_votes(resp.votes);
+      Post.register_posts(resp.posts);
     }.bind(this),
 
     onComplete: function(resp) {

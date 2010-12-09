@@ -387,6 +387,8 @@ Post = {
           var post = Post.posts.get(post_id);
           if(post)
             post.score = resp.score;
+          Post.votes.set(post_id, score);
+
           if(container.vote_post_id == post_id)
           {
             container.current_vote = score;

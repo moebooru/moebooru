@@ -325,9 +325,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
         return;
       }
 
-      Post.register_tags(resp.tags);
-      Post.register_votes(resp.votes);
-      Post.register_posts(resp.posts);
+      Post.register_resp(resp);
     }.bind(this),
 
     onComplete: function(resp) {

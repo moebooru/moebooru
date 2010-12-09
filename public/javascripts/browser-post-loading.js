@@ -89,7 +89,8 @@ PostLoader.prototype.server_load_posts = function()
       tags: search,
       api_version: 2,
       filter: 1,
-      include_tags: 1
+      include_tags: 1,
+      include_votes: 1
     },
     method: "get",
 
@@ -106,12 +107,10 @@ PostLoader.prototype.server_load_posts = function()
       if(this.current_ajax_requests.indexOf(resp.request) == -1)
         return;
     
-      var posts = resp.responseJSON.posts;
-      this.result.posts = posts;
+      var resp = resp.responseJSON;
+      this.result.posts = resp.posts;
 
-      Post.register_tags(resp.responseJSON.tags);
-      for(var i = 0; i < posts.length; ++i)
-        Post.register(posts[i]);
+      Post.register_resp(resp);
 
       this.cached_posts.set(search, this.result.posts);
     }.bind(this),

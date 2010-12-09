@@ -442,8 +442,7 @@ PostQuickEdit.prototype.submit_event = function(e)
       var resp = resp.responseJSON;
       notice("Post updated");
       this.hide();
-      Post.register(resp.post);
-      Post.register_tags(resp.tags);
+      Post.register_resp(resp);
     }.bindAsEventListener(this),
     onFailure: function(resp) {
       var resp = resp.responseJSON;

@@ -132,7 +132,7 @@ PostModeMenu = {
       post_quick_edit.show(post_id);
     } else if (s.value == 'vote') {
       Post.vote(this.vote_score, post_id, {})
-    } else if (1) { //s.value == 'rating-q') {
+    } else if (s.value == 'rating-q') {
       Post.update_batch([{id: post_id, rating: "questionable"}]);
     } else if (s.value == 'rating-s') {
       Post.update_batch([{id: post_id, rating: "safe"}]);

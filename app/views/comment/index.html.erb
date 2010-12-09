@@ -51,10 +51,10 @@
 
   <script type="text/javascript">
     Post.init_vote_widgets();
+    Post.register_resp(<%= Post.batch_api_data(@posts).to_json %>);
     <% @posts.each do |post| %>
-      Post.register(<%= post.to_json %>)
       var container = $("comments-for-p<%= post.id %>").down(".vote-container");
-      Post.init_vote(<%= post.id %>, <%= @votes[post.id] or "null" %>, container)
+      Post.init_vote(<%= post.id %>, container)
     <% end %>
     Post.init_blacklisted({replace: true})
   </script>

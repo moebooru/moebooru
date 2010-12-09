@@ -78,14 +78,6 @@ class CommentController < ApplicationController
 
       @posts = @posts.select {|x| x.can_be_seen_by?(@current_user, {:show_deleted => true})}
     end
-
-    @votes = {}
-    if !@current_user.is_anonymous?
-      @posts.each { |post|
-        vote = PostVotes.find_by_ids(@current_user.id, post.id)
-	@votes[post.id] = vote.score rescue 0
-      }
-    end
   end
 
   def search

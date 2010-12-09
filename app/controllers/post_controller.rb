@@ -417,10 +417,6 @@ class PostController < ApplicationController
         @post = Post.find(params[:id])
       end
       
-      if !@current_user.is_anonymous? && @post
-        @vote = PostVotes.find_by_ids(@current_user.id, @post.id).score rescue 0
-      end
-
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")
       if params.has_key?(:pool_id) then
         @following_pool_post = PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil

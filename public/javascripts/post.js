@@ -280,7 +280,8 @@ Post = {
     container.down(".vote-desc").update();
   },
 
-  init_vote: function(post_id, vote, container) {
+  init_vote: function(post_id, container) {
+    var vote = Post.votes.get(post_id) || 0;
     container = Post.get_vote_container(container);
     container.vote_post_id = post_id;
     container.current_vote = vote;

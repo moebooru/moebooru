@@ -30,7 +30,7 @@
 <% content_for("post_cookie_javascripts") do %>
 <script type="text/javascript">
   Post.init_vote_widgets();
-  Post.init_vote(<%= @post.id %>, <%= @vote or "null" %>, $("stats"));
+  Post.init_vote(<%= @post.id %>, $("stats"));
   Post.init_vote_hotkeys(<%= @post.id %>, $("stats"));
 </script>
 <% end %>

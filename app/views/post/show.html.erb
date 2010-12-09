@@ -3,7 +3,7 @@
     <h2>Nobody here but us chickens!</h2>
   <% else %>
     <% if @post.can_be_seen_by?(@current_user) %>
-      <script type="text/javascript"> Post.register(<%= @post.to_json %>) </script>
+      <script type="text/javascript"> Post.register_resp(<%= Post.batch_api_data([@post]).to_json %>); </script>
     <% end %>
 
     <%= render :partial => "post/show_partials/status_notices" %>

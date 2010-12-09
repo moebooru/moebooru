@@ -23,7 +23,7 @@
     return false
   }
 
-  Post.register_tags(<%= Tag.batch_get_tag_types(@posts).to_json %>);
+  Post.register_tags(<%= Tag.batch_get_tag_types_for_posts(@posts).to_json %>);
   <% @posts.each do |post| %>
     Post.register(<%= post.to_json %>)
   <% end %>

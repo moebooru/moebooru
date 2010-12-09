@@ -71,7 +71,7 @@ module PostApiMethods
   def api_data
     {
       :post => self,
-      :tags => Tag.batch_get_tag_types([self]),
+      :tags => Tag.batch_get_tag_types_for_posts([self]),
     }
   end
 
@@ -79,7 +79,7 @@ module PostApiMethods
     def batch_api_data(posts, options={})
       result = { :posts => posts }
       if options[:include_tags] then
-        result[:tags] = Tag.batch_get_tag_types(posts)
+        result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
       end
 
       return result

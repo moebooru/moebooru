@@ -37,11 +37,18 @@ module TagTypeMethods
     end
 
     # Get all tag types for the given list of posts.
-    def batch_get_tag_types(posts)
+    def batch_get_tag_types_for_posts(posts)
       post_tags = Set.new
       posts.each { |post|
-        post_tags.merge(post.cached_tags.split.map { |p| "tag_type:#{p}"} )
+        post_tags.merge(post.cached_tags.split.map { |p| p} )
       }
+      return batch_get_tag_types(post_tags)
+    end
+
+    # Get all tag types for the given tags.
+    def batch_get_tag_types(post_tags)
+      post_tags = post_tags.map { |p| "tag_type:#{p}" }
+      post_tags = Set.new(post_tags)
 
       # Memcache is dropping our connection if we make too make requests at once.  Request
       # tag types max_tags_per_query at a time.

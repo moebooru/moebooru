@@ -489,8 +489,7 @@ BrowserView.prototype.set_post = function(post_id)
 
   this.set_main_image(post);
 
-  // XXX: initial vote
-  Post.init_vote(post.id, 0, $("vote-container"));
+  Post.init_vote(post.id, Post.votes.get(post.id), $("vote-container"));
 
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 

@@ -129,7 +129,7 @@ class PostController < ApplicationController
       end
       posts.uniq!
 
-      api_data = Post.batch_api_data(posts, :include_tags => true, :include_votes_for => @current_user.id) if params[:format] == "json" || params[:format] == "xml"
+      api_data = Post.batch_api_data(posts) if params[:format] == "json" || params[:format] == "xml"
 
       if params[:commit] == "Approve"
         respond_to_success("Post approved", {:action => "moderate"}, :api => api_data)
@@ -203,7 +203,7 @@ class PostController < ApplicationController
     # Updates to one post may affect others, so only generate the return list after we've already
     # updated everything.
     posts = Post.find_by_sql(["SELECT * FROM posts WHERE id IN (?)", ids.map { |id, t| id }])
-    api_data = Post.batch_api_data(posts, :include_tags => true, :include_votes_for => @current_user.id)
+    api_data = Post.batch_api_data(posts)
 
     url = params[:url]
     url = {:action => "index"} if not url
@@ -368,11 +368,10 @@ class PostController < ApplicationController
           return
         end
 
-        api_data_params = { :include_tags => params[:include_tags] == "1" }
-        if params[:include_votes] == "1" then
-          api_data_params[:include_votes_for] = @current_user.id
-        end
-        api_data = Post.batch_api_data(@posts, api_data_params)
+        api_data = Post.batch_api_data(@posts, {
+          :exclude_tags => params[:include_tags] != "1",
+          :exclude_votes => params[:include_votes] != "1",
+        }
 
         render :json => api_data.to_json
       }
@@ -590,7 +589,7 @@ class PostController < ApplicationController
     # Reload the post to pull in post.flag_reason.
     post.reload
 
-    api_data = Post.batch_api_data([post], :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
+    api_data = Post.batch_api_data([post]) if params[:format] == "json" || params[:format] == "xml"
     respond_to_success(message, {:action => "show", :id => params[:id]}, :api => api_data)
   end
   
@@ -830,7 +829,7 @@ class PostController < ApplicationController
 
     affected_posts = [post]
     affected_posts << post.get_parent if post.parent_id
-    api_data = Post.batch_api_data(affected_posts, :include_tags => true) if params[:format] == "json" || params[:format] == "xml"
+    api_data = Post.batch_api_data(affected_posts) if params[:format] == "json" || params[:format] == "xml"
     respond_to_success("Post was undeleted", {:action => "show", :id => params[:id]}, :api => api_data)
   end
   

@@ -78,19 +78,25 @@ module PostApiMethods
   module ClassMethods
     def batch_api_data(posts, options={})
       result = { :posts => posts }
-      if options[:include_tags] then
+      if not options[:exclude_tags] then
         result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
+      end
+
+      if options.include?(:user)
+        user = options[:user]
+      else
+        user = Thread.current["danbooru-user"]
       end
 
       # Allow loading votes along with the posts.
       #
       # The post data is cachable and vote data isn't, so keep this data separate from the
       # main post data to make it easier to cache API output later.
-      if options.include?(:include_votes_for) then
+      if not options[:exclude_votes] then
         vote_map = {}
         if not posts.empty? then
           post_ids = posts.map { |p| p.id }.join(",")
-          sql = "SELECT v.* FROM post_votes v WHERE v.user_id = %i AND v.post_id IN (%s)" % [options[:include_votes_for], post_ids]
+          sql = "SELECT v.* FROM post_votes v WHERE v.user_id = %i AND v.post_id IN (%s)" % [user.id, post_ids]
           votes = PostVotes.find_by_sql(sql)
           votes.each { |v|
             vote_map[v.post_id] = v.score

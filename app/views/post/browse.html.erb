@@ -266,7 +266,7 @@ document.observe("dom:loaded", function()
       tags_element.blur();
 
       var tags = tags_element.value;
-      UrlHash.set({tags: tags});
+      document.fire("viewer:perform-search", {tags: tags, results_mode: "jump-to-first"});
     });
 
     UrlHash.observe("tags", function() {

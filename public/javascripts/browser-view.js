@@ -223,11 +223,14 @@ BrowserView.prototype.set_post_ui = function(visible)
   if(Prototype.BrowserFeatures.Touchscreen)
     visible = false;
 
+  /* If we don't have a post displayed, always hide the post UI even if it's currently
+   * shown. */
+  this.container.down(".post-info").show(visible && this.displayed_post_id != null);
+
   if(visible == this.post_ui_visible)
     return;
 
   this.post_ui_visible = visible;
-  this.container.down(".post-info").show(this.post_ui_visible && this.displayed_post_id);
   if(this.navigator)
     this.navigator.set_autohide(!visible);
 

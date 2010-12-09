@@ -295,7 +295,9 @@ Post = {
 	
   vote_mouse_out: function(desc, container, vote) {
     container = Post.get_vote_container(container);
-    Post.vote_set_stars(container.current_vote, false, container);
+    var post_id = container.vote_post_id;
+    var original_vote = Post.votes.get(post_id);
+    Post.vote_set_stars(original_vote, false, container);
     container.down(".vote-desc").update();
   },
 
@@ -303,7 +305,6 @@ Post = {
     var vote = Post.votes.get(post_id) || 0;
     container = Post.get_vote_container(container);
     container.vote_post_id = post_id;
-    container.current_vote = vote;
     Post.vote_set_stars(vote, false, container);
 
     if(container.event_initialized)
@@ -316,7 +317,6 @@ Post = {
         return;
 
       var new_vote = Post.votes.get(post_id);
-      container.current_vote = new_vote;
       Post.vote_set_stars(new_vote, false, container);
 
       if(container.down("#post-score-" + post_id))
@@ -400,7 +400,9 @@ Post = {
 
   widget_vote_up: function(container) {
     container = Post.get_vote_container(container);
-    return Post.widget_vote(container, container.current_vote + 1);
+    var post_id = container.vote_post_id;
+    var current_vote = Post.votes.get(post_id);
+    return Post.widget_vote(container, current_vote + 1);
   },
   widget_vote: function(container, score) {
     container = Post.get_vote_container(container);

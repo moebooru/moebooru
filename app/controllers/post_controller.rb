@@ -538,18 +538,15 @@ class PostController < ApplicationController
       return
     end
 
-    options = {}
-    if p.vote!(score, @current_user, request.remote_ip, options)
-      voted_by = p.voted_by
-      voted_by.each_key { |vote|
-        users = voted_by[vote]
-        users.map! { |user|
-          { :name => user.pretty_name, :id => user.id }
-        }
-      }
-      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => {:vote => score, :score => p.score, :post_id => p.id, :votes => voted_by })
+    vote_successful = p.vote!(score, @current_user, request.remote_ip, {})
+
+    api_data = Post.batch_api_data([p])
+    api_data[:voted_by] = p.voted_by
+
+    if vote_successful
+      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => api_data)
     else
-      respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 423)
+      respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => api_data, :status => 423)
     end
   end
 

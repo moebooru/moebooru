@@ -389,50 +389,38 @@ Post = {
     var post_id = Post.get_vote_post_id(container);
     notice("Voting...")
 
-    options = {
-            "id": post_id,
-            "score": score
-    }
-    
-    new Ajax.Request("/post/vote.json", {
-      parameters: options,
-
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-
-        if (resp.success) {
-          var post = Post.posts.get(post_id);
-          if(post)
-            post.score = resp.score;
-          Post.votes.set(post_id, score);
-
-          if(container.vote_post_id == post_id)
-          {
-            container.current_vote = score;
-            Post.vote_set_stars(resp.vote, false, container);
-          }
-
-          if(Post.vote_changed_func)
-            Post.vote_changed_func(post_id, resp, container);
-          else
-            Post.vote_default_update(post_id, resp, container);
-        } else {
-          notice(resp.reason)
-        }
+    var finished = function(resp)
+    {
+      if(container.vote_post_id == post_id)
+      {
+        var new_vote = Post.votes.get(post_id);
+        container.current_vote = new_vote;
+        Post.vote_set_stars(new_vote, false, container);
       }
-    })
+
+      if(Post.vote_changed_func)
+        Post.vote_changed_func(post_id, resp.voted_by);
+      else
+        Post.vote_default_update(post_id, resp.voted_by, container);
+    }
+
+    Post.make_request("/post/vote.json", { id: post_id, score: score }, finished);
   },
 
-  vote_default_update: function(post_id, resp, container)
+  vote_default_update: function(post_id, votes, container)
   {
     if(container.vote_post_id != post_id)
       return;
 
-    if($("post-score-" + resp.post_id))
-      $("post-score-" + resp.post_id).update(resp.score)
+    if($("post-score-" + post_id))
+    {
+      var post = Post.posts.get(post_id);
+      if(post)
+        $("post-score-" + post_id).update(post.score)
+    }
 
     if ($("favorited-by")) {
-      $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))
+      $("favorited-by").update(Favorite.link_to_users(votes["3"]))
     }
     notice("Vote saved");
   },

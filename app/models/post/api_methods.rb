@@ -44,7 +44,9 @@ module PostApiMethods
     if status == "flagged" or status == "deleted"
       ret[:flag_detail] = flag_detail
 
-      flag_detail.hide_user = (status == "deleted" and not Thread.current["danbooru-user"].is_mod_or_higher?)
+      if flag_detail then
+        flag_detail.hide_user = (status == "deleted" and not Thread.current["danbooru-user"].is_mod_or_higher?)
+      end
     end
 
     # If we're being formatted as the contents of a pool, we'll have the pool_post

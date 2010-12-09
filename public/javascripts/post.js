@@ -151,6 +151,7 @@ Post = {
       e.removeClassName("has-parent");
   },
 
+  /* Deprecated; use Post.update_batch instead. */
   update: function(post_id, params, finished) {
     notice('Updating post #' + post_id)
     params["id"] = post_id

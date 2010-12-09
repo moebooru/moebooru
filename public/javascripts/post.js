@@ -118,13 +118,13 @@ Post = {
     {
       resp.posts.each(function(post) {
         Post.update_styles(post);
-      });
 
-      var element = $$("#p" + post_id + " > .directlink")
-      if (element.length > 0) {
-        element[0].addClassName("tag-script-applied")
-        Post.applied_list.push(element[0])
-      }
+        var element = $$("#p" + post.id + " > .directlink")
+        if (element.length > 0) {
+          element[0].addClassName("tag-script-applied")
+          Post.applied_list.push(element[0])
+        }
+      });
 
       notice((original_count == 1? "Post": "Posts") + " updated");
 

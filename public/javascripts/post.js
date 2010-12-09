@@ -228,8 +228,9 @@ Post = {
    * and doesn't return errors for individual posts. */
   activate_post: function(post_id)
   {
-     Post.update(post_id, { "post[is_held]": false }, function(post)
+     Post.update_batch([{ id: post_id, is_held: false }], function()
      {
+       var post = Post.posts.get(post_id);
        if(post.is_held)
          notice("Couldn't activate post");
        else

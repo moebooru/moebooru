@@ -35,6 +35,17 @@ Post = {
       onSuccess: function(resp) {
         var resp = resp.responseJSON
         Post.register_resp(resp);
+
+        /* Fire posts:update, to allow observers to update their display on change. */
+        var post_ids = new Hash();
+        for(var i = 0; i < resp.posts.length; ++i)
+          post_ids.set(resp.posts[i].id, true);
+
+        document.fire("posts:update", {
+          resp: resp,
+          post_ids: post_ids
+        });
+
         if(finished)
           finished(resp);
       }
@@ -127,16 +138,6 @@ Post = {
       });
 
       notice((original_count == 1? "Post": "Posts") + " updated");
-
-      /* Fire posts:update, to allow observers to update their display on change. */
-      var post_ids = new Hash();
-      for(var i = 0; i < resp.posts.length; ++i)
-        post_ids.set(resp.posts[i].id, true);
-
-      document.fire("posts:update", {
-        resp: resp,
-        post_ids: post_ids
-      });
 
       if(finished)
         finished(resp.posts);
@@ -329,9 +330,8 @@ Post = {
     return stars.vote_post_id;
   },
 
-  init_vote_widgets: function(changed_func)
+  init_vote_widgets: function()
   {
-    Post.vote_changed_func = changed_func;
     var vote_descs =
     {
       "0": "Neutral",
@@ -398,10 +398,8 @@ Post = {
         Post.vote_set_stars(new_vote, false, container);
       }
 
-      if(Post.vote_changed_func)
-        Post.vote_changed_func(post_id, resp.voted_by);
-      else
-        Post.vote_default_update(post_id, resp.voted_by, container);
+      notice("Vote saved");
+      Post.vote_default_update(post_id, resp.voted_by, container);
     }
 
     Post.make_request("/post/vote.json", { id: post_id, score: score }, finished);
@@ -422,7 +420,6 @@ Post = {
     if ($("favorited-by")) {
       $("favorited-by").update(Favorite.link_to_users(votes["3"]))
     }
-    notice("Vote saved");
   },
 
   flag: function(id, finished) {
@@ -436,7 +433,11 @@ Post = {
       if(finished)
         finished(id);
       else
-        $("p" + id).addClassName("flagged");
+      {
+        var e = $("p" + id);
+        if(e)
+          e.addClassName("flagged");
+      }
     }
 
     return Post.make_request("/post/flag.json", { "id": id, "reason": reason }, complete);
@@ -449,7 +450,11 @@ Post = {
       if(finished)
         finished(id);
       else
-        $("p" + id).removeClassName("flagged");
+      {
+        var e = $("p" + id);
+        if(e)
+          e.removeClassName("flagged");
+      }
     }
 
     return Post.make_request("/post/flag.json", { id: id, unflag: 1 }, complete);

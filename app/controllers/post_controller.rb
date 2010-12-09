@@ -371,7 +371,7 @@ class PostController < ApplicationController
         api_data = Post.batch_api_data(@posts, {
           :exclude_tags => params[:include_tags] != "1",
           :exclude_votes => params[:include_votes] != "1",
-        }
+        })
 
         render :json => api_data.to_json
       }

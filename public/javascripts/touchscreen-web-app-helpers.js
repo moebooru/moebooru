@@ -228,25 +228,22 @@ EmulateDoubleClick.prototype.touchstart_event = function(event)
 
   /* Don't store event.changedTouches or any of its contents.  Some browsers modify these
    * objects in-place between events instead of properly returning unique events. */
-  this.last_click = {
+  var this_click = {
     timeStamp: event.timeStamp,
     target: event.target,
-    was_released: false,
     identifier: this_touch.identifier,
     position: [this_touch.screenX, this_touch.screenY],
     clientPosition: [this_touch.clientX, this_touch.clientY]
   }
+  this.last_click = this_click;
 
   if(last_click == null)
       return;
 
   /* If the first tap was never released then this is a multitouch double-tap.
    * Clear the original tap and don't fire anything. */
-  if(!last_click.was_released)
-  {
-    this.last_click = null;
+  if(event.touches.length > 1)
     return;
-  }
 
   /* Check that not too much time has passed. */
   var time_since_previous = event.timeStamp - last_click.timeStamp;
@@ -290,8 +287,6 @@ EmulateDoubleClick.prototype.touchend_event = function(event)
   var this_click = event.changedTouches[0];
   if(this_click.identifier == last_click_identifier)
   {
-    this.last_click.was_released = true;
-
     /* If the touch moved too far when it was removed, don't fire a doubleclick; for
      * example, two quick swipe gestures aren't a double-click. */
     var distance = Math.pow(this_click.screenX - last_click_position[0], 2) + Math.pow(this_click.screenY - last_click_position[1], 2);

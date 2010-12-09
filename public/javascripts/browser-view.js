@@ -195,7 +195,7 @@ BrowserView = function(container)
   document.on("posts:update", function(e) {
     if(e.memo.post_ids.get(this.displayed_post_id) == null)
       return;
-    this.refresh_post_info(this.displayed_post_id);
+    this.set_post_info();
   }.bindAsEventListener(this));
 
   Post.init_vote_widgets();
@@ -491,14 +491,6 @@ BrowserView.prototype.set_post = function(post_id)
 
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 
-  this.set_post_info();
-}
-
-/* If post_id is currently being displayed, update changed post info. */
-BrowserView.prototype.refresh_post_info = function(post_id)
-{
-  if(this.displayed_post_id != post_id)
-    return;
   this.set_post_info();
 }
 

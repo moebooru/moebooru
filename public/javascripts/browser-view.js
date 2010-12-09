@@ -146,8 +146,9 @@ BrowserView = function(container)
     var post_id = this.displayed_post_id;
     if(!confirm("Activate this post?"))
       return;
-    Post.update(post_id, { "post[is_held]": false }, function(post)
+    Post.update_batch([{ id: post_id, is_held: false }], function()
     {
+      var post = Post.posts.get(post_id);
       if(post.is_held)
       {
         notice("Couldn't activate post");

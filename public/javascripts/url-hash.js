@@ -3,6 +3,7 @@ UrlHashHandler = function()
   this.observers = new Hash();
   this.normalize = function(h) { }
   this.denormalize = function(h) { }
+  this.deferred_sets = [];
 
   this.current_hash = this.parse(this.get_raw_hash());
   this.normalize(this.current_hash);
@@ -191,6 +192,45 @@ UrlHashHandler.prototype.set = function(hash)
   this.normalize(new_hash);
   this.set_all(new_hash);
 }
+
+/*
+ * Each call to UrlHash.set() will immediately set the new hash, which will create a new
+ * browser history slot.  This isn't always wanted.  When several changes are being made
+ * in response to a single action, all changes should be made simultaeously, so only a
+ * single history slot is created.  Making only a single call to set() is difficult when
+ * these changes are made by unrelated parts of code.
+ *
+ * Defer changes to the URL hash.  If several calls are made in quick succession, buffer
+ * the changes.  When a short timer expires, make all changes at once.  This will never
+ * happen before the current Javascript call completes, because timers will never interrupt
+ * running code.
+ *
+ * UrlHash.set() doesn't do this, because set() guarantees that the hashchange event will
+ * be fired and complete before the function returns.
+ */
+UrlHashHandler.prototype.set_deferred = function(hash)
+{
+  this.deferred_sets.push(hash);
+
+  var set = function()
+  {
+    this.deferred_set_timer = null;
+
+    var new_hash = this.current_hash;
+    this.deferred_sets.each(function(m) {
+      new_hash = new_hash.merge(m);
+    });
+    this.normalize(new_hash);
+    this.set_all(new_hash);
+    this.deferred_sets = [];
+
+    this.hashchange_event(null);
+  }.bind(this);
+
+  if(this.deferred_set_timer == null)
+    this.deferred_set_timer = set.defer();
+}
+
 
 UrlHashHandler.prototype.set_all = function(query_params)
 {

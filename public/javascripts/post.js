@@ -334,10 +334,10 @@ Post = {
 
   init_vote_hotkeys: function(post_id, container)
   {
-    OnKey(192, null, function(e) { Post.vote(container, +0); return true; }.bindAsEventListener(this)); // `
-    OnKey(49, null, function(e) { Post.vote(container, +1); return true; }.bindAsEventListener(this));
-    OnKey(50, null, function(e) { Post.vote(container, +2); return true; }.bindAsEventListener(this));
-    OnKey(51, null, function(e) { Post.vote(container, +3); return true; }.bindAsEventListener(this));
+    OnKey(192, null, function(e) { Post.widget_vote(container, +0); return true; }.bindAsEventListener(this)); // `
+    OnKey(49, null, function(e) { Post.widget_vote(container, +1); return true; }.bindAsEventListener(this));
+    OnKey(50, null, function(e) { Post.widget_vote(container, +2); return true; }.bindAsEventListener(this));
+    OnKey(51, null, function(e) { Post.widget_vote(container, +3); return true; }.bindAsEventListener(this));
   },
 
   get_vote_container: function(stars)
@@ -400,20 +400,19 @@ Post = {
 
   widget_vote_up: function(container) {
     container = Post.get_vote_container(container);
-    return Post.vote(container, container.current_vote + 1);
+    return Post.widget_vote(container, container.current_vote + 1);
   },
   widget_vote: function(container, score) {
-    return Post.vote(container, score);
+    container = Post.get_vote_container(container);
+    var post_id = Post.get_vote_post_id(container);
+    return Post.vote(post_id, score);
   },
 
-  vote: function(container, score) {
+  vote: function(post_id, score) {
     if(score > 3)
       return;
     
-    container = Post.get_vote_container(container);
-    var post_id = Post.get_vote_post_id(container);
     notice("Voting...")
-
     Post.make_request("/post/vote.json", { id: post_id, score: score }, function(resp) { notice("Vote saved"); });
   },
 

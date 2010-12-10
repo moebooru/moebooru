@@ -747,7 +747,10 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
   this.last_y = this.anchor_y;
 
   if(this.options.ondown)
-    this.options.ondown(this);
+    this.options.ondown({
+      dragger: this,
+      latest_event: event
+    });
 }
 
 DragElement.prototype.touchend_event = function(event)
@@ -803,7 +806,10 @@ DragElement.prototype.stop_dragging = function()
   this.dragging_touch_identifier = null;
 
   if(this.options.onup)
-    this.options.onup(this);
+    this.options.onup({
+      dragger: this,
+      latest_event: event
+    });
 }
 
 DragElement.prototype.click_event = function(event)

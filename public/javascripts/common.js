@@ -488,6 +488,7 @@ DragElement = function(element, options)
   this.options = options || {};
   if(this.options.snap_pixels == null)
     this.options.snap_pixels = 10;
+  this.ignore_mouse_events_until = null;
 
   this.mousemove_event = this.mousemove_event.bindAsEventListener(this);
   this.mousedown_event = this.mousedown_event.bindAsEventListener(this);
@@ -676,6 +677,15 @@ DragElement.prototype.mousedown_event = function(event)
   if(!event.isLeftClick())
     return;
 
+  /* Check if we're temporarily ignoring mouse events. */
+  if(this.ignore_mouse_events_until != null)
+  {
+    var now = (new Date()).valueOf();
+    if(now < this.ignore_mouse_events_until)
+      return;
+
+    this.ignore_mouse_events_until = null;
+  }
   var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
   var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
   var x = event.pointerX() - scrollLeft;
@@ -735,6 +745,9 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
   this.anchor_y = y;
   this.last_x = this.anchor_x;
   this.last_y = this.anchor_y;
+
+  if(this.options.ondown)
+    this.options.ondown(this);
 }
 
 DragElement.prototype.touchend_event = function(event)
@@ -746,6 +759,21 @@ DragElement.prototype.touchend_event = function(event)
     if(t.identifier == this.dragging_touch_identifier)
     {
       this.stop_dragging();
+
+      /*
+       * Work around a bug on iPhone.  The mousedown and mouseup events are sent after
+       * the touch is released, instead of when they should be (immediately following
+       * touchstart and touchend).  This means we'll process each touch as a touch,
+       * then immediately after as a mouse press, and fire ondown/onup events for each.
+       *
+       * We can't simply ignore mouse presses if touch events are supported; some devices
+       * will support both touches and mice and both types of events will always need to
+       * be handled.
+       *
+       * After a touch is released, ignore all mouse presses for a little while.  It's
+       * unlikely that the user will touch an element, then immediately click it.
+       */
+      this.ignore_mouse_events_until = (new Date()).valueOf() + 500;
       return;
     }
   }
@@ -773,6 +801,9 @@ DragElement.prototype.stop_dragging = function()
   this.drag_handlers.each(function(h) { h.stop(); });
   this.drag_handlers = [];
   this.dragging_touch_identifier = null;
+
+  if(this.options.onup)
+    this.options.onup(this);
 }
 
 DragElement.prototype.click_event = function(event)

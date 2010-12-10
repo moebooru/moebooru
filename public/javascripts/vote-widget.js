@@ -29,17 +29,17 @@ VoteWidget = function(container)
     "3": "Favorite"
   };
 
-  container.select(".star").each(function(s) {
-    var vote_match = s.className.match(/.* star-(\d+)/);
-    if(!vote_match)
-      return;
-    var vote = parseInt(vote_match[1]);
+  var init_star = function(stars)
+  {
+    var desc = vote_descs[stars];
+    var s = this.container.down(".star-" + stars);
+    s.on("click", function(e) { e.stop(); this.vote(stars); }.bindAsEventListener(this));
+    s.on("mouseover", function(e) { this.vote_mouse_over(desc, stars); }.bindAsEventListener(this));
+    s.on("mouseout", function(e) { this.vote_mouse_out(stars); }.bindAsEventListener(this));
+  }.bind(this)
 
-    var desc = vote_descs[vote];
-    s.on("click", function(e) { e.stop(); this.vote(vote); }.bindAsEventListener(this));
-    s.on("mouseover", function(e) { this.vote_mouse_over(desc, vote); }.bindAsEventListener(this));
-    s.on("mouseout", function(e) { this.vote_mouse_out(desc, vote); }.bindAsEventListener(this));
-  }.bind(this));
+  for(var i = 1; i <= 3; ++i)
+    init_star(i);
 
   document.on("posts:update", this.post_update_event.bindAsEventListener(this));
 }
@@ -53,7 +53,7 @@ VoteWidget.prototype.post_update_event = function(e)
     return;
 
   var new_vote = Post.votes.get(post_id);
-  this.vote_set_stars(new_vote);
+  this.set_stars(new_vote);
 
   if(this.container.down("#post-score-" + post_id))
   {
@@ -71,7 +71,7 @@ VoteWidget.prototype.set_post_id = function(post_id)
 {
   var vote = Post.votes.get(post_id) || 0;
   this.post_id = post_id;
-  this.vote_set_stars(vote);
+  this.set_stars(vote);
 }
 
 VoteWidget.prototype.init_hotkeys = function()
@@ -95,25 +95,26 @@ VoteWidget.prototype.vote = function(score)
 
 VoteWidget.prototype.vote_mouse_over = function(desc, vote)
 {
-  this.vote_set_stars(vote);
-  this.container.down(".vote-desc").update(desc);
+  this.set_stars(vote);
+  var text = this.container.down(".vote-desc");
+  if(text)
+    text.update(desc);
 }
 
-VoteWidget.prototype.vote_mouse_out = function(desc, vote)
+VoteWidget.prototype.vote_mouse_out = function(vote)
 {
   var original_vote = Post.votes.get(this.post_id);
-  this.vote_set_stars(original_vote);
-  this.container.down(".vote-desc").update();
+  this.set_stars(original_vote);
+  var text = this.container.down(".vote-desc");
+  if(text)
+    text.update();
 }
 
-VoteWidget.prototype.vote_set_stars = function(vote)
+VoteWidget.prototype.set_stars = function(vote)
 {
-  var stars = this.container.down(".stars").select("a")
-  stars.each(function(star) {
-    var matches = star.className.match(/^.* star-(\d+)$/)
-    if(!matches)
-      return;
-    var star_vote = parseInt(matches[1])
+  for(var star_vote = 1; star_vote <= 3; ++star_vote)
+  {
+    var star = this.container.down(".star-" + star_vote);
     var on = star.down(".score-on")
     var off = star.down(".score-off")
 
@@ -127,6 +128,6 @@ VoteWidget.prototype.vote_set_stars = function(vote)
       on.removeClassName("score-visible");
       off.addClassName("score-visible");
     }
-  })
+  }
 }
 

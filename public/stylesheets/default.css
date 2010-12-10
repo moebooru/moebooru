@@ -1429,10 +1429,6 @@ span.stars .star-3 { color:#ff0; }
   font-weight: normal;
 }
 
-#sizing-body {
-  overflow: hidden;
-}
-
 .post-browser {
   width: 100%;
   background-color: #222;

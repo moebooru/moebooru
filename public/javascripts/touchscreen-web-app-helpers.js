@@ -42,6 +42,8 @@
 
 function AndroidDetectWindowSize()
 {
+  $("sizing-body").setStyle({overflow: "hidden"});
+
   /* This is shown to make sure we can scroll the address bar off.  It goes outside
    * of #sizing-body, so it's not clipped.  By not changing #sizing-body itself, we
    * avoid reflowing the entire document more than once, when we finish. */

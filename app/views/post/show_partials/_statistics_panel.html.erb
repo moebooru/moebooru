@@ -32,6 +32,7 @@
   Post.init_vote_widgets();
   Post.init_vote(<%= @post.id %>, $("stats"));
   Post.init_vote_hotkeys(<%= @post.id %>, $("stats"));
+  Post.init_add_to_favs(<%= @post.id %>, $("add-to-favs"), $("remove-from-favs"));
 </script>
 <% end %>
 

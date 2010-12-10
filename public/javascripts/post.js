@@ -251,19 +251,8 @@ Post = {
   },
 
 
-  vote_set_stars: function(vote, temp, container) {
+  vote_set_stars: function(vote, container) {
     container = Post.get_vote_container(container);
-
-    if(!temp && $("add-to-favs"))
-    {
-      if (vote >= 3) {
-        $("add-to-favs").hide()
-        $("remove-from-favs").show()
-      } else {
-        $("remove-from-favs").hide()
-        $("add-to-favs").show()
-      }
-    }
 
     var stars = container.down(".stars").select("a")
     stars.each(function(star) {
@@ -289,7 +278,7 @@ Post = {
 
   vote_mouse_over: function(desc, container, vote) {
     container = Post.get_vote_container(container);
-    Post.vote_set_stars(vote, true, container);
+    Post.vote_set_stars(vote, container);
     container.down(".vote-desc").update(desc);
   },
 	
@@ -297,7 +286,7 @@ Post = {
     container = Post.get_vote_container(container);
     var post_id = container.vote_post_id;
     var original_vote = Post.votes.get(post_id);
-    Post.vote_set_stars(original_vote, false, container);
+    Post.vote_set_stars(original_vote, container);
     container.down(".vote-desc").update();
   },
 
@@ -305,7 +294,7 @@ Post = {
     var vote = Post.votes.get(post_id) || 0;
     container = Post.get_vote_container(container);
     container.vote_post_id = post_id;
-    Post.vote_set_stars(vote, false, container);
+    Post.vote_set_stars(vote, container);
 
     if(container.event_initialized)
       return;
@@ -317,7 +306,7 @@ Post = {
         return;
 
       var new_vote = Post.votes.get(post_id);
-      Post.vote_set_stars(new_vote, false, container);
+      Post.vote_set_stars(new_vote, container);
 
       if(container.down("#post-score-" + post_id))
       {
@@ -408,6 +397,20 @@ Post = {
     container = Post.get_vote_container(container);
     var post_id = Post.get_vote_post_id(container);
     return Post.vote(post_id, score);
+  },
+
+  init_add_to_favs: function(post_id, add_to_favs, remove_from_favs) {
+    var update_add_to_favs = function(e)
+    {
+      if(e != null && e.memo.post_ids.get(post_id) == null)
+        return;
+      var vote = Post.votes.get(post_id) || 0;
+      add_to_favs.show(vote < 3);
+      remove_from_favs.show(vote >= 3);
+    }
+
+    update_add_to_favs();
+    document.on("posts:update", update_add_to_favs);
   },
 
   vote: function(post_id, score) {

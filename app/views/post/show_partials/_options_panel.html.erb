@@ -47,8 +47,8 @@
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
       <li><%= link_to_function "Add translation", "Note.create(#{@post.id})", :level => :member %></li>
     <% end %>
-    <li id="add-to-favs"><%= link_to_function "Add to favorites", "Post.vote($('stats'), 3)" %></li>
-    <li id="remove-from-favs"><%= link_to_function "Remove from favorites", "Post.vote($('stats'), 2)" %></li>
+    <li id="add-to-favs"><%= link_to_function "Add to favorites", "Post.vote(#{@post.id}, 3)" %></li>
+    <li id="remove-from-favs"><%= link_to_function "Remove from favorites", "Post.vote(#{@post.id}, 2)" %></li>
     <% if @post.is_pending? && @current_user.is_janitor_or_higher? %>
       <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.approve(#{@post.id})}" %></li>
     <% end %>

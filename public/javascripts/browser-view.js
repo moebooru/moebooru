@@ -41,6 +41,7 @@ BrowserView = function(container)
   this.last_preload_request_active = false;
 
   this.image_pool = new ImgPoolHandler();
+  this.img_box = this.container.down(".image-box");
 
   /* True if the post UI is visible. */
   this.post_ui_visible = true;
@@ -210,6 +211,8 @@ BrowserView = function(container)
   }.bindAsEventListener(this));
 
 
+  this.navigator = new Navigator(this.container.down(".image-navigator"), this.img_box);
+
   this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: e.memo.right }); }.bindAsEventListener(this));
 
   if(Prototype.BrowserFeatures.Touchscreen)
@@ -217,6 +220,11 @@ BrowserView = function(container)
     this.create_voting_popup();
     this.image_swipe = new SwipeHandler(this.container.down(".image-container"));
   }
+
+  /* If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
+   * dragging too. */
+  if(this.image_swipe == null)
+    this.image_dragger = new WindowDragElementAbsolute(this.img_box, this.update_navigator);
 }
 
 BrowserView.prototype.create_voting_popup = function()
@@ -463,16 +471,9 @@ BrowserView.prototype.set_main_image = function(post)
   {
     this.img.stopObserving();
     this.img.parentNode.removeChild(this.img);
-    if(this.image_dragger)
-      this.image_dragger.destroy();
-    this.image_dragger = null;
     this.image_pool.release(this.img);
     this.img = null;
   }
-
-  if(this.navigator)
-    this.navigator.destroy();
-  this.navigator = null;
 
   /* If this post is blacklisted, show a message instead of displaying it. */
   var hide_post = Post.is_blacklisted(post.id) && post.id != this.blacklist_override_post_id;
@@ -482,6 +483,8 @@ BrowserView.prototype.set_main_image = function(post)
 
   this.img = this.image_pool.get();
   this.img.className = "main-image";
+
+  this.img.show();
 
   /*
    * Work around an iPhone bug.  If a touchstart event is sent to this.img, and then
@@ -494,44 +497,43 @@ BrowserView.prototype.set_main_image = function(post)
    * the image.
    */
   if(this.image_swipe)
+  {
     this.img.setStyle({pointerEvents: "none"});
+    this.img_box.setStyle({pointerEvents: "none"});
+  }
 
   if(this.viewing_larger_version && post.jpeg_url)
   {
     this.img.src = post.jpeg_url;
-    this.img.original_width = post.jpeg_width;
-    this.img.original_height = post.jpeg_height;
-    this.img.show();
+    this.img_box.original_width = post.jpeg_width;
+    this.img_box.original_height = post.jpeg_height;
+    this.img_box.show();
   }
   else if(!this.viewing_larger_version && post.sample_url)
   {
     this.img.src = post.sample_url;
-    this.img.original_width = post.sample_width;
-    this.img.original_height = post.sample_height;
-    this.img.show();
+    this.img_box.original_width = post.sample_width;
+    this.img_box.original_height = post.sample_height;
+    this.img_box.show();
   }
   else
   {
     /* Having no sample URL is an edge case, usually from deleted posts.  Keep the number
      * of code paths smaller by creating the IMG anyway, but not showing it. */
-    this.img.hide();
+    this.img_box.hide();
   }
 
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
   this.container.down(".image-box").appendChild(this.img);
 
-  /* If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
-   * dragging too. */
-  if(this.image_swipe == null)
-    this.image_dragger = new WindowDragElementAbsolute(this.img, this.update_navigator);
-
-  this.img.on("viewer:center-on", function(e) { this.center_image_on(e.memo.x, e.memo.y); }.bindAsEventListener(this));
+  this.img_box.on("viewer:center-on", function(e) { this.center_image_on(e.memo.x, e.memo.y); }.bindAsEventListener(this));
 
   if(this.viewing_larger_version)
   {
-    this.navigator = new Navigator(this.container.down(".image-navigator"), this.img, post);
+    this.navigator.set_image(post.preview_url, post.actual_preview_width, post.actual_preview_height);
     this.navigator.set_autohide(!this.post_ui_visible);
   }
+  this.navigator.enable(this.viewing_larger_version);
 
   this.scale_and_position_image();
 }
@@ -938,11 +940,11 @@ BrowserView.prototype.update_image_window_size = function()
 
 BrowserView.prototype.scale_and_position_image = function(resizing)
 {
-  var img = this.img;
-  if(!img)
+  var img_box = this.img_box;
+  if(!this.img)
     return;
-  var original_width = img.original_width;
-  var original_height = img.original_height;
+  var original_width = img_box.original_width;
+  var original_height = img_box.original_height;
 
   var post = Post.posts.get(this.displayed_post_id);
   if(!post)
@@ -962,8 +964,10 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
       ratio = window_size.height / original_height;
   }
 
-  img.width = original_width * ratio;
-  img.height = original_height * ratio;
+  this.displayed_image_width = original_width * ratio;
+  this.displayed_image_height = original_height * ratio;
+  this.img.width = this.displayed_image_width;
+  this.img.height = this.displayed_image_height;
 
   /* If we're resizing and showing the full-size image, don't snap the position
    * back to the default. */
@@ -976,7 +980,7 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
   {
     /* Align the image to the top of the screen. */
     y = this.image_window_size.height/2;
-    y /= this.img.height;
+    y /= this.displayed_image_height;
   }
 
   this.center_image_on(x, y);
@@ -989,25 +993,25 @@ BrowserView.prototype.update_navigator = function()
     return;
 
   /* The coordinates of the image located at the top-left corner of the window: */
-  var scroll_x = -this.img.offsetLeft;
-  var scroll_y = -this.img.offsetTop;
+  var scroll_x = -this.img_box.offsetLeft;
+  var scroll_y = -this.img_box.offsetTop;
 
   /* The coordinates at the center of the window: */
   x = scroll_x + this.image_window_size.width/2;
   y = scroll_y + this.image_window_size.height/2;
 
-  var percent_x = x / this.img.width;
-  var percent_y = y / this.img.height;
+  var percent_x = x / this.displayed_image_width;
+  var percent_y = y / this.displayed_image_height;
 
-  var height_percent = this.image_window_size.height / this.img.height;
-  var width_percent = this.image_window_size.width / this.img.width;
+  var height_percent = this.image_window_size.height / this.displayed_image_height;
+  var width_percent = this.image_window_size.width / this.displayed_image_width;
   this.navigator.image_position_changed(percent_x, percent_y, height_percent, width_percent);
 }
 
 BrowserView.prototype.center_image_on = function(percent_x, percent_y)
 {
-  var x = percent_x * this.img.width;
-  var y = percent_y * this.img.height;
+  var x = percent_x * this.displayed_image_width;
+  var y = percent_y * this.displayed_image_height;
 
   var scroll_x = x - this.image_window_size.width/2;
   scroll_x = Math.round(scroll_x);
@@ -1015,7 +1019,7 @@ BrowserView.prototype.center_image_on = function(percent_x, percent_y)
   var scroll_y = y - this.image_window_size.height/2;
   scroll_y = Math.round(scroll_y);
 
-  this.img.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
+  this.img_box.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
 
   this.update_navigator();
 }
@@ -1125,15 +1129,13 @@ BrowserView.prototype.child_posts_click_event = function(event)
 }
 
 
-var Navigator = function(container, target, post)
+var Navigator = function(container, target)
 {
   this.container = container;
   this.target = target;
   this.hovering = false;
+  this.autohide = false;
   this.img = this.container.down(".image-navigator-img");
-  this.img.src = post.preview_url;
-  this.img.width = post.actual_preview_width;
-  this.img.height = post.actual_preview_height;
   this.container.show();
 
   this.handlers = [];
@@ -1146,6 +1148,18 @@ var Navigator = function(container, target, post)
     onenddrag: this.enddrag.bind(this),
     ondrag: this.ondrag.bind(this)
   });
+}
+
+Navigator.prototype.set_image = function(image_url, width, height)
+{
+  this.img.src = image_url;
+  this.img.width = width;
+  this.img.height = height;
+}
+
+Navigator.prototype.enable = function(enabled)
+{
+  this.container.show(enabled);
 }
 
 Navigator.prototype.mouseover_event = function(e)

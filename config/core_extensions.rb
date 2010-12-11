@@ -78,6 +78,12 @@ class Array
 
   def to_xml(options = {})
     options[:builder] ||= Builder::XmlMarkup.new
+
+    if not options[:skip_instruct]
+      options[:skip_instruct] = true
+      options[:builder].instruct!
+    end
+
     root = options.delete(:root) || "array"
     options[:builder].tag!(root) do
       self.each do |value|

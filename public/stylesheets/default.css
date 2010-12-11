@@ -1415,11 +1415,88 @@ span.stars .star-3 { color:#ff0; }
 .star:focus {
 	outline: none;
 }
-.star > .score-on, .star > .score-off {
-	display: none;
+
+.standard-vote-widget .star-set-upto:after { content: "★"; }
+.standard-vote-widget .star-set-after:after { content: "☆"; }
+.standard-vote-widget .star-hovered-upto:after { content: "★"; }
+.standard-vote-widget .star-hovered-after:after { content: "☆"; }
+
+.standard-vote-widget .star-0:after { content: "↶ "; }
+.standard-vote-widget .star.vote-up:after { content: "vote up"; }
+.standard-vote-widget .star.vote-up-anonymous:after { content: "vote up"; }
+
+.standard-vote-widget .vote-up-block:before { content: " ("; }
+.standard-vote-widget .vote-up-block:after { content: ")"; }
+.standard-vote-widget .vote-up-block-anonymous:before { content: "("; }
+.standard-vote-widget .vote-up-block-anonymous:after { content: ")"; }
+
+/* This is the invisible block to catches touches for expanding vote-popup-container. */
+.vote-popup-expand {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  /*background-color: #0FF;*/
+  width: 100px;
+  height: 100px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
 }
-.star > .score-visible {
-	display: inline;
+
+.vote-popup-container {
+  position: absolute;
+  bottom: 0;
+  left: 100px;
+  vertical-align: top;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
+.vote-popup-container .star { 
+  display: inline-block;
+  font-size: 5em;
+
+  /* Extend the box outward a bit.  Do this on the top and bottom to keep the
+   * text centered. */
+  padding-top: 50px;
+  padding-bottom: 50px;
+  margin-top: -50px;
+  margin-bottom: -50px;
+}
+
+.vote-popup-container .vote-desc { display: none; }
+.vote-popup-container .star:after { content: "★"; }
+.vote-popup-container .star-0:after { content: "↶"; }
+
+/* Zoom in the current vote, if any.  Use a transform for this so it doesn't
+ * affect layout. */
+.vote-popup-container .star-set {
+  -webkit-transform: scale(1.35);
+}
+.vote-popup-container .vote-up-block { display: none; }
+.vote-popup-container .vote-up-block-anonymous { display: none; }
+
+.vote-popup-container .star {
+  -webkit-transition: -webkit-transform 0.15s ease-in-out;
+}
+.vote-popup-container.vote-popup-hidden .star {
+  -webkit-transform: scale(0.000001); /* WebKit hates scale(0) */
+}
+
+.vote-popup-flash {
+  position: absolute;
+  font-size: 10em;
+}
+
+.vote-popup-flash.star-0 .flash-item:after { content: "↶"; }
+.vote-popup-flash        .flash-item:after { content: "★"; }
+.vote-popup-flash.star-1 .flash-item { color: #0a0; }
+.vote-popup-flash.star-2 .flash-item { color: #0f0; }
+.vote-popup-flash.star-3 .flash-item { color: #ff0; }
+
+.vote-popup-flash.flash-star .flash-item {
+  -webkit-transition: all 0.75s cubic-bezier(0.0, 0.3, 0.5, 1);
+  -webkit-transform: translateY(0px) scale(2.0);
+  opacity: 0;
 }
 
 .del-mode {

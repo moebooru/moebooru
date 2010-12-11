@@ -69,6 +69,12 @@
         <img class="image-navigator-img">
       </div>
     </div>
+
+    <div class="vote-popup-expand" style="display: none;"></div>
+    <div id="vote-popup-container" class="vote-popup-container vote-popup-hidden">
+      <%= vote_widget(@current_user, "vote-popup") %></span>
+    </div>
+    <div class="vote-popup-flash" style="display: none;"><div class="flash-item"></div></div>
   </div>
 
   <div class="post-info" style="display: none;">

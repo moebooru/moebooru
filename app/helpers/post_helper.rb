@@ -151,22 +151,19 @@ module PostHelper
     return %{<span class="vote-desc"></span>}
   end
 
-  def vote_widget(user)
+  def vote_widget(user, className="standard-vote-widget")
     html = []
     
-    html << %{<span class="stars">}
+    html << %{<span class="stars #{className}">}
     
     if !user.is_anonymous?
-      html << %{<a class="star remove-vote" href="#">↶</a> }
-
-      (1..3).each do |vote|
-        star = '<span class="score-on">★</span><span class="score-off score-visible">☆</span>'
-        html << %{<a href="#" class="star star-#{vote}">#{star}</a>}
+      (0..3).each do |vote|
+        html << %{<a href="#" class="star star-#{vote} star-off"></a>}
       end
 
-      html << %{ (<a class="star vote-up" href="#">vote up</a>)}
+      html << %{<span class="vote-up-block"><a class="star vote-up" href="#"></a></span>}
     else
-      html << %{(<a class="star vote-up-anonymous" href="#">vote up</a>)}
+      html << %{<span class="vote-up-block-anonymous"><a class="star vote-up-anonymous" href="#"></a></span>}
     end
     
     html << %{</span>}

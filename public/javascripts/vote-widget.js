@@ -1,19 +1,7 @@
 VoteWidget = function(container)
 {
-  if(!container.hasClassName("vote-container"))
-    container = container.up(".vote-container");
-  if(!container)
-    throw "Couldn't find .vote-container element";
-
   this.container = container;
   this.post_id = null;
-
-  if(container.down(".remove-vote"))
-  {
-    container.down(".remove-vote").on("mouseover", function(e) { this.vote_mouse_over("Remove vote", 0); }.bindAsEventListener(this));
-    container.down(".remove-vote").on("mouseout", function(e) { this.vote_mouse_out("Remove vote", 0); }.bindAsEventListener(this));
-    container.down(".remove-vote").on("click", function(e) { e.stop(); this.vote(0); }.bindAsEventListener(this));
-  }
 
   if(container.down(".vote-up-anonymous"))
     container.down(".vote-up-anonymous").on("click", function(e) { e.stop(); this.vote(+1); }.bindAsEventListener(this));
@@ -23,26 +11,69 @@ VoteWidget = function(container)
 
   var vote_descs =
   {
-    "0": "Neutral",
+    "0": "Remove vote",
     "1": "Good",
     "2": "Great",
     "3": "Favorite"
   };
 
-  var init_star = function(stars)
+  for(var stars = 0; stars <= 3; ++stars)
   {
-    var desc = vote_descs[stars];
     var s = this.container.down(".star-" + stars);
-    s.on("click", function(e) { e.stop(); this.vote(stars); }.bindAsEventListener(this));
-    s.on("mouseover", function(e) { this.vote_mouse_over(desc, stars); }.bindAsEventListener(this));
-    s.on("mouseout", function(e) { this.vote_mouse_out(stars); }.bindAsEventListener(this));
-  }.bind(this)
+    if(!s)
+      continue;
+    s.star = stars;
+    s.desc = vote_descs[stars];
+  }
 
-  for(var i = 1; i <= 3; ++i)
-    init_star(i);
+  this.container.on("click", ".star", function(e) { e.stop(); this.activate_item(e.target); }.bindAsEventListener(this));
+  this.container.on("mouseover", ".star", function(e) { this.set_mouseover(e.target); }.bindAsEventListener(this));
+  this.container.on("mouseout", ".star", function(e) { this.set_mouseover(e.relatedTarget); }.bindAsEventListener(this));
 
   document.on("posts:update", this.post_update_event.bindAsEventListener(this));
 }
+
+VoteWidget.prototype.get_star_element = function(element)
+{
+  if(!element)
+    return null;
+  if(element.hasClassName("star"))
+    return element;
+  else
+    return element.up(".star");
+}
+
+VoteWidget.prototype.set_mouseover = function(element)
+{
+  if(element)
+    element = this.get_star_element(element);
+  if(!element)
+  {
+    this.set_stars(null);
+    var text = this.container.down(".vote-desc");
+    if(text)
+      text.update();
+    return false;
+  }
+  else
+  {
+    this.set_stars(element.star);
+    var text = this.container.down(".vote-desc");
+    if(text)
+      text.update(element.desc);
+    return true;
+  }
+}
+
+VoteWidget.prototype.activate_item = function(element)
+{
+  element = this.get_star_element(element);
+  if(!element)
+    return null;
+  this.vote(element.star);
+  return element.star;
+}
+
 
 /* One or more posts have been updated; see if the vote we should be displaying
  * has changed. */
@@ -52,8 +83,7 @@ VoteWidget.prototype.post_update_event = function(e)
   if(e.memo.post_ids.get(post_id) == null)
     return;
 
-  var new_vote = Post.votes.get(post_id);
-  this.set_stars(new_vote);
+  this.set_stars(this.displayed_hover);
 
   if(this.container.down("#post-score-" + post_id))
   {
@@ -71,7 +101,7 @@ VoteWidget.prototype.set_post_id = function(post_id)
 {
   var vote = Post.votes.get(post_id) || 0;
   this.post_id = post_id;
-  this.set_stars(vote);
+  this.set_stars(null);
 }
 
 VoteWidget.prototype.init_hotkeys = function()
@@ -93,41 +123,42 @@ VoteWidget.prototype.vote = function(score)
   return Post.vote(this.post_id, score);
 }
 
-VoteWidget.prototype.vote_mouse_over = function(desc, vote)
+var array_select = function(list, y, n, val)
 {
-  this.set_stars(vote);
-  var text = this.container.down(".vote-desc");
-  if(text)
-    text.update(desc);
+  if(val)
+    list.push(y);
+  else
+    list.push(n);
 }
 
-VoteWidget.prototype.vote_mouse_out = function(vote)
+VoteWidget.prototype.set_stars = function(hovered_vote)
 {
-  var original_vote = Post.votes.get(this.post_id);
-  this.set_stars(original_vote);
-  var text = this.container.down(".vote-desc");
-  if(text)
-    text.update();
-}
+  var set_vote = Post.votes.get(this.post_id);
 
-VoteWidget.prototype.set_stars = function(vote)
-{
-  for(var star_vote = 1; star_vote <= 3; ++star_vote)
+  if(this.displayed_hover == hovered_vote && this.displayed_set == set_vote)
+    return;
+  this.displayed_hover = hovered_vote;
+  this.displayed_set = set_vote;
+
+  for(var star_vote = 0; star_vote <= 3; ++star_vote)
   {
     var star = this.container.down(".star-" + star_vote);
-    var on = star.down(".score-on")
-    var off = star.down(".score-off")
+    if(!star)
+      continue;
+    var className = star.className;
+    className = className.replace(/(star-hovered|star-unhovered|star-hovered-upto|star-hovered-after|star-set|star-unset|star-set-upto|star-unset-upto)(\s+|$)/g, " ");
+    className = className.strip();
+    var classes = className.split(" ");
 
-    if (vote != null && vote >= star_vote)
+    if(hovered_vote != null)
     {
-      on.addClassName("score-visible");
-      off.removeClassName("score-visible");
+      array_select(classes, "star-hovered", "star-unhovered", hovered_vote == star_vote);
+      array_select(classes, "star-hovered-upto", "star-hovered-after", hovered_vote >= star_vote);
     }
-    else
-    {
-      on.removeClassName("score-visible");
-      off.addClassName("score-visible");
-    }
+    array_select(classes, "star-set", "star-unset", set_vote != null && set_vote == star_vote);
+    array_select(classes, "star-set-upto", "star-set-after", set_vote != null && set_vote >= star_vote);
+
+    star.className = classes.join(" ");
   }
 }
 

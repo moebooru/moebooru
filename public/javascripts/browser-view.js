@@ -49,7 +49,7 @@ BrowserView = function(container)
   this.update_navigator = this.update_navigator.bind(this);
 
   Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
-  document.on("viewer:vote", function(event) { this.vote_widget.vote(event.memo.score); }.bindAsEventListener(this));
+  document.on("viewer:vote", function(event) { if(this.vote_widget) this.vote_widget.vote(event.memo.score); }.bindAsEventListener(this));
 
   /* Double-clicking the main image, or on nothing, toggles the thumb bar. */
   this.container.down(".image-container").on("dblclick", ".image-container", function(event) {
@@ -198,7 +198,7 @@ BrowserView = function(container)
     this.set_post_info();
   }.bindAsEventListener(this));
 
-  this.vote_widget = new VoteWidget(this.container.down(".stars"));
+  this.vote_widget = new VoteWidget(this.container.down(".vote-container"));
 
   this.blacklist_override_post_id = null;
   this.container.down(".show-blacklisted").on("click", function(e) { e.preventDefault(); }.bindAsEventListener(this));
@@ -213,8 +213,85 @@ BrowserView = function(container)
   this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: e.memo.right }); }.bindAsEventListener(this));
 
   if(Prototype.BrowserFeatures.Touchscreen)
+  {
+    this.create_voting_popup();
     this.image_swipe = new SwipeHandler(this.container.down(".image-container"));
+  }
 }
+
+BrowserView.prototype.create_voting_popup = function()
+{
+  /* Create the low-level voting widget. */
+  var popup_vote_widget_container = this.container.down(".vote-popup-container");
+  this.popup_vote_widget = new VoteWidget(popup_vote_widget_container);
+
+  var flash = this.container.down(".vote-popup-flash");
+
+  /* vote-popup-expand is the part that's always present and is clicked to display the
+   * voting popup.  Create a dragger on it, and pass the position down to the voting
+   * popup as we drag around. */
+  var popup_expand = this.container.down(".vote-popup-expand");
+  popup_expand.show();
+
+  var last_dragged_over = null;
+
+  this.popup_vote_dragger = new DragElement(popup_expand, {
+    ondown: function(drag) {
+      /* Stop the touchdown/mousedown events, so this drag takes priority over any
+       * others.  In particular, we don't want this.image_swipe to also catch this
+       * as a drag. */
+      drag.latest_event.stop();
+
+      flash.hide();
+      flash.removeClassName("flash-star");
+
+      this.popup_vote_widget.set_mouseover(null);
+      last_dragged_over = null;
+      popup_vote_widget_container.removeClassName("vote-popup-hidden");
+    }.bind(this),
+
+    onup: function(drag) {
+      /* If we're cancelling the drag, don't activate the vote, if any. */
+      if(drag.cancelling)
+      {
+        debug("cancelling drag");
+        last_dragged_over = null;
+      }
+
+      /* Call even if star_container is null or not a star, so we clear any mouseover. */
+      this.popup_vote_widget.set_mouseover(last_dragged_over);
+
+      var star = this.popup_vote_widget.activate_item(last_dragged_over);
+
+      /* If a vote was made, flash the vote star. */
+      if(star != null)
+      {
+        /* Set the star-# class to color the star. */
+        for(var i = 0; i < 4; ++i)
+          flash.removeClassName("star-" + i);
+        flash.addClassName("star-" + star);
+
+        flash.show();
+
+        /* Center the element on the screen. */
+        var offset = this.image_window_size;
+        var flash_x = offset.width/2 - flash.offsetWidth/2;
+        var flash_y = offset.height/2 - flash.offsetHeight/2;
+        flash.setStyle({left: flash_x + "px", top: flash_y + "px"});
+        flash.addClassName("flash-star");
+      }
+
+      popup_vote_widget_container.addClassName("vote-popup-hidden");
+      last_dragged_over = null;
+    }.bind(this),
+
+    ondrag: function(drag) {
+      last_dragged_over = document.elementFromPoint(drag.x, drag.y);
+      this.popup_vote_widget.set_mouseover(last_dragged_over);
+    }.bind(this)
+  });
+}
+
 
 BrowserView.prototype.set_post_ui = function(visible)
 {
@@ -458,6 +535,7 @@ BrowserView.prototype.set_main_image = function(post)
   this.scale_and_position_image();
 }
 
+var ggg = 0;
 /* Display post_id. */
 BrowserView.prototype.set_post = function(post_id)
 {
@@ -487,7 +565,11 @@ BrowserView.prototype.set_post = function(post_id)
 
   this.set_main_image(post);
 
-  this.vote_widget.set_post_id(post.id);
+  if(this.vote_widget)
+    this.vote_widget.set_post_id(post.id);
+  if(this.popup_vote_widget && !ggg)
+    this.popup_vote_widget.set_post_id(post.id);
+  ++ggg;
 
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 

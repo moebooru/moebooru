@@ -544,7 +544,7 @@ DragElement = function(element, options)
 
 DragElement.prototype.destroy = function()
 {
-  this.stop_dragging();
+  this.stop_dragging(null);
   this.handlers.each(function(h) { h.stop(); });
   this.handlers = [];
 }
@@ -761,7 +761,7 @@ DragElement.prototype.touchend_event = function(event)
     var t = event.changedTouches[i];
     if(t.identifier == this.dragging_touch_identifier)
     {
-      this.stop_dragging();
+      this.stop_dragging(event);
 
       /*
        * Work around a bug on iPhone.  The mousedown and mouseup events are sent after
@@ -787,10 +787,10 @@ DragElement.prototype.mouseup_event = function(event)
   if(!event.isLeftClick())
     return;
 
-  this.stop_dragging();
+  this.stop_dragging(event);
 }
 
-DragElement.prototype.stop_dragging = function()
+DragElement.prototype.stop_dragging = function(event)
 {
   if(this.dragging)
   {

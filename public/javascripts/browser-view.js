@@ -536,7 +536,6 @@ BrowserView.prototype.set_main_image = function(post)
   this.scale_and_position_image();
 }
 
-var ggg = 0;
 /* Display post_id. */
 BrowserView.prototype.set_post = function(post_id)
 {
@@ -568,9 +567,8 @@ BrowserView.prototype.set_post = function(post_id)
 
   if(this.vote_widget)
     this.vote_widget.set_post_id(post.id);
-  if(this.popup_vote_widget && !ggg)
+  if(this.popup_vote_widget)
     this.popup_vote_widget.set_post_id(post.id);
-  ++ggg;
 
   document.fire("viewer:displayed-post-changed", { post_id: post_id });
 

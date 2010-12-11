@@ -814,7 +814,6 @@ div#notice {
   border: 1px solid #ddd;
   /* Use a margin to prevent the box from falling under scrollbars. */
   max-width: 800px;
-  margin-right: 50px;
   border-top: none;
   background-color: #333;
 }

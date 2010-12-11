@@ -494,12 +494,8 @@ BrowserView.prototype.set_main_image = function(post)
    * touchend is ever delivered, even though it's the containing box listening to the
    * event.  Work around this by setting the image to pointer-events: none, so clicks on
    * the image will actually be sent to the containing box directly.
-   *
-   * Only do this when using the swipe handler.  The drag handler does use events from
-   * the image.
    */
-  if(this.image_swipe)
-    this.img.setStyle({pointerEvents: "none"});
+  this.img.setStyle({pointerEvents: "none"});
 
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
 

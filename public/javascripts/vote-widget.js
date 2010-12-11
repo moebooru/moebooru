@@ -148,7 +148,7 @@ VoteWidget.prototype.set_stars = function(hovered_vote)
     if(!star)
       continue;
     var className = star.className;
-    className = className.replace(/(star-hovered|star-unhovered|star-hovered-upto|star-hovered-after|star-set|star-unset|star-set-upto|star-unset-upto)(\s+|$)/g, " ");
+    className = className.replace(/(star-hovered|star-unhovered|star-hovered-upto|star-hovered-after|star-set|star-unset|star-set-upto|star-set-after)(\s+|$)/g, " ");
     className = className.strip();
     var classes = className.split(" ");
 

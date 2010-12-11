@@ -223,6 +223,7 @@ BrowserView.prototype.create_voting_popup = function()
 {
   /* Create the low-level voting widget. */
   var popup_vote_widget_container = this.container.down(".vote-popup-container");
+  popup_vote_widget_container.show();
   this.popup_vote_widget = new VoteWidget(popup_vote_widget_container);
 
   var flash = this.container.down(".vote-popup-flash");

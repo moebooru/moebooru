@@ -544,7 +544,7 @@ DragElement = function(element, options)
 
 DragElement.prototype.destroy = function()
 {
-  this.stop_dragging(null);
+  this.stop_dragging(null, true);
   this.handlers.each(function(h) { h.stop(); });
   this.handlers = [];
 }
@@ -615,6 +615,17 @@ DragElement.prototype.touchmove_event = function(event)
     return;
 
   event.preventDefault();
+
+  /* If a touch drags over the bottom navigation bar in Safari and is released while outside of
+   * the viewport, the touchend event is never sent.  Work around this by cancelling the drag
+   * if we get too close to the end.  Don't do this if we're in standalone (web app) mode, since
+   * there's no navigation bar. */
+  if(!window.navigator.standalone && touch.pageY > window.innerHeight-10)
+  {
+    debug("Dragged off the bottom");
+    this.stop_dragging(event, true);
+    return;
+  }
 
   var x = touch.pageX;
   var y = touch.pageY;
@@ -761,7 +772,7 @@ DragElement.prototype.touchend_event = function(event)
     var t = event.changedTouches[i];
     if(t.identifier == this.dragging_touch_identifier)
     {
-      this.stop_dragging(event);
+      this.stop_dragging(event, event.type == "touchcancel");
 
       /*
        * Work around a bug on iPhone.  The mousedown and mouseup events are sent after
@@ -787,10 +798,12 @@ DragElement.prototype.mouseup_event = function(event)
   if(!event.isLeftClick())
     return;
 
-  this.stop_dragging(event);
+  this.stop_dragging(event, false);
 }
 
-DragElement.prototype.stop_dragging = function(event)
+/* If cancelling is true, we're stopping for a reason other than an explicit mouse/touch
+ * release. */
+DragElement.prototype.stop_dragging = function(event, cancelling)
 {
   if(this.dragging)
   {
@@ -808,7 +821,8 @@ DragElement.prototype.stop_dragging = function(event)
   if(this.options.onup)
     this.options.onup({
       dragger: this,
-      latest_event: event
+      latest_event: event,
+      cancelling: cancelling
     });
 }
 

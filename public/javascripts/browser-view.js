@@ -211,6 +211,8 @@ BrowserView = function(container)
   }.bindAsEventListener(this));
 
 
+  this.img_box.on("viewer:center-on", function(e) { this.center_image_on(e.memo.x, e.memo.y); }.bindAsEventListener(this));
+
   this.navigator = new Navigator(this.container.down(".image-navigator"), this.img_box);
 
   this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: e.memo.right }); }.bindAsEventListener(this));
@@ -525,8 +527,6 @@ BrowserView.prototype.set_main_image = function(post)
 
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
   this.container.down(".image-box").appendChild(this.img);
-
-  this.img_box.on("viewer:center-on", function(e) { this.center_image_on(e.memo.x, e.memo.y); }.bindAsEventListener(this));
 
   if(this.viewing_larger_version)
   {

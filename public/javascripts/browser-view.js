@@ -499,10 +499,9 @@ BrowserView.prototype.set_main_image = function(post)
    * the image.
    */
   if(this.image_swipe)
-  {
     this.img.setStyle({pointerEvents: "none"});
-    this.img_box.setStyle({pointerEvents: "none"});
-  }
+
+  this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
 
   if(this.viewing_larger_version && post.jpeg_url)
   {
@@ -525,7 +524,6 @@ BrowserView.prototype.set_main_image = function(post)
     this.img_box.hide();
   }
 
-  this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
   this.container.down(".image-box").appendChild(this.img);
 
   if(this.viewing_larger_version)

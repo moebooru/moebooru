@@ -459,6 +459,15 @@ getWindowSize = function()
   return size;
 }
 
+/* If 2d canvases are supported, return one.  Otherwise, return null. */
+create_canvas_2d = function()
+{
+  var canvas = document.createElement("canvas");
+  if(canvas.getContext && canvas.getContext("2d"))
+    return canvas;
+  return null;
+}
+
 Prototype.Browser.AndroidWebKit = (navigator.userAgent.indexOf("Android") != -1 && navigator.userAgent.indexOf("WebKit") != -1);
 
 /* Some UI simply doesn't make sense on a touchscreen, and may need to be disabled or changed.

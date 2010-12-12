@@ -1515,7 +1515,7 @@ span.stars .star-3 { color:#ff0; }
   z-index: 11;
 }
 
-#post-content .main-image {
+#post-content .image-box {
   position: absolute;
 
   /* Prevent the image from being selected when double-clicking the container to

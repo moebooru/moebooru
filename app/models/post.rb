@@ -31,7 +31,8 @@ class Post < ActiveRecord::Base
   include PostStatusMethods
   include PostApiMethods
   include PostMirrorMethods
-  
+  include PostFrameMethods
+
   def destroy_with_reason(reason, current_user)
     Post.transaction do
       self.flag!(reason, current_user.id)

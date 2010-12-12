@@ -151,6 +151,8 @@ class PostController < ApplicationController
     @post = Post.find(params[:id])
     user_id = @current_user.id
 
+    Post.filter_api_changes(params[:post])
+
     if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
@@ -187,6 +189,8 @@ class PostController < ApplicationController
       next if post.empty?
 
       old_parent_id = @post.parent_id
+
+      Post.filter_api_changes(post)
 
       if @post.update_attributes(post.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
         # Reload the post to send the new status back; not all changes will be reflected in

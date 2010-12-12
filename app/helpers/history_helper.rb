@@ -252,6 +252,9 @@ module HistoryHelper
           html << "source: <span class='name-change'>%s</span>" % [source_link(change.value, false)]
         end
 
+      when "frames_pending"
+        html << "frames changed: #{h(change.value.empty? ? '(none)':change.value)}"
+
       when "is_rating_locked"
         html << (change.value == 't' ? added : removed)
         html << "rating-locked"

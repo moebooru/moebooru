@@ -101,6 +101,7 @@
       </div>
     <div>Posted <span class="posted-at"></span><span class="posted-by"> ago by <a href="#" target="_blank"></a></span></div>
     <div id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
+    <div class="post-frames">Frames: <div class="post-frame-list" style="inline-block"></div></div>
     <div class="post-source">Source: <a href="#" target="_blank"></a><span></span></div>
 
     <div class="status-deleted"> 
@@ -203,14 +204,18 @@ document.observe("dom:loaded", function()
   var normalize_hash = function(h)
   {
     // Normalize:
-    // post_id/search
+    // post_id-frame/search
     var path = h.get("");
     if(path != null)
     {
       var post_id = path.split("/", 1)[0];
       h.set("", null);
       if(post_id != "")
-        h.set("post-id", post_id);
+      {
+        var post_id_parts = post_id.split("-");
+        h.set("post-id", post_id_parts[0]);
+        h.set("post-frame", post_id_parts[1]);
+      }
       if(path.substr(post_id.length, 1) == "/")
         h.set("tags", path.substr(post_id.length + 1));
     }
@@ -228,10 +233,15 @@ document.observe("dom:loaded", function()
     var str = "";
 
     var post_id = h.get("post-id");
+    var post_frame = h.get("post-frame");
     if(post_id != null)
     {
       str += post_id;
+      if(post_frame != null)
+        str += "-" + post_frame;
+
       h.set("post-id", null);
+      h.set("post-frame", null);
     }
     var tags = h.get("tags");
     if(tags != null)

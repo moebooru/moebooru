@@ -33,6 +33,10 @@ module PostApiMethods
       :width => width,
       :height => height,
       :is_held => is_held,
+      :frames_pending_string => frames_pending,
+      :frames_pending => frames_api_data(frames_pending),
+      :frames_string => frames,
+      :frames => frames_api_data(frames),
     }
 
     if status == "deleted"
@@ -78,6 +82,12 @@ module PostApiMethods
   end
 
   module ClassMethods
+    # Remove attribute from params that shouldn't be changed through the API.
+    def filter_api_changes(params)
+      params.delete(:frames)
+      params.delete(:frames_warehoused)
+    end
+
     def batch_api_data(posts, options={})
       result = { :posts => posts }
       if not options[:exclude_tags] then

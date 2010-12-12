@@ -11,7 +11,8 @@ ThumbnailView = function(container, view)
   this.container = container;
   this.view = view;
   this.post_ids = [];
-  this.expanded_post_id = null;
+  this.post_frames = [];
+  this.expanded_post_idx = null;
   this.centered_post_idx = null;
   this.centered_post_offset = 0;
   this.last_mouse_x = 0;
@@ -40,6 +41,7 @@ ThumbnailView = function(container, view)
 
   this.hashchange_post_id = this.hashchange_post_id.bind(this);
   UrlHash.observe("post-id", this.hashchange_post_id);
+  UrlHash.observe("post-frame", this.hashchange_post_id);
 
   new DragElement(this.container, { ondrag: this.container_ondrag.bind(this) });
 
@@ -131,7 +133,28 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
   /* Filter blacklisted posts. */
   post_ids = post_ids.reject(Post.is_blacklisted);
 
-  this.post_ids = post_ids;
+  this.post_ids = [];
+  this.post_frames = [];
+
+  for(var i = 0; i < post_ids.length; ++i)
+  {
+    var post_id = post_ids[i];
+    var post = Post.posts.get(post_id);
+    if(post.frames.length > 0)
+    {
+      for(var frame_idx = 0; frame_idx < post.frames.length; ++frame_idx)
+      {
+        this.post_ids.push(post_id);
+        this.post_frames.push(frame_idx);
+      }
+    }
+    else
+    {
+      this.post_ids.push(post_id);
+      this.post_frames.push(null);
+    }
+  }
+
   this.allow_wrapping = !event.memo.can_be_extended_further;
 
   /* Show the results box or "no results".  Do this before updating the results box to make sure
@@ -203,14 +226,14 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
      */
     var results_mode = event.memo.load_options.results_mode || "center-on-current";
 
-    var initial_post_id;
+    var initial_post_id_and_frame;
     if(results_mode == "center-on-first" || results_mode == "jump-to-first")
-      initial_post_id = this.post_ids[0];
+      initial_post_id_and_frame = [this.post_ids[0], this.post_frames[0]];
     else
-      initial_post_id = this.get_current_post_id();
+      initial_post_id_and_frame = this.get_current_post_id_and_frame();
 
-    var center_on_post_idx = this.post_ids.indexOf(initial_post_id)
-    if(center_on_post_idx == -1)
+    var center_on_post_idx = this.get_post_idx(initial_post_id_and_frame);
+    if(center_on_post_idx == null)
       center_on_post_idx = 0;
 
     this.centered_post_offset = 0;
@@ -219,8 +242,8 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
     /* If no post is currently displayed and we just completed a search, set the current post.
      * This happens when first initializing; we wait for the first search to complete to retrieve
      * info about the post we're starting on, instead of making a separate query. */
-    if(results_mode == "jump-to-first" || this.active_post_id == null)
-      this.set_active_post(initial_post_id);
+    if(results_mode == "jump-to-first" || this.active_post_idx == null)
+      this.set_active_post(initial_post_id_and_frame);
   }
 
   if(event.memo.tags == null)
@@ -244,38 +267,76 @@ ThumbnailView.prototype.container_mouseover_event = function(event)
   if(!li)
     return;
 
-  this.expand_post(li.post_id);
+  this.expand_post(li.post_idx);
 }
 
 ThumbnailView.prototype.hashchange_post_id = function()
 {
-  var new_post_id = this.get_current_post_id();
+  var post_id_and_frame = this.get_current_post_id_and_frame();
+  if(post_id_and_frame == null)
+    return;
 
   /* If we're already displaying this post, ignore the hashchange.  Don't center on the
    * post if this is just a side-effect of clicking a post, rather than the user actually
    * changing the hash. */
-  if(new_post_id == this.view.displayed_post_id)
+  var post_id = post_id_and_frame[0];
+  var post_frame = post_id_and_frame[1];
+  if(post_id == this.view.displayed_post_id &&
+      post_frame == this.view.displayed_post_frame)
   {
 //    debug("ignored-hashchange");
     return;
   }
 
+  var new_post_idx = this.get_post_idx(post_id_and_frame);
   this.centered_post_offset = 0;
-  var new_post_idx = this.post_ids.indexOf(new_post_id);
   this.center_on_post_for_scroll(new_post_idx);
-  this.set_active_post(new_post_id);
+  this.set_active_post(post_id_and_frame);
 }
 
-/* Return the post ID that's currently being displayed in the main view, based
- * on the URL hash.  If no post is specified, return -1. */
-ThumbnailView.prototype.get_current_post_id = function()
+/* Search for the given post ID and frame in the current search results, and return its
+ * index.  If the given post isn't in post_ids, return null. */
+ThumbnailView.prototype.get_post_idx = function(post_id_and_frame)
+{
+  var post_id = post_id_and_frame[0];
+  var post_frame = post_id_and_frame[1];
+
+  var post_idx = this.post_ids.indexOf(post_id);
+  if(post_idx == -1)
+    return null;
+  if(post_frame == null)
+    return post_idx;
+
+  /* A post-frame is specified.  Search for a matching post-id and post-frame.  We assume
+   * here that all frames for a post are grouped together in post_ids. */
+  if(post_frame != null)
+  {
+    var post_frame_idx = post_idx;
+    while(post_frame_idx < this.post_ids.length && this.post_ids[post_frame_idx] == post_id)
+    {
+      if(this.post_frames[post_frame_idx] == post_frame)
+        return post_frame_idx;
+      ++post_frame_idx;
+    }
+  }
+
+  /* We found a matching post, but not a matching frame.  Return the post. */
+  return post_idx;
+}
+
+/* Return the post and frame that's currently being displayed in the main view, based
+ * on the URL hash. */
+ThumbnailView.prototype.get_current_post_id_and_frame = function()
 {
   var post_id = UrlHash.get("post-id");
   if(post_id == null)
-    return this.post_ids[0];
-
+    return [this.post_ids[0], this.post_frames[0]];
   post_id = parseInt(post_id);
-  return post_id;
+
+  var post_frame = UrlHash.get("post-frame");
+  if(post_frame != null)
+    post_frame = parseInt(post_frame);
+  return [post_id, post_frame];
 }
 
 /* Track the mouse cursor when it's within the container. */
@@ -305,31 +366,37 @@ ThumbnailView.prototype.document_mouse_wheel_event = function(event)
     document.fire("viewer:show-next-post", { prev: val >= 0 });
 }
 
-ThumbnailView.prototype.set_active_post = function(post_id, lazy)
+ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy)
 {
-  if(post_id == null)
-    return;
-
-  this.active_post_id = post_id;
+  this.active_post_idx = this.get_post_idx(post_id_and_frame);
 
   if(lazy)
   {
     /* Ask the pool browser to load the new post, with a delay in case we're
      * scrolling quickly. */
-    this.view.lazily_load(post_id);
+    this.view.lazily_load(post_id_and_frame[0], post_id_and_frame[1]);
   } else {
-    this.view.set_post(post_id);
+    this.view.set_post(post_id_and_frame[0], post_id_and_frame[1]);
   }
+}
+
+ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy)
+{
+  if(post_idx == null)
+    return;
+
+  var post_id = this.post_ids[post_idx];
+  var post_frame = this.post_frames[post_idx];
+  this.set_active_post([post_id, post_frame], lazy);
 }
 
 ThumbnailView.prototype.show_next_post = function(prev)
 {
-  var active_post_id = this.active_post_id;
-  var current_idx = this.post_ids.indexOf(active_post_id);
+  var current_idx = this.active_post_idx;
 
   /* If the displayed post isn't in the thumbnails and we're changing posts, start
    * at the beginning. */
-  if(current_idx == -1)
+  if(current_idx == null)
     current_idx = 0;
 
   if(this.post_ids.length == 0)
@@ -356,8 +423,7 @@ ThumbnailView.prototype.show_next_post = function(prev)
   this.centered_post_offset = 0;
   this.center_on_post_for_scroll(new_idx);
 
-  var new_post_id = this.post_ids[new_idx];
-  this.set_active_post(new_post_id, true);
+  this.set_active_post_idx(new_idx, true);
 }
 
 /* Scroll the thumbnail view left or right.  Don't change the displayed post. */
@@ -400,7 +466,7 @@ ThumbnailView.prototype.scroll = function(left)
   this.center_on_post_for_scroll(new_idx);
 }
 
-/* Hide the hovered post, if any, call center_on_post(post_id), then hover over the correct post again. */
+/* Hide the hovered post, if any, call center_on_post(post_idx), then hover over the correct post again. */
 ThumbnailView.prototype.center_on_post_for_scroll = function(post_idx)
 {
   if(this.thumb_container_shown)
@@ -426,7 +492,7 @@ ThumbnailView.prototype.center_on_post_for_scroll = function(post_idx)
     {
       var li = element.up(".post-thumb");
       if(li)
-        this.expand_post(li.post_id);
+        this.expand_post(li.post_idx);
     }
   }
 }
@@ -473,7 +539,7 @@ ThumbnailView.prototype.add_post_to_display = function(right)
       return false;
     ++this.posts_populated[1];
 
-    var thumb = this.create_thumb(this.post_ids[post_idx_to_populate]);
+    var thumb = this.create_thumb(post_idx_to_populate);
     node.insertBefore(thumb, null);
   }
   else
@@ -482,13 +548,13 @@ ThumbnailView.prototype.add_post_to_display = function(right)
       return false;
     --this.posts_populated[0];
     var post_idx_to_populate = this.posts_populated[0];
-    var thumb = this.create_thumb(this.post_ids[post_idx_to_populate]);
+    var thumb = this.create_thumb(post_idx_to_populate);
     node.insertBefore(thumb, node.firstChild);
   }
   return true;
 }
 
-/* Fill the container so post_id is visible. */
+/* Fill the container so post_idx is visible. */
 ThumbnailView.prototype.populate_post = function(post_idx)
 {
   if(this.is_post_idx_shown(post_idx))
@@ -513,7 +579,7 @@ ThumbnailView.prototype.populate_post = function(post_idx)
 
   var node = this.container.down(".post-browser-posts");
 
-  var thumb = this.create_thumb(this.post_ids[post_idx]);
+  var thumb = this.create_thumb(post_idx);
   node.appendChild(thumb);
   this.posts_populated[0] = post_idx;
   this.posts_populated[1] = post_idx + 1;
@@ -526,11 +592,11 @@ ThumbnailView.prototype.is_post_idx_shown = function(post_idx)
   return post_idx >= this.posts_populated[0];
 }
 
-/* Return the total width of all thumbs to the left or right of post_id, not
- * including post_id itself. */
-ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
+/* Return the total width of all thumbs to the left or right of post_idx, not
+ * including itself. */
+ThumbnailView.prototype.get_width_adjacent_to_post = function(post_idx, right)
 {
-  var post = $("p" + post_id);
+  var post = $("p" + post_idx);
   if(right)
   {
     var rightmost_node = post.parentNode.lastChild;
@@ -546,7 +612,7 @@ ThumbnailView.prototype.get_width_adjacent_to_post = function(post_id, right)
   }
 }
 
-/* Center the thumbnail strip on post_id.  If post_id isn't in the display, do nothing.
+/* Center the thumbnail strip on post_idx.  If post_id isn't in the display, do nothing.
  * Fire viewer:need-more-thumbs if we're scrolling near the edge of the list. */
 ThumbnailView.prototype.center_on_post = function(post_idx)
 {
@@ -569,7 +635,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
   this.centered_post_idx = post_idx;
 
   /* If we're not expanded, we can't figure out how to center it since we'll have no width.
-   * Also, don't cause thumbnails to be loaded if we're hidden.  Just set centered_post_id,
+   * Also, don't cause thumbnails to be loaded if we're hidden.  Just set centered_post_idx,
    * and we'll come back here when we're displayed. */
   if(!this.thumb_container_shown)
     return;
@@ -579,8 +645,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
    * pointing at the item that's actually centered. */
   while(1)
   {
-    var center_post_id = this.post_ids[this.centered_post_idx];
-    var post = $("p" + center_post_id);
+    var post = $("p" + this.centered_post_idx);
     if(!post)
       break;
     var pos = post.offsetWidth/2 + this.centered_post_offset;
@@ -588,9 +653,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
       break;
 
     var next_post_idx = this.centered_post_idx + (this.centered_post_offset > 0? +1:-1);
-    var next_post_id = this.post_ids[next_post_idx];
-
-    var next_post = $("p" + next_post_id);
+    var next_post = $("p" + next_post_idx);
     if(next_post == null)
       break;
 
@@ -608,7 +671,6 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
 
   /* Make sure that we have enough posts populated around the one we're centering
    * on to fill the display.  If we have too many nodes, remove some. */
-  var post_id = this.post_ids[post_idx];
   for(var direction = 0; direction < 2; ++direction)
   {
     var right = !!direction;
@@ -621,7 +683,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
     while(true)
     {
       var added = false;
-      var width = this.get_width_adjacent_to_post(post_id, right);
+      var width = this.get_width_adjacent_to_post(post_idx, right);
 
       /* If we're offset to the right then we need more data to the left, and vice versa. */
       width += this.centered_post_offset * (right? -1:+1);
@@ -661,7 +723,7 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
   /* We always center the thumb.  Don't clamp to the edge when we're near the first or last
    * item, so we always have empty space on the sides for expanded landscape thumbnails to
    * be visible. */
-  var thumb = $("p" + post_id);
+  var thumb = $("p" + post_idx);
   var center_on_position = this.container.offsetWidth/2;
 
   var shift_pixels_right = center_on_position - thumb.offsetWidth/2 - thumb.offsetLeft;
@@ -675,27 +737,26 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
 /* Preload thumbs on the boundary of what's actually displayed. */
 ThumbnailView.prototype.preload_thumbs = function()
 {
-  var post_ids = [];
+  var post_idxs = [];
   for(var i = 0; i < 5; ++i)
   {
     var preload_post_idx = this.posts_populated[0] - i - 1;
     if(preload_post_idx >= 0)
-      post_ids.push(this.post_ids[preload_post_idx]);
+      post_idxs.push(preload_post_idx);
 
     var preload_post_idx = this.posts_populated[1] + i;
     if(preload_post_idx < this.post_ids.length)
-      post_ids.push(this.post_ids[preload_post_idx]);
+      post_idxs.push(preload_post_idx);
   }
 
   /* Remove any preloaded thumbs that are no longer in the preload list. */
   this.thumb_preload_container.get_all().each(function(element) {
-    var post_id = element.post_id;
-    var post_idx = post_ids.indexOf(post_id);
-    if(post_idx != -1)
+    var post_idx = element.post_idx;
+    if(post_idxs.indexOf(post_idx) != -1)
     {
-      /* The post is staying loaded.  Clear the value in post_ids, so we don't load it
+      /* The post is staying loaded.  Clear the value in post_idxs, so we don't load it
        * again down below. */
-      post_ids[post_idx] = null;
+      post_idxs[post_idx] = null;
       return;
     }
 
@@ -704,19 +765,28 @@ ThumbnailView.prototype.preload_thumbs = function()
   }.bind(this));
 
   /* Add new preloads. */
-  for(var i = 0; i < post_ids.length; ++i)
+  for(var i = 0; i < post_idxs.length; ++i)
   {
-    var post_id = post_ids[i];
-    if(post_id == null)
+    var post_idx = post_idxs[i];
+    if(post_idx == null)
       continue;
 
+    var post_id = this.post_ids[post_idx];
     var post = Post.posts.get(post_id);
-    var element = this.thumb_preload_container.preload(post.preview_url);
-    element.post_id = post_id;
+
+    var post_frame = this.post_frames[post_idx];
+    var url;
+    if(post_frame != null)
+      url = post.frames[post_frame].preview_url;
+    else
+      url = post.preview_url;
+
+    var element = this.thumb_preload_container.preload(url);
+    element.post_idx = post_idx;
   }
 }
 
-ThumbnailView.prototype.expand_post = function(post_id)
+ThumbnailView.prototype.expand_post = function(post_idx)
 {
   /* Thumbs on click for touchpads doesn't make much sense anyway--touching the thumb causes it
    * to be loaded.  It also triggers a bug in iPhone WebKit (covering up the original target of
@@ -728,23 +798,40 @@ ThumbnailView.prototype.expand_post = function(post_id)
   if(!this.thumb_container_shown)
     return;
 
+  var post_id = this.post_ids[post_idx];
+
   var overlay = this.container.down(".browser-thumb-hover-overlay");
   overlay.hide();
   overlay.down("IMG").src = "about:blank";
 
-  this.expanded_post_id = post_id;
-  if(post_id == null)
+  this.expanded_post_idx = post_idx;
+  if(post_idx == null)
     return;
 
   var post = Post.posts.get(post_id);
   if(post.status == "deleted")
     return;
 
-  var thumb = $("p" + post_id);
+  var thumb = $("p" + post_idx);
 
   var bottom = this.container.down(".browser-bottom-bar").offsetHeight;
   overlay.style.bottom = bottom + "px";
-  var left = thumb.cumulativeOffset().left - post.actual_preview_width/2 + thumb.offsetWidth/2;
+
+  var post_frame = this.post_frames[post_idx];
+  var image_width, image_url;
+  if(post_frame != null)
+  {
+    var frame = post.frames[post_frame];
+    image_width = frame.preview_width;
+    image_url = frame.preview_url;
+  }
+  else
+  {
+    image_width = post.actual_preview_width;
+    image_url = post.preview_url;
+  }
+
+  var left = thumb.cumulativeOffset().left - image_width/2 + thumb.offsetWidth/2;
   overlay.style.left = left + "px";
 
   /* If the hover thumbnail overflows the right edge of the viewport, it'll extend the document and
@@ -755,12 +842,17 @@ ThumbnailView.prototype.expand_post = function(post_id)
   overlay.style.maxWidth = max_width + "px";
 
   overlay.href = "/post/browse#" + post.id;
-  overlay.down("IMG").src = post.preview_url;
+  if(post_frame != null)
+    overlay.href += "-" + post_frame;
+  overlay.down("IMG").src = image_url;
   overlay.show();
 }
 
-ThumbnailView.prototype.create_thumb = function(post_id)
+ThumbnailView.prototype.create_thumb = function(post_idx)
 {
+  var post_id = this.post_ids[post_idx];
+  var post_frame = this.post_frames[post_idx];
+
   var post = Post.posts.get(post_id);
 
   /*
@@ -789,28 +881,53 @@ ThumbnailView.prototype.create_thumb = function(post_id)
     var item = this.unused_thumb_pool.pop();
   }
     
-  item.id = "p" + post_id;
-  item.post_id = post_id;
+  item.id = "p" + post_idx;
+  item.post_idx = post_idx;
   item.down("A").href = "/post/browse#" + post.id;
+  if(post_frame != null)
+    item.down("A").href += "-" + post_frame;
 
   /* If the image is already what we want, then leave it alone.  Setting it to what it's
    * already set to won't necessarily cause onload to be fired, so it'll never be set
    * back to visible. */
   var img = item.down("IMG");
-  if(img.src != post.preview_url)
+  var url;
+  if(post_frame != null)
+    url = post.frames[post_frame].preview_url;
+  else
+    url = post.preview_url;
+  if(img.src != url)
   {
     img.style.visibility = "hidden";
-    img.src = post.preview_url;
+    img.src = url;
   }
 
-  this.set_thumb_dimensions(post, item);
+  this.set_thumb_dimensions(item);
   return item;
 }
 
-ThumbnailView.prototype.set_thumb_dimensions = function(post, li)
+ThumbnailView.prototype.set_thumb_dimensions = function(li)
 {
-  var width = post.actual_preview_width * this.config.thumb_scale;
-  var height = post.actual_preview_height * this.config.thumb_scale;
+  var post_idx = li.post_idx;
+  var post_id = this.post_ids[post_idx];
+  var post_frame = this.post_frames[post_idx];
+  var post = Post.posts.get(post_id);
+
+  var width, height;
+  if(post_frame != null)
+  {
+    var frame = post.frames[post_frame];
+    width = frame.preview_width;
+    height = frame.preview_height;
+  }
+  else
+  {
+    width = post.actual_preview_width;
+    height = post.actual_preview_height;
+  }
+
+  width *= this.config.thumb_scale;
+  height *= this.config.thumb_scale;
 
   /* This crops blocks that are too wide, but doesn't pad them if they're too
    * narrow, since that creates odd spacing. 
@@ -839,13 +956,7 @@ ThumbnailView.prototype.config_changed = function()
   var container_height = 200*this.config.thumb_scale + 10;
   this.container.down(".post-browser-posts-container").setStyle({height: container_height + "px"});
 
-  for(var post_idx = this.posts_populated[0]; post_idx != this.posts_populated[1]; ++post_idx)
-  {
-    var post_id = this.post_ids[post_idx];
-    var post = Post.posts.get(post_id);
-    var li = $("p" + post_id);
-    this.set_thumb_dimensions(post, li);
-  }
+  this.container.select("LI.post-thumb").each(this.set_thumb_dimensions.bind(this));
 
   this.center_on_post_for_scroll(this.centered_post_idx);
 }
@@ -862,7 +973,7 @@ ThumbnailView.prototype.container_click_event = function(event)
   {
     /* The hover overlay was clicked.  When the user clicks a thumbnail, this is
      * usually what happens, since the hover overlay covers the actual thumbnail. */
-    this.set_active_post(this.expanded_post_id);
+    this.set_active_post_idx(this.expanded_post_idx);
     event.preventDefault();
     return;
   }
@@ -874,7 +985,7 @@ ThumbnailView.prototype.container_click_event = function(event)
   /* An actual thumbnail was clicked.  This can happen if we don't have the expanded
    * thumbnails for some reason. */
   event.preventDefault();
-  this.set_active_post(li.post_id);
+  this.set_active_post_idx(li.post_idx);
 }
 
 ThumbnailView.prototype.container_dblclick_event = function(event)
@@ -902,12 +1013,11 @@ ThumbnailView.prototype.show_thumb_bar = function(shown)
 }
 
 /* Return the next or previous post, wrapping around if necessary. */
-ThumbnailView.prototype.get_adjacent_post_id_wrapped = function(post_id, next)
+ThumbnailView.prototype.get_adjacent_post_idx_wrapped = function(post_idx, next)
 {
-  var idx = this.post_ids.indexOf(post_id);
-  idx += next? +1:-1;
-  idx = (idx + this.post_ids.length) % this.post_ids.length;
-  return this.post_ids[idx];
+  post_idx += next? +1:-1;
+  post_idx = (post_idx + this.post_ids.length) % this.post_ids.length;
+  return post_idx;
 }
 
 ThumbnailView.prototype.displayed_image_loaded_event = function(event)
@@ -917,6 +1027,8 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
     return;
 
   var post_id = event.memo.post_id;
+  var post_frame = event.memo.post_frame;
+  var post_idx = this.get_post_idx([post_id, post_frame]);
 
   /*
    * The image in the post we're displaying is finished loading.
@@ -925,12 +1037,12 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
    * already be in cache.
    */
   var post_ids_to_preload = [];
-  var adjacent_post_id = this.get_adjacent_post_id_wrapped(post_id, true);
-  if(adjacent_post_id != null)
-    post_ids_to_preload.push(adjacent_post_id);
-  var adjacent_post_id = this.get_adjacent_post_id_wrapped(post_id, false);
-  if(adjacent_post_id != null)
-    post_ids_to_preload.push(adjacent_post_id);
+  var adjacent_post_idx = this.get_adjacent_post_idx_wrapped(post_idx, true);
+  if(adjacent_post_idx != null)
+    post_ids_to_preload.push([this.post_ids[adjacent_post_idx], this.post_frames[adjacent_post_idx]]);
+  var adjacent_post_idx = this.get_adjacent_post_idx_wrapped(post_idx, false);
+  if(adjacent_post_idx != null)
+    post_ids_to_preload.push([this.post_ids[adjacent_post_idx], this.post_frames[adjacent_post_idx]]);
   this.view.preload(post_ids_to_preload);
 }
 

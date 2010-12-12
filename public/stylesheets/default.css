@@ -1620,6 +1620,17 @@ textarea.edit-item { border: none; }
   list-style-type: none;
 }
 
+.post-info .post-frame-list {
+  display: inline-block;
+}
+
+.post-info .post-frame-link {
+  display: inline-block;
+  border: 1px solid #fff;
+  margin: 0 2px;
+  padding: 0 2px;
+}
+
 .image-navigator
 {
   overflow: hidden;

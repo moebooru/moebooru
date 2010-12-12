@@ -1,5 +1,5 @@
 class JobTask < ActiveRecord::Base
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions upload_posts_to_mirrors periodic_maintenance upload_batch_posts)
+  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions upload_posts_to_mirrors periodic_maintenance upload_batch_posts update_post_frames)
   STATUSES = %w(pending processing finished error)
   
   validates_inclusion_of :task_type, :in => TASK_TYPES
@@ -129,6 +129,23 @@ class JobTask < ActiveRecord::Base
     upload.run
   end
 
+  def execute_update_post_frames
+    update_status = Proc.new { |status|
+      update_attributes(:data => {:status => status})
+    }
+
+    # Do a limited number of operations to update frames, then move on.
+    (1..10).each do
+      # Do one step, then move on.
+      next if PostFrames.process_frames(update_status)
+      next if PostFrames.warehouse_frames(update_status)
+      next if PostFrames.purge_frames(update_status)
+
+      # There's nothing more to do.
+      return
+    end
+  end
+
   def pretty_data
     case task_type
     when "mass_tag_edit"
@@ -183,6 +200,8 @@ class JobTask < ActiveRecord::Base
         user = User.find_name(data["user_id"])
         return "uploading #{data["url"]} for #{user}" 
       end
+    when "update_post_frames"
+      return data[:status]
     end
   end
   

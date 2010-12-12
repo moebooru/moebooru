@@ -32,9 +32,11 @@ BrowserView = function(container)
   /* The post that we currently want to display.  This will be either one of the
    * current html_preloads, or be the displayed_post_id. */
   this.wanted_post_id = null;
+  this.wanted_post_frame = null;
 
   /* The post that's currently actually being displayed. */
   this.displayed_post_id = null;
+  this.displayed_post_frame = null;
 
   this.current_ajax_request = null;
   this.last_preload_request = [];
@@ -78,6 +80,11 @@ BrowserView = function(container)
   this.container.down(".post-info").on("click", ".toggle-zoom", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
   this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
   this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
+
+  this.container.down(".post-frames").on("click", ".post-frame-link", function(e, item) {
+    e.stop();
+    this.set_post(this.displayed_post_id, item.post_frame);
+  }.bind(this));
 
   /* We'll receive this message from the thumbnail view when the overlay is
    * visible on the bottom of the screen, to tell us how much space is covered up
@@ -230,7 +237,7 @@ BrowserView = function(container)
     e.stop();
     this.blacklist_override_post_id = this.displayed_post_id;
     var post = Post.posts.get(this.displayed_post_id);
-    this.set_main_image(post);
+    this.set_main_image(post, this.displayed_post_frame);
   }.bindAsEventListener(this));
 
 
@@ -353,7 +360,7 @@ BrowserView.prototype.set_post_ui = function(visible)
 
 BrowserView.prototype.image_loaded_event = function(event)
 {
-  document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id });
+  document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id, post_frame: this.displayed_post_frame });
   this.update_canvas();
 }
 
@@ -373,7 +380,7 @@ BrowserView.prototype.preload = function(post_ids)
    * call to preload().  If it didn't include the current post, then skip the preload. */
   var last_preload_request = this.last_preload_request;
   this.last_preload_request = post_ids;
-  if(last_preload_request.indexOf(this.wanted_post_id) == -1)
+  if(last_preload_request.find(function(post) { return post[0] == this.wanted_post_id && post[1] == this.wanted_post_frame; }))
   {
     // debug("skipped-preload(" + post_ids.join(",") + ")");
     this.last_preload_request_active = false;
@@ -385,9 +392,17 @@ BrowserView.prototype.preload = function(post_ids)
   var new_preload_container = new PreloadContainer();
   for(var i = 0; i < post_ids.length; ++i)
   {
-    var post_id = post_ids[i];
+    var post_id = post_ids[i][0];
+    var post_frame = post_ids[i][1];
     var post = Post.posts.get(post_id);
-    new_preload_container.preload(post.sample_url);
+
+    if(post_frame != null)
+    {
+      var frame = post.frames[post_frame];
+      new_preload_container.preload(frame.url);
+    }
+    else
+      new_preload_container.preload(post.sample_url);
   }
 
   /* If we already were preloading images, we created the new preloads before
@@ -458,7 +473,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
 
       /* This will either load the post we just finished, or request data for the
        * one we want. */
-      this.set_post(this.wanted_post_id);
+      this.set_post(this.wanted_post_id, this.wanted_post_frame);
     }.bind(this),
 
     onFailure: function(resp) {
@@ -483,7 +498,7 @@ BrowserView.prototype.set_viewing_larger_version = function(b)
     this.image_dragger.set_disabled(!b);
 }
 
-BrowserView.prototype.set_main_image = function(post)
+BrowserView.prototype.set_main_image = function(post, post_frame)
 {
   /*
    * Clear the previous post, if any.  Don't keep the old IMG around; create a new one, or
@@ -525,7 +540,16 @@ BrowserView.prototype.set_main_image = function(post)
 
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
 
-  if(this.viewing_larger_version && post.jpeg_url)
+  // XXX larger_version + frames
+  if(post_frame != null && post_frame < post.frames.length)
+  {
+    var frame = post.frames[post_frame];
+    this.img.src = frame.url;
+    this.img_box.original_width = frame.width;
+    this.img_box.original_height = frame.height;
+    this.img_box.show();
+  }
+  else if(this.viewing_larger_version && post.jpeg_url)
   {
     this.img.src = post.jpeg_url;
     this.img_box.original_width = post.jpeg_width;
@@ -558,15 +582,16 @@ BrowserView.prototype.set_main_image = function(post)
   this.scale_and_position_image();
 }
 
-/* Display post_id. */
-BrowserView.prototype.set_post = function(post_id)
+/* Display post_id.  If post_frame is not null, set the specified frame. */
+BrowserView.prototype.set_post = function(post_id, post_frame)
 {
   /* If there was a lazy load pending, cancel it. */
   this.cancel_lazily_load();
 
   this.wanted_post_id = post_id;
+  this.wanted_post_frame = post_frame;
 
-  if(post_id == this.displayed_post_id)
+  if(post_id == this.displayed_post_id && post_frame == this.displayed_post_frame)
     return;
 
   var post = Post.posts.get(post_id);
@@ -581,18 +606,19 @@ BrowserView.prototype.set_post = function(post_id)
   }
 
   this.displayed_post_id = post_id;
-  UrlHash.set_deferred({"post-id": post_id});
+  this.displayed_post_frame = post_frame;
+  UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame});
 
   this.set_viewing_larger_version(false);
 
-  this.set_main_image(post);
+  this.set_main_image(post, post_frame);
 
   if(this.vote_widget)
     this.vote_widget.set_post_id(post.id);
   if(this.popup_vote_widget)
     this.popup_vote_widget.set_post_id(post.id);
 
-  document.fire("viewer:displayed-post-changed", { post_id: post_id });
+  document.fire("viewer:displayed-post-changed", { post_id: post_id, post_frame: post_frame });
 
   this.set_post_info();
 }
@@ -653,6 +679,32 @@ BrowserView.prototype.set_post_info = function()
     }
 
   }
+
+  this.container.down(".post-frames").show(post.frames.length > 0);
+  if(post.frames.length > 0)
+  {
+    this.displayed_post_frame;
+
+    var frame_list = this.container.down(".post-frame-list");
+    while(frame_list.firstChild)
+      frame_list.removeChild(frame_list.firstChild);
+
+    for(var i = -1; i < post.frames.length; ++i)
+    {
+      var text = i == -1? "main": (i+1);
+
+      var a = document.createElement("a");
+      a.href = "/post/browse#" + post.id;
+      if(i >= 0)
+        a.href += "-" + i;
+
+      a.className = "post-frame-link";
+      a.setTextContent(text);
+      a.post_frame = i >= 0? i:null;
+      frame_list.appendChild(a);
+    }
+  }
+
 
   var ratings = {s: "Safe", q: "Questionable", e: "Explicit"};
   this.container.down(".post-rating").setTextContent(ratings[post.rating]);
@@ -938,7 +990,7 @@ BrowserView.prototype.toggle_view_large_image = function()
 
   /* Toggle between the sample and JPEG version. */
   this.set_viewing_larger_version(!this.viewing_larger_version);
-  this.set_main_image(post);
+  this.set_main_image(post); // XXX frame
 }
 
 /* this.image_window_size is the size of the area where the image is visible. */
@@ -1075,8 +1127,8 @@ BrowserView.prototype.update_canvas = function()
       this.canvas.width == this.displayed_image_width &&
       this.canvas.height == this.displayed_image_height)
   {
-    debug(this.canvas.rendered_url + ", " + this.canvas.width + ", " + this.canvas.height)
-    debug("Skipping canvas blit");
+    // debug(this.canvas.rendered_url + ", " + this.canvas.width + ", " + this.canvas.height)
+    // debug("Skipping canvas blit");
     return;
   }
 
@@ -1119,7 +1171,7 @@ BrowserView.prototype.cancel_lazily_load = function()
    this.lazy_load_timer = null;
 }
 
-BrowserView.prototype.lazily_load = function(post_id)
+BrowserView.prototype.lazily_load = function(post_id, post_frame)
 {
   this.cancel_lazily_load();
 
@@ -1133,11 +1185,13 @@ BrowserView.prototype.lazily_load = function(post_id)
    * requested by lazily_load (due to a background request completing).  Mark whatever post
    * we're currently on as the one we want, until we're able to switch to the new one. */
   this.wanted_post_id = this.displayed_post_id;
+  this.wanted_post_frame = this.displayed_post_frame;
 
   this.lazy_load_post_id = post_id;
+  this.lazy_load_post_frame = post_frame;
   this.lazy_load_timer = window.setTimeout(function() {
     this.lazy_load_timer = null;
-    this.set_post(post_id);
+    this.set_post(post_id, post_frame);
   }.bind(this), ms);
 }
 
@@ -1146,6 +1200,7 @@ WindowTitleHandler = function()
 {
   this.searched_tags = "";
   this.post_id = null;
+  this.post_frame = null;
   this.pool = null;
 
   document.on("viewer:searched-tags-changed", function(e) {
@@ -1155,6 +1210,7 @@ WindowTitleHandler = function()
 
   document.on("viewer:displayed-post-changed", function(e) {
     this.post_id = e.memo.post_id;
+    this.post_frame = e.memo.post_id;
     this.update();
   }.bindAsEventListener(this));
 

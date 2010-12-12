@@ -42,6 +42,15 @@ BrowserView = function(container)
 
   this.image_pool = new ImgPoolHandler();
   this.img_box = this.container.down(".image-box");
+  this.container.down(".image-canvas");
+
+  this.canvas = create_canvas_2d();
+  if(this.canvas)
+  {
+    this.canvas.hide();
+    this.img_box.appendChild(this.canvas);
+  }
+  this.zoom_level = 0;
 
   /* True if the post UI is visible. */
   this.post_ui_visible = true;
@@ -82,7 +91,21 @@ BrowserView = function(container)
     this.set_post_ui(e.memo.shown);
     this.scale_and_position_image(true);
   }.bindAsEventListener(this));
+/*
+  OnKey(79, null, function(e) {
+    this.zoom_level -= 1;
+    this.scale_and_position_image(true);
+    this.update_navigator();
+    return true;
+  }.bindAsEventListener(this));
 
+  OnKey(80, null, function(e) {
+    this.zoom_level += 1;
+    this.scale_and_position_image(true);
+    this.update_navigator();
+    return true;
+  }.bindAsEventListener(this));
+*/
   /* Hide member-only and moderator-only controls: */
   $(document.body).pickClassName("is-member", "not-member", User.is_member_or_higher());
   $(document.body).pickClassName("is-moderator", "not-moderator", User.is_mod_or_higher());
@@ -331,6 +354,7 @@ BrowserView.prototype.set_post_ui = function(visible)
 BrowserView.prototype.image_loaded_event = function(event)
 {
   document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id });
+  this.update_canvas();
 }
 
 BrowserView.prototype.get_debug = function()
@@ -486,6 +510,8 @@ BrowserView.prototype.set_main_image = function(post)
   this.img = this.image_pool.get();
   this.img.className = "main-image";
 
+  if(this.canvas)
+    this.canvas.hide();
   this.img.show();
 
   /*
@@ -958,11 +984,15 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
       ratio = window_size.height / original_height;
   }
 
+  ratio *= Math.pow(0.9, this.zoom_level);
+
   this.displayed_image_width = Math.round(original_width * ratio);
   this.displayed_image_height = Math.round(original_height * ratio);
 
   this.img.width = this.displayed_image_width;
   this.img.height = this.displayed_image_height;
+
+  this.update_canvas();
 
   /* If we're resizing and showing the full-size image, don't snap the position
    * back to the default. */
@@ -1004,6 +1034,65 @@ BrowserView.prototype.update_navigator = function()
   var width_percent = this.image_window_size.width / this.displayed_image_width;
   this.navigator.image_position_changed(percent_x, percent_y, height_percent, width_percent);
 }
+
+/*
+ * If Canvas support is available, we can accelerate drawing.
+ *
+ * Most browsers are slow when resizing large images.  In the best cases, it results in
+ * dragging the image around not being smooth (all browsers except Chrome).  In the worst
+ * case it causes rendering the page to be very slow; in Chrome, drawing the thumbnail
+ * strip under a large resized image is unusably slow.
+ *
+ * If Canvas support is enabled, then once the image is fully loaded, blit the image into
+ * the canvas at the size we actually want to display it at.  This avoids most scaling
+ * performance issues, because it's not rescaling the image constantly while dragging it
+ * around.
+ *
+ * Note that if Chrome fixes its slow rendering of boxes *over* the image, then this may
+ * be unnecessary for that browser.  Rendering the image itself is very smooth; Chrome seems
+ * to prescale the image just once, which is what we're doing.
+ *
+ * Limitations:
+ * - If full-page zooming is being used, it'll still scale at runtime.
+ * - We blit the entire image at once.  It's more efficient to blit parts of the image
+ *   as necessary to paint, but that's a lot more work.
+ * - Canvas won't blit partially-loaded images, so we do nothing until the image is complete.
+ */
+BrowserView.prototype.update_canvas = function()
+{
+  if(!this.img.complete)
+  {
+    debug("image incomplete; can't render to canvas");
+    return false;
+  }
+
+  if(!this.canvas)
+    return;
+
+  /* If the contents havn't changed, skip the blit.  This happens frequently when resizing
+   * the window when not fitting the image to the screen. */
+  if(this.canvas.rendered_url == this.img.src &&
+      this.canvas.width == this.displayed_image_width &&
+      this.canvas.height == this.displayed_image_height)
+  {
+    debug(this.canvas.rendered_url + ", " + this.canvas.width + ", " + this.canvas.height)
+    debug("Skipping canvas blit");
+    return;
+  }
+
+  this.canvas.rendered_url = this.img.src;
+  this.canvas.width = this.displayed_image_width;
+  this.canvas.height = this.displayed_image_height;
+  var ctx = this.canvas.getContext("2d");
+  var t = new Date();
+  ctx.drawImage(this.img, 0, 0, this.displayed_image_width, this.displayed_image_height);
+  debug(new Date()-t);
+  this.canvas.show();
+  this.img.hide();
+
+  return true;
+}
+
 
 BrowserView.prototype.center_image_on = function(percent_x, percent_y)
 {

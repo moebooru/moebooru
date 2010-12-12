@@ -958,8 +958,9 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
       ratio = window_size.height / original_height;
   }
 
-  this.displayed_image_width = original_width * ratio;
-  this.displayed_image_height = original_height * ratio;
+  this.displayed_image_width = Math.round(original_width * ratio);
+  this.displayed_image_height = Math.round(original_height * ratio);
+
   this.img.width = this.displayed_image_width;
   this.img.height = this.displayed_image_height;
 
@@ -984,6 +985,8 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
 BrowserView.prototype.update_navigator = function()
 {
   if(!this.navigator)
+    return;
+  if(!this.img)
     return;
 
   /* The coordinates of the image located at the top-left corner of the window: */

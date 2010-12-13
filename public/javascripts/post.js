@@ -842,8 +842,8 @@ Post = {
     var f = function() {
       img.stopObserving("load")
       img.stopObserving("error")
-      img.height = img.getAttribute("orig_height");
-      img.width = img.getAttribute("orig_width");
+      img.height = img.getAttribute("large_height");
+      img.width = img.getAttribute("large_width");
       img.src = $("highres").href;
 
       if (window.Note) {

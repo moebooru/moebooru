@@ -1040,6 +1040,8 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
   var post_id = event.memo.post_id;
   var post_frame = event.memo.post_frame;
   var post_idx = this.get_post_idx([post_id, post_frame]);
+  if(post_idx == null)
+    return;
 
   /*
    * The image in the post we're displaying is finished loading.

@@ -698,6 +698,8 @@ BrowserView.prototype.set_post_info = function()
 
     for(var i = -1; i < post.frames.length; ++i)
     {
+      var frame_number = i >= 0? i: null;
+
       var text = i == -1? "main": (i+1);
 
       var a = document.createElement("a");
@@ -706,8 +708,11 @@ BrowserView.prototype.set_post_info = function()
         a.href += "-" + i;
 
       a.className = "post-frame-link";
+      if(this.displayed_post_frame == frame_number)
+        a.className += " current-post-frame";
+
       a.setTextContent(text);
-      a.post_frame = i >= 0? i:null;
+      a.post_frame = frame_number;
       frame_list.appendChild(a);
     }
   }

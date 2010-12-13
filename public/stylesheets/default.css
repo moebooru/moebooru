@@ -1631,6 +1631,11 @@ textarea.edit-item { border: none; }
   padding: 0 2px;
 }
 
+.post-info .post-frame-link.current-post-frame {
+  background: rgb(60, 60, 220);
+  color: #FFF;
+}
+
 .image-navigator
 {
   overflow: hidden;

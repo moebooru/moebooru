@@ -1061,14 +1061,7 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
 /* This handler handles global keypress bindings, and fires viewer: events. */
 function InputHandler()
 {
-  this.document_focus_event = this.document_focus_event.bindAsEventListener(this);
-  this.document_focusin_event = this.document_focusin_event.bindAsEventListener(this);
-
-  /* Track the focused element, so we can clear focus on KEY_ESC. */
-  this.focused_element = null;
-  if(document.addEventListener)
-    document.addEventListener("focus", this.document_focus_event, true);
-  document.observe("focusin", this.document_focusin_event);
+  TrackFocus();
 
   /*
    * Keypresses are aggrevating:
@@ -1089,16 +1082,6 @@ function InputHandler()
   document.on(keypress_event_name, this.document_keypress_event.bindAsEventListener(this));
 }
 
-InputHandler.prototype.document_focus_event = function(e)
-{
-  this.focused_element = e.target;
-}
-
-InputHandler.prototype.document_focusin_event = function(event)
-{
-  this.focused_element = event.srcElement;
-}
-
 InputHandler.prototype.handle_keypress = function(e)
 {
   var key = e.charCode;
@@ -1106,9 +1089,9 @@ InputHandler.prototype.handle_keypress = function(e)
     key = e.keyCode; /* Opera */
   if(key == Event.KEY_ESC)
   {
-    if(this.focused_element && this.focused_element.blur && !this.focused_element.hasClassName("no-blur-on-escape"))
+    if(document.focusedElement && document.focusedElement.blur && !document.focusedElement.hasClassName("no-blur-on-escape"))
     {
-      this.focused_element.blur();
+      document.focusedElement.blur();
       return true;
     }
   }

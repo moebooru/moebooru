@@ -930,3 +930,19 @@ WindowDragElementAbsolute.prototype.destroy = function()
   this.dragger.destroy();
 }
 
+/* Track the focused element, and store it in document.focusedElement.. */
+function TrackFocus()
+{
+  document.focusedElement = null;
+  if(document.addEventListener)
+  {
+    document.addEventListener("focus", function(e)
+    {
+      document.focusedElement = e.target;
+    }.bindAsEventListener(this), true);
+  }
+  document.observe("focusin", function(event) {
+    document.focusedElement = event.srcElement;
+  }.bindAsEventListener(this));
+}
+

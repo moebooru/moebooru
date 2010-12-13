@@ -1112,8 +1112,6 @@ InputHandler.prototype.handle_keypress = function(e)
   var grave_keycode = Prototype.Browser.WebKit? 192: 96;
   if(key == 32) // space
     document.fire("viewer:set-thumb-bar", { toggle: true });
-  else if(key == Event.KEY_ESC)
-    document.fire("viewer:set-thumb-bar", { toggle: true });
   else if(key == 49) // 1
     document.fire("viewer:vote", { score: 1 });
   else if(key == 50) // 2

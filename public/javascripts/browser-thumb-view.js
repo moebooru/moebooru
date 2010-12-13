@@ -29,7 +29,12 @@ ThumbnailView = function(container, view)
   document.on("mousewheel", this.document_mouse_wheel_event.bindAsEventListener(this));
 
   document.on("viewer:displayed-image-loaded", this.displayed_image_loaded_event.bindAsEventListener(this));
+  document.on("viewer:set-active-post", function(e) {
+    var post_id_and_frame = [e.memo.post_id, e.memo.post_frame];
+    this.set_active_post(post_id_and_frame, e.memo.lazy, e.memo.center_thumbs);
+  }.bindAsEventListener(this));
   document.on("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
+
   document.on("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
   document.on("viewer:set-thumb-bar", function(e) {
     if(e.memo.toggle)
@@ -366,7 +371,9 @@ ThumbnailView.prototype.document_mouse_wheel_event = function(event)
     document.fire("viewer:show-next-post", { prev: val >= 0 });
 }
 
-ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy)
+/* Set the post that's shown in the view.  The thumbs will be centered on the post
+ * if center_thumbs is true. */
+ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs)
 {
   this.active_post_idx = this.get_post_idx(post_id_and_frame);
 
@@ -378,16 +385,23 @@ ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy)
   } else {
     this.view.set_post(post_id_and_frame[0], post_id_and_frame[1]);
   }
+
+  if(center_thumbs)
+  {
+    var post_idx = this.get_post_idx(post_id_and_frame);
+    this.centered_post_offset = 0;
+    this.center_on_post_for_scroll(post_idx);
+  }
 }
 
-ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy)
+ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy, center_thumbs)
 {
   if(post_idx == null)
     return;
 
   var post_id = this.post_ids[post_idx];
   var post_frame = this.post_frames[post_idx];
-  this.set_active_post([post_id, post_frame], lazy);
+  this.set_active_post([post_id, post_frame], lazy, center_thumbs);
 }
 
 ThumbnailView.prototype.show_next_post = function(prev)
@@ -420,10 +434,7 @@ ThumbnailView.prototype.show_next_post = function(prev)
       notice("Starting over from the beginning");
   }
 
-  this.centered_post_offset = 0;
-  this.center_on_post_for_scroll(new_idx);
-
-  this.set_active_post_idx(new_idx, true);
+  this.set_active_post_idx(new_idx, true, true);
 }
 
 /* Scroll the thumbnail view left or right.  Don't change the displayed post. */

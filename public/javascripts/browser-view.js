@@ -83,7 +83,11 @@ BrowserView = function(container)
 
   this.container.down(".post-frames").on("click", ".post-frame-link", function(e, item) {
     e.stop();
-    this.set_post(this.displayed_post_id, item.post_frame);
+
+    /* Change the displayed post frame to the one that was clicked.  Since all post frames
+     * are usually displayed in the thumbnail view, set center_thumbs to true to recenter
+     * on the thumb that was clicked, so it's clearer what's happening. */
+    document.fire("viewer:set-active-post", {post_id: this.displayed_post_id, post_frame: item.post_frame, center_thumbs: true});
   }.bind(this));
 
   /* We'll receive this message from the thumbnail view when the overlay is

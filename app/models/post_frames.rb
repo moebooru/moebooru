@@ -223,6 +223,7 @@ class PostFrames < ActiveRecord::Base
 
     logger.info("Warehousing frame #{id}...")
     Mirrors.copy_file_to_mirrors(file_path)
+    Mirrors.copy_file_to_mirrors(preview_path)
 
     # Mark the frame warehoused.
     self.update_attributes(:is_warehoused => true)

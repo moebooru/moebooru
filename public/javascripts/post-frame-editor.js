@@ -223,8 +223,6 @@ FrameEditor.prototype.create_dragger = function()
     this.dragger.destroy();
 
   this.dragger = new DragElement(this.main_frame, {
-    snap_pixels: 0,
-
     ondown: function(e) {
       var post = Post.posts.get(this.post_id);
 
@@ -300,6 +298,8 @@ FrameEditor.prototype.create_dragger = function()
       /* If we're dragging a handle, override the drag class so the pointer will
        * use the handle pointer instead of the drag pointer. */
       this.dragger.overriden_drag_class = this.dragging_mode == "move"? null: this.dragging_mode;
+
+      this.dragger.options.snap_pixels = this.dragging_new? 10:0;
 
       /* Stop propagation of the event, so any other draggers in the chain don't start.  In
        * particular, when we're dragging inside the image, we need to stop WindowDragElementAbsolute.

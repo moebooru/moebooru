@@ -458,7 +458,6 @@ FrameEditor.prototype.discard = function()
 
   /* Revert changes. */
   var post = Post.posts.get(post_id);
-  debug(this.post_id);
   post.frames_pending = revert_to.evalJSON();
 }
 
@@ -513,13 +512,8 @@ FrameEditor.prototype.save = function(finished)
     frames_pending_string: spec
   }], function(posts)
   {
-      var post = Post.posts.get(post_id);
-      debug("XXX " + post_id + ": " + post.frames_pending[0].source_top);
-
-//  debug("foo " + this.post_id + ", " + post_id);
     if(this.post_id == post_id)
     {
-    debug("gggggnk");
       /* The registered post has been changed, and we're still displaying it.  Grab the
        * new version, and updated original_frames so we no longer consider this post
        * changed. */

@@ -279,7 +279,7 @@ ThumbnailView.prototype.container_mouseover_event = function(event)
 ThumbnailView.prototype.hashchange_post_id = function()
 {
   var post_id_and_frame = this.get_current_post_id_and_frame();
-  if(post_id_and_frame == null)
+  if(post_id_and_frame[0] == null)
     return;
 
   /* If we're already displaying this post, ignore the hashchange.  Don't center on the
@@ -331,12 +331,18 @@ ThumbnailView.prototype.get_post_idx = function(post_id_and_frame)
 }
 
 /* Return the post and frame that's currently being displayed in the main view, based
- * on the URL hash. */
+ * on the URL hash.  If no post is displayed and no search results are available,
+ * return [null, null]. */
 ThumbnailView.prototype.get_current_post_id_and_frame = function()
 {
   var post_id = UrlHash.get("post-id");
   if(post_id == null)
-    return [this.post_ids[0], this.post_frames[0]];
+  {
+    if(this.post_ids.length == 0)
+      return [null, null];
+    else
+      return [this.post_ids[0], this.post_frames[0]];
+  }
   post_id = parseInt(post_id);
 
   var post_frame = UrlHash.get("post-frame");

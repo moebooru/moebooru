@@ -3,7 +3,7 @@ module PostFrameMethods
     m.versioned :frames_pending, :default => "", :allow_reverting_to_default => true
   end
 
-  def frames_pending=(frames)
+  def frames_pending_string=(frames)
 #    if r == nil && !new_record?
 #      return
 #    end

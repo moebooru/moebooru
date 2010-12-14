@@ -635,6 +635,10 @@ BrowserView.prototype.set_post = function(post_id, post_frame)
     return;
   }
 
+  /* If post_frame doesn't exist, just display the main post. */
+  if(post_frame != null && post.frames.length < post_frame)
+    post_frame = null;
+
   this.displayed_post_id = post_id;
   this.displayed_post_frame = post_frame;
   UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame});

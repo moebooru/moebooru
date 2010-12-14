@@ -131,7 +131,7 @@ class JobTask < ActiveRecord::Base
 
   def execute_update_post_frames
     update_status = Proc.new { |status|
-      update_attributes(:data => {:status => status})
+      update_data("status" => status)
     }
 
     # Do a limited number of operations to update frames, then move on.
@@ -201,7 +201,11 @@ class JobTask < ActiveRecord::Base
         return "uploading #{data["url"]} for #{user}" 
       end
     when "update_post_frames"
-      return data[:status]
+      if status == "pending" then
+        return "idle"
+      elsif status == "processing" then
+        return data["status"]
+      end
     end
   end
   

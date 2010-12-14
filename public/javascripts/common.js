@@ -391,14 +391,18 @@ Ajax.Responders.register({
 });
 
 /*
- * Exceptions thrown from event handlers tend to get lost.  Sometimes they trigger
- * window.onerror, but not reliably.  Catch exceptions out of event handlers and
+ * In Firefox, exceptions thrown from event handlers tend to get lost.  Sometimes they
+ * trigger window.onerror, but not reliably.  Catch exceptions out of event handlers and
  * throw them from a deferred context, so they'll make it up to the browser to be
  * logged.
  *
  * This depends on bindAsEventListener actually only being used for event listeners,
  * since it eats exceptions.
+ *
+ * Only do this in Firefox; not all browsers preserve the call stack in the exception,
+ * so this can lose information if used when it's not needed.
  */
+if(Prototype.Browser.Gecko)
 Function.prototype.bindAsEventListener = function()
 {
   var __method = this, args = $A(arguments), object = args.shift();
@@ -670,7 +674,8 @@ DragElement.prototype.handle_move_event = function(event, x, y)
     }
 
     this.dragged = true;
-    $(document.body).addClassName("dragging");
+    
+    $(document.body).addClassName(this.overriden_drag_class || "dragging");
   }
 
   this.last_event_params = {
@@ -769,6 +774,8 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
   if(this.options.ondown)
     this.options.ondown({
       dragger: this,
+      x: x,
+      y: y,
       latest_event: event
     });
 }
@@ -817,7 +824,7 @@ DragElement.prototype.stop_dragging = function(event, cancelling)
   if(this.dragging)
   {
     this.dragging = false;
-    $(document.body).removeClassName("dragging");
+    $(document.body).removeClassName(this.overriden_drag_class || "dragging");
 
     if(this.options.onenddrag)
       this.options.onenddrag(this);

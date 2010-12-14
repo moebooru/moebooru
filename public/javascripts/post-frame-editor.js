@@ -223,6 +223,8 @@ FrameEditor.prototype.create_dragger = function()
     this.dragger.destroy();
 
   this.dragger = new DragElement(this.main_frame, {
+    snap_pixels: 0,
+
     ondown: function(e) {
       var post = Post.posts.get(this.post_id);
 

@@ -248,7 +248,7 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
     /* If no post is currently displayed and we just completed a search, set the current post.
      * This happens when first initializing; we wait for the first search to complete to retrieve
      * info about the post we're starting on, instead of making a separate query. */
-    if(results_mode == "jump-to-first" || this.active_post_idx == null)
+    if(results_mode == "jump-to-first" || this.view.wanted_post_id == null)
       this.set_active_post(initial_post_id_and_frame);
   }
 
@@ -382,8 +382,6 @@ ThumbnailView.prototype.document_mouse_wheel_event = function(event)
  * if center_thumbs is true. */
 ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs)
 {
-  this.active_post_idx = this.get_post_idx(post_id_and_frame);
-
   if(lazy)
   {
     /* Ask the pool browser to load the new post, with a delay in case we're
@@ -413,18 +411,35 @@ ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy, center_th
 
 ThumbnailView.prototype.show_next_post = function(prev)
 {
-  var current_idx = this.active_post_idx;
+  if(this.post_ids.length == 0)
+    return;
+
+  var current_idx = this.get_post_idx([this.view.wanted_post_id, this.view.wanted_post_frame]);
 
   /* If the displayed post isn't in the thumbnails and we're changing posts, start
    * at the beginning. */
   if(current_idx == null)
     current_idx = 0;
 
-  if(this.post_ids.length == 0)
-    return;
+  var add = prev? -1:+1;
+  if(this.post_frames[current_idx] != this.view.wanted_post_frame && add == +1)
+  {
+    /*
+     * We didn't find an exact match for the frame we're displaying, which usually means
+     * we viewed a post frame, and then the user changed the view to the main post, and
+     * the main post isn't in the thumbnails.
+     *
+     * It's strange to be on the main post, to hit pgdn, and to end up on the second frame
+     * because the nearest match was the first frame.  Instead, we should end up on the first
+     * frame.  To do that, just don't add anything to the index.
+     */
+    debug("Snapped the display to the nearest frame");
+    if(add == +1)
+      add = 0;
+  }
 
   var new_idx = current_idx;
-  new_idx += prev? -1:+1;
+  new_idx += add;
 
   new_idx += this.post_ids.length;
   new_idx %= this.post_ids.length;

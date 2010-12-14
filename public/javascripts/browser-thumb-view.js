@@ -114,6 +114,7 @@ ThumbnailView = function(container, view)
   this.config_changed();
 
   /* Send the initial viewer:thumb-bar-changed event. */
+  this.thumb_container_shown = false;
   this.show_thumb_bar(true);
 }
 

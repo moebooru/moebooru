@@ -21,6 +21,14 @@ body {
 }
 
 body.dragging { cursor: pointer !important; }
+body.n-resize { cursor: n-resize !important; }
+body.s-resize { cursor: s-resize !important; }
+body.e-resize { cursor: e-resize !important; }
+body.w-resize { cursor: w-resize !important; }
+body.nw-resize { cursor: nw-resize !important; }
+body.ne-resize { cursor: ne-resize !important; }
+body.sw-resize { cursor: sw-resize !important; }
+body.se-resize { cursor: se-resize !important; }
 body.not-moderator .moderator-only { display: none !important; }
 body.not-member .member-only { display: none !important; }
 
@@ -1634,6 +1642,60 @@ textarea.edit-item { border: none; }
 .post-info .post-frame-link.current-post-frame {
   background: rgb(60, 60, 220);
   color: #FFF;
+}
+
+.frame-editor .frame-label {
+  cursor: pointer;
+}
+.frame-editor TD {
+  padding: 0;
+  vertical-align: middle;
+}
+.frame-editor TR {
+}
+.frame-editor .frame-button-box {
+  margin: 0 0.25em;
+  font-weight: bold;
+  padding: 0 2px;
+  border: 1px solid #FFF;
+  background-color: #005;
+}
+.frame-editor .frame-down
+{
+  margin-right: 1.0em;
+}
+.frame-editor .frame-label {
+  margin: 0 0.5em;
+}
+.frame-editor TR.frame-focused .frame-label {
+  color: #000;
+}
+.frame-editor TR.frame-focused {
+  background: #aaa;
+}
+
+.frame-editor .frame-dims {
+  padding: 0;
+  margin: 0.25em 0;
+}
+.frame-editor-main-frame .frame-editor-frame-box {
+  position: absolute;
+  border: 1px solid #000;
+  background-color: rgba(0,0,0,0.1);
+}
+
+/* Mark these not-dragging, so when we're dragging the body dragging cursor takes precedence. */
+body.not-dragging .frame-box-handle.n-resize { cursor: n-resize; }
+body.not-dragging .frame-box-handle.s-resize { cursor: s-resize; }
+body.not-dragging .frame-box-handle.e-resize { cursor: e-resize; }
+body.not-dragging .frame-box-handle.w-resize { cursor: w-resize; }
+body.not-dragging .frame-box-handle.nw-resize { cursor: nw-resize; }
+body.not-dragging .frame-box-handle.ne-resize { cursor: ne-resize; }
+body.not-dragging .frame-box-handle.sw-resize { cursor: sw-resize; }
+body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
+
+.frame-editor-main-frame .focused-frame-box {
+  background-color: rgba(0,0,0,0.3);
 }
 
 .image-navigator

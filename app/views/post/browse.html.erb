@@ -101,7 +101,17 @@
       </div>
     <div>Posted <span class="posted-at"></span><span class="posted-by"> ago by <a href="#" target="_blank"></a></span></div>
     <div id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
-    <div class="post-frames">Frames: <div class="post-frame-list" style="inline-block"></div></div>
+    <div class="post-frames">
+      Frames: <div class="post-frame-list" style="inline-block"></div>
+      <a href="#" style="font-style: italic; margin: 0 0.5em;" class="show-frame-edit advanced-editing">edit</a>
+    </div>
+
+    <div class="frame-editor" style="display: none">
+      <a href="#" class="frame-editor-add">Add a frame</a>
+      <a href="#" class="frame-editor-discard">Discard changes</a>
+      <a href="#" class="frame-editor-save">Save changes</a>
+      <table class="frame-list" style="margin: 0.5em 0;" cellspacing=0 cellpadding=0><tbody></tbody></table>
+    </div>
     <div class="post-source">Source: <a href="#" target="_blank"></a><span></span></div>
 
     <div class="status-deleted"> 
@@ -141,7 +151,7 @@
       <form>
         <input style="display: none;" type="submit" value="dummy">
 
-        <textarea style="overflow: hidden; width: 100%; resize: none;" class="edit-tags edit-item no-blur-on-escape" name="tags" rows="1" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+        <textarea style="overflow: hidden; width: 100%; resize: none;" class="edit-tags edit-item" name="tags" rows="1" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
 
         <table style="margin: 0">
           <tr>

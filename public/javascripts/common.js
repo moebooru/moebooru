@@ -96,6 +96,11 @@ scale = function(x, l1, h1, l2, h2)
   return ((x - l1) * (h2 - l2) / (h1 - l1) + l2);
 }
 
+clamp = function(n, min, max)
+{
+  return Math.max(Math.min(n, max), min);
+}
+
 var ClearNoticeTimer;
 function start_notice_timer() {
   if(ClearNoticeTimer)
@@ -498,6 +503,8 @@ Prototype.BrowserFeatures.Touchscreen = (function() {
  * scrolled. */
 DragElement = function(element, options)
 {
+  $(document.body).addClassName("not-dragging");
+
   this.options = options || {};
   if(this.options.snap_pixels == null)
     this.options.snap_pixels = 10;
@@ -676,6 +683,7 @@ DragElement.prototype.handle_move_event = function(event, x, y)
     this.dragged = true;
     
     $(document.body).addClassName(this.overriden_drag_class || "dragging");
+    $(document.body).removeClassName("not-dragging");
   }
 
   this.last_event_params = {
@@ -825,6 +833,7 @@ DragElement.prototype.stop_dragging = function(event, cancelling)
   {
     this.dragging = false;
     $(document.body).removeClassName(this.overriden_drag_class || "dragging");
+    $(document.body).addClassName("not-dragging");
 
     if(this.options.onenddrag)
       this.options.onenddrag(this);

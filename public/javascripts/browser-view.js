@@ -215,7 +215,10 @@ BrowserView = function(container)
   post_edit.down(".edit-tags").on("keydown", function(e) { this.edit_post_area_changed.defer(); }.bindAsEventListener(this));
 
   this.container.down(".post-edit").on("keydown", function(e) {
-    if (e.keyCode == Event.KEY_ESC) { e.stop(); this.edit_show(false); }
+    /* Don't e.stop() KEY_ESC, so we fall through and let handle_keypress unfocus the
+     * form entry, if any.  Otherwise, Chrome gets confused and leaves the focus on the
+     * hidden input, where it'll steal keystrokes. */
+    if (e.keyCode == Event.KEY_ESC) { this.edit_show(false); }
     else if (e.keyCode == Event.KEY_RETURN) { e.stop(); this.edit_save(); }
   }.bindAsEventListener(this));
 
@@ -256,6 +259,15 @@ BrowserView = function(container)
     this.create_voting_popup();
     this.image_swipe = new SwipeHandler(this.container.down(".image-container"));
   }
+
+  /* Create the frame editor.  This must be created before image_dragger, since it takes priority
+   * for drags. */
+  this.container.down(".show-frame-edit").on("click", function(e) { e.stop(); this.show_frame_editor(); }.bindAsEventListener(this));
+  this.frame_editor = new FrameEditor(this.container.down(".frame-editor"), this.img_box, {
+    onClose: function() {
+      this.hide_frame_editor();
+    }.bind(this)
+  });
 
   /* If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
    * dragging too. */
@@ -507,6 +519,11 @@ BrowserView.prototype.set_viewing_larger_version = function(b)
    * scrolling so we can use it to switch images instead. */
   if(Prototype.BrowserFeatures.Touchscreen && this.image_dragger)
     this.image_dragger.set_disabled(!b);
+
+  /* Only allow dragging to create new frames when not viewing the large version,
+   * since we need to be able to drag the image. */
+  if(this.frame_editor)
+    this.frame_editor.set_drag_to_create(!b);
 }
 
 BrowserView.prototype.set_main_image = function(post, post_frame)
@@ -604,6 +621,8 @@ BrowserView.prototype.set_post = function(post_id, post_frame)
 
   if(post_id == this.displayed_post_id && post_frame == this.displayed_post_frame)
     return;
+
+  this.hide_frame_editor();
 
   var post = Post.posts.get(post_id);
   if(post == null)
@@ -1062,6 +1081,9 @@ BrowserView.prototype.scale_and_position_image = function(resizing)
 
   this.update_canvas();
 
+  if(this.frame_editor)
+    this.frame_editor.set_image_dimensions(this.displayed_image_width, this.displayed_image_height);
+
   /* If we're resizing and showing the full-size image, don't snap the position
    * back to the default. */
   if(resizing && this.viewing_larger_version)
@@ -1286,6 +1308,30 @@ BrowserView.prototype.child_posts_click_event = function(event)
   });
 }
 
+BrowserView.prototype.show_frame_editor = function()
+{
+  /* If we're displaying a frame and not the whole image, switch to the main image. */
+  var post_frame = null;
+  if(this.displayed_post_frame != null)
+  {
+    post_frame = this.displayed_post_frame;
+    document.fire("viewer:set-active-post", {post_id: this.displayed_post_id, post_frame: null});
+  }
+
+  this.frame_editor.open(this.displayed_post_id);
+  this.container.down(".post-frames").hide();
+
+  /* If we were on a frame when opened, focus the frame we were on.  Otherwise,
+   * leave it on the default. */
+  if(post_frame != null)
+    this.frame_editor.focus(post_frame);
+}
+
+BrowserView.prototype.hide_frame_editor = function()
+{
+  this.frame_editor.discard();
+  this.container.down(".post-frames").show();
+}
 
 var Navigator = function(container, target)
 {

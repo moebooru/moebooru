@@ -326,7 +326,6 @@ FrameEditor.prototype.create_dragger = function()
         else if(e.aX < 0 && e.aY < 0)   this.dragging_mode = "nw-resize";
 
         this.dragging_new = false;
-        this.dragging_idx = this.add_frame();
 
         /* Create a new, empty frame.  When we get to the regular drag path below we'll
          * give it its real size, based on how far we've dragged so far. */
@@ -340,6 +339,7 @@ FrameEditor.prototype.create_dragger = function()
         this.dragging_anchor = dims;
 
         var source_dims = frame_dimensions_from_image(dims, this.image_dimensions, post);
+        this.dragging_idx = this.add_frame(source_dims);
         post.frames_pending[this.editing_frame] = source_dims;
       }
 
@@ -643,16 +643,17 @@ FrameEditor.prototype.update_frame_from_list = function(frame_idx)
 }
 
 /* Add a new default frame to the end of the list, update the table, and edit the new frame. */
-FrameEditor.prototype.add_frame = function()
+FrameEditor.prototype.add_frame = function(new_frame)
 {
   var post = Post.posts.get(this.post_id);
 
-  var new_frame = {
-    source_top: post.height * 1/4,
-    source_left: post.width * 1/4,
-    source_width: post.width / 2,
-    source_height: post.height / 2
-  };
+  if(new_frame == null)
+    new_frame = {
+      source_top: post.height * 1/4,
+      source_left: post.width * 1/4,
+      source_width: post.width / 2,
+      source_height: post.height / 2
+    };
 
   post.frames_pending.push(new_frame);
   this.add_frame_to_list(post.frames_pending.length-1);

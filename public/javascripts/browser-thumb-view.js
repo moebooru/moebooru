@@ -1010,6 +1010,8 @@ ThumbnailView.prototype.container_dblclick_event = function(event)
 
 ThumbnailView.prototype.show_thumb_bar = function(shown)
 {
+  if(this.thumb_container_shown == shown)
+    return;
   this.thumb_container_shown = shown;
   this.container.show(shown);
 

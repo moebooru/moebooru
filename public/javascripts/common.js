@@ -756,9 +756,7 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
   /* If we've been started with a touch event, only listen for touch events.  If we've
    * been started with a mouse event, only listen for mouse events.  We may receive
    * both sets of events, and the anchor coordinates for the two may not be compatible. */
-  // This breaks clicking on input elements within drag boxes in Chrome (the browser
-  // search box).  Is it needed?
-//  this.drag_handlers.push(document.on("selectstart", this.selectstart_event));
+  this.drag_handlers.push(document.on("selectstart", this.selectstart_event));
   if(touch)
   {
     this.drag_handlers.push(document.on("touchend", this.touchend_event));
@@ -868,7 +866,12 @@ DragElement.prototype.dragstart_event = function(event)
 
 DragElement.prototype.selectstart_event = function(event)
 {
-  event.stop();
+  /* We need to stop selectstart to prevent drag selection in Chrome.  However, we need
+   * to work around a bug: if we stop the event of an INPUT element, it'll prevent focusing
+   * on that element entirely.  We shouldn't prevent selecting the text in the input box,
+   * either. */
+  if(event.target.tagName != "INPUT")
+    event.stop();
 }
 
 /* When element is dragged, the document moves around it.  If scroll_element is true, the

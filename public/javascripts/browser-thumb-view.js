@@ -1072,8 +1072,12 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
    *
    * Preload the next and previous posts.  Normally, one or the other of these will
    * already be in cache.
+   *
+   * Include the current post in the preloads, so if we switch from a frame back to
+   * the main image, the frame itself will still be loaded.
    */
   var post_ids_to_preload = [];
+  post_ids_to_preload.push([this.post_ids[post_idx], this.post_frames[post_idx]]);
   var adjacent_post_idx = this.get_adjacent_post_idx_wrapped(post_idx, true);
   if(adjacent_post_idx != null)
     post_ids_to_preload.push([this.post_ids[adjacent_post_idx], this.post_frames[adjacent_post_idx]]);

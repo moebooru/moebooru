@@ -756,7 +756,9 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
   /* If we've been started with a touch event, only listen for touch events.  If we've
    * been started with a mouse event, only listen for mouse events.  We may receive
    * both sets of events, and the anchor coordinates for the two may not be compatible. */
-  this.drag_handlers.push(document.on("selectstart", this.selectstart_event));
+  // This breaks clicking on input elements within drag boxes in Chrome (the browser
+  // search box).  Is it needed?
+//  this.drag_handlers.push(document.on("selectstart", this.selectstart_event));
   if(touch)
   {
     this.drag_handlers.push(document.on("touchend", this.touchend_event));

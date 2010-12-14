@@ -262,7 +262,7 @@ BrowserView = function(container)
 
   /* Create the frame editor.  This must be created before image_dragger, since it takes priority
    * for drags. */
-  this.container.down(".show-frame-edit").on("click", function(e) { e.stop(); this.show_frame_editor(); }.bindAsEventListener(this));
+  this.container.down(".edit-frames-button").on("click", function(e) { e.stop(); this.show_frame_editor(); }.bindAsEventListener(this));
   this.frame_editor = new FrameEditor(this.container.down(".frame-editor"), this.img_box, {
     onClose: function() {
       this.hide_frame_editor();
@@ -651,6 +651,9 @@ BrowserView.prototype.set_post = function(post_id, post_frame)
   document.fire("viewer:displayed-post-changed", { post_id: post_id, post_frame: post_frame });
 
   this.set_post_info();
+
+  /* Hide the editor when changing posts. */
+  this.edit_show(false);
 }
 
 /* Set the post info box for the currently displayed post. */
@@ -877,8 +880,6 @@ BrowserView.prototype.set_post_info = function()
   this.container.down(".status-held").show(post.is_held);
   var has_permission = User.get_current_user_id() == post.creator_id || User.is_mod_or_higher();
   this.container.down(".activate-post").show(has_permission);
-
-  this.edit_show(false);
 }
 
 BrowserView.prototype.edit_show = function(shown)
@@ -894,7 +895,13 @@ BrowserView.prototype.edit_show = function(shown)
   this.container.down(".post-tags-box").show(!shown);
   this.container.down(".post-edit").show(shown);
   if(!shown)
+  {
+    /* Revert all changes. */
+    this.frame_editor.discard();
     return;
+  }
+
+  this.select_edit_box(".post-edit-main");
 
   /* This returns [tag, tag type].  We only want the tag; we call this so we sort the
    * tags consistently. */
@@ -965,8 +972,26 @@ if(0)
 
 BrowserView.prototype.edit_save = function()
 {
+  var save_completed = function()
+  {
+    notice("Post saved");
+
+    /* If we're still showing the post we saved, hide the edit area. */
+    if(this.displayed_post_id == post_id)
+      this.edit_show(false);
+  }.bind(this);
   var post_id = this.displayed_post_id;
   
+  /* If we're in the frame editor, save it.  Don't save the hidden main editor. */
+  if(this.frame_editor)
+  {
+    if(this.frame_editor.is_opened())
+    {
+      this.frame_editor.save(save_completed);
+      return;
+    }
+  }
+
   var edit_tags = this.container.down(".edit-tags");
   var tags = edit_tags.value;
 
@@ -991,14 +1016,7 @@ BrowserView.prototype.edit_save = function()
     parent_id: this.container.down(".edit-parent").value,
     is_shown_in_index: this.container.down(".edit-shown-in-index").checked,
     rating: selected_rating
-  }], function(posts)
-  {
-    notice("Post saved");
-
-    /* If we're still showing the post we saved, hide the edit area. */
-    if(this.displayed_post_id == post_id)
-      this.edit_show(false);
-  }.bind(this));
+  }], save_completed);
 }
 
 BrowserView.prototype.window_resize_event = function(e)
@@ -1308,8 +1326,18 @@ BrowserView.prototype.child_posts_click_event = function(event)
   });
 }
 
+BrowserView.prototype.select_edit_box = function(className)
+{
+  if(this.shown_edit_container)
+    this.shown_edit_container.hide();
+  this.shown_edit_container = this.container.down(className);
+  this.shown_edit_container.show();
+}
+
 BrowserView.prototype.show_frame_editor = function()
 {
+  this.select_edit_box(".frame-editor");
+
   /* If we're displaying a frame and not the whole image, switch to the main image. */
   var post_frame = null;
   if(this.displayed_post_frame != null)

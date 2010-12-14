@@ -68,8 +68,6 @@ FrameEditor = function(container, image_container, options)
 
   /* Frame editor buttons: */
   this.container.down(".frame-editor-add").on("click", function(e) { e.stop(); this.add_frame(); }.bindAsEventListener(this));
-  this.container.down(".frame-editor-save").on("click", function(e) { e.stop(); this.save(); }.bindAsEventListener(this));
-  this.container.down(".frame-editor-discard").on("click", function(e) { e.stop(); this.discard(); }.bindAsEventListener(this));
 
   /* Buttons in the frame table: */
   this.container.on("click", ".frame-label", function(e, element) {
@@ -138,7 +136,6 @@ FrameEditor.prototype.set_drag_to_create = function(enable)
 
 FrameEditor.prototype.set_image_dimensions = function(width, height)
 {
-  var opened = this.opened;
   var editing_frame = this.editing_frame;
   var post_id = this.post_id;
 
@@ -148,7 +145,7 @@ FrameEditor.prototype.set_image_dimensions = function(width, height)
   this.main_frame.style.width = this.image_dimensions.width + "px";
   this.main_frame.style.height = this.image_dimensions.height + "px";
 
-  if(opened)
+  if(post_id != null)
   {
     this.open(post_id);
     this.focus(editing_frame);
@@ -182,15 +179,18 @@ var elementArrayFromPoint = function(x, y, top)
   return elements;
 }
 
+FrameEditor.prototype.is_opened = function()
+{
+  return this.post_id != null;
+}
+
 /* Open the frame editor if it isn't already, and focus on the specified frame. */
 FrameEditor.prototype.open = function(post_id)
 {
   if(this.image_dimensions == null)
     throw "Must call set_image_dimensions before open";
-  if(this.opened)
+  if(this.post_id != null)
     return;
-  this.opened = true;
-
   this.post_id = post_id;
   this.editing_frame = null;
   this.dragging_item = null;
@@ -447,59 +447,92 @@ FrameEditor.prototype.update = function()
 /* If the frame editor is open, discard changes and close it. */
 FrameEditor.prototype.discard = function()
 {
-  if(!this.opened)
+  if(this.post_id == null)
     return;
 
   /* Save revert_to, and close the editor before reverting, to make sure closing
    * the editor doesn't change anything. */
   var revert_to = this.original_frames;
+  var post_id = this.post_id;
   this.close();
 
   /* Revert changes. */
-  var post = Post.posts.get(this.post_id);
+  var post = Post.posts.get(post_id);
+  debug(this.post_id);
   post.frames_pending = revert_to.evalJSON();
 }
+
+/* Get the frames specifier for the post's frames. */
+FrameEditor.prototype.get_current_frames_spec = function()
+{
+  var post = Post.posts.get(this.post_id);
+  var frame = post.frames_pending;
+  var frame_specs = [];
+  post.frames_pending.each(function(frame) {
+    var s = frame.source_left + "x" + frame.source_top + "," + frame.source_width + "x" + frame.source_height;
+    frame_specs.push(s);
+  }.bind(this));
+  return frame_specs.join(";");
+}
+
 
 /* Return true if the frames have been changed. */
 FrameEditor.prototype.changed = function()
 {
   var post = Post.posts.get(this.post_id);
-  var changed_frames = Object.toJSON(post.frames_pending);
-  return changed_frames != this.original_frames;
+  var spec = this.get_current_frames_spec();
+  return spec != post.frames_pending_string;
 }
 
-FrameEditor.prototype.save = function()
+/* Save changes to the post, if any.  If not null, call finished on completion. */
+FrameEditor.prototype.save = function(finished)
 {
-  var post = Post.posts.get(this.post_id);
+  if(this.post_id == null)
+  {
+    if(finished)
+      finished();
+    return;
+  }
+
+  /* Save the current post_id, so it's preserved when the AJAX completion function
+   * below is run. */
+  var post_id = this.post_id;
+  var post = Post.posts.get(post_id);
   var frame = post.frames_pending;
 
-  if(!this.changed())
+  var spec = this.get_current_frames_spec();
+  if(spec == post.frames_pending_string)
+  {
+    if(finished)
+      finished();
     return;
-
-  /* Generate the frames specifier for the post's frames. */
-  var frame_specs = [];
-  var spec = "";
-  post.frames_pending.each(function(frame) {
-    var s = frame.source_left + "x" + frame.source_top + "," + frame.source_width + "x" + frame.source_height;
-    frame_specs.push(s);
-  }.bind(this));
-  var spec = frame_specs.join(";");
+  }
 
   Post.update_batch([{
-    id: this.post_id,
-    frames_pending: spec
+    id: post_id,
+    frames_pending_string: spec
   }], function(posts)
   {
-    notice("Frames saved");
+      var post = Post.posts.get(post_id);
+      debug("XXX " + post_id + ": " + post.frames_pending[0].source_top);
 
-    /* The registered post has been changed.  Grab the new version, and updated
-     * original_frames so we no longer consider this post changed. */
-    var post = Post.posts.get(this.post_id);
-    this.original_frames = Object.toJSON(post.frames_pending);
+//  debug("foo " + this.post_id + ", " + post_id);
+    if(this.post_id == post_id)
+    {
+    debug("gggggnk");
+      /* The registered post has been changed, and we're still displaying it.  Grab the
+       * new version, and updated original_frames so we no longer consider this post
+       * changed. */
+      var post = Post.posts.get(post_id);
+      this.original_frames = Object.toJSON(post.frames_pending);
 
-    /* In the off-chance that the frames_pending that came back differs from what we
-     * requested, update the display. */
-    this.update();
+      /* In the off-chance that the frames_pending that came back differs from what we
+       * requested, update the display. */
+      this.update();
+    }
+
+    if(finished)
+      finished();
   }.bind(this));
 }
 
@@ -690,9 +723,9 @@ FrameEditor.prototype.focus = function(post_frame)
 /* Close the frame editor.  Local changes are not saved or reverted. */
 FrameEditor.prototype.close = function()
 {
-  if(!this.opened)
+  if(this.post_id == null)
     return;
-  this.opened = false;
+  this.post_id = null;
 
   this.editing_frame = null;
 

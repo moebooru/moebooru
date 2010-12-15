@@ -388,13 +388,6 @@ BrowserView.prototype.get_debug = function()
   return s;
 }
 
-/* Return true if last_preload_request includes [post_id, post_frame]. */
-BrowserView.prototype.last_preload_request_includes = function(post_id, post_frame)
-{
-  var found_preload = this.last_preload_request.find(function(post) { return post[0] == post_id && post[1] == post_frame; });
-  return found_preload != null;
-}
-
 /* Begin preloading the HTML and images for the given post IDs. */
 BrowserView.prototype.preload = function(post_ids)
 {
@@ -403,7 +396,9 @@ BrowserView.prototype.preload = function(post_ids)
    * call to preload().  If it didn't include the current post, then skip the preload. */
   var last_preload_request = this.last_preload_request;
   this.last_preload_request = post_ids;
-  if(this.last_preload_request_includes(this.wanted_post_id, this.wanted_post_frame))
+
+  var previous_preload = last_preload_request.find(function(post) { return post[0] == this.wanted_post_id && post[1] == this.wanted_post_frame; }.bind(this));
+  if(previous_preload == null)
   {
     // debug("skipped-preload(" + post_ids.join(",") + ")");
     this.last_preload_request_active = false;

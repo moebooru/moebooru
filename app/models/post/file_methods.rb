@@ -346,7 +346,6 @@ module PostFileMethods
       return true
     end
 
-    size = Danbooru.reduce_to({:width => width, :height => height}, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]})
     begin
       Danbooru.resize(file_ext, path, tempfile_sample_path, size, CONFIG["sample_quality"])
     rescue Exception => x

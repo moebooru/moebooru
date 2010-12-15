@@ -59,7 +59,7 @@ CONFIG["sample_quality"] = 92
 # The greater dimension of sample images will be clamped to sample_min, and the smaller
 # to sample_min.  2000x1400 will clamp a landscape image to 2000x1400, or a portrait
 # image to 1400x2000.
-CONFIG["sample_max"] = 1800
+CONFIG["sample_max"] = 1500
 CONFIG["sample_min"] = 1200
 
 # The maximum dimensions of inline images for the forums and wiki.

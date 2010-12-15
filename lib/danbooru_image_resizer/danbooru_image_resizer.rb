@@ -44,8 +44,20 @@ module Danbooru
 
   # If allow_enlarge is true, always scale to fit, even if the source area is
   # smaller than max_size.
-  def reduce_to(size, max_size, ratio = 1, allow_enlarge = false)
+  #
+  # If min_max is true, max_size[:width] and max_size[:height] are treated as bounding
+  # the greater and lesser dimensions of the image.  For example, if max_size is 1500x1000,
+  # then a landscape image will be scaled to 1500x1000, and a portrait image will be
+  # 1000x1500.
+  # the maximum scaling to 1000x1500.
+  def reduce_to(size, max_size, ratio = 1, allow_enlarge = false, min_max = false)
     ret = size.dup
+
+    if min_max then
+      if max_size[:width] < max_size[:height] != size[:width] < size[:height] then
+        max_size[:width], max_size[:height] = max_size[:height], max_size[:width]
+      end
+    end
     
     if allow_enlarge
       if ret[:width] < max_size[:width]

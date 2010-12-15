@@ -57,7 +57,7 @@ FrameEditor = function(container, image_container, options)
 
   /* Create the main frame.  This sits on top of the image, receives mouse events and
    * holds the individual frames. */
-  var div = document.createElement("div");
+  var div = $(document.createElement("div"));
   div.style.position = "absolute";
   div.style.left = "0";
   div.style.top = "0";
@@ -534,7 +534,7 @@ FrameEditor.prototype.save = function(finished)
 
 FrameEditor.prototype.create_image_frame = function()
 {
-  var div = document.createElement("div");
+  var div = $(document.createElement("div"));
   div.className = "frame-editor-frame-box";
 
   /* Disable pointer-events on the image frame, so the handle cursors always
@@ -547,7 +547,7 @@ FrameEditor.prototype.create_image_frame = function()
 
   var create_handle = function(cursor, style)
   {
-    var handle = document.createElement("div");
+    var handle = $(document.createElement("div"));
     handle.style.position = "absolute";
     handle.className = "frame-box-handle " + cursor;
     handle.frame_drag_cursor = cursor;
@@ -594,7 +594,7 @@ FrameEditor.prototype.update_image_frame = function(frame_idx)
 FrameEditor.prototype.add_frame_to_list = function(frame_idx)
 {
   var tbody = this.container.down(".frame-list").down("TBODY");
-  var tr = document.createElement("TR");
+  var tr = $(document.createElement("TR"));
   tr.className = "frame-row frame-" + frame_idx;
   tr.frame_idx = frame_idx;
   tbody.appendChild(tr);

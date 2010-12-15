@@ -719,22 +719,22 @@ Post = {
   resize_image: function() {
     var img = $("image");
 
-    if ((img.scale_factor == 1) || (img.scale_factor == null)) {
+    if(img.original_width == null)
+    {
       img.original_width = img.width;
       img.original_height = img.height;
-      var client_width = $("right-col").clientWidth - 15;
-      var client_height = $("right-col").clientHeight;
-
-      if (img.width > client_width) {
-        var ratio = img.scale_factor = client_width / img.width;
-        img.width = img.width * ratio;
-        img.height = img.height * ratio;
-      }
-    } else {
-      img.scale_factor = 1;
-      img.width = img.original_width;
-      img.height = img.original_height;
     }
+
+    var ratio = 1;
+    if ((img.scale_factor == 1) || (img.scale_factor == null)) {
+      var client_width = window.innerWidth - 15;
+      var client_height = window.innerHeight - 15;
+      ratio = Math.min(ratio, client_width / img.original_width);
+      ratio = Math.min(ratio, client_height / img.original_height);
+    }
+    img.width = img.original_width * ratio;
+    img.height = img.original_height * ratio;
+    img.scale_factor = ratio;
   
     if (window.Note) {
       for (var i=0; i<window.Note.all.length; ++i) {
@@ -842,6 +842,8 @@ Post = {
     var f = function() {
       img.stopObserving("load")
       img.stopObserving("error")
+      img.original_height = null;
+      img.original_width = null;
       img.height = img.getAttribute("large_height");
       img.width = img.getAttribute("large_width");
       img.src = $("highres").href;

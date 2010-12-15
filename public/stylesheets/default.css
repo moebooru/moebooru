@@ -1680,7 +1680,7 @@ textarea.edit-item { border: none; }
 }
 .frame-editor-main-frame .frame-editor-frame-box {
   position: absolute;
-  border: 1px solid #000;
+  border: 1px solid #777;
   background-color: rgba(0,0,0,0.1);
 }
 

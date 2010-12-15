@@ -48,16 +48,26 @@ CONFIG["mirrors"] = [
 # Enables image samples for large images. NOTE: if you enable this, you must manually create a public/data/sample directory.
 CONFIG["image_samples"] = true
 
-# The maximum dimensions and JPEG quality of sample images.
-CONFIG["sample_width"] = 1400
+# The maximum dimensions and JPEG quality of sample images.  This is applied
+# before sample_max/sample_min below.  If sample_width is nil, neither of these
+# will be applied and only sample_min/sample_max below will determine the sample
+# size.
+CONFIG["sample_width"] = nil
 CONFIG["sample_height"] = 1000 # Set to nil if you never want to scale an image to fit on the screen vertically
-CONFIG["sample_quality"] = 95
+CONFIG["sample_quality"] = 92
+
+# The greater dimension of sample images will be clamped to sample_min, and the smaller
+# to sample_min.  2000x1400 will clamp a landscape image to 2000x1400, or a portrait
+# image to 1400x2000.
+CONFIG["sample_max"] = 1800
+CONFIG["sample_min"] = 1200
 
 # The maximum dimensions of inline images for the forums and wiki.
 CONFIG["inline_sample_width"] = 800
 CONFIG["inline_sample_height"] = 600
 
 # Resample the image only if the image is larger than sample_ratio * sample_dimensions.
+# This is ignored for PNGs, so a JPEG sample is always created.
 CONFIG["sample_ratio"] = 1.25
 
 # A prefix to prepend to sample files

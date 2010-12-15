@@ -41,8 +41,14 @@ class PostFrames < ActiveRecord::Base
   end
 
   def self.frame_image_dimensions(frame)
-    return Danbooru.reduce_to({:width=>frame[:source_width], :height=>frame[:source_height]},
-                              {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]}, CONFIG["sample_ratio"])
+    size = {:width=>frame[:source_width], :height=>frame[:source_height]}
+
+    if not CONFIG["sample_width"].nil?
+      size = Danbooru.reduce_to(size, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]}, CONFIG["sample_ratio"])
+    end
+    size = Danbooru.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, 1, false, true)
+
+    return size
   end
 
   def self.frame_preview_dimensions(frame)

@@ -320,7 +320,18 @@ module PostFileMethods
     return true unless (width && height)
     return true if (file_ext.downcase == "gif")
 
-    size = Danbooru.reduce_to({:width => width, :height => height}, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]}, CONFIG["sample_ratio"])
+    # Always create samples for PNGs.
+    if file_ext.downcase == "png" then
+      ratio = 1
+    else
+      ratio = CONFIG["sample_ratio"]
+    end
+
+    size = {:width => width, :height => height}
+    if not CONFIG["sample_width"].nil?
+      size = Danbooru.reduce_to(size, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]}, ratio)
+    end
+    size = Danbooru.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, ratio, false, true)
 
     # We can generate the sample image during upload or offline.  Use tempfile_path
     # if it exists, otherwise use file_path.

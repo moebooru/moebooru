@@ -263,7 +263,8 @@ BrowserView = function(container)
   /* Create the frame editor.  This must be created before image_dragger, since it takes priority
    * for drags. */
   this.container.down(".edit-frames-button").on("click", function(e) { e.stop(); this.show_frame_editor(); }.bindAsEventListener(this));
-  this.frame_editor = new FrameEditor(this.container.down(".frame-editor"), this.img_box, {
+  this.frame_editor = new FrameEditor(this.container.down(".frame-editor"), this.img_box, this.container.down(".frame-editor-popup"),
+  {
     onClose: function() {
       this.hide_frame_editor();
     }.bind(this)
@@ -525,7 +526,10 @@ BrowserView.prototype.set_viewing_larger_version = function(b)
   /* Only allow dragging to create new frames when not viewing the large version,
    * since we need to be able to drag the image. */
   if(this.frame_editor)
+  {
     this.frame_editor.set_drag_to_create(!b);
+    this.frame_editor.set_show_corner_drag(!b);
+  }
 }
 
 BrowserView.prototype.set_main_image = function(post, post_frame)

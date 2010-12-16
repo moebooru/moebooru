@@ -1,3 +1,82 @@
+var create_drag_box = function(div)
+{
+  var create_handle = function(cursor, style)
+  {
+    var handle = $(document.createElement("div"));
+    handle.style.position = "absolute";
+    handle.className = "frame-box-handle " + cursor;
+    handle.frame_drag_cursor = cursor;
+
+    handle.style.pointerEvents = "all";
+    div.appendChild(handle);
+    for(s in style)
+    {
+      handle.style[s] = style[s];
+    }
+    return handle;
+  }
+
+  /* Create the corner handles after the edge handles, so they're on top. */
+  create_handle("n-resize", {top: "-5px", width: "100%", height: "10px"});
+  create_handle("s-resize", {bottom: "-5px", width: "100%", height: "10px"});
+  create_handle("w-resize", {left: "-5px", height: "100%", width: "10px"});
+  create_handle("e-resize", {right: "-5px", height: "100%", width: "10px"});
+  create_handle("nw-resize", {top: "-5px", left: "-5px", height: "10px", width: "10px"});
+  create_handle("ne-resize", {top: "-5px", right: "-5px", height: "10px", width: "10px"});
+  create_handle("sw-resize", {bottom: "-5px", left: "-5px", height: "10px", width: "10px"});
+  create_handle("se-resize", {bottom: "-5px", right: "-5px", height: "10px", width: "10px"});
+}
+
+var apply_drag = function(dragging_mode, x, y, image_dimensions, box)
+{
+  var move_modes = {
+    "move": { left: +1, top: +1, bottom: +1, right: +1 },
+    "n-resize": { top: +1 },
+    "s-resize": { bottom: +1 },
+    "w-resize": { left: +1 },
+    "e-resize": { right: +1 },
+    "nw-resize": { top: +1, left: +1 },
+    "ne-resize": { top: +1, right: +1 },
+    "sw-resize": { bottom: +1, left: +1 },
+    "se-resize": { bottom: +1, right: +1 }
+  }
+  var mode = move_modes[dragging_mode];
+  var result = {
+    left: box.left,
+    top: box.top,
+    width: box.width,
+    height: box.height
+  };
+  var right = result.left + result.width;
+  var bottom = result.top + result.height;
+
+  if(dragging_mode == "move")
+  {
+    /* In move mode, clamp the movement.  In other modes, clip the size below. */
+    x = clamp(x, -result.left, image_dimensions.width-right);
+    y = clamp(y, -result.top, image_dimensions.height-bottom);
+  }
+
+  /* Apply the drag. */
+  if(mode.top != null)     result.top += y * mode.top;
+  if(mode.left != null)    result.left += x * mode.left;
+  if(mode.right != null)   right += x * mode.right;
+  if(mode.bottom != null)  bottom += y * mode.bottom;
+
+  if(dragging_mode != "move")
+  {
+    /* Only clamp the dimensions that were modified. */
+    if(mode.left != null)   result.left = clamp(result.left, 0, right-1);
+    if(mode.top != null)    result.top = clamp(result.top, 0, bottom-1);
+    if(mode.bottom != null) bottom = clamp(bottom, result.top+1, image_dimensions.height);
+    if(mode.right != null)  right = clamp(right, result.left+1, image_dimensions.width);
+  }
+
+  result.width = right - result.left;
+  result.height = bottom - result.top;
+  return result;
+}
+
 /*
  * Given a frame, its post and an image, return the frame's rectangle scaled to
  * the size of the image.
@@ -44,16 +123,34 @@ var frame_dimensions_from_image = function(frame, image, post)
   return result;
 }
 
-FrameEditor = function(container, image_container, options)
+FrameEditor = function(container, image_container, popup_container, options)
 {
   this.container = container;
+  this.popup_container = popup_container;
   this.image_container = image_container;
   this.options = options;
+  this.show_corner_drag = true;
 
   this.image_frames = [];
 
   /* Event handlers which are set only while the tag editor is open: */
   this.open_handlers = [];
+
+  /* Set up the four parts of the corner dragger. */
+  var popup_parts = [".frame-editor-nw", ".frame-editor-ne", ".frame-editor-sw", ".frame-editor-se"];
+  this.corner_draggers = [];
+  for(var i = 0; i < popup_parts.length; ++i)
+  {
+    var part = popup_parts[i];
+    var div = this.popup_container.down(part);
+    var corner_dragger = new CornerDragger(div, part, {
+      onUpdate: function() {
+        this.update_frame_in_list(this.editing_frame);
+        this.update_image_frame(this.editing_frame);
+      }.bind(this)
+    });
+    this.corner_draggers.push(corner_dragger);
+  }
 
   /* Create the main frame.  This sits on top of the image, receives mouse events and
    * holds the individual frames. */
@@ -134,6 +231,19 @@ FrameEditor.prototype.set_drag_to_create = function(enable)
   this.drag_to_create = enable;
 }
 
+FrameEditor.prototype.update_show_corner_drag = function()
+{
+  this.popup_container.show(this.show_corner_drag && this.post_id != null);
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].update();
+}
+
+FrameEditor.prototype.set_show_corner_drag = function(enable)
+{
+  this.show_corner_drag = enable;
+  this.update_show_corner_drag();
+}
+
 FrameEditor.prototype.set_image_dimensions = function(width, height)
 {
   var editing_frame = this.editing_frame;
@@ -197,6 +307,16 @@ FrameEditor.prototype.open = function(post_id)
 
   this.container.show();
   this.main_frame.show();
+  this.update_show_corner_drag();
+
+  var post = Post.posts.get(this.post_id);
+
+  /* Tell the corner draggers which post we're working on now, so they'll start
+   * loading the JPEG version immediately if necessary.  Otherwise, we'll start
+   * loading it the first time we focus a frame, which will hitch the editor for
+   * a while in Chrome. */
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].set_post_id(this.post_id);
 
   this.open_handlers.push(
     document.on("keydown", function(e) {
@@ -206,7 +326,6 @@ FrameEditor.prototype.open = function(post_id)
 
   /* If we havn't done so already, make a backup of this post's frames.  We'll restore
    * from this later if the user cancels the edit. */
-  var post = Post.posts.get(this.post_id);
   this.original_frames = Object.toJSON(post.frames_pending);
 
   this.repopulate_table();
@@ -324,6 +443,7 @@ FrameEditor.prototype.create_dragger = function()
         else if(e.aX > 0 && e.aY < 0)   this.dragging_mode = "ne-resize";
         else if(e.aX < 0 && e.aY > 0)   this.dragging_mode = "sw-resize";
         else if(e.aX < 0 && e.aY < 0)   this.dragging_mode = "nw-resize";
+        else return;
 
         this.dragging_new = false;
 
@@ -343,61 +463,10 @@ FrameEditor.prototype.create_dragger = function()
         post.frames_pending[this.editing_frame] = source_dims;
       }
 
-      // XXX: remove dragging_idx for editing_frame?
       if(this.dragging_idx == null)
         return;
 
-
-
-      var frame = post.frames_pending[this.editing_frame];
-
-      var dims = {
-        left: this.dragging_anchor.left,
-        top: this.dragging_anchor.top,
-        width: this.dragging_anchor.width,
-        height: this.dragging_anchor.height
-      };
-      var move_modes = {
-        "move": { left: +1, top: +1, bottom: +1, right: +1 },
-        "n-resize": { top: +1 },
-        "s-resize": { bottom: +1 },
-        "w-resize": { left: +1 },
-        "e-resize": { right: +1 },
-        "nw-resize": { top: +1, left: +1 },
-        "ne-resize": { top: +1, right: +1 },
-        "sw-resize": { bottom: +1, left: +1 },
-        "se-resize": { bottom: +1, right: +1 }
-      }
-      var mode = move_modes[this.dragging_mode];
-      var x = e.aX;
-      var y = e.aY;
-      var right = dims.left + dims.width;
-      var bottom = dims.top + dims.height;
-
-      if(this.dragging_mode == "move")
-      {
-        /* In move mode, clamp the movement.  In other modes, clip the size below. */
-        x = clamp(x, -dims.left, this.image_dimensions.width-right);
-        y = clamp(y, -dims.top, this.image_dimensions.height-bottom);
-      }
-
-      /* Apply the drag. */
-      if(mode.top != null)     dims.top += y * mode.top;
-      if(mode.left != null)    dims.left += x * mode.left;
-      if(mode.right != null)   right += x * mode.right;
-      if(mode.bottom != null)  bottom += y * mode.bottom;
-
-      if(this.dragging_mode != "move")
-      {
-        /* Only clamp the dimensions that were modified. */
-        if(mode.left != null)   dims.left = clamp(dims.left, 0, right-1);
-        if(mode.top != null)    dims.top = clamp(dims.top, 0, bottom-1);
-        if(mode.bottom != null) bottom = clamp(bottom, dims.top+1, this.image_dimensions.height);
-        if(mode.right != null)  right = clamp(right, dims.left+1, this.image_dimensions.width);
-      }
-
-      dims.width = right - dims.left;
-      dims.height = bottom - dims.top;
+      var dims = apply_drag(this.dragging_mode, e.aX, e.aY, this.image_dimensions, this.dragging_anchor);
 
       /* Scale the changed dimensions back to the source resolution and apply them
        * to the frame. */
@@ -545,37 +614,23 @@ FrameEditor.prototype.create_image_frame = function()
   this.main_frame.appendChild(div);
   this.image_frames.push(div);
 
-  var create_handle = function(cursor, style)
-  {
-    var handle = $(document.createElement("div"));
-    handle.style.position = "absolute";
-    handle.className = "frame-box-handle " + cursor;
-    handle.frame_drag_cursor = cursor;
+  create_drag_box(div);
 
-    handle.style.pointerEvents = "all";
-    div.appendChild(handle);
-    for(s in style)
-    {
-      handle.style[s] = style[s];
-    }
-    return handle;
-  }
 
-  /* Create the corner handles after the edge handles, so they're on top. */
-  create_handle("n-resize", {top: "-5px", width: "100%", height: "10px"});
-  create_handle("s-resize", {bottom: "-5px", width: "100%", height: "10px"});
-  create_handle("w-resize", {left: "-5px", height: "100%", width: "10px"});
-  create_handle("e-resize", {right: "-5px", height: "100%", width: "10px"});
-  create_handle("nw-resize", {top: "-5px", left: "-5px", height: "10px", width: "10px"});
-  create_handle("ne-resize", {top: "-5px", right: "-5px", height: "10px", width: "10px"});
-  create_handle("sw-resize", {bottom: "-5px", left: "-5px", height: "10px", width: "10px"});
-  create_handle("se-resize", {bottom: "-5px", right: "-5px", height: "10px", width: "10px"});
 }
 
 FrameEditor.prototype.update_image_frame = function(frame_idx)
 {
   var post = Post.posts.get(this.post_id);
   var frame = post.frames_pending[frame_idx];
+
+  /* If the focused frame is being modified, update the corner dragger as well. */
+  if(frame_idx == this.editing_frame)
+  {
+    for(var i = 0; i < this.corner_draggers.length; ++i)
+      this.corner_draggers[i].update();
+  }
+
   var dimensions = frame_dimensions_to_image(frame, this.image_dimensions, post);
 
   var div = this.image_frames[frame_idx];
@@ -714,6 +769,9 @@ FrameEditor.prototype.focus = function(post_frame)
     row.addClassName("frame-focused");
   }
 
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].set_post_frame(this.editing_frame);
+
   this.update();
 }
 
@@ -725,6 +783,9 @@ FrameEditor.prototype.close = function()
   this.post_id = null;
 
   this.editing_frame = null;
+
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].set_post_id(null);
 
   if(this.keydown_handler)
   {
@@ -738,6 +799,7 @@ FrameEditor.prototype.close = function()
 
   this.container.hide();
   this.main_frame.hide();
+  this.update_show_corner_drag();
 
   /* Clear the row table. */
   var tbody = this.container.down(".frame-list").down("TBODY");
@@ -749,5 +811,191 @@ FrameEditor.prototype.close = function()
 
   if(this.options.onClose)
     this.options.onClose(this);
+}
+
+/* Create the specified corner dragger. */
+CornerDragger = function(container, part, options)
+{
+  this.container = container;
+  this.part = part;
+  this.options = options;
+
+  var box = container.down(".frame-editor-popup-div");
+
+  /* Create a div inside each .frame-editor-popup-div floating on top of the image
+   * to show the border of the frame. */
+  var frame_box = $(document.createElement("div"));
+  frame_box.className = "frame-editor-frame-box";
+  create_drag_box(frame_box);
+  box.appendChild(frame_box);
+
+  this.dragger = new DragElement(box, {
+    snap_pixels: 0,
+
+    ondown: function(e) {
+      var element = document.elementFromPoint(e.x, e.y);
+
+      /* If we clicked on a drag handle, use that handle.  Otherwise, choose the corner drag
+       * handle for the corner we're in. */
+      if(element.hasClassName("frame-box-handle")) this.dragging_mode = element.frame_drag_cursor;
+      else if(part == ".frame-editor-nw") this.dragging_mode = "nw-resize";
+      else if(part == ".frame-editor-ne") this.dragging_mode = "ne-resize";
+      else if(part == ".frame-editor-sw") this.dragging_mode = "sw-resize";
+      else if(part == ".frame-editor-se") this.dragging_mode = "se-resize";
+
+      var post = Post.posts.get(this.post_id);
+      var frame = post.frames_pending[this.post_frame];
+      this.dragging_anchor = frame_dimensions_to_image(frame, this.image_dimensions, post);
+
+      /* When dragging a handle, hide the cursor to get it out of the way. */
+      this.dragger.overriden_drag_class = this.dragging_mode == "move"? null: "hide-cursor";
+
+      /* Stop propagation of the event, so any other draggers in the chain don't start.  In
+       * particular, when we're dragging inside the image, we need to stop WindowDragElementAbsolute.
+       * Only do this if we're actually dragging, not if we aborted due to this.drag_to_create. */
+      e.latest_event.stopPropagation();
+    }.bind(this),
+
+    ondrag: function(e) {
+      var post = Post.posts.get(this.post_id);
+
+      /* Invert the motion, since we're dragging the image around underneith the
+       * crop frame instead of dragging the crop frame around. */
+      var dims = apply_drag(this.dragging_mode, -e.aX, -e.aY, this.image_dimensions, this.dragging_anchor);
+
+      /* Scale the changed dimensions back to the source resolution and apply them
+       * to the frame. */
+      var source_dims = frame_dimensions_from_image(dims, this.image_dimensions, post);
+      post.frames_pending[this.post_frame] = source_dims;
+
+      if(this.options.onUpdate)
+        this.options.onUpdate();
+    }.bind(this)
+  });
+
+  this.update();
+}
+
+/*
+ * Set the post to show in the corner dragger.  If post_id is null, clear any displayed
+ * post.
+ *
+ * When the post ID is set, the post frame is always cleared.
+ */
+CornerDragger.prototype.set_post_id = function(post_id)
+{
+  this.post_id = post_id;
+  this.post_frame = null;
+
+  var url = null;
+  var img = this.container.down("img");
+  if(post_id != null)
+  {
+    var post = Post.posts.get(this.post_id);
+    this.image_dimensions = {
+      width: post.jpeg_width, height: post.jpeg_height
+    };
+
+    url = post.jpeg_url;
+    img.width = this.image_dimensions.width;
+    img.height = this.image_dimensions.height;
+  }
+
+  /* Don't change the image if it's already set; it causes Chrome to reprocess the
+   * image. */
+  if(img.src != url)
+  {
+    img.src = url;
+  
+    if(Prototype.Browser.WebKit && url)
+    {
+      /* Decoding in Chrome takes long enough to be visible.  Hourglass the cursor while it runs. */
+      document.body.addClassName("hourglass");
+      (function() { document.body.removeClassName("hourglass"); }.defer());
+    }
+  }
+
+  this.update();
+}
+
+CornerDragger.prototype.set_post_frame = function(post_frame)
+{
+  this.post_frame = post_frame;
+
+  this.update();
+}
+
+CornerDragger.prototype.update = function()
+{
+  var shown = this.post_id != null && this.post_frame != null;
+
+  if(Prototype.Browser.WebKit)
+  {
+    /* Work around a WebKit (maybe just a Chrome) issue.  Images are downloaded immediately, but
+     * they're only decompressed the first time they're actually painted on screen.  This happens
+     * late, after all style is applied: hiding with display: none, visibility: hidden or even
+     * opacity: 0 causes the image to not be decoded until it's displayed, which causes a huge
+     * UI hitch the first time the user drags a box.  Work around this by setting opacity very
+     * small; it'll trick it into decoding the image, but it'll clip to 0 when rendered. */
+    if(shown)
+      this.container.style.opacity = 1;
+    else
+      this.container.style.opacity = 0.001;
+  }
+  else
+  {
+    this.container.show(shown);
+  }
+
+  this.container.show(this.post_id != null);
+  if(this.post_id == null || this.post_frame == null)
+    return;
+
+  var post = Post.posts.get(this.post_id);
+  var frame = post.frames_pending[this.post_frame];
+  var dims = frame_dimensions_to_image(frame, this.image_dimensions, post);
+
+  var div = this.container;
+
+  /* Update the drag/frame box. */
+  var box = this.container.down(".frame-editor-frame-box");
+  box.style.left = dims.left + "px";
+  box.style.top = dims.top + "px";
+  box.style.width = dims.width + "px";
+  box.style.height = dims.height + "px";
+
+  /* Recenter the corner box. */
+  var top = dims.top;
+  var left = dims.left;
+  if(this.part == ".frame-editor-ne" || this.part == ".frame-editor-se")
+    left += dims.width;
+  if(this.part == ".frame-editor-sw" || this.part == ".frame-editor-se")
+    top += dims.height;
+
+  var offset_height = div.offsetHeight/2;
+  var offset_width = div.offsetWidth/2;
+  /*
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-ne") offset_height -= div.offsetHeight/4;
+  if(this.part == ".frame-editor-sw" || this.part == ".frame-editor-se") offset_height += div.offsetHeight/4;
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-sw") offset_width -= div.offsetWidth/4;
+  if(this.part == ".frame-editor-ne" || this.part == ".frame-editor-se") offset_width += div.offsetWidth/4;
+  */
+  left -= offset_width;
+  top -= offset_height;
+
+  /* If the region is small enough that we don't have enough to fill the corner
+   * frames, push the frames inward so they line up. */
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-sw")
+    left = Math.min(left, dims.left + dims.width/2 - div.offsetWidth);
+  if(this.part == ".frame-editor-ne" || this.part == ".frame-editor-se")
+    left = Math.max(left, dims.left + dims.width/2);
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-ne")
+    top = Math.min(top, dims.top + dims.height/2 - div.offsetHeight);
+  if(this.part == ".frame-editor-sw" || this.part == ".frame-editor-se")
+    top = Math.max(top, dims.top + dims.height/2);
+
+  var img = this.container.down(".frame-editor-popup-div");
+  img.style.marginTop = (-top) + "px";
+  img.style.marginLeft = (-left) + "px";
 }
 

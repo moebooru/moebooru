@@ -21,6 +21,8 @@ body {
 }
 
 body.dragging { cursor: pointer !important; }
+body.hourglass { cursor: wait !important; }
+body.hide-cursor { cursor: url(/images/blank.png), pointer !important; }
 body.n-resize { cursor: n-resize !important; }
 body.s-resize { cursor: s-resize !important; }
 body.e-resize { cursor: e-resize !important; }
@@ -1678,10 +1680,16 @@ textarea.edit-item { border: none; }
   padding: 0;
   margin: 0.25em 0;
 }
-.frame-editor-main-frame .frame-editor-frame-box {
+.frame-editor-frame-box {
   position: absolute;
   border: 1px solid #777;
   background-color: rgba(0,0,0,0.1);
+}
+
+.frame-editor-popup-div .frame-editor-frame-box {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* Mark these not-dragging, so when we're dragging the body dragging cursor takes precedence. */
@@ -1697,6 +1705,33 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 .frame-editor-main-frame .focused-frame-box {
   background-color: rgba(0,0,0,0.3);
 }
+
+.frame-editor-popup-container
+{
+  position: absolute;
+  right: 0;
+}
+.frame-editor-popup
+{
+  width: 240px;
+  height: 240px;
+}
+.frame-editor-popup-box
+{
+  position: absolute;
+  overflow: hidden;
+  width: 120px;
+  height: 120px;
+  background-color: #000;
+}
+.frame-editor-popup-div
+{
+  position: relative;
+}
+.frame-editor-nw { left: 0; top: 0; }
+.frame-editor-ne { right: 0; top: 0; }
+.frame-editor-sw { left: 0; bottom: 0; }
+.frame-editor-se { right: 0; bottom: 0; }
 
 .image-navigator
 {

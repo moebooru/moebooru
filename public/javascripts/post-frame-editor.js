@@ -260,6 +260,7 @@ FrameEditor.prototype.update_show_corner_drag = function()
       this.popup_container.style.top = "0px";
       this.popup_container.style.right = "0px";
     }
+    this.popup_container.show();
   }
   else
   {

@@ -7,8 +7,7 @@
   <ul id="post-list-posts">
     <% @posts.each do |post| -%>
       <%-%><%= print_preview(post, :onclick => "return remove_post_confirm(#{post.id}, #{@pool.id})",
-                             :user => @current_user, :display => @browse_mode == 1? :large : :block, :hide_directlink => @browse_mode == 1,
-                             :url_params => "?pool_id=#{@pool.id}") -%>
+                             :user => @current_user, :display => @browse_mode == 1? :large : :block, :hide_directlink => @browse_mode == 1) -%>
     <%- end -%>
   </ul>
   </div>

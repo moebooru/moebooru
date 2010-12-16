@@ -334,6 +334,8 @@ FrameEditor.prototype.open = function(post_id)
 
   if(post.frames_pending.length > 0)
     this.focus(0);
+
+  this.update();
 }
 
 FrameEditor.prototype.create_dragger = function()
@@ -504,6 +506,39 @@ FrameEditor.prototype.repopulate_table = function()
 
 FrameEditor.prototype.update = function()
 {
+  var shown = this.post_id != null && this.editing_frame != null;
+  if(Prototype.Browser.WebKit)
+  {
+    /* Work around a WebKit (maybe just a Chrome) issue.  Images are downloaded immediately, but
+     * they're only decompressed the first time they're actually painted on screen.  This happens
+     * late, after all style is applied: hiding with display: none, visibility: hidden or even
+     * opacity: 0 causes the image to not be decoded until it's displayed, which causes a huge
+     * UI hitch the first time the user drags a box.  Work around this by setting opacity very
+     * small; it'll trick it into decoding the image, but it'll clip to 0 when rendered. */
+    if(shown)
+    {
+      this.popup_container.style.opacity = 1;
+      this.popup_container.style.pointerEvents = "";
+      this.popup_container.style.position = "static";
+    }
+    else
+    {
+      this.popup_container.style.opacity = 0.001;
+
+      /* Make sure the invisible element doesn't interfere with the page; disable pointer-events
+       * so it doesn't receive clicks, and set it to absolute so it doesn't affect the size of its
+       * containing box. */
+      this.popup_container.style.pointerEvents = "none";
+      this.popup_container.style.position = "absolute";
+      this.popup_container.style.top = "0px";
+      this.popup_container.style.right = "0px";
+    }
+  }
+  else
+  {
+    this.popup_container.show(shown);
+  }
+
   if(this.image_dimensions == null)
     return;
 
@@ -927,26 +962,6 @@ CornerDragger.prototype.set_post_frame = function(post_frame)
 
 CornerDragger.prototype.update = function()
 {
-  var shown = this.post_id != null && this.post_frame != null;
-
-  if(Prototype.Browser.WebKit)
-  {
-    /* Work around a WebKit (maybe just a Chrome) issue.  Images are downloaded immediately, but
-     * they're only decompressed the first time they're actually painted on screen.  This happens
-     * late, after all style is applied: hiding with display: none, visibility: hidden or even
-     * opacity: 0 causes the image to not be decoded until it's displayed, which causes a huge
-     * UI hitch the first time the user drags a box.  Work around this by setting opacity very
-     * small; it'll trick it into decoding the image, but it'll clip to 0 when rendered. */
-    if(shown)
-      this.container.style.opacity = 1;
-    else
-      this.container.style.opacity = 0.001;
-  }
-  else
-  {
-    this.container.show(shown);
-  }
-
   if(this.post_id == null || this.post_frame == null)
     return;
 

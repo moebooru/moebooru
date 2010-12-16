@@ -947,7 +947,6 @@ CornerDragger.prototype.update = function()
     this.container.show(shown);
   }
 
-  this.container.show(this.post_id != null);
   if(this.post_id == null || this.post_frame == null)
     return;
 

@@ -1208,9 +1208,7 @@ BrowserView.prototype.update_canvas = function()
   this.canvas.width = this.displayed_image_width;
   this.canvas.height = this.displayed_image_height;
   var ctx = this.canvas.getContext("2d");
-  var t = new Date();
   ctx.drawImage(this.img, 0, 0, this.displayed_image_width, this.displayed_image_height);
-  debug(new Date()-t);
   this.canvas.show();
   this.img.hide();
 

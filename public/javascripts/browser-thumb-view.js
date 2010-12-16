@@ -382,14 +382,7 @@ ThumbnailView.prototype.document_mouse_wheel_event = function(event)
  * if center_thumbs is true. */
 ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs)
 {
-  if(lazy)
-  {
-    /* Ask the pool browser to load the new post, with a delay in case we're
-     * scrolling quickly. */
-    this.view.lazily_load(post_id_and_frame[0], post_id_and_frame[1]);
-  } else {
-    this.view.set_post(post_id_and_frame[0], post_id_and_frame[1]);
-  }
+  this.view.set_post(post_id_and_frame[0], post_id_and_frame[1], lazy);
 
   if(center_thumbs)
   {

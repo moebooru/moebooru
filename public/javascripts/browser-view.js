@@ -607,7 +607,7 @@ BrowserView.prototype.set_main_image = function(post, post_frame)
 }
 
 /* Display post_id.  If post_frame is not null, set the specified frame. */
-BrowserView.prototype.set_post = function(post_id, post_frame)
+BrowserView.prototype.set_post = function(post_id, post_frame, lazy)
 {
   /* If there was a lazy load pending, cancel it. */
   this.cancel_lazily_load();
@@ -617,6 +617,18 @@ BrowserView.prototype.set_post = function(post_id, post_frame)
 
   if(post_id == this.displayed_post_id && post_frame == this.displayed_post_frame)
     return;
+
+  /* If a lazy load was requested and we're not yet loading the image for this post,
+   * delay loading. */
+  var is_cached = this.last_preload_request_active && this.post_frame_list_includes(this.last_preload_request, post_id, post_frame);
+  if(lazy && !is_cached)
+  {
+    this.lazy_load_timer = window.setTimeout(function() {
+      this.lazy_load_timer = null;
+      this.set_post(this.wanted_post_id, this.wanted_post_frame);
+    }.bind(this), 500);
+    return;
+  }
 
   this.hide_frame_editor();
 
@@ -1225,30 +1237,6 @@ BrowserView.prototype.cancel_lazily_load = function()
 
    window.clearTimeout(this.lazy_load_timer);
    this.lazy_load_timer = null;
-}
-
-BrowserView.prototype.lazily_load = function(post_id, post_frame)
-{
-  this.cancel_lazily_load();
-
-  /* If we already started the preload for the requested post, then use a small timeout. */
-  var is_cached = this.last_preload_request_active && this.post_frame_list_includes(this.last_preload_request, post_id, post_frame);
-
-  var ms = is_cached? 0:500;
-
-  /* Once lazily_load is called with a new post, we should consistently stay on the current
-   * post or change to the new post.  We shouldn't change to a post that was previously
-   * requested by lazily_load (due to a background request completing).  Mark whatever post
-   * we're currently on as the one we want, until we're able to switch to the new one. */
-  this.wanted_post_id = this.displayed_post_id;
-  this.wanted_post_frame = this.displayed_post_frame;
-
-  this.lazy_load_post_id = post_id;
-  this.lazy_load_post_frame = post_frame;
-  this.lazy_load_timer = window.setTimeout(function() {
-    this.lazy_load_timer = null;
-    this.set_post(post_id, post_frame);
-  }.bind(this), ms);
 }
 
 /* Update the window title when the display changes. */

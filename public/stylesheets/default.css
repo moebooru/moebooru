@@ -837,6 +837,7 @@ div#notice {
   position: fixed;
   z-index: 1000;
   text-align: center;
+  pointer-events: none;
 }
 
 #notice-container > table

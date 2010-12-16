@@ -1684,6 +1684,8 @@ textarea.edit-item { border: none; }
 .frame-editor-frame-box {
   position: absolute;
   border: 1px solid #777;
+  margin-top: -1px; /* adjust for border */
+  margin-left: -1px; /* adjust for border */
   background-color: rgba(0,0,0,0.1);
 }
 

@@ -381,6 +381,12 @@ BrowserView.prototype.set_post_ui = function(visible)
 
 BrowserView.prototype.image_loaded_event = function(event)
 {
+  /* Record that the image is completely available, so it can be blitted to the canvas.
+   * This is different than img.complete, which is true if the image has completed downloading
+   * but hasn't yet been decoded, so isn't yet completely available.  This generally happens
+   * if we query img.completed quickly after setting img.src and the image data is cached. */
+  this.img.fully_loaded = true;
+
   document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id, post_frame: this.displayed_post_frame });
   this.update_canvas();
 }
@@ -569,6 +575,7 @@ BrowserView.prototype.set_main_image = function(post, post_frame)
 
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
 
+  this.img.fully_loaded = false;
   if(post_frame != null && post_frame < post.frames.length)
   {
     var frame = post.frames[post_frame];
@@ -1184,7 +1191,7 @@ BrowserView.prototype.update_navigator = function()
  */
 BrowserView.prototype.update_canvas = function()
 {
-  if(!this.img.complete)
+  if(!this.img.fully_loaded)
   {
     debug("image incomplete; can't render to canvas");
     return false;

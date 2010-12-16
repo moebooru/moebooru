@@ -57,7 +57,6 @@ BrowserView = function(container)
   /* True if the post UI is visible. */
   this.post_ui_visible = true;
 
-  debug.handler.add_hook(this.get_debug.bind(this));
   this.update_navigator = this.update_navigator.bind(this);
 
   Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
@@ -380,15 +379,6 @@ BrowserView.prototype.image_loaded_event = function(event)
   document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id, post_frame: this.displayed_post_frame });
   this.update_canvas();
 }
-
-BrowserView.prototype.get_debug = function()
-{
-  var s = "wanted: " + this.wanted_post_id + ", displayed: " + this.displayed_post_id;
-  if(this.lazy_load_timer)
-    s += ", lazy load pending";
-  return s;
-}
-
 
 /* Return true if last_preload_request includes [post_id, post_frame]. */
 BrowserView.prototype.post_frame_list_includes = function(post_id_list, post_id, post_frame)

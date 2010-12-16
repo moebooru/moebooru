@@ -46,7 +46,12 @@ BrowserView = function(container)
   this.img_box = this.container.down(".image-box");
   this.container.down(".image-canvas");
 
-  this.canvas = create_canvas_2d();
+  /* In Opera 10.63, the img.complete property is not reset to false after changing the
+   * src property.  Blits from images to the canvas silently fail, with nothing being
+   * blitted and no exception raised.  This causes blank canvases to be displayed, because
+   * we have no way of telling whether the image is blittable or if the blit succeeded. */
+  if(!Prototype.Browser.Opera)
+    this.canvas = create_canvas_2d();
   if(this.canvas)
   {
     this.canvas.hide();
@@ -564,7 +569,6 @@ BrowserView.prototype.set_main_image = function(post, post_frame)
 
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
 
-  // XXX larger_version + frames
   if(post_frame != null && post_frame < post.frames.length)
   {
     var frame = post.frames[post_frame];

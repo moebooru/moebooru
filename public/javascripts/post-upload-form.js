@@ -58,6 +58,10 @@ PostUploadForm.prototype.click_cancel = function(e)
 
 PostUploadForm.prototype.form_submit_event = function(e)
 {
+  /* This submit may have been stopped by User.run_login_onsubmit. */
+  if(e.stopped)
+    return;
+
   if(this.current_request != null)
     return;
 

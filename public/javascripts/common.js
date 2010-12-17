@@ -273,7 +273,7 @@ function InitTextAreas()
     elem.set_login_handler = true;
 
     OnKey(13, { ctrlKey: true, AllowInputFields: true, AllowTextAreaFields: true, Element: elem}, function(f) {
-      $(form).submitWithLogin();
+      $(form).simulate_submit();
     });
   });
 }

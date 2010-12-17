@@ -790,10 +790,10 @@ class PostController < ApplicationController
       end
       fmt.json do
         @posts.each { |post|
-          post.similarity = res[:similarity][e]
+          post.similarity = res[:similarity][post]
         }
         res[:posts_external].each { |post|
-          post.similarity = res[:similarity][e]
+          post.similarity = res[:similarity][post]
         }
         api_data = {
           :posts => @posts,

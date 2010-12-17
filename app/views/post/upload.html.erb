@@ -48,7 +48,13 @@
           <tr>
             <td></td>
             <td>
-              <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s" %>
+              <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s", :class => "submit", :style => "margin: 0;" %>
+              <%= submit_tag "Cancel", :tabindex => 8, :accesskey => "s", :class => "cancel", :style => "display: none; vertical-align: bottom; margin: 0;" %>
+              <div id="progress" class="upload-progress-bar" style="display: none;">
+                <div class="upload-progress-bar-fill"></div>
+              </div>
+              <span style="display: none;" id="post-exists">This post already exists: <a href="#" id="post-exists-link"></a></span>
+              <span style="display: none;" id="post-upload-error"></span>
             </td>
           </tr>
         </tfoot>
@@ -125,6 +131,10 @@
   if (Cookie.get("upload-disclaimer") == "1") {
     $("upload-disclaimer").hide()
   }
+
+  var form = $("edit-form");
+  if(form)
+    new PostUploadForm(form, $("progress"));
 </script>
 
 <% content_for("post_cookie_javascripts") do %>

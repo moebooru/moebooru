@@ -547,6 +547,20 @@ ul.link-page > li {
   color: #33CFFF;
 }
 
+.upload-progress-bar
+{
+  display: inline-block;
+  width: 100px;
+  height: 1em;
+  border: 1px solid #FFF;
+}
+
+.upload-progress-bar-fill
+{
+  height: 100%;
+  background-color: #F0F;
+}
+
 .added {
   color: #00CC00;
 }

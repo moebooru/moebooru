@@ -314,8 +314,8 @@ Post = {
   observe_text_area: function(field_id) {
     $(field_id).observe("keydown", function(e) {
       if (e.keyCode == Event.KEY_RETURN) {
-        e.stop()
-        this.up("form").submitWithLogin()
+        e.stop();
+        this.up("form").simulate_submit();
       }
     })
   },

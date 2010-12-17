@@ -1,8 +1,26 @@
+require "base64"
+
+# This simulates an http.request_get response, for data: URLs.
+class LocalData
+  def initialize(data)
+    @data = data
+  end
+  def read_body
+    yield @data
+  end
+end
+
 module Danbooru
   # Download the given URL, following redirects; once we have the result, yield the request.
   def http_get_streaming(source, options = {}, &block)
     max_size = options[:max_size] || CONFIG["max_image_size"]
     max_size = nil if max_size == 0 # unlimited
+
+    # Decode data: URLs.
+    if source =~ /^data:([^;]{1,100})(;[^;]{1,100})?,(.*)$/
+      data = Base64.decode64($3)
+      return yield LocalData.new(data)
+    end
 
     limit = 4
 

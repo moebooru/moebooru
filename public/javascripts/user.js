@@ -619,17 +619,3 @@ User = {
   }
 }
 
-/* This should be done in User.init(), but that doesn't work in IE (for some reason). */
-Element.addMethods("FORM", {
-  submitWithLogin: function(form)
-  {
-    if(!form.hasClassName("need-signup"))
-    {
-      form.submit();
-      return;
-    }
-
-    User.run_login(false, function() { form.submit() });
-  }
-});
-

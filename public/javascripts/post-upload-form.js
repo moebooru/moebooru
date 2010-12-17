@@ -1,6 +1,6 @@
 var PostUploadForm = function(form, progress)
 {
-  var XHRLevel2 = (new XMLHttpRequest().upload != null);
+  var XHRLevel2 = "XMLHttpRequest" in window && (new XMLHttpRequest().upload != null);
   var SupportsFormData = "FormData" in window;
   if(!XHRLevel2 || !SupportsFormData)
     return;

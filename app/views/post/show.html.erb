@@ -53,18 +53,6 @@
         <% browser_url = "/post/browse##{@post.id}" %>
         <% browser_url += "/pool:#{@following_pool_post.pool_id}" if not @following_pool_post.nil? %>
         OnKey(66, { AlwaysAllowOpera: true }, function(e) { window.location.href = <%= browser_url.to_json %>; });
-
-        <% if not @following_pool_post.nil? %>
-          OnKey(65, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.prev_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
-          OnKey(83, { AlwaysAllowOpera: true }, function(e) { Post.jump_to_post_in_pool(<%= @following_pool_post.next_post_id.to_json %>, <%= @following_pool_post.pool_id.to_json %>); return true; });
-
-          <% for pool_post in [@following_pool_post.next_post, @following_pool_post.prev_post] do %>
-            <% next if pool_post.nil? %>
-            Preload.preload(<%= pool_post.sample_url.to_json %>);
-            var url = Post.get_url_for_post_in_pool(<%= pool_post.id %>, <%= @following_pool_post.pool_id %>);
-            Preload.preload_raw(url);
-          <% end %>
-        <% end %>
       </script>
     <% end %>
   <% end %>

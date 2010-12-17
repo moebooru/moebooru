@@ -203,6 +203,11 @@ input {
   padding: 0 0.3em;
 }
 
+input[type=file] {
+  /* Chrome puts the filename next to the input element in the text color. */
+  color: white;
+}
+
 input[type=password]:focus {
   background: #FFC;
 	color: #000;

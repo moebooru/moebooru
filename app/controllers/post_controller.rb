@@ -76,6 +76,7 @@ class PostController < ApplicationController
         @post.destroy
         respond_to_error("MD5 mismatch", {:action => "error"}, :status => 420)
       else
+        api_data = {:post_id => @post.id, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}
         if CONFIG["dupe_check_on_upload"] && @post.image? && @post.parent_id.nil?
           if params[:format] == "xml" || params[:format] == "json"
             options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
@@ -84,12 +85,15 @@ class PostController < ApplicationController
             if not res[:posts].empty?
               @post.tags = @post.tags + " possible_duplicate"
               @post.save!
+              api_data[:has_similar_hits] = true
             end
           end
 
-          respond_to_success("Post uploaded", {:controller => "post", :action => "similar", :id => @post.id, :initial => 1}, :api => {:post_id => @post.id, :location => url_for(:controller => "post", :action => "similar", :id => @post.id, :initial => 1)})
+          api_data[:similar_location] = url_for(:controller => "post", :action => "similar", :id => @post.id, :initial => 1)
+          p api_data
+          respond_to_success("Post uploaded", {:controller => "post", :action => "similar", :id => @post.id, :initial => 1}, :api => api_data)
         else
-          respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => {:post_id => @post.id, :location => url_for(:controller => "post", :action => "show", :id => @post.id)})
+          respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => api_data)
         end
       end
     elsif @post.errors.invalid?(:md5)

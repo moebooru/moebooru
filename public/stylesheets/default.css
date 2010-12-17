@@ -204,8 +204,6 @@ input {
 }
 
 input[type=file] {
-  /* Chrome puts the filename next to the input element in the text color. */
-  color: white;
 }
 
 input[type=password]:focus {

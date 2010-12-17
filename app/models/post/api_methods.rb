@@ -1,4 +1,6 @@
 module PostApiMethods
+  attr_accessor :similarity
+
   def api_attributes
     ret = {
       :id => id, 
@@ -61,6 +63,12 @@ module PostApiMethods
       ret[:pool_post][:next_post_id] = pool_next_post_id
       ret[:pool_post][:prev_post_id] = pool_prev_post_id
       ret[:pool_post][:sequence] = pool_sequence
+    end
+
+    # For post/similar results:
+    p similarity
+    if not similarity.nil?
+      ret[:similarity] = similarity
     end
 
     return ret

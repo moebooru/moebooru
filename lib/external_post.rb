@@ -1,6 +1,6 @@
 class ExternalPost
   # These mimic the equivalent attributes in Post directly.
-  attr_accessor :md5, :url, :preview_url, :service, :width, :height, :tags, :rating, :id
+  attr_accessor :md5, :url, :preview_url, :service, :width, :height, :tags, :rating, :id, :similarity
 
   class << self
     def get_service_icon(service)

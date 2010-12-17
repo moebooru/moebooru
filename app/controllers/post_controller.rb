@@ -741,7 +741,7 @@ class PostController < ApplicationController
 
       @errors = res[:errors]
       @searched = true
-      @search_id = res[:search_id]
+      @search_id = params[:search_id]
 
       # Never pass :file on through generated URLs.
       params.delete(:file)
@@ -753,6 +753,17 @@ class PostController < ApplicationController
 
     @posts = res[:posts]
     @similar = res
+
+    if params[:format] == "json" || params[:format] == "xml" then
+      if @errors[:error]
+        respond_to_error(@errors[:error], {:action => "index"}, :status => 503)
+        return
+      end
+      if not @searched
+        respond_to_error("no search supplied", {:action => "index"}, :status => 503)
+        return
+      end
+    end
 
     respond_to do |fmt|
       fmt.html do
@@ -777,15 +788,30 @@ class PostController < ApplicationController
           end
         end
       end
+      fmt.json do
+        @posts.each { |post|
+          post.similarity = res[:similarity][e]
+        }
+        res[:posts_external].each { |post|
+          post.similarity = res[:similarity][e]
+        }
+        api_data = {
+          :posts => @posts,
+          :source => res[:source] ? res[:source]:res[:external_source],
+          :search_id => @search_id
+        }
+
+        unless res[:errors].empty?
+          api_data[:error] = []
+          res[:errors].map { |server, error|
+            api_data[:error] << { :server=>server, :message=>error[:message], :services=>error[:services].join(",") }
+          }
+        end
+
+        respond_to_success("", {}, :api => api_data)
+      end
+
       fmt.xml do
-        if @errors[:error]
-          respond_to_error(@errors[:error], {:action => "index"}, :status => 503)
-          return
-        end
-        if not @searched
-          respond_to_error("no search supplied", {:action => "index"}, :status => 503)
-          return
-        end
         x = Builder::XmlMarkup.new(:indent => 2)
         x.instruct!
         render :xml => x.posts() {

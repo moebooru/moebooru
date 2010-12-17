@@ -183,6 +183,11 @@ module SimilarImages
       post.rating = "q"
       ret[:search_id] = "source"
 
+      # Don't include the source URL if it's a data: url; it can be very large and isn't useful.
+      if post.url.slice(0, 5) == "data:" then
+        post.url = ""
+      end
+
       imgsize = ImageSize.new(source_file)
       source_width = imgsize.get_width
       source_height = imgsize.get_height

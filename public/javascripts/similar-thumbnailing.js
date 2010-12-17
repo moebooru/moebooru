@@ -2,13 +2,20 @@ SimilarWithThumbnailing = function(form)
 {
   this.supported = false;
 
+  /* Temporary hack to support FF4 betas: */
+  if(!("createObjectURL" in window) && "createBlobURL" in window)
+  {
+    window.createObjectURL = window.createBlobURL;
+    window.revokeObjectURL = window.revokeBlobURL;
+  }
+
+  /* Stop if the FormData or object URL APIs aren't supported. */
+  if(!("FormData" in window) || !("createObjectURL" in window))
+    return;
+
   /* Stop if canvas isn't supported, and just use regular form submission. */
   this.canvas = create_canvas_2d();
   if(!this.canvas)
-    return;
-
-  /* Stop if the FormData API isn't supported. */
-  if(!("FormData" in window))
     return;
 
   this.supported = true;

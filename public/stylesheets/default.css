@@ -22,7 +22,7 @@ body {
 
 html.progress { cursor: progress !important; }
 body.dragging { cursor: pointer !important; }
-body.hourglass { cursor: wait !important; }
+html.hourglass { cursor: wait !important; }
 body.hide-cursor { cursor: url(/images/blank.png), pointer !important; }
 body.n-resize { cursor: n-resize !important; }
 body.s-resize { cursor: s-resize !important; }

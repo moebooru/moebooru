@@ -947,8 +947,8 @@ CornerDragger.prototype.set_post_id = function(post_id)
     if(Prototype.Browser.WebKit && url)
     {
       /* Decoding in Chrome takes long enough to be visible.  Hourglass the cursor while it runs. */
-      document.body.addClassName("hourglass");
-      (function() { document.body.removeClassName("hourglass"); }.defer());
+      document.documentElement.addClassName("hourglass");
+      (function() { document.documentElement.removeClassName("hourglass"); }.defer());
     }
   }
 

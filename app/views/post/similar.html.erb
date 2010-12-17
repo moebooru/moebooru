@@ -161,6 +161,10 @@
   post_quick_edit = new PostQuickEdit($("quick-edit"));
 
   PostModeMenu.init()
+
+  var form = $("similar-form");
+  if(form)
+    new SimilarWithThumbnailing(form);
 </script>
 <% end %>
 

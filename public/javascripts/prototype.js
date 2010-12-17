@@ -1553,6 +1553,8 @@ Ajax.Request = Class.create(Ajax.Base, {
     };
 
     if (this.method == 'post') {
+      // Don't touch contentType if we've been told not to.
+      if(this.options.contentType != null)
       headers['Content-type'] = this.options.contentType +
         (this.options.encoding ? '; charset=' + this.options.encoding : '');
 

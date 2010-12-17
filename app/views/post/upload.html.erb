@@ -132,9 +132,13 @@
     $("upload-disclaimer").hide()
   }
 
-  var form = $("edit-form");
-  if(form)
-    new PostUploadForm(form, $("progress"));
+  /* Set up PostUploadForm in dom:loaded, to make sure the login handler can attach to
+   * the form first. */
+  document.observe("dom:loaded", function() {
+    var form = $("edit-form");
+    if(form)
+      new PostUploadForm(form, $("progress"));
+  });
 </script>
 
 <% content_for("post_cookie_javascripts") do %>

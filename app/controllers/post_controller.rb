@@ -99,7 +99,11 @@ class PostController < ApplicationController
       update[:source] = @post.source if p.source.blank? && !@post.source.blank?
       p.update_attributes(update)
 
-      respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :api => {:location => url_for(:controller => "post", :action => "show", :id => p.id)}, :status => 423)
+      api_data = {
+        :location => url_for(:controller => "post", :action => "show", :id => p.id),
+        :post_id => p.id
+      }
+      respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :api => api_data, :status => 423)
     else
       respond_to_error(@post, :action => "error")
     end

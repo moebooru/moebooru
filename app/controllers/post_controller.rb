@@ -423,9 +423,9 @@ class PostController < ApplicationController
       
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")
       if params.has_key?(:pool_id) then
-        @following_pool_post = PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil
+        @following_pool_post = PoolPost.find(:first, :conditions => ["active AND pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil
       else
-        @following_pool_post = PoolPost.find(:first, :conditions => ["post_id = ?", @post.id]) rescue nil
+        @following_pool_post = PoolPost.find(:first, :conditions => ["active AND post_id = ?", @post.id]) rescue nil
       end
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true

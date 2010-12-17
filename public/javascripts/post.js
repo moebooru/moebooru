@@ -727,7 +727,9 @@ Post = {
 
     var ratio = 1;
     if ((img.scale_factor == 1) || (img.scale_factor == null)) {
-      var client_width = window.innerWidth - 15;
+      /* Use clientWidth for sizing the width, and the window height for the height.
+       * This prevents needing to scroll horizontally to center the image. */
+      var client_width = $("right-col").clientWidth - 15;
       var client_height = window.innerHeight - 15;
       ratio = Math.min(ratio, client_width / img.original_width);
       ratio = Math.min(ratio, client_height / img.original_height);

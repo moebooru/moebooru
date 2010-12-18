@@ -249,7 +249,7 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
      * This happens when first initializing; we wait for the first search to complete to retrieve
      * info about the post we're starting on, instead of making a separate query. */
     if(results_mode == "jump-to-first" || this.view.wanted_post_id == null)
-      this.set_active_post(initial_post_id_and_frame);
+      this.set_active_post(initial_post_id_and_frame, false, false, true);
   }
 
   if(event.memo.tags == null)
@@ -297,7 +297,7 @@ ThumbnailView.prototype.hashchange_post_id = function()
   var new_post_idx = this.get_post_idx(post_id_and_frame);
   this.centered_post_offset = 0;
   this.center_on_post_for_scroll(new_post_idx);
-  this.set_active_post(post_id_and_frame);
+  this.set_active_post(post_id_and_frame, false, false, true);
 }
 
 /* Search for the given post ID and frame in the current search results, and return its
@@ -379,10 +379,11 @@ ThumbnailView.prototype.document_mouse_wheel_event = function(event)
 }
 
 /* Set the post that's shown in the view.  The thumbs will be centered on the post
- * if center_thumbs is true. */
-ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs)
+ * if center_thumbs is true.  See BrowserView.prototype.set_post for an explanation
+ * of no_hash_change. */
+ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs, no_hash_change)
 {
-  this.view.set_post(post_id_and_frame[0], post_id_and_frame[1], lazy);
+  this.view.set_post(post_id_and_frame[0], post_id_and_frame[1], lazy, no_hash_change);
 
   if(center_thumbs)
   {
@@ -392,14 +393,14 @@ ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, cent
   }
 }
 
-ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy, center_thumbs)
+ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy, center_thumbs, no_hash_change)
 {
   if(post_idx == null)
     return;
 
   var post_id = this.post_ids[post_idx];
   var post_frame = this.post_frames[post_idx];
-  this.set_active_post([post_id, post_frame], lazy, center_thumbs);
+  this.set_active_post([post_id, post_frame], lazy, center_thumbs, no_hash_change);
 }
 
 ThumbnailView.prototype.show_next_post = function(prev)

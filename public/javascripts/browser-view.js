@@ -617,14 +617,27 @@ BrowserView.prototype.set_main_image = function(post, post_frame)
   this.scale_and_position_image();
 }
 
-/* Display post_id.  If post_frame is not null, set the specified frame. */
-BrowserView.prototype.set_post = function(post_id, post_frame, lazy)
+/*
+ * Display post_id.  If post_frame is not null, set the specified frame.
+ *
+ * If no_hash_change is true, the UrlHash will not be updated to reflect the new post.
+ * This should be used when this is called to load the post already reflected by the
+ * URL hash.  For example, the hash "#/pool:123" shows pool 123 in the thumbnails and
+ * shows its first post in the view.  It should *not* change the URL hash to reflect
+ * the actual first post (eg. #12345/pool:123).  This will insert an unwanted history
+ * state in the browser, so the user has to go back twice to get out.
+ *
+ * no_hash_change should also be set when loading a state as a result of hashchange,
+ * for similar reasons.
+ */
+BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_change)
 {
   /* If there was a lazy load pending, cancel it. */
   this.cancel_lazily_load();
 
   this.wanted_post_id = post_id;
   this.wanted_post_frame = post_frame;
+  this.wanted_post_no_hash_change = no_hash_change;
 
   if(post_id == this.displayed_post_id && post_frame == this.displayed_post_frame)
     return;
@@ -636,7 +649,7 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy)
   {
     this.lazy_load_timer = window.setTimeout(function() {
       this.lazy_load_timer = null;
-      this.set_post(this.wanted_post_id, this.wanted_post_frame);
+      this.set_post(this.wanted_post_id, this.wanted_post_frame, false, this.wanted_post_no_hash_change);
     }.bind(this), 500);
     return;
   }
@@ -660,7 +673,8 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy)
 
   this.displayed_post_id = post_id;
   this.displayed_post_frame = post_frame;
-  UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame});
+  if(!no_hash_change)
+    UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame});
 
   this.set_viewing_larger_version(false);
 

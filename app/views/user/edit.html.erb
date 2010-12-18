@@ -79,6 +79,15 @@
         <% end %>
         <tr>
           <th>
+            <label class="block" for="user_use_browser">Use post browser</label>
+            <p>Use the post browser when viewing posts and pools.</p>
+          </th>
+          <td>
+            <%= check_box "user", "use_browser" %>
+          </td>
+        </tr>
+        <tr>
+          <th>
             <label class="block" for="user_show_advanced_editing">Advanced Editing</label>
             <p>Show advanced editing controls.</p>
           </th>

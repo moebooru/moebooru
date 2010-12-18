@@ -1222,5 +1222,73 @@ Post = {
       return;
     }
     window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id);
+  },
+
+  /*
+   * If the user has global browser links enabled, apply them.  This changes all links
+   * from /post/show/123 to /post/browse#123, and /pool/show/123 to /post/browse#/pool:123.
+   * 
+   * We do this in JS, so it applies without affecting memcached pages, and applies to
+   * things like preformatted, translated DText blocks.
+   *
+   * This is only done if the user's "Use post browser" (User.use_browser) setting is enabled.
+   */
+  InitBrowserLinks: function()
+  {
+    if(!User.get_use_browser())
+      return;
+
+    /*
+     * Break out the controller, action, ID and anchor:
+     * http://url.com/post/show/123#anchor
+     */
+    var parse_url = function(href)
+    {
+      var match = href.match(/^(http:\/\/[^\/]+)\/([a-z]+)\/([a-z]+)\/([0-9]+)([^#]*)(#.*)?$/);
+      if(!match)
+        return null;
+
+      return {
+        controller: match[2],
+        action: match[3],
+        id: match[4],
+        hash: match[6]
+      };
+    }
+
+    /* If the current page is /pool/show, make post links include both the post ID and
+     * the pool ID, eg. "#12345/pool:123". */
+    var current = parse_url(document.location.href);
+    var current_pool_id = null;
+    if(current && current.controller == "pool" && current.action == "show")
+      current_pool_id = current.id;
+
+    $$("A").each(function(a) {
+      var target = parse_url(a.href);
+      if(!target)
+        return;
+
+      /* If the URL has a hash, then it's something like a post comment link, so leave it
+       * alone. */
+      if(target.hash)
+        return;
+
+      if(target.controller == "post" && target.action == "show")
+      {
+        var url = "/post/browse#" + target.id;
+        if(current_pool_id != null)
+          url += "/pool:" + current_pool_id;
+        a.browse_href = url;
+        a.orig_href = a.href;
+      }
+      else if(target.controller == "pool" && target.action == "show")
+      {
+        a.browse_href = "/post/browse#/pool:" + target.id;
+        a.orig_href = a.href;
+      }
+
+      if(a.browse_href)
+        a.href = a.browse_href;
+    });
   }
 }

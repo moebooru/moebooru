@@ -592,20 +592,29 @@ User = {
       return null;
     return user_info.split(";");
   },
-  get_current_user_id: function()
+  get_current_user_info_field: function(idx, def)
   {
     var user_info = User.get_current_user_info();
     if(!user_info)
-      return 0;
-    return parseInt(user_info[0]);
+      return def;
+    if(idx >= user_info.length)
+      return def;
+    return user_info[idx];
+  },
+  get_current_user_id: function()
+  {
+    return parseInt(User.get_current_user_info_field(0, 0));
   },
 
   get_current_user_level: function()
   {
-    var user_info = User.get_current_user_info();
-    if(!user_info)
-      return 0;
-    return parseInt(user_info[1]);
+    return parseInt(User.get_current_user_info_field(1, 0));
+  },
+
+  get_use_browser: function()
+  {
+    var setting = User.get_current_user_info_field(2, "0");
+    return setting == "1";
   },
 
   is_member_or_higher: function()

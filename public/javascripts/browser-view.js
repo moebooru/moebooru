@@ -106,6 +106,13 @@ BrowserView = function(container)
     this.set_post_ui(e.memo.shown);
     this.scale_and_position_image(true);
   }.bindAsEventListener(this));
+
+  this.displayed_pool = null;
+  document.on("viewer:displayed-pool-changed", function(e) {
+    this.displayed_pool = e.memo.pool;
+  }.bindAsEventListener(this));
+
+
 /*
   OnKey(79, null, function(e) {
     this.zoom_level -= 1;
@@ -704,6 +711,20 @@ BrowserView.prototype.set_post_info = function()
   this.container.down(".post-id-link").href = "/post/show/" + post.id;
   this.container.down(".posted-by").show(post.creator_id != null);
   this.container.down(".posted-at").setTextContent(time_ago_in_words(new Date(post.created_at*1000)));
+
+  this.container.down(".pool-info").show(this.displayed_pool != null);
+  if(this.displayed_pool != null)
+  {
+    var sequence = post.pool_post.sequence;
+    if(sequence.match(/^[0-9]/))
+      sequence = "#" + sequence;
+    this.container.down(".pool-post-sequence").setTextContent(sequence);
+
+    this.container.down(".pool-link").href = "/pool/show/" + this.displayed_pool.id;
+
+    var pool_title = this.displayed_pool.name.replace(/_/g, " ");
+    this.container.down(".pool-link").setTextContent(pool_title);
+  }
 
   if(post.creator_id != null)
   {

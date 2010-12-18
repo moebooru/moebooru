@@ -1264,7 +1264,6 @@ Post = {
      */
     var parse_index_url = function(href)
     {
-      console.log(href);
       var match = href.match(/^(http:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/);
       if(!match)
         return null;
@@ -1282,7 +1281,6 @@ Post = {
       var tags = parse_index_url(a.href);
       if(tags != null)
       {
-        console.log(tags);
         a.href = "/post/browse#/" + tags;
         return;
       }

@@ -967,3 +967,10 @@ function TrackFocus()
   }.bindAsEventListener(this));
 }
 
+/* Temporary hack to support FF4 betas: */
+if(!("createObjectURL" in window) && "createBlobURL" in window)
+{
+  window.createObjectURL = window.createBlobURL;
+  window.revokeObjectURL = window.revokeBlobURL;
+}
+

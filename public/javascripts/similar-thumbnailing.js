@@ -1,64 +1,69 @@
-SimilarWithThumbnailing = function(form)
+/*
+ * file must be a Blob object.  Create and return a thumbnail of the image.
+ * Perform an image search using post/similar.
+ *
+ * On completion, onComplete(result) will be called, where result is an object with
+ * these properties:
+ *
+ * success: true or false.
+ *
+ * On failure:
+ * aborted: true if failure was due to a user abort.
+ * chromeFailure: If true, the image loaded but was empty.  Chrome probably ran out
+ * of memory, but the selected file may be a valid image.
+ *
+ * On success:
+ * canvas: On success, the canvas containing the thumbnailed image.
+ *
+ */
+ThumbnailUserImage = function(file, onComplete)
 {
-  this.supported = false;
+  /* Create the shared image pool, if we havn't yet. */
+  if(ThumbnailUserImage.image_pool == null)
+    ThumbnailUserImage.image_pool = new ImgPoolHandler();
 
-  /* Temporary hack to support FF4 betas: */
-  if(!("createObjectURL" in window) && "createBlobURL" in window)
-  {
-    window.createObjectURL = window.createBlobURL;
-    window.revokeObjectURL = window.revokeBlobURL;
-  }
-
-  /* Stop if the FormData or object URL APIs aren't supported. */
-  if(!("FormData" in window) || !("createObjectURL" in window))
-    return;
-
-  /* Stop if canvas isn't supported, and just use regular form submission. */
+  this.file = file;
   this.canvas = create_canvas_2d();
-  if(!this.canvas)
-    return;
+  this.image = ThumbnailUserImage.image_pool.get();
+  this.onComplete = onComplete;
 
-  this.supported = true;
-  this.form = form;
-  this.image = document.createElement("IMG");
+  var url = createObjectURL(this.file);
 
-  form.on("submit", this.form_submit_event.bindAsEventListener(this));
   this.image.on("load", this.image_load_event.bindAsEventListener(this));
   this.image.on("abort", this.image_abort_event.bindAsEventListener(this));
   this.image.on("error", this.image_error_event.bindAsEventListener(this));
-}
-
-SimilarWithThumbnailing.prototype.form_submit_event = function(e)
-{
-  var post_file = this.form.down("#file");
-
-  /* If the files attribute isn't supported, or we have no file (source upload), use regular
-   * form submission. */
-  if(post_file.files == null || post_file.files.length == 0)
-    return;
-
-  /* If we failed to load the image last time due to a silent Chrome error, continue with
-   * the submission normally this time. */
-  var file = post_file.files[0];
-  if(this.force_file && this.force_file == file)
-  {
-    this.force_file = null;
-    return;
-  }
-
-  e.stop();
 
   document.documentElement.addClassName("progress");
-
-  this.file = file;
-  var url = createObjectURL(this.file);
 
   this.image.src = url;
 }
 
+/* This is a shared pool; for clarity, don't put it in the prototype. */
+ThumbnailUserImage.image_pool = null;
+
+/* Cancel any running request.  The onComplete callback will not be called.
+ * The object must not be reused. */
+ThumbnailUserImage.prototype.destroy = function()
+{
+  document.documentElement.removeClassName("progress");
+
+  this.onComplete = null;
+
+  this.image.stopObserving();
+  ThumbnailUserImage.image_pool.release(this.image);
+  this.image = null;
+}
+
+ThumbnailUserImage.prototype.completed = function(result)
+{
+  if(this.onComplete)
+    this.onComplete(result);
+  this.destroy();
+}
+
 /* When the image finishes loading after form_submit_event sets it, update the canvas
  * thumbnail from it. */
-SimilarWithThumbnailing.prototype.image_load_event = function(e)
+ThumbnailUserImage.prototype.image_load_event = function(e)
 {
   /* Reduce the image size to thumbnail resolution. */
   var width = this.image.width;
@@ -91,21 +96,13 @@ SimilarWithThumbnailing.prototype.image_load_event = function(e)
 
   ctx.drawImage(this.image, 0, 0, canvas.width, canvas.height);
 
-  document.documentElement.removeClassName("progress");
-
   if(!this.check_image_contents())
   {
-    notice("The image failed to load; submitting normally...");
-    this.force_file = this.file;
-
-    /* Resend the submit event.  Defer it, so the notice can take effect before we
-     * navigate off the page. */
-    (function() { this.form.simulate_submit(); }).bind(this).defer();
-
+    this.completed({ success: false, chromeFailure: true });
     return;
   }
 
-  this.submit();
+  this.completed({ success: true, canvas: this.canvas });
 }
 
 /*
@@ -115,7 +112,7 @@ SimilarWithThumbnailing.prototype.image_load_event = function(e)
  * or not.  Check that the image loaded by looking at the results; reject the image
  * if it's completely transparent.
  */
-SimilarWithThumbnailing.prototype.check_image_contents = function()
+ThumbnailUserImage.prototype.check_image_contents = function()
 {
   var ctx = this.canvas.getContext("2d");
   var image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -133,23 +130,79 @@ SimilarWithThumbnailing.prototype.check_image_contents = function()
   return false;
 }
 
-SimilarWithThumbnailing.prototype.image_abort_event = function(e)
+ThumbnailUserImage.prototype.image_abort_event = function(e)
 {
-  document.documentElement.removeClassName("progress");
+  this.completed({ success: false, aborted: true });
 }
 
 /* This happens on normal errors, usually because the file isn't a supported image. */
-SimilarWithThumbnailing.prototype.image_error_event = function(e)
+ThumbnailUserImage.prototype.image_error_event = function(e)
 {
-  document.documentElement.removeClassName("progress");
-  alert("The file couldn't be loaded.");
+  this.completed({ success: false });
+}
+
+/* If the necessary APIs aren't supported, don't use ThumbnailUserImage. */
+if(!("createObjectURL" in window) || create_canvas_2d() == null)
+  ThumbnailUserImage = null;
+
+SimilarWithThumbnailing = function(form)
+{
+  this.similar = null;
+  this.form = form;
+  this.force_file = null;
+
+  form.on("submit", this.form_submit_event.bindAsEventListener(this));
+}
+
+SimilarWithThumbnailing.prototype.form_submit_event = function(e)
+{
+  var post_file = this.form.down("#file");
+
+  /* If the files attribute isn't supported, or we have no file (source upload), use regular
+   * form submission. */
+  if(post_file.files == null || post_file.files.length == 0)
+    return;
+
+  /* If we failed to load the image last time due to a silent Chrome error, continue with
+   * the submission normally this time. */
+  var file = post_file.files[0];
+  if(this.force_file && this.force_file == file)
+  {
+    this.force_file = null;
+    return;
+  }
+
+  e.stop();
+
+  if(this.similar)
+    this.similar.destroy();
+  this.similar = new ThumbnailUserImage(file, this.complete.bind(this));
 }
 
 /* Submit a post/similar request using the image currently in the canvas. */
-SimilarWithThumbnailing.prototype.submit = function()
+SimilarWithThumbnailing.prototype.complete = function(result)
 {
+  if(result.chromeFailure)
+  {
+    notice("The image failed to load; submitting normally...");
+
+    this.force_file = this.file;
+
+    /* Resend the submit event.  Defer it, so the notice can take effect before we
+     * navigate off the page. */
+    (function() { this.form.simulate_submit(); }).bind(this).defer();
+    return;
+  }
+
+  if(!result.success)
+  {
+    if(!result.aborted)
+      alert("The file couldn't be loaded.");
+    return;
+  }
+
   /* Grab a data URL from the canvas; this is what we'll send to the server. */
-  var data_url = this.canvas.toDataURL();
+  var data_url = result.canvas.toDataURL();
 
   /* Create the FormData containing the thumbnail image we're sending. */
   var form_data = new FormData();
@@ -176,4 +229,8 @@ SimilarWithThumbnailing.prototype.submit = function()
     }
   });
 }
+
+/* If the necessary APIs aren't supported, don't use SimilarWithThumbnailing. */
+if(!("FormData" in window) || !ThumbnailUserImage)
+  SimilarWithThumbnailing = null;
 

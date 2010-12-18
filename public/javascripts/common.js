@@ -757,6 +757,7 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
    * been started with a mouse event, only listen for mouse events.  We may receive
    * both sets of events, and the anchor coordinates for the two may not be compatible. */
   this.drag_handlers.push(document.on("selectstart", this.selectstart_event));
+  this.drag_handlers.push(Element.on(window, "pagehide", this.pagehide_event.bindAsEventListener(this)));
   if(touch)
   {
     this.drag_handlers.push(document.on("touchend", this.touchend_event));
@@ -786,6 +787,11 @@ DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identi
       y: y,
       latest_event: event
     });
+}
+
+DragElement.prototype.pagehide_event = function(event)
+{
+  this.stop_dragging(event, true);
 }
 
 DragElement.prototype.touchend_event = function(event)

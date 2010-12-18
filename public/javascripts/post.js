@@ -1256,6 +1256,21 @@ Post = {
       };
     }
 
+    /*
+     * Parse an index search URL and return the tags.  Only accept URLs with no other parameters;
+     * this shouldn't match the paginator in post/index.
+     *
+     * http://url.com/post?tags=tagme
+     */
+    var parse_index_url = function(href)
+    {
+      console.log(href);
+      var match = href.match(/^(http:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/);
+      if(!match)
+        return null;
+      return match[3];
+    }
+
     /* If the current page is /pool/show, make post links include both the post ID and
      * the pool ID, eg. "#12345/pool:123". */
     var current = parse_url(document.location.href);
@@ -1264,6 +1279,13 @@ Post = {
       current_pool_id = current.id;
 
     $$("A").each(function(a) {
+      var tags = parse_index_url(a.href);
+      if(tags != null)
+      {
+        console.log(tags);
+        a.href = "/post/browse#/" + tags;
+        return;
+      }
       var target = parse_url(a.href);
       if(!target)
         return;

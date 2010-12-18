@@ -974,3 +974,7 @@ if(!("createObjectURL" in window) && "createBlobURL" in window)
   window.revokeObjectURL = window.revokeBlobURL;
 }
 
+/* Allow CSS styles for WebKit. */
+if(navigator.userAgent.indexOf("AppleWebKit/") != -1)
+  document.documentElement.className += " webkit";
+

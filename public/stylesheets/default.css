@@ -204,7 +204,12 @@ input {
   padding: 0 0.3em;
 }
 
-input[type=file] {
+/* Unlike just about every other browser, WebKit puts the filename of file input elements
+ * on the page background, instead of on a white box.  We need to set it to a light color
+ * to make it visible, and we need to do this only on WebKit--if we set other browsers to
+ * white, it'll be unreadable on the white background. */
+HTML.webkit input[type=file] {
+  color: #FFF;
 }
 
 input[type=password]:focus {

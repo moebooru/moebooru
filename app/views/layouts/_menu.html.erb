@@ -21,7 +21,10 @@
     if(Cookie.get("login"))
     {
       var favorites_item = <%= make_sub_item("My&nbsp;Favorites", :controller => "post", :action => "index", :tags => "order:vote vote:3:") %>;
-      favorites_item.dest += Cookie.get("login")
+      if(User.get_use_browser())
+        favorites_item.dest = "/post/browse#/order:vote vote:3:" + Cookie.get("login");
+      else
+        favorites_item.dest += Cookie.get("login")
       account_menu.push(favorites_item);
     }
 

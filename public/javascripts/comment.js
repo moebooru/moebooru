@@ -76,5 +76,12 @@ Comment = {
     element.down(".untranslated-body").show(!translated);
     element.down(".show-translated").show(translated);
     element.down(".show-untranslated").show(!translated);
+  },
+
+  show_reply_form: function(post_id)
+  {
+    $("respond-link-" + post_id).hide();
+    $("reply-" + post_id).show();
+    $("reply-" + post_id).down("textarea").focus();
   }
 }

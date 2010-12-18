@@ -804,7 +804,7 @@ class PostController < ApplicationController
           post.similarity = res[:similarity][post]
         }
         api_data = {
-          :posts => @posts,
+          :posts => @posts + res[:posts_external],
           :source => res[:source] ? res[:source]:res[:external_source],
           :search_id => @search_id
         }

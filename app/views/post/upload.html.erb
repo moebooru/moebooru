@@ -136,9 +136,11 @@
    * the form first. */
   document.observe("dom:loaded", function() {
     var form = $("edit-form");
+    form.down("#post_file").on("change", function(e) { form.down("#post_tags").focus(); });
+
     if(form)
       new PostUploadForm(form, $("progress"));
-  });
+  }.bindAsEventListener(null));
 </script>
 
 <% content_for("post_cookie_javascripts") do %>

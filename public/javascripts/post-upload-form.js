@@ -144,3 +144,95 @@ PostUploadForm.prototype.cancel = function()
   this.current_request.transport.abort();
 }
 
+/*
+ * When file_field is changed to an image, run an image search and put a summary in
+ * results.
+ */
+UploadSimilarSearch = function(file_field, results)
+{
+  if(!ThumbnailUserImage)
+    return;
+
+  this.file_field = file_field;
+  this.results = results;
+
+  file_field.on("change", this.field_changed_event.bindAsEventListener(this));
+}
+
+UploadSimilarSearch.prototype.field_changed_event = function(event)
+{
+  this.results.hide();
+
+  if(this.file_field.files == null || this.file_field.files.length == 0)
+    return;
+
+  this.results.innerHTML = "Searching...";
+  this.results.show();
+
+  var file = this.file_field.files[0];
+  var similar = new ThumbnailUserImage(file, this.thumbnail_complete.bind(this));
+}
+
+UploadSimilarSearch.prototype.thumbnail_complete = function(result)
+{
+  if(!result.success)
+  {
+    this.results.innerHTML = "Image load failed.";
+    this.results.show();
+    return;
+  }
+
+  /* Grab a data URL from the canvas; this is what we'll send to the server. */
+  var data_url = result.canvas.toDataURL();
+
+  /* Create the FormData containing the thumbnail image we're sending. */
+  var form_data = new FormData();
+  form_data.append("url", data_url);
+
+  var req = new Ajax.Request("/post/similar.json", {
+    method: "post",
+    postBody: form_data,
+
+    /* Tell Prototype not to change XHR's contentType; it breaks FormData. */
+    contentType: null,
+
+    onComplete: function(resp)
+    {
+      this.results.innerHTML = "";
+      this.results.show();
+
+      var json = resp.responseJSON;
+      if(!json.success)
+      {
+        this.results.innerHTML = json.reason;
+        return;
+      }
+
+      if(json.posts.length > 0)
+      {
+        var posts = [];
+        var shown_posts = 3;
+        json.posts.slice(0, shown_posts).each(function(post) {
+            var s = "<a href='" + post.url + "'>post #" + post.id + "</a>";
+            posts.push(s);
+        });
+        var post_links = posts.join(", ");
+        var see_all = "<a href='/post/similar?search_id=" + json.search_id + "'>(see all)</a>";
+        var html = "Similar posts " + see_all + ": " + post_links;
+
+        if(json.posts.length > shown_posts)
+        {
+          var remaining_posts = json.posts.length - shown_posts;
+          html += " (" + remaining_posts + " more)";
+        }
+
+        this.results.innerHTML = html;
+      }
+      else
+      {
+        this.results.innerHTML = "No similar posts found.";
+      }
+    }.bind(this)
+  });
+}
+

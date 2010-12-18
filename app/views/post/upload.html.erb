@@ -61,7 +61,7 @@
         <tbody>
           <tr>
             <th width="15%"><label for="post_file">File</label></th>
-            <td width="85%"><%= file_field "post", "file", :size => 50, :tabindex => 1 %></td>
+            <td width="85%"><%= file_field "post", "file", :size => 50, :tabindex => 1 %><span class="similar-results" style="display: none;"></span></td>
           </tr>
           <tr>
             <th>
@@ -139,8 +139,11 @@
     form.down("#post_file").on("change", function(e) { form.down("#post_tags").focus(); });
 
     if(form)
+    {
       new PostUploadForm(form, $("progress"));
-  }.bindAsEventListener(null));
+      new UploadSimilarSearch(form.down("#post_file"), form.down(".similar-results"));
+    }
+  }.bindAsEventListener());
 </script>
 
 <% content_for("post_cookie_javascripts") do %>

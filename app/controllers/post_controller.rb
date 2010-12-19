@@ -444,6 +444,7 @@ class PostController < ApplicationController
   end
 
   def browse
+    response.headers["Cache-Control"] = "max-age=300"
     render :layout => "bare"
   end
 

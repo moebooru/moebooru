@@ -90,7 +90,6 @@ class PostController < ApplicationController
           end
 
           api_data[:similar_location] = url_for(:controller => "post", :action => "similar", :id => @post.id, :initial => 1)
-          p api_data
           respond_to_success("Post uploaded", {:controller => "post", :action => "similar", :id => @post.id, :initial => 1}, :api => api_data)
         else
           respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => api_data)

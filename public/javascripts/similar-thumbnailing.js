@@ -27,7 +27,7 @@ ThumbnailUserImage = function(file, onComplete)
   this.image = ThumbnailUserImage.image_pool.get();
   this.onComplete = onComplete;
 
-  var url = createObjectURL(this.file);
+  this.url = createObjectURL(this.file);
 
   this.image.on("load", this.image_load_event.bindAsEventListener(this));
   this.image.on("abort", this.image_abort_event.bindAsEventListener(this));
@@ -35,7 +35,7 @@ ThumbnailUserImage = function(file, onComplete)
 
   document.documentElement.addClassName("progress");
 
-  this.image.src = url;
+  this.image.src = this.url;
 }
 
 /* This is a shared pool; for clarity, don't put it in the prototype. */
@@ -52,6 +52,12 @@ ThumbnailUserImage.prototype.destroy = function()
   this.image.stopObserving();
   ThumbnailUserImage.image_pool.release(this.image);
   this.image = null;
+
+  if(this.url != null)
+  {
+    revokeObjectURL(this.url);
+    this.url = null;
+  }
 }
 
 ThumbnailUserImage.prototype.completed = function(result)

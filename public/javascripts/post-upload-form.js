@@ -213,7 +213,12 @@ UploadSimilarSearch.prototype.thumbnail_complete = function(result)
         var posts = [];
         var shown_posts = 3;
         json.posts.slice(0, shown_posts).each(function(post) {
-            var s = "<a href='" + post.url + "'>post #" + post.id + "</a>";
+            var url;
+            if(User.get_use_browser())
+              url = "/post/browse#" + post.id;
+            else
+              url = "/post/show/" + post.id;
+            var s = "<a href='" + url + "'>post #" + post.id + "</a>";
             posts.push(s);
         });
         var post_links = posts.join(", ");

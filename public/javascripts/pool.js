@@ -57,25 +57,16 @@ Pool = {
   },
 
   remove_post: function(post_id, pool_id) {
-    new Ajax.Request('/pool/remove_post.json', {
-      parameters: {
-        "post_id": post_id,
-        "pool_id": pool_id
-      },
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-        
-        if (resp.success) {
-          notice("Post removed from pool")
-          if($("p" + post_id))
-            $("p" + post_id).addClassName("deleted");
-          if($("pool" + pool_id))
-            $("pool" + pool_id).remove()            
-        } else {
-          notice("Error: " + resp.reason)
-        }          
-      }
-    })
+    var complete = function()
+    {
+      notice("Post removed from pool")
+      if($("p" + post_id))
+        $("p" + post_id).addClassName("deleted");
+      if($("pool" + pool_id))
+        $("pool" + pool_id).remove()            
+    }
+
+    Post.make_request('/pool/remove_post.json', { "post_id": post_id, "pool_id": pool_id }, complete);
   },
 
   transfer_post: function(old_post_id, new_post_id, pool_id, sequence)

@@ -1330,7 +1330,7 @@ Post = {
       return null;
 
     if(Post.cached_sample_urls != null)
-      return cached_sample_urls;
+      return Post.cached_sample_urls;
 
     try {
       var sample_urls = JSON.parse(window.localStorage.sample_urls);

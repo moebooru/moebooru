@@ -35,6 +35,8 @@ class Pool < ActiveRecord::Base
 
       def get_pools_from_pool_posts(pool_posts)
         pool_ids = pool_posts.map { |pp| pp.pool_id }.uniq
+        return [] if pool_ids.empty?
+
         sql = "SELECT p.* FROM pools p WHERE p.id IN (%s)" % pool_ids.join(",")
         return Pool.find_by_sql(sql)
       end

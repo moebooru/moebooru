@@ -66,7 +66,6 @@ module PostApiMethods
     end
 
     # For post/similar results:
-    p similarity
     if not similarity.nil?
       ret[:similarity] = similarity
     end
@@ -98,6 +97,13 @@ module PostApiMethods
 
     def batch_api_data(posts, options={})
       result = { :posts => posts }
+      if not options[:exclude_pools] then
+        pool_posts = Pool.get_pool_posts_from_posts(posts)
+        pools = Pool.get_pools_from_pool_posts(pool_posts)
+        result[:pools] = pools
+        result[:pool_posts] = pool_posts
+      end
+
       if not options[:exclude_tags] then
         result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
       end

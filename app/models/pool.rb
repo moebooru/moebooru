@@ -13,6 +13,7 @@ class Pool < ActiveRecord::Base
   
   module PostMethods
     def self.included(m)
+      m.extend(ClassMethods)
       m.has_many :pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id", :conditions => "pools_posts.active"
       m.has_many :all_pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id"
       m.versioned :name
@@ -23,6 +24,22 @@ class Pool < ActiveRecord::Base
       m.after_save :expire_cache
     end
     
+    module ClassMethods
+      def get_pool_posts_from_posts(posts)
+        post_ids = posts.map { |post| post.id }
+        return [] if post_ids.empty?
+
+        sql = "SELECT pp.* FROM pools_posts pp WHERE pp.active AND pp.post_id IN (%s)" % post_ids.join(",")
+        return PoolPost.find_by_sql(sql)
+      end
+
+      def get_pools_from_pool_posts(pool_posts)
+        pool_ids = pool_posts.map { |pp| pp.pool_id }.uniq
+        sql = "SELECT p.* FROM pools p WHERE p.id IN (%s)" % pool_ids.join(",")
+        return Pool.find_by_sql(sql)
+      end
+    end
+
     def can_be_updated_by?(user)
       is_public? || user.has_permission?(self)
     end

@@ -1548,7 +1548,7 @@ Ajax.Request = Class.create(Ajax.Base, {
   setRequestHeaders: function() {
     var headers = {
       'X-Requested-With': 'XMLHttpRequest',
-      'X-Prototype-Version': Prototype.Version,
+    // 'X-Prototype-Version': Prototype.Version,
       'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
     };
 

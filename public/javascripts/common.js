@@ -361,6 +361,12 @@ Object.extend(String.prototype, {
     }
 
     return text;
+  },
+
+  createElement: function() {
+    var container = document.createElement("div");
+    container.innerHTML = this;
+    return container.removeChild(container.firstChild);
   }
 });
 

@@ -383,6 +383,11 @@ ThumbnailView.prototype.document_mouse_wheel_event = function(event)
  * of no_hash_change. */
 ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs, no_hash_change)
 {
+  /* If no post is specified, do nothing.  This will happen if a search returns
+   * no results. */
+  if(post_id_and_frame[0] == null)
+    return;
+
   this.view.set_post(post_id_and_frame[0], post_id_and_frame[1], lazy, no_hash_change);
 
   if(center_thumbs)

@@ -646,6 +646,9 @@ BrowserView.prototype.set_main_image = function(post, post_frame)
  */
 BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_change)
 {
+  if(post_id == null)
+    throw "post_id must not be null";
+
   /* If there was a lazy load pending, cancel it. */
   this.cancel_lazily_load();
 

@@ -740,7 +740,7 @@ BrowserView.prototype.set_post_info = function()
         '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)';
 
       if(Pool.can_edit_pool(pool))
-        html += ' (<a href="#" class="remove-pool-from-post">remove</a>)</div>';
+        html += '<span class="advanced-editing"> (<a href="#" class="remove-pool-from-post">remove</a>)</div></span>';
 
       var div = html.subst({
         sequence: sequence,

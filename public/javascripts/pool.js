@@ -36,6 +36,14 @@ Pool = {
 
   },
 
+  can_edit_pool: function(pool)
+  {
+    if(!User.is_member_or_higher())
+      return false;
+
+   return pool.is_public || pool.user_id == User.get_current_user_id();
+  },
+
   add_post: function(post_id, pool_id) {
     notice("Adding to pool...")
 

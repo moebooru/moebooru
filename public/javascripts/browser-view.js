@@ -208,6 +208,18 @@ BrowserView = function(container)
     Post.reparent_post(post_id, post.parent_id, false);
   }.bindAsEventListener(this));
 
+  this.container.down(".pool-info").on("click", ".remove-pool-from-post", function(e, element)
+  {
+    e.stop();
+    var pool_info = element.up(".pool-info");
+    var pool = Pool.pools.get(pool_info.pool_id);
+    var pool_name = pool.name.replace(/_/g, ' ');
+    if(!confirm("Remove this post from pool #" + pool_info.pool_id + ": " + pool_name + "?"))
+      return;
+
+    Pool.remove_post(pool_info.post_id, pool_info.pool_id);
+  }.bind(this));
+  
   /* Post editing: */
   var post_edit = this.container.down(".post-edit");
   post_edit.down("FORM").on("submit", function(e) { e.stop(); this.edit_save(); }.bindAsEventListener(this));
@@ -725,12 +737,19 @@ BrowserView.prototype.set_post_info = function()
 
       var html = 
         '<div class="pool-info">Post ${sequence} in <a class="pool-link" href="/post/browse#/pool:${pool_id}">${desc}</a> ' +
-        '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)</div>';
+        '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)';
+
+      if(Pool.can_edit_pool(pool))
+        html += ' (<a href="#" class="remove-pool-from-post">remove</a>)</div>';
+
       var div = html.subst({
         sequence: sequence,
         pool_id: pool_id,
         desc: pool_title.escapeHTML()
       }).createElement();
+
+      div.post_id = post.id;
+      div.pool_id = pool_id;
 
       pool_info.appendChild(div);
     }.bind(this));

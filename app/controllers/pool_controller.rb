@@ -241,6 +241,7 @@ class PoolController < ApplicationController
   def remove_post
     if request.post?
       @pool = Pool.find(params[:pool_id])
+      post = Post.find(params[:post_id])
       
       begin
         @pool.remove_post(params[:post_id], :user => @current_user)
@@ -249,8 +250,10 @@ class PoolController < ApplicationController
         return
       end
       
+      api_data = Post.batch_api_data([post])
+ 
       response.headers["X-Post-Id"] = params[:post_id]
-      respond_to_success("Post removed", :controller => "post", :action => "show", :id => params[:post_id])
+      respond_to_success("Post removed", {:controller => "post", :action => "show", :id => params[:post_id]}, :api => api_data)
     else
       @pool = Pool.find(params[:pool_id])
       @post = Post.find(params[:post_id])

@@ -8,6 +8,8 @@ PostLoader = function()
 
   this.cached_posts = new Hash();
   this.cached_pools = new Hash();
+  this.sample_preload_container = null;
+  this.preloading_sample_for_post_id = null;
 
   this.load({results_mode: "center-on-current"});
 }
@@ -22,6 +24,49 @@ PostLoader.prototype.need_more_post_data = function()
   this.load({extending: true});
 }
 
+
+/*
+ * This is a response time optimization.  If we know the sample URL of what we want to display,
+ * we can start loading it from the server without waiting for the full post/index.json response
+ * to come back and tell us.  This saves us the time of a round-trip before we start loading the
+ * image.  The common case is if the user was on post/index and clicked on a link with "use
+ * post browser" enabled.  This allows us to start loading the image immediately, without waiting
+ * for any other network activity.
+ *
+ * We only do this for the sample image, to get a head-start loading it.  This is safe because
+ * the image URLs are immutable (or effectively so).  The rest of the post information isn't cached.
+ */
+PostLoader.prototype.preload_sample_image = function()
+{
+  var post_id = UrlHash.get("post-id");
+  if(this.preloading_sample_for_post_id == post_id)
+    return;
+  this.preloading_sample_for_post_id = post_id;
+
+  if(this.sample_preload_container)
+  {
+    this.sample_preload_container.destroy();
+    this.sample_preload_container = null;
+  }
+
+  if(post_id == null)
+    return;
+
+  /* If this returns null, the browser doesn't support this. */
+  var cached_sample_urls = Post.get_cached_sample_urls();
+  if(cached_sample_urls == null)
+    return;
+
+  if(!(String(post_id) in cached_sample_urls))
+    return;
+  var sample_url = cached_sample_urls[String(post_id)];
+
+  /* If we have an existing preload_container, just add to it and allow any other
+   * preloads to continue. */
+  debug("Advance preloading sample image for post " + post_id);
+  this.sample_preload_container = new PreloadContainer();
+  this.sample_preload_container.preload(sample_url);
+}
 
 PostLoader.prototype.server_load_pool = function()
 {
@@ -212,6 +257,8 @@ PostLoader.prototype.load = function(load_options)
   }
 
   debug("PostLoader.load(" + extending + ", " + disable_cache + ")");
+
+  this.preload_sample_image();
 
   this.loaded_extended_results = extending;
 

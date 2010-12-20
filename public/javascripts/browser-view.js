@@ -464,7 +464,8 @@ BrowserView.prototype.load_post_id_data = function(post_id)
       api_version: 2,
       filter: 1,
       include_tags: "1",
-      include_votes: "1"
+      include_votes: "1",
+      include_pools: 1
     },
     method: "get",
 

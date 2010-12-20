@@ -390,6 +390,10 @@ Post = {
       Post.register_tags(resp.tags);
     if(resp.votes)
       Post.register_votes(resp.votes);
+    if(resp.pools)
+      Pool.register_pools(resp.pools);
+    if(resp.pool_posts)
+      Pool.register_pool_posts(resp.pool_posts, resp.posts);
   },
 
   register: function(post) {

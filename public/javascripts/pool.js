@@ -1,4 +1,41 @@
 Pool = {
+  pools: new Hash(),
+  register: function(pool)
+  {
+    Pool.pools.set(pool.id, pool);
+  },
+
+  register_pools: function(pools)
+  {
+    if(pools != null)
+      pools.each(function(pool) { Pool.register(pool); });
+  },
+
+  register_pool_posts: function(pool_posts, posts)
+  {
+    /*
+     * pool_post is an array of individual posts in pools.  It contains only data for posts
+     * listed in posts.
+     *
+     * This means that a pool_post not existing in pool_posts only indicates the post is
+     * no longer in the pool only if that post is listed in posts.
+     *
+     * We don't need to clear the pool_posts entry in posts, because the posts registered
+     * by this function are always newly registered via Post.register_resp; pool_posts is
+     * already empty.
+     */
+    pool_posts.each(function(pool_post) {
+      var post = Post.posts.get(pool_post.post_id);
+      if(post)
+      {
+        if(!post.pool_posts)
+          post.pool_posts = new Hash();
+        post.pool_posts.set(pool_post.pool_id, pool_post);
+      }
+    });
+
+  },
+
   add_post: function(post_id, pool_id) {
     notice("Adding to pool...")
 

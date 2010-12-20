@@ -54,6 +54,7 @@ ThumbnailView = function(container, view)
 
   this.container.on("mousemove", this.container_mousemove_event.bindAsEventListener(this));
   this.container.on("mouseover", this.container_mouseover_event.bindAsEventListener(this));
+  this.container.on("mouseout", this.container_mouseout_event.bindAsEventListener(this));
   this.container.on("click", this.container_click_event.bindAsEventListener(this));
   this.container.on("dblclick", ".post-thumb,.browser-thumb-hover-overlay",
       this.container_dblclick_event.bindAsEventListener(this));
@@ -269,11 +270,21 @@ ThumbnailView.prototype.container_ondrag = function(e)
 
 ThumbnailView.prototype.container_mouseover_event = function(event)
 {
-  var li = $(event.target).up(".post-thumb");
-  if(!li)
-    return;
+  var li = $(event.target);
+  if(!li.hasClassName(".post-thumb"))
+    li = li.up(".post-thumb");
+  if(li)
+    this.expand_post(li.post_idx);
+}
 
-  this.expand_post(li.post_idx);
+ThumbnailView.prototype.container_mouseout_event = function(event)
+{
+  /* If the mouse is leaving the hover overlay, hide it. */
+  var target = $(event.target);
+  if(!target.hasClassName(".browser-thumb-hover-overlay"))
+    target = target.up(".browser-thumb-hover-overlay");
+  if(target)
+    this.expand_post(null);
 }
 
 ThumbnailView.prototype.hashchange_post_id = function()

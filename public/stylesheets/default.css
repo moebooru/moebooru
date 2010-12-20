@@ -1463,6 +1463,9 @@ span.stars .star-3 { color:#ff0; }
 .standard-vote-widget .vote-up-block-anonymous:before { content: "("; }
 .standard-vote-widget .vote-up-block-anonymous:after { content: ")"; }
 
+/* Hide "vote up" in post/browse. */
+.post-info .standard-vote-widget .vote-up-block { display: none; }
+
 /* This is the invisible block to catches touches for expanding vote-popup-container. */
 .vote-popup-expand {
   position: absolute;

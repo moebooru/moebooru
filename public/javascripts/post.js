@@ -1314,5 +1314,76 @@ Post = {
       if(a.browse_href)
         a.href = a.browse_href;
     });
+  },
+
+  /* Handle the sample URL cache.  This allows pages that statically know sample URLs for
+   * files (post/index) to communicate that to dynamic pages that normally get it from
+   * XHR (post/browse). */
+  cached_sample_urls: null,            
+
+  /* Return an object containing cached sample URLs, eg. {"12345": "http://example.com/image.jpg"}.
+   * If the browser lacks support for this, return null.  If the stored data is invalid or doesn't
+   * yet exist, return {}. */
+  get_cached_sample_urls: function()
+  {
+    if(!("localStorage" in window))
+      return null;
+
+    if(Post.cached_sample_urls != null)
+      return cached_sample_urls;
+
+    try {
+      var sample_urls = JSON.parse(window.localStorage.sample_urls);
+    } catch(SyntaxError) {
+      return {};
+    }
+
+    if(sample_urls == null)
+      return {};
+
+    Post.cached_sample_urls = sample_urls;
+    return sample_urls;
+  },
+
+  /* Save all loaded posts to the sample URL cache, and expire old data. */
+  cache_sample_urls: function()
+  {
+    var sample_urls = Post.get_cached_sample_urls();
+    if(sample_urls == null)
+      return;
+
+    /* Track post URLs in the order we see them, and push old data out. */
+    var fifo = window.localStorage.sample_url_fifo || "";
+    fifo = fifo.split(",");
+
+    Post.posts.each(function(id_and_post) {
+      var post = id_and_post[1];
+      if(post.sample_url)
+        sample_urls[post.id] = post.sample_url;
+      fifo.push(post.id);
+    });
+
+    /* Erase all but the most recent 1000 items. */
+    fifo = fifo.splice(-1000);
+
+    /* Make a set of the FIFO, so we can do lookups quickly. */
+    var fifo_set = {}
+    fifo.each(function(post_id) { fifo_set[post_id] = true; });
+
+    /* Make a list of items no longer in the FIFO to be deleted. */
+    var post_ids_to_expire = [];
+    for(post_id in sample_urls)
+    {
+      if(!(post_id in fifo_set))
+        post_ids_to_expire.push(post_id);
+    }
+
+    /* Erase items no longer in the FIFO. */
+    post_ids_to_expire.each(function(post_id) { delete sample_urls[post_id]; });
+
+    /* Save the cached items and FIFO back to localStorage. */
+    Post.cached_sample_urls = sample_urls;
+    window.localStorage.sample_urls = JSON.stringify(sample_urls);
+    window.localStorage.sample_url_fifo = JSON.stringify(fifo);
   }
 }

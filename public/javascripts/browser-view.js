@@ -454,6 +454,35 @@ BrowserView.prototype.preload = function(post_ids)
   this.preload_container = new_preload_container;
 }
 
+/*
+ * This is a response time optimization.  If we know the sample URL of what we want to display,
+ * we can start loading it from the server without waiting for the full post/index.json response
+ * to come back and tell us.  This saves us the time of a round-trip before we start loading the
+ * image.  The common case is if the user was on post/index and clicked on a link (with "use
+ * post browser" enabled).  This allows us to start loading the image immediately, without waiting
+ * for any other network activity.
+ *
+ * We only do this for the sample image, to get a head-start loading it.  This is safe because
+ * the image URLs are immutable (or effectively so).  The rest of the post information isn't cached.
+ */
+BrowserView.prototype.preload_sample_image = function(post_id)
+{
+  /* If this returns null, the browser doesn't support this. */
+  var cached_sample_urls = Post.get_cached_sample_urls();
+  if(cached_sample_urls == null)
+    return;
+
+  if(!(String(post_id) in cached_sample_urls))
+    return;
+  var sample_url = cached_sample_urls[String(post_id)];
+
+  /* If we have an existing preload_container, just add to it and allow any other
+   * preloads to continue. */
+  debug("Advance preloading sample image");
+  if(!this.preload_container)
+    this.preload_container = new PreloadContainer();
+  this.preload_container.preload(sample_url);
+}
 
 BrowserView.prototype.load_post_id_data = function(post_id)
 {
@@ -679,6 +708,11 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_cha
     /* The post we've been asked to display isn't loaded.  Request a load and come back. */
     if(this.displayed_post_id == null)
       this.container.down(".post-info").hide();
+
+    /* The most common way we get here is when loading a post/browse#12345 link without any
+     * post data loaded.  Try to start loading the sample image in advance, so we don't wait
+     * for the post data to come back. */
+    this.preload_sample_image(post_id);
 
     this.load_post_id_data(post_id);
     return;

@@ -107,12 +107,6 @@ BrowserView = function(container)
     this.scale_and_position_image(true);
   }.bindAsEventListener(this));
 
-  this.displayed_pool = null;
-  document.on("viewer:displayed-pool-changed", function(e) {
-    this.displayed_pool = e.memo.pool;
-  }.bindAsEventListener(this));
-
-
 /*
   OnKey(79, null, function(e) {
     this.zoom_level -= 1;
@@ -713,18 +707,33 @@ BrowserView.prototype.set_post_info = function()
   this.container.down(".posted-by").show(post.creator_id != null);
   this.container.down(".posted-at").setTextContent(time_ago_in_words(new Date(post.created_at*1000)));
 
-  this.container.down(".pool-info").show(this.displayed_pool != null);
-  if(this.displayed_pool != null)
+  /* Fill in the pool list. */
+  var pool_info = this.container.down(".pool-info");
+  while(pool_info.firstChild)
+    pool_info.removeChild(pool_info.firstChild);
+  if(post.pool_posts)
   {
-    var sequence = post.pool_post.sequence;
-    if(sequence.match(/^[0-9]/))
-      sequence = "#" + sequence;
-    this.container.down(".pool-post-sequence").setTextContent(sequence);
+    post.pool_posts.each(function(pp) {
+      var pool_post = pp[1];
+      var pool_id = pool_post.pool_id;
+      var pool = Pool.pools.get(pool_id);
 
-    this.container.down(".pool-link").href = "/pool/show/" + this.displayed_pool.id;
+      var pool_title = pool.name.replace(/_/g, " ");
+      var sequence = pool_post.sequence;
+      if(sequence.match(/^[0-9]/))
+        sequence = "#" + sequence;
 
-    var pool_title = this.displayed_pool.name.replace(/_/g, " ");
-    this.container.down(".pool-link").setTextContent(pool_title);
+      var html = 
+        '<div class="pool-info">Post ${sequence} in <a class="pool-link" href="/post/browse#/pool:${pool_id}">${desc}</a> ' +
+        '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)</div>';
+      var div = html.subst({
+        sequence: sequence,
+        pool_id: pool_id,
+        desc: pool_title.escapeHTML()
+      }).createElement();
+
+      pool_info.appendChild(div);
+    }.bind(this));
   }
 
   if(post.creator_id != null)

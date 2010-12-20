@@ -1097,7 +1097,7 @@ Post = {
     hover.style.left = x + "px";
     hover.style.top = y + "px";
 
-    overlay.down("A").href = "/post/show/" + post.id;
+    overlay.down("A").href = (User.get_use_browser()?  "/post/browse#":"/post/show/") + post.id;
     overlay.down("IMG").src = post.preview_url;
     
     /* This doesn't always align properly in Firefox if full-page zooming is being

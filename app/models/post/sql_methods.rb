@@ -278,11 +278,6 @@ module PostSqlMethods
         sql << options[:select]
       else
         sql << "p.*"
-
-	# If we're searching in a pool, include the pool_post sequence in API output.
-	if q.has_key?(:pool)
-	  sql << ", pools_posts.pool_id AS pool_pool_id, pools_posts.sequence AS pool_sequence, pools_posts.next_post_id AS pool_next_post_id, pools_posts.prev_post_id AS pool_prev_post_id"
-	end
       end
 
       sql << " FROM " + joins.join(" ")

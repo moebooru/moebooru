@@ -1353,8 +1353,8 @@ Post = {
       return;
 
     /* Track post URLs in the order we see them, and push old data out. */
-    var fifo = window.localStorage.sample_url_fifo || "";
-    fifo = fifo.split(",");
+    var fifo = window.localStorage.sample_url_fifo || null;
+    fifo = fifo? fifo.split(","): [];
 
     Post.posts.each(function(id_and_post) {
       var post = id_and_post[1];
@@ -1383,7 +1383,14 @@ Post = {
 
     /* Save the cached items and FIFO back to localStorage. */
     Post.cached_sample_urls = sample_urls;
-    window.localStorage.sample_urls = JSON.stringify(sample_urls);
-    window.localStorage.sample_url_fifo = JSON.stringify(fifo);
+    try {
+      window.localStorage.sample_urls = JSON.stringify(sample_urls);
+      window.localStorage.sample_url_fifo = fifo.join(",");
+    } catch(e) {
+      /* If this fails for some reason, clear the data. */
+      delete window.localStorage.sample_urls;
+      delete window.localStorage.sample_url_fifo;
+      throw(e);
+    }
   }
 }

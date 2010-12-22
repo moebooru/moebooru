@@ -175,6 +175,16 @@ Object.extend(Element.Methods, {
     else
       element.textContent = text;
     return element;
+  },
+  recursivelyVisible: function(element)
+  {
+    while(element != document.documentElement)
+    {
+      if(!element.visible())
+        return false;
+      element = element.parentNode;
+    }
+    return true;
   }
 });
 Element.addMethods()

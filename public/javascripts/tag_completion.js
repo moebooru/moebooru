@@ -312,6 +312,9 @@ TagCompletionClass.prototype.retrieve_tag_search = function(re, source, options)
       break;
 
     var tag = m[0];
+    /* Ignore this tag.  We need a better way to blackhole tags. */
+    if(tag.indexOf(":deletethistag:") != -1)
+      continue;
     if(results.indexOf(tag) == -1)
       results.push(tag);
   }

@@ -19,6 +19,15 @@ TagCompletionClass = function()
   this.loading = false;
   this.loaded = false;
 
+  /* If the data format is out of date, clear it. */
+  if(localStorage.tag_data_format != 2)
+  {
+    delete localStorage.tag_data;
+    delete localStorage.tag_data_version;
+    delete localStorage.recent_tags;
+    localStorage.tag_data_format = 2;
+  }
+
   /* Pull in recent tags.  This is entirely local data and not too big, so always load it. */
   this.recent_tags = localStorage.recent_tags || "";
 
@@ -127,13 +136,13 @@ TagCompletionClass.prototype.observe_tag_changes_on_submit = function(form, tags
   });
 }
 
-/* From a tag string, eg. "1:tagme", retrieve the tag name, "tagme". */
+/* From a tag string, eg. "1:tagme:alias:alias2:", retrieve the tag name "tagme". */
 var get_tag_from_string = function(tag_string)
 {
-  var m = tag_string.match(/(\d):(.*)/);
+  var m = tag_string.match(/\d+:([^:]*):.*/);
   if(!m)
     throw "Unparsable cached tag: '" + tag_string + "'";
-  return m[2];
+  return m[1];
 }
 
 /* Update the cached types of all known tags in tag_data and recent_tags. */
@@ -168,25 +177,33 @@ TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_ad
     if(tag_type_idx == -1)
       throw "Unknown tag type " + tag_type;
 
-    var tag_string = tag_type_idx + ":" + tag;
-
     if(!(tag in tag_map))
     {
       /* This tag is known in Post.tag_types, but isn't a known tag.  If allow_add is true,
        * add it to the end.  This is for updating new tags that have shown up on the server,
        * not for adding new recent tags. */
       if(allow_add)
+      {
+        var tag_string = tag_type_idx + ":" + tag;
+        console.log("adding new tag '" + tag_string + "'");
         split_tags.push(tag_string);
+      }
     }
     else
     {
-      /* This is a known tag; this is the usual case.  Update the entry in-place. */
+      /* This is a known tag; this is the usual case.  Parse out the complete tag from the
+       * original string, and update the tag type index. */
       var tag_idx = tag_map[tag];
-      split_tags[tag_idx] = tag_string;
+      var existing_tag = split_tags[tag_idx];
+
+      var m = existing_tag.match(/\d+(:.*)/);
+      var new_tag_string = tag_type_idx + m[1];
+
+      split_tags[tag_idx] = new_tag_string;
     }
   });
 
-  return split_tags.join(" ") + " ";
+  return split_tags.join(" ");
 }
 
 TagCompletionClass.prototype.update_tag_types = function()
@@ -226,7 +243,7 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
   /* Allow basic word prefix matches.  "tag" matches at the beginning of any word
    * in a tag, eg. both "tagme" and "dont_tagme". */
   /* Add the regex for ordinary prefix matches. */
-  var s = "(([^ ]*_)?";
+  var s = "(([^:]*_)?";
   letters.each(function(letter) {
     var escaped_letter = RegExp.escape(letter);
     s += escaped_letter;
@@ -244,9 +261,9 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
     last = RegExp.escape(last);
 
     var s = "(";
-    s += "(" + first + "[^ ]*_" + last + ")";
+    s += "(" + first + "[^:]*_" + last + ")";
     s += "|";
-    s += "(" + last + "[^ ]*_" + first + ")";
+    s += "(" + last + "[^:]*_" + first + ")";
     s += ")";
     regex_parts.push(s);
   }
@@ -259,16 +276,23 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
     letters.each(function(letter) {
       var escaped_letter = RegExp.escape(letter);
       s += escaped_letter;
-      s += '[^ ]*';
+      s += '[^:]*';
     });
     s += ")";
     regex_parts.push(s);
   }
 
   /* The space is included in the result, so the result tags can be matched with the
-   * same regexes, for in reorder_search_results. */
+   * same regexes, for in reorder_search_results. 
+   *
+   * (\d)+  match the alias ID                      1:
+   * [^ ]*: start at the beginning of any alias     1:foo:bar:
+   * ... match ...
+   * [^:]*: all matches are prefix matches          1:foo:bar:tagme:
+   * [^ ]*  match any remaining aliases             1:foo:bar:tagme:tag_me:
+   */
   var regex_string = regex_parts.join("|");
-  regex_string = "(\\d+):(" + regex_string + ")[^ ]* ";
+  regex_string = "(\\d+)[^ ]*:(" + regex_string + ")[^:]*:[^ ]* ";
 
   return new RegExp(regex_string, options.global? "g":"");
 }
@@ -304,7 +328,7 @@ TagCompletionClass.prototype.add_recent_tag = function(tag)
 
   /* Remove the tag from the recent tag list if it's already there. */
   var escaped_tag = RegExp.escape(tag);
-  var re = new RegExp("\\d:" + escaped_tag + " ");
+  var re = new RegExp("\\d:" + escaped_tag + ": ");
   this.recent_tags = this.recent_tags.replace(re, "");
 
   /* Look up the tag type if we know it. */
@@ -316,7 +340,7 @@ TagCompletionClass.prototype.add_recent_tag = function(tag)
     throw "Unknown tag type: " + tag_type;
 
   /* Add the tag to the front.  Always append a space, not just between entries. */
-  var tag_entry = tag_type_idx + ":" + tag + " ";
+  var tag_entry = tag_type_idx + ":" + tag + ": ";
   this.recent_tags = tag_entry + this.recent_tags;
 
   /* If the recent tags list is too big, remove data from the end. */
@@ -414,7 +438,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   var final_results = [];
   var tag_types = {};
   results.each(function(tag) {
-    var m = tag.match(/(\d+):(.*) /);
+    var m = tag.match(/(\d+):([^:]*):[^ ]* /);
     var tag = m[2];
     var tag_type = Post.tag_type_names[m[1]];
     tag_types[tag] = tag_type;

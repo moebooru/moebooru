@@ -418,8 +418,9 @@ PostQuickEdit.prototype.show = function(post_id)
   Post.hover_info_pin(post_id);
 
   var post = Post.posts.get(post_id);
-  this.container.down("#id").value = post_id;
-  this.container.down("#post_old_tags").value = post.tags.join(" ");
+  this.post_id = post_id;
+  this.old_tags = post.tags.join(" ");
+
   this.container.down("#post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1) + " ";
   this.container.show();
   this.container.down("#post_tags").focus();
@@ -436,18 +437,9 @@ PostQuickEdit.prototype.submit_event = function(e)
   e.stop();
   this.hide();
 
-  new Ajax.Request("/post/update.json", {
-    parameters: this.container.down("form").serialize(),
-    onSuccess: function(resp) {
-      var resp = resp.responseJSON;
-      notice("Post updated");
-      this.hide();
-      Post.register_resp(resp);
-    }.bindAsEventListener(this),
-    onFailure: function(resp) {
-      var resp = resp.responseJSON;
-      notice("Error: " + resp.reason);
-    }.bindAsEventListener(this)
-  });
+  Post.update_batch([{id: this.post_id, tags: this.container.down("#post_tags").value, old_tags: this.old_tags}], function() {
+    notice("Post updated");
+    this.hide();
+  }.bind(this));
 }
 

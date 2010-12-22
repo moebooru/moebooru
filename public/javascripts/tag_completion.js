@@ -424,7 +424,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   });
 
   /* Register tag types of results with Post. */
-  Post.register_tags(tag_types);
+  Post.register_tags(tag_types, true);
 
   return final_results;
 }
@@ -688,6 +688,6 @@ TagCompletionBox.prototype.input_keypress = function(event)
 }
 
 /* If tag completion isn't supported, disable TagCompletionBox. */
-//if(TagCompletion == null)
+if(TagCompletion == null)
   TagCompletionBox = function() {};
 

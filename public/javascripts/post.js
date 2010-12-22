@@ -436,9 +436,12 @@ Post = {
   },
 
   /* Post.register_tags({tagme: "general"}); */
-  register_tags: function(tags) {
+  register_tags: function(tags, no_send_to_completion) {
     this.tag_types.update(tags);
-    if(TagCompletion)
+
+    /* If no_send_to_completion is true, this data is coming from completion, so there's
+     * no need to send it back. */
+    if(TagCompletion && !no_send_to_completion)
       TagCompletion.update_tag_types();
   },
 

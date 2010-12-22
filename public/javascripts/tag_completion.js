@@ -518,6 +518,9 @@ TagCompletionBox.prototype.input_keydown = function(event)
 
 TagCompletionBox.prototype.focus_element = function(element)
 {
+  if(element == null)
+    throw "Can't select no element";
+
   var previous = this.completion_box.down(".focused");
   if(previous)
     previous.removeClassName("focused");
@@ -528,14 +531,10 @@ TagCompletionBox.prototype.focus_element = function(element)
 TagCompletionBox.prototype.select_next = function(next)
 {
   var focused = this.completion_box.down(".focused");
-  var new_focus;
-  if(focused == null)
+  var siblings = next? focused.nextSiblings(): focused.previousSiblings();
+  var new_focus = Prototype.Selector.find(siblings, ".completed-tag", 0);
+  if(new_focus == null)
     new_focus = this.completion_box.down(next? ".completed-tag":".completed-tag:last-child");
-  else
-  {
-    var siblings = next? focused.nextSiblings(): focused.previousSiblings();
-    new_focus = Prototype.Selector.find(siblings, ".completed-tag", 0);
-  }
 
   this.focus_element(new_focus);
 }
@@ -679,7 +678,7 @@ TagCompletionBox.prototype.update = function()
   this.completion_box.show();
 
   /* Focus the first item. */
-  this.focus_element(null);
+  this.focus_element(this.completion_box.down(".completed-tag"));
 }
 
 TagCompletionBox.prototype.input_keypress = function(event)

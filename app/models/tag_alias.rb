@@ -1,6 +1,7 @@
 class TagAlias < ActiveRecord::Base
   before_create :normalize
   before_create :validate_uniqueness
+  after_destroy :expire_tag_cache_after_deletion
 
   # Maps tags to their preferred names. Returns an array of strings.
   #
@@ -79,8 +80,14 @@ class TagAlias < ActiveRecord::Base
     end
 
     execute_sql("UPDATE tags SET post_count = 0 WHERE name = ?", name)
+
+    Cache.expire_tag_version
   end
   
+  def expire_tag_cache_after_deletion
+    Cache.expire_tag_version
+  end
+
   def api_attributes
     return {
      :id => id, 

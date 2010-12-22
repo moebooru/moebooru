@@ -16,6 +16,12 @@ module Cache
     end
   end
   
+  def expire_tag_version
+    # $tag_version is bumped when the type of a tag is changed in Tags, if
+    # a new tag is created, or if a tag's post_count becomes nonzero.
+    Cache.incr("$tag_version")
+  end
+
   def incr(key)
     if CONFIG["enable_caching"]
       val = Cache.get(key)
@@ -24,5 +30,6 @@ module Cache
   end
   
   module_function :expire
+  module_function :expire_tag_version
   module_function :incr
 end

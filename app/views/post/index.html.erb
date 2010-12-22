@@ -1,4 +1,4 @@
-<div id="post-list">  
+<div id="post-list"> 
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">
       Maybe you meant: <%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence(:connector => "or") %>
@@ -108,6 +108,10 @@
     }
   }
   Post.cache_sample_urls();
+  new TagCompletionBox($("post_tags"));
+  new TagCompletionBox($("tags"));
+  if($("tag-script"))
+    new TagCompletionBox($("tag-script"));
 </script>
 <% end %>
 

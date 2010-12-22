@@ -95,6 +95,8 @@
     InitTextAreas();
     InitAdvancedEditing();
     Post.InitBrowserLinks();
+    if(TagCompletion)
+      TagCompletion.init(<%= Tag.get_summary_version.to_json %>);
   </script>
 
   <!--[if lt IE 7]>

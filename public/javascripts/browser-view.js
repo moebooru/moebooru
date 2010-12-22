@@ -67,6 +67,9 @@ BrowserView = function(container)
   Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
   document.on("viewer:vote", function(event) { if(this.vote_widget) this.vote_widget.vote(event.memo.score); }.bindAsEventListener(this));
 
+  if(TagCompletion)
+    TagCompletion.init();
+
   /* Double-clicking the main image, or on nothing, toggles the thumb bar. */
   this.container.down(".image-container").on("dblclick", ".image-container", function(event) {
     /* Watch out: Firefox fires dblclick events for all buttons, with the standard
@@ -230,6 +233,7 @@ BrowserView = function(container)
   this.edit_post_area_changed = this.edit_post_area_changed.bind(this);
   post_edit.down(".edit-tags").on("paste", function(e) { this.edit_post_area_changed.defer(); }.bindAsEventListener(this));
   post_edit.down(".edit-tags").on("keydown", function(e) { this.edit_post_area_changed.defer(); }.bindAsEventListener(this));
+  new TagCompletionBox(post_edit.down(".edit-tags"));
 
   this.container.down(".post-edit").on("keydown", function(e) {
     /* Don't e.stop() KEY_ESC, so we fall through and let handle_keypress unfocus the

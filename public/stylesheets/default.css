@@ -566,6 +566,29 @@ ul.link-page > li {
   background-color: #48F;
 }
 
+.tag-completion-box
+{
+  position: absolute;
+  background-color: #002;
+  top: 0;
+  left: 0;
+  z-index: 10; /* above the quick edit box */
+}
+.tag-completion-box ul
+{
+  list-style-type: none;
+  margin: 0.5em;
+}
+.tag-completion-box .completed-tag
+{
+  margin: 0; /* work around annoying global style */
+  cursor: default;
+}
+.tag-completion-box .completed-tag.focused
+{
+  background-color: #005;
+}
+
 .added {
   color: #00CC00;
 }

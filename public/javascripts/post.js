@@ -3,6 +3,17 @@ Post = {
   tag_types: new Hash(),
   votes: new Hash(),
 
+  tag_type_names: [
+    "general",
+    "artist",
+    "",
+    "copyright",
+    "character",
+    "circle",
+    "faults"
+  ],
+
+
 	find_similar: function() {
 		var old_source_name = $("post_source").name
 		var old_file_name = $("post_file").name
@@ -115,6 +126,17 @@ Post = {
    */
   update_batch: function(posts, finished) {
     var original_count = posts.length;
+
+    if(TagCompletion)
+    {
+      /* Tell TagCompletion about recently used tags. */
+      posts.each(function(post) {
+        if(post.tags == null)
+          return;
+
+        TagCompletion.add_recent_tags_from_update(post.tags, post.old_tags);
+      });
+    }
 
     /* posts is a hash of id: { post }.  Convert this to a Rails-format object array. */
     var params_array = [];                  
@@ -416,6 +438,8 @@ Post = {
   /* Post.register_tags({tagme: "general"}); */
   register_tags: function(tags) {
     this.tag_types.update(tags);
+    if(TagCompletion)
+      TagCompletion.update_tag_types();
   },
 
   /* Post.register_votes({12345: 1}) */

@@ -10,6 +10,21 @@ class TagController < ApplicationController
     @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}
   end
 
+  def summary
+    if params[:version] then
+      # HTTP caching is unreliable for XHR.  If a version is supplied, and the version
+      # hasn't changed since then, return an empty response.  
+      version = Tag.get_summary_version
+      if params[:version].to_i == version then
+        render :json => {:version => version, :unchanged => true}
+        return
+      end
+    end
+
+    # This string is already JSON-encoded, so don't call to_json.
+    render :json => Tag.get_json_summary
+  end
+
   def index
     # TODO: convert to nagato
     set_title "Tags"

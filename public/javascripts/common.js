@@ -408,7 +408,13 @@ Ajax.Request.prototype.success = function()
 /* Work around a Prototype bug; it discards exceptions instead of letting them fall back
  * to the browser where they'll be logged. */
 Ajax.Responders.register({
-  onException: function(request, exception) { (function() { throw exception; }).defer(); }
+  onException: function(request, exception) { (function() {
+      /* Report the error here; don't wait for onerror to get it, since the exception
+       * isn't passed to it so the stack trace is lost.  */
+      ReportError(null, null, null, exception);
+      throw exception;
+    }).defer();
+  }
 });
 
 /*
@@ -434,6 +440,11 @@ Function.prototype.bindAsEventListener = function()
       (function() { throw exception; }).defer();
     }
   }
+}
+
+window.onerror = function(error, file, line)
+{
+  ReportError(error, file, line, null);
 }
 
 /*
@@ -987,6 +998,94 @@ function TrackFocus()
   document.observe("focusin", function(event) {
     document.focusedElement = event.srcElement;
   }.bindAsEventListener(this));
+}
+
+function FormatError(message, file, line, exc)
+{
+  var report = "";
+  report += "Error: " + message + "\n";
+  report += "UA: " + window.navigator.userAgent + "\n";
+  report += "URL: " + window.location.href + "\n";
+
+  var cookies = document.cookie;
+  cookies = cookies.replace(/(pass_hash)=[0-9a-f]{40}/, "$1=(removed)");
+  try {
+    report += "Cookies: " + decodeURIComponent(cookies) + "\n";
+  } catch(e) {
+    report += "Cookies (couldn't decode): " + cookies + "\n";
+  }
+
+  if("localStorage" in window)
+  {
+    /* FF's localStorage is broken; we can't iterate over it.  Name the keys we use explicitly. */
+    var keys = [];
+    try {
+      for(key in localStorage)
+        keys.push(keys);
+    } catch(e) {
+      keys = ["sample_urls", "sample_url_fifo", "tag_data", "tag_data_version", "recent_tags", "tag_data_format"];
+    }
+
+    for(var i = 0; i < keys.length; ++i)
+    {
+      var key = keys[i];
+      try {
+        if(!(key in localStorage))
+          continue;
+
+        var data = localStorage[key];
+        var length = data.length;
+        if(data.length > 512)
+          data = data.slice(0, 512);
+
+        report += "localStorage." + key + " (size: " + length + "): " + data + "\n";
+      } catch(e) {
+        report += "(ignored errors retrieving localStorage for " + key + ": " + e + ")\n";
+      }
+    }
+  }
+
+  if(exc && exc.stack)
+    report += "\n" + exc.stack + "\n";
+
+  if(file)
+  {
+    report += "File: " + file;
+    if(line != null)
+      report += " line " + line + "\n";
+  }
+
+  return report;
+}
+
+var reported_error = false;
+function ReportError(message, file, line, exc)
+{
+  if(navigator.userAgent.match(/.*MSIE [67]/))
+    return;
+
+  /* Only attempt to report an error once per page load. */
+  if(reported_error)
+    return;
+  reported_error = true;
+
+  /* Only report an error at most once per hour. */
+  if(document.cookie.indexOf("reported_error=1") != -1)
+    return;
+
+  var expiration = new Date();
+  expiration.setTime(expiration.getTime() + (60 * 60 * 1000));
+  document.cookie = "reported_error=1; path=/; expires=" + expiration.toGMTString();
+
+  var report = FormatError(exc? exc.message:message, file, line, exc);
+
+  try {
+    new Ajax.Request("/user/error.json", {
+      parameters: { report: report }
+    });
+  } catch(e) {
+    alert("Error: " + e);
+  }
 }
 
 /* Temporary hack to support FF4 betas: */

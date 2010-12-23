@@ -418,10 +418,11 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
     return [];
 
   /* Make a list of all results; this will be ordered recent tags first, other tags
-   * sorted by tag count. */
+   * sorted by tag count.  Request more results than we need, since we'll reorder
+   * them below before cutting it off. */
   var re = this.create_tag_search_regex(tag, { global: true });
-  var recent_results = this.retrieve_tag_search(re, this.recent_tags, options);
-  var main_results = this.retrieve_tag_search(re, this.tag_data, options);
+  var recent_results = this.retrieve_tag_search(re, this.recent_tags, {max_results: 100});
+  var main_results = this.retrieve_tag_search(re, this.tag_data, {max_results: 100});
 
   recent_results = this.reorder_search_results(tag, recent_results);
   main_results = this.reorder_search_results(tag, main_results);
@@ -433,8 +434,6 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   if("sqe".indexOf(tag) != -1)
     results.unshift("0:" + tag + " ");
 
-  /* Each subsearch returned up to the max, so we may have up to twice as many results
-   * as requested.  Remove the excess. */
   results = results.slice(0, options.max_results != null? options.max_results:10);
 
   /* Strip the "1:" tag type prefix off of each result. */

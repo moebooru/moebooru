@@ -411,11 +411,20 @@ Ajax.Responders.register({
   onException: function(request, exception) { (function() {
       /* Report the error here; don't wait for onerror to get it, since the exception
        * isn't passed to it so the stack trace is lost.  */
-      var data;
+
+      var data = "";
       try {
-        data = "Response text: ->" + request.transport.responseText + "<-\n";
+        var params = request.parameters;
+        for(key in params)
+          data += "Parameter: " + key + "=" + params[key] + "\n";
       } catch(e) {
-        data = "Couldn't get response text: " + e + "\n";
+        data += "Couldn't get response parameters: " + e + "\n";
+      }
+
+      try {
+        data += "Response: ->" + request.transport.responseText + "<-\n";
+      } catch(e) {
+        data += "Couldn't get response text: " + e + "\n";
       }
 
       ReportError(null, null, null, exception, data);

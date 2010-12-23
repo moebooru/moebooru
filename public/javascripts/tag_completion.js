@@ -185,7 +185,6 @@ TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_ad
       if(allow_add)
       {
         var tag_string = tag_type_idx + ":" + tag;
-        console.log("adding new tag '" + tag_string + "'");
         split_tags.push(tag_string);
       }
     }

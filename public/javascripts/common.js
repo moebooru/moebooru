@@ -412,6 +412,9 @@ Ajax.Responders.register({
     /* Report the error here; don't wait for onerror to get it, since the exception
      * isn't passed to it so the stack trace is lost.  */
     var data = "";
+    if(request.url)
+      data += "AJAX URL: " + request.url + "\n";
+
     try {
       var params = request.parameters;
       for(key in params)

@@ -408,26 +408,37 @@ Ajax.Request.prototype.success = function()
 /* Work around a Prototype bug; it discards exceptions instead of letting them fall back
  * to the browser where they'll be logged. */
 Ajax.Responders.register({
-  onException: function(request, exception) { (function() {
-      /* Report the error here; don't wait for onerror to get it, since the exception
-       * isn't passed to it so the stack trace is lost.  */
-
-      var data = "";
-      try {
-        var params = request.parameters;
-        for(key in params)
-          data += "Parameter: " + key + "=" + params[key] + "\n";
-      } catch(e) {
-        data += "Couldn't get response parameters: " + e + "\n";
+  onException: function(request, exception) {
+    /* Report the error here; don't wait for onerror to get it, since the exception
+     * isn't passed to it so the stack trace is lost.  */
+    var data = "";
+    try {
+      var params = request.parameters;
+      for(key in params)
+      {
+        var text = params[key];
+        var length = text.length;
+        if(text.length > 1024)
+          text = text.slice(0, 1024) + "...";
+        data += "Parameter (" + length + "): " + key + "=" + text + "\n";
       }
+    } catch(e) {
+      data += "Couldn't get response parameters: " + e + "\n";
+    }
 
-      try {
-        data += "Response: ->" + request.transport.responseText + "<-\n";
-      } catch(e) {
-        data += "Couldn't get response text: " + e + "\n";
-      }
+    try {
+      var text = request.transport.responseText;
+      var length = text.length;
+      if(text.length > 1024)
+        text = text.slice(0, 1024) + "...";
+      data += "Response (" + length + "): ->" + text + "<-\n";
+    } catch(e) {
+      data += "Couldn't get response text: " + e + "\n";
+    }
 
-      ReportError(null, null, null, exception, data);
+    ReportError(null, null, null, exception, data);
+
+    (function() {
       throw exception;
     }).defer();
   }

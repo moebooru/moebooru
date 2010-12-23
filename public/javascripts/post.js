@@ -1356,6 +1356,10 @@ Post = {
     if(LocalStorageDisabled())
       return null;
 
+    /* If the data format is out of date, clear it. */
+    if(localStorage.sample_url_format != 2)
+      Post.clear_sample_url_cache();
+
     if(Post.cached_sample_urls != null)
       return Post.cached_sample_urls;
 
@@ -1387,10 +1391,6 @@ Post = {
     var sample_urls = Post.get_cached_sample_urls();
     if(sample_urls == null)
       return;
-
-    /* If the data format is out of date, clear it. */
-    if(localStorage.sample_url_format != 2)
-      Post.clear_sample_url_cache();
 
     /* Track post URLs in the order we see them, and push old data out. */
     var fifo = window.localStorage.sample_url_fifo || null;

@@ -20,7 +20,7 @@ TagCompletionClass = function()
   this.loaded = false;
 
   /* If the data format is out of date, clear it. */
-  var current_version = 3;
+  var current_version = 4;
   if(localStorage.tag_data_format != current_version)
   {
     delete localStorage.tag_data;
@@ -435,7 +435,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   /* Hack: if the search is one of the ratings shortcuts, put that at the top, even though
    * it's not a real tag. */
   if("sqe".indexOf(tag) != -1)
-    results.unshift("0`" + tag + " ");
+    results.unshift("0`" + tag + "` ");
 
   results = results.slice(0, options.max_results != null? options.max_results:10);
 

@@ -440,6 +440,12 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   var tag_types = {};
   results.each(function(tag) {
     var m = tag.match(/(\d+):([^:]*):[^ ]* /);
+    if(!m)
+    {
+      ReportError("Unparsable cached tag: '" + tag + "'", null, null, null, null);
+      throw "Unparsable cached tag: '" + tag + "'";
+    }
+
     var tag = m[2];
     var tag_type = Post.tag_type_names[m[1]];
     tag_types[tag] = tag_type;

@@ -411,7 +411,14 @@ Ajax.Responders.register({
   onException: function(request, exception) { (function() {
       /* Report the error here; don't wait for onerror to get it, since the exception
        * isn't passed to it so the stack trace is lost.  */
-      ReportError(null, null, null, exception);
+      var data;
+      try {
+        data = "Response text: ->" + request.transport.responseText + "<-\n";
+      } catch(e) {
+        data = "Couldn't get response text: " + e + "\n";
+      }
+
+      ReportError(null, null, null, exception, data);
       throw exception;
     }).defer();
   }
@@ -1000,10 +1007,14 @@ function TrackFocus()
   }.bindAsEventListener(this));
 }
 
-function FormatError(message, file, line, exc)
+function FormatError(message, file, line, exc, info)
 {
   var report = "";
   report += "Error: " + message + "\n";
+
+  if(info != null)
+    report += info;
+
   report += "UA: " + window.navigator.userAgent + "\n";
   report += "URL: " + window.location.href + "\n";
 
@@ -1059,7 +1070,7 @@ function FormatError(message, file, line, exc)
 }
 
 var reported_error = false;
-function ReportError(message, file, line, exc)
+function ReportError(message, file, line, exc, info)
 {
   if(navigator.userAgent.match(/.*MSIE [67]/))
     return;
@@ -1077,7 +1088,7 @@ function ReportError(message, file, line, exc)
   expiration.setTime(expiration.getTime() + (60 * 60 * 1000));
   document.cookie = "reported_error=1; path=/; expires=" + expiration.toGMTString();
 
-  var report = FormatError(exc? exc.message:message, file, line, exc);
+  var report = FormatError(exc? exc.message:message, file, line, exc, info);
 
   try {
     new Ajax.Request("/user/error.json", {

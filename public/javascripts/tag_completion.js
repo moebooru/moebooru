@@ -712,6 +712,6 @@ TagCompletionBox.prototype.input_keypress = function(event)
 }
 
 /* If tag completion isn't supported, disable TagCompletionBox. */
-if(TagCompletion == null)
+if(TagCompletion == null || !("addEventListener" in document))
   TagCompletionBox = function() {};
 

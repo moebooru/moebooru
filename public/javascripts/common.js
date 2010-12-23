@@ -1135,7 +1135,7 @@ function LocalStorageDisabled()
       throw "disabled";
     delete localStorage.x;
   } catch(e) {
-    if(navigator.userAgent.indexOf("Mozilla/") != -1)
+    if(navigator.userAgent.indexOf("Gecko/") != -1)
     {
       // If the user or an extension toggles about:config dom.storage.enabled, this happens:
       if(e.message.indexOf("Security error") != -1)

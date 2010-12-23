@@ -465,7 +465,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
 
 /* This is only supported if the browser supports localStorage.  Also disable this if
  * addEventListener is missing; IE has various problems that aren't worth fixing. */
-if("localStorage" in window && "addEventListener" in document)
+if(!LocalStorageDisabled() && "addEventListener" in document)
   TagCompletion = new TagCompletionClass();
 else
   TagCompletion = null;

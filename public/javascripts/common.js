@@ -1122,6 +1122,33 @@ function ReportError(message, file, line, exc, info)
   }
 }
 
+function LocalStorageDisabled()
+{
+  if(!("localStorage" in window))
+    return "unsupported";
+
+  try {
+    /* We can't just access a property to test it; that detects it being disabled in FF, but
+     * not in Chrome. */
+    localStorage.x = 1;
+    if(localStorage.x != 1)
+      throw "disabled";
+    delete localStorage.x;
+  } catch(e) {
+    if(navigator.userAgent.indexOf("Mozilla/") != -1)
+    {
+      // If the user or an extension toggles about:config dom.storage.enabled, this happens:
+      if(e.message.indexOf("Security error") != -1)
+        return "ff-disabled";
+    }
+
+    /* Chrome unhelpfully reports QUOTA_EXCEEDED_ERR if local storage is disabled, which
+     * means we can't easily detect it being disabled and show a tip to the user. */
+    return "error";
+  }
+  return null;
+}
+
 /* Temporary hack to support FF4 betas: */
 if(!("createObjectURL" in window) && "createBlobURL" in window)
 {

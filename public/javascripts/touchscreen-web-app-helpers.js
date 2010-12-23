@@ -407,7 +407,7 @@ PreventDragScrolling = function()
 var MaintainUrlHash = function()
 {
   /* This requires DOM storage. */
-  if(!("localStorage" in window))
+  if(LocalStorageDisabled())
     return;
 
   /* When any part of the URL hash changes, save it. */

@@ -1353,7 +1353,7 @@ Post = {
    * yet exist, return {}. */
   get_cached_sample_urls: function()
   {
-    if(!("localStorage" in window))
+    if(LocalStorageDisabled())
       return null;
 
     if(Post.cached_sample_urls != null)

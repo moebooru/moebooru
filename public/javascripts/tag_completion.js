@@ -83,14 +83,17 @@ TagCompletionClass.prototype.load_data = function(onComplete)
     }.bind(this));
   }.bind(this);
 
-  /* If we've been told the current tag data revision and we already have that version, we
-   * don't need to waste time requesting it; we know we're up to date. */
-  if(this.most_recent_tag_data_version != null && localStorage.tag_data_version == this.most_recent_tag_data_version)
+  /* If we've been told the current tag data revision and we're already on it, or if we havn't
+   * been told the revision at all, use the data we have. */
+  if(localStorage.tag_data != null)
   {
-    // console.log("Already on most recent tag data version");
-    this.tag_data = localStorage.tag_data;
-    complete();
-    return;
+    if(this.most_recent_tag_data_version == null || localStorage.tag_data_version == this.most_recent_tag_data_version)
+    {
+      // console.log("Already on most recent tag data version");
+      this.tag_data = localStorage.tag_data;
+      complete();
+      return;
+    }
   }
   
   /* Requeset the tag data from the server.  Tell the server the data version we already

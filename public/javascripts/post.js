@@ -1372,12 +1372,25 @@ Post = {
     return sample_urls;
   },
 
+  clear_sample_url_cache: function()
+  {
+    if("sample_urls" in localStorage)
+      delete window.localStorage.sample_urls;
+    if("sample_url_fifo" in localStorage)
+      delete window.localStorage.sample_url_fifo;
+    localStorage.sample_url_format = 2;
+  },
+
   /* Save all loaded posts to the sample URL cache, and expire old data. */
   cache_sample_urls: function()
   {
     var sample_urls = Post.get_cached_sample_urls();
     if(sample_urls == null)
       return;
+
+    /* If the data format is out of date, clear it. */
+    if(localStorage.sample_url_format != 2)
+      Post.clear_sample_url_cache();
 
     /* Track post URLs in the order we see them, and push old data out. */
     var fifo = window.localStorage.sample_url_fifo || null;
@@ -1415,8 +1428,7 @@ Post = {
       window.localStorage.sample_url_fifo = fifo.join(",");
     } catch(e) {
       /* If this fails for some reason, clear the data. */
-      delete window.localStorage.sample_urls;
-      delete window.localStorage.sample_url_fifo;
+      Post.clear_sample_url_cache();
       throw(e);
     }
   }

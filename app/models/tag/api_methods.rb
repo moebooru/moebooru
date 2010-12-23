@@ -44,7 +44,11 @@ module TagApiMethods
     def get_json_summary_no_cache
       version = Tag.get_summary_version
 
-      tags = select_all_sql("SELECT t.id, t.name, t.tag_type, ta.name AS alias FROM tags t LEFT JOIN tag_aliases ta ON (t.id = ta.alias_id) ORDER BY t.id")
+      tags = select_all_sql("""
+        SELECT t.id, t.name, t.tag_type, ta.name AS alias
+        FROM tags t LEFT JOIN tag_aliases ta ON (t.id = ta.alias_id AND NOT ta.is_pending)
+        WHERE t.post_count > 0
+        ORDER BY t.id""")
 
       tags_with_type = []
       current_tag = ""
@@ -57,11 +61,11 @@ module TagApiMethods
           end
 
           last_tag_id = id
-          current_tag = "%s:%s:" % [tag["tag_type"], tag["name"]]
+          current_tag = "%s`%s`" % [tag["tag_type"], tag["name"]]
         end
 
         if not tag["alias"].nil? then
-          current_tag << tag["alias"] + ":"
+          current_tag << tag["alias"] + "`"
         end
       }
       if not last_tag_id.nil? then

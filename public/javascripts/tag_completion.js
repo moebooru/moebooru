@@ -20,12 +20,13 @@ TagCompletionClass = function()
   this.loaded = false;
 
   /* If the data format is out of date, clear it. */
-  if(localStorage.tag_data_format != 2)
+  var current_version = 3;
+  if(localStorage.tag_data_format != current_version)
   {
     delete localStorage.tag_data;
     delete localStorage.tag_data_version;
     delete localStorage.recent_tags;
-    localStorage.tag_data_format = 2;
+    localStorage.tag_data_format = current_version;
   }
 
   /* Pull in recent tags.  This is entirely local data and not too big, so always load it. */
@@ -139,10 +140,10 @@ TagCompletionClass.prototype.observe_tag_changes_on_submit = function(form, tags
   });
 }
 
-/* From a tag string, eg. "1:tagme:alias:alias2:", retrieve the tag name "tagme". */
+/* From a tag string, eg. "1`tagme`alias`alias2`", retrieve the tag name "tagme". */
 var get_tag_from_string = function(tag_string)
 {
-  var m = tag_string.match(/\d+:([^:]*):.*/);
+  var m = tag_string.match(/\d+`([^`]*)`.*/);
   if(!m)
     throw "Unparsable cached tag: '" + tag_string + "'";
   return m[1];
@@ -198,7 +199,7 @@ TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_ad
       var tag_idx = tag_map[tag];
       var existing_tag = split_tags[tag_idx];
 
-      var m = existing_tag.match(/\d+(:.*)/);
+      var m = existing_tag.match(/\d+(`.*)/);
       var new_tag_string = tag_type_idx + m[1];
 
       split_tags[tag_idx] = new_tag_string;
@@ -245,7 +246,7 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
   /* Allow basic word prefix matches.  "tag" matches at the beginning of any word
    * in a tag, eg. both "tagme" and "dont_tagme". */
   /* Add the regex for ordinary prefix matches. */
-  var s = "(([^:]*_)?";
+  var s = "(([^`]*_)?";
   letters.each(function(letter) {
     var escaped_letter = RegExp.escape(letter);
     s += escaped_letter;
@@ -263,9 +264,9 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
     last = RegExp.escape(last);
 
     var s = "(";
-    s += "(" + first + "[^:]*_" + last + ")";
+    s += "(" + first + "[^`]*_" + last + ")";
     s += "|";
-    s += "(" + last + "[^:]*_" + first + ")";
+    s += "(" + last + "[^`]*_" + first + ")";
     s += ")";
     regex_parts.push(s);
   }
@@ -278,7 +279,7 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
     letters.each(function(letter) {
       var escaped_letter = RegExp.escape(letter);
       s += escaped_letter;
-      s += '[^:]*';
+      s += '[^`]*';
     });
     s += ")";
     regex_parts.push(s);
@@ -287,14 +288,14 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
   /* The space is included in the result, so the result tags can be matched with the
    * same regexes, for in reorder_search_results. 
    *
-   * (\d)+  match the alias ID                      1:
-   * [^ ]*: start at the beginning of any alias     1:foo:bar:
+   * (\d)+  match the alias ID                      1`
+   * [^ ]*: start at the beginning of any alias     1`foo`bar`
    * ... match ...
-   * [^:]*: all matches are prefix matches          1:foo:bar:tagme:
-   * [^ ]*  match any remaining aliases             1:foo:bar:tagme:tag_me:
+   * [^`]*` all matches are prefix matches          1`foo`bar`tagme`
+   * [^ ]*  match any remaining aliases             1`foo`bar`tagme`tag_me`
    */
   var regex_string = regex_parts.join("|");
-  regex_string = "(\\d+)[^ ]*:(" + regex_string + ")[^:]*:[^ ]* ";
+  regex_string = "(\\d+)[^ ]*`(" + regex_string + ")[^`]*`[^ ]* ";
 
   return new RegExp(regex_string, options.global? "g":"");
 }
@@ -328,12 +329,12 @@ TagCompletionClass.prototype.retrieve_tag_search = function(re, source, options)
 TagCompletionClass.prototype.add_recent_tag = function(tag)
 {
   /* Don't add tags that will make the data unparsable. */
-  if(tag.indexOf(" ") != -1 || tag.indexOf(":") != -1)
+  if(tag.indexOf(" ") != -1 || tag.indexOf("`") != -1)
     throw "Invalid recent tag: " + tag;
 
   /* Remove the tag from the recent tag list if it's already there. */
   var escaped_tag = RegExp.escape(tag);
-  var re = new RegExp("\\d:" + escaped_tag + ": ");
+  var re = new RegExp("\\d`" + escaped_tag + ": ");
   this.recent_tags = this.recent_tags.replace(re, "");
 
   /* Look up the tag type if we know it. */
@@ -345,7 +346,7 @@ TagCompletionClass.prototype.add_recent_tag = function(tag)
     throw "Unknown tag type: " + tag_type;
 
   /* Add the tag to the front.  Always append a space, not just between entries. */
-  var tag_entry = tag_type_idx + ":" + tag + ": ";
+  var tag_entry = tag_type_idx + "`" + tag + "` ";
   this.recent_tags = tag_entry + this.recent_tags;
 
   /* If the recent tags list is too big, remove data from the end. */
@@ -434,15 +435,15 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   /* Hack: if the search is one of the ratings shortcuts, put that at the top, even though
    * it's not a real tag. */
   if("sqe".indexOf(tag) != -1)
-    results.unshift("0:" + tag + " ");
+    results.unshift("0`" + tag + " ");
 
   results = results.slice(0, options.max_results != null? options.max_results:10);
 
-  /* Strip the "1:" tag type prefix off of each result. */
+  /* Strip the "1`" tag type prefix off of each result. */
   var final_results = [];
   var tag_types = {};
   results.each(function(tag) {
-    var m = tag.match(/(\d+):([^:]*):[^ ]* /);
+    var m = tag.match(/(\d+)`([^`]*)`[^ ]* /);
     if(!m)
     {
       ReportError("Unparsable cached tag: '" + tag + "'", null, null, null, null);

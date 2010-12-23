@@ -39,7 +39,8 @@ class Tag < ActiveRecord::Base
   end
 
   def self.find_or_create_by_name(name)
-    name = name.downcase.tr(" ", "_").gsub(/^[-~]+/, "")
+    # Reserve ` as a field separator for tag/summary.
+    name = name.downcase.tr(" ", "_").gsub(/^[-~]+/, "").gsub(/`/, "")
     
     ambiguous = false
     tag_type = nil

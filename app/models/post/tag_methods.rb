@@ -236,18 +236,16 @@ module PostTagMethods
       execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
       self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
 
-      # We don't try to keep tag post_counts continually in sync, but we do need to know if a tag
-      # is active at all.  If a tag's post_count is zero and we're using it, set it to one.
-      # post_count is only updated beyond that, or set back to zero, by Tag.recalculate_post_count.
+      # If any tags are newly active, expire the tag cache.
       if not self.new_tags.empty? then
-        tag_ids = new_tags.map { |tag| tag.id }.join(",")
-        sql = "UPDATE tags SET post_count = 1 WHERE id IN (%s) AND post_count = 0" % tag_ids
-        execute_sql(sql)
-
-        # If any tags are newly active, expire the tag cache.
         any_new_tags = false
+        previous_tags = self.cached_tags.split(" ")
         self.new_tags.each do |tag|
-          if tag.post_count == 0 then
+          # If this tag is in old_tags, then it's already active and we just removed it
+          # in the above DELETE, so it's not really a newly activated tag.  (This isn't
+          # self.old_tags; that's the tags the user saw before he edited, not the data
+          # we're replacing.)
+          if tag.post_count == 0 and not previous_tags.include?(tag.name) then
             any_new_tags = true
           end
         end

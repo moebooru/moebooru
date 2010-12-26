@@ -79,8 +79,6 @@ class TagAlias < ActiveRecord::Base
       post.update_attributes(:tags => post.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
     end
 
-    execute_sql("UPDATE tags SET post_count = 0 WHERE name = ?", name)
-
     Cache.expire_tag_version
   end
   

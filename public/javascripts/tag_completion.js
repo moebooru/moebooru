@@ -43,8 +43,11 @@ TagCompletionClass.prototype.init = function(current_version)
 }
 
 /*
- * If we havn't loaded the data yet, do so now.  If the data is already loaded, call onComplete
- * immediately; otherwise call it when the data finishes loading.
+ * If cached data is available, load it.  If the cached data is out of date, run an
+ * update asynchronously.  Return true if data is available and tag completions may
+ * be done, whether or not the data is current.  Call onComplete when up-to-date tag
+ * data is available; if the current cached data is known to be current, it will be
+ * called before this function returns.
  *
  * If this is called multiple times before the tag load completes, the data will only be loaded
  * once, but all callbacks will be called.
@@ -56,7 +59,7 @@ TagCompletionClass.prototype.load_data = function(onComplete)
   {
     if(onComplete)
       onComplete();
-    return;
+    return this.tag_data != null;
   }
 
   /* Add the callback to the list. */
@@ -65,7 +68,7 @@ TagCompletionClass.prototype.load_data = function(onComplete)
 
   /* If we're already loading, let the existing request finish; it'll run the callback. */
   if(this.loading)
-    return;
+    return this.tag_data != null;
   this.loading = true;
 
   var complete = function()
@@ -84,6 +87,10 @@ TagCompletionClass.prototype.load_data = function(onComplete)
     }.bind(this));
   }.bind(this);
 
+  /* If we have data available, load it. */
+  if(localStorage.tag_data != null)
+    this.tag_data = localStorage.tag_data;
+
   /* If we've been told the current tag data revision and we're already on it, or if we havn't
    * been told the revision at all, use the data we have. */
   if(localStorage.tag_data != null)
@@ -91,13 +98,12 @@ TagCompletionClass.prototype.load_data = function(onComplete)
     if(this.most_recent_tag_data_version == null || localStorage.tag_data_version == this.most_recent_tag_data_version)
     {
       // console.log("Already on most recent tag data version");
-      this.tag_data = localStorage.tag_data;
       complete();
-      return;
+      return this.tag_data != null;
     }
   }
   
-  /* Requeset the tag data from the server.  Tell the server the data version we already
+  /* Request the tag data from the server.  Tell the server the data version we already
    * have. */
   var params = {};
   if(localStorage.tag_data_version != null)
@@ -128,6 +134,8 @@ TagCompletionClass.prototype.load_data = function(onComplete)
       complete();
     }.bind(this)
   });
+
+  return this.tag_data != null;
 }
 
 /* When form is submitted, call add_recent_tags_from_update for the given tags and old_tags
@@ -652,12 +660,23 @@ TagCompletionBox.prototype.update = function()
 {
   /* If the tag data hasn't been loaded, run the load and rerun the update when it
    * completes. */
-  if(!TagCompletion.loaded)
+  if(TagCompletion.tag_data == null)
   {
-    TagCompletion.load_data(function() {
+    /* If this returns true, we'll display with the data we have now.  If this happens,
+     * don't update during the callback; it's bad UI to be changing the list out from
+     * under the user at a seemingly random time. */
+    var data_available = TagCompletion.load_data(function() {
+      if(data_available)
+        return;
+
+      /* After the load completes, force an update, even though the tag we're completing
+       * hasn't changed; the tag data may have. */
+      this.current_tag = null;
       this.update();
     }.bind(this));
-    return;
+
+    if(!data_available)
+      return;
   }
 
   /* Don't show the autocomplete unless the contents actually change, so we can still

@@ -20,7 +20,7 @@ TagCompletionClass = function()
   this.loaded = false;
 
   /* If the data format is out of date, clear it. */
-  var current_version = 4;
+  var current_version = 5;
   if(localStorage.tag_data_format != current_version)
   {
     delete localStorage.tag_data;
@@ -157,13 +157,41 @@ var get_tag_from_string = function(tag_string)
   return m[1];
 }
 
+/*
+ * Like string.split, but rather than each item of data being separated by the separator,
+ * each item of data ends in the separator; that is, the final item is followed by the
+ * separator.
+ *
+ * "a b c " -> ["a", "b", "c"].
+ *
+ * If the final item doesn't end in the separator, throw an exception.
+ *
+ */
+var split_data = function(str, separator)
+{
+  var result = str.split(separator);
+  if(result.length != 0)
+  {
+    if(result[result.length-1] != "")
+      throw "String doesn't end in separator";
+    result.pop();
+  }
+
+  return result;
+}
+
+var join_data = function(items, separator)
+{
+  return items.join(separator) + separator;
+}
+
 /* Update the cached types of all known tags in tag_data and recent_tags. */
 TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_add)
 {
   var tag_map = {};
 
   /* Make a mapping of tags to indexes. */
-  var split_tags = tags.split(" ");
+  var split_tags = split_data(tags, " ");
   var idx = 0;
   split_tags.each(function(tag) {
     if(tag == "")
@@ -196,7 +224,7 @@ TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_ad
        * not for adding new recent tags. */
       if(allow_add)
       {
-        var tag_string = tag_type_idx + ":" + tag;
+        var tag_string = tag_type_idx + "`" + tag + "`";
         split_tags.push(tag_string);
       }
     }
@@ -214,7 +242,7 @@ TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_ad
     }
   });
 
-  return split_tags.join(" ");
+  return join_data(split_tags, " ");
 }
 
 TagCompletionClass.prototype.update_tag_types = function()

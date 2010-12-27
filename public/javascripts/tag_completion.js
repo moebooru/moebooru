@@ -146,7 +146,7 @@ TagCompletionClass.prototype.load_data = function(onComplete)
 TagCompletionClass.prototype.observe_tag_changes_on_submit = function(form, tags_field, old_tags_field)
 {
   return form.on("submit", function(e) {
-    var old_tags = old_tags_field? old_tags_field.value:"";
+    var old_tags = old_tags_field? old_tags_field.value:null;
     TagCompletion.add_recent_tags_from_update(tags_field.value, old_tags);
   });
 }
@@ -401,21 +401,41 @@ TagCompletionClass.prototype.add_recent_tag = function(tag)
   localStorage.recent_tags = this.recent_tags;
 }
 
-/* Add as recent tags all tags which are in tags and not in old_tags. */
+/* Add as recent tags all tags which are in tags and not in old_tags.  If this is from an
+ * edit form, old_tags must be the hidden old_tags value in the edit form; if this is
+ * from a search form, old_tags must be null. */
 TagCompletionClass.prototype.add_recent_tags_from_update = function(tags, old_tags)
 {
   tags = tags.split(" ");
-  old_tags = old_tags.split(" ");
+  if(old_tags != null)
+    old_tags = old_tags.split(" ");
 
   tags.each(function(tag) {
-    /* Ignore metatags. */
-    if(tag.indexOf(":") != -1)
+    /* Ignore invalid tags. */
+    if(tag.indexOf("`") != -1)
       return;
     /* Ignore rating shortcuts. */
     if("sqe".indexOf(tag) != -1)
       return;
-    if(old_tags.indexOf(tag) != -1)
+    /* Ignore tags that the user didn't just add. */
+    if(old_tags && old_tags.indexOf(tag) != -1)
       return;
+
+    /*
+     * We may be adding tags from an edit form or a search form.  If we're on an edit
+     * form, old_tags is set; if we're on a search form, old_tags is null.
+     *
+     * If we're on a search form, ignore non-metatags that don't exist in tag_data.  This
+     * will just allow adding typos to recent tag data.
+     *
+     * If we're on an edit form, allow these completely new tags to be added, since the
+     * edit form is going to create them.
+     */
+    if(old_tags == null && tag.indexOf(":") == -1)
+    {
+      if(this.tag_data.indexOf("`" + tag + "`") == -1)
+        return;
+    }
 
     this.add_recent_tag(tag);
   }.bind(this));

@@ -33,6 +33,9 @@ TagCompletionClass = function()
   this.recent_tags = localStorage.recent_tags || "";
 
   this.load_data_complete_callbacks = [];
+
+  this.rapid_backspaces_received = 0;
+  this.updates_deferred = false;
 }
 
 TagCompletionClass.prototype.init = function(current_version)
@@ -550,6 +553,42 @@ TagCompletionBox.prototype.input_keydown = function(event)
   if(event.target != this.input_field)
     return;
 
+  /* Handle backspaces even when hidden. */
+  if(event.keyCode == Event.KEY_BACKSPACE)
+  {
+    /*
+     * If the user holds down backspace to delete tags, don't spend time updating the
+     * autocomplete; if it's too slow it may slow down the input.  However, we don't
+     * want to always delay autocomplete on backspace; it looks unresponsive.
+     *
+     * Count the number of backspaces we receive less than 100ms apart.  Defer updates
+     * after we receive two or more in rapid succession, so we'll defer when backspace
+     * is held down but not when being depressed.
+     *
+     * Note that this is done this way rather than by tracking the pressed state with
+     * keydown/keyup, because this way we don't need to deal with lost keyup events if
+     * focus is lost while the key is pressed.  There's no way to become desynced this way.
+     */
+    ++this.rapid_backspaces_received;
+
+    if(this.backspace_timeout)
+      clearTimeout(this.backspace_timeout);
+    this.backspace_timeout = setTimeout(function() {
+      this.rapid_backspaces_received = 0;
+    }.bind(this), 100);
+
+    if(this.rapid_backspaces_received > 1)
+    {
+      this.updates_deferred = true;
+      if(this.defer_timeout != null)
+        clearTimeout(this.defer_timeout);
+      this.defer_timeout = setTimeout(function() {
+        this.updates_deferred = false;
+        this.update();
+      }.bind(this), 100);
+    }
+  }
+
   if(!this.shown)
   {
     this.update.defer();
@@ -686,6 +725,9 @@ TagCompletionBox.prototype.set_current_word = function(tag)
 
 TagCompletionBox.prototype.update = function()
 {
+  if(this.updates_deferred)
+    return;
+
   /* If the tag data hasn't been loaded, run the load and rerun the update when it
    * completes. */
   if(TagCompletion.tag_data == null)

@@ -467,6 +467,11 @@ TagCompletionClass.prototype.reorder_search_results = function(tag, results)
  * options = {
  *   max_results: 10
  * }
+ *
+ * [["tag1", "tag2", "tag3"], 1]
+ *
+ * The value 1 is the number of results from the beginning which come from recent_tags,
+ * rather than tag_data.
  */
 TagCompletionClass.prototype.complete_tag = function(tag, options)
 {
@@ -477,7 +482,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
     options = {};
 
   if(tag == "")
-    return [];
+    return [[], 0];
 
   /* Make a list of all results; this will be ordered recent tags first, other tags
    * sorted by tag count.  Request more results than we need, since we'll reorder
@@ -489,6 +494,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   recent_results = this.reorder_search_results(tag, recent_results);
   main_results = this.reorder_search_results(tag, main_results);
 
+  var recent_result_count = recent_results.length;
   var results = recent_results.concat(main_results);
 
   /* Hack: if the search is one of the ratings shortcuts, put that at the top, even though
@@ -497,6 +503,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
     results.unshift("0`" + tag + "` ");
 
   results = results.slice(0, options.max_results != null? options.max_results:10);
+  recent_result_count = Math.min(results.length, recent_result_count);
 
   /* Strip the "1`" tag type prefix off of each result. */
   var final_results = [];
@@ -520,7 +527,7 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   /* Register tag types of results with Post. */
   Post.register_tags(tag_types, true);
 
-  return final_results;
+  return [final_results, recent_result_count];
 }
 
 /* This is only supported if the browser supports localStorage.  Also disable this if
@@ -790,7 +797,9 @@ TagCompletionBox.prototype.update = function()
   if(!this.input_field.recursivelyVisible())
     return;
 
-  var tags = TagCompletion.complete_tag(tag);
+  var tags_and_recent_count = TagCompletion.complete_tag(tag);
+  var tags = tags_and_recent_count[0];
+  var recent_result_count = tags_and_recent_count[1];
   if(tags.length == 0)
     return;
 
@@ -809,7 +818,10 @@ TagCompletionBox.prototype.update = function()
   while(ul.firstChild)
     ul.removeChild(ul.firstChild);
 
-  tags.each(function(tag) {
+  for(var i = 0; i < tags.length; ++i)
+  {
+    var tag = tags[i];
+
     var li = document.createElement("LI");
     li.className = "completed-tag";
     li.setTextContent(tag);
@@ -817,8 +829,10 @@ TagCompletionBox.prototype.update = function()
 
     var tag_type = Post.tag_types.get(tag);
     li.className += " tag-type-" + tag_type;
+    if(i < recent_result_count)
+      li.className += " recent-tag";
     li.result_tag = tag;
-  });
+  }
 
   this.completion_box.show();
 

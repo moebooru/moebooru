@@ -588,6 +588,10 @@ ul.link-page > li {
 {
   background-color: #005;
 }
+.tag-completion-box .completed-tag.recent-tag
+{
+  font-weight: bold;
+}
 
 .added {
   color: #00CC00;

@@ -592,11 +592,17 @@ ul.link-page > li {
 {
   font-weight: bold;
 }
+.tag-completion-box .completed-tag
+{
+  position: relative;
+}
 .tag-completion-box .remove-recent-tag
 {
-  float: right;
-  margin-left: 1.0em;
-  padding-left: 2px;
+  left: -1.5em;
+  padding-right: 0.5em;
+  padding-left: 0.25em;
+  position: absolute;
+  background-color: #002;
 }
 
 .added {

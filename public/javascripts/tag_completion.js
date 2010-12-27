@@ -185,6 +185,8 @@ var split_data = function(str, separator)
 
 var join_data = function(items, separator)
 {
+  if(items.length == 0)
+    return "";
   return items.join(separator) + separator;
 }
 

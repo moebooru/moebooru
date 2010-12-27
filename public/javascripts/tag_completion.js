@@ -371,10 +371,7 @@ TagCompletionClass.prototype.add_recent_tag = function(tag)
   if(tag.indexOf(" ") != -1 || tag.indexOf("`") != -1)
     throw "Invalid recent tag: " + tag;
 
-  /* Remove the tag from the recent tag list if it's already there. */
-  var escaped_tag = RegExp.escape(tag);
-  var re = new RegExp("\\d`" + escaped_tag + ": ");
-  this.recent_tags = this.recent_tags.replace(re, "");
+  this.remove_recent_tag(tag);
 
   /* Look up the tag type if we know it. */
   var tag_type = Post.tag_types.get(tag) || "general";
@@ -398,6 +395,15 @@ TagCompletionClass.prototype.add_recent_tag = function(tag)
       this.recent_tags = this.recent_tags.slice(0, purge_at+1);
   }
 
+  localStorage.recent_tags = this.recent_tags;
+}
+
+/* Remove the tag from the recent tag list. */
+TagCompletionClass.prototype.remove_recent_tag = function(tag)
+{
+  var escaped_tag = RegExp.escape(tag);
+  var re = new RegExp("\\d`" + escaped_tag + "` ", "g");
+  this.recent_tags = this.recent_tags.replace(re, "");
   localStorage.recent_tags = this.recent_tags;
 }
 
@@ -698,6 +704,12 @@ TagCompletionBox.prototype.hide = function()
 TagCompletionBox.prototype.click_result = function(event, element)
 {
   event.stop();
+  if(event.target.hasClassName("remove-recent-tag"))
+  {
+    TagCompletion.remove_recent_tag(element.result_tag);
+    this.update(true);
+    return;
+  }
   this.set_current_word(element.result_tag);
 }
 
@@ -750,9 +762,9 @@ TagCompletionBox.prototype.set_current_word = function(tag)
   this.hide();
 }
 
-TagCompletionBox.prototype.update = function()
+TagCompletionBox.prototype.update = function(force)
 {
-  if(this.updates_deferred)
+  if(this.updates_deferred && !force)
     return;
 
   /* If the tag data hasn't been loaded, run the load and rerun the update when it
@@ -776,20 +788,20 @@ TagCompletionBox.prototype.update = function()
       return;
   }
 
-  /* Don't show the autocomplete unless the contents actually change, so we can still
-   * navigate multiline tag input boxes with the arrow keys. */
-  if(this.last_value == this.input_field.value)
-    return;
-  this.last_value = this.input_field.value;
-
   /* Figure out the tag the cursor is on. */
   var offset = this.get_input_word_offset(this.input_field);
   var tag = this.input_field.value.substr(offset.start, offset.end-offset.start);
 
-  if(tag == this.current_tag)
+  if(tag == this.current_tag && !force)
     return;
 
   this.hide();
+
+  /* Don't show the autocomplete unless the contents actually change, so we can still
+   * navigate multiline tag input boxes with the arrow keys. */
+  if(this.last_value == this.input_field.value && !force)
+    return;
+  this.last_value = this.input_field.value;
 
   this.current_tag = tag;
 
@@ -830,7 +842,12 @@ TagCompletionBox.prototype.update = function()
     var tag_type = Post.tag_types.get(tag);
     li.className += " tag-type-" + tag_type;
     if(i < recent_result_count)
+    {
       li.className += " recent-tag";
+
+      var h = "<a class='remove-recent-tag' href='#'>X</a>'";
+      li.appendChild(h.createElement());
+    }
     li.result_tag = tag;
   }
 

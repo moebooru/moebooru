@@ -1680,6 +1680,10 @@ textarea.edit-item { border: none; }
   list-style-type: none;
 }
 
+.post-info .post-frames.no-frames {
+  display: none;
+}
+
 .post-info .post-frame-list {
   display: inline-block;
 }

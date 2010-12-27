@@ -806,10 +806,11 @@ BrowserView.prototype.set_post_info = function()
 
   }
 
-  this.container.down(".post-frames").show(post.frames.length > 0);
   if(post.frames.length > 0)
   {
-    this.displayed_post_frame;
+    /* Hide this with a class rather than by changing display, so show_frame_editor
+     * and hide_frame_editor can hide and unhide this separately. */
+    this.container.down(".post-frames").removeClassName("no-frames");
 
     var frame_list = this.container.down(".post-frame-list");
     while(frame_list.firstChild)
@@ -834,6 +835,10 @@ BrowserView.prototype.set_post_info = function()
       a.post_frame = frame_number;
       frame_list.appendChild(a);
     }
+  }
+  else
+  {
+    this.container.down(".post-frames").addClassName("no-frames");
   }
 
 

@@ -576,6 +576,8 @@ TagCompletionBox = function(input_field)
   }.bind(this));
 
   this.completion_box.on("click", "li", this.click_result.bind(this));
+
+  this.hide();
 }
 
 TagCompletionBox.prototype.input_mouse = function(event)

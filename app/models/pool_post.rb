@@ -49,5 +49,25 @@ class PoolPost < ActiveRecord::Base
   def expire_cache
     Cache.expire
   end
+
+  module ApiMethods
+    def api_attributes
+      return {
+        :id => id,
+        :pool_id => pool_id,
+        :post_id => post_id,
+        :active => active,
+        :sequence => sequence,
+        :next_post_id => next_post_id,
+        :prev_post_id => prev_post_id,
+      }
+    end
+
+    def to_json(*params)
+      api_attributes.to_json(*params)
+    end
+  end
+
+  include ApiMethods
 end
 

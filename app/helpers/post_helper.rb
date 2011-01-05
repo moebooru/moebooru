@@ -5,9 +5,9 @@ module PostHelper
     elsif source[/^http/]
       text = source
       text = text[7, 20] + "..." if abbreviate
-      link_to text, source
+      link_to h(text), source
     else
-      source
+      h(source)
     end
   end
 

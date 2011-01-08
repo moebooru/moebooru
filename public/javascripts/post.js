@@ -1309,6 +1309,9 @@ Post = {
       current_pool_id = current.id;
 
     $$("A").each(function(a) {
+      if(a.hasClassName("no-browser-link"))
+        return;
+
       var tags = parse_index_url(a.href);
       if(tags != null)
       {

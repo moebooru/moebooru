@@ -131,8 +131,10 @@ module PostHelper
     image_class = "preview external"
     width, height = post.preview_dimensions
 
+    # Set no-browser-link on external image links, so the Post.InitBrowserLinks knows not to
+    # change these links to post/browse.
     image = %{<img src="#{post.preview_url}" alt="#{(post.md5)}" class="#{image_class} width="#{width}" height="#{height}">}
-    link = %{<a class="thumb" href="#{post.url}">#{image}</a>}
+    link = %{<a class="thumb" href="#{post.url} class='no-browser-link'">#{image}</a>}
     icon = %{<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">}
     div = %{<div class="inner">#{link}</div>}
 

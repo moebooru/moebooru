@@ -37,8 +37,8 @@ module TagHelper
       end
 
       if @current_user.is_privileged_or_higher?
-        html << %{<a href="/post/index?tags=#{u(name)}+#{u(params[:tags])}">+</a> }
-        html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}">&ndash;</a> }
+        html << %{<a href="/post/index?tags=#{u(name)}+#{u(params[:tags])}" class="no-browser-link">+</a> }
+        html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}" class="no-browser-link">&ndash;</a> }
       end
 
       if options[:with_hover_highlight] then

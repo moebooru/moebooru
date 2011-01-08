@@ -42,7 +42,16 @@ module QueryParser
     return query
   end
   
+  # Escape an SQL string.  This is used only for escaping nested strings, within things like
+  # to_tsquery parameters; the results must always be passed as a normal parameter to ensure
+  # correct, safe escaping.
+  def generate_sql_escape(token)
+    escaped_token = token.gsub(/\\|'/, '\0\0\0\0').gsub("?", "\\\\77")
+    "'" + escaped_token + "'"
+  end
+
   module_function :parse
   module_function :parse_meta
   module_function :escape_for_tsquery
+  module_function :generate_sql_escape
 end

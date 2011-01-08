@@ -201,7 +201,7 @@ module PostFileMethods
         end
       end
 
-      if self.source.to_s =~ /^http/
+      if self.source.to_s =~ /^http/ and self.source.to_s !~ /pixiv\.net/ then
         #self.source = "Image board"
         self.source = ""
       end

@@ -671,8 +671,11 @@ ThumbnailView.prototype.center_on_post = function(post_idx)
 
   if(post_idx > this.post_ids.length*3/4)
   {
-    /* We're coming near the end of the loaded posts, so load more. */
-    document.fire("viewer:need-more-thumbs", { view: this });
+    /* We're coming near the end of the loaded posts, so load more.  We may be currently
+     * in the middle of setting up the post; defer this, so we finish what we're doing first. */
+    (function() {
+      document.fire("viewer:need-more-thumbs", { view: this });
+    }).defer();
   }
 
   this.centered_post_idx = post_idx;

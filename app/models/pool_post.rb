@@ -8,7 +8,6 @@ class PoolPost < ActiveRecord::Base
   versioning_group_by :class => :pool
   versioned :active, :default => 'f', :allow_reverting_to_default => true
   versioned :sequence
-  before_save :update_pool
   after_save :expire_cache
 
   def can_change_is_public?(user)
@@ -26,22 +25,6 @@ class PoolPost < ActiveRecord::Base
       return "##{sequence}"
     else
       return "\"#{sequence}\""
-    end
-  end
-
-  def update_pool
-    # If active has changed, update our pool's count.  (Don't use active_changed?; that'll
-    # be true if active was modified and then set back to its original value.)  Tricky:
-    # if we're creating a new record, we need to treat active as changed so we increment
-    # the count.  In this case, self.id will be nil, since we havn't saved ourself yet.
-    if self.active != self.active_was or self.id == nil then
-      if active then
-        pool.increment!(:post_count)
-      else
-        pool.decrement!(:post_count)
-      end
-
-      pool.save!
     end
   end
 

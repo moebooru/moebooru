@@ -110,6 +110,22 @@ module PostFileMethods
     self.crc32 = crc32_accum
   end
 
+  def regenerate_jpeg_hash
+    return false if not has_jpeg?
+
+    crc32_accum = 0
+    File.open(jpeg_path, 'rb') { |fp|
+      buf = ""
+      while fp.read(1024*64, buf) do
+        crc32_accum = Zlib.crc32(buf, crc32_accum)
+      end
+    }
+    return false if self.jpeg_crc32 == crc32_accum
+
+    self.jpeg_crc32 = crc32_accum
+    return true
+  end
+
   def generate_hash
     if not regenerate_hash
       return false

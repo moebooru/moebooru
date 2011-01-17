@@ -110,4 +110,15 @@ namespace :posts do
       post.save!
     end
   end
+
+  desc 'Regenerate JPEG CRCs'
+  task :regen_jpeg_crcs => :environment do
+    ActiveRecord::Base.select_values_sql("SELECT p.id FROM posts p ORDER BY p.id DESC").each do |post_id|
+      p "%i..." % post_id
+      post = Post.find_by_id(post_id)
+      if post.regenerate_jpeg_hash() then
+        post.save!
+      end
+    end
+  end
 end

@@ -39,7 +39,8 @@
     <% if has_jpeg %>
       <li><%= link_to_pool_zip "Download&nbsp;JPGs", @pool, zip_params.merge({:jpeg => true}) %></li>
     <% end %>
-    <li><%= link_to_pool_zip "Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
+    <% li_class = has_jpeg ? "advanced-editing":"" %>
+    <li class="<%= li_class %>"><%= link_to_pool_zip "Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
   <% end %>
   <li><%= link_to "Index&nbsp;view", :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
   <% if not @current_user.is_anonymous? %>

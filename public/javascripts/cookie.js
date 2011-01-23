@@ -32,6 +32,15 @@ Cookie = {
   get: function(name) {
     return this.unescape(this.raw_get(name))
   },
+
+  get_int: function(name) {
+    var value = Cookie.get(name);
+    value = parseInt(value);
+    if(value)
+      return value;
+    else
+      return 0;
+  },
   
   remove: function(name) {
     Cookie.put(name, "", -1)

@@ -326,8 +326,6 @@ class ApplicationController < ActionController::Base
     }.to_json
 
     cookies["country"] = @current_user_country
-    cookies["nag_counter"] ||= "0"
-    cookies["last_nagged"] ||= "#{Time.now - 24.hours}"
 
     unless @current_user.is_anonymous?
       cookies["user_id"] = @current_user.id.to_s
@@ -390,19 +388,4 @@ class ApplicationController < ActionController::Base
       cookies["notice"] = flash[:notice]
     end
   end
-  def increment_nag_counter
-    last_nagged = cookies[:last_nagged] || (Time.now - 24.hours).to_s
-    nag_counter = cookies[:nag_counter] || "0"
-    if @current_user.is_privileged_or_lower? && (Time.now - 24.hours) > last_nagged.to_time
-      cookies[:nag_counter] = "#{nag_counter.to_i + 1}"
-    end
-  end
-  def update_last_nagged
-    nag_counter = cookies[:nag_counter] || "0"
-    if nag_counter.to_i == 25
-      cookies[:nag_counter] = "0"
-      cookies[:last_nagged] = "#{Time.now}"
-    end
-  end
-
 end

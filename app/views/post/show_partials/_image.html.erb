@@ -3,18 +3,6 @@
     <% if !@post.can_be_seen_by?(@current_user) %>
       <p>You need a privileged account to see this image.</p>
     <% elsif @post.image? %>
-      <% if cookies[:nag_counter] == "15" || cookies[:nag_counter] == "25"%>
-<script type="text/javascript">
-Event.observe( window,'load', function() {
-
-Dialog.alert("Test of alert panel, check out debug window after closing it", 
-             {width:300, height:100, okLabel: "close", 
-              ok:function(win) {return true;}});
-
-});
-</script>
-
-      <%end%>
       <div id="note-container">
         <% @post.active_notes.each do |note| %>
           <div class="note-box" style="width: <%= note.width %>px; height: <%= note.height %>px; top: <%= note.y %>px; left: <%= note.x %>px;" id="note-box-<%= note.id %>">
@@ -61,3 +49,4 @@ Dialog.alert("Test of alert panel, check out debug window after closing it",
     </script>
   </div>
 <% end %>
+

@@ -58,9 +58,18 @@
   <% end %>
 </div>
 
+<% if CONFIG["app_name"] == "oreno.imouto" %>
+<%= render :partial => "referral" %>
+<% end %>
+
 <script type="text/javascript">
   new TagCompletionBox($("post_tags"));
   if(TagCompletion)
     TagCompletion.observe_tag_changes_on_submit($("edit-form"), $("post_tags"), $("post_old_tags"));
+
+  <% if CONFIG["app_name"] == "oreno.imouto" %>
+    referral_banner = new ReferralBanner($("hosting-referral"));
+    referral_banner.increment_views_and_check_referral();
+  <% end %>
 </script>
 <%= render :partial => "footer" %>

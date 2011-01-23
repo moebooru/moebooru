@@ -2531,3 +2531,24 @@ P,.inline-image + .inline-image > .inline-thumb
   -moz-user-select:none;
 }                                                    
 
+#hosting-referral
+{
+  position: absolute;
+  width: 25em;
+  margin-left: -12.5em;
+  left: 50%;
+
+  padding: 0.5em;
+  font-size: 150%;
+  text-align: center;
+  background-color: #008;
+
+  -webkit-transition: top 0.2s ease-out;
+  top: -8em;
+}
+
+#hosting-referral.shown
+{
+  top: 1em;
+}
+

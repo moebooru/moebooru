@@ -68,7 +68,10 @@ module PostHelper
       plid = ""
       target_url = post.url
     end
-    link = %{<a class="thumb" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
+
+    link_class = "thumb"
+    link_class += " no-browser-link" if not is_post
+    link = %{<a class="#{link_class}" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
     div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
     
     if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then

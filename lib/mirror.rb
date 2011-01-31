@@ -17,6 +17,21 @@ module Mirrors
   end
   module_function :ssh_open_pipe
 
+  def create_mirror_paths(dirs)
+    CONFIG["mirrors"].each { |mirror|
+      remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
+      remote_dirs = []
+      dirs.each { |dir|
+        remote_dirs << mirror[:data_dir] + "/" + dir
+      }
+
+      # Create all directories in one go.
+      system("/usr/bin/ssh", "-o", "Compression=no", "-o", "BatchMode=yes",
+             remote_user_host, "mkdir -p #{remote_dirs.uniq.join(" ")}")
+    }
+  end
+  module_function :create_mirror_paths
+
   # Copy a file to all mirrors.  file is an absolute path which must be
   # located in public/data; the files will land in the equivalent public/data
   # on each mirror.

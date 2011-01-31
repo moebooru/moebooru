@@ -16,19 +16,12 @@ module PostMirrorMethods
     # CONFIG[:data_dir] is equivalent to our local_base.
     local_base = "#{RAILS_ROOT}/public/data/"
 
-    CONFIG["mirrors"].each { |mirror|
-      remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
-      remote_dirs = []
-      files_to_copy.each { |file|
-        remote_filename = file[local_base.length, file.length]
-        remote_dir = File.dirname(remote_filename)
-        remote_dirs << mirror[:data_dir] + "/" + File.dirname(remote_filename)
-      }
-
-      # Create all directories in one go.
-      system("/usr/bin/ssh", "-o", "Compression=no", "-o", "BatchMode=yes",
-             remote_user_host, "mkdir -p #{remote_dirs.uniq.join(" ")}")
+    dirs = []
+    files_to_copy.each { |file|
+        dirs << File.dirname(file[local_base.length, file.length])
     }
+
+    Mirrors.create_mirror_paths(dirs)
 
     begin
       files_to_copy.each { |file|

@@ -17,8 +17,21 @@ module Mirrors
   end
   module_function :ssh_open_pipe
 
-  def create_mirror_paths(dirs)
+  def filter_mirror_list(options)
+    results = []
     CONFIG["mirrors"].each { |mirror|
+      next if mirrors[:previews_only] != mirror[:previews_only]
+      results << mirror
+    }
+
+    return results
+  end
+
+  def create_mirror_paths(dirs, options={})
+    dirs = dirs.uniq
+
+    target_mirrors = filter_mirror_list(options)
+    target_mirrors.each { |mirror|
       remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
       remote_dirs = []
       dirs.each { |dir|
@@ -36,6 +49,9 @@ module Mirrors
   # located in public/data; the files will land in the equivalent public/data
   # on each mirror.
   #
+  # If options[:previews_only] is true, copy only to :previews_only mirrors; otherwise
+  # copy only to others.
+  #
   # Because we have no mechanism for indicating that a file is only available on
   # certain mirrors, if any mirror fails to upload, MirrorError will be thrown
   # and the file should be treated as completely unwarehoused.
@@ -50,7 +66,8 @@ module Mirrors
 
     expected_md5 = File.open(file, 'rb') {|fp| Digest::MD5.hexdigest(fp.read)}
 
-    CONFIG["mirrors"].each { |mirror|
+    target_mirrors = filter_mirror_list(options)
+    target_mirrors.each { |mirror|
       remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
       remote_filename = "#{mirror[:data_dir]}/#{file[local_base.length, file.length]}"
 

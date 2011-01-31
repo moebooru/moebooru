@@ -32,6 +32,7 @@ module PostMirrorMethods
       # an error.
       self.reload
       raise if self.status != "deleted"
+      return
     end
 
     # This might take a while.  Rather than hold a transaction, just reload the post

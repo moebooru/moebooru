@@ -20,12 +20,13 @@ module Mirrors
   def filter_mirror_list(options)
     results = []
     CONFIG["mirrors"].each { |mirror|
-      next if mirrors[:previews_only] != mirror[:previews_only]
+      next if options[:previews_only] != mirror[:previews_only]
       results << mirror
     }
 
     return results
   end
+  module_function :filter_mirror_list
 
   def create_mirror_paths(dirs, options={})
     dirs = dirs.uniq

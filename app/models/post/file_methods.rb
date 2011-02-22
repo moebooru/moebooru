@@ -12,6 +12,8 @@ module PostFileMethods
     m.before_validation_on_create :validate_content_type
     m.before_validation_on_create :generate_hash
     m.before_validation_on_create :set_image_dimensions
+    m.before_validation_on_create :set_image_status
+    m.before_validation_on_create :check_pending_count
     m.before_validation_on_create :generate_sample
     m.before_validation_on_create :generate_jpeg
     m.before_validation_on_create :generate_preview
@@ -266,6 +268,41 @@ module PostFileMethods
       self.height = imgsize.get_height
     end
     self.file_size = File.size(tempfile_path) rescue 0
+  end
+
+  # If the image resolution is too low and the user is privileged or below, force the
+  # image to pending.  If the user has too many pending posts, raise an error.
+  #
+  # We have to do this here, so on creation it's done after set_image_dimensions so
+  # we know the size.  If we do it in another module the order of operations is unclear.
+  def image_is_too_small
+    return false if CONFIG["min_mpixels"].nil?
+    return false if self.width.nil?
+    return false if self.width * self.height >= CONFIG["min_mpixels"]
+    return true
+  end
+
+  def set_image_status
+    return true if not image_is_too_small
+
+    return if self.user.is_contributor_or_higher?
+
+    self.status = "pending"
+    return true
+  end
+
+  # If this post is pending, and the user has too many pending posts, reject the upload.
+  # This must be done after set_image_status.
+  def check_pending_count
+    return if CONFIG["max_pending_images"].nil?
+    return if self.status != "pending"
+    return if self.user.is_contributor_or_higher?
+
+    pending_posts = Post.count(:conditions => ["user_id = ? AND status = 'pending'", self.user_id])
+    return if pending_posts < CONFIG["max_pending_images"]
+
+    errors.add_to_base("You have too many posts pending moderation")
+    return false
   end
 
   # Returns true if the post is an image format that GD can handle.

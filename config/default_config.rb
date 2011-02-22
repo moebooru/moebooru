@@ -289,3 +289,11 @@ require 'languages'
 # select which languages they understand and that shouldn't be translated.
 CONFIG["known_languages"] = CONFIG["language_names"].map { |key, lang| key }.sort
 
+# The number of posts a privileged_or_lower can have pending at one time.  Any
+# further posts will be rejected.
+CONFIG["max_pending_images"] = nil
+
+# If set, posts by privileged_or_lower accounts below this size will be set to
+# pending.
+CONFIG["min_mpixels"] = nil
+

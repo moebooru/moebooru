@@ -297,3 +297,6 @@ CONFIG["max_pending_images"] = nil
 # pending.
 CONFIG["min_mpixels"] = nil
 
+# If true, posts are bumped to the front of the index when approved.
+CONFIG["bump_approved_posts"] = false
+

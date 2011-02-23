@@ -105,11 +105,19 @@ class Post < ActiveRecord::Base
   end
 
   def approve!(approver_id)
+    old_status = status
+
     if flag_detail
       flag_detail.update_attributes(:is_resolved => true)
     end
     
     update_attributes(:status => "active", :approver_id => approver_id)
+
+    # Don't bump posts if the status wasn't "pending"; it might be "flagged".
+    if old_status == "pending" and CONFIG["bump_approved_posts"] then
+      touch_index_timestamp
+      self.save!
+    end
   end
   
   def voted_by

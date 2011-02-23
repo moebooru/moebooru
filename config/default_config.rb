@@ -297,11 +297,8 @@ CONFIG["max_pending_images"] = nil
 # pending.
 CONFIG["min_mpixels"] = nil
 
-# If true, posts are bumped to the front of the index when approved.  This should
-# be combined with CONFIG["hide_pending_posts"] = true.
-CONFIG["bump_approved_posts"] = false
-
-# If true, pending posts are hidden from the index like held posts, unless pending:all
-# is specified.
+# If true, pending posts act like hidden posts: they're hidden from the index unless
+# pending:all is used, and posts are bumped to the front of the index when they're
+# approved.
 CONFIG["hide_pending_posts"] = false
 

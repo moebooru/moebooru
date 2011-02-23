@@ -62,10 +62,10 @@ Cookie = {
       $("has-mail-notice").show()
     }
   
-    var posts_flagged = this.get("posts_flagged");
-    if (posts_flagged && parseInt(posts_flagged) > "0") {
+    var mod_pending = this.get("mod_pending");
+    if (mod_pending && parseInt(mod_pending) > "0") {
       if($("moderate"))
-        $("moderate").addClassName("posts-flagged")
+        $("moderate").addClassName("mod-pending")
     }
   
     if (this.get("forum_updated") == "1") {

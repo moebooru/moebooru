@@ -68,7 +68,7 @@ module TagParseMethods
           next
         end
 
-        if token =~ /^(unlocked|deleted|ext|user|sub|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|shown|limit):(.+)$/
+        if token =~ /^(unlocked|deleted|ext|user|sub|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|pending|shown|limit):(.+)$/
           if $1 == "user"
             q[:user] = $2
           elsif $1 == "vote"
@@ -147,6 +147,14 @@ module TagParseMethods
               q[:show_holds] = :yes # all posts, held or not
             elsif $2 == "false"
               q[:show_holds] = :hide
+            end
+          elsif $1 == "pending"
+            if $2 == "true" or $2 == "only"
+              q[:show_pending] = :only
+            elsif $2 == "all"
+              q[:show_pending] = :yes # all posts, pending or not
+            elsif $2 == "false"
+              q[:show_pending] = :hide
             end
           elsif $1 == "limit"
             q[:limit] = $2

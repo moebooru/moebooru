@@ -259,6 +259,20 @@ module PostSqlMethods
 	end
       end
 
+      if q.has_key?(:show_pending)
+        if q[:show_pending] == :only
+          conds << "p.status = 'pending'"
+        elsif q[:show_pending] == :hide
+          conds << "p.status <> 'pending'"
+        elsif q[:show_pending] == :yes
+        end
+      else
+	# Hide pending posts by default only when not using the API.
+	if CONFIG["hide_pending_posts"] and not options[:from_api] then
+          conds << "p.status <> 'pending'"
+	end
+      end
+
       if q.has_key?(:shown_in_index)
         if q[:shown_in_index]
           conds << "p.is_shown_in_index"

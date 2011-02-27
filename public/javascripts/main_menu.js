@@ -299,19 +299,12 @@ MainMenu.prototype.document_mouseup = function(event)
 {
   if(!event.isLeftClick())
   {
-    /* Work around a WebKit bug: click events aren't dispatched for
-     * any button but the first, which causes us to not hide the menu
-     * when the user middle-clicks a menu item.  We'll need to version check
-     * this if this gets fixed, or figure out a way to feature check it. */
-    if(Prototype.Browser.WebKit && event.button != 0 && !event.defaultPrevented)
-    {
-      var ev = document.createEvent("MouseEvents");
-      ev.initMouseEvent("click", true, true, document.defaultView, event.button,
-          event.screenX, event.screenY, event.clientX, event.clientY,
-          event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
-          event.button, event.relatedTarget);
-      event.target.dispatchEvent(ev);
-    }
+    /* The user right- or middle-clicked, so we need to close the menu.  We can't
+     * do this from onclick, since WebKit doesn't yet send onclick for non-primary
+     * buttons.  However, we can't actually remove the menu right now, since that'll
+     * cause Gecko to never send the click.  Defer it, so the menu will be closed
+     * after the click event finishes. */
+    this.stop_drag.bind(this).defer();
     return;
   }
 

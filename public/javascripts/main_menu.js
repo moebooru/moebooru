@@ -298,7 +298,22 @@ MainMenu.prototype.document_click = function(event)
 MainMenu.prototype.document_mouseup = function(event)
 {
   if(!event.isLeftClick())
+  {
+    /* Work around a WebKit bug: click events aren't dispatched for
+     * any button but the first, which causes us to not hide the menu
+     * when the user middle-clicks a menu item.  We'll need to version check
+     * this if this gets fixed, or figure out a way to feature check it. */
+    if(Prototype.Browser.WebKit && event.button != 0 && !event.defaultPrevented)
+    {
+      var ev = document.createEvent("MouseEvents");
+      ev.initMouseEvent("click", true, true, document.defaultView, event.button,
+          event.screenX, event.screenY, event.clientX, event.clientY,
+          event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
+          event.button, event.relatedTarget);
+      event.target.dispatchEvent(ev);
+    }
     return;
+  }
 
   if(this.dropdownTimer)
   {

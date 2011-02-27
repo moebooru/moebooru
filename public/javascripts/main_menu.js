@@ -227,7 +227,7 @@ MainMenu.prototype.hovering_over_item = function(element)
   this.focused_menu_item = element;
 
   /* Mark the hovered item.  For some reason, :hover CSS rules don't work while
-   * a mouse button is depressed in Chrome and Safari. */
+   * a mouse button is depressed in WebKit. */
   if(element)
     element.addClassName("focused-menu-item");
 }

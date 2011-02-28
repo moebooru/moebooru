@@ -11,6 +11,9 @@
 <% elsif @post.is_pending? %>
   <div class="status-notice" id="pending-notice">
     This post is pending moderator approval.
+    <% if @post.flag_detail %>
+      Reason: <%= h @post.flag_detail.reason %>
+    <% end %>
   </div>
 <% elsif @post.is_deleted? %>
   <div class="status-notice">

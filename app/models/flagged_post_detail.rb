@@ -24,8 +24,13 @@ class FlaggedPostDetail < ActiveRecord::Base
     end
   end
 
+  # XXX: author and flagged_by are redundant
   def flagged_by
-    return User.find_name(user_id)
+    if user_id.nil?
+      return "system"
+    else
+      return User.find_name(user_id)
+    end
   end
 
   def api_attributes

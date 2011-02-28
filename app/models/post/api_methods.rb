@@ -47,7 +47,7 @@ module PostApiMethods
       ret.delete(:file_url)
     end
 
-    if status == "flagged" or status == "deleted"
+    if status == "flagged" or status == "deleted" or status == "pending"
       ret[:flag_detail] = flag_detail
 
       if flag_detail then

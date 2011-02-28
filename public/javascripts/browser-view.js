@@ -959,6 +959,9 @@ BrowserView.prototype.set_post_info = function()
 
   var pending = this.container.down(".status-pending");
   pending.show(post.status == "pending");
+  this.container.down(".pending-reason-box").show(post.flag_detail.reason);
+  if(post.flag_detail)
+    this.container.down(".pending-reason").setTextContent(post.flag_detail.reason);
 
   var deleted = this.container.down(".status-deleted");
   deleted.show(post.status == "deleted");

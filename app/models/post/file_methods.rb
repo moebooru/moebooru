@@ -288,6 +288,7 @@ module PostFileMethods
     return if self.user.is_contributor_or_higher?
 
     self.status = "pending"
+    self.status_reason = "low-res"
     return true
   end
 

@@ -6,7 +6,11 @@ class FlaggedPostDetail < ActiveRecord::Base
   attr_accessor :hide_user
 
   def author
-    return User.find_name(self.user_id)
+    if self.user_id.nil?
+      return "system"
+    else
+      return User.find_name(self.user_id)
+    end
   end
 
   def self.new_deleted_posts(user)

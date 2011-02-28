@@ -83,15 +83,18 @@ class Post < ActiveRecord::Base
     self.index_timestamp = self.created_at
   end
 
+  def set_flag_detail(reason, creator_id)
+    if flag_detail
+      flag_detail.update_attributes(:reason => reason, :user_id => creator_id, :created_at => Time.now)
+    else
+      FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
+    end
+  end
+
   def flag!(reason, creator_id)
     transaction do
       update_attributes(:status => "flagged")
-      
-      if flag_detail
-        flag_detail.update_attributes(:reason => reason, :user_id => creator_id, :created_at => Time.now)
-      else
-        FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
-      end
+      set_flag_detail(reason, creator_id)
     end
   end
   

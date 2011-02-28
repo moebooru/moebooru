@@ -81,6 +81,17 @@ module PostStatusMethods
     m.extend(ClassMethods)
     m.before_create :reset_index_timestamp
     m.versioned :is_shown_in_index, :default => true
+
+    # This is only used on initial creation: if the post is initially set to flagged or
+    # pending, this may contain the reason, which will be stored as a flagged_post_detail
+    # on save; we can't save it before then since we don't yet have an ID to create the row.
+    m.after_save :commit_status_reason
+    attr_accessor :status_reason
+  end
+
+  def commit_status_reason
+    return if self.status_reason.nil?
+    self.set_flag_detail(self.status_reason, nil)
   end
 
   def is_held=(hold)

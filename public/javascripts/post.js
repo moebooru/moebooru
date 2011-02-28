@@ -1441,7 +1441,8 @@ Post = {
     if(completed == null)
       completed = function() { window.location.reload(); };
 
-    var default_reason = Post.posts.get(post_id).flag_detail.reason;
+    var flag_detail = Post.posts.get(post_id).flag_detail
+    var default_reason = flag_detail? flag_detail.reason:"";
     var reason = prompt('Reason:', default_reason);
     if(!reason)
       return false;

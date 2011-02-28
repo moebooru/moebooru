@@ -1434,5 +1434,19 @@ Post = {
       Post.clear_sample_url_cache();
       throw(e);
     }
+  },
+
+  prompt_to_delete: function(post_id, completed)
+  {
+    if(completed == null)
+      completed = function() { window.location.reload(); };
+
+    var default_reason = Post.posts.get(post_id).flag_detail.reason;
+    var reason = prompt('Reason:', default_reason);
+    if(!reason)
+      return false;
+
+    Post.approve(post_id, reason, completed);
+    return true;
   }
 }

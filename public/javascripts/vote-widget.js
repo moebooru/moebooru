@@ -94,7 +94,7 @@ VoteWidget.prototype.post_update_event = function(e)
       this.container.down("#post-score-" + post_id).update(post.score)
   }
 
-  if(this.container.down("#favorited-by")) {
+  if(e.memo.resp.voted_by && this.container.down("#favorited-by")) {
     this.container.down("#favorited-by").update(Favorite.link_to_users(e.memo.resp.voted_by["3"]))
   }
 }

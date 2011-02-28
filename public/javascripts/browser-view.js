@@ -945,8 +945,12 @@ BrowserView.prototype.set_post_info = function()
   if(post.status == "flagged" && post.flag_detail)
   {
     var by = flagged.down(".by");
-    by.setTextContent(post.flag_detail.flagged_by);
-    by.href = "/user/show/" + post.flag_detail.user_id;
+    flagged.down(".flagged-by-box").show(post.flag_detail.user_id != null);
+    if(post.flag_detail.user_id != null)
+    {
+      by.setTextContent(post.flag_detail.flagged_by);
+      by.href = "/user/show/" + post.flag_detail.user_id;
+    }
 
     var reason = flagged.down(".reason");
     reason.setTextContent(post.flag_detail.reason);

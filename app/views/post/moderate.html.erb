@@ -53,7 +53,7 @@
                 <% end %>
                 <li>Tags: <%= h p.cached_tags %></li>
                 <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span></li>
-		<li>Size: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
+                <li>Size: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
               </ul>
             </td>
           </tr>
@@ -94,7 +94,7 @@
                 <li>Tags: <%= h p.cached_tags %></li>
                 <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id}, {})" %>)</li>
                 <li>Reason: <%= h p.flag_detail.reason %> (<%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %>)</li>
-		<li>Size: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
+                <li>Size: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
               </ul>
             </td>
           </tr>

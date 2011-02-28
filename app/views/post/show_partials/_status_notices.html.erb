@@ -14,6 +14,10 @@
     <% if @post.flag_detail %>
       Reason: <%= h @post.flag_detail.reason %>
     <% end %>
+    <% if @current_user.is_janitor_or_higher? %>
+      (<%= link_to_function "approve", "if (confirm('Do you really want to approve this post?')) {Post.approve(#{@post.id})}" %></li>)
+      (<%= link_to_function "delete", "Post.prompt_to_delete(#{@post.id});" %></li>)
+    <% end %>
   </div>
 <% elsif @post.is_deleted? %>
   <div class="status-notice">

@@ -366,7 +366,7 @@ table tr.even {
 }
 
 table tr.good {
-  background: rgb(230, 255, 230);
+/*  background: rgb(230, 255, 230); */
 }
 
 tr.odd {

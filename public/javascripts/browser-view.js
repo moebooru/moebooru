@@ -1364,22 +1364,27 @@ WindowTitleHandler.prototype.update = function()
 
   if(this.pool)
   {
-    var title = "Browse " + this.pool.name.replace(/_/g, " ");
+    var title = this.pool.name.replace(/_/g, " ");
 
-    if(post && post.pool_post)
+    if(post && post.pool_posts)
     {
-      var sequence = post.pool_post.sequence;
-      title += " ";
-      if(sequence.match(/^[0-9]/))
-        title += "#";
-      title += sequence;
+      var pool_post = post.pool_posts.get(this.pool.id);
+      if(pool_post)
+      {
+        var sequence = pool_post.sequence;
+        title += " ";
+        if(sequence.match(/^[0-9]/))
+          title += "#";
+        title += sequence;
+      }
     }
-
-    document.title = title;
-    return;
+  }
+  else
+  {
+    var title = "/" + this.searched_tags.replace(/_/g, " ");
   }
 
-  var title = "Browse /" + this.searched_tags.replace(/_/g, " ");
+  title += " - Browse";
   document.title = title;
 }
 

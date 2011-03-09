@@ -259,7 +259,6 @@ UrlHashHandler.prototype.set_all = function(query_params, replace)
     if(window.history && window.history.replaceState && window.history.pushState)
     {
       var url = window.location.protocol + "//" + window.location.host + window.location.pathname + new_hash;
-      debug("... replaceState: " + url);
       if(replace)
         window.history.replaceState({}, window.title, url);
       else

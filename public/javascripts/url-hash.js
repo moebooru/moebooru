@@ -4,6 +4,7 @@ UrlHashHandler = function()
   this.normalize = function(h) { }
   this.denormalize = function(h) { }
   this.deferred_sets = [];
+  this.deferred_replace = false;
 
   this.current_hash = this.parse(this.get_raw_hash());
   this.normalize(this.current_hash);
@@ -185,12 +186,15 @@ UrlHashHandler.prototype.get = function(key)
  * Set keys in the URL hash.
  *
  * UrlHash.set({id: 50});
+ *
+ * If replace is true and the History API is available, replace the state instead
+ * of pushing it.
  */
-UrlHashHandler.prototype.set = function(hash)
+UrlHashHandler.prototype.set = function(hash, replace)
 {
   var new_hash = this.current_hash.merge(hash);
   this.normalize(new_hash);
-  this.set_all(new_hash);
+  this.set_all(new_hash, replace);
 }
 
 /*
@@ -207,10 +211,16 @@ UrlHashHandler.prototype.set = function(hash)
  *
  * UrlHash.set() doesn't do this, because set() guarantees that the hashchange event will
  * be fired and complete before the function returns.
+ *
+ * If replace is true and the History API is available, replace the state instead of pushing
+ * it.  If any set_deferred call consolidated into a single update has replace = false, the
+ * new state will be pushed.
  */
-UrlHashHandler.prototype.set_deferred = function(hash)
+UrlHashHandler.prototype.set_deferred = function(hash, replace)
 {
   this.deferred_sets.push(hash);
+  if(replace)
+    this.deferred_replace = true;
 
   var set = function()
   {
@@ -221,10 +231,11 @@ UrlHashHandler.prototype.set_deferred = function(hash)
       new_hash = new_hash.merge(m);
     });
     this.normalize(new_hash);
-    this.set_all(new_hash);
+    this.set_all(new_hash, this.deferred_replace);
     this.deferred_sets = [];
 
     this.hashchange_event(null);
+    this.deferred_replace = false;
   }.bind(this);
 
   if(this.deferred_set_timer == null)
@@ -232,7 +243,7 @@ UrlHashHandler.prototype.set_deferred = function(hash)
 }
 
 
-UrlHashHandler.prototype.set_all = function(query_params)
+UrlHashHandler.prototype.set_all = function(query_params, replace)
 {
   query_params = query_params.clone();
 
@@ -243,7 +254,22 @@ UrlHashHandler.prototype.set_all = function(query_params)
 
   var new_hash = this.construct(query_params);
   if(window.location.hash != new_hash)
-    window.location.hash = new_hash;
+  {
+    /* If the History API is available, use it to support URL replacement. */
+    if(window.history && window.history.replaceState && window.history.pushState)
+    {
+      var url = window.location.protocol + "//" + window.location.host + window.location.pathname + new_hash;
+      debug("... replaceState: " + url);
+      if(replace)
+        window.history.replaceState({}, window.title, url);
+      else
+        window.history.pushState({}, window.title, url);
+    }
+    else
+    {
+      window.location.hash = new_hash;
+    }
+  }
 
   /* Explicitly fire the hashchange event, so it's handled quickly even if the browser
    * doesn't support the event.  It's harmless if we get this event multiple times due

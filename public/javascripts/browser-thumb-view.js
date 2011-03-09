@@ -392,14 +392,14 @@ ThumbnailView.prototype.document_mouse_wheel_event = function(event)
 /* Set the post that's shown in the view.  The thumbs will be centered on the post
  * if center_thumbs is true.  See BrowserView.prototype.set_post for an explanation
  * of no_hash_change. */
-ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs, no_hash_change)
+ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs, no_hash_change, replace_history)
 {
   /* If no post is specified, do nothing.  This will happen if a search returns
    * no results. */
   if(post_id_and_frame[0] == null)
     return;
 
-  this.view.set_post(post_id_and_frame[0], post_id_and_frame[1], lazy, no_hash_change);
+  this.view.set_post(post_id_and_frame[0], post_id_and_frame[1], lazy, no_hash_change, replace_history);
 
   if(center_thumbs)
   {
@@ -409,14 +409,14 @@ ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, cent
   }
 }
 
-ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy, center_thumbs, no_hash_change)
+ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy, center_thumbs, no_hash_change, replace_history)
 {
   if(post_idx == null)
     return;
 
   var post_id = this.post_ids[post_idx];
   var post_frame = this.post_frames[post_idx];
-  this.set_active_post([post_id, post_frame], lazy, center_thumbs, no_hash_change);
+  this.set_active_post([post_id, post_frame], lazy, center_thumbs, no_hash_change, replace_history);
 }
 
 ThumbnailView.prototype.show_next_post = function(prev)
@@ -466,7 +466,7 @@ ThumbnailView.prototype.show_next_post = function(prev)
       notice("Starting over from the beginning");
   }
 
-  this.set_active_post_idx(new_idx, true, true);
+  this.set_active_post_idx(new_idx, true, true, false, true);
 }
 
 /* Scroll the thumbnail view left or right.  Don't change the displayed post. */

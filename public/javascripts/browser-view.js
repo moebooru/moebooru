@@ -647,7 +647,7 @@ BrowserView.prototype.set_main_image = function(post, post_frame)
  * no_hash_change should also be set when loading a state as a result of hashchange,
  * for similar reasons.
  */
-BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_change)
+BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_change, replace_history)
 {
   if(post_id == null)
     throw "post_id must not be null";
@@ -658,6 +658,7 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_cha
   this.wanted_post_id = post_id;
   this.wanted_post_frame = post_frame;
   this.wanted_post_no_hash_change = no_hash_change;
+  this.wanted_post_replace_history = replace_history;
 
   if(post_id == this.displayed_post_id && post_frame == this.displayed_post_frame)
     return;
@@ -669,7 +670,7 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_cha
   {
     this.lazy_load_timer = window.setTimeout(function() {
       this.lazy_load_timer = null;
-      this.set_post(this.wanted_post_id, this.wanted_post_frame, false, this.wanted_post_no_hash_change);
+      this.set_post(this.wanted_post_id, this.wanted_post_frame, false, this.wanted_post_no_hash_change, this.wanted_post_replace_history);
     }.bind(this), 500);
     return;
   }
@@ -694,7 +695,7 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_cha
   this.displayed_post_id = post_id;
   this.displayed_post_frame = post_frame;
   if(!no_hash_change)
-    UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame});
+    UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame}, replace_history);
 
   this.set_viewing_larger_version(false);
 

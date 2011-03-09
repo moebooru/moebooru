@@ -22,6 +22,7 @@ class PoolController < ApplicationController
 
     search_tokens = []
     if params[:query]
+      set_title(params[:query] + " - Pools")
       query = Tokenize.tokenize_with_quotes(params[:query] || "")
 
       query.each { |token|

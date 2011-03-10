@@ -1177,10 +1177,3 @@ if("createObjectURL" in window && !("URL" in window))
 if(navigator.userAgent.indexOf("AppleWebKit/") != -1)
   document.documentElement.className += " webkit";
 
-/* FF4.0's pushState is broken; disable the new history API. */
-if(navigator.userAgent.match("Firefox/4\.0$"))
-{
-  window.pushState = null;
-  window.replaceState = null;
-}
-

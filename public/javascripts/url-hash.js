@@ -255,8 +255,10 @@ UrlHashHandler.prototype.set_all = function(query_params, replace)
   var new_hash = this.construct(query_params);
   if(window.location.hash != new_hash)
   {
-    /* If the History API is available, use it to support URL replacement. */
-    if(window.history && window.history.replaceState && window.history.pushState)
+    /* If the History API is available, use it to support URL replacement.  FF4.0's pushState
+     * is broken; don't use it. */
+    if(window.history && window.history.replaceState && window.history.pushState &&
+        !navigator.userAgent.match("Firefox/4\.0$"))
     {
       var url = window.location.protocol + "//" + window.location.host + window.location.pathname + new_hash;
       if(replace)

@@ -27,7 +27,7 @@ ThumbnailUserImage = function(file, onComplete)
   this.image = ThumbnailUserImage.image_pool.get();
   this.onComplete = onComplete;
 
-  this.url = createObjectURL(this.file);
+  this.url = URL.createObjectURL(this.file);
 
   this.image.on("load", this.image_load_event.bindAsEventListener(this));
   this.image.on("abort", this.image_abort_event.bindAsEventListener(this));
@@ -55,7 +55,7 @@ ThumbnailUserImage.prototype.destroy = function()
 
   if(this.url != null)
   {
-    revokeObjectURL(this.url);
+    URL.revokeObjectURL(this.url);
     this.url = null;
   }
 }
@@ -148,7 +148,7 @@ ThumbnailUserImage.prototype.image_error_event = function(e)
 }
 
 /* If the necessary APIs aren't supported, don't use ThumbnailUserImage. */
-if(!("createObjectURL" in window) || create_canvas_2d() == null)
+if(!("URL" in window) || create_canvas_2d() == null)
   ThumbnailUserImage = null;
 
 SimilarWithThumbnailing = function(form)

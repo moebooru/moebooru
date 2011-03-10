@@ -1164,11 +1164,13 @@ function LocalStorageDisabled()
   }
 }
 
-/* Temporary hack to support FF4 betas: */
-if(!("createObjectURL" in window) && "createBlobURL" in window)
+/* For Chrome 9: */
+if("createObjectURL" in window && !("URL" in window))
 {
-  window.createObjectURL = window.createBlobURL;
-  window.revokeObjectURL = window.revokeBlobURL;
+  window.URL = {
+    createObjectURL: function(blob) { return window.createObjectURL(blob); },
+    revokeObjectURL: function(url) { window.revokeObjectURL(url); }
+  }
 }
 
 /* Allow CSS styles for WebKit. */

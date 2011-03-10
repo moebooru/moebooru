@@ -27,7 +27,7 @@
 <%= render :partial => "post/hover" %>
 
 <div id="paginator">
-  <%= will_paginate(@posts) %>
+  <%= will_paginate(@posts, :class => "no-browser-link") %>
 
   <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
 </div>

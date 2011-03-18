@@ -1164,6 +1164,11 @@ function LocalStorageDisabled()
   }
 }
 
+/* Chrome 10/WebKit braindamage; stop breaking things intentionally just to create
+ * busywork for everyone else: */
+if(!("URL" in window) && "webkitURL" in window)
+  window.URL = window.webkitURL;
+
 /* For Chrome 9: */
 if("createObjectURL" in window && !("URL" in window))
 {

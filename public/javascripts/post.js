@@ -1225,7 +1225,7 @@ Post = {
 	for(var i = 0; i < resp.length; ++i)
 	{
           var post = resp[i];
-          if(post.id != post_id && post.parent_id != null)
+          if(post.id == old_parent_id && post.parent_id != null)
           {
             alert("The parent post has a parent, so this post can't be automatically reparented.");
             return;

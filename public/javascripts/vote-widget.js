@@ -5,9 +5,6 @@ VoteWidget = function(container)
   this.displayed_hover = -1;
   this.displayed_set = -1;
 
-  if(container.down(".vote-up-anonymous"))
-    container.down(".vote-up-anonymous").on("click", function(e) { e.stop(); this.vote(+1); }.bindAsEventListener(this));
-
   if(container.down(".vote-up"))
     container.down(".vote-up").on("click", function(e) { e.stop(); this.vote_up(); }.bindAsEventListener(this));
 

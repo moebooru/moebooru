@@ -167,8 +167,6 @@ module PostHelper
       end
 
       html << %{<span class="vote-up-block"><a class="star vote-up" href="#"></a></span>}
-    else
-      html << %{<span class="vote-up-block-anonymous"><a class="star vote-up-anonymous" href="#"></a></span>}
     end
     
     html << %{</span>}

@@ -1495,12 +1495,9 @@ span.stars .star-3 { color:#ff0; }
 
 .standard-vote-widget .star-0:after { content: "↶ "; }
 .standard-vote-widget .star.vote-up:after { content: "vote up"; }
-.standard-vote-widget .star.vote-up-anonymous:after { content: "vote up"; }
 
 .standard-vote-widget .vote-up-block:before { content: " ("; }
 .standard-vote-widget .vote-up-block:after { content: ")"; }
-.standard-vote-widget .vote-up-block-anonymous:before { content: "("; }
-.standard-vote-widget .vote-up-block-anonymous:after { content: ")"; }
 
 /* Hide "vote up" in post/browse. */
 .post-info .standard-vote-widget .vote-up-block { display: none; }

@@ -448,29 +448,45 @@ module PostFileMethods
     end
   end
 
-  def sample_url(user = nil)
-    if status != "deleted" && use_sample?(user)
-      store_sample_url
-    else
-      file_url
+  def get_file_image(user = nil)
+    {
+      :url => file_url,
+      :ext => file_ext,
+      :size => file_size,
+      :width => width,
+      :height => height
+    }
+  end
+  def get_file_jpeg(user = nil)
+    if status == "deleted" or !use_jpeg?(user)
+      return get_file_image(user)
     end
+
+    {
+      :url => store_jpeg_url,
+      :size => jpeg_size,
+      :ext => "jpg",
+      :width => jpeg_width,
+      :height => jpeg_height
+    }
+  end
+  def get_file_sample(user = nil)
+    if status == "deleted" or !use_sample?(user)
+      return get_file_jpeg(user)
+    end
+
+    {
+      :url => store_sample_url,
+      :size => sample_size,
+      :ext => "jpg",
+      :width => sample_width,
+      :height => sample_height
+    }
   end
 
-  def get_sample_width(user = nil)
-    if use_sample?(user)
-      sample_width
-    else
-      width
-    end
-  end
-
-  def get_sample_height(user = nil)
-    if use_sample?(user)
-      sample_height
-    else
-      height
-    end
-  end
+  def sample_url(user = nil) get_file_sample(user)[:url] end
+  def get_sample_width(user = nil) get_file_sample(user)[:width] end
+  def get_sample_height(user = nil) get_file_sample(user)[:height] end
 
   def tempfile_jpeg_path
     "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}-jpeg.jpg"
@@ -534,10 +550,6 @@ module PostFileMethods
   end
 
   def jpeg_url(user = nil)
-    if status != "deleted" && use_jpeg?(user)
-      store_jpeg_url
-    else
-      file_url
-    end
+    get_file_jpeg(user)[:url]
   end
 end

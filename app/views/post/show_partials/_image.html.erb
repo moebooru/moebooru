@@ -11,14 +11,15 @@
            <div class="note-body" id="note-body-<%= note.id %>" title="Click to edit"><%= hs note.formatted_body %></div>
         <% end %>
       </div>
-      <%= image_tag(@post.sample_url(@current_user),
+      <% file_sample = @post.get_file_sample(@current_user) %>
+      <%= image_tag(file_sample[:url],
                     :alt => @post.cached_tags,
                     :id => 'image',
                     :class => "image",
-                    :width => @post.get_sample_width(@current_user),
-                    :height => @post.get_sample_height(@current_user),
-                    :large_width => @post.jpeg_width || @post.width,
-                    :large_height => @post.jpeg_height || @post.height) %>
+                    :width => file_sample[:width],
+                    :height => file_sample[:height],
+                    :large_width => @post.get_file_jpeg(@current_user)[:width],
+                    :large_height => @post.get_file_jpeg(@current_user)[:height]) %>
     <% elsif @post.flash? %>
       <object width="<%= @post.width %>" height="<%= @post.height %>">
         <param name="movie" value="<%= @post.file_url %>">

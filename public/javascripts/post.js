@@ -877,9 +877,10 @@ Post = {
       img.stopObserving("error")
       img.original_height = null;
       img.original_width = null;
-      img.height = img.getAttribute("large_height");
-      img.width = img.getAttribute("large_width");
-      img.src = $("highres").href;
+      var highres = $("highres-show");
+      img.height = highres.getAttribute("link_height");
+      img.width = highres.getAttribute("link_width");
+      img.src = highres.href;
 
       if (window.Note) {
         window.Note.all.invoke("adjustScale")

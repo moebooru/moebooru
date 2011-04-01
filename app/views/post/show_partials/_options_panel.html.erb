@@ -6,32 +6,24 @@
       <li><%= link_to_function "Resize image", "Post.resize_image()" %></li>
     <% end %> -->
     <% if @post.image? && @post.can_be_seen_by?(@current_user) %>
-      <%
-	if @post.has_jpeg?
-	  url = @post.jpeg_url
-	  size = @post.jpeg_size
-	  ext = "JPG"
-	else
-	  url = @post.file_url
-	  size = @post.file_size
-	  ext = @post.file_ext.upcase
-	end
-      %>
+      <% file_jpeg = @post.get_file_jpeg %>
       <% if @post.use_sample?(@current_user) %>
-      <li><%= link_to("View larger version", url,
-		      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
-		      :id => "highres-show", :onclick => "Post.highres(); return false") %>
+      <li><%= link_to("View larger version", file_jpeg[:url],
+                      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
+                      :id => "highres-show", :onclick => "Post.highres(); return false",
+                      :link_height => file_jpeg[:height], :link_width => file_jpeg[:width]) %>
       </li>
       <% end %>
-      <li><%= link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(size)} #{ext})", url,
-		      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
-		      :id => "highres") %>
+      <li><%= link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(file_jpeg[:size])} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
+                      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
+                      :id => "highres") %>
       </li>
       <% if @post.has_jpeg? then %>
+	<% file_image = @post.get_file_image %>
 	<%# If we have a JPEG, the above link was the JPEG.  Link to the PNG here. %>
-	<li><%= link_to("Download PNG (#{number_to_human_size(@post.file_size)})", @post.file_url,
-			:class => "original-file-unchanged",
-			:id => "png") %>
+        <li><%= link_to("Download #{ file_image[:ext].upcase } (#{number_to_human_size(file_image[:size])})", file_image[:url],
+                        :class => "original-file-unchanged",
+                        :id => "png") %>
 	</li>
       <% end %>
     <% end %>

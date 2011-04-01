@@ -6,7 +6,7 @@ class PostController < ApplicationController
 
   verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
 
-  before_filter :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch]
+  before_filter :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
   before_filter :post_member_only, :only => [:update, :upload, :flag]
   before_filter :janitor_only, :only => [:moderate, :undelete]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
@@ -551,7 +551,7 @@ class PostController < ApplicationController
       return
     end
 
-    vote_successful = p.vote!(score, @current_user, request.remote_ip, {})
+    vote_successful = p.vote!(score, @current_user)
 
     api_data = Post.batch_api_data([p])
     api_data[:voted_by] = p.voted_by

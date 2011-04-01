@@ -53,8 +53,8 @@ module PostParentMethods
 
     transaction do
       for vote in PostVotes.find(:all, :conditions => ["post_id = ?", self.id], :include => :user)
-        parent.vote!(vote.score, vote.user, nil)
-        self.vote!(0, vote.user, nil)
+        parent.vote!(vote.score, vote.user)
+        self.vote!(0, vote.user)
       end
     end
   end

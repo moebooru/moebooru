@@ -7,7 +7,7 @@
     <% end %> -->
     <% if @post.image? && @post.can_be_seen_by?(@current_user) %>
       <% file_jpeg = @post.get_file_jpeg %>
-      <% if @post.use_sample?(@current_user) %>
+      <% if @post.use_sample?(@current_user) or @current_user.always_resize_images %>
       <li><%= link_to("View larger version", file_jpeg[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
                       :id => "highres-show", :onclick => "Post.highres(); return false",

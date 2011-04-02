@@ -129,7 +129,7 @@ PostUploadForm.prototype.form_submit_event = function(e)
       var target = json.location;
       if(json.similar_location && json.has_similar_hits)
         target = json.similar_location;
-      window.location.href = json.location;
+      window.location.href = target;
     }.bind(this)
   });
 }

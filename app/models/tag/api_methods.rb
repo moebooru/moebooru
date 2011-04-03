@@ -48,7 +48,7 @@ module TagApiMethods
         SELECT t.id, t.name, t.tag_type, ta.name AS alias
         FROM tags t LEFT JOIN tag_aliases ta ON (t.id = ta.alias_id AND NOT ta.is_pending)
         WHERE t.post_count > 0
-        ORDER BY t.id""")
+        ORDER BY t.id, ta.name""")
 
       tags_with_type = []
       current_tag = ""

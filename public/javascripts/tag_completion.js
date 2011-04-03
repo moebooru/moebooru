@@ -855,15 +855,14 @@ TagCompletionBox.prototype.update = function(force)
 
     /* If we have any aliases, show the first one. */
     var aliases = tag_aliases[i];
-/*    if(aliases.length > 0)
+    if(aliases.length > 0)
     {
       var span = document.createElement("span");
-      span.style.float = "right";
-      span.style.marginLeft = "1em";
+      span.className = "completed-tag-alias";
       span.setTextContent(aliases[0]);
       li.appendChild(span);
     }
-*/
+
     var tag_type = Post.tag_types.get(tag);
     li.className += " tag-type-" + tag_type;
     if(i < recent_result_count)

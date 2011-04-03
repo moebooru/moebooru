@@ -584,6 +584,12 @@ ul.link-page > li {
   margin: 0; /* work around annoying global style */
   cursor: default;
 }
+.tag-completion-box .completed-tag-alias
+{
+  float: right;
+  margin-left: 1em;
+}
+
 .tag-completion-box .completed-tag.focused
 {
   background-color: #005;

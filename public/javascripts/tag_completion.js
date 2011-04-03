@@ -516,8 +516,9 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
   /* Strip the "1`" tag type prefix off of each result. */
   var final_results = [];
   var tag_types = {};
+  var final_aliases = [];
   results.each(function(tag) {
-    var m = tag.match(/(\d+)`([^`]*)`[^ ]* /);
+    var m = tag.match(/(\d+)`([^`]*)`(([^ ]*)`)? /);
     if(!m)
     {
       ReportError("Unparsable cached tag: '" + tag + "'", null, null, null, null);
@@ -526,16 +527,24 @@ TagCompletionClass.prototype.complete_tag = function(tag, options)
 
     var tag = m[2];
     var tag_type = Post.tag_type_names[m[1]];
+    var aliases = m[4];
+    if(m[4])
+      aliases = aliases.split("`");
+    else
+      aliases = [];
     tag_types[tag] = tag_type;
 
     if(final_results.indexOf(tag) == -1)
+    {
       final_results.push(tag);
+      final_aliases.push(aliases);
+    }
   });
 
   /* Register tag types of results with Post. */
   Post.register_tags(tag_types, true);
 
-  return [final_results, recent_result_count];
+  return [final_results, recent_result_count, final_aliases];
 }
 
 /* This is only supported if the browser supports localStorage.  Also disable this if
@@ -815,6 +824,7 @@ TagCompletionBox.prototype.update = function(force)
 
   var tags_and_recent_count = TagCompletion.complete_tag(tag);
   var tags = tags_and_recent_count[0];
+  var tag_aliases = tags_and_recent_count[2];
   var recent_result_count = tags_and_recent_count[1];
   if(tags.length == 0)
     return;
@@ -842,6 +852,17 @@ TagCompletionBox.prototype.update = function(force)
     li.className = "completed-tag";
     li.setTextContent(tag);
     ul.appendChild(li);
+
+    /* If we have any aliases, show the first one. */
+    var aliases = tag_aliases[i];
+    if(aliases.length > 0)
+    {
+      var span = document.createElement("span");
+      span.style.float = "right";
+      span.style.marginLeft = "1em";
+      span.setTextContent(aliases[0]);
+      li.appendChild(span);
+    }
 
     var tag_type = Post.tag_types.get(tag);
     li.className += " tag-type-" + tag_type;

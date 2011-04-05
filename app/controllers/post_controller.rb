@@ -47,6 +47,8 @@ class PostController < ApplicationController
   end
 
   def upload
+    set_title "Upload"
+
     @deleted_posts = FlaggedPostDetail.new_deleted_posts(@current_user)
 #    if params[:url]
 #      @post = Post.find(:first, :conditions => ["source = ?", params[:url]])

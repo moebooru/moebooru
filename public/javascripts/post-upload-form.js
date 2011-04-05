@@ -9,6 +9,8 @@ var PostUploadForm = function(form, progress)
   this.cancel_element = this.form_element.down(".cancel");
 
   this.progress = progress;
+  this.document_title = document.documentElement.down("TITLE");
+  this.document_title_orig = this.document_title.textContent;
   this.current_request = null;
   this.form_element.on("submit", this.form_submit_event.bindAsEventListener(this));
   this.cancel_element.on("click", this.click_cancel.bindAsEventListener(this));
@@ -21,6 +23,7 @@ PostUploadForm.prototype.set_progress = function(f)
 {
   var percent = f * 100;
   this.progress.down(".upload-progress-bar-fill").style.width = percent + "%";
+  this.document_title.textContent = this.document_title_orig + " (" + percent.toFixed(0) + "%)";
 }
 
 PostUploadForm.prototype.request_starting = function()
@@ -36,6 +39,7 @@ PostUploadForm.prototype.request_ending = function()
   this.form_element.down(".submit").show();
   this.cancel_element.hide();
   this.progress.hide();
+  this.document_title.textContent = this.document_title_orig;
   document.documentElement.removeClassName("progress");
 }
 

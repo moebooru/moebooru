@@ -27,10 +27,13 @@
  * - capture resize events
  * - cancel the resize event; we'll fire it again when we're done
  * - enable a large padding div, to ensure that we can scroll the window downward
- * - window.scrollTo(0, 1) to scroll the address bar off screen, which increases the window
- *   size to the maximum
- * - wait a little while; unbelievably, window.scrollTo on Android animates rather than
- *   snapping to the position as all sane browsers do
+ * - window.scrollTo(0, 99999999) to scroll the address bar off screen, which increases the window
+ *   size to the maximum.  We use a big value here, because Android has a broken scrollTo, which
+ *   animates to the specified position.  If we say (0, 1), then it'll take a while to scroll
+ *   there; by giving it a huge value, it'll scroll past the scrollbar in one frame.
+ * - wait a little while.  We need to wait for one frame of scrollTo's animation, but we don't
+ *   know how long that'll be, so we need to poll with a timer periodically, checking
+ *   document.body.scrollTop.
  * - set the body to the size of the window
  * - hide the padding div
  * - synthesize a new resize event to continue other event handlers that we originally cancelled
@@ -48,7 +51,8 @@ function AndroidDetectWindowSize()
    * of #sizing-body, so it's not clipped.  By not changing #sizing-body itself, we
    * avoid reflowing the entire document more than once, when we finish. */
   this.padding = document.createElement("DIV");
-  this.padding.setStyle({width: "5000px", height: "5000px"});
+  this.padding.setStyle({width: "1px", height: "5000px"});
+  this.padding.style.visibility = "hidden";
   this.padding.hide();
   document.documentElement.appendChild(this.padding);
 
@@ -109,12 +113,15 @@ AndroidDetectWindowSize.prototype.begin = function()
     return;
   }
 
-  debug("begin window size detection, " + initial_window_size[0] + "x" + initial_window_size[1] + " at start");
+  debug("begin window size detection, " + initial_window_size[0] + "x" + initial_window_size[1] + " at start (scroll pos " + document.documentElement.scrollHeight + ")");
   this.active = true;
   this.padding.show();
 
-  window.scrollTo(0, 1);
-  this.finish_timer = window.setTimeout(this.finish, 500);
+  /* If we set a sizing-body the last time, remove it before running again. */
+  $("sizing-body").setStyle({width: "0px", height: "0px"});
+
+  window.scrollTo(0, 99999999);
+  this.finish_timer = window.setTimeout(this.finish, 0);
 }
 
 AndroidDetectWindowSize.prototype.end = function()
@@ -136,20 +143,39 @@ AndroidDetectWindowSize.prototype.end = function()
 
 AndroidDetectWindowSize.prototype.current_window_size = function()
 {
-  return [window.innerWidth, window.innerHeight];
+  var size = [window.innerWidth, window.innerHeight];
+
+  // We need to fudge the height up a pixel, or in many cases we'll end up with a white line
+  // at the bottom of the screen (or the top in 2.3).  This seems to be sub-pixel rounding
+  // error.
+  ++size[1];
+
+  return size;
 }
 
 AndroidDetectWindowSize.prototype.finish = function()
 {
   if(!this.active)
     return;
-  debug("window size detection: finish()");
+  debug("window size detection: finish(), at " + document.body.scrollTop);
+
+  /* scrollTo is supposed to be synchronous.  Android's animates.  Worse, the time it'll
+   * update the animation is nondeterministic; it might happen as soon as we return from
+   * calling scrollTo, or it might take a while.  Check whether we've scrolled down; if
+   * we're still at the top, keep waiting. */
+  if(document.body.scrollTop == 0)
+  {
+    console.log("Waiting for scroll...");
+    this.finish_timer = window.setTimeout(this.finish, 10);
+    return;
+  }
+
+  /* The scroll may still be trying to run. */
+  window.scrollTo(document.body.scrollLeft, document.body.scrollTop);
   this.end();
 
   this.window_size = this.current_window_size();
 
-  // We need to fudge the height up a pixel, or in many cases we'll end up with a white line
-  // at the bottom of the screen.  This seems to be sub-pixel rounding error.
   debug("new window size: " + this.window_size[0] + "x" + this.window_size[1]);
   $("sizing-body").setStyle({width: this.window_size[0] + "px", height: (this.window_size[1]) + "px"});
 

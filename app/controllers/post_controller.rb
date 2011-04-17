@@ -876,6 +876,24 @@ class PostController < ApplicationController
     raise "error"
   end
 
+  def download
+    require 'base64'
+
+    data = params[:data]
+    filename = params[:filename]
+    type = params[:type]
+    if filename.nil?
+      filename = "file"
+    end
+    if type.nil?
+      type = "application/octet-stream"
+    end
+
+    data = Base64.decode64(data)
+
+    send_data data, :filename => filename, :disposition => "attachment", :type => type
+  end
+
   def histogram
     # Send a CORS response, to allow this request cross-origin.
     headers["Access-Control-Allow-Origin"] = "*"

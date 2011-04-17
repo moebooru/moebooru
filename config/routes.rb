@@ -6,5 +6,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ":controller/:action/:id", :requirements => {:id => /[-\d]+/}
   map.connect ":controller/:action.:format"
   map.connect ":controller/:action"
+
   map.connect "histogram", :controller => "post", :action => "histogram"
+  map.connect "download", :controller => "post", :action => "download"
 end

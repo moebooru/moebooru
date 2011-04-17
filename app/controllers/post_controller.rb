@@ -875,4 +875,38 @@ class PostController < ApplicationController
   def exception
     raise "error"
   end
+
+  def histogram
+    # Send a CORS response, to allow this request cross-origin.
+    headers["Access-Control-Allow-Origin"] = "*"
+
+    url = params[:url]
+    tempfile_path = "/tmp/#{$PROCESS_ID}.temp"
+    tempfile = File.open(tempfile_path, "wb")
+
+    begin
+      Timeout::timeout(30) do
+        Danbooru.http_get_streaming(url) do |res|
+          res.read_body do |block|
+            tempfile.write(block)
+          end
+        end
+      end
+      tempfile.close
+
+      imgsize = ImageSize.new(File.open(tempfile_path, 'rb'))
+      if imgsize.get_width.nil?
+        raise Danbooru::ResizeError, "Unrecognized image format"
+      end
+      ext = imgsize.get_type.gsub(/JPEG/, "JPG").downcase
+
+      histogram = Danbooru.histogram(ext, tempfile_path)
+
+      render :json => {:url => url, :data => histogram}
+    rescue SocketError, Danbooru::ResizeError => e
+      render :json => {:url => url, :error => e.to_s}, :status => 500
+    ensure
+      FileUtils.rm_f(tempfile_path) if tempfile_path
+    end
+  end
 end

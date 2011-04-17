@@ -115,6 +115,8 @@ class PostController < ApplicationController
   end
 
   def moderate
+    set_title "Moderation queue"
+
     if request.post?
       posts = []
 

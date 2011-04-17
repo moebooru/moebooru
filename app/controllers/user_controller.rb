@@ -34,6 +34,12 @@ class UserController < ApplicationController
 
     if @user.nil?
       redirect_to "/404"
+    else
+      if @user == @current_user then
+        set_title "My Profile"
+      else
+        set_title @user.name + "'s Profile"
+      end
     end
     if @current_user.is_mod_or_higher?
       @user_ips = UserLog.find_by_sql("SELECT ul.ip_addr, ul.created_at FROM user_logs ul WHERE ul.user_id = #{@user.id} ORDER BY ul.created_at DESC")
@@ -265,6 +271,8 @@ class UserController < ApplicationController
   end
   
   def show_blocked_users
+    set_title "Blocked users"
+
     #@users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
     @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :order => "id DESC")
     @ip_bans = IpBans.find(:all)

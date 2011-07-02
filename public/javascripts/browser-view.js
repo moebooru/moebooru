@@ -440,7 +440,7 @@ BrowserView.prototype.preload = function(post_ids)
     var post_frame = post_ids[i][1];
     var post = Post.posts.get(post_id);
 
-    if(post_frame != null)
+    if(post_frame != -1)
     {
       var frame = post.frames[post_frame];
       new_preload_container.preload(frame.url);
@@ -593,7 +593,7 @@ BrowserView.prototype.set_main_image = function(post, post_frame)
   this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
 
   this.img.fully_loaded = false;
-  if(post_frame != null && post_frame < post.frames.length)
+  if(post_frame != -1 && post_frame < post.frames.length)
   {
     var frame = post.frames[post_frame];
     this.img.src = frame.url;
@@ -688,14 +688,24 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_cha
     return;
   }
 
+  if(post_frame == null) {
+    // If post_frame is unspecified and we have a frame, display the first.
+    post_frame = this.get_default_post_frame(post_id);
+
+    // We know what frame we actually want to display now, so update wanted_post_frame.
+    this.wanted_post_frame = post_frame;
+  }
+
   /* If post_frame doesn't exist, just display the main post. */
-  if(post_frame != null && post.frames.length < post_frame)
-    post_frame = null;
+  if(post_frame != -1 && post.frames.length <= post_frame)
+    post_frame = -1;
 
   this.displayed_post_id = post_id;
   this.displayed_post_frame = post_frame;
-  if(!no_hash_change)
-    UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame}, replace_history);
+  if(!no_hash_change) {
+    // If this post has no frames, omit post_frame.
+    UrlHash.set_deferred({"post-id": post_id, "post-frame": post.frames.length == 0? null:post_frame}, replace_history);
+  }
 
   this.set_viewing_larger_version(false);
 
@@ -713,6 +723,30 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_cha
   /* Hide the editor when changing posts. */
   this.edit_show(false);
 }
+
+/* Return the frame spec for the hash, eg. "-0".
+ *
+ * If the post has no frames, then just omit the frame spec.  If the post has any frames,
+ * then return the frame number or "-F" for the full image. */
+BrowserView.prototype.post_frame_hash = function(post, post_frame)
+{
+  if(post.frames.length == 0)
+    return "";
+  return "-" + (post_frame == -1? "F":post_frame);
+}
+
+/* Return the default frame to display for the given post.  If the post isn't loaded,
+ * we don't know which frame we'll display and null will be returned.  This corresponds
+ * to a hash of #1234, where no frame is specified (eg. #1234-F, #1234-0). */
+BrowserView.prototype.get_default_post_frame = function(post_id)
+{
+  var post = Post.posts.get(post_id);
+  if(post == null)
+    return null;
+  
+  return post.frames.length > 0? 0: -1;
+}
+
 
 /* Set the post info box for the currently displayed post. */
 BrowserView.prototype.set_post_info = function()
@@ -819,21 +853,17 @@ BrowserView.prototype.set_post_info = function()
 
     for(var i = -1; i < post.frames.length; ++i)
     {
-      var frame_number = i >= 0? i: null;
-
       var text = i == -1? "main": (i+1);
 
       var a = document.createElement("a");
-      a.href = "/post/browse#" + post.id;
-      if(i >= 0)
-        a.href += "-" + i;
+      a.href = "/post/browse#" + post.id  + this.post_frame_hash(post, i);
 
       a.className = "post-frame-link";
-      if(this.displayed_post_frame == frame_number)
+      if(this.displayed_post_frame == i)
         a.className += " current-post-frame";
 
       a.setTextContent(text);
-      a.post_frame = frame_number;
+      a.post_frame = i;
       frame_list.appendChild(a);
     }
   }
@@ -1425,10 +1455,10 @@ BrowserView.prototype.show_frame_editor = function()
 
   /* If we're displaying a frame and not the whole image, switch to the main image. */
   var post_frame = null;
-  if(this.displayed_post_frame != null)
+  if(this.displayed_post_frame != -1)
   {
     post_frame = this.displayed_post_frame;
-    document.fire("viewer:set-active-post", {post_id: this.displayed_post_id, post_frame: null});
+    document.fire("viewer:set-active-post", {post_id: this.displayed_post_id, post_frame: -1});
   }
 
   this.frame_editor.open(this.displayed_post_id);

@@ -239,6 +239,8 @@ document.observe("dom:loaded", function()
       if(post_id != "")
       {
         var post_id_parts = post_id.split("-");
+        if(post_id_parts[1] == 'F')
+          post_id_parts[1] = -1;
         h.set("post-id", post_id_parts[0]);
         h.set("post-frame", post_id_parts[1]);
       }
@@ -263,7 +265,9 @@ document.observe("dom:loaded", function()
     if(post_id != null)
     {
       str += post_id;
-      if(post_frame != null)
+      if(post_frame == -1)
+        str += "-F";
+      else if(post_frame != null)
         str += "-" + post_frame;
 
       h.set("post-id", null);

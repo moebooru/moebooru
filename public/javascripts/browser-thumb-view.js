@@ -158,7 +158,7 @@ ThumbnailView.prototype.loaded_posts_event = function(event)
     else
     {
       this.post_ids.push(post_id);
-      this.post_frames.push(null);
+      this.post_frames.push(-1);
     }
   }
 
@@ -321,20 +321,17 @@ ThumbnailView.prototype.get_post_idx = function(post_id_and_frame)
   var post_idx = this.post_ids.indexOf(post_id);
   if(post_idx == -1)
     return null;
-  if(post_frame == null)
+  if(post_frame == -1)
     return post_idx;
 
   /* A post-frame is specified.  Search for a matching post-id and post-frame.  We assume
    * here that all frames for a post are grouped together in post_ids. */
-  if(post_frame != null)
+  var post_frame_idx = post_idx;
+  while(post_frame_idx < this.post_ids.length && this.post_ids[post_frame_idx] == post_id)
   {
-    var post_frame_idx = post_idx;
-    while(post_frame_idx < this.post_ids.length && this.post_ids[post_frame_idx] == post_id)
-    {
-      if(this.post_frames[post_frame_idx] == post_frame)
-        return post_frame_idx;
-      ++post_frame_idx;
-    }
+    if(this.post_frames[post_frame_idx] == post_frame)
+      return post_frame_idx;
+    ++post_frame_idx;
   }
 
   /* We found a matching post, but not a matching frame.  Return the post. */
@@ -357,8 +354,12 @@ ThumbnailView.prototype.get_current_post_id_and_frame = function()
   post_id = parseInt(post_id);
 
   var post_frame = UrlHash.get("post-frame");
-  if(post_frame != null)
-    post_frame = parseInt(post_frame);
+
+  // If no frame is set, attempt to resolve the post_frame we'll display, if the post data
+  // is already loaded.  Otherwise, post_frame will remain null.
+  if(post_frame == null)
+    post_frame = this.view.get_default_post_frame(post_id);
+
   return [post_id, post_frame];
 }
 
@@ -822,7 +823,7 @@ ThumbnailView.prototype.preload_thumbs = function()
 
     var post_frame = this.post_frames[post_idx];
     var url;
-    if(post_frame != null)
+    if(post_frame != -1)
       url = post.frames[post_frame].preview_url;
     else
       url = post.preview_url;
@@ -865,7 +866,7 @@ ThumbnailView.prototype.expand_post = function(post_idx)
 
   var post_frame = this.post_frames[post_idx];
   var image_width, image_url;
-  if(post_frame != null)
+  if(post_frame != -1)
   {
     var frame = post.frames[post_frame];
     image_width = frame.preview_width;
@@ -886,10 +887,7 @@ ThumbnailView.prototype.expand_post = function(post_idx)
    * necessary. */
   var max_width = document.viewport.getDimensions().width - left;
   overlay.style.maxWidth = max_width + "px";
-
-  overlay.href = "/post/browse#" + post.id;
-  if(post_frame != null)
-    overlay.href += "-" + post_frame;
+  overlay.href = "/post/browse#" + post.id + this.view.post_frame_hash(post, post_frame);
   overlay.down("IMG").src = image_url;
   overlay.show();
 }
@@ -929,16 +927,14 @@ ThumbnailView.prototype.create_thumb = function(post_idx)
     
   item.id = "p" + post_idx;
   item.post_idx = post_idx;
-  item.down("A").href = "/post/browse#" + post.id;
-  if(post_frame != null)
-    item.down("A").href += "-" + post_frame;
+  item.down("A").href = "/post/browse#" + post.id + this.view.post_frame_hash(post, post_frame);
 
   /* If the image is already what we want, then leave it alone.  Setting it to what it's
    * already set to won't necessarily cause onload to be fired, so it'll never be set
    * back to visible. */
   var img = item.down("IMG");
   var url;
-  if(post_frame != null)
+  if(post_frame != -1)
     url = post.frames[post_frame].preview_url;
   else
     url = post.preview_url;
@@ -960,7 +956,7 @@ ThumbnailView.prototype.set_thumb_dimensions = function(li)
   var post = Post.posts.get(post_id);
 
   var width, height;
-  if(post_frame != null)
+  if(post_frame != -1)
   {
     var frame = post.frames[post_frame];
     width = frame.preview_width;

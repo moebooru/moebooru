@@ -703,8 +703,8 @@ BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_cha
   this.displayed_post_id = post_id;
   this.displayed_post_frame = post_frame;
   if(!no_hash_change) {
-    // If this post has no frames, omit post_frame.
-    UrlHash.set_deferred({"post-id": post_id, "post-frame": post.frames.length == 0? null:post_frame}, replace_history);
+    var post_frame_hash = this.get_post_frame_hash(post, post_frame);
+    UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame_hash}, replace_history);
   }
 
   this.set_viewing_larger_version(false);
@@ -747,7 +747,24 @@ BrowserView.prototype.get_default_post_frame = function(post_id)
   return post.frames.length > 0? 0: -1;
 }
 
-
+BrowserView.prototype.get_post_frame_hash = function(post, post_frame)
+{
+/* 
+ * Omitting the frame in the hash selects the default frame: the first frame if any,
+ * otherwise the full image.  If we're setting the hash to a post_frame which would be
+ * selected by this default, omit the frame so this default is used.  For example, if
+ * post #1234 has one frame and post_frame is 0, it would be selected by the default,
+ * so omit the frame and use a hash of #1234, not #1234-0.
+ *
+ * This helps normalize the hash.  Otherwise, loading /#1234 will update the hash to
+ * /#1234-in set_post, causing an unwanted history entry.
+ */
+  var default_frame = post.frames.length > 0? 0:-1;
+  if(post_frame == default_frame)
+    return null;
+  else
+    return post_frame;
+}
 /* Set the post info box for the currently displayed post. */
 BrowserView.prototype.set_post_info = function()
 {

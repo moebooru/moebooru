@@ -10,6 +10,7 @@ module PostFileMethods
     m.before_validation_on_create :ensure_tempfile_exists
     m.before_validation_on_create :determine_content_type
     m.before_validation_on_create :validate_content_type
+    m.before_validation_on_create :strip_exif
     m.before_validation_on_create :generate_hash
     m.before_validation_on_create :set_image_dimensions
     m.before_validation_on_create :set_image_status
@@ -18,6 +19,12 @@ module PostFileMethods
     m.before_validation_on_create :generate_jpeg
     m.before_validation_on_create :generate_preview
     m.before_validation_on_create :move_file
+  end
+  
+  def strip_exif
+	  if file_ext.downcase == "jpg" then
+		  system ("/usr/bin/mogrify -strip #{tempfile_path}")
+	  end
   end
   
   def ensure_tempfile_exists

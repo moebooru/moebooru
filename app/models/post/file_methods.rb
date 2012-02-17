@@ -23,7 +23,7 @@ module PostFileMethods
   
   def strip_exif
 	  if file_ext.downcase == "jpg" then
-		  system ("/usr/bin/mogrify -strip #{tempfile_path}")
+		  system ("/usr/bin/jhead -purejpg #{tempfile_path}")
 	  end
   end
   

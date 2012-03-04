@@ -49,7 +49,7 @@ class ReportController < ApplicationController
         params << @users.select {|x| x["id"]}.map {|x| x["id"]}
       end
 
-      votes = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql(["SELECT COUNT(score) AS sum, score FROM post_votes WHERE #{conds.join(" AND ")} GROUP BY score", *params]))
+      votes = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array(["SELECT COUNT(score) AS sum, score FROM post_votes WHERE #{conds.join(" AND ")} GROUP BY score", *params]))
       user["votes"] = {}
       votes.each { |vote|
         score = vote["score"].to_i

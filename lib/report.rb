@@ -14,7 +14,7 @@ module Report
     conds << "users.id NOT IN (?)"
     params << users.map {|x| x["id"]}
 
-    other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql(["SELECT COUNT(*) FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND "), *params])).to_i
+    other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql_array(["SELECT COUNT(*) FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND "), *params])).to_i
 
     users << {"id" => nil, "change_count" => other_count}
     

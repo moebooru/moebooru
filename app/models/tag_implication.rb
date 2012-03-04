@@ -57,7 +57,7 @@ class TagImplication < ActiveRecord::Base
       results = [tag]
 
       10.times do
-        results = connection.select_values(sanitize_sql([<<-SQL, results]))
+        results = connection.select_values(sanitize_sql_array([<<-SQL, results]))
           SELECT t1.name 
           FROM tags t1, tags t2, tag_implications ti 
           WHERE ti.predicate_id = t2.id 

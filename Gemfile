@@ -10,6 +10,7 @@ gem 'hpricot'
 gem 'memcache-client'
 gem 'mime-types'
 gem 'unicorn'
+gem 'redhillonrails_core'
 
 group :development do
   gem 'ruby-debug'

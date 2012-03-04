@@ -1,0 +1,10 @@
+(^|/)\.(bundle|DS_Store)$
+^\.redcar$
+^db/.*\.sqlite3$
+^(log|tmp)/
+^config/(database\.yml|unicorn\.rb)$
+^public/system/photos/
+\.(swp|orig)$
+^[^/]+\.war
+^bin/
+~$

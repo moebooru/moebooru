@@ -19,11 +19,10 @@ GEM
     html5 (0.10.0)
       chardet (>= 0.9.0)
       hoe (>= 1.2.0)
-    json (1.5.0)
+    json (1.6.5)
     kgio (2.7.2)
     memcache-client (1.8.5)
     mime-types (1.17.2)
-    multi_json (1.1.0)
     pg (0.13.2)
     rack (1.4.1)
     rails (2.2.2)
@@ -48,10 +47,9 @@ DEPENDENCIES
   gchartrb
   hpricot
   html5
-  json (= 1.5.0)
+  json
   memcache-client
   mime-types
-  multi_json
   pg
   rails (= 2.2.2)
   unicorn

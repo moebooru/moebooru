@@ -26,7 +26,6 @@ require 'google_chart' if CONFIG["enable_reporting"]
 require 'core_extensions'
 require 'json'
 require 'json/add/core'
-require 'json/add/rails'
 require 'fix_form_tag'
 require 'download'
 require 'sys/cpu' if CONFIG["load_average_threshold"]

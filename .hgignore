@@ -9,3 +9,5 @@
 ^bin/
 ~$
 ^public/data/
+\.(s?o)$
+(extconf\.h|Makefile|mkmf\.log)$

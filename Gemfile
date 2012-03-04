@@ -10,3 +10,7 @@ gem 'hpricot'
 gem 'memcache-client'
 gem 'mime-types'
 gem 'unicorn'
+
+group :development do
+  gem 'ruby-debug'
+end

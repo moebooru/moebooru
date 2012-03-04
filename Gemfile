@@ -12,6 +12,12 @@ gem 'mime-types'
 gem 'unicorn'
 gem 'redhillonrails_core'
 
+# bundler requirements
+gem 'builder', '~> 2.1.2'
+gem 'tzinfo'
+gem 'i18n'
+gem 'tmail'
+
 group :development do
   gem 'ruby-debug'
 end

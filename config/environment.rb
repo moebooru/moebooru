@@ -7,7 +7,7 @@ Rails::Initializer.run do |config|
   config.frameworks -= [:action_web_service]
 
   # Add additional load paths for your own custom dirs
-  config.load_paths += ["#{RAILS_ROOT}/app/models/post", "#{RAILS_ROOT}/app/models/post/image_store"]
+  config.autoload_paths += ["#{RAILS_ROOT}/app/models/post", "#{RAILS_ROOT}/app/models/post/image_store"]
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug

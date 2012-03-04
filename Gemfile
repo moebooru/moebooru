@@ -1,0 +1,13 @@
+source 'http://rubygems.org'
+
+gem 'rails', '=2.2.2'
+gem 'pg'
+gem 'html5'
+gem 'diff-lcs'
+gem 'gchartrb'
+gem 'json', '= 1.5.0'
+gem 'multi_json'
+gem 'hpricot'
+gem 'memcache-client'
+gem 'mime-types'
+gem 'unicorn'

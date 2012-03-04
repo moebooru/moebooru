@@ -9,7 +9,12 @@ module ActionView
     module AssetTagHelper
       private
       class AssetCollection
-        alias_method :orig_all_asset_files, :all_asset_files
+        def orig_all_asset_files
+          path = [public_directory, ('**' if @recursive), "*.#{extension}"].compact
+          Dir[File.join(*path)].collect { |file|
+            file[-(file.size - public_directory.size - 1)..-1].sub(/\.\w+$/, '')
+          }.sort
+        end
         def all_asset_files
           x = orig_all_asset_files
           x.delete("application")

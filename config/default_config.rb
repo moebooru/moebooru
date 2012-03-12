@@ -280,7 +280,7 @@ CONFIG["max_tag_subscriptions"] = 5
 
 # Languages that we support translating to.  We'll translate each comment into all of these
 # languages.  Set this to nil to disable translation.
-CONFIG["translate_languages"] = ["en", "ja", "zh-CN", "zh-TW", "es"]
+#CONFIG["translate_languages"] = ["en", "ja", "zh-CN", "zh-TW", "es"]
 
 # Load expanded language names.
 require Rails.root.join('config/languages')

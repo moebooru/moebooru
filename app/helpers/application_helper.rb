@@ -289,7 +289,7 @@ module ApplicationHelper
       end
       html_options.delete(:level)
     end
-    args = ([args] + [html_options])
+    args << html_options
     orig_link_to_function name, *args, &block
   end
 

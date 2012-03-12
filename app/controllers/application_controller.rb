@@ -1,5 +1,4 @@
 require 'digest/md5'
-require 'geoip'
 
 class ApplicationController < ActionController::Base
   # This is a proxy class to make various nil checks unnecessary
@@ -133,7 +132,7 @@ class ApplicationController < ActionController::Base
     end
 
     def set_country
-      @current_user_country = GeoIP.get_country_for_ip(request.remote_ip)
+      @current_user_country = Net::GeoIP.open(File.expand_path('db/GeoIP.dat', Rails.root)).country_code_by_addr(request.remote_ip)
     end
 
     CONFIG["user_levels"].each do |name, value|

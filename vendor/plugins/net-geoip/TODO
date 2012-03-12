@@ -1,7 +1,0 @@
-$Id: TODO,v 1.3 2002/10/09 06:29:48 sean Exp $
-
-Need to document Net::GeoIP with rubydoc
-
-Need to be able to specify different types of databases
-
-Figure out why there's a memory leak when using database_info

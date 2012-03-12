@@ -11,6 +11,7 @@ gem 'memcache-client'
 gem 'mime-types'
 gem 'unicorn'
 gem 'redhillonrails_core'
+gem 'net-geoip', :require => 'net/geoip'
 
 # bundler requirements
 gem 'builder', '~> 2.1.2'

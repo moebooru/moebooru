@@ -132,7 +132,7 @@ class ApplicationController < ActionController::Base
     end
 
     def set_country
-      @current_user_country = Net::GeoIP.open(File.expand_path('db/GeoIP.dat', Rails.root)).country_code_by_addr(request.remote_ip)
+      @current_user_country = GeoIP.new(File.expand_path('db/GeoIP.dat', Rails.root)).country(request.remote_ip).country_code
     end
 
     CONFIG["user_levels"].each do |name, value|

@@ -11,7 +11,7 @@ gem 'memcache-client'
 gem 'mime-types'
 gem 'unicorn'
 gem 'redhillonrails_core'
-gem 'net-geoip', :require => 'net/geoip'
+gem 'geoip'
 gem 'repeated_auto_complete'
 gem 'exception_notification', '~> 2.3.0'
 gem 'will_paginate', '~> 2.3.16'
@@ -23,6 +23,4 @@ gem 'i18n'
 gem 'tmail'
 
 group :development do
-  gem 'ruby-debug', :platforms => :mri_18
-  gem 'ruby-debug19', :platforms => :mri_19
 end

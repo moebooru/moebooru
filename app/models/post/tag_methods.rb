@@ -106,7 +106,7 @@ module PostTagMethods
   
   # Returns all versioned tags and metatags.
   def cached_tags_versioned
-    ["rating:" + self.rating, cached_tags].map.join(" ")
+    ["rating:" + self.rating, cached_tags].join(" ")
   end
 
   # Commit metatags; this is done before save, so any changes are stored normally.

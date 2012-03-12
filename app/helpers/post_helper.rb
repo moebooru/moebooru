@@ -157,7 +157,7 @@ module PostHelper
   end
 
   def vote_widget(user, className="standard-vote-widget")
-    html = []
+    html = ""
     
     html << %{<span class="stars #{className}">}
     

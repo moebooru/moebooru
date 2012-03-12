@@ -30,11 +30,15 @@ module DText
     str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>')
     str.gsub!(/\[spoilers?(=(.+))\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\2</span></span><span class="spoilertext" style="display: none">\3</span>')
 
-    # Ruby regexes are in the localization dark ages, so we need to match UTF-8 characters
-    # manually:
-    utf8_char = '[\xC0-\xFF][\x80-\xBF]+'
-
-    url = "(h?ttps?:\\/\\/(?:[a-zA-Z0-9_\\-#~%.,:;\\(\\)\\[\\]$@!&=+?\\/#]|#{utf8_char})+)"
+    if RUBY_VERSION < '1.9' then
+      # Ruby regexes are in the localization dark ages, so we need to match UTF-8 characters
+      # manually:
+      utf8_char = '[\xC0-\xFF][\x80-\xBF]+'
+  
+      url = "(h?ttps?:\\/\\/(?:[a-zA-Z0-9_\\-#~%.,:;\\(\\)\\[\\]$@!&=+?\\/#]|#{utf8_char})+)"
+    else
+      url = "(h?ttps?:\\/\\/(?:\S)+)"
+    end
     str.gsub!(/#{url}|&lt;&lt;#{url}(?:\|(.+?))?&gt;&gt;|&quot;(.+?)&quot;:#{url}/m) do |link| # url or <<url|text>> or "text":url
       if $1 then
         text = $1

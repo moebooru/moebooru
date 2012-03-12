@@ -11,6 +11,7 @@ GEM
     activeresource (2.3.14)
       activesupport (= 2.3.14)
     activesupport (2.3.14)
+    archive-tar-minitar (0.5.2)
     builder (2.1.2)
     chardet (0.9.0)
     columnize (0.3.6)
@@ -28,6 +29,8 @@ GEM
     kgio (2.7.2)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
+    linecache19 (0.5.12)
+      ruby_core_source (>= 0.1.4)
     memcache-client (1.8.5)
     mime-types (1.17.2)
     net-geoip (0.07)
@@ -51,6 +54,16 @@ GEM
       ruby-debug-base (~> 0.10.4.0)
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
+    ruby-debug-base19 (0.11.25)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
+    ruby_core_source (0.1.5)
+      archive-tar-minitar (>= 0.5.2)
     tmail (1.2.7.1)
     tzinfo (0.3.32)
     unicorn (4.2.0)
@@ -78,6 +91,7 @@ DEPENDENCIES
   redhillonrails_core
   repeated_auto_complete
   ruby-debug
+  ruby-debug19
   tmail
   tzinfo
   unicorn

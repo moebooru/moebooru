@@ -22,5 +22,6 @@ gem 'i18n'
 gem 'tmail'
 
 group :development do
-  gem 'ruby-debug'
+  gem 'ruby-debug', :platforms => :mri_18
+  gem 'ruby-debug19', :platforms => :mri_19
 end

@@ -12,6 +12,7 @@ gem 'mime-types'
 gem 'unicorn'
 gem 'redhillonrails_core'
 gem 'net-geoip', :require => 'net/geoip'
+gem 'repeated_auto_complete'
 
 # bundler requirements
 gem 'builder', '~> 2.1.2'

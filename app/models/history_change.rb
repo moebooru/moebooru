@@ -4,7 +4,12 @@ class HistoryChange < ActiveRecord::Base
   after_create :set_previous
 
   def options
-    master_class.get_versioned_attribute_options(field) or {}
+    # FIXME: I don't know what I did here.
+    opts = master_class.get_versioned_attribute_options(field) or {}
+    if opts.class.to_s == "Array" then
+      opts = opts.reduce({}) {|h,pairs| pairs.each {|k,v| h[k] = v}; h}
+    end
+    return opts
   end
 
   def master_class

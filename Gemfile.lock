@@ -16,7 +16,7 @@ GEM
     columnize (0.3.6)
     diff-lcs (1.1.3)
     gchartrb (0.8)
-    hoe (2.15.0)
+    hoe (2.16.0)
       rake (~> 0.8)
     hpricot (0.8.6)
     html5 (0.10.0)

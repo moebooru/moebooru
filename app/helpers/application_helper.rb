@@ -189,7 +189,7 @@ module ApplicationHelper
 
       unless posts.next_page.nil?
         html << tag("link", :href => url_for(params.merge(:page => posts.next_page)), :rel => "next", :title => "Next Page")
-        html << tag("link", :href => url_for(params.merge(:page => posts.page_count)), :rel => "last", :title => "Last Page")
+        html << tag("link", :href => url_for(params.merge(:page => posts.total_pages)), :rel => "last", :title => "Last Page")
       end
     end
 

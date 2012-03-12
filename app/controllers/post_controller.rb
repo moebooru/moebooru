@@ -263,10 +263,11 @@ class PostController < ApplicationController
       @current_user.update_attribute(:last_deleted_post_seen_at, Time.now)
     end
 
+    page = params[:page].to_i > 0 ? params[:page].to_i : 1
     if params[:user_id]
-      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ? ", params[:user_id]], :page => params[:page])
+      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ? ", params[:user_id]], :page => page)
     else
-      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted'"], :page => params[:page])
+      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted'"], :page => page)
     end
   end
 
@@ -278,7 +279,7 @@ class PostController < ApplicationController
   def index
     tags = params[:tags].to_s
     split_tags = QueryParser.parse(tags)
-    page = params[:page].to_i
+    page = params[:page].to_i > 0 ? params[:page].to_i : 1
     
 #    if @current_user.is_member_or_lower? && split_tags.size > 2
 #      respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
@@ -414,7 +415,8 @@ class PostController < ApplicationController
       return
     end
 
-    @posts = WillPaginate::Collection.create(params[:page], 16, Post.fast_count(params[:tags])) do |pager|
+    page = params[:page].to_i > 0 ? params[:page].to_i : 1
+    @posts = WillPaginate::Collection.create(page, 16, Post.fast_count(params[:tags])) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
     

@@ -70,6 +70,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    will_paginate (2.3.16)
 
 PLATFORMS
   ruby
@@ -95,3 +96,4 @@ DEPENDENCIES
   tmail
   tzinfo
   unicorn
+  will_paginate (~> 2.3.16)

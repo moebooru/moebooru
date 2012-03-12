@@ -119,7 +119,8 @@ class PoolController < ApplicationController
 
     count = Post.count_by_sql(Post.generate_sql(q, :from_api => true, :count => true))
 
-    @posts = WillPaginate::Collection.new(params[:page], q[:limit], count)
+    page = params[:page].to_i > 0 ? params[:page].to_i : 1
+    @posts = WillPaginate::Collection.new(page, q[:limit], count)
 
     sql = Post.generate_sql(q, :from_api => true, :offset => @posts.offset, :limit => @posts.per_page)
     @posts.replace(Post.find_by_sql(sql))

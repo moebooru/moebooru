@@ -115,13 +115,13 @@ module TagTypeMethods
 
     def tag_list_order(tag_type)
       case tag_type
-      when "artist": 0
-      when "circle": 1
-      when "copyright": 2
-      when "character": 3
-      when "general": 5
-      when "faults": 6
-      else 4
+        when "artist" then 0
+        when "circle" then 1
+        when "copyright" then 2
+        when "character" then 3
+        when "general" then 5
+        when "faults" then 6
+        else 4
       end
     end
   end

@@ -13,6 +13,7 @@ gem 'unicorn'
 gem 'redhillonrails_core'
 gem 'net-geoip', :require => 'net/geoip'
 gem 'repeated_auto_complete'
+gem 'exception_notification', '~> 2.3.0'
 
 # bundler requirements
 gem 'builder', '~> 2.1.2'

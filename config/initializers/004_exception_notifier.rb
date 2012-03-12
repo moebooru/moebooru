@@ -1,3 +1,3 @@
-#ExceptionNotifier.exception_recipients = [CONFIG["admin_contact"]]
-#ExceptionNotifier.sender_address = CONFIG["admin_contact"]
-#ExceptionNotifier.email_prefix = "[" + CONFIG["app_name"] + "] "
+ExceptionNotification::Notifier.exception_recipients = [CONFIG["admin_contact"]]
+ExceptionNotification::Notifier.sender_address = CONFIG["admin_contact"]
+ExceptionNotification::Notifier.email_prefix = "[%s] " % CONFIG["app_name"]

@@ -225,7 +225,7 @@ class ApplicationController < ActionController::Base
   
   include LoginSystem
   include RespondToHelpers
-  #include ExceptionNotifiable
+  include ExceptionNotification::Notifiable
   include CacheHelper
   #local_addresses.clear
   

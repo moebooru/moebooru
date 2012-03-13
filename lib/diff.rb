@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 module Danbooru
   TAG_DEL = '<del>'
   TAG_INS = '<ins>'

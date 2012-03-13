@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class WikiController < ApplicationController
   layout 'default'
   before_filter :post_member_only, :only => [:update, :create, :edit, :revert]

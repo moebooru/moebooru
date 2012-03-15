@@ -1,0 +1,43 @@
+h1. Moebooru
+
+This project is based on original Moebooru which is being used in "yande.re Image Board":http://yande.re. Changes compared to original Moebooru:
+
+* Requires Ruby 1.9
+* Uses Rails 2.3
+* Uses Bundler
+* Updated gems
+* Pool ZIP support for nginx (with @mod_zip@)
+
+As this is still in development, bug reports are welcome.
+
+* "Demo site":http://moe.myconan.net
+* "Source Repository":http://bitbucket.org/edogawaconan/moebooru
+
+h2. Requirements
+
+As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application requires:
+
+* Ruby 1.9
+* PostgreSQL (tested with 8.4)
+* Bundler gem
+* GD image library header
+* And various other requirement for the gems (check @Gemfile@ for the list)
+
+h2. Installation
+
+* Create a new PostgreSQL user with type of superuser
+* Run @bundle install@
+* Build image resizer:
+** @cd lib/danbooru_image_resizer@
+** @ruby extconf.rb@
+** @make@
+* Create @config/database.yml@ and @config/local_config.rb@
+* Run @rake db:migrate@
+* Start the server (@bundle exec unicorn_rails@)
+
+h2. Plans
+
+* Bug fixes
+* Documentation
+* Switch to RMagick
+* And more!

@@ -15,12 +15,3 @@ gem 'geoip'
 gem 'repeated_auto_complete'
 gem 'exception_notification', '~> 2.3.0'
 gem 'will_paginate', '~> 2.3.16'
-
-# bundler requirements
-gem 'builder', '~> 2.1.2'
-gem 'tzinfo'
-gem 'i18n'
-gem 'tmail'
-
-group :development do
-end

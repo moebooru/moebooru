@@ -37,15 +37,15 @@ class InlineImage < ActiveRecord::Base
   before_create :validate_uniqueness
 
   def tempfile_image_path
-    "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}.upload"
+    "#{RAILS_ROOT}/public/data/#{Process.pid}.upload"
   end
 
   def tempfile_sample_path
-    "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}-sample.upload"
+    "#{RAILS_ROOT}/public/data/#{Process.pid}-sample.upload"
   end
 
   def tempfile_preview_path
-    "#{RAILS_ROOT}/public/data/#{$PROCESS_ID}-preview.upload"
+    "#{RAILS_ROOT}/public/data/#{Process.pid}-preview.upload"
   end
 
   attr_accessor :source

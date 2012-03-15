@@ -46,7 +46,7 @@ module AssetCache
     # the temporary application-new-12345 file being created by other processes
     # as a regular Javascript file and try to include it in their own, causing
     # weird race conditions.  Write the file in the parent directory.
-    cache_temp = "../../tmp/application-new-#{$PROCESS_ID}" 
+    cache_temp = "../../tmp/application-new-#{Process.pid}" 
     temp = "#{path}/javascripts/#{cache_temp}.js" 
     file = "#{path}/javascripts/application.js"
     File.unlink(temp) if File.exist?(temp)

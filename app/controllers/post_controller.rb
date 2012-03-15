@@ -901,7 +901,7 @@ class PostController < ApplicationController
     headers["Access-Control-Allow-Origin"] = "*"
 
     url = params[:url]
-    tempfile_path = "/tmp/#{$PROCESS_ID}.temp"
+    tempfile_path = "/tmp/#{Process.pid}.temp"
     tempfile = File.open(tempfile_path, "wb")
 
     begin

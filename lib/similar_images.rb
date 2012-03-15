@@ -213,7 +213,7 @@ module SimilarImages
     begin
       FileUtils.mkdir_p(SEARCH_CACHE_DIR, :mode => 0775)
 
-      tempfile_path = "#{SEARCH_CACHE_DIR}/#{$PROCESS_ID}.upload"
+      tempfile_path = "#{SEARCH_CACHE_DIR}/#{Process.pid}.upload"
       File.open(tempfile_path, 'wb') { |f| yield f }
 
       # Use the resizer to validate the file and convert it to a thumbnail-size JPEG.

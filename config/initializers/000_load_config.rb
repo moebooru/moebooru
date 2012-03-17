@@ -1,3 +1,7 @@
+CONFIG = {}
+
+require 'languages'
+
 require "#{RAILS_ROOT}/config/default_config"
 require "#{RAILS_ROOT}/config/local_config"
 

@@ -1,5 +1,3 @@
-CONFIG = {}
-
 # The version of this Danbooru.
 CONFIG["version"] = "1.16.0-moebooru1"
 
@@ -282,9 +280,6 @@ CONFIG["max_tag_subscriptions"] = 5
 # languages.  Set this to nil to disable translation.
 #CONFIG["translate_languages"] = ["en", "ja", "zh-CN", "zh-TW", "es"]
 CONFIG["translate_languages"] = nil
-
-# Load expanded language names.
-require Rails.root.join('config/languages')
 
 # Languages that we're aware of.  This is what we show in "Secondary languages", to let users
 # select which languages they understand and that shouldn't be translated.

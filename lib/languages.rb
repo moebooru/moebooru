@@ -112,4 +112,3 @@ CONFIG["language_names"] = {
   "ja" => "Japanese",
   "es" => "Spanish",
 }
-

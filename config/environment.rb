@@ -26,4 +26,7 @@ Rails::Initializer.run do |config|
   # Use Active Record's schema dumper instead of SQL when creating the test database
   # (enables use of different database adapters for development and test environments)
   config.active_record.schema_format = :sql
+
+  #testing new relic
+#  config.gem "newrelic_rpm"
 end

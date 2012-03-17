@@ -229,13 +229,22 @@ class ApplicationController < ActionController::Base
   include CacheHelper
   #local_addresses.clear
   
+  before_filter :time_start
   before_filter :set_title
   before_filter :set_current_user
   before_filter :set_current_request
   before_filter :set_country
   before_filter :check_ip_ban
   after_filter :init_cookies
-  
+  after_filter :time_end
+  def time_start
+    @start = Time.now
+  end
+  def time_end
+    t = Time.now - @start
+    File.open("/tmp/temp", 'a+') {|f| f.write("%.3f %s %15s %s\n" % [t, @current_user_country, request.remote_ip, request.request_uri])}
+  end
+
   protected :build_cache_key
   protected :get_cache_key
 

@@ -8,22 +8,35 @@
     <% if @post.image? && @post.can_be_seen_by?(@current_user) %>
       <% file_jpeg = @post.get_file_jpeg %>
       <% if @post.use_sample?(@current_user) or @current_user.always_resize_images %>
-      <li><%= link_to("View larger version", file_jpeg[:url],
+      <li><%= if(@post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
+	      else
+		      link_to("View larger version", file_jpeg[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
                       :id => "highres-show", :onclick => "Post.highres(); return false",
-                      :link_height => file_jpeg[:height], :link_width => file_jpeg[:width]) %>
+                      :link_height => file_jpeg[:height], :link_width => file_jpeg[:width]) 
+              end %>
       </li>
       <% end %>
-      <li><%= link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(file_jpeg[:size])} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
+      <li><%= if(@post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
+                      file_sample = @post.get_file_sample(@current_user)
+                      link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(file_sample[:size])} #{file_sample[:ext].upcase})", file_sample[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
-                      :id => "highres") %>
+                      :id => "highres")
+
+              else
+		      link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(file_jpeg[:size])} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
+                      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
+                      :id => "highres") 
+	      end %>
       </li>
       <% if @post.has_jpeg? then %>
 	<% file_image = @post.get_file_image %>
 	<%# If we have a JPEG, the above link was the JPEG.  Link to the PNG here. %>
-        <li><%= link_to("Download #{ file_image[:ext].upcase } (#{number_to_human_size(file_image[:size])})", file_image[:url],
+        <li><%= 
+                        link_to("Download #{ file_image[:ext].upcase } (#{number_to_human_size(file_image[:size])})", file_image[:url],
                         :class => "original-file-unchanged",
-                        :id => "png") %>
+                        :id => "png") 
+                %>
 	</li>
       <% end %>
     <% end %>

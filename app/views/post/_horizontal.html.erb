@@ -1,3 +1,16 @@
 <%=
-'<a href="http://www.hendane.com/shop/disclaimer.php"><img src="http://moe.imouto.org/images/hendane_banner_take1.png" border="0" /></a><br />' if rand(100) < 30
+if(@post.rating == "e" || @post.rating == "q" || @post.tags.include?("swimsuits") || @post.tags.include?("bra") || @post.tags.include?("pantsu") || @post.tags.include?("undressing"))
+	print_advertisement("horizontal")
+else
+	'<script type="text/javascript"><!--
+google_ad_client = "ca-pub-4985435874424704";
+/* ad */
+google_ad_slot = "6419965602";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>'
+end
 %>

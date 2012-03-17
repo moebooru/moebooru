@@ -265,7 +265,7 @@ class Pool < ActiveRecord::Base
       end
       return true
     end
-
+    
     #nginx version
     def get_zip_data(options={})
       return "" if pool_posts.empty?

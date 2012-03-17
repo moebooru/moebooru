@@ -95,6 +95,7 @@
             <%= check_box "user", "show_advanced_editing" %>
           </td>
         </tr>
+	<% if CONFIG["translate_languages"] %>
         <tr>
           <th>
             <label class="block" for="user_language">Language</label>
@@ -123,6 +124,7 @@
             </select>
           </td>
         </tr>
+	<% end %>
       </tbody>
     </table>
   <% end %>

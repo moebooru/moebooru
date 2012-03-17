@@ -17,18 +17,6 @@
     document.getElementsByTagName("head")[0].appendChild(style);
   </script>
 
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-291955-3']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
   <%= @content_for_html_header %>
   <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
   <%= stylesheet_link_tag "default" %>
@@ -46,6 +34,7 @@
     </style>
     <script src="http://ie7-js.googlecode.com/svn/trunk/lib/IE7.js" type="text/javascript"></script>
   <![endif]-->
+<link href="https://plus.google.com/113331331128995002385/" rel="publisher" />
 </head>
 <body>
   <div id="header">
@@ -54,7 +43,7 @@
   </div>
   <%= render :partial => "layouts/login" %>
 
-  <% if CONFIG["server_host"] == "moe.imouto.org" %>
+  <% if CONFIG["server_host"] == "yande.re" %>
     <%# This is actually just to keyword "image board" and "danbooru" for searches like
         "tinkle danbooru".  Be careful, this looks very stupid in search results if taken
         too far: "Sex hentai porn danbooru image board"; this should hint search engines,
@@ -106,5 +95,27 @@
     </script>
   <![endif]-->
   <%= @content_for_post_cookie_javascripts %>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-291955-10']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <script type="text/javascript">
+    (function() {
+      var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+      po.src = 'http://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+  </script>
+  <script type="text/javascript">
+  window.google_analytics_uacct = "UA-291955-10";
+  </script>
 </body>
 </html>

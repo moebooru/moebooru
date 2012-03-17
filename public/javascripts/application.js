@@ -1,5 +1,5 @@
-/*  Prototype JavaScript framework, version 1.6.0.3
- *  (c) 2005-2008 Sam Stephenson
+/*  Prototype JavaScript framework, version 1.7
+ *  (c) 2005-2010 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
  *  For details, see the Prototype web site: http://www.prototypejs.org/
@@ -7,32 +7,53 @@
  *--------------------------------------------------------------------------*/
 
 var Prototype = {
-  Version: '1.6.0.3',
 
-  Browser: {
-    IE:     !!(window.attachEvent &&
-      navigator.userAgent.indexOf('Opera') === -1),
-    Opera:  navigator.userAgent.indexOf('Opera') > -1,
-    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
-    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 &&
-      navigator.userAgent.indexOf('KHTML') === -1,
-    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
-  },
+  Version: '1.7',
+
+  Browser: (function(){
+    var ua = navigator.userAgent;
+    var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
+    return {
+      IE:             !!window.attachEvent && !isOpera,
+      Opera:          isOpera,
+      WebKit:         ua.indexOf('AppleWebKit/') > -1,
+      Gecko:          ua.indexOf('Gecko') > -1 && ua.indexOf('KHTML') === -1,
+      MobileSafari:   /Apple.*Mobile/.test(ua)
+    }
+  })(),
 
   BrowserFeatures: {
     XPath: !!document.evaluate,
+
     SelectorsAPI: !!document.querySelector,
-    ElementExtensions: !!window.HTMLElement,
-    SpecificElementExtensions:
-      document.createElement('div')['__proto__'] &&
-      document.createElement('div')['__proto__'] !==
-        document.createElement('form')['__proto__']
+
+    ElementExtensions: (function() {
+      var constructor = window.Element || window.HTMLElement;
+      return !!(constructor && constructor.prototype);
+    })(),
+    SpecificElementExtensions: (function() {
+      if (typeof window.HTMLDivElement !== 'undefined')
+        return true;
+
+      var div = document.createElement('div'),
+          form = document.createElement('form'),
+          isSupported = false;
+
+      if (div['__proto__'] && (div['__proto__'] !== form['__proto__'])) {
+        isSupported = true;
+      }
+
+      div = form = null;
+
+      return isSupported;
+    })()
   },
 
   ScriptFragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
   JSONFilter: /^\/\*-secure-([\s\S]*)\*\/\s*$/,
 
   emptyFunction: function() { },
+
   K: function(x) { return x }
 };
 
@@ -40,232 +61,8 @@ if (Prototype.Browser.MobileSafari)
   Prototype.BrowserFeatures.SpecificElementExtensions = false;
 
 
-/* Based on Alex Arnell's inheritance implementation. */
-var Class = {
-  create: function() {
-    var parent = null, properties = $A(arguments);
-    if (Object.isFunction(properties[0]))
-      parent = properties.shift();
-
-    function klass() {
-      this.initialize.apply(this, arguments);
-    }
-
-    Object.extend(klass, Class.Methods);
-    klass.superclass = parent;
-    klass.subclasses = [];
-
-    if (parent) {
-      var subclass = function() { };
-      subclass.prototype = parent.prototype;
-      klass.prototype = new subclass;
-      parent.subclasses.push(klass);
-    }
-
-    for (var i = 0; i < properties.length; i++)
-      klass.addMethods(properties[i]);
-
-    if (!klass.prototype.initialize)
-      klass.prototype.initialize = Prototype.emptyFunction;
-
-    klass.prototype.constructor = klass;
-
-    return klass;
-  }
-};
-
-Class.Methods = {
-  addMethods: function(source) {
-    var ancestor   = this.superclass && this.superclass.prototype;
-    var properties = Object.keys(source);
-
-    if (!Object.keys({ toString: true }).length)
-      properties.push("toString", "valueOf");
-
-    for (var i = 0, length = properties.length; i < length; i++) {
-      var property = properties[i], value = source[property];
-      if (ancestor && Object.isFunction(value) &&
-          value.argumentNames().first() == "$super") {
-        var method = value;
-        value = (function(m) {
-          return function() { return ancestor[m].apply(this, arguments) };
-        })(property).wrap(method);
-
-        value.valueOf = method.valueOf.bind(method);
-        value.toString = method.toString.bind(method);
-      }
-      this.prototype[property] = value;
-    }
-
-    return this;
-  }
-};
-
 var Abstract = { };
 
-Object.extend = function(destination, source) {
-  for (var property in source)
-    destination[property] = source[property];
-  return destination;
-};
-
-Object.extend(Object, {
-  inspect: function(object) {
-    try {
-      if (Object.isUndefined(object)) return 'undefined';
-      if (object === null) return 'null';
-      return object.inspect ? object.inspect() : String(object);
-    } catch (e) {
-      if (e instanceof RangeError) return '...';
-      throw e;
-    }
-  },
-
-  toJSON: function(object) {
-    var type = typeof object;
-    switch (type) {
-      case 'undefined':
-      case 'function':
-      case 'unknown': return;
-      case 'boolean': return object.toString();
-    }
-
-    if (object === null) return 'null';
-    if (object.toJSON) return object.toJSON();
-    if (Object.isElement(object)) return;
-
-    var results = [];
-    for (var property in object) {
-      var value = Object.toJSON(object[property]);
-      if (!Object.isUndefined(value))
-        results.push(property.toJSON() + ': ' + value);
-    }
-
-    return '{' + results.join(', ') + '}';
-  },
-
-  toQueryString: function(object) {
-    return $H(object).toQueryString();
-  },
-
-  toHTML: function(object) {
-    return object && object.toHTML ? object.toHTML() : String.interpret(object);
-  },
-
-  keys: function(object) {
-    var keys = [];
-    for (var property in object)
-      keys.push(property);
-    return keys;
-  },
-
-  values: function(object) {
-    var values = [];
-    for (var property in object)
-      values.push(object[property]);
-    return values;
-  },
-
-  clone: function(object) {
-    return Object.extend({ }, object);
-  },
-
-  isElement: function(object) {
-    return !!(object && object.nodeType == 1);
-  },
-
-  isArray: function(object) {
-    return object != null && typeof object == "object" &&
-      'splice' in object && 'join' in object;
-  },
-
-  isHash: function(object) {
-    return object instanceof Hash;
-  },
-
-  isFunction: function(object) {
-    return typeof object == "function";
-  },
-
-  isString: function(object) {
-    return typeof object == "string";
-  },
-
-  isNumber: function(object) {
-    return typeof object == "number";
-  },
-
-  isUndefined: function(object) {
-    return typeof object == "undefined";
-  }
-});
-
-Object.extend(Function.prototype, {
-  argumentNames: function() {
-    var names = this.toString().match(/^[\s\(]*function[^(]*\(([^\)]*)\)/)[1]
-      .replace(/\s+/g, '').split(',');
-    return names.length == 1 && !names[0] ? [] : names;
-  },
-
-  bind: function() {
-    if (arguments.length < 2 && Object.isUndefined(arguments[0])) return this;
-    var __method = this, args = $A(arguments), object = args.shift();
-    return function() {
-      return __method.apply(object, args.concat($A(arguments)));
-    }
-  },
-
-  bindAsEventListener: function() {
-    var __method = this, args = $A(arguments), object = args.shift();
-    return function(event) {
-      return __method.apply(object, [event || window.event].concat(args));
-    }
-  },
-
-  curry: function() {
-    if (!arguments.length) return this;
-    var __method = this, args = $A(arguments);
-    return function() {
-      return __method.apply(this, args.concat($A(arguments)));
-    }
-  },
-
-  delay: function() {
-    var __method = this, args = $A(arguments), timeout = args.shift() * 1000;
-    return window.setTimeout(function() {
-      return __method.apply(__method, args);
-    }, timeout);
-  },
-
-  defer: function() {
-    var args = [0.01].concat($A(arguments));
-    return this.delay.apply(this, args);
-  },
-
-  wrap: function(wrapper) {
-    var __method = this;
-    return function() {
-      return wrapper.apply(this, [__method.bind(this)].concat($A(arguments)));
-    }
-  },
-
-  methodize: function() {
-    if (this._methodized) return this._methodized;
-    var __method = this;
-    return this._methodized = function() {
-      return __method.apply(null, [this].concat($A(arguments)));
-    };
-  }
-});
-
-Date.prototype.toJSON = function() {
-  return '"' + this.getUTCFullYear() + '-' +
-    (this.getUTCMonth() + 1).toPaddedString(2) + '-' +
-    this.getUTCDate().toPaddedString(2) + 'T' +
-    this.getUTCHours().toPaddedString(2) + ':' +
-    this.getUTCMinutes().toPaddedString(2) + ':' +
-    this.getUTCSeconds().toPaddedString(2) + 'Z"';
-};
 
 var Try = {
   these: function() {
@@ -283,14 +80,407 @@ var Try = {
   }
 };
 
+/* Based on Alex Arnell's inheritance implementation. */
+
+var Class = (function() {
+
+  var IS_DONTENUM_BUGGY = (function(){
+    for (var p in { toString: 1 }) {
+      if (p === 'toString') return false;
+    }
+    return true;
+  })();
+
+  function subclass() {};
+  function create() {
+    var parent = null, properties = $A(arguments);
+    if (Object.isFunction(properties[0]))
+      parent = properties.shift();
+
+    function klass() {
+      this.initialize.apply(this, arguments);
+    }
+
+    Object.extend(klass, Class.Methods);
+    klass.superclass = parent;
+    klass.subclasses = [];
+
+    if (parent) {
+      subclass.prototype = parent.prototype;
+      klass.prototype = new subclass;
+      parent.subclasses.push(klass);
+    }
+
+    for (var i = 0, length = properties.length; i < length; i++)
+      klass.addMethods(properties[i]);
+
+    if (!klass.prototype.initialize)
+      klass.prototype.initialize = Prototype.emptyFunction;
+
+    klass.prototype.constructor = klass;
+    return klass;
+  }
+
+  function addMethods(source) {
+    var ancestor   = this.superclass && this.superclass.prototype,
+        properties = Object.keys(source);
+
+    if (IS_DONTENUM_BUGGY) {
+      if (source.toString != Object.prototype.toString)
+        properties.push("toString");
+      if (source.valueOf != Object.prototype.valueOf)
+        properties.push("valueOf");
+    }
+
+    for (var i = 0, length = properties.length; i < length; i++) {
+      var property = properties[i], value = source[property];
+      if (ancestor && Object.isFunction(value) &&
+          value.argumentNames()[0] == "$super") {
+        var method = value;
+        value = (function(m) {
+          return function() { return ancestor[m].apply(this, arguments); };
+        })(property).wrap(method);
+
+        value.valueOf = method.valueOf.bind(method);
+        value.toString = method.toString.bind(method);
+      }
+      this.prototype[property] = value;
+    }
+
+    return this;
+  }
+
+  return {
+    create: create,
+    Methods: {
+      addMethods: addMethods
+    }
+  };
+})();
+(function() {
+
+  var _toString = Object.prototype.toString,
+      NULL_TYPE = 'Null',
+      UNDEFINED_TYPE = 'Undefined',
+      BOOLEAN_TYPE = 'Boolean',
+      NUMBER_TYPE = 'Number',
+      STRING_TYPE = 'String',
+      OBJECT_TYPE = 'Object',
+      FUNCTION_CLASS = '[object Function]',
+      BOOLEAN_CLASS = '[object Boolean]',
+      NUMBER_CLASS = '[object Number]',
+      STRING_CLASS = '[object String]',
+      ARRAY_CLASS = '[object Array]',
+      DATE_CLASS = '[object Date]',
+      NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON &&
+        typeof JSON.stringify === 'function' &&
+        JSON.stringify(0) === '0' &&
+        typeof JSON.stringify(Prototype.K) === 'undefined';
+
+  function Type(o) {
+    switch(o) {
+      case null: return NULL_TYPE;
+      case (void 0): return UNDEFINED_TYPE;
+    }
+    var type = typeof o;
+    switch(type) {
+      case 'boolean': return BOOLEAN_TYPE;
+      case 'number':  return NUMBER_TYPE;
+      case 'string':  return STRING_TYPE;
+    }
+    return OBJECT_TYPE;
+  }
+
+  function extend(destination, source) {
+    for (var property in source)
+      destination[property] = source[property];
+    return destination;
+  }
+
+  function inspect(object) {
+    try {
+      if (isUndefined(object)) return 'undefined';
+      if (object === null) return 'null';
+      return object.inspect ? object.inspect() : String(object);
+    } catch (e) {
+      if (e instanceof RangeError) return '...';
+      throw e;
+    }
+  }
+
+  function toJSON(value) {
+    return Str('', { '': value }, []);
+  }
+
+  function Str(key, holder, stack) {
+    var value = holder[key],
+        type = typeof value;
+
+    if (Type(value) === OBJECT_TYPE && typeof value.toJSON === 'function') {
+      value = value.toJSON(key);
+    }
+
+    var _class = _toString.call(value);
+
+    switch (_class) {
+      case NUMBER_CLASS:
+      case BOOLEAN_CLASS:
+      case STRING_CLASS:
+        value = value.valueOf();
+    }
+
+    switch (value) {
+      case null: return 'null';
+      case true: return 'true';
+      case false: return 'false';
+    }
+
+    type = typeof value;
+    switch (type) {
+      case 'string':
+        return value.inspect(true);
+      case 'number':
+        return isFinite(value) ? String(value) : 'null';
+      case 'object':
+
+        for (var i = 0, length = stack.length; i < length; i++) {
+          if (stack[i] === value) { throw new TypeError(); }
+        }
+        stack.push(value);
+
+        var partial = [];
+        if (_class === ARRAY_CLASS) {
+          for (var i = 0, length = value.length; i < length; i++) {
+            var str = Str(i, value, stack);
+            partial.push(typeof str === 'undefined' ? 'null' : str);
+          }
+          partial = '[' + partial.join(',') + ']';
+        } else {
+          var keys = Object.keys(value);
+          for (var i = 0, length = keys.length; i < length; i++) {
+            var key = keys[i], str = Str(key, value, stack);
+            if (typeof str !== "undefined") {
+               partial.push(key.inspect(true)+ ':' + str);
+             }
+          }
+          partial = '{' + partial.join(',') + '}';
+        }
+        stack.pop();
+        return partial;
+    }
+  }
+
+  function stringify(object) {
+    return JSON.stringify(object);
+  }
+
+  function toQueryString(object) {
+    return $H(object).toQueryString();
+  }
+
+  function toHTML(object) {
+    return object && object.toHTML ? object.toHTML() : String.interpret(object);
+  }
+
+  function keys(object) {
+    if (Type(object) !== OBJECT_TYPE) { throw new TypeError(); }
+    var results = [];
+    for (var property in object) {
+      if (object.hasOwnProperty(property)) {
+        results.push(property);
+      }
+    }
+    return results;
+  }
+
+  function values(object) {
+    var results = [];
+    for (var property in object)
+      results.push(object[property]);
+    return results;
+  }
+
+  function clone(object) {
+    return extend({ }, object);
+  }
+
+  function isElement(object) {
+    return !!(object && object.nodeType == 1);
+  }
+
+  function isArray(object) {
+    return _toString.call(object) === ARRAY_CLASS;
+  }
+
+  var hasNativeIsArray = (typeof Array.isArray == 'function')
+    && Array.isArray([]) && !Array.isArray({});
+
+  if (hasNativeIsArray) {
+    isArray = Array.isArray;
+  }
+
+  function isHash(object) {
+    return object instanceof Hash;
+  }
+
+  function isFunction(object) {
+    return _toString.call(object) === FUNCTION_CLASS;
+  }
+
+  function isString(object) {
+    return _toString.call(object) === STRING_CLASS;
+  }
+
+  function isNumber(object) {
+    return _toString.call(object) === NUMBER_CLASS;
+  }
+
+  function isDate(object) {
+    return _toString.call(object) === DATE_CLASS;
+  }
+
+  function isUndefined(object) {
+    return typeof object === "undefined";
+  }
+
+  extend(Object, {
+    extend:        extend,
+    inspect:       inspect,
+    toJSON:        NATIVE_JSON_STRINGIFY_SUPPORT ? stringify : toJSON,
+    toQueryString: toQueryString,
+    toHTML:        toHTML,
+    keys:          Object.keys || keys,
+    values:        values,
+    clone:         clone,
+    isElement:     isElement,
+    isArray:       isArray,
+    isHash:        isHash,
+    isFunction:    isFunction,
+    isString:      isString,
+    isNumber:      isNumber,
+    isDate:        isDate,
+    isUndefined:   isUndefined
+  });
+})();
+Object.extend(Function.prototype, (function() {
+  var slice = Array.prototype.slice;
+
+  function update(array, args) {
+    var arrayLength = array.length, length = args.length;
+    while (length--) array[arrayLength + length] = args[length];
+    return array;
+  }
+
+  function merge(array, args) {
+    array = slice.call(array, 0);
+    return update(array, args);
+  }
+
+  function argumentNames() {
+    var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
+      .replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
+      .replace(/\s+/g, '').split(',');
+    return names.length == 1 && !names[0] ? [] : names;
+  }
+
+  function bind(context) {
+    if (arguments.length < 2 && Object.isUndefined(arguments[0])) return this;
+    var __method = this, args = slice.call(arguments, 1);
+    return function() {
+      var a = merge(args, arguments);
+      return __method.apply(context, a);
+    }
+  }
+
+  function bindAsEventListener(context) {
+    var __method = this, args = slice.call(arguments, 1);
+    return function(event) {
+      var a = update([event || window.event], args);
+      return __method.apply(context, a);
+    }
+  }
+
+  function curry() {
+    if (!arguments.length) return this;
+    var __method = this, args = slice.call(arguments, 0);
+    return function() {
+      var a = merge(args, arguments);
+      return __method.apply(this, a);
+    }
+  }
+
+  function delay(timeout) {
+    var __method = this, args = slice.call(arguments, 1);
+    timeout = timeout * 1000;
+    return window.setTimeout(function() {
+      return __method.apply(__method, args);
+    }, timeout);
+  }
+
+  function defer() {
+    var args = update([0.01], arguments);
+    return this.delay.apply(this, args);
+  }
+
+  function wrap(wrapper) {
+    var __method = this;
+    return function() {
+      var a = update([__method.bind(this)], arguments);
+      return wrapper.apply(this, a);
+    }
+  }
+
+  function methodize() {
+    if (this._methodized) return this._methodized;
+    var __method = this;
+    return this._methodized = function() {
+      var a = update([this], arguments);
+      return __method.apply(null, a);
+    };
+  }
+
+  return {
+    argumentNames:       argumentNames,
+    bind:                bind,
+    bindAsEventListener: bindAsEventListener,
+    curry:               curry,
+    delay:               delay,
+    defer:               defer,
+    wrap:                wrap,
+    methodize:           methodize
+  }
+})());
+
+
+
+(function(proto) {
+
+
+  function toISOString() {
+    return this.getUTCFullYear() + '-' +
+      (this.getUTCMonth() + 1).toPaddedString(2) + '-' +
+      this.getUTCDate().toPaddedString(2) + 'T' +
+      this.getUTCHours().toPaddedString(2) + ':' +
+      this.getUTCMinutes().toPaddedString(2) + ':' +
+      this.getUTCSeconds().toPaddedString(2) + 'Z';
+  }
+
+
+  function toJSON() {
+    return this.toISOString();
+  }
+
+  if (!proto.toISOString) proto.toISOString = toISOString;
+  if (!proto.toJSON) proto.toJSON = toJSON;
+
+})(Date.prototype);
+
+
 RegExp.prototype.match = RegExp.prototype.test;
 
 RegExp.escape = function(str) {
   return String(str).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
 };
-
-/*--------------------------------------------------------------------------*/
-
 var PeriodicalExecuter = Class.create({
   initialize: function(callback, frequency) {
     this.callback = callback;
@@ -319,8 +509,10 @@ var PeriodicalExecuter = Class.create({
       try {
         this.currentlyExecuting = true;
         this.execute();
-      } finally {
         this.currentlyExecuting = false;
+      } catch(e) {
+        this.currentlyExecuting = false;
+        throw e;
       }
     }
   }
@@ -339,10 +531,28 @@ Object.extend(String, {
   }
 });
 
-Object.extend(String.prototype, {
-  gsub: function(pattern, replacement) {
+Object.extend(String.prototype, (function() {
+  var NATIVE_JSON_PARSE_SUPPORT = window.JSON &&
+    typeof JSON.parse === 'function' &&
+    JSON.parse('{"test": true}').test;
+
+  function prepareReplacement(replacement) {
+    if (Object.isFunction(replacement)) return replacement;
+    var template = new Template(replacement);
+    return function(match) { return template.evaluate(match) };
+  }
+
+  function gsub(pattern, replacement) {
     var result = '', source = this, match;
-    replacement = arguments.callee.prepareReplacement(replacement);
+    replacement = prepareReplacement(replacement);
+
+    if (Object.isString(pattern))
+      pattern = RegExp.escape(pattern);
+
+    if (!(pattern.length || pattern.source)) {
+      replacement = replacement('');
+      return replacement + source.split('').join(replacement) + replacement;
+    }
 
     while (source.length > 0) {
       if (match = source.match(pattern)) {
@@ -354,76 +564,72 @@ Object.extend(String.prototype, {
       }
     }
     return result;
-  },
+  }
 
-  sub: function(pattern, replacement, count) {
-    replacement = this.gsub.prepareReplacement(replacement);
+  function sub(pattern, replacement, count) {
+    replacement = prepareReplacement(replacement);
     count = Object.isUndefined(count) ? 1 : count;
 
     return this.gsub(pattern, function(match) {
       if (--count < 0) return match[0];
       return replacement(match);
     });
-  },
+  }
 
-  scan: function(pattern, iterator) {
+  function scan(pattern, iterator) {
     this.gsub(pattern, iterator);
     return String(this);
-  },
+  }
 
-  truncate: function(length, truncation) {
+  function truncate(length, truncation) {
     length = length || 30;
     truncation = Object.isUndefined(truncation) ? '...' : truncation;
     return this.length > length ?
       this.slice(0, length - truncation.length) + truncation : String(this);
-  },
+  }
 
-  strip: function() {
+  function strip() {
     return this.replace(/^\s+/, '').replace(/\s+$/, '');
-  },
+  }
 
-  stripTags: function() {
-    return this.replace(/<\/?[^>]+>/gi, '');
-  },
+  function stripTags() {
+    return this.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
+  }
 
-  stripScripts: function() {
+  function stripScripts() {
     return this.replace(new RegExp(Prototype.ScriptFragment, 'img'), '');
-  },
+  }
 
-  extractScripts: function() {
-    var matchAll = new RegExp(Prototype.ScriptFragment, 'img');
-    var matchOne = new RegExp(Prototype.ScriptFragment, 'im');
+  function extractScripts() {
+    var matchAll = new RegExp(Prototype.ScriptFragment, 'img'),
+        matchOne = new RegExp(Prototype.ScriptFragment, 'im');
     return (this.match(matchAll) || []).map(function(scriptTag) {
       return (scriptTag.match(matchOne) || ['', ''])[1];
     });
-  },
+  }
 
-  evalScripts: function() {
+  function evalScripts() {
     return this.extractScripts().map(function(script) { return eval(script) });
-  },
+  }
 
-  escapeHTML: function() {
-    var self = arguments.callee;
-    self.text.data = this;
-    return self.div.innerHTML;
-  },
+  function escapeHTML() {
+    return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
 
-  unescapeHTML: function() {
-    var div = new Element('div');
-    div.innerHTML = this.stripTags();
-    return div.childNodes[0] ? (div.childNodes.length > 1 ?
-      $A(div.childNodes).inject('', function(memo, node) { return memo+node.nodeValue }) :
-      div.childNodes[0].nodeValue) : '';
-  },
+  function unescapeHTML() {
+    return this.stripTags().replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  }
 
-  toQueryParams: function(separator) {
+
+  function toQueryParams(separator) {
     var match = this.strip().match(/([^?#]*)(#.*)?$/);
     if (!match) return { };
 
     return match[1].split(separator || '&').inject({ }, function(hash, pair) {
       if ((pair = pair.split('='))[0]) {
-        var key = decodeURIComponent(pair.shift());
-        var value = pair.length > 1 ? pair.join('=') : pair[0];
+        var key = decodeURIComponent(pair.shift()),
+            value = pair.length > 1 ? pair.join('=') : pair[0];
+
         if (value != undefined) value = decodeURIComponent(value);
 
         if (key in hash) {
@@ -434,128 +640,144 @@ Object.extend(String.prototype, {
       }
       return hash;
     });
-  },
+  }
 
-  toArray: function() {
+  function toArray() {
     return this.split('');
-  },
+  }
 
-  succ: function() {
+  function succ() {
     return this.slice(0, this.length - 1) +
       String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
-  },
+  }
 
-  times: function(count) {
+  function times(count) {
     return count < 1 ? '' : new Array(count + 1).join(this);
-  },
+  }
 
-  camelize: function() {
-    var parts = this.split('-'), len = parts.length;
-    if (len == 1) return parts[0];
+  function camelize() {
+    return this.replace(/-+(.)?/g, function(match, chr) {
+      return chr ? chr.toUpperCase() : '';
+    });
+  }
 
-    var camelized = this.charAt(0) == '-'
-      ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
-      : parts[0];
-
-    for (var i = 1; i < len; i++)
-      camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
-
-    return camelized;
-  },
-
-  capitalize: function() {
+  function capitalize() {
     return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
-  },
+  }
 
-  underscore: function() {
-    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
-  },
+  function underscore() {
+    return this.replace(/::/g, '/')
+               .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+               .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+               .replace(/-/g, '_')
+               .toLowerCase();
+  }
 
-  dasherize: function() {
-    return this.gsub(/_/,'-');
-  },
+  function dasherize() {
+    return this.replace(/_/g, '-');
+  }
 
-  inspect: function(useDoubleQuotes) {
-    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
-      var character = String.specialChar[match[0]];
-      return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
+  function inspect(useDoubleQuotes) {
+    var escapedString = this.replace(/[\x00-\x1f\\]/g, function(character) {
+      if (character in String.specialChar) {
+        return String.specialChar[character];
+      }
+      return '\\u00' + character.charCodeAt().toPaddedString(2, 16);
     });
     if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
     return "'" + escapedString.replace(/'/g, '\\\'') + "'";
-  },
+  }
 
-  toJSON: function() {
-    return this.inspect(true);
-  },
+  function unfilterJSON(filter) {
+    return this.replace(filter || Prototype.JSONFilter, '$1');
+  }
 
-  unfilterJSON: function(filter) {
-    return this.sub(filter || Prototype.JSONFilter, '#{1}');
-  },
-
-  isJSON: function() {
+  function isJSON() {
     var str = this;
     if (str.blank()) return false;
-    str = this.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
-    return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(str);
-  },
+    str = str.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@');
+    str = str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']');
+    str = str.replace(/(?:^|:|,)(?:\s*\[)+/g, '');
+    return (/^[\],:{}\s]*$/).test(str);
+  }
 
-  evalJSON: function(sanitize) {
-    var json = this.unfilterJSON();
+  function evalJSON(sanitize) {
+    var json = this.unfilterJSON(),
+        cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+    if (cx.test(json)) {
+      json = json.replace(cx, function (a) {
+        return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+      });
+    }
     try {
       if (!sanitize || json.isJSON()) return eval('(' + json + ')');
     } catch (e) { }
     throw new SyntaxError('Badly formed JSON string: ' + this.inspect());
-  },
+  }
 
-  include: function(pattern) {
+  function parseJSON() {
+    var json = this.unfilterJSON();
+    return JSON.parse(json);
+  }
+
+  function include(pattern) {
     return this.indexOf(pattern) > -1;
-  },
+  }
 
-  startsWith: function(pattern) {
-    return this.indexOf(pattern) === 0;
-  },
+  function startsWith(pattern) {
+    return this.lastIndexOf(pattern, 0) === 0;
+  }
 
-  endsWith: function(pattern) {
+  function endsWith(pattern) {
     var d = this.length - pattern.length;
-    return d >= 0 && this.lastIndexOf(pattern) === d;
-  },
+    return d >= 0 && this.indexOf(pattern, d) === d;
+  }
 
-  empty: function() {
+  function empty() {
     return this == '';
-  },
+  }
 
-  blank: function() {
+  function blank() {
     return /^\s*$/.test(this);
-  },
+  }
 
-  interpolate: function(object, pattern) {
+  function interpolate(object, pattern) {
     return new Template(this, pattern).evaluate(object);
   }
-});
 
-if (Prototype.Browser.WebKit || Prototype.Browser.IE) Object.extend(String.prototype, {
-  escapeHTML: function() {
-    return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  },
-  unescapeHTML: function() {
-    return this.stripTags().replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
-  }
-});
-
-String.prototype.gsub.prepareReplacement = function(replacement) {
-  if (Object.isFunction(replacement)) return replacement;
-  var template = new Template(replacement);
-  return function(match) { return template.evaluate(match) };
-};
-
-String.prototype.parseQuery = String.prototype.toQueryParams;
-
-Object.extend(String.prototype.escapeHTML, {
-  div:  document.createElement('div'),
-  text: document.createTextNode('')
-});
-
-String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
+  return {
+    gsub:           gsub,
+    sub:            sub,
+    scan:           scan,
+    truncate:       truncate,
+    strip:          String.prototype.trim || strip,
+    stripTags:      stripTags,
+    stripScripts:   stripScripts,
+    extractScripts: extractScripts,
+    evalScripts:    evalScripts,
+    escapeHTML:     escapeHTML,
+    unescapeHTML:   unescapeHTML,
+    toQueryParams:  toQueryParams,
+    parseQuery:     toQueryParams,
+    toArray:        toArray,
+    succ:           succ,
+    times:          times,
+    camelize:       camelize,
+    capitalize:     capitalize,
+    underscore:     underscore,
+    dasherize:      dasherize,
+    inspect:        inspect,
+    unfilterJSON:   unfilterJSON,
+    isJSON:         isJSON,
+    evalJSON:       NATIVE_JSON_PARSE_SUPPORT ? parseJSON : evalJSON,
+    include:        include,
+    startsWith:     startsWith,
+    endsWith:       endsWith,
+    empty:          empty,
+    blank:          blank,
+    interpolate:    interpolate
+  };
+})());
 
 var Template = Class.create({
   initialize: function(template, pattern) {
@@ -564,22 +786,23 @@ var Template = Class.create({
   },
 
   evaluate: function(object) {
-    if (Object.isFunction(object.toTemplateReplacements))
+    if (object && Object.isFunction(object.toTemplateReplacements))
       object = object.toTemplateReplacements();
 
     return this.template.gsub(this.pattern, function(match) {
-      if (object == null) return '';
+      if (object == null) return (match[1] + '');
 
       var before = match[1] || '';
       if (before == '\\') return match[2];
 
-      var ctx = object, expr = match[3];
-      var pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
+      var ctx = object, expr = match[3],
+          pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
+
       match = pattern.exec(expr);
       if (match == null) return before;
 
       while (match != null) {
-        var comp = match[1].startsWith('[') ? match[2].gsub('\\\\]', ']') : match[1];
+        var comp = match[1].startsWith('[') ? match[2].replace(/\\\\]/g, ']') : match[1];
         ctx = ctx[comp];
         if (null == ctx || '' == match[3]) break;
         expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
@@ -594,8 +817,8 @@ Template.Pattern = /(^|.|\r|\n)(#\{(.*?)\})/;
 
 var $break = { };
 
-var Enumerable = {
-  each: function(iterator, context) {
+var Enumerable = (function() {
+  function each(iterator, context) {
     var index = 0;
     try {
       this._each(function(value) {
@@ -605,17 +828,17 @@ var Enumerable = {
       if (e != $break) throw e;
     }
     return this;
-  },
+  }
 
-  eachSlice: function(number, iterator, context) {
+  function eachSlice(number, iterator, context) {
     var index = -number, slices = [], array = this.toArray();
     if (number < 1) return array;
     while ((index += number) < array.length)
       slices.push(array.slice(index, index+number));
     return slices.collect(iterator, context);
-  },
+  }
 
-  all: function(iterator, context) {
+  function all(iterator, context) {
     iterator = iterator || Prototype.K;
     var result = true;
     this.each(function(value, index) {
@@ -623,9 +846,9 @@ var Enumerable = {
       if (!result) throw $break;
     });
     return result;
-  },
+  }
 
-  any: function(iterator, context) {
+  function any(iterator, context) {
     iterator = iterator || Prototype.K;
     var result = false;
     this.each(function(value, index) {
@@ -633,18 +856,18 @@ var Enumerable = {
         throw $break;
     });
     return result;
-  },
+  }
 
-  collect: function(iterator, context) {
+  function collect(iterator, context) {
     iterator = iterator || Prototype.K;
     var results = [];
     this.each(function(value, index) {
       results.push(iterator.call(context, value, index));
     });
     return results;
-  },
+  }
 
-  detect: function(iterator, context) {
+  function detect(iterator, context) {
     var result;
     this.each(function(value, index) {
       if (iterator.call(context, value, index)) {
@@ -653,32 +876,32 @@ var Enumerable = {
       }
     });
     return result;
-  },
+  }
 
-  findAll: function(iterator, context) {
+  function findAll(iterator, context) {
     var results = [];
     this.each(function(value, index) {
       if (iterator.call(context, value, index))
         results.push(value);
     });
     return results;
-  },
+  }
 
-  grep: function(filter, iterator, context) {
+  function grep(filter, iterator, context) {
     iterator = iterator || Prototype.K;
     var results = [];
 
     if (Object.isString(filter))
-      filter = new RegExp(filter);
+      filter = new RegExp(RegExp.escape(filter));
 
     this.each(function(value, index) {
       if (filter.match(value))
         results.push(iterator.call(context, value, index));
     });
     return results;
-  },
+  }
 
-  include: function(object) {
+  function include(object) {
     if (Object.isFunction(this.indexOf))
       if (this.indexOf(object) != -1) return true;
 
@@ -690,31 +913,31 @@ var Enumerable = {
       }
     });
     return found;
-  },
+  }
 
-  inGroupsOf: function(number, fillWith) {
+  function inGroupsOf(number, fillWith) {
     fillWith = Object.isUndefined(fillWith) ? null : fillWith;
     return this.eachSlice(number, function(slice) {
       while(slice.length < number) slice.push(fillWith);
       return slice;
     });
-  },
+  }
 
-  inject: function(memo, iterator, context) {
+  function inject(memo, iterator, context) {
     this.each(function(value, index) {
       memo = iterator.call(context, memo, value, index);
     });
     return memo;
-  },
+  }
 
-  invoke: function(method) {
+  function invoke(method) {
     var args = $A(arguments).slice(1);
     return this.map(function(value) {
       return value[method].apply(value, args);
     });
-  },
+  }
 
-  max: function(iterator, context) {
+  function max(iterator, context) {
     iterator = iterator || Prototype.K;
     var result;
     this.each(function(value, index) {
@@ -723,9 +946,9 @@ var Enumerable = {
         result = value;
     });
     return result;
-  },
+  }
 
-  min: function(iterator, context) {
+  function min(iterator, context) {
     iterator = iterator || Prototype.K;
     var result;
     this.each(function(value, index) {
@@ -734,9 +957,9 @@ var Enumerable = {
         result = value;
     });
     return result;
-  },
+  }
 
-  partition: function(iterator, context) {
+  function partition(iterator, context) {
     iterator = iterator || Prototype.K;
     var trues = [], falses = [];
     this.each(function(value, index) {
@@ -744,26 +967,26 @@ var Enumerable = {
         trues : falses).push(value);
     });
     return [trues, falses];
-  },
+  }
 
-  pluck: function(property) {
+  function pluck(property) {
     var results = [];
     this.each(function(value) {
       results.push(value[property]);
     });
     return results;
-  },
+  }
 
-  reject: function(iterator, context) {
+  function reject(iterator, context) {
     var results = [];
     this.each(function(value, index) {
       if (!iterator.call(context, value, index))
         results.push(value);
     });
     return results;
-  },
+  }
 
-  sortBy: function(iterator, context) {
+  function sortBy(iterator, context) {
     return this.map(function(value, index) {
       return {
         value: value,
@@ -773,13 +996,13 @@ var Enumerable = {
       var a = left.criteria, b = right.criteria;
       return a < b ? -1 : a > b ? 1 : 0;
     }).pluck('value');
-  },
+  }
 
-  toArray: function() {
+  function toArray() {
     return this.map();
-  },
+  }
 
-  zip: function() {
+  function zip() {
     var iterator = Prototype.K, args = $A(arguments);
     if (Object.isFunction(args.last()))
       iterator = args.pop();
@@ -788,159 +1011,66 @@ var Enumerable = {
     return this.map(function(value, index) {
       return iterator(collections.pluck(index));
     });
-  },
+  }
 
-  size: function() {
+  function size() {
     return this.toArray().length;
-  },
+  }
 
-  inspect: function() {
+  function inspect() {
     return '#<Enumerable:' + this.toArray().inspect() + '>';
   }
-};
 
-Object.extend(Enumerable, {
-  map:     Enumerable.collect,
-  find:    Enumerable.detect,
-  select:  Enumerable.findAll,
-  filter:  Enumerable.findAll,
-  member:  Enumerable.include,
-  entries: Enumerable.toArray,
-  every:   Enumerable.all,
-  some:    Enumerable.any
-});
+
+
+
+
+
+
+
+
+  return {
+    each:       each,
+    eachSlice:  eachSlice,
+    all:        all,
+    every:      all,
+    any:        any,
+    some:       any,
+    collect:    collect,
+    map:        collect,
+    detect:     detect,
+    findAll:    findAll,
+    select:     findAll,
+    filter:     findAll,
+    grep:       grep,
+    include:    include,
+    member:     include,
+    inGroupsOf: inGroupsOf,
+    inject:     inject,
+    invoke:     invoke,
+    max:        max,
+    min:        min,
+    partition:  partition,
+    pluck:      pluck,
+    reject:     reject,
+    sortBy:     sortBy,
+    toArray:    toArray,
+    entries:    toArray,
+    zip:        zip,
+    size:       size,
+    inspect:    inspect,
+    find:       detect
+  };
+})();
+
 function $A(iterable) {
   if (!iterable) return [];
-  if (iterable.toArray) return iterable.toArray();
+  if ('toArray' in Object(iterable)) return iterable.toArray();
   var length = iterable.length || 0, results = new Array(length);
   while (length--) results[length] = iterable[length];
   return results;
 }
 
-if (Prototype.Browser.WebKit) {
-  $A = function(iterable) {
-    if (!iterable) return [];
-    // In Safari, only use the `toArray` method if it's not a NodeList.
-    // A NodeList is a function, has an function `item` property, and a numeric
-    // `length` property. Adapted from Google Doctype.
-    if (!(typeof iterable === 'function' && typeof iterable.length ===
-        'number' && typeof iterable.item === 'function') && iterable.toArray)
-      return iterable.toArray();
-    var length = iterable.length || 0, results = new Array(length);
-    while (length--) results[length] = iterable[length];
-    return results;
-  };
-}
-
-Array.from = $A;
-
-Object.extend(Array.prototype, Enumerable);
-
-if (!Array.prototype._reverse) Array.prototype._reverse = Array.prototype.reverse;
-
-Object.extend(Array.prototype, {
-  _each: function(iterator) {
-    for (var i = 0, length = this.length; i < length; i++)
-      iterator(this[i]);
-  },
-
-  clear: function() {
-    this.length = 0;
-    return this;
-  },
-
-  first: function() {
-    return this[0];
-  },
-
-  last: function() {
-    return this[this.length - 1];
-  },
-
-  compact: function() {
-    return this.select(function(value) {
-      return value != null;
-    });
-  },
-
-  flatten: function() {
-    return this.inject([], function(array, value) {
-      return array.concat(Object.isArray(value) ?
-        value.flatten() : [value]);
-    });
-  },
-
-  without: function() {
-    var values = $A(arguments);
-    return this.select(function(value) {
-      return !values.include(value);
-    });
-  },
-
-  reverse: function(inline) {
-    return (inline !== false ? this : this.toArray())._reverse();
-  },
-
-  reduce: function() {
-    return this.length > 1 ? this : this[0];
-  },
-
-  uniq: function(sorted) {
-    return this.inject([], function(array, value, index) {
-      if (0 == index || (sorted ? array.last() != value : !array.include(value)))
-        array.push(value);
-      return array;
-    });
-  },
-
-  intersect: function(array) {
-    return this.uniq().findAll(function(item) {
-      return array.detect(function(value) { return item === value });
-    });
-  },
-
-  clone: function() {
-    return [].concat(this);
-  },
-
-  size: function() {
-    return this.length;
-  },
-
-  inspect: function() {
-    return '[' + this.map(Object.inspect).join(', ') + ']';
-  },
-
-  toJSON: function() {
-    var results = [];
-    this.each(function(object) {
-      var value = Object.toJSON(object);
-      if (!Object.isUndefined(value)) results.push(value);
-    });
-    return '[' + results.join(', ') + ']';
-  }
-});
-
-// use native browser JS 1.6 implementation if available
-if (Object.isFunction(Array.prototype.forEach))
-  Array.prototype._each = Array.prototype.forEach;
-
-if (!Array.prototype.indexOf) Array.prototype.indexOf = function(item, i) {
-  i || (i = 0);
-  var length = this.length;
-  if (i < 0) i = length + i;
-  for (; i < length; i++)
-    if (this[i] === item) return i;
-  return -1;
-};
-
-if (!Array.prototype.lastIndexOf) Array.prototype.lastIndexOf = function(item, i) {
-  i = isNaN(i) ? this.length : (i < 0 ? this.length + i : i) + 1;
-  var n = this.slice(0, i).reverse().indexOf(item);
-  return (n < 0) ? n : i - n - 1;
-};
-
-Array.prototype.toArray = Array.prototype.clone;
 
 function $w(string) {
   if (!Object.isString(string)) return [];
@@ -948,176 +1078,349 @@ function $w(string) {
   return string ? string.split(/\s+/) : [];
 }
 
-if (Prototype.Browser.Opera){
-  Array.prototype.concat = function() {
-    var array = [];
-    for (var i = 0, length = this.length; i < length; i++) array.push(this[i]);
+Array.from = $A;
+
+
+(function() {
+  var arrayProto = Array.prototype,
+      slice = arrayProto.slice,
+      _each = arrayProto.forEach; // use native browser JS 1.6 implementation if available
+
+  function each(iterator, context) {
+    for (var i = 0, length = this.length >>> 0; i < length; i++) {
+      if (i in this) iterator.call(context, this[i], i, this);
+    }
+  }
+  if (!_each) _each = each;
+
+  function clear() {
+    this.length = 0;
+    return this;
+  }
+
+  function first() {
+    return this[0];
+  }
+
+  function last() {
+    return this[this.length - 1];
+  }
+
+  function compact() {
+    return this.select(function(value) {
+      return value != null;
+    });
+  }
+
+  function flatten() {
+    return this.inject([], function(array, value) {
+      if (Object.isArray(value))
+        return array.concat(value.flatten());
+      array.push(value);
+      return array;
+    });
+  }
+
+  function without() {
+    var values = slice.call(arguments, 0);
+    return this.select(function(value) {
+      return !values.include(value);
+    });
+  }
+
+  function reverse(inline) {
+    return (inline === false ? this.toArray() : this)._reverse();
+  }
+
+  function uniq(sorted) {
+    return this.inject([], function(array, value, index) {
+      if (0 == index || (sorted ? array.last() != value : !array.include(value)))
+        array.push(value);
+      return array;
+    });
+  }
+
+  function intersect(array) {
+    return this.uniq().findAll(function(item) {
+      return array.detect(function(value) { return item === value });
+    });
+  }
+
+
+  function clone() {
+    return slice.call(this, 0);
+  }
+
+  function size() {
+    return this.length;
+  }
+
+  function inspect() {
+    return '[' + this.map(Object.inspect).join(', ') + ']';
+  }
+
+  function indexOf(item, i) {
+    i || (i = 0);
+    var length = this.length;
+    if (i < 0) i = length + i;
+    for (; i < length; i++)
+      if (this[i] === item) return i;
+    return -1;
+  }
+
+  function lastIndexOf(item, i) {
+    i = isNaN(i) ? this.length : (i < 0 ? this.length + i : i) + 1;
+    var n = this.slice(0, i).reverse().indexOf(item);
+    return (n < 0) ? n : i - n - 1;
+  }
+
+  function concat() {
+    var array = slice.call(this, 0), item;
     for (var i = 0, length = arguments.length; i < length; i++) {
-      if (Object.isArray(arguments[i])) {
-        for (var j = 0, arrayLength = arguments[i].length; j < arrayLength; j++)
-          array.push(arguments[i][j]);
+      item = arguments[i];
+      if (Object.isArray(item) && !('callee' in item)) {
+        for (var j = 0, arrayLength = item.length; j < arrayLength; j++)
+          array.push(item[j]);
       } else {
-        array.push(arguments[i]);
+        array.push(item);
       }
     }
     return array;
-  };
-}
-Object.extend(Number.prototype, {
-  toColorPart: function() {
-    return this.toPaddedString(2, 16);
-  },
-
-  succ: function() {
-    return this + 1;
-  },
-
-  times: function(iterator, context) {
-    $R(0, this, true).each(iterator, context);
-    return this;
-  },
-
-  toPaddedString: function(length, radix) {
-    var string = this.toString(radix || 10);
-    return '0'.times(length - string.length) + string;
-  },
-
-  toJSON: function() {
-    return isFinite(this) ? this.toString() : 'null';
   }
-});
 
-$w('abs round ceil floor').each(function(method){
-  Number.prototype[method] = Math[method].methodize();
-});
+  Object.extend(arrayProto, Enumerable);
+
+  if (!arrayProto._reverse)
+    arrayProto._reverse = arrayProto.reverse;
+
+  Object.extend(arrayProto, {
+    _each:     _each,
+    clear:     clear,
+    first:     first,
+    last:      last,
+    compact:   compact,
+    flatten:   flatten,
+    without:   without,
+    reverse:   reverse,
+    uniq:      uniq,
+    intersect: intersect,
+    clone:     clone,
+    toArray:   clone,
+    size:      size,
+    inspect:   inspect
+  });
+
+  var CONCAT_ARGUMENTS_BUGGY = (function() {
+    return [].concat(arguments)[0][0] !== 1;
+  })(1,2)
+
+  if (CONCAT_ARGUMENTS_BUGGY) arrayProto.concat = concat;
+
+  if (!arrayProto.indexOf) arrayProto.indexOf = indexOf;
+  if (!arrayProto.lastIndexOf) arrayProto.lastIndexOf = lastIndexOf;
+})();
 function $H(object) {
   return new Hash(object);
 };
 
 var Hash = Class.create(Enumerable, (function() {
+  function initialize(object) {
+    this._object = Object.isHash(object) ? object.toObject() : Object.clone(object);
+  }
+
+
+  function _each(iterator) {
+    for (var key in this._object) {
+      var value = this._object[key], pair = [key, value];
+      pair.key = key;
+      pair.value = value;
+      iterator(pair);
+    }
+  }
+
+  function set(key, value) {
+    return this._object[key] = value;
+  }
+
+  function get(key) {
+    if (this._object[key] !== Object.prototype[key])
+      return this._object[key];
+  }
+
+  function unset(key) {
+    var value = this._object[key];
+    delete this._object[key];
+    return value;
+  }
+
+  function toObject() {
+    return Object.clone(this._object);
+  }
+
+
+
+  function keys() {
+    return this.pluck('key');
+  }
+
+  function values() {
+    return this.pluck('value');
+  }
+
+  function index(value) {
+    var match = this.detect(function(pair) {
+      return pair.value === value;
+    });
+    return match && match.key;
+  }
+
+  function merge(object) {
+    return this.clone().update(object);
+  }
+
+  function update(object) {
+    return new Hash(object).inject(this, function(result, pair) {
+      result.set(pair.key, pair.value);
+      return result;
+    });
+  }
 
   function toQueryPair(key, value) {
     if (Object.isUndefined(value)) return key;
     return key + '=' + encodeURIComponent(String.interpret(value));
   }
 
-  return {
-    initialize: function(object) {
-      this._object = Object.isHash(object) ? object.toObject() : Object.clone(object);
-    },
+  function toQueryString() {
+    return this.inject([], function(results, pair) {
+      var key = encodeURIComponent(pair.key), values = pair.value;
 
-    _each: function(iterator) {
-      for (var key in this._object) {
-        var value = this._object[key], pair = [key, value];
-        pair.key = key;
-        pair.value = value;
-        iterator(pair);
-      }
-    },
-
-    set: function(key, value) {
-      return this._object[key] = value;
-    },
-
-    get: function(key) {
-      // simulating poorly supported hasOwnProperty
-      if (this._object[key] !== Object.prototype[key])
-        return this._object[key];
-    },
-
-    unset: function(key) {
-      var value = this._object[key];
-      delete this._object[key];
-      return value;
-    },
-
-    toObject: function() {
-      return Object.clone(this._object);
-    },
-
-    keys: function() {
-      return this.pluck('key');
-    },
-
-    values: function() {
-      return this.pluck('value');
-    },
-
-    index: function(value) {
-      var match = this.detect(function(pair) {
-        return pair.value === value;
-      });
-      return match && match.key;
-    },
-
-    merge: function(object) {
-      return this.clone().update(object);
-    },
-
-    update: function(object) {
-      return new Hash(object).inject(this, function(result, pair) {
-        result.set(pair.key, pair.value);
-        return result;
-      });
-    },
-
-    toQueryString: function() {
-      return this.inject([], function(results, pair) {
-        var key = encodeURIComponent(pair.key), values = pair.value;
-
-        if (values && typeof values == 'object') {
-          if (Object.isArray(values))
-            return results.concat(values.map(toQueryPair.curry(key)));
-        } else results.push(toQueryPair(key, values));
-        return results;
-      }).join('&');
-    },
-
-    inspect: function() {
-      return '#<Hash:{' + this.map(function(pair) {
-        return pair.map(Object.inspect).join(': ');
-      }).join(', ') + '}>';
-    },
-
-    toJSON: function() {
-      return Object.toJSON(this.toObject());
-    },
-
-    clone: function() {
-      return new Hash(this);
-    }
+      if (values && typeof values == 'object') {
+        if (Object.isArray(values)) {
+          var queryValues = [];
+          for (var i = 0, len = values.length, value; i < len; i++) {
+            value = values[i];
+            queryValues.push(toQueryPair(key, value));
+          }
+          return results.concat(queryValues);
+        }
+      } else results.push(toQueryPair(key, values));
+      return results;
+    }).join('&');
   }
+
+  function inspect() {
+    return '#<Hash:{' + this.map(function(pair) {
+      return pair.map(Object.inspect).join(': ');
+    }).join(', ') + '}>';
+  }
+
+  function clone() {
+    return new Hash(this);
+  }
+
+  return {
+    initialize:             initialize,
+    _each:                  _each,
+    set:                    set,
+    get:                    get,
+    unset:                  unset,
+    toObject:               toObject,
+    toTemplateReplacements: toObject,
+    keys:                   keys,
+    values:                 values,
+    index:                  index,
+    merge:                  merge,
+    update:                 update,
+    toQueryString:          toQueryString,
+    inspect:                inspect,
+    toJSON:                 toObject,
+    clone:                  clone
+  };
 })());
 
-Hash.prototype.toTemplateReplacements = Hash.prototype.toObject;
 Hash.from = $H;
-var ObjectRange = Class.create(Enumerable, {
-  initialize: function(start, end, exclusive) {
+Object.extend(Number.prototype, (function() {
+  function toColorPart() {
+    return this.toPaddedString(2, 16);
+  }
+
+  function succ() {
+    return this + 1;
+  }
+
+  function times(iterator, context) {
+    $R(0, this, true).each(iterator, context);
+    return this;
+  }
+
+  function toPaddedString(length, radix) {
+    var string = this.toString(radix || 10);
+    return '0'.times(length - string.length) + string;
+  }
+
+  function abs() {
+    return Math.abs(this);
+  }
+
+  function round() {
+    return Math.round(this);
+  }
+
+  function ceil() {
+    return Math.ceil(this);
+  }
+
+  function floor() {
+    return Math.floor(this);
+  }
+
+  return {
+    toColorPart:    toColorPart,
+    succ:           succ,
+    times:          times,
+    toPaddedString: toPaddedString,
+    abs:            abs,
+    round:          round,
+    ceil:           ceil,
+    floor:          floor
+  };
+})());
+
+function $R(start, end, exclusive) {
+  return new ObjectRange(start, end, exclusive);
+}
+
+var ObjectRange = Class.create(Enumerable, (function() {
+  function initialize(start, end, exclusive) {
     this.start = start;
     this.end = end;
     this.exclusive = exclusive;
-  },
+  }
 
-  _each: function(iterator) {
+  function _each(iterator) {
     var value = this.start;
     while (this.include(value)) {
       iterator(value);
       value = value.succ();
     }
-  },
+  }
 
-  include: function(value) {
+  function include(value) {
     if (value < this.start)
       return false;
     if (this.exclusive)
       return value < this.end;
     return value <= this.end;
   }
-});
 
-var $R = function(start, end, exclusive) {
-  return new ObjectRange(start, end, exclusive);
-};
+  return {
+    initialize: initialize,
+    _each:      _each,
+    include:    include
+  };
+})());
+
+
 
 var Ajax = {
   getTransport: function() {
@@ -1164,7 +1467,6 @@ Ajax.Responders.register({
   onCreate:   function() { Ajax.activeRequestCount++ },
   onComplete: function() { Ajax.activeRequestCount-- }
 });
-
 Ajax.Base = Class.create({
   initialize: function(options) {
     this.options = {
@@ -1180,13 +1482,10 @@ Ajax.Base = Class.create({
 
     this.options.method = this.options.method.toLowerCase();
 
-//    if (Object.isString(this.options.parameters))
-//      this.options.parameters = this.options.parameters.toQueryParams();
     if (Object.isHash(this.options.parameters))
       this.options.parameters = this.options.parameters.toObject();
   }
 });
-
 Ajax.Request = Class.create(Ajax.Base, {
   _complete: false,
 
@@ -1199,25 +1498,20 @@ Ajax.Request = Class.create(Ajax.Base, {
   request: function(url) {
     this.url = url;
     this.method = this.options.method;
-    var params = this.options.parameters;
-    if(!Object.isString(this.options.parameters))
-      params = Object.clone(this.options.parameters);
+    var params = Object.isString(this.options.parameters) ?
+          this.options.parameters :
+          Object.toQueryString(this.options.parameters);
 
     if (!['get', 'post'].include(this.method)) {
-      // simulate other verbs over post
-      params['_method'] = this.method;
+      params += (params ? '&' : '') + "_method=" + this.method;
       this.method = 'post';
     }
 
-    this.parameters = params;
-
-    if (Object.isString(params) || (params = Object.toQueryString(params))) {
-      // when GET, append parameters to URL
-      if (this.method == 'get')
-        this.url += (this.url.include('?') ? '&' : '?') + params;
-      else if (/Konqueror|Safari|KHTML/.test(navigator.userAgent))
-        params += '&_=';
+    if (params && this.method === 'get') {
+      this.url += (this.url.include('?') ? '&' : '?') + params;
     }
+
+    this.parameters = params.toQueryParams();
 
     try {
       var response = new Ajax.Response(this);
@@ -1254,11 +1548,13 @@ Ajax.Request = Class.create(Ajax.Base, {
   setRequestHeaders: function() {
     var headers = {
       'X-Requested-With': 'XMLHttpRequest',
-      'X-Prototype-Version': Prototype.Version,
+    // 'X-Prototype-Version': Prototype.Version,
       'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
     };
 
     if (this.method == 'post') {
+      // Don't touch contentType if we've been told not to.
+      if(this.options.contentType != null)
       headers['Content-type'] = this.options.contentType +
         (this.options.encoding ? '; charset=' + this.options.encoding : '');
 
@@ -1271,7 +1567,6 @@ Ajax.Request = Class.create(Ajax.Base, {
             headers['Connection'] = 'close';
     }
 
-    // user-defined headers
     if (typeof this.options.requestHeaders == 'object') {
       var extras = this.options.requestHeaders;
 
@@ -1288,11 +1583,12 @@ Ajax.Request = Class.create(Ajax.Base, {
 
   success: function() {
     var status = this.getStatus();
-    return !status || (status >= 200 && status < 300);
+    return !status || (status >= 200 && status < 300) || status == 304;
   },
 
   getStatus: function() {
     try {
+      if (this.transport.status === 1223) return 204;
       return this.transport.status || 0;
     } catch (e) { return 0 }
   },
@@ -1325,7 +1621,6 @@ Ajax.Request = Class.create(Ajax.Base, {
     }
 
     if (state == 'Complete') {
-      // avoid memory leak in MSIE: clean up
       this.transport.onreadystatechange = Prototype.emptyFunction;
     }
   },
@@ -1342,7 +1637,7 @@ Ajax.Request = Class.create(Ajax.Base, {
   getHeader: function(name) {
     try {
       return this.transport.getResponseHeader(name) || null;
-    } catch (e) { return null }
+    } catch (e) { return null; }
   },
 
   evalResponse: function() {
@@ -1362,20 +1657,27 @@ Ajax.Request = Class.create(Ajax.Base, {
 Ajax.Request.Events =
   ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
 
+
+
+
+
+
+
+
 Ajax.Response = Class.create({
   initialize: function(request){
     this.request = request;
     var transport  = this.transport  = request.transport,
         readyState = this.readyState = transport.readyState;
 
-    if((readyState > 2 && !Prototype.Browser.IE) || readyState == 4) {
+    if ((readyState > 2 && !Prototype.Browser.IE) || readyState == 4) {
       this.status       = this.getStatus();
       this.statusText   = this.getStatusText();
       this.responseText = String.interpret(transport.responseText);
       this.headerJSON   = this._getHeaderJSON();
     }
 
-    if(readyState == 4) {
+    if (readyState == 4) {
       var xml = transport.responseXML;
       this.responseXML  = Object.isUndefined(xml) ? null : xml;
       this.responseJSON = this._getResponseJSON();
@@ -1383,6 +1685,7 @@ Ajax.Response = Class.create({
   },
 
   status:      0,
+
   statusText: '',
 
   getStatus: Ajax.Request.prototype.getStatus,
@@ -1512,6 +1815,8 @@ Ajax.PeriodicalUpdater = Class.create(Ajax.Base, {
     this.updater = new Ajax.Updater(this.container, this.url, this.options);
   }
 });
+
+
 function $(element) {
   if (arguments.length > 1) {
     for (var i = 0, elements = [], length = arguments.length; i < length; i++)
@@ -1536,10 +1841,9 @@ if (Prototype.BrowserFeatures.XPath) {
 
 /*--------------------------------------------------------------------------*/
 
-if (!window.Node) var Node = { };
+if (!Node) var Node = { };
 
 if (!Node.ELEMENT_NODE) {
-  // DOM level 2 ECMAScript Language Binding
   Object.extend(Node, {
     ELEMENT_NODE: 1,
     ATTRIBUTE_NODE: 2,
@@ -1556,25 +1860,62 @@ if (!Node.ELEMENT_NODE) {
   });
 }
 
-(function() {
-  var element = this.Element;
-  this.Element = function(tagName, attributes) {
+
+
+(function(global) {
+  function shouldUseCache(tagName, attributes) {
+    if (tagName === 'select') return false;
+    if ('type' in attributes) return false;
+    return true;
+  }
+
+  var HAS_EXTENDED_CREATE_ELEMENT_SYNTAX = (function(){
+    try {
+      var el = document.createElement('<input name="x">');
+      return el.tagName.toLowerCase() === 'input' && el.name === 'x';
+    }
+    catch(err) {
+      return false;
+    }
+  })();
+
+  var element = global.Element;
+
+  global.Element = function(tagName, attributes) {
     attributes = attributes || { };
     tagName = tagName.toLowerCase();
     var cache = Element.cache;
-    if (Prototype.Browser.IE && attributes.name) {
+
+    if (HAS_EXTENDED_CREATE_ELEMENT_SYNTAX && attributes.name) {
       tagName = '<' + tagName + ' name="' + attributes.name + '">';
       delete attributes.name;
       return Element.writeAttribute(document.createElement(tagName), attributes);
     }
-    if (!cache[tagName]) cache[tagName] = Element.extend(document.createElement(tagName));
-    return Element.writeAttribute(cache[tagName].cloneNode(false), attributes);
-  };
-  Object.extend(this.Element, element || { });
-  if (element) this.Element.prototype = element.prototype;
-}).call(window);
 
+    if (!cache[tagName]) cache[tagName] = Element.extend(document.createElement(tagName));
+
+    var node = shouldUseCache(tagName, attributes) ?
+     cache[tagName].cloneNode(false) : document.createElement(tagName);
+
+    return Element.writeAttribute(node, attributes);
+  };
+
+  Object.extend(global.Element, element || { });
+  if (element) global.Element.prototype = element.prototype;
+
+})(this);
+
+Element.idCounter = 1;
 Element.cache = { };
+
+Element._purgeElement = function(element) {
+  var uid = element._prototypeUID;
+  if (uid) {
+    Element.stopObserving(element);
+    element._prototypeUID = void 0;
+    delete Element.Storage[uid];
+  }
+}
 
 Element.Methods = {
   visible: function(element) {
@@ -1605,15 +1946,116 @@ Element.Methods = {
     return element;
   },
 
-  update: function(element, content) {
-    element = $(element);
-    if (content && content.toElement) content = content.toElement();
-    if (Object.isElement(content)) return element.update().insert(content);
-    content = Object.toHTML(content);
-    element.innerHTML = content.stripScripts();
-    content.evalScripts.bind(content).defer();
-    return element;
-  },
+  update: (function(){
+
+    var SELECT_ELEMENT_INNERHTML_BUGGY = (function(){
+      var el = document.createElement("select"),
+          isBuggy = true;
+      el.innerHTML = "<option value=\"test\">test</option>";
+      if (el.options && el.options[0]) {
+        isBuggy = el.options[0].nodeName.toUpperCase() !== "OPTION";
+      }
+      el = null;
+      return isBuggy;
+    })();
+
+    var TABLE_ELEMENT_INNERHTML_BUGGY = (function(){
+      try {
+        var el = document.createElement("table");
+        if (el && el.tBodies) {
+          el.innerHTML = "<tbody><tr><td>test</td></tr></tbody>";
+          var isBuggy = typeof el.tBodies[0] == "undefined";
+          el = null;
+          return isBuggy;
+        }
+      } catch (e) {
+        return true;
+      }
+    })();
+
+    var LINK_ELEMENT_INNERHTML_BUGGY = (function() {
+      try {
+        var el = document.createElement('div');
+        el.innerHTML = "<link>";
+        var isBuggy = (el.childNodes.length === 0);
+        el = null;
+        return isBuggy;
+      } catch(e) {
+        return true;
+      }
+    })();
+
+    var ANY_INNERHTML_BUGGY = SELECT_ELEMENT_INNERHTML_BUGGY ||
+     TABLE_ELEMENT_INNERHTML_BUGGY || LINK_ELEMENT_INNERHTML_BUGGY;
+
+    var SCRIPT_ELEMENT_REJECTS_TEXTNODE_APPENDING = (function () {
+      var s = document.createElement("script"),
+          isBuggy = false;
+      try {
+        s.appendChild(document.createTextNode(""));
+        isBuggy = !s.firstChild ||
+          s.firstChild && s.firstChild.nodeType !== 3;
+      } catch (e) {
+        isBuggy = true;
+      }
+      s = null;
+      return isBuggy;
+    })();
+
+
+    function update(element, content) {
+      element = $(element);
+      var purgeElement = Element._purgeElement;
+
+      var descendants = element.getElementsByTagName('*'),
+       i = descendants.length;
+      while (i--) purgeElement(descendants[i]);
+
+      if (content && content.toElement)
+        content = content.toElement();
+
+      if (Object.isElement(content))
+        return element.update().insert(content);
+
+      content = Object.toHTML(content);
+
+      var tagName = element.tagName.toUpperCase();
+
+      if (tagName === 'SCRIPT' && SCRIPT_ELEMENT_REJECTS_TEXTNODE_APPENDING) {
+        element.text = content;
+        return element;
+      }
+
+      if (ANY_INNERHTML_BUGGY) {
+        if (tagName in Element._insertionTranslations.tags) {
+          while (element.firstChild) {
+            element.removeChild(element.firstChild);
+          }
+          Element._getContentFromAnonymousElement(tagName, content.stripScripts())
+            .each(function(node) {
+              element.appendChild(node)
+            });
+        } else if (LINK_ELEMENT_INNERHTML_BUGGY && Object.isString(content) && content.indexOf('<link') > -1) {
+          while (element.firstChild) {
+            element.removeChild(element.firstChild);
+          }
+          var nodes = Element._getContentFromAnonymousElement(tagName, content.stripScripts(), true);
+          nodes.each(function(node) { element.appendChild(node) });
+        }
+        else {
+          element.innerHTML = content.stripScripts();
+        }
+      }
+      else {
+        element.innerHTML = content.stripScripts();
+      }
+
+      content.evalScripts.bind(content).defer();
+      return element;
+    }
+
+    return update;
+  })(),
 
   replace: function(element, content) {
     element = $(element);
@@ -1681,28 +2123,35 @@ Element.Methods = {
     element = $(element);
     var result = '<' + element.tagName.toLowerCase();
     $H({'id': 'id', 'className': 'class'}).each(function(pair) {
-      var property = pair.first(), attribute = pair.last();
-      var value = (element[property] || '').toString();
+      var property = pair.first(),
+          attribute = pair.last(),
+          value = (element[property] || '').toString();
       if (value) result += ' ' + attribute + '=' + value.inspect(true);
     });
     return result + '>';
   },
 
-  recursivelyCollect: function(element, property) {
+  recursivelyCollect: function(element, property, maximumLength) {
     element = $(element);
+    maximumLength = maximumLength || -1;
     var elements = [];
-    while (element = element[property])
+
+    while (element = element[property]) {
       if (element.nodeType == 1)
         elements.push(Element.extend(element));
+      if (elements.length == maximumLength)
+        break;
+    }
+
     return elements;
   },
 
   ancestors: function(element) {
-    return $(element).recursivelyCollect('parentNode');
+    return Element.recursivelyCollect(element, 'parentNode');
   },
 
   descendants: function(element) {
-    return $(element).select("*");
+    return Element.select(element, "*");
   },
 
   firstDescendant: function(element) {
@@ -1712,78 +2161,96 @@ Element.Methods = {
   },
 
   immediateDescendants: function(element) {
-    if (!(element = $(element).firstChild)) return [];
-    while (element && element.nodeType != 1) element = element.nextSibling;
-    if (element) return [element].concat($(element).nextSiblings());
-    return [];
+    var results = [], child = $(element).firstChild;
+    while (child) {
+      if (child.nodeType === 1) {
+        results.push(Element.extend(child));
+      }
+      child = child.nextSibling;
+    }
+    return results;
   },
 
-  previousSiblings: function(element) {
-    return $(element).recursivelyCollect('previousSibling');
+  previousSiblings: function(element, maximumLength) {
+    return Element.recursivelyCollect(element, 'previousSibling');
   },
 
   nextSiblings: function(element) {
-    return $(element).recursivelyCollect('nextSibling');
+    return Element.recursivelyCollect(element, 'nextSibling');
   },
 
   siblings: function(element) {
     element = $(element);
-    return element.previousSiblings().reverse().concat(element.nextSiblings());
+    return Element.previousSiblings(element).reverse()
+      .concat(Element.nextSiblings(element));
   },
 
   match: function(element, selector) {
+    element = $(element);
     if (Object.isString(selector))
-      selector = new Selector(selector);
-    return selector.match($(element));
+      return Prototype.Selector.match(element, selector);
+    return selector.match(element);
   },
 
   up: function(element, expression, index) {
     element = $(element);
     if (arguments.length == 1) return $(element.parentNode);
-    var ancestors = element.ancestors();
+    var ancestors = Element.ancestors(element);
     return Object.isNumber(expression) ? ancestors[expression] :
-      Selector.findElement(ancestors, expression, index);
+      Prototype.Selector.find(ancestors, expression, index);
   },
 
   down: function(element, expression, index) {
     element = $(element);
-    if (arguments.length == 1) return element.firstDescendant();
-    return Object.isNumber(expression) ? element.descendants()[expression] :
+    if (arguments.length == 1) return Element.firstDescendant(element);
+    return Object.isNumber(expression) ? Element.descendants(element)[expression] :
       Element.select(element, expression)[index || 0];
   },
 
   previous: function(element, expression, index) {
     element = $(element);
-    if (arguments.length == 1) return $(Selector.handlers.previousElementSibling(element));
-    var previousSiblings = element.previousSiblings();
-    return Object.isNumber(expression) ? previousSiblings[expression] :
-      Selector.findElement(previousSiblings, expression, index);
+    if (Object.isNumber(expression)) index = expression, expression = false;
+    if (!Object.isNumber(index)) index = 0;
+
+    if (expression) {
+      return Prototype.Selector.find(element.previousSiblings(), expression, index);
+    } else {
+      return element.recursivelyCollect("previousSibling", index + 1)[index];
+    }
   },
 
   next: function(element, expression, index) {
     element = $(element);
-    if (arguments.length == 1) return $(Selector.handlers.nextElementSibling(element));
-    var nextSiblings = element.nextSiblings();
-    return Object.isNumber(expression) ? nextSiblings[expression] :
-      Selector.findElement(nextSiblings, expression, index);
+    if (Object.isNumber(expression)) index = expression, expression = false;
+    if (!Object.isNumber(index)) index = 0;
+
+    if (expression) {
+      return Prototype.Selector.find(element.nextSiblings(), expression, index);
+    } else {
+      var maximumLength = Object.isNumber(index) ? index + 1 : 1;
+      return element.recursivelyCollect("nextSibling", index + 1)[index];
+    }
   },
 
-  select: function() {
-    var args = $A(arguments), element = $(args.shift());
-    return Selector.findChildElements(element, args);
+
+  select: function(element) {
+    element = $(element);
+    var expressions = Array.prototype.slice.call(arguments, 1).join(', ');
+    return Prototype.Selector.select(expressions, element);
   },
 
-  adjacent: function() {
-    var args = $A(arguments), element = $(args.shift());
-    return Selector.findChildElements(element.parentNode, args).without(element);
+  adjacent: function(element) {
+    element = $(element);
+    var expressions = Array.prototype.slice.call(arguments, 1).join(', ');
+    return Prototype.Selector.select(expressions, element.parentNode).without(element);
   },
 
   identify: function(element) {
     element = $(element);
-    var id = element.readAttribute('id'), self = arguments.callee;
+    var id = Element.readAttribute(element, 'id');
     if (id) return id;
-    do { id = 'anonymous_element_' + self.counter++ } while ($(id));
-    element.writeAttribute('id', id);
+    do { id = 'anonymous_element_' + Element.idCounter++ } while ($(id));
+    Element.writeAttribute(element, 'id', id);
     return id;
   },
 
@@ -1822,11 +2289,11 @@ Element.Methods = {
   },
 
   getHeight: function(element) {
-    return $(element).getDimensions().height;
+    return Element.getDimensions(element).height;
   },
 
   getWidth: function(element) {
-    return $(element).getDimensions().width;
+    return Element.getDimensions(element).width;
   },
 
   classNames: function(element) {
@@ -1842,7 +2309,7 @@ Element.Methods = {
 
   addClassName: function(element, className) {
     if (!(element = $(element))) return;
-    if (!element.hasClassName(className))
+    if (!Element.hasClassName(element, className))
       element.className += (element.className ? ' ' : '') + className;
     return element;
   },
@@ -1856,11 +2323,10 @@ Element.Methods = {
 
   toggleClassName: function(element, className) {
     if (!(element = $(element))) return;
-    return element[element.hasClassName(className) ?
-      'removeClassName' : 'addClassName'](className);
+    return Element[Element.hasClassName(element, className) ?
+      'removeClassName' : 'addClassName'](element, className);
   },
 
-  // removes whitespace-only text node children
   cleanWhitespace: function(element) {
     element = $(element);
     var node = element.firstChild;
@@ -1894,7 +2360,7 @@ Element.Methods = {
 
   scrollTo: function(element) {
     element = $(element);
-    var pos = element.cumulativeOffset();
+    var pos = Element.cumulativeOffset(element);
     window.scrollTo(pos[0], pos[1]);
     return element;
   },
@@ -1940,37 +2406,12 @@ Element.Methods = {
     return element;
   },
 
-  getDimensions: function(element) {
-    element = $(element);
-    var display = element.getStyle('display');
-    if (display != 'none' && display != null) // Safari bug
-      return {width: element.offsetWidth, height: element.offsetHeight};
-
-    // All *Width and *Height properties give 0 on elements with display none,
-    // so enable the element temporarily
-    var els = element.style;
-    var originalVisibility = els.visibility;
-    var originalPosition = els.position;
-    var originalDisplay = els.display;
-    els.visibility = 'hidden';
-    els.position = 'absolute';
-    els.display = 'block';
-    var originalWidth = element.clientWidth;
-    var originalHeight = element.clientHeight;
-    els.display = originalDisplay;
-    els.position = originalPosition;
-    els.visibility = originalVisibility;
-    return {width: originalWidth, height: originalHeight};
-  },
-
   makePositioned: function(element) {
     element = $(element);
     var pos = Element.getStyle(element, 'position');
     if (pos == 'static' || !pos) {
       element._madePositioned = true;
       element.style.position = 'relative';
-      // Opera returns the offset relative to the positioning context, when an
-      // element is position relative but top and left have not been defined
       if (Prototype.Browser.Opera) {
         element.style.top = 0;
         element.style.left = 0;
@@ -2009,117 +2450,6 @@ Element.Methods = {
     return element;
   },
 
-  cumulativeOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      element = element.offsetParent;
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  positionedOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      element = element.offsetParent;
-      if (element) {
-        if (element.tagName.toUpperCase() == 'BODY') break;
-        var p = Element.getStyle(element, 'position');
-        if (p !== 'static') break;
-      }
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  absolutize: function(element) {
-    element = $(element);
-    if (element.getStyle('position') == 'absolute') return element;
-    // Position.prepare(); // To be done manually by Scripty when it needs it.
-
-    var offsets = element.positionedOffset();
-    var top     = offsets[1];
-    var left    = offsets[0];
-    var width   = element.clientWidth;
-    var height  = element.clientHeight;
-
-    element._originalLeft   = left - parseFloat(element.style.left  || 0);
-    element._originalTop    = top  - parseFloat(element.style.top || 0);
-    element._originalWidth  = element.style.width;
-    element._originalHeight = element.style.height;
-
-    element.style.position = 'absolute';
-    element.style.top    = top + 'px';
-    element.style.left   = left + 'px';
-    element.style.width  = width + 'px';
-    element.style.height = height + 'px';
-    return element;
-  },
-
-  relativize: function(element) {
-    element = $(element);
-    if (element.getStyle('position') == 'relative') return element;
-    // Position.prepare(); // To be done manually by Scripty when it needs it.
-
-    element.style.position = 'relative';
-    var top  = parseFloat(element.style.top  || 0) - (element._originalTop || 0);
-    var left = parseFloat(element.style.left || 0) - (element._originalLeft || 0);
-
-    element.style.top    = top + 'px';
-    element.style.left   = left + 'px';
-    element.style.height = element._originalHeight;
-    element.style.width  = element._originalWidth;
-    return element;
-  },
-
-  cumulativeScrollOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.scrollTop  || 0;
-      valueL += element.scrollLeft || 0;
-      element = element.parentNode;
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  getOffsetParent: function(element) {
-    if (element.offsetParent) return $(element.offsetParent);
-    if (element == document.body) return $(element);
-
-    while ((element = element.parentNode) && element != document.body)
-      if (Element.getStyle(element, 'position') != 'static')
-        return $(element);
-
-    return $(document.body);
-  },
-
-  viewportOffset: function(forElement) {
-    var valueT = 0, valueL = 0;
-
-    var element = forElement;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-
-      // Safari fix
-      if (element.offsetParent == document.body &&
-        Element.getStyle(element, 'position') == 'absolute') break;
-
-    } while (element = element.offsetParent);
-
-    element = forElement;
-    do {
-      if (!Prototype.Browser.Opera || (element.tagName && (element.tagName.toUpperCase() == 'BODY'))) {
-        valueT -= element.scrollTop  || 0;
-        valueL -= element.scrollLeft || 0;
-      }
-    } while (element = element.parentNode);
-
-    return Element._returnOffset(valueL, valueT);
-  },
-
   clonePosition: function(element, source) {
     var options = Object.extend({
       setLeft:    true,
@@ -2130,28 +2460,21 @@ Element.Methods = {
       offsetLeft: 0
     }, arguments[2] || { });
 
-    // find page position of source
     source = $(source);
-    var p = source.viewportOffset();
+    var p = Element.viewportOffset(source), delta = [0, 0], parent = null;
 
-    // find coordinate system to use
     element = $(element);
-    var delta = [0, 0];
-    var parent = null;
-    // delta [0,0] will do fine with position: fixed elements,
-    // position:absolute needs offsetParent deltas
+
     if (Element.getStyle(element, 'position') == 'absolute') {
-      parent = element.getOffsetParent();
-      delta = parent.viewportOffset();
+      parent = Element.getOffsetParent(element);
+      delta = Element.viewportOffset(parent);
     }
 
-    // correct by body offsets (fixes Safari)
     if (parent == document.body) {
       delta[0] -= document.body.offsetLeft;
       delta[1] -= document.body.offsetTop;
     }
 
-    // set position
     if (options.setLeft)   element.style.left  = (p[0] - delta[0] + options.offsetLeft) + 'px';
     if (options.setTop)    element.style.top   = (p[1] - delta[1] + options.offsetTop) + 'px';
     if (options.setWidth)  element.style.width = source.offsetWidth + 'px';
@@ -2160,10 +2483,9 @@ Element.Methods = {
   }
 };
 
-Element.Methods.identify.counter = 1;
-
 Object.extend(Element.Methods, {
   getElementsBySelector: Element.Methods.select,
+
   childElements: Element.Methods.immediateDescendants
 });
 
@@ -2181,14 +2503,9 @@ if (Prototype.Browser.Opera) {
   Element.Methods.getStyle = Element.Methods.getStyle.wrap(
     function(proceed, element, style) {
       switch (style) {
-        case 'left': case 'top': case 'right': case 'bottom':
-          if (proceed(element, 'position') === 'static') return null;
         case 'height': case 'width':
-          // returns '0px' for hidden elements; we want it to return null
           if (!Element.visible(element)) return null;
 
-          // returns the border-box dimensions rather than the content-box
-          // dimensions, so we subtract padding and borders from the value
           var dim = parseInt(proceed(element, style), 10);
 
           if (dim !== element['offset' + style.capitalize()])
@@ -2221,52 +2538,6 @@ if (Prototype.Browser.Opera) {
 }
 
 else if (Prototype.Browser.IE) {
-  // IE doesn't report offsets correctly for static elements, so we change them
-  // to "relative" to get the values, then change them back.
-  Element.Methods.getOffsetParent = Element.Methods.getOffsetParent.wrap(
-    function(proceed, element) {
-      element = $(element);
-      // IE throws an error if element is not in document
-      try { element.offsetParent }
-      catch(e) { return $(document.body) }
-      var position = element.getStyle('position');
-      if (position !== 'static') return proceed(element);
-      element.setStyle({ position: 'relative' });
-      var value = proceed(element);
-      element.setStyle({ position: position });
-      return value;
-    }
-  );
-
-  $w('positionedOffset viewportOffset').each(function(method) {
-    Element.Methods[method] = Element.Methods[method].wrap(
-      function(proceed, element) {
-        element = $(element);
-        try { element.offsetParent }
-        catch(e) { return Element._returnOffset(0,0) }
-        var position = element.getStyle('position');
-        if (position !== 'static') return proceed(element);
-        // Trigger hasLayout on the offset parent so that IE6 reports
-        // accurate offsetTop and offsetLeft values for position: fixed.
-        var offsetParent = element.getOffsetParent();
-        if (offsetParent && offsetParent.getStyle('position') === 'fixed')
-          offsetParent.setStyle({ zoom: 1 });
-        element.setStyle({ position: 'relative' });
-        var value = proceed(element);
-        element.setStyle({ position: position });
-        return value;
-      }
-    );
-  });
-
-  Element.Methods.cumulativeOffset = Element.Methods.cumulativeOffset.wrap(
-    function(proceed, element) {
-      try { element.offsetParent }
-      catch(e) { return Element._returnOffset(0,0) }
-      return proceed(element);
-    }
-  );
-
   Element.Methods.getStyle = function(element, style) {
     element = $(element);
     style = (style == 'float' || style == 'cssFloat') ? 'styleFloat' : style.camelize();
@@ -2308,36 +2579,90 @@ else if (Prototype.Browser.IE) {
     return element;
   };
 
-  Element._attributeTranslations = {
-    read: {
-      names: {
-        'class': 'className',
-        'for':   'htmlFor'
-      },
-      values: {
-        _getAttr: function(element, attribute) {
-          return element.getAttribute(attribute, 2);
+  Element._attributeTranslations = (function(){
+
+    var classProp = 'className',
+        forProp = 'for',
+        el = document.createElement('div');
+
+    el.setAttribute(classProp, 'x');
+
+    if (el.className !== 'x') {
+      el.setAttribute('class', 'x');
+      if (el.className === 'x') {
+        classProp = 'class';
+      }
+    }
+    el = null;
+
+    el = document.createElement('label');
+    el.setAttribute(forProp, 'x');
+    if (el.htmlFor !== 'x') {
+      el.setAttribute('htmlFor', 'x');
+      if (el.htmlFor === 'x') {
+        forProp = 'htmlFor';
+      }
+    }
+    el = null;
+
+    return {
+      read: {
+        names: {
+          'class':      classProp,
+          'className':  classProp,
+          'for':        forProp,
+          'htmlFor':    forProp
         },
-        _getAttrNode: function(element, attribute) {
-          var node = element.getAttributeNode(attribute);
-          return node ? node.value : "";
-        },
-        _getEv: function(element, attribute) {
-          attribute = element.getAttribute(attribute);
-          return attribute ? attribute.toString().slice(23, -2) : null;
-        },
-        _flag: function(element, attribute) {
-          return $(element).hasAttribute(attribute) ? attribute : null;
-        },
-        style: function(element) {
-          return element.style.cssText.toLowerCase();
-        },
-        title: function(element) {
-          return element.title;
+        values: {
+          _getAttr: function(element, attribute) {
+            return element.getAttribute(attribute);
+          },
+          _getAttr2: function(element, attribute) {
+            return element.getAttribute(attribute, 2);
+          },
+          _getAttrNode: function(element, attribute) {
+            var node = element.getAttributeNode(attribute);
+            return node ? node.value : "";
+          },
+          _getEv: (function(){
+
+            var el = document.createElement('div'), f;
+            el.onclick = Prototype.emptyFunction;
+            var value = el.getAttribute('onclick');
+
+            if (String(value).indexOf('{') > -1) {
+              f = function(element, attribute) {
+                attribute = element.getAttribute(attribute);
+                if (!attribute) return null;
+                attribute = attribute.toString();
+                attribute = attribute.split('{')[1];
+                attribute = attribute.split('}')[0];
+                return attribute.strip();
+              };
+            }
+            else if (value === '') {
+              f = function(element, attribute) {
+                attribute = element.getAttribute(attribute);
+                if (!attribute) return null;
+                return attribute.strip();
+              };
+            }
+            el = null;
+            return f;
+          })(),
+          _flag: function(element, attribute) {
+            return $(element).hasAttribute(attribute) ? attribute : null;
+          },
+          style: function(element) {
+            return element.style.cssText.toLowerCase();
+          },
+          title: function(element) {
+            return element.title;
+          }
         }
       }
     }
-  };
+  })();
 
   Element._attributeTranslations.write = {
     names: Object.extend({
@@ -2365,8 +2690,8 @@ else if (Prototype.Browser.IE) {
 
   (function(v) {
     Object.extend(v, {
-      href:        v._getAttr,
-      src:         v._getAttr,
+      href:        v._getAttr2,
+      src:         v._getAttr2,
       type:        v._getAttr,
       action:      v._getAttrNode,
       disabled:    v._flag,
@@ -2393,6 +2718,26 @@ else if (Prototype.Browser.IE) {
       onchange:    v._getEv
     });
   })(Element._attributeTranslations.read.values);
+
+  if (Prototype.BrowserFeatures.ElementExtensions) {
+    (function() {
+      function _descendants(element) {
+        var nodes = element.getElementsByTagName('*'), results = [];
+        for (var i = 0, node; node = nodes[i]; i++)
+          if (node.tagName !== "!") // Filter out comment nodes.
+            results.push(node);
+        return results;
+      }
+
+      Element.Methods.down = function(element, expression, index) {
+        element = $(element);
+        if (arguments.length == 1) return element.firstDescendant();
+        return Object.isNumber(expression) ? _descendants(element)[expression] :
+          Element.select(element, expression)[index || 0];
+      }
+    })();
+  }
+
 }
 
 else if (Prototype.Browser.Gecko && /rv:1\.8\.0/.test(navigator.userAgent)) {
@@ -2411,7 +2756,7 @@ else if (Prototype.Browser.WebKit) {
       (value < 0.00001) ? 0 : value;
 
     if (value == 1)
-      if(element.tagName.toUpperCase() == 'IMG' && element.width) {
+      if (element.tagName.toUpperCase() == 'IMG' && element.width) {
         element.width++; element.width--;
       } else try {
         var n = document.createTextNode(' ');
@@ -2421,49 +2766,9 @@ else if (Prototype.Browser.WebKit) {
 
     return element;
   };
-
-  // Safari returns margins on body which is incorrect if the child is absolutely
-  // positioned.  For performance reasons, redefine Element#cumulativeOffset for
-  // KHTML/WebKit only.
-  Element.Methods.cumulativeOffset = function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      if (element.offsetParent == document.body)
-        if (Element.getStyle(element, 'position') == 'absolute') break;
-
-      element = element.offsetParent;
-    } while (element);
-
-    return Element._returnOffset(valueL, valueT);
-  };
 }
 
-if (Prototype.Browser.IE || Prototype.Browser.Opera) {
-  // IE and Opera are missing .innerHTML support for TABLE-related and SELECT elements
-  Element.Methods.update = function(element, content) {
-    element = $(element);
-
-    if (content && content.toElement) content = content.toElement();
-    if (Object.isElement(content)) return element.update().insert(content);
-
-    content = Object.toHTML(content);
-    var tagName = element.tagName.toUpperCase();
-
-    if (tagName in Element._insertionTranslations.tags) {
-      $A(element.childNodes).each(function(node) { element.removeChild(node) });
-      Element._getContentFromAnonymousElement(tagName, content.stripScripts())
-        .each(function(node) { element.appendChild(node) });
-    }
-    else element.innerHTML = content.stripScripts();
-
-    content.evalScripts.bind(content).defer();
-    return element;
-  };
-}
-
-if ('outerHTML' in document.createElement('div')) {
+if ('outerHTML' in document.documentElement) {
   Element.Methods.replace = function(element, content) {
     element = $(element);
 
@@ -2477,8 +2782,8 @@ if ('outerHTML' in document.createElement('div')) {
     var parent = element.parentNode, tagName = parent.tagName.toUpperCase();
 
     if (Element._insertionTranslations.tags[tagName]) {
-      var nextSibling = element.next();
-      var fragments = Element._getContentFromAnonymousElement(tagName, content.stripScripts());
+      var nextSibling = element.next(),
+          fragments = Element._getContentFromAnonymousElement(tagName, content.stripScripts());
       parent.removeChild(element);
       if (nextSibling)
         fragments.each(function(node) { parent.insertBefore(node, nextSibling) });
@@ -2499,12 +2804,27 @@ Element._returnOffset = function(l, t) {
   return result;
 };
 
-Element._getContentFromAnonymousElement = function(tagName, html) {
-  var div = new Element('div'), t = Element._insertionTranslations.tags[tagName];
-  if (t) {
-    div.innerHTML = t[0] + html + t[1];
-    t[2].times(function() { div = div.firstChild });
-  } else div.innerHTML = html;
+Element._getContentFromAnonymousElement = function(tagName, html, force) {
+  var div = new Element('div'),
+      t = Element._insertionTranslations.tags[tagName];
+
+  var workaround = false;
+  if (t) workaround = true;
+  else if (force) {
+    workaround = true;
+    t = ['', '', 0];
+  }
+
+  if (workaround) {
+    div.innerHTML = '&nbsp;' + t[0] + html + t[1];
+    div.removeChild(div.firstChild);
+    for (var i = t[2]; i--; ) {
+      div = div.firstChild;
+    }
+  }
+  else {
+    div.innerHTML = html;
+  }
   return $A(div.childNodes);
 };
 
@@ -2531,12 +2851,13 @@ Element._insertionTranslations = {
 };
 
 (function() {
-  Object.extend(this.tags, {
-    THEAD: this.tags.TBODY,
-    TFOOT: this.tags.TBODY,
-    TH:    this.tags.TD
+  var tags = Element._insertionTranslations.tags;
+  Object.extend(tags, {
+    THEAD: tags.TBODY,
+    TFOOT: tags.TBODY,
+    TH:    tags.TD
   });
-}).call(Element._insertionTranslations);
+})();
 
 Element.Methods.Simulated = {
   hasAttribute: function(element, attribute) {
@@ -2550,41 +2871,81 @@ Element.Methods.ByTag = { };
 
 Object.extend(Element, Element.Methods);
 
-if (!Prototype.BrowserFeatures.ElementExtensions &&
-    document.createElement('div')['__proto__']) {
-  window.HTMLElement = { };
-  window.HTMLElement.prototype = document.createElement('div')['__proto__'];
-  Prototype.BrowserFeatures.ElementExtensions = true;
-}
+(function(div) {
+
+  if (!Prototype.BrowserFeatures.ElementExtensions && div['__proto__']) {
+    window.HTMLElement = { };
+    window.HTMLElement.prototype = div['__proto__'];
+    Prototype.BrowserFeatures.ElementExtensions = true;
+  }
+
+  div = null;
+
+})(document.createElement('div'));
 
 Element.extend = (function() {
-  if (Prototype.BrowserFeatures.SpecificElementExtensions)
+
+  function checkDeficiency(tagName) {
+    if (typeof window.Element != 'undefined') {
+      var proto = window.Element.prototype;
+      if (proto) {
+        var id = '_' + (Math.random()+'').slice(2),
+            el = document.createElement(tagName);
+        proto[id] = 'x';
+        var isBuggy = (el[id] !== 'x');
+        delete proto[id];
+        el = null;
+        return isBuggy;
+      }
+    }
+    return false;
+  }
+
+  function extendElementWith(element, methods) {
+    for (var property in methods) {
+      var value = methods[property];
+      if (Object.isFunction(value) && !(property in element))
+        element[property] = value.methodize();
+    }
+  }
+
+  var HTMLOBJECTELEMENT_PROTOTYPE_BUGGY = checkDeficiency('object');
+
+  if (Prototype.BrowserFeatures.SpecificElementExtensions) {
+    if (HTMLOBJECTELEMENT_PROTOTYPE_BUGGY) {
+      return function(element) {
+        if (element && typeof element._extendedByPrototype == 'undefined') {
+          var t = element.tagName;
+          if (t && (/^(?:object|applet|embed)$/i.test(t))) {
+            extendElementWith(element, Element.Methods);
+            extendElementWith(element, Element.Methods.Simulated);
+            extendElementWith(element, Element.Methods.ByTag[t.toUpperCase()]);
+          }
+        }
+        return element;
+      }
+    }
     return Prototype.K;
+  }
 
   var Methods = { }, ByTag = Element.Methods.ByTag;
 
   var extend = Object.extend(function(element) {
-    if (!element || element._extendedByPrototype ||
+    if (!element || typeof element._extendedByPrototype != 'undefined' ||
         element.nodeType != 1 || element == window) return element;
 
     var methods = Object.clone(Methods),
-      tagName = element.tagName.toUpperCase(), property, value;
+        tagName = element.tagName.toUpperCase();
 
-    // extend methods for specific tags
     if (ByTag[tagName]) Object.extend(methods, ByTag[tagName]);
 
-    for (property in methods) {
-      value = methods[property];
-      if (Object.isFunction(value) && !(property in element))
-        element[property] = value.methodize();
-    }
+    extendElementWith(element, methods);
 
     element._extendedByPrototype = Prototype.emptyFunction;
     return element;
 
   }, {
     refresh: function() {
-      // extend methods for all tags (Safari doesn't need this)
       if (!Prototype.BrowserFeatures.ElementExtensions) {
         Object.extend(Methods, Element.Methods);
         Object.extend(Methods, Element.Methods.Simulated);
@@ -2596,10 +2957,14 @@ Element.extend = (function() {
   return extend;
 })();
 
-Element.hasAttribute = function(element, attribute) {
-  if (element.hasAttribute) return element.hasAttribute(attribute);
-  return Element.Methods.Simulated.hasAttribute(element, attribute);
-};
+if (document.documentElement.hasAttribute) {
+  Element.hasAttribute = function(element, attribute) {
+    return element.hasAttribute(attribute);
+  };
+}
+else {
+  Element.hasAttribute = Element.Methods.Simulated.hasAttribute;
+}
 
 Element.addMethods = function(methods) {
   var F = Prototype.BrowserFeatures, T = Element.Methods.ByTag;
@@ -2611,7 +2976,8 @@ Element.addMethods = function(methods) {
       "FORM":     Object.clone(Form.Methods),
       "INPUT":    Object.clone(Form.Element.Methods),
       "SELECT":   Object.clone(Form.Element.Methods),
-      "TEXTAREA": Object.clone(Form.Element.Methods)
+      "TEXTAREA": Object.clone(Form.Element.Methods),
+      "BUTTON":   Object.clone(Form.Element.Methods)
     });
   }
 
@@ -2663,14 +3029,19 @@ Element.addMethods = function(methods) {
     klass = 'HTML' + tagName.capitalize() + 'Element';
     if (window[klass]) return window[klass];
 
-    window[klass] = { };
-    window[klass].prototype = document.createElement(tagName)['__proto__'];
-    return window[klass];
+    var element = document.createElement(tagName),
+        proto = element['__proto__'] || element.constructor.prototype;
+
+    element = null;
+    return proto;
   }
 
+  var elementPrototype = window.HTMLElement ? HTMLElement.prototype :
+   Element.prototype;
+
   if (F.ElementExtensions) {
-    copy(Element.Methods, HTMLElement.prototype);
-    copy(Element.Methods.Simulated, HTMLElement.prototype, true);
+    copy(Element.Methods, elementPrototype);
+    copy(Element.Methods.Simulated, elementPrototype, true);
   }
 
   if (F.SpecificElementExtensions) {
@@ -2688,791 +3059,1947 @@ Element.addMethods = function(methods) {
   Element.cache = { };
 };
 
+
 document.viewport = {
+
   getDimensions: function() {
-    var dimensions = { }, B = Prototype.Browser;
-    $w('width height').each(function(d) {
-      var D = d.capitalize();
-      if (B.WebKit && !document.evaluate) {
-        // Safari <3.0 needs self.innerWidth/Height
-        dimensions[d] = self['inner' + D];
-      } else if (B.Opera && parseFloat(window.opera.version()) < 9.5) {
-        // Opera <9.5 needs document.body.clientWidth/Height
-        dimensions[d] = document.body['client' + D]
-      } else {
-        dimensions[d] = document.documentElement['client' + D];
-      }
-    });
-    return dimensions;
-  },
-
-  getWidth: function() {
-    return this.getDimensions().width;
-  },
-
-  getHeight: function() {
-    return this.getDimensions().height;
+    return { width: this.getWidth(), height: this.getHeight() };
   },
 
   getScrollOffsets: function() {
     return Element._returnOffset(
       window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
-      window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+      window.pageYOffset || document.documentElement.scrollTop  || document.body.scrollTop);
   }
 };
-/* Portions of the Selector class are derived from Jack Slocum's DomQuery,
- * part of YUI-Ext version 0.40, distributed under the terms of an MIT-style
- * license.  Please see http://www.yui-ext.com/ for more information. */
 
-var Selector = Class.create({
-  initialize: function(expression) {
-    this.expression = expression.strip();
+(function(viewport) {
+  var B = Prototype.Browser, doc = document, element, property = {};
 
-    if (this.shouldUseSelectorsAPI()) {
-      this.mode = 'selectorsAPI';
-    } else if (this.shouldUseXPath()) {
-      this.mode = 'xpath';
-      this.compileXPathMatcher();
+  function getRootElement() {
+    if (B.WebKit && !doc.evaluate)
+      return document;
+
+    if (B.Opera && window.parseFloat(window.opera.version()) < 9.5)
+      return document.body;
+
+    return document.documentElement;
+  }
+
+  function define(D) {
+    if (!element) element = getRootElement();
+
+    property[D] = 'client' + D;
+
+    viewport['get' + D] = function() { return element[property[D]] };
+    return viewport['get' + D]();
+  }
+
+  viewport.getWidth  = define.curry('Width');
+
+  viewport.getHeight = define.curry('Height');
+})(document.viewport);
+
+
+Element.Storage = {
+  UID: 1
+};
+
+Element.addMethods({
+  getStorage: function(element) {
+    if (!(element = $(element))) return;
+
+    var uid;
+    if (element === window) {
+      uid = 0;
     } else {
-      this.mode = "normal";
-      this.compileMatcher();
+      if (typeof element._prototypeUID === "undefined")
+        element._prototypeUID = Element.Storage.UID++;
+      uid = element._prototypeUID;
     }
 
+    if (!Element.Storage[uid])
+      Element.Storage[uid] = $H();
+
+    return Element.Storage[uid];
   },
 
-  shouldUseXPath: function() {
-    if (!Prototype.BrowserFeatures.XPath) return false;
+  store: function(element, key, value) {
+    if (!(element = $(element))) return;
 
-    var e = this.expression;
-
-    // Safari 3 chokes on :*-of-type and :empty
-    if (Prototype.Browser.WebKit &&
-     (e.include("-of-type") || e.include(":empty")))
-      return false;
-
-    // XPath can't do namespaced attributes, nor can it read
-    // the "checked" property from DOM nodes
-    if ((/(\[[\w-]*?:|:checked)/).test(e))
-      return false;
-
-    return true;
-  },
-
-  shouldUseSelectorsAPI: function() {
-    if (!Prototype.BrowserFeatures.SelectorsAPI) return false;
-
-    if (!Selector._div) Selector._div = new Element('div');
-
-    // Make sure the browser treats the selector as valid. Test on an
-    // isolated element to minimize cost of this check.
-    try {
-      Selector._div.querySelector(this.expression);
-    } catch(e) {
-      return false;
+    if (arguments.length === 2) {
+      Element.getStorage(element).update(key);
+    } else {
+      Element.getStorage(element).set(key, value);
     }
 
-    return true;
+    return element;
   },
 
-  compileMatcher: function() {
-    var e = this.expression, ps = Selector.patterns, h = Selector.handlers,
-        c = Selector.criteria, le, p, m;
+  retrieve: function(element, key, defaultValue) {
+    if (!(element = $(element))) return;
+    var hash = Element.getStorage(element), value = hash.get(key);
 
-    if (Selector._cache[e]) {
-      this.matcher = Selector._cache[e];
-      return;
+    if (Object.isUndefined(value)) {
+      hash.set(key, defaultValue);
+      value = defaultValue;
     }
 
-    this.matcher = ["this.matcher = function(root) {",
-                    "var r = root, h = Selector.handlers, c = false, n;"];
+    return value;
+  },
 
-    while (e && le != e && (/\S/).test(e)) {
-      le = e;
-      for (var i in ps) {
-        p = ps[i];
-        if (m = e.match(p)) {
-          this.matcher.push(Object.isFunction(c[i]) ? c[i](m) :
-            new Template(c[i]).evaluate(m));
-          e = e.replace(m[0], '');
-          break;
-        }
+  clone: function(element, deep) {
+    if (!(element = $(element))) return;
+    var clone = element.cloneNode(deep);
+    clone._prototypeUID = void 0;
+    if (deep) {
+      var descendants = Element.select(clone, '*'),
+          i = descendants.length;
+      while (i--) {
+        descendants[i]._prototypeUID = void 0;
       }
     }
-
-    this.matcher.push("return h.unique(n);\n}");
-    eval(this.matcher.join('\n'));
-    Selector._cache[this.expression] = this.matcher;
+    return Element.extend(clone);
   },
 
-  compileXPathMatcher: function() {
-    var e = this.expression, ps = Selector.patterns,
-        x = Selector.xpath, le, m;
+  purge: function(element) {
+    if (!(element = $(element))) return;
+    var purgeElement = Element._purgeElement;
 
-    if (Selector._cache[e]) {
-      this.xpath = Selector._cache[e]; return;
-    }
+    purgeElement(element);
 
-    this.matcher = ['.//*'];
-    while (e && le != e && (/\S/).test(e)) {
-      le = e;
-      for (var i in ps) {
-        if (m = e.match(ps[i])) {
-          this.matcher.push(Object.isFunction(x[i]) ? x[i](m) :
-            new Template(x[i]).evaluate(m));
-          e = e.replace(m[0], '');
-          break;
-        }
-      }
-    }
+    var descendants = element.getElementsByTagName('*'),
+     i = descendants.length;
 
-    this.xpath = this.matcher.join('');
-    Selector._cache[this.expression] = this.xpath;
-  },
+    while (i--) purgeElement(descendants[i]);
 
-  findElements: function(root) {
-    root = root || document;
-    var e = this.expression, results;
-
-    switch (this.mode) {
-      case 'selectorsAPI':
-        // querySelectorAll queries document-wide, then filters to descendants
-        // of the context element. That's not what we want.
-        // Add an explicit context to the selector if necessary.
-        if (root !== document) {
-          var oldId = root.id, id = $(root).identify();
-          e = "#" + id + " " + e;
-        }
-
-        results = $A(root.querySelectorAll(e)).map(Element.extend);
-        root.id = oldId;
-
-        return results;
-      case 'xpath':
-        return document._getElementsByXPath(this.xpath, root);
-      default:
-       return this.matcher(root);
-    }
-  },
-
-  match: function(element) {
-    this.tokens = [];
-
-    var e = this.expression, ps = Selector.patterns, as = Selector.assertions;
-    var le, p, m;
-
-    while (e && le !== e && (/\S/).test(e)) {
-      le = e;
-      for (var i in ps) {
-        p = ps[i];
-        if (m = e.match(p)) {
-          // use the Selector.assertions methods unless the selector
-          // is too complex.
-          if (as[i]) {
-            this.tokens.push([i, Object.clone(m)]);
-            e = e.replace(m[0], '');
-          } else {
-            // reluctantly do a document-wide search
-            // and look for a match in the array
-            return this.findElements(document).include(element);
-          }
-        }
-      }
-    }
-
-    var match = true, name, matches;
-    for (var i = 0, token; token = this.tokens[i]; i++) {
-      name = token[0], matches = token[1];
-      if (!Selector.assertions[name](element, matches)) {
-        match = false; break;
-      }
-    }
-
-    return match;
-  },
-
-  toString: function() {
-    return this.expression;
-  },
-
-  inspect: function() {
-    return "#<Selector:" + this.expression.inspect() + ">";
+    return null;
   }
 });
 
-Object.extend(Selector, {
-  _cache: { },
+(function() {
 
-  xpath: {
-    descendant:   "//*",
-    child:        "/*",
-    adjacent:     "/following-sibling::*[1]",
-    laterSibling: '/following-sibling::*',
-    tagName:      function(m) {
-      if (m[1] == '*') return '';
-      return "[local-name()='" + m[1].toLowerCase() +
-             "' or local-name()='" + m[1].toUpperCase() + "']";
-    },
-    className:    "[contains(concat(' ', @class, ' '), ' #{1} ')]",
-    id:           "[@id='#{1}']",
-    attrPresence: function(m) {
-      m[1] = m[1].toLowerCase();
-      return new Template("[@#{1}]").evaluate(m);
-    },
-    attr: function(m) {
-      m[1] = m[1].toLowerCase();
-      m[3] = m[5] || m[6];
-      return new Template(Selector.xpath.operators[m[2]]).evaluate(m);
-    },
-    pseudo: function(m) {
-      var h = Selector.xpath.pseudos[m[1]];
-      if (!h) return '';
-      if (Object.isFunction(h)) return h(m);
-      return new Template(Selector.xpath.pseudos[m[1]]).evaluate(m);
-    },
-    operators: {
-      '=':  "[@#{1}='#{3}']",
-      '!=': "[@#{1}!='#{3}']",
-      '^=': "[starts-with(@#{1}, '#{3}')]",
-      '$=': "[substring(@#{1}, (string-length(@#{1}) - string-length('#{3}') + 1))='#{3}']",
-      '*=': "[contains(@#{1}, '#{3}')]",
-      '~=': "[contains(concat(' ', @#{1}, ' '), ' #{3} ')]",
-      '|=': "[contains(concat('-', @#{1}, '-'), '-#{3}-')]"
-    },
-    pseudos: {
-      'first-child': '[not(preceding-sibling::*)]',
-      'last-child':  '[not(following-sibling::*)]',
-      'only-child':  '[not(preceding-sibling::* or following-sibling::*)]',
-      'empty':       "[count(*) = 0 and (count(text()) = 0)]",
-      'checked':     "[@checked]",
-      'disabled':    "[(@disabled) and (@type!='hidden')]",
-      'enabled':     "[not(@disabled) and (@type!='hidden')]",
-      'not': function(m) {
-        var e = m[6], p = Selector.patterns,
-            x = Selector.xpath, le, v;
+  function toDecimal(pctString) {
+    var match = pctString.match(/^(\d+)%?$/i);
+    if (!match) return null;
+    return (Number(match[1]) / 100);
+  }
 
-        var exclusion = [];
-        while (e && le != e && (/\S/).test(e)) {
-          le = e;
-          for (var i in p) {
-            if (m = e.match(p[i])) {
-              v = Object.isFunction(x[i]) ? x[i](m) : new Template(x[i]).evaluate(m);
-              exclusion.push("(" + v.substring(1, v.length - 1) + ")");
-              e = e.replace(m[0], '');
-              break;
-            }
-          }
-        }
-        return "[not(" + exclusion.join(" and ") + ")]";
-      },
-      'nth-child':      function(m) {
-        return Selector.xpath.pseudos.nth("(count(./preceding-sibling::*) + 1) ", m);
-      },
-      'nth-last-child': function(m) {
-        return Selector.xpath.pseudos.nth("(count(./following-sibling::*) + 1) ", m);
-      },
-      'nth-of-type':    function(m) {
-        return Selector.xpath.pseudos.nth("position() ", m);
-      },
-      'nth-last-of-type': function(m) {
-        return Selector.xpath.pseudos.nth("(last() + 1 - position()) ", m);
-      },
-      'first-of-type':  function(m) {
-        m[6] = "1"; return Selector.xpath.pseudos['nth-of-type'](m);
-      },
-      'last-of-type':   function(m) {
-        m[6] = "1"; return Selector.xpath.pseudos['nth-last-of-type'](m);
-      },
-      'only-of-type':   function(m) {
-        var p = Selector.xpath.pseudos; return p['first-of-type'](m) + p['last-of-type'](m);
-      },
-      nth: function(fragment, m) {
-        var mm, formula = m[6], predicate;
-        if (formula == 'even') formula = '2n+0';
-        if (formula == 'odd')  formula = '2n+1';
-        if (mm = formula.match(/^(\d+)$/)) // digit only
-          return '[' + fragment + "= " + mm[1] + ']';
-        if (mm = formula.match(/^(-?\d*)?n(([+-])(\d+))?/)) { // an+b
-          if (mm[1] == "-") mm[1] = -1;
-          var a = mm[1] ? Number(mm[1]) : 1;
-          var b = mm[2] ? Number(mm[2]) : 0;
-          predicate = "[((#{fragment} - #{b}) mod #{a} = 0) and " +
-          "((#{fragment} - #{b}) div #{a} >= 0)]";
-          return new Template(predicate).evaluate({
-            fragment: fragment, a: a, b: b });
-        }
-      }
+  function getPixelValue(value, property, context) {
+    var element = null;
+    if (Object.isElement(value)) {
+      element = value;
+      value = element.getStyle(property);
     }
-  },
 
-  criteria: {
-    tagName:      'n = h.tagName(n, r, "#{1}", c);      c = false;',
-    className:    'n = h.className(n, r, "#{1}", c);    c = false;',
-    id:           'n = h.id(n, r, "#{1}", c);           c = false;',
-    attrPresence: 'n = h.attrPresence(n, r, "#{1}", c); c = false;',
-    attr: function(m) {
-      m[3] = (m[5] || m[6]);
-      return new Template('n = h.attr(n, r, "#{1}", "#{3}", "#{2}", c); c = false;').evaluate(m);
-    },
-    pseudo: function(m) {
-      if (m[6]) m[6] = m[6].replace(/"/g, '\\"');
-      return new Template('n = h.pseudo(n, "#{1}", "#{6}", r, c); c = false;').evaluate(m);
-    },
-    descendant:   'c = "descendant";',
-    child:        'c = "child";',
-    adjacent:     'c = "adjacent";',
-    laterSibling: 'c = "laterSibling";'
-  },
-
-  patterns: {
-    // combinators must be listed first
-    // (and descendant needs to be last combinator)
-    laterSibling: /^\s*~\s*/,
-    child:        /^\s*>\s*/,
-    adjacent:     /^\s*\+\s*/,
-    descendant:   /^\s/,
-
-    // selectors follow
-    tagName:      /^\s*(\*|[\w\-]+)(\b|$)?/,
-    id:           /^#([\w\-\*]+)(\b|$)/,
-    className:    /^\.([\w\-\*]+)(\b|$)/,
-    pseudo:
-/^:((first|last|nth|nth-last|only)(-child|-of-type)|empty|checked|(en|dis)abled|not)(\((.*?)\))?(\b|$|(?=\s|[:+~>]))/,
-    attrPresence: /^\[((?:[\w]+:)?[\w]+)\]/,
-    attr:         /\[((?:[\w-]*:)?[\w-]+)\s*(?:([!^$*~|]?=)\s*((['"])([^\4]*?)\4|([^'"][^\]]*?)))?\]/
-  },
-
-  // for Selector.match and Element#match
-  assertions: {
-    tagName: function(element, matches) {
-      return matches[1].toUpperCase() == element.tagName.toUpperCase();
-    },
-
-    className: function(element, matches) {
-      return Element.hasClassName(element, matches[1]);
-    },
-
-    id: function(element, matches) {
-      return element.id === matches[1];
-    },
-
-    attrPresence: function(element, matches) {
-      return Element.hasAttribute(element, matches[1]);
-    },
-
-    attr: function(element, matches) {
-      var nodeValue = Element.readAttribute(element, matches[1]);
-      return nodeValue && Selector.operators[matches[2]](nodeValue, matches[5] || matches[6]);
+    if (value === null) {
+      return null;
     }
-  },
 
-  handlers: {
-    // UTILITY FUNCTIONS
-    // joins two collections
-    concat: function(a, b) {
-      for (var i = 0, node; node = b[i]; i++)
-        a.push(node);
-      return a;
-    },
+    if ((/^(?:-)?\d+(\.\d+)?(px)?$/i).test(value)) {
+      return window.parseFloat(value);
+    }
 
-    // marks an array of nodes for counting
-    mark: function(nodes) {
-      var _true = Prototype.emptyFunction;
-      for (var i = 0, node; node = nodes[i]; i++)
-        node._countedByPrototype = _true;
-      return nodes;
-    },
+    var isPercentage = value.include('%'), isViewport = (context === document.viewport);
 
-    unmark: function(nodes) {
-      for (var i = 0, node; node = nodes[i]; i++)
-        node._countedByPrototype = undefined;
-      return nodes;
-    },
+    if (/\d/.test(value) && element && element.runtimeStyle && !(isPercentage && isViewport)) {
+      var style = element.style.left, rStyle = element.runtimeStyle.left;
+      element.runtimeStyle.left = element.currentStyle.left;
+      element.style.left = value || 0;
+      value = element.style.pixelLeft;
+      element.style.left = style;
+      element.runtimeStyle.left = rStyle;
 
-    // mark each child node with its position (for nth calls)
-    // "ofType" flag indicates whether we're indexing for nth-of-type
-    // rather than nth-child
-    index: function(parentNode, reverse, ofType) {
-      parentNode._countedByPrototype = Prototype.emptyFunction;
-      if (reverse) {
-        for (var nodes = parentNode.childNodes, i = nodes.length - 1, j = 1; i >= 0; i--) {
-          var node = nodes[i];
-          if (node.nodeType == 1 && (!ofType || node._countedByPrototype)) node.nodeIndex = j++;
+      return value;
+    }
+
+    if (element && isPercentage) {
+      context = context || element.parentNode;
+      var decimal = toDecimal(value);
+      var whole = null;
+      var position = element.getStyle('position');
+
+      var isHorizontal = property.include('left') || property.include('right') ||
+       property.include('width');
+
+      var isVertical =  property.include('top') || property.include('bottom') ||
+        property.include('height');
+
+      if (context === document.viewport) {
+        if (isHorizontal) {
+          whole = document.viewport.getWidth();
+        } else if (isVertical) {
+          whole = document.viewport.getHeight();
         }
       } else {
-        for (var i = 0, j = 1, nodes = parentNode.childNodes; node = nodes[i]; i++)
-          if (node.nodeType == 1 && (!ofType || node._countedByPrototype)) node.nodeIndex = j++;
-      }
-    },
-
-    // filters out duplicates and extends all nodes
-    unique: function(nodes) {
-      if (nodes.length == 0) return nodes;
-      var results = [], n;
-      for (var i = 0, l = nodes.length; i < l; i++)
-        if (!(n = nodes[i])._countedByPrototype) {
-          n._countedByPrototype = Prototype.emptyFunction;
-          results.push(Element.extend(n));
+        if (isHorizontal) {
+          whole = $(context).measure('width');
+        } else if (isVertical) {
+          whole = $(context).measure('height');
         }
-      return Selector.handlers.unmark(results);
-    },
-
-    // COMBINATOR FUNCTIONS
-    descendant: function(nodes) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        h.concat(results, node.getElementsByTagName('*'));
-      return results;
-    },
-
-    child: function(nodes) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        for (var j = 0, child; child = node.childNodes[j]; j++)
-          if (child.nodeType == 1 && child.tagName != '!') results.push(child);
       }
-      return results;
-    },
 
-    adjacent: function(nodes) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        var next = this.nextElementSibling(node);
-        if (next) results.push(next);
-      }
-      return results;
-    },
-
-    laterSibling: function(nodes) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        h.concat(results, Element.nextSiblings(node));
-      return results;
-    },
-
-    nextElementSibling: function(node) {
-      while (node = node.nextSibling)
-        if (node.nodeType == 1) return node;
-      return null;
-    },
-
-    previousElementSibling: function(node) {
-      while (node = node.previousSibling)
-        if (node.nodeType == 1) return node;
-      return null;
-    },
-
-    // TOKEN FUNCTIONS
-    tagName: function(nodes, root, tagName, combinator) {
-      var uTagName = tagName.toUpperCase();
-      var results = [], h = Selector.handlers;
-      if (nodes) {
-        if (combinator) {
-          // fastlane for ordinary descendant combinators
-          if (combinator == "descendant") {
-            for (var i = 0, node; node = nodes[i]; i++)
-              h.concat(results, node.getElementsByTagName(tagName));
-            return results;
-          } else nodes = this[combinator](nodes);
-          if (tagName == "*") return nodes;
-        }
-        for (var i = 0, node; node = nodes[i]; i++)
-          if (node.tagName.toUpperCase() === uTagName) results.push(node);
-        return results;
-      } else return root.getElementsByTagName(tagName);
-    },
-
-    id: function(nodes, root, id, combinator) {
-      var targetNode = $(id), h = Selector.handlers;
-      if (!targetNode) return [];
-      if (!nodes && root == document) return [targetNode];
-      if (nodes) {
-        if (combinator) {
-          if (combinator == 'child') {
-            for (var i = 0, node; node = nodes[i]; i++)
-              if (targetNode.parentNode == node) return [targetNode];
-          } else if (combinator == 'descendant') {
-            for (var i = 0, node; node = nodes[i]; i++)
-              if (Element.descendantOf(targetNode, node)) return [targetNode];
-          } else if (combinator == 'adjacent') {
-            for (var i = 0, node; node = nodes[i]; i++)
-              if (Selector.handlers.previousElementSibling(targetNode) == node)
-                return [targetNode];
-          } else nodes = h[combinator](nodes);
-        }
-        for (var i = 0, node; node = nodes[i]; i++)
-          if (node == targetNode) return [targetNode];
-        return [];
-      }
-      return (targetNode && Element.descendantOf(targetNode, root)) ? [targetNode] : [];
-    },
-
-    className: function(nodes, root, className, combinator) {
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      return Selector.handlers.byClassName(nodes, root, className);
-    },
-
-    byClassName: function(nodes, root, className) {
-      if (!nodes) nodes = Selector.handlers.descendant([root]);
-      var needle = ' ' + className + ' ';
-      for (var i = 0, results = [], node, nodeClassName; node = nodes[i]; i++) {
-        nodeClassName = node.className;
-        if (nodeClassName.length == 0) continue;
-        if (nodeClassName == className || (' ' + nodeClassName + ' ').include(needle))
-          results.push(node);
-      }
-      return results;
-    },
-
-    attrPresence: function(nodes, root, attr, combinator) {
-      if (!nodes) nodes = root.getElementsByTagName("*");
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      var results = [];
-      for (var i = 0, node; node = nodes[i]; i++)
-        if (Element.hasAttribute(node, attr)) results.push(node);
-      return results;
-    },
-
-    attr: function(nodes, root, attr, value, operator, combinator) {
-      if (!nodes) nodes = root.getElementsByTagName("*");
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      var handler = Selector.operators[operator], results = [];
-      for (var i = 0, node; node = nodes[i]; i++) {
-        var nodeValue = Element.readAttribute(node, attr);
-        if (nodeValue === null) continue;
-        if (handler(nodeValue, value)) results.push(node);
-      }
-      return results;
-    },
-
-    pseudo: function(nodes, name, value, root, combinator) {
-      if (nodes && combinator) nodes = this[combinator](nodes);
-      if (!nodes) nodes = root.getElementsByTagName("*");
-      return Selector.pseudos[name](nodes, value, root);
+      return (whole === null) ? 0 : whole * decimal;
     }
-  },
 
-  pseudos: {
-    'first-child': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        if (Selector.handlers.previousElementSibling(node)) continue;
-          results.push(node);
-      }
-      return results;
-    },
-    'last-child': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        if (Selector.handlers.nextElementSibling(node)) continue;
-          results.push(node);
-      }
-      return results;
-    },
-    'only-child': function(nodes, value, root) {
-      var h = Selector.handlers;
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (!h.previousElementSibling(node) && !h.nextElementSibling(node))
-          results.push(node);
-      return results;
-    },
-    'nth-child':        function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root);
-    },
-    'nth-last-child':   function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root, true);
-    },
-    'nth-of-type':      function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root, false, true);
-    },
-    'nth-last-of-type': function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, formula, root, true, true);
-    },
-    'first-of-type':    function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, "1", root, false, true);
-    },
-    'last-of-type':     function(nodes, formula, root) {
-      return Selector.pseudos.nth(nodes, "1", root, true, true);
-    },
-    'only-of-type':     function(nodes, formula, root) {
-      var p = Selector.pseudos;
-      return p['last-of-type'](p['first-of-type'](nodes, formula, root), formula, root);
-    },
-
-    // handles the an+b logic
-    getIndices: function(a, b, total) {
-      if (a == 0) return b > 0 ? [b] : [];
-      return $R(1, total).inject([], function(memo, i) {
-        if (0 == (i - b) % a && (i - b) / a >= 0) memo.push(i);
-        return memo;
-      });
-    },
-
-    // handles nth(-last)-child, nth(-last)-of-type, and (first|last)-of-type
-    nth: function(nodes, formula, root, reverse, ofType) {
-      if (nodes.length == 0) return [];
-      if (formula == 'even') formula = '2n+0';
-      if (formula == 'odd')  formula = '2n+1';
-      var h = Selector.handlers, results = [], indexed = [], m;
-      h.mark(nodes);
-      for (var i = 0, node; node = nodes[i]; i++) {
-        if (!node.parentNode._countedByPrototype) {
-          h.index(node.parentNode, reverse, ofType);
-          indexed.push(node.parentNode);
-        }
-      }
-      if (formula.match(/^\d+$/)) { // just a number
-        formula = Number(formula);
-        for (var i = 0, node; node = nodes[i]; i++)
-          if (node.nodeIndex == formula) results.push(node);
-      } else if (m = formula.match(/^(-?\d*)?n(([+-])(\d+))?/)) { // an+b
-        if (m[1] == "-") m[1] = -1;
-        var a = m[1] ? Number(m[1]) : 1;
-        var b = m[2] ? Number(m[2]) : 0;
-        var indices = Selector.pseudos.getIndices(a, b, nodes.length);
-        for (var i = 0, node, l = indices.length; node = nodes[i]; i++) {
-          for (var j = 0; j < l; j++)
-            if (node.nodeIndex == indices[j]) results.push(node);
-        }
-      }
-      h.unmark(nodes);
-      h.unmark(indexed);
-      return results;
-    },
-
-    'empty': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++) {
-        // IE treats comments as element nodes
-        if (node.tagName == '!' || node.firstChild) continue;
-        results.push(node);
-      }
-      return results;
-    },
-
-    'not': function(nodes, selector, root) {
-      var h = Selector.handlers, selectorType, m;
-      var exclusions = new Selector(selector).findElements(root);
-      h.mark(exclusions);
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (!node._countedByPrototype) results.push(node);
-      h.unmark(exclusions);
-      return results;
-    },
-
-    'enabled': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (!node.disabled && (!node.type || node.type !== 'hidden'))
-          results.push(node);
-      return results;
-    },
-
-    'disabled': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (node.disabled) results.push(node);
-      return results;
-    },
-
-    'checked': function(nodes, value, root) {
-      for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (node.checked) results.push(node);
-      return results;
-    }
-  },
-
-  operators: {
-    '=':  function(nv, v) { return nv == v; },
-    '!=': function(nv, v) { return nv != v; },
-    '^=': function(nv, v) { return nv == v || nv && nv.startsWith(v); },
-    '$=': function(nv, v) { return nv == v || nv && nv.endsWith(v); },
-    '*=': function(nv, v) { return nv == v || nv && nv.include(v); },
-    '$=': function(nv, v) { return nv.endsWith(v); },
-    '*=': function(nv, v) { return nv.include(v); },
-    '~=': function(nv, v) { return (' ' + nv + ' ').include(' ' + v + ' '); },
-    '|=': function(nv, v) { return ('-' + (nv || "").toUpperCase() +
-     '-').include('-' + (v || "").toUpperCase() + '-'); }
-  },
-
-  split: function(expression) {
-    var expressions = [];
-    expression.scan(/(([\w#:.~>+()\s-]+|\*|\[.*?\])+)\s*(,|$)/, function(m) {
-      expressions.push(m[1].strip());
-    });
-    return expressions;
-  },
-
-  matchElements: function(elements, expression) {
-    var matches = $$(expression), h = Selector.handlers;
-    h.mark(matches);
-    for (var i = 0, results = [], element; element = elements[i]; i++)
-      if (element._countedByPrototype) results.push(element);
-    h.unmark(matches);
-    return results;
-  },
-
-  findElement: function(elements, expression, index) {
-    if (Object.isNumber(expression)) {
-      index = expression; expression = false;
-    }
-    return Selector.matchElements(elements, expression || '*')[index || 0];
-  },
-
-  findChildElements: function(element, expressions) {
-    expressions = Selector.split(expressions.join(','));
-    var results = [], h = Selector.handlers;
-    for (var i = 0, l = expressions.length, selector; i < l; i++) {
-      selector = new Selector(expressions[i].strip());
-      h.concat(results, selector.findElements(element));
-    }
-    return (l > 1) ? h.unique(results) : results;
+    return 0;
   }
-});
 
-if (Prototype.Browser.IE) {
-  Object.extend(Selector.handlers, {
-    // IE returns comment nodes on getElementsByTagName("*").
-    // Filter them out.
-    concat: function(a, b) {
-      for (var i = 0, node; node = b[i]; i++)
-        if (node.tagName !== "!") a.push(node);
-      return a;
+  function toCSSPixels(number) {
+    if (Object.isString(number) && number.endsWith('px')) {
+      return number;
+    }
+    return number + 'px';
+  }
+
+  function isDisplayed(element) {
+    var originalElement = element;
+    while (element && element.parentNode) {
+      var display = element.getStyle('display');
+      if (display === 'none') {
+        return false;
+      }
+      element = $(element.parentNode);
+    }
+    return true;
+  }
+
+  var hasLayout = Prototype.K;
+  if ('currentStyle' in document.documentElement) {
+    hasLayout = function(element) {
+      if (!element.currentStyle.hasLayout) {
+        element.style.zoom = 1;
+      }
+      return element;
+    };
+  }
+
+  function cssNameFor(key) {
+    if (key.include('border')) key = key + '-width';
+    return key.camelize();
+  }
+
+  Element.Layout = Class.create(Hash, {
+    initialize: function($super, element, preCompute) {
+      $super();
+      this.element = $(element);
+
+      Element.Layout.PROPERTIES.each( function(property) {
+        this._set(property, null);
+      }, this);
+
+      if (preCompute) {
+        this._preComputing = true;
+        this._begin();
+        Element.Layout.PROPERTIES.each( this._compute, this );
+        this._end();
+        this._preComputing = false;
+      }
     },
 
-    // IE improperly serializes _countedByPrototype in (inner|outer)HTML.
-    unmark: function(nodes) {
-      for (var i = 0, node; node = nodes[i]; i++)
-        node.removeAttribute('_countedByPrototype');
-      return nodes;
+    _set: function(property, value) {
+      return Hash.prototype.set.call(this, property, value);
+    },
+
+    set: function(property, value) {
+      throw "Properties of Element.Layout are read-only.";
+    },
+
+    get: function($super, property) {
+      var value = $super(property);
+      return value === null ? this._compute(property) : value;
+    },
+
+    _begin: function() {
+      if (this._prepared) return;
+
+      var element = this.element;
+      if (isDisplayed(element)) {
+        this._prepared = true;
+        return;
+      }
+
+      var originalStyles = {
+        position:   element.style.position   || '',
+        width:      element.style.width      || '',
+        visibility: element.style.visibility || '',
+        display:    element.style.display    || ''
+      };
+
+      element.store('prototype_original_styles', originalStyles);
+
+      var position = element.getStyle('position'),
+       width = element.getStyle('width');
+
+      if (width === "0px" || width === null) {
+        element.style.display = 'block';
+        width = element.getStyle('width');
+      }
+
+      var context = (position === 'fixed') ? document.viewport :
+       element.parentNode;
+
+      element.setStyle({
+        position:   'absolute',
+        visibility: 'hidden',
+        display:    'block'
+      });
+
+      var positionedWidth = element.getStyle('width');
+
+      var newWidth;
+      if (width && (positionedWidth === width)) {
+        newWidth = getPixelValue(element, 'width', context);
+      } else if (position === 'absolute' || position === 'fixed') {
+        newWidth = getPixelValue(element, 'width', context);
+      } else {
+        var parent = element.parentNode, pLayout = $(parent).getLayout();
+
+        newWidth = pLayout.get('width') -
+         this.get('margin-left') -
+         this.get('border-left') -
+         this.get('padding-left') -
+         this.get('padding-right') -
+         this.get('border-right') -
+         this.get('margin-right');
+      }
+
+      element.setStyle({ width: newWidth + 'px' });
+
+      this._prepared = true;
+    },
+
+    _end: function() {
+      var element = this.element;
+      var originalStyles = element.retrieve('prototype_original_styles');
+      element.store('prototype_original_styles', null);
+      element.setStyle(originalStyles);
+      this._prepared = false;
+    },
+
+    _compute: function(property) {
+      var COMPUTATIONS = Element.Layout.COMPUTATIONS;
+      if (!(property in COMPUTATIONS)) {
+        throw "Property not found.";
+      }
+
+      return this._set(property, COMPUTATIONS[property].call(this, this.element));
+    },
+
+    toObject: function() {
+      var args = $A(arguments);
+      var keys = (args.length === 0) ? Element.Layout.PROPERTIES :
+       args.join(' ').split(' ');
+      var obj = {};
+      keys.each( function(key) {
+        if (!Element.Layout.PROPERTIES.include(key)) return;
+        var value = this.get(key);
+        if (value != null) obj[key] = value;
+      }, this);
+      return obj;
+    },
+
+    toHash: function() {
+      var obj = this.toObject.apply(this, arguments);
+      return new Hash(obj);
+    },
+
+    toCSS: function() {
+      var args = $A(arguments);
+      var keys = (args.length === 0) ? Element.Layout.PROPERTIES :
+       args.join(' ').split(' ');
+      var css = {};
+
+      keys.each( function(key) {
+        if (!Element.Layout.PROPERTIES.include(key)) return;
+        if (Element.Layout.COMPOSITE_PROPERTIES.include(key)) return;
+
+        var value = this.get(key);
+        if (value != null) css[cssNameFor(key)] = value + 'px';
+      }, this);
+      return css;
+    },
+
+    inspect: function() {
+      return "#<Element.Layout>";
     }
   });
+
+  Object.extend(Element.Layout, {
+    PROPERTIES: $w('height width top left right bottom border-left border-right border-top border-bottom padding-left padding-right padding-top padding-bottom margin-top margin-bottom margin-left margin-right padding-box-width padding-box-height border-box-width border-box-height margin-box-width margin-box-height'),
+
+    COMPOSITE_PROPERTIES: $w('padding-box-width padding-box-height margin-box-width margin-box-height border-box-width border-box-height'),
+
+    COMPUTATIONS: {
+      'height': function(element) {
+        if (!this._preComputing) this._begin();
+
+        var bHeight = this.get('border-box-height');
+        if (bHeight <= 0) {
+          if (!this._preComputing) this._end();
+          return 0;
+        }
+
+        var bTop = this.get('border-top'),
+         bBottom = this.get('border-bottom');
+
+        var pTop = this.get('padding-top'),
+         pBottom = this.get('padding-bottom');
+
+        if (!this._preComputing) this._end();
+
+        return bHeight - bTop - bBottom - pTop - pBottom;
+      },
+
+      'width': function(element) {
+        if (!this._preComputing) this._begin();
+
+        var bWidth = this.get('border-box-width');
+        if (bWidth <= 0) {
+          if (!this._preComputing) this._end();
+          return 0;
+        }
+
+        var bLeft = this.get('border-left'),
+         bRight = this.get('border-right');
+
+        var pLeft = this.get('padding-left'),
+         pRight = this.get('padding-right');
+
+        if (!this._preComputing) this._end();
+
+        return bWidth - bLeft - bRight - pLeft - pRight;
+      },
+
+      'padding-box-height': function(element) {
+        var height = this.get('height'),
+         pTop = this.get('padding-top'),
+         pBottom = this.get('padding-bottom');
+
+        return height + pTop + pBottom;
+      },
+
+      'padding-box-width': function(element) {
+        var width = this.get('width'),
+         pLeft = this.get('padding-left'),
+         pRight = this.get('padding-right');
+
+        return width + pLeft + pRight;
+      },
+
+      'border-box-height': function(element) {
+        if (!this._preComputing) this._begin();
+        var height = element.offsetHeight;
+        if (!this._preComputing) this._end();
+        return height;
+      },
+
+      'border-box-width': function(element) {
+        if (!this._preComputing) this._begin();
+        var width = element.offsetWidth;
+        if (!this._preComputing) this._end();
+        return width;
+      },
+
+      'margin-box-height': function(element) {
+        var bHeight = this.get('border-box-height'),
+         mTop = this.get('margin-top'),
+         mBottom = this.get('margin-bottom');
+
+        if (bHeight <= 0) return 0;
+
+        return bHeight + mTop + mBottom;
+      },
+
+      'margin-box-width': function(element) {
+        var bWidth = this.get('border-box-width'),
+         mLeft = this.get('margin-left'),
+         mRight = this.get('margin-right');
+
+        if (bWidth <= 0) return 0;
+
+        return bWidth + mLeft + mRight;
+      },
+
+      'top': function(element) {
+        var offset = element.positionedOffset();
+        return offset.top;
+      },
+
+      'bottom': function(element) {
+        var offset = element.positionedOffset(),
+         parent = element.getOffsetParent(),
+         pHeight = parent.measure('height');
+
+        var mHeight = this.get('border-box-height');
+
+        return pHeight - mHeight - offset.top;
+      },
+
+      'left': function(element) {
+        var offset = element.positionedOffset();
+        return offset.left;
+      },
+
+      'right': function(element) {
+        var offset = element.positionedOffset(),
+         parent = element.getOffsetParent(),
+         pWidth = parent.measure('width');
+
+        var mWidth = this.get('border-box-width');
+
+        return pWidth - mWidth - offset.left;
+      },
+
+      'padding-top': function(element) {
+        return getPixelValue(element, 'paddingTop');
+      },
+
+      'padding-bottom': function(element) {
+        return getPixelValue(element, 'paddingBottom');
+      },
+
+      'padding-left': function(element) {
+        return getPixelValue(element, 'paddingLeft');
+      },
+
+      'padding-right': function(element) {
+        return getPixelValue(element, 'paddingRight');
+      },
+
+      'border-top': function(element) {
+        return getPixelValue(element, 'borderTopWidth');
+      },
+
+      'border-bottom': function(element) {
+        return getPixelValue(element, 'borderBottomWidth');
+      },
+
+      'border-left': function(element) {
+        return getPixelValue(element, 'borderLeftWidth');
+      },
+
+      'border-right': function(element) {
+        return getPixelValue(element, 'borderRightWidth');
+      },
+
+      'margin-top': function(element) {
+        return getPixelValue(element, 'marginTop');
+      },
+
+      'margin-bottom': function(element) {
+        return getPixelValue(element, 'marginBottom');
+      },
+
+      'margin-left': function(element) {
+        return getPixelValue(element, 'marginLeft');
+      },
+
+      'margin-right': function(element) {
+        return getPixelValue(element, 'marginRight');
+      }
+    }
+  });
+
+  if ('getBoundingClientRect' in document.documentElement) {
+    Object.extend(Element.Layout.COMPUTATIONS, {
+      'right': function(element) {
+        var parent = hasLayout(element.getOffsetParent());
+        var rect = element.getBoundingClientRect(),
+         pRect = parent.getBoundingClientRect();
+
+        return (pRect.right - rect.right).round();
+      },
+
+      'bottom': function(element) {
+        var parent = hasLayout(element.getOffsetParent());
+        var rect = element.getBoundingClientRect(),
+         pRect = parent.getBoundingClientRect();
+
+        return (pRect.bottom - rect.bottom).round();
+      }
+    });
+  }
+
+  Element.Offset = Class.create({
+    initialize: function(left, top) {
+      this.left = left.round();
+      this.top  = top.round();
+
+      this[0] = this.left;
+      this[1] = this.top;
+    },
+
+    relativeTo: function(offset) {
+      return new Element.Offset(
+        this.left - offset.left,
+        this.top  - offset.top
+      );
+    },
+
+    inspect: function() {
+      return "#<Element.Offset left: #{left} top: #{top}>".interpolate(this);
+    },
+
+    toString: function() {
+      return "[#{left}, #{top}]".interpolate(this);
+    },
+
+    toArray: function() {
+      return [this.left, this.top];
+    }
+  });
+
+  function getLayout(element, preCompute) {
+    return new Element.Layout(element, preCompute);
+  }
+
+  function measure(element, property) {
+    return $(element).getLayout().get(property);
+  }
+
+  function getDimensions(element) {
+    element = $(element);
+    var display = Element.getStyle(element, 'display');
+
+    if (display && display !== 'none') {
+      return { width: element.offsetWidth, height: element.offsetHeight };
+    }
+
+    var style = element.style;
+    var originalStyles = {
+      visibility: style.visibility,
+      position:   style.position,
+      display:    style.display
+    };
+
+    var newStyles = {
+      visibility: 'hidden',
+      display:    'block'
+    };
+
+    if (originalStyles.position !== 'fixed')
+      newStyles.position = 'absolute';
+
+    Element.setStyle(element, newStyles);
+
+    var dimensions = {
+      width:  element.offsetWidth,
+      height: element.offsetHeight
+    };
+
+    Element.setStyle(element, originalStyles);
+
+    return dimensions;
+  }
+
+  function getOffsetParent(element) {
+    element = $(element);
+
+    if (isDocument(element) || isDetached(element) || isBody(element) || isHtml(element))
+      return $(document.body);
+
+    var isInline = (Element.getStyle(element, 'display') === 'inline');
+    if (!isInline && element.offsetParent) return $(element.offsetParent);
+
+    while ((element = element.parentNode) && element !== document.body) {
+      if (Element.getStyle(element, 'position') !== 'static') {
+        return isHtml(element) ? $(document.body) : $(element);
+      }
+    }
+
+    return $(document.body);
+  }
+
+
+  function cumulativeOffset(element) {
+    element = $(element);
+    var valueT = 0, valueL = 0;
+    if (element.parentNode) {
+      do {
+        valueT += element.offsetTop  || 0;
+        valueL += element.offsetLeft || 0;
+        element = element.offsetParent;
+      } while (element);
+    }
+    return new Element.Offset(valueL, valueT);
+  }
+
+  function positionedOffset(element) {
+    element = $(element);
+
+    var layout = element.getLayout();
+
+    var valueT = 0, valueL = 0;
+    do {
+      valueT += element.offsetTop  || 0;
+      valueL += element.offsetLeft || 0;
+      element = element.offsetParent;
+      if (element) {
+        if (isBody(element)) break;
+        var p = Element.getStyle(element, 'position');
+        if (p !== 'static') break;
+      }
+    } while (element);
+
+    valueL -= layout.get('margin-top');
+    valueT -= layout.get('margin-left');
+
+    return new Element.Offset(valueL, valueT);
+  }
+
+  function cumulativeScrollOffset(element) {
+    var valueT = 0, valueL = 0;
+    do {
+      valueT += element.scrollTop  || 0;
+      valueL += element.scrollLeft || 0;
+      element = element.parentNode;
+    } while (element);
+    return new Element.Offset(valueL, valueT);
+  }
+
+  function viewportOffset(forElement) {
+    element = $(element);
+    var valueT = 0, valueL = 0, docBody = document.body;
+
+    var element = forElement;
+    do {
+      valueT += element.offsetTop  || 0;
+      valueL += element.offsetLeft || 0;
+      if (element.offsetParent == docBody &&
+        Element.getStyle(element, 'position') == 'absolute') break;
+    } while (element = element.offsetParent);
+
+    element = forElement;
+    do {
+      if (element != docBody) {
+        valueT -= element.scrollTop  || 0;
+        valueL -= element.scrollLeft || 0;
+      }
+    } while (element = element.parentNode);
+    return new Element.Offset(valueL, valueT);
+  }
+
+  function absolutize(element) {
+    element = $(element);
+
+    if (Element.getStyle(element, 'position') === 'absolute') {
+      return element;
+    }
+
+    var offsetParent = getOffsetParent(element);
+    var eOffset = element.viewportOffset(),
+     pOffset = offsetParent.viewportOffset();
+
+    var offset = eOffset.relativeTo(pOffset);
+    var layout = element.getLayout();
+
+    element.store('prototype_absolutize_original_styles', {
+      left:   element.getStyle('left'),
+      top:    element.getStyle('top'),
+      width:  element.getStyle('width'),
+      height: element.getStyle('height')
+    });
+
+    element.setStyle({
+      position: 'absolute',
+      top:    offset.top + 'px',
+      left:   offset.left + 'px',
+      width:  layout.get('width') + 'px',
+      height: layout.get('height') + 'px'
+    });
+
+    return element;
+  }
+
+  function relativize(element) {
+    element = $(element);
+    if (Element.getStyle(element, 'position') === 'relative') {
+      return element;
+    }
+
+    var originalStyles =
+     element.retrieve('prototype_absolutize_original_styles');
+
+    if (originalStyles) element.setStyle(originalStyles);
+    return element;
+  }
+
+  if (Prototype.Browser.IE) {
+    getOffsetParent = getOffsetParent.wrap(
+      function(proceed, element) {
+        element = $(element);
+
+        if (isDocument(element) || isDetached(element) || isBody(element) || isHtml(element))
+          return $(document.body);
+
+        var position = element.getStyle('position');
+        if (position !== 'static') return proceed(element);
+
+        element.setStyle({ position: 'relative' });
+        var value = proceed(element);
+        element.setStyle({ position: position });
+        return value;
+      }
+    );
+
+    positionedOffset = positionedOffset.wrap(function(proceed, element) {
+      element = $(element);
+      if (!element.parentNode) return new Element.Offset(0, 0);
+      var position = element.getStyle('position');
+      if (position !== 'static') return proceed(element);
+
+      var offsetParent = element.getOffsetParent();
+      if (offsetParent && offsetParent.getStyle('position') === 'fixed')
+        hasLayout(offsetParent);
+
+      element.setStyle({ position: 'relative' });
+      var value = proceed(element);
+      element.setStyle({ position: position });
+      return value;
+    });
+  } else if (Prototype.Browser.Webkit) {
+    cumulativeOffset = function(element) {
+      element = $(element);
+      var valueT = 0, valueL = 0;
+      do {
+        valueT += element.offsetTop  || 0;
+        valueL += element.offsetLeft || 0;
+        if (element.offsetParent == document.body)
+          if (Element.getStyle(element, 'position') == 'absolute') break;
+
+        element = element.offsetParent;
+      } while (element);
+
+      return new Element.Offset(valueL, valueT);
+    };
+  }
+
+
+  Element.addMethods({
+    getLayout:              getLayout,
+    measure:                measure,
+    getDimensions:          getDimensions,
+    getOffsetParent:        getOffsetParent,
+    cumulativeOffset:       cumulativeOffset,
+    positionedOffset:       positionedOffset,
+    cumulativeScrollOffset: cumulativeScrollOffset,
+    viewportOffset:         viewportOffset,
+    absolutize:             absolutize,
+    relativize:             relativize
+  });
+
+  function isBody(element) {
+    return element.nodeName.toUpperCase() === 'BODY';
+  }
+
+  function isHtml(element) {
+    return element.nodeName.toUpperCase() === 'HTML';
+  }
+
+  function isDocument(element) {
+    return element.nodeType === Node.DOCUMENT_NODE;
+  }
+
+  function isDetached(element) {
+    return element !== document.body &&
+     !Element.descendantOf(element, document.body);
+  }
+
+  if ('getBoundingClientRect' in document.documentElement) {
+    Element.addMethods({
+      viewportOffset: function(element) {
+        element = $(element);
+        if (isDetached(element)) return new Element.Offset(0, 0);
+
+        var rect = element.getBoundingClientRect(),
+         docEl = document.documentElement;
+        return new Element.Offset(rect.left - docEl.clientLeft,
+         rect.top - docEl.clientTop);
+      }
+    });
+  }
+})();
+window.$$ = function() {
+  var expression = $A(arguments).join(', ');
+  return Prototype.Selector.select(expression, document);
+};
+
+Prototype.Selector = (function() {
+
+  function select() {
+    throw new Error('Method "Prototype.Selector.select" must be defined.');
+  }
+
+  function match() {
+    throw new Error('Method "Prototype.Selector.match" must be defined.');
+  }
+
+  function find(elements, expression, index) {
+    index = index || 0;
+    var match = Prototype.Selector.match, length = elements.length, matchIndex = 0, i;
+
+    for (i = 0; i < length; i++) {
+      if (match(elements[i], expression) && index == matchIndex++) {
+        return Element.extend(elements[i]);
+      }
+    }
+  }
+
+  function extendElements(elements) {
+    for (var i = 0, length = elements.length; i < length; i++) {
+      Element.extend(elements[i]);
+    }
+    return elements;
+  }
+
+
+  var K = Prototype.K;
+
+  return {
+    select: select,
+    match: match,
+    find: find,
+    extendElements: (Element.extend === K) ? K : extendElements,
+    extendElement: Element.extend
+  };
+})();
+Prototype._original_property = window.Sizzle;
+/*!
+ * Sizzle CSS Selector Engine - v1.0
+ *  Copyright 2009, The Dojo Foundation
+ *  Released under the MIT, BSD, and GPL Licenses.
+ *  More information: http://sizzlejs.com/
+ */
+(function(){
+
+var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^[\]]*\]|['"][^'"]*['"]|[^[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g,
+	done = 0,
+	toString = Object.prototype.toString,
+	hasDuplicate = false,
+	baseHasDuplicate = true;
+
+[0, 0].sort(function(){
+	baseHasDuplicate = false;
+	return 0;
+});
+
+var Sizzle = function(selector, context, results, seed) {
+	results = results || [];
+	var origContext = context = context || document;
+
+	if ( context.nodeType !== 1 && context.nodeType !== 9 ) {
+		return [];
+	}
+
+	if ( !selector || typeof selector !== "string" ) {
+		return results;
+	}
+
+	var parts = [], m, set, checkSet, check, mode, extra, prune = true, contextXML = isXML(context),
+		soFar = selector;
+
+	while ( (chunker.exec(""), m = chunker.exec(soFar)) !== null ) {
+		soFar = m[3];
+
+		parts.push( m[1] );
+
+		if ( m[2] ) {
+			extra = m[3];
+			break;
+		}
+	}
+
+	if ( parts.length > 1 && origPOS.exec( selector ) ) {
+		if ( parts.length === 2 && Expr.relative[ parts[0] ] ) {
+			set = posProcess( parts[0] + parts[1], context );
+		} else {
+			set = Expr.relative[ parts[0] ] ?
+				[ context ] :
+				Sizzle( parts.shift(), context );
+
+			while ( parts.length ) {
+				selector = parts.shift();
+
+				if ( Expr.relative[ selector ] )
+					selector += parts.shift();
+
+				set = posProcess( selector, set );
+			}
+		}
+	} else {
+		if ( !seed && parts.length > 1 && context.nodeType === 9 && !contextXML &&
+				Expr.match.ID.test(parts[0]) && !Expr.match.ID.test(parts[parts.length - 1]) ) {
+			var ret = Sizzle.find( parts.shift(), context, contextXML );
+			context = ret.expr ? Sizzle.filter( ret.expr, ret.set )[0] : ret.set[0];
+		}
+
+		if ( context ) {
+			var ret = seed ?
+				{ expr: parts.pop(), set: makeArray(seed) } :
+				Sizzle.find( parts.pop(), parts.length === 1 && (parts[0] === "~" || parts[0] === "+") && context.parentNode ? context.parentNode : context, contextXML );
+			set = ret.expr ? Sizzle.filter( ret.expr, ret.set ) : ret.set;
+
+			if ( parts.length > 0 ) {
+				checkSet = makeArray(set);
+			} else {
+				prune = false;
+			}
+
+			while ( parts.length ) {
+				var cur = parts.pop(), pop = cur;
+
+				if ( !Expr.relative[ cur ] ) {
+					cur = "";
+				} else {
+					pop = parts.pop();
+				}
+
+				if ( pop == null ) {
+					pop = context;
+				}
+
+				Expr.relative[ cur ]( checkSet, pop, contextXML );
+			}
+		} else {
+			checkSet = parts = [];
+		}
+	}
+
+	if ( !checkSet ) {
+		checkSet = set;
+	}
+
+	if ( !checkSet ) {
+		throw "Syntax error, unrecognized expression: " + (cur || selector);
+	}
+
+	if ( toString.call(checkSet) === "[object Array]" ) {
+		if ( !prune ) {
+			results.push.apply( results, checkSet );
+		} else if ( context && context.nodeType === 1 ) {
+			for ( var i = 0; checkSet[i] != null; i++ ) {
+				if ( checkSet[i] && (checkSet[i] === true || checkSet[i].nodeType === 1 && contains(context, checkSet[i])) ) {
+					results.push( set[i] );
+				}
+			}
+		} else {
+			for ( var i = 0; checkSet[i] != null; i++ ) {
+				if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
+					results.push( set[i] );
+				}
+			}
+		}
+	} else {
+		makeArray( checkSet, results );
+	}
+
+	if ( extra ) {
+		Sizzle( extra, origContext, results, seed );
+		Sizzle.uniqueSort( results );
+	}
+
+	return results;
+};
+
+Sizzle.uniqueSort = function(results){
+	if ( sortOrder ) {
+		hasDuplicate = baseHasDuplicate;
+		results.sort(sortOrder);
+
+		if ( hasDuplicate ) {
+			for ( var i = 1; i < results.length; i++ ) {
+				if ( results[i] === results[i-1] ) {
+					results.splice(i--, 1);
+				}
+			}
+		}
+	}
+
+	return results;
+};
+
+Sizzle.matches = function(expr, set){
+	return Sizzle(expr, null, null, set);
+};
+
+Sizzle.find = function(expr, context, isXML){
+	var set, match;
+
+	if ( !expr ) {
+		return [];
+	}
+
+	for ( var i = 0, l = Expr.order.length; i < l; i++ ) {
+		var type = Expr.order[i], match;
+
+		if ( (match = Expr.leftMatch[ type ].exec( expr )) ) {
+			var left = match[1];
+			match.splice(1,1);
+
+			if ( left.substr( left.length - 1 ) !== "\\" ) {
+				match[1] = (match[1] || "").replace(/\\/g, "");
+				set = Expr.find[ type ]( match, context, isXML );
+				if ( set != null ) {
+					expr = expr.replace( Expr.match[ type ], "" );
+					break;
+				}
+			}
+		}
+	}
+
+	if ( !set ) {
+		set = context.getElementsByTagName("*");
+	}
+
+	return {set: set, expr: expr};
+};
+
+Sizzle.filter = function(expr, set, inplace, not){
+	var old = expr, result = [], curLoop = set, match, anyFound,
+		isXMLFilter = set && set[0] && isXML(set[0]);
+
+	while ( expr && set.length ) {
+		for ( var type in Expr.filter ) {
+			if ( (match = Expr.match[ type ].exec( expr )) != null ) {
+				var filter = Expr.filter[ type ], found, item;
+				anyFound = false;
+
+				if ( curLoop == result ) {
+					result = [];
+				}
+
+				if ( Expr.preFilter[ type ] ) {
+					match = Expr.preFilter[ type ]( match, curLoop, inplace, result, not, isXMLFilter );
+
+					if ( !match ) {
+						anyFound = found = true;
+					} else if ( match === true ) {
+						continue;
+					}
+				}
+
+				if ( match ) {
+					for ( var i = 0; (item = curLoop[i]) != null; i++ ) {
+						if ( item ) {
+							found = filter( item, match, i, curLoop );
+							var pass = not ^ !!found;
+
+							if ( inplace && found != null ) {
+								if ( pass ) {
+									anyFound = true;
+								} else {
+									curLoop[i] = false;
+								}
+							} else if ( pass ) {
+								result.push( item );
+								anyFound = true;
+							}
+						}
+					}
+				}
+
+				if ( found !== undefined ) {
+					if ( !inplace ) {
+						curLoop = result;
+					}
+
+					expr = expr.replace( Expr.match[ type ], "" );
+
+					if ( !anyFound ) {
+						return [];
+					}
+
+					break;
+				}
+			}
+		}
+
+		if ( expr == old ) {
+			if ( anyFound == null ) {
+				throw "Syntax error, unrecognized expression: " + expr;
+			} else {
+				break;
+			}
+		}
+
+		old = expr;
+	}
+
+	return curLoop;
+};
+
+var Expr = Sizzle.selectors = {
+	order: [ "ID", "NAME", "TAG" ],
+	match: {
+		ID: /#((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
+		CLASS: /\.((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
+		NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF-]|\\.)+)['"]*\]/,
+		ATTR: /\[\s*((?:[\w\u00c0-\uFFFF-]|\\.)+)\s*(?:(\S?=)\s*(['"]*)(.*?)\3|)\s*\]/,
+		TAG: /^((?:[\w\u00c0-\uFFFF\*-]|\\.)+)/,
+		CHILD: /:(only|nth|last|first)-child(?:\((even|odd|[\dn+-]*)\))?/,
+		POS: /:(nth|eq|gt|lt|first|last|even|odd)(?:\((\d*)\))?(?=[^-]|$)/,
+		PSEUDO: /:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\((['"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/
+	},
+	leftMatch: {},
+	attrMap: {
+		"class": "className",
+		"for": "htmlFor"
+	},
+	attrHandle: {
+		href: function(elem){
+			return elem.getAttribute("href");
+		}
+	},
+	relative: {
+		"+": function(checkSet, part, isXML){
+			var isPartStr = typeof part === "string",
+				isTag = isPartStr && !/\W/.test(part),
+				isPartStrNotTag = isPartStr && !isTag;
+
+			if ( isTag && !isXML ) {
+				part = part.toUpperCase();
+			}
+
+			for ( var i = 0, l = checkSet.length, elem; i < l; i++ ) {
+				if ( (elem = checkSet[i]) ) {
+					while ( (elem = elem.previousSibling) && elem.nodeType !== 1 ) {}
+
+					checkSet[i] = isPartStrNotTag || elem && elem.nodeName === part ?
+						elem || false :
+						elem === part;
+				}
+			}
+
+			if ( isPartStrNotTag ) {
+				Sizzle.filter( part, checkSet, true );
+			}
+		},
+		">": function(checkSet, part, isXML){
+			var isPartStr = typeof part === "string";
+
+			if ( isPartStr && !/\W/.test(part) ) {
+				part = isXML ? part : part.toUpperCase();
+
+				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+					var elem = checkSet[i];
+					if ( elem ) {
+						var parent = elem.parentNode;
+						checkSet[i] = parent.nodeName === part ? parent : false;
+					}
+				}
+			} else {
+				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+					var elem = checkSet[i];
+					if ( elem ) {
+						checkSet[i] = isPartStr ?
+							elem.parentNode :
+							elem.parentNode === part;
+					}
+				}
+
+				if ( isPartStr ) {
+					Sizzle.filter( part, checkSet, true );
+				}
+			}
+		},
+		"": function(checkSet, part, isXML){
+			var doneName = done++, checkFn = dirCheck;
+
+			if ( !/\W/.test(part) ) {
+				var nodeCheck = part = isXML ? part : part.toUpperCase();
+				checkFn = dirNodeCheck;
+			}
+
+			checkFn("parentNode", part, doneName, checkSet, nodeCheck, isXML);
+		},
+		"~": function(checkSet, part, isXML){
+			var doneName = done++, checkFn = dirCheck;
+
+			if ( typeof part === "string" && !/\W/.test(part) ) {
+				var nodeCheck = part = isXML ? part : part.toUpperCase();
+				checkFn = dirNodeCheck;
+			}
+
+			checkFn("previousSibling", part, doneName, checkSet, nodeCheck, isXML);
+		}
+	},
+	find: {
+		ID: function(match, context, isXML){
+			if ( typeof context.getElementById !== "undefined" && !isXML ) {
+				var m = context.getElementById(match[1]);
+				return m ? [m] : [];
+			}
+		},
+		NAME: function(match, context, isXML){
+			if ( typeof context.getElementsByName !== "undefined" ) {
+				var ret = [], results = context.getElementsByName(match[1]);
+
+				for ( var i = 0, l = results.length; i < l; i++ ) {
+					if ( results[i].getAttribute("name") === match[1] ) {
+						ret.push( results[i] );
+					}
+				}
+
+				return ret.length === 0 ? null : ret;
+			}
+		},
+		TAG: function(match, context){
+			return context.getElementsByTagName(match[1]);
+		}
+	},
+	preFilter: {
+		CLASS: function(match, curLoop, inplace, result, not, isXML){
+			match = " " + match[1].replace(/\\/g, "") + " ";
+
+			if ( isXML ) {
+				return match;
+			}
+
+			for ( var i = 0, elem; (elem = curLoop[i]) != null; i++ ) {
+				if ( elem ) {
+					if ( not ^ (elem.className && (" " + elem.className + " ").indexOf(match) >= 0) ) {
+						if ( !inplace )
+							result.push( elem );
+					} else if ( inplace ) {
+						curLoop[i] = false;
+					}
+				}
+			}
+
+			return false;
+		},
+		ID: function(match){
+			return match[1].replace(/\\/g, "");
+		},
+		TAG: function(match, curLoop){
+			for ( var i = 0; curLoop[i] === false; i++ ){}
+			return curLoop[i] && isXML(curLoop[i]) ? match[1] : match[1].toUpperCase();
+		},
+		CHILD: function(match){
+			if ( match[1] == "nth" ) {
+				var test = /(-?)(\d*)n((?:\+|-)?\d*)/.exec(
+					match[2] == "even" && "2n" || match[2] == "odd" && "2n+1" ||
+					!/\D/.test( match[2] ) && "0n+" + match[2] || match[2]);
+
+				match[2] = (test[1] + (test[2] || 1)) - 0;
+				match[3] = test[3] - 0;
+			}
+
+			match[0] = done++;
+
+			return match;
+		},
+		ATTR: function(match, curLoop, inplace, result, not, isXML){
+			var name = match[1].replace(/\\/g, "");
+
+			if ( !isXML && Expr.attrMap[name] ) {
+				match[1] = Expr.attrMap[name];
+			}
+
+			if ( match[2] === "~=" ) {
+				match[4] = " " + match[4] + " ";
+			}
+
+			return match;
+		},
+		PSEUDO: function(match, curLoop, inplace, result, not){
+			if ( match[1] === "not" ) {
+				if ( ( chunker.exec(match[3]) || "" ).length > 1 || /^\w/.test(match[3]) ) {
+					match[3] = Sizzle(match[3], null, null, curLoop);
+				} else {
+					var ret = Sizzle.filter(match[3], curLoop, inplace, true ^ not);
+					if ( !inplace ) {
+						result.push.apply( result, ret );
+					}
+					return false;
+				}
+			} else if ( Expr.match.POS.test( match[0] ) || Expr.match.CHILD.test( match[0] ) ) {
+				return true;
+			}
+
+			return match;
+		},
+		POS: function(match){
+			match.unshift( true );
+			return match;
+		}
+	},
+	filters: {
+		enabled: function(elem){
+			return elem.disabled === false && elem.type !== "hidden";
+		},
+		disabled: function(elem){
+			return elem.disabled === true;
+		},
+		checked: function(elem){
+			return elem.checked === true;
+		},
+		selected: function(elem){
+			elem.parentNode.selectedIndex;
+			return elem.selected === true;
+		},
+		parent: function(elem){
+			return !!elem.firstChild;
+		},
+		empty: function(elem){
+			return !elem.firstChild;
+		},
+		has: function(elem, i, match){
+			return !!Sizzle( match[3], elem ).length;
+		},
+		header: function(elem){
+			return /h\d/i.test( elem.nodeName );
+		},
+		text: function(elem){
+			return "text" === elem.type;
+		},
+		radio: function(elem){
+			return "radio" === elem.type;
+		},
+		checkbox: function(elem){
+			return "checkbox" === elem.type;
+		},
+		file: function(elem){
+			return "file" === elem.type;
+		},
+		password: function(elem){
+			return "password" === elem.type;
+		},
+		submit: function(elem){
+			return "submit" === elem.type;
+		},
+		image: function(elem){
+			return "image" === elem.type;
+		},
+		reset: function(elem){
+			return "reset" === elem.type;
+		},
+		button: function(elem){
+			return "button" === elem.type || elem.nodeName.toUpperCase() === "BUTTON";
+		},
+		input: function(elem){
+			return /input|select|textarea|button/i.test(elem.nodeName);
+		}
+	},
+	setFilters: {
+		first: function(elem, i){
+			return i === 0;
+		},
+		last: function(elem, i, match, array){
+			return i === array.length - 1;
+		},
+		even: function(elem, i){
+			return i % 2 === 0;
+		},
+		odd: function(elem, i){
+			return i % 2 === 1;
+		},
+		lt: function(elem, i, match){
+			return i < match[3] - 0;
+		},
+		gt: function(elem, i, match){
+			return i > match[3] - 0;
+		},
+		nth: function(elem, i, match){
+			return match[3] - 0 == i;
+		},
+		eq: function(elem, i, match){
+			return match[3] - 0 == i;
+		}
+	},
+	filter: {
+		PSEUDO: function(elem, match, i, array){
+			var name = match[1], filter = Expr.filters[ name ];
+
+			if ( filter ) {
+				return filter( elem, i, match, array );
+			} else if ( name === "contains" ) {
+				return (elem.textContent || elem.innerText || "").indexOf(match[3]) >= 0;
+			} else if ( name === "not" ) {
+				var not = match[3];
+
+				for ( var i = 0, l = not.length; i < l; i++ ) {
+					if ( not[i] === elem ) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		},
+		CHILD: function(elem, match){
+			var type = match[1], node = elem;
+			switch (type) {
+				case 'only':
+				case 'first':
+					while ( (node = node.previousSibling) )  {
+						if ( node.nodeType === 1 ) return false;
+					}
+					if ( type == 'first') return true;
+					node = elem;
+				case 'last':
+					while ( (node = node.nextSibling) )  {
+						if ( node.nodeType === 1 ) return false;
+					}
+					return true;
+				case 'nth':
+					var first = match[2], last = match[3];
+
+					if ( first == 1 && last == 0 ) {
+						return true;
+					}
+
+					var doneName = match[0],
+						parent = elem.parentNode;
+
+					if ( parent && (parent.sizcache !== doneName || !elem.nodeIndex) ) {
+						var count = 0;
+						for ( node = parent.firstChild; node; node = node.nextSibling ) {
+							if ( node.nodeType === 1 ) {
+								node.nodeIndex = ++count;
+							}
+						}
+						parent.sizcache = doneName;
+					}
+
+					var diff = elem.nodeIndex - last;
+					if ( first == 0 ) {
+						return diff == 0;
+					} else {
+						return ( diff % first == 0 && diff / first >= 0 );
+					}
+			}
+		},
+		ID: function(elem, match){
+			return elem.nodeType === 1 && elem.getAttribute("id") === match;
+		},
+		TAG: function(elem, match){
+			return (match === "*" && elem.nodeType === 1) || elem.nodeName === match;
+		},
+		CLASS: function(elem, match){
+			return (" " + (elem.className || elem.getAttribute("class")) + " ")
+				.indexOf( match ) > -1;
+		},
+		ATTR: function(elem, match){
+			var name = match[1],
+				result = Expr.attrHandle[ name ] ?
+					Expr.attrHandle[ name ]( elem ) :
+					elem[ name ] != null ?
+						elem[ name ] :
+						elem.getAttribute( name ),
+				value = result + "",
+				type = match[2],
+				check = match[4];
+
+			return result == null ?
+				type === "!=" :
+				type === "=" ?
+				value === check :
+				type === "*=" ?
+				value.indexOf(check) >= 0 :
+				type === "~=" ?
+				(" " + value + " ").indexOf(check) >= 0 :
+				!check ?
+				value && result !== false :
+				type === "!=" ?
+				value != check :
+				type === "^=" ?
+				value.indexOf(check) === 0 :
+				type === "$=" ?
+				value.substr(value.length - check.length) === check :
+				type === "|=" ?
+				value === check || value.substr(0, check.length + 1) === check + "-" :
+				false;
+		},
+		POS: function(elem, match, i, array){
+			var name = match[2], filter = Expr.setFilters[ name ];
+
+			if ( filter ) {
+				return filter( elem, i, match, array );
+			}
+		}
+	}
+};
+
+var origPOS = Expr.match.POS;
+
+for ( var type in Expr.match ) {
+	Expr.match[ type ] = new RegExp( Expr.match[ type ].source + /(?![^\[]*\])(?![^\(]*\))/.source );
+	Expr.leftMatch[ type ] = new RegExp( /(^(?:.|\r|\n)*?)/.source + Expr.match[ type ].source );
 }
 
-function $$() {
-  return Selector.findChildElements(document, $A(arguments));
+var makeArray = function(array, results) {
+	array = Array.prototype.slice.call( array, 0 );
+
+	if ( results ) {
+		results.push.apply( results, array );
+		return results;
+	}
+
+	return array;
+};
+
+try {
+	Array.prototype.slice.call( document.documentElement.childNodes, 0 );
+
+} catch(e){
+	makeArray = function(array, results) {
+		var ret = results || [];
+
+		if ( toString.call(array) === "[object Array]" ) {
+			Array.prototype.push.apply( ret, array );
+		} else {
+			if ( typeof array.length === "number" ) {
+				for ( var i = 0, l = array.length; i < l; i++ ) {
+					ret.push( array[i] );
+				}
+			} else {
+				for ( var i = 0; array[i]; i++ ) {
+					ret.push( array[i] );
+				}
+			}
+		}
+
+		return ret;
+	};
 }
+
+var sortOrder;
+
+if ( document.documentElement.compareDocumentPosition ) {
+	sortOrder = function( a, b ) {
+		if ( !a.compareDocumentPosition || !b.compareDocumentPosition ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
+
+		var ret = a.compareDocumentPosition(b) & 4 ? -1 : a === b ? 0 : 1;
+		if ( ret === 0 ) {
+			hasDuplicate = true;
+		}
+		return ret;
+	};
+} else if ( "sourceIndex" in document.documentElement ) {
+	sortOrder = function( a, b ) {
+		if ( !a.sourceIndex || !b.sourceIndex ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
+
+		var ret = a.sourceIndex - b.sourceIndex;
+		if ( ret === 0 ) {
+			hasDuplicate = true;
+		}
+		return ret;
+	};
+} else if ( document.createRange ) {
+	sortOrder = function( a, b ) {
+		if ( !a.ownerDocument || !b.ownerDocument ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
+
+		var aRange = a.ownerDocument.createRange(), bRange = b.ownerDocument.createRange();
+		aRange.setStart(a, 0);
+		aRange.setEnd(a, 0);
+		bRange.setStart(b, 0);
+		bRange.setEnd(b, 0);
+		var ret = aRange.compareBoundaryPoints(Range.START_TO_END, bRange);
+		if ( ret === 0 ) {
+			hasDuplicate = true;
+		}
+		return ret;
+	};
+}
+
+(function(){
+	var form = document.createElement("div"),
+		id = "script" + (new Date).getTime();
+	form.innerHTML = "<a name='" + id + "'/>";
+
+	var root = document.documentElement;
+	root.insertBefore( form, root.firstChild );
+
+	if ( !!document.getElementById( id ) ) {
+		Expr.find.ID = function(match, context, isXML){
+			if ( typeof context.getElementById !== "undefined" && !isXML ) {
+				var m = context.getElementById(match[1]);
+				return m ? m.id === match[1] || typeof m.getAttributeNode !== "undefined" && m.getAttributeNode("id").nodeValue === match[1] ? [m] : undefined : [];
+			}
+		};
+
+		Expr.filter.ID = function(elem, match){
+			var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
+			return elem.nodeType === 1 && node && node.nodeValue === match;
+		};
+	}
+
+	root.removeChild( form );
+	root = form = null; // release memory in IE
+})();
+
+(function(){
+
+	var div = document.createElement("div");
+	div.appendChild( document.createComment("") );
+
+	if ( div.getElementsByTagName("*").length > 0 ) {
+		Expr.find.TAG = function(match, context){
+			var results = context.getElementsByTagName(match[1]);
+
+			if ( match[1] === "*" ) {
+				var tmp = [];
+
+				for ( var i = 0; results[i]; i++ ) {
+					if ( results[i].nodeType === 1 ) {
+						tmp.push( results[i] );
+					}
+				}
+
+				results = tmp;
+			}
+
+			return results;
+		};
+	}
+
+	div.innerHTML = "<a href='#'></a>";
+	if ( div.firstChild && typeof div.firstChild.getAttribute !== "undefined" &&
+			div.firstChild.getAttribute("href") !== "#" ) {
+		Expr.attrHandle.href = function(elem){
+			return elem.getAttribute("href", 2);
+		};
+	}
+
+	div = null; // release memory in IE
+})();
+
+if ( document.querySelectorAll ) (function(){
+	var oldSizzle = Sizzle, div = document.createElement("div");
+	div.innerHTML = "<p class='TEST'></p>";
+
+	if ( div.querySelectorAll && div.querySelectorAll(".TEST").length === 0 ) {
+		return;
+	}
+
+	Sizzle = function(query, context, extra, seed){
+		context = context || document;
+
+		if ( !seed && context.nodeType === 9 && !isXML(context) ) {
+			try {
+				return makeArray( context.querySelectorAll(query), extra );
+			} catch(e){}
+		}
+
+		return oldSizzle(query, context, extra, seed);
+	};
+
+	for ( var prop in oldSizzle ) {
+		Sizzle[ prop ] = oldSizzle[ prop ];
+	}
+
+	div = null; // release memory in IE
+})();
+
+if ( document.getElementsByClassName && document.documentElement.getElementsByClassName ) (function(){
+	var div = document.createElement("div");
+	div.innerHTML = "<div class='test e'></div><div class='test'></div>";
+
+	if ( div.getElementsByClassName("e").length === 0 )
+		return;
+
+	div.lastChild.className = "e";
+
+	if ( div.getElementsByClassName("e").length === 1 )
+		return;
+
+	Expr.order.splice(1, 0, "CLASS");
+	Expr.find.CLASS = function(match, context, isXML) {
+		if ( typeof context.getElementsByClassName !== "undefined" && !isXML ) {
+			return context.getElementsByClassName(match[1]);
+		}
+	};
+
+	div = null; // release memory in IE
+})();
+
+function dirNodeCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
+	var sibDir = dir == "previousSibling" && !isXML;
+	for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+		var elem = checkSet[i];
+		if ( elem ) {
+			if ( sibDir && elem.nodeType === 1 ){
+				elem.sizcache = doneName;
+				elem.sizset = i;
+			}
+			elem = elem[dir];
+			var match = false;
+
+			while ( elem ) {
+				if ( elem.sizcache === doneName ) {
+					match = checkSet[elem.sizset];
+					break;
+				}
+
+				if ( elem.nodeType === 1 && !isXML ){
+					elem.sizcache = doneName;
+					elem.sizset = i;
+				}
+
+				if ( elem.nodeName === cur ) {
+					match = elem;
+					break;
+				}
+
+				elem = elem[dir];
+			}
+
+			checkSet[i] = match;
+		}
+	}
+}
+
+function dirCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
+	var sibDir = dir == "previousSibling" && !isXML;
+	for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+		var elem = checkSet[i];
+		if ( elem ) {
+			if ( sibDir && elem.nodeType === 1 ) {
+				elem.sizcache = doneName;
+				elem.sizset = i;
+			}
+			elem = elem[dir];
+			var match = false;
+
+			while ( elem ) {
+				if ( elem.sizcache === doneName ) {
+					match = checkSet[elem.sizset];
+					break;
+				}
+
+				if ( elem.nodeType === 1 ) {
+					if ( !isXML ) {
+						elem.sizcache = doneName;
+						elem.sizset = i;
+					}
+					if ( typeof cur !== "string" ) {
+						if ( elem === cur ) {
+							match = true;
+							break;
+						}
+
+					} else if ( Sizzle.filter( cur, [elem] ).length > 0 ) {
+						match = elem;
+						break;
+					}
+				}
+
+				elem = elem[dir];
+			}
+
+			checkSet[i] = match;
+		}
+	}
+}
+
+var contains = document.compareDocumentPosition ?  function(a, b){
+	return a.compareDocumentPosition(b) & 16;
+} : function(a, b){
+	return a !== b && (a.contains ? a.contains(b) : true);
+};
+
+var isXML = function(elem){
+	return elem.nodeType === 9 && elem.documentElement.nodeName !== "HTML" ||
+		!!elem.ownerDocument && elem.ownerDocument.documentElement.nodeName !== "HTML";
+};
+
+var posProcess = function(selector, context){
+	var tmpSet = [], later = "", match,
+		root = context.nodeType ? [context] : context;
+
+	while ( (match = Expr.match.PSEUDO.exec( selector )) ) {
+		later += match[0];
+		selector = selector.replace( Expr.match.PSEUDO, "" );
+	}
+
+	selector = Expr.relative[selector] ? selector + "*" : selector;
+
+	for ( var i = 0, l = root.length; i < l; i++ ) {
+		Sizzle( selector, root[i], tmpSet );
+	}
+
+	return Sizzle.filter( later, tmpSet );
+};
+
+
+window.Sizzle = Sizzle;
+
+})();
+
+;(function(engine) {
+  var extendElements = Prototype.Selector.extendElements;
+
+  function select(selector, scope) {
+    return extendElements(engine(selector, scope || document));
+  }
+
+  function match(element, selector) {
+    return engine.matches(selector, [element]).length == 1;
+  }
+
+  Prototype.Selector.engine = engine;
+  Prototype.Selector.select = select;
+  Prototype.Selector.match = match;
+})(Sizzle);
+
+window.Sizzle = Prototype._original_property;
+delete Prototype._original_property;
+
 var Form = {
   reset: function(form) {
-    $(form).reset();
+    form = $(form);
+    form.reset();
     return form;
   },
 
   serializeElements: function(elements, options) {
     if (typeof options != 'object') options = { hash: !!options };
     else if (Object.isUndefined(options.hash)) options.hash = true;
-    var key, value, submitted = false, submit = options.submit;
+    var key, value, submitted = false, submit = options.submit, accumulator, initial;
 
-    var data = elements.inject({ }, function(result, element) {
+    if (options.hash) {
+      initial = {};
+      accumulator = function(result, key, value) {
+        if (key in result) {
+          if (!Object.isArray(result[key])) result[key] = [result[key]];
+          result[key].push(value);
+        } else result[key] = value;
+        return result;
+      };
+    } else {
+      initial = '';
+      accumulator = function(result, key, value) {
+        return result + (result ? '&' : '') + encodeURIComponent(key) + '=' + encodeURIComponent(value);
+      }
+    }
+
+    return elements.inject(initial, function(result, element) {
       if (!element.disabled && element.name) {
         key = element.name; value = $(element).getValue();
         if (value != null && element.type != 'file' && (element.type != 'submit' || (!submitted &&
             submit !== false && (!submit || key == submit) && (submitted = true)))) {
-          if (key in result) {
-            // a key is already present; construct an array of values
-            if (!Object.isArray(result[key])) result[key] = [result[key]];
-            result[key].push(value);
-          }
-          else result[key] = value;
+          result = accumulator(result, key, value);
         }
       }
       return result;
     });
-
-    return options.hash ? data : Object.toQueryString(data);
   }
 };
 
@@ -3482,13 +5009,18 @@ Form.Methods = {
   },
 
   getElements: function(form) {
-    return $A($(form).getElementsByTagName('*')).inject([],
-      function(elements, child) {
-        if (Form.Element.Serializers[child.tagName.toLowerCase()])
-          elements.push(Element.extend(child));
-        return elements;
-      }
-    );
+    var elements = $(form).getElementsByTagName('*'),
+        element,
+        arr = [ ],
+        serializers = Form.Element.Serializers;
+    for (var i = 0; element = elements[i]; i++) {
+      arr.push(element);
+    }
+    return arr.inject([], function(elements, child) {
+      if (serializers[child.tagName.toLowerCase()])
+        elements.push(Element.extend(child));
+      return elements;
+    })
   },
 
   getInputs: function(form, typeName, name) {
@@ -3528,13 +5060,14 @@ Form.Methods = {
     }).sortBy(function(element) { return element.tabIndex }).first();
 
     return firstByIndex ? firstByIndex : elements.find(function(element) {
-      return ['input', 'select', 'textarea'].include(element.tagName.toLowerCase());
+      return /^(?:input|select|textarea)$/i.test(element.tagName);
     });
   },
 
   focusFirstElement: function(form) {
     form = $(form);
-    form.findFirstElement().activate();
+    var element = form.findFirstElement();
+    if (element) element.activate();
     return form;
   },
 
@@ -3559,6 +5092,7 @@ Form.Methods = {
 
 /*--------------------------------------------------------------------------*/
 
+
 Form.Element = {
   focus: function(element) {
     $(element).focus();
@@ -3572,6 +5106,7 @@ Form.Element = {
 };
 
 Form.Element.Methods = {
+
   serialize: function(element) {
     element = $(element);
     if (!element.disabled && element.name) {
@@ -3612,7 +5147,7 @@ Form.Element.Methods = {
     try {
       element.focus();
       if (element.select && (element.tagName.toLowerCase() != 'input' ||
-          !['button', 'reset', 'submit'].include(element.type)))
+          !(/^(?:button|reset|submit)$/i.test(element.type))))
         element.select();
     } catch (e) { }
     return element;
@@ -3634,74 +5169,85 @@ Form.Element.Methods = {
 /*--------------------------------------------------------------------------*/
 
 var Field = Form.Element;
+
 var $F = Form.Element.Methods.getValue;
 
 /*--------------------------------------------------------------------------*/
 
-Form.Element.Serializers = {
-  input: function(element, value) {
+Form.Element.Serializers = (function() {
+  function input(element, value) {
     switch (element.type.toLowerCase()) {
       case 'checkbox':
       case 'radio':
-        return Form.Element.Serializers.inputSelector(element, value);
+        return inputSelector(element, value);
       default:
-        return Form.Element.Serializers.textarea(element, value);
+        return valueSelector(element, value);
     }
-  },
+  }
 
-  inputSelector: function(element, value) {
-    if (Object.isUndefined(value)) return element.checked ? element.value : null;
+  function inputSelector(element, value) {
+    if (Object.isUndefined(value))
+      return element.checked ? element.value : null;
     else element.checked = !!value;
-  },
+  }
 
-  textarea: function(element, value) {
+  function valueSelector(element, value) {
     if (Object.isUndefined(value)) return element.value;
     else element.value = value;
-  },
+  }
 
-  select: function(element, value) {
+  function select(element, value) {
     if (Object.isUndefined(value))
-      return this[element.type == 'select-one' ?
-        'selectOne' : 'selectMany'](element);
-    else {
-      var opt, currentValue, single = !Object.isArray(value);
-      for (var i = 0, length = element.length; i < length; i++) {
-        opt = element.options[i];
-        currentValue = this.optionValue(opt);
-        if (single) {
-          if (currentValue == value) {
-            opt.selected = true;
-            return;
-          }
+      return (element.type === 'select-one' ? selectOne : selectMany)(element);
+
+    var opt, currentValue, single = !Object.isArray(value);
+    for (var i = 0, length = element.length; i < length; i++) {
+      opt = element.options[i];
+      currentValue = this.optionValue(opt);
+      if (single) {
+        if (currentValue == value) {
+          opt.selected = true;
+          return;
         }
-        else opt.selected = value.include(currentValue);
       }
+      else opt.selected = value.include(currentValue);
     }
-  },
+  }
 
-  selectOne: function(element) {
+  function selectOne(element) {
     var index = element.selectedIndex;
-    return index >= 0 ? this.optionValue(element.options[index]) : null;
-  },
+    return index >= 0 ? optionValue(element.options[index]) : null;
+  }
 
-  selectMany: function(element) {
+  function selectMany(element) {
     var values, length = element.length;
     if (!length) return null;
 
     for (var i = 0, values = []; i < length; i++) {
       var opt = element.options[i];
-      if (opt.selected) values.push(this.optionValue(opt));
+      if (opt.selected) values.push(optionValue(opt));
     }
     return values;
-  },
-
-  optionValue: function(opt) {
-    // extend element because hasAttribute may not be native
-    return Element.extend(opt).hasAttribute('value') ? opt.value : opt.text;
   }
-};
+
+  function optionValue(opt) {
+    return Element.hasAttribute(opt, 'value') ? opt.value : opt.text;
+  }
+
+  return {
+    input:         input,
+    inputSelector: inputSelector,
+    textarea:      valueSelector,
+    select:        select,
+    selectOne:     selectOne,
+    selectMany:    selectMany,
+    optionValue:   optionValue,
+    button:        valueSelector
+  };
+})();
 
 /*--------------------------------------------------------------------------*/
+
 
 Abstract.TimedObserver = Class.create(PeriodicalExecuter, {
   initialize: function($super, element, frequency, callback) {
@@ -3784,354 +5330,527 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
     return Form.serialize(this.element);
   }
 });
-if (!window.Event) var Event = { };
+(function() {
 
-Object.extend(Event, {
-  KEY_BACKSPACE: 8,
-  KEY_TAB:       9,
-  KEY_RETURN:   13,
-  KEY_ESC:      27,
-  KEY_LEFT:     37,
-  KEY_UP:       38,
-  KEY_RIGHT:    39,
-  KEY_DOWN:     40,
-  KEY_DELETE:   46,
-  KEY_HOME:     36,
-  KEY_END:      35,
-  KEY_PAGEUP:   33,
-  KEY_PAGEDOWN: 34,
-  KEY_INSERT:   45,
+  var Event = {
+    KEY_BACKSPACE: 8,
+    KEY_TAB:       9,
+    KEY_RETURN:   13,
+    KEY_ESC:      27,
+    KEY_LEFT:     37,
+    KEY_UP:       38,
+    KEY_RIGHT:    39,
+    KEY_DOWN:     40,
+    KEY_DELETE:   46,
+    KEY_HOME:     36,
+    KEY_END:      35,
+    KEY_PAGEUP:   33,
+    KEY_PAGEDOWN: 34,
+    KEY_INSERT:   45,
 
-  cache: { },
-
-  relatedTarget: function(event) {
-    var element;
-    switch(event.type) {
-      case 'mouseover': element = event.fromElement; break;
-      case 'mouseout':  element = event.toElement;   break;
-      default: return null;
-    }
-    return Element.extend(element);
-  }
-});
-
-Event.Methods = (function() {
-  var isButton;
-
-  if (Prototype.Browser.IE) {
-    var buttonMap = { 0: 1, 1: 4, 2: 2 };
-    isButton = function(event, code) {
-      return event.button == buttonMap[code];
-    };
-
-  } else if (Prototype.Browser.WebKit) {
-    isButton = function(event, code) {
-      switch (code) {
-        case 0: return event.which == 1 && !event.metaKey;
-        case 1: return event.which == 1 && event.metaKey;
-        default: return false;
-      }
-    };
-
-  } else {
-    isButton = function(event, code) {
-      return event.which ? (event.which === code + 1) : (event.button === code);
-    };
-  }
-
-  return {
-    isLeftClick:   function(event) { return isButton(event, 0) },
-    isMiddleClick: function(event) { return isButton(event, 1) },
-    isRightClick:  function(event) { return isButton(event, 2) },
-
-    element: function(event) {
-      event = Event.extend(event);
-
-      var node          = event.target,
-          type          = event.type,
-          currentTarget = event.currentTarget;
-
-      if (currentTarget && currentTarget.tagName) {
-        // Firefox screws up the "click" event when moving between radio buttons
-        // via arrow keys. It also screws up the "load" and "error" events on images,
-        // reporting the document as the target instead of the original image.
-        if (type === 'load' || type === 'error' ||
-          (type === 'click' && currentTarget.tagName.toLowerCase() === 'input'
-            && currentTarget.type === 'radio'))
-              node = currentTarget;
-      }
-      if (node.nodeType == Node.TEXT_NODE) node = node.parentNode;
-      return Element.extend(node);
-    },
-
-    findElement: function(event, expression) {
-      var element = Event.element(event);
-      if (!expression) return element;
-      var elements = [element].concat(element.ancestors());
-      return Selector.findElement(elements, expression, 0);
-    },
-
-    pointer: function(event) {
-      var docElement = document.documentElement,
-      body = document.body || { scrollLeft: 0, scrollTop: 0 };
-      return {
-        x: event.pageX || (event.clientX +
-          (docElement.scrollLeft || body.scrollLeft) -
-          (docElement.clientLeft || 0)),
-        y: event.pageY || (event.clientY +
-          (docElement.scrollTop || body.scrollTop) -
-          (docElement.clientTop || 0))
-      };
-    },
-
-    pointerX: function(event) { return Event.pointer(event).x },
-    pointerY: function(event) { return Event.pointer(event).y },
-
-    stop: function(event) {
-      Event.extend(event);
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopped = true;
-    }
+    cache: {}
   };
-})();
 
-Event.extend = (function() {
+  var docEl = document.documentElement;
+  var MOUSEENTER_MOUSELEAVE_EVENTS_SUPPORTED = 'onmouseenter' in docEl
+    && 'onmouseleave' in docEl;
+
+
+
+  var isIELegacyEvent = function(event) { return false; };
+
+  if (window.attachEvent) {
+    if (window.addEventListener) {
+      isIELegacyEvent = function(event) {
+        return !(event instanceof window.Event);
+      };
+    } else {
+      isIELegacyEvent = function(event) { return true; };
+    }
+  }
+
+  var _isButton;
+
+  function _isButtonForDOMEvents(event, code) {
+    return event.which ? (event.which === code + 1) : (event.button === code);
+  }
+
+  var legacyButtonMap = { 0: 1, 1: 4, 2: 2 };
+  function _isButtonForLegacyEvents(event, code) {
+    return event.button === legacyButtonMap[code];
+  }
+
+  function _isButtonForWebKit(event, code) {
+    switch (code) {
+      case 0: return event.which == 1 && !event.metaKey;
+      case 1: return event.which == 2 || (event.which == 1 && event.metaKey);
+      case 2: return event.which == 3;
+      default: return false;
+    }
+  }
+
+  if (window.attachEvent) {
+    if (!window.addEventListener) {
+      _isButton = _isButtonForLegacyEvents;
+    } else {
+      _isButton = function(event, code) {
+        return isIELegacyEvent(event) ? _isButtonForLegacyEvents(event, code) :
+         _isButtonForDOMEvents(event, code);
+      }
+    }
+  } else if (Prototype.Browser.WebKit) {
+    _isButton = _isButtonForWebKit;
+  } else {
+    _isButton = _isButtonForDOMEvents;
+  }
+
+  function isLeftClick(event)   { return _isButton(event, 0) }
+
+  function isMiddleClick(event) { return _isButton(event, 1) }
+
+  function isRightClick(event)  { return _isButton(event, 2) }
+
+  function element(event) {
+    event = Event.extend(event);
+
+    var node = event.target, type = event.type,
+     currentTarget = event.currentTarget;
+
+    if (currentTarget && currentTarget.tagName) {
+      if (type === 'load' || type === 'error' ||
+        (type === 'click' && currentTarget.tagName.toLowerCase() === 'input'
+          && currentTarget.type === 'radio'))
+            node = currentTarget;
+    }
+
+    if (node.nodeType == Node.TEXT_NODE)
+      node = node.parentNode;
+
+    return Element.extend(node);
+  }
+
+  function findElement(event, expression) {
+    var element = Event.element(event);
+
+    if (!expression) return element;
+    while (element) {
+      if (Object.isElement(element) && Prototype.Selector.match(element, expression)) {
+        return Element.extend(element);
+      }
+      element = element.parentNode;
+    }
+  }
+
+  function pointer(event) {
+    return { x: pointerX(event), y: pointerY(event) };
+  }
+
+  function pointerX(event) {
+    var docElement = document.documentElement,
+     body = document.body || { scrollLeft: 0 };
+
+    return event.pageX || (event.clientX +
+      (docElement.scrollLeft || body.scrollLeft) -
+      (docElement.clientLeft || 0));
+  }
+
+  function pointerY(event) {
+    var docElement = document.documentElement,
+     body = document.body || { scrollTop: 0 };
+
+    return  event.pageY || (event.clientY +
+       (docElement.scrollTop || body.scrollTop) -
+       (docElement.clientTop || 0));
+  }
+
+
+  function stop(event) {
+    Event.extend(event);
+    event.preventDefault();
+    event.stopPropagation();
+
+    event.stopped = true;
+  }
+
+
+  Event.Methods = {
+    isLeftClick:   isLeftClick,
+    isMiddleClick: isMiddleClick,
+    isRightClick:  isRightClick,
+
+    element:     element,
+    findElement: findElement,
+
+    pointer:  pointer,
+    pointerX: pointerX,
+    pointerY: pointerY,
+
+    stop: stop
+  };
+
   var methods = Object.keys(Event.Methods).inject({ }, function(m, name) {
     m[name] = Event.Methods[name].methodize();
     return m;
   });
 
-  if (Prototype.Browser.IE) {
-    Object.extend(methods, {
+  if (window.attachEvent) {
+    function _relatedTarget(event) {
+      var element;
+      switch (event.type) {
+        case 'mouseover':
+        case 'mouseenter':
+          element = event.fromElement;
+          break;
+        case 'mouseout':
+        case 'mouseleave':
+          element = event.toElement;
+          break;
+        default:
+          return null;
+      }
+      return Element.extend(element);
+    }
+
+    var additionalMethods = {
       stopPropagation: function() { this.cancelBubble = true },
       preventDefault:  function() { this.returnValue = false },
-      inspect: function() { return "[object Event]" }
-    });
+      inspect: function() { return '[object Event]' }
+    };
 
-    return function(event) {
+    Event.extend = function(event, element) {
       if (!event) return false;
-      if (event._extendedByPrototype) return event;
 
+      if (!isIELegacyEvent(event)) return event;
+
+      if (event._extendedByPrototype) return event;
       event._extendedByPrototype = Prototype.emptyFunction;
+
       var pointer = Event.pointer(event);
+
       Object.extend(event, {
-        target: event.srcElement,
-        relatedTarget: Event.relatedTarget(event),
+        target: event.srcElement || element,
+        relatedTarget: _relatedTarget(event),
         pageX:  pointer.x,
         pageY:  pointer.y
       });
-      return Object.extend(event, methods);
+
+      Object.extend(event, methods);
+      Object.extend(event, additionalMethods);
+
+      return event;
     };
-
   } else {
-    Event.prototype = Event.prototype || document.createEvent("HTMLEvents")['__proto__'];
+    Event.extend = Prototype.K;
+  }
+
+  if (window.addEventListener) {
+    Event.prototype = window.Event.prototype || document.createEvent('HTMLEvents').__proto__;
     Object.extend(Event.prototype, methods);
-    return Prototype.K;
-  }
-})();
-
-Object.extend(Event, (function() {
-  var cache = Event.cache;
-
-  function getEventID(element) {
-    if (element._prototypeEventID) return element._prototypeEventID[0];
-    arguments.callee.id = arguments.callee.id || 1;
-    return element._prototypeEventID = [++arguments.callee.id];
   }
 
-  function getDOMEventName(eventName) {
-    if (eventName && eventName.include(':')) return "dataavailable";
-    return eventName;
-  }
+  function _createResponder(element, eventName, handler) {
+    var registry = Element.retrieve(element, 'prototype_event_registry');
 
-  function getCacheForID(id) {
-    return cache[id] = cache[id] || { };
-  }
+    if (Object.isUndefined(registry)) {
+      CACHE.push(element);
+      registry = Element.retrieve(element, 'prototype_event_registry', $H());
+    }
 
-  function getWrappersForEventName(id, eventName) {
-    var c = getCacheForID(id);
-    return c[eventName] = c[eventName] || [];
-  }
+    var respondersForEvent = registry.get(eventName);
+    if (Object.isUndefined(respondersForEvent)) {
+      respondersForEvent = [];
+      registry.set(eventName, respondersForEvent);
+    }
 
-  function createWrapper(element, eventName, handler) {
-    var id = getEventID(element);
-    var c = getWrappersForEventName(id, eventName);
-    if (c.pluck("handler").include(handler)) return false;
+    if (respondersForEvent.pluck('handler').include(handler)) return false;
 
-    var wrapper = function(event) {
-      if (!Event || !Event.extend ||
-        (event.eventName && event.eventName != eventName))
+    var responder;
+    if (eventName.include(":")) {
+      responder = function(event) {
+        if (Object.isUndefined(event.eventName))
           return false;
 
-      Event.extend(event);
-      handler.call(element, event);
-    };
+        if (event.eventName !== eventName)
+          return false;
 
-    wrapper.handler = handler;
-    c.push(wrapper);
-    return wrapper;
-  }
+        Event.extend(event, element);
+        handler.call(element, event);
+      };
+    } else {
+      if (!MOUSEENTER_MOUSELEAVE_EVENTS_SUPPORTED &&
+       (eventName === "mouseenter" || eventName === "mouseleave")) {
+        if (eventName === "mouseenter" || eventName === "mouseleave") {
+          responder = function(event) {
+            Event.extend(event, element);
 
-  function findWrapper(id, eventName, handler) {
-    var c = getWrappersForEventName(id, eventName);
-    return c.find(function(wrapper) { return wrapper.handler == handler });
-  }
+            var parent = event.relatedTarget;
+            while (parent && parent !== element) {
+              try { parent = parent.parentNode; }
+              catch(e) { parent = element; }
+            }
 
-  function destroyWrapper(id, eventName, handler) {
-    var c = getCacheForID(id);
-    if (!c[eventName]) return false;
-    c[eventName] = c[eventName].without(findWrapper(id, eventName, handler));
-  }
+            if (parent === element) return;
 
-  function destroyCache() {
-    for (var id in cache)
-      for (var eventName in cache[id])
-        cache[id][eventName] = null;
-  }
-
-
-  // Internet Explorer needs to remove event handlers on page unload
-  // in order to avoid memory leaks.
-  if (window.attachEvent) {
-    window.attachEvent("onunload", destroyCache);
-  }
-
-  // Safari has a dummy event handler on page unload so that it won't
-  // use its bfcache. Safari <= 3.1 has an issue with restoring the "document"
-  // object when page is returned to via the back button using its bfcache.
-  if (Prototype.Browser.WebKit) {
-    window.addEventListener('unload', Prototype.emptyFunction, false);
-  }
-
-  return {
-    observe: function(element, eventName, handler) {
-      element = $(element);
-      var name = getDOMEventName(eventName);
-
-      var wrapper = createWrapper(element, eventName, handler);
-      if (!wrapper) return element;
-
-      if (element.addEventListener) {
-        element.addEventListener(name, wrapper, false);
+            handler.call(element, event);
+          };
+        }
       } else {
-        element.attachEvent("on" + name, wrapper);
+        responder = function(event) {
+          Event.extend(event, element);
+          handler.call(element, event);
+        };
       }
-
-      return element;
-    },
-
-    stopObserving: function(element, eventName, handler) {
-      element = $(element);
-      var id = getEventID(element), name = getDOMEventName(eventName);
-
-      if (!handler && eventName) {
-        getWrappersForEventName(id, eventName).each(function(wrapper) {
-          element.stopObserving(eventName, wrapper.handler);
-        });
-        return element;
-
-      } else if (!eventName) {
-        Object.keys(getCacheForID(id)).each(function(eventName) {
-          element.stopObserving(eventName);
-        });
-        return element;
-      }
-
-      var wrapper = findWrapper(id, eventName, handler);
-      if (!wrapper) return element;
-
-      if (element.removeEventListener) {
-        element.removeEventListener(name, wrapper, false);
-      } else {
-        element.detachEvent("on" + name, wrapper);
-      }
-
-      destroyWrapper(id, eventName, handler);
-
-      return element;
-    },
-
-    fire: function(element, eventName, memo) {
-      element = $(element);
-      if (element == document && document.createEvent && !element.dispatchEvent)
-        element = document.documentElement;
-
-      var event;
-      if (document.createEvent) {
-        event = document.createEvent("HTMLEvents");
-        event.initEvent("dataavailable", true, true);
-      } else {
-        event = document.createEventObject();
-        event.eventType = "ondataavailable";
-      }
-
-      event.eventName = eventName;
-      event.memo = memo || { };
-
-      if (document.createEvent) {
-        element.dispatchEvent(event);
-      } else {
-        element.fireEvent(event.eventType, event);
-      }
-
-      return Event.extend(event);
     }
-  };
-})());
 
-Object.extend(Event, Event.Methods);
+    responder.handler = handler;
+    respondersForEvent.push(responder);
+    return responder;
+  }
 
-Element.addMethods({
-  fire:          Event.fire,
-  observe:       Event.observe,
-  stopObserving: Event.stopObserving
-});
+  function _destroyCache() {
+    for (var i = 0, length = CACHE.length; i < length; i++) {
+      Event.stopObserving(CACHE[i]);
+      CACHE[i] = null;
+    }
+  }
 
-Object.extend(document, {
-  fire:          Element.Methods.fire.methodize(),
-  observe:       Element.Methods.observe.methodize(),
-  stopObserving: Element.Methods.stopObserving.methodize(),
-  loaded:        false
-});
+  var CACHE = [];
+
+  if (Prototype.Browser.IE)
+    window.attachEvent('onunload', _destroyCache);
+
+  if (Prototype.Browser.WebKit)
+    window.addEventListener('unload', Prototype.emptyFunction, false);
+
+
+  var _getDOMEventName = Prototype.K,
+      translations = { mouseenter: "mouseover", mouseleave: "mouseout" };
+
+  if (!MOUSEENTER_MOUSELEAVE_EVENTS_SUPPORTED) {
+    _getDOMEventName = function(eventName) {
+      return (translations[eventName] || eventName);
+    };
+  }
+
+  function observe(element, eventName, handler) {
+    element = $(element);
+
+    var responder = _createResponder(element, eventName, handler);
+
+    if (!responder) return element;
+
+    if (eventName.include(':')) {
+      if (element.addEventListener)
+        element.addEventListener("dataavailable", responder, false);
+      else {
+        element.attachEvent("ondataavailable", responder);
+        element.attachEvent("onlosecapture", responder);
+      }
+    } else {
+      var actualEventName = _getDOMEventName(eventName);
+
+      if (element.addEventListener)
+        element.addEventListener(actualEventName, responder, false);
+      else
+        element.attachEvent("on" + actualEventName, responder);
+    }
+
+    return element;
+  }
+
+  function stopObserving(element, eventName, handler) {
+    element = $(element);
+
+    var registry = Element.retrieve(element, 'prototype_event_registry');
+    if (!registry) return element;
+
+    if (!eventName) {
+      registry.each( function(pair) {
+        var eventName = pair.key;
+        stopObserving(element, eventName);
+      });
+      return element;
+    }
+
+    var responders = registry.get(eventName);
+    if (!responders) return element;
+
+    if (!handler) {
+      responders.each(function(r) {
+        stopObserving(element, eventName, r.handler);
+      });
+      return element;
+    }
+
+    var i = responders.length, responder;
+    while (i--) {
+      if (responders[i].handler === handler) {
+        responder = responders[i];
+        break;
+      }
+    }
+    if (!responder) return element;
+
+    if (eventName.include(':')) {
+      if (element.removeEventListener)
+        element.removeEventListener("dataavailable", responder, false);
+      else {
+        element.detachEvent("ondataavailable", responder);
+        element.detachEvent("onlosecapture", responder);
+      }
+    } else {
+      var actualEventName = _getDOMEventName(eventName);
+      if (element.removeEventListener)
+        element.removeEventListener(actualEventName, responder, false);
+      else
+        element.detachEvent('on' + actualEventName, responder);
+    }
+
+    registry.set(eventName, responders.without(responder));
+
+    return element;
+  }
+
+  function fire(element, eventName, memo, bubble) {
+    element = $(element);
+
+    if (Object.isUndefined(bubble))
+      bubble = true;
+
+    if (element == document && document.createEvent && !element.dispatchEvent)
+      element = document.documentElement;
+
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent('dataavailable', bubble, true);
+    } else {
+      event = document.createEventObject();
+      event.eventType = bubble ? 'ondataavailable' : 'onlosecapture';
+    }
+
+    event.eventName = eventName;
+    event.memo = memo || { };
+
+    if (document.createEvent)
+      element.dispatchEvent(event);
+    else
+      element.fireEvent(event.eventType, event);
+
+    return Event.extend(event);
+  }
+
+  Event.Handler = Class.create({
+    initialize: function(element, eventName, selector, callback) {
+      this.element   = $(element);
+      this.eventName = eventName;
+      this.selector  = selector;
+      this.callback  = callback;
+      this.handler   = this.handleEvent.bind(this);
+    },
+
+    start: function() {
+      Event.observe(this.element, this.eventName, this.handler);
+      return this;
+    },
+
+    stop: function() {
+      Event.stopObserving(this.element, this.eventName, this.handler);
+      return this;
+    },
+
+    handleEvent: function(event) {
+      var element = Event.findElement(event, this.selector);
+      if (element) this.callback.call(this.element, event, element);
+    }
+  });
+
+  function on(element, eventName, selector, callback) {
+    element = $(element);
+    if (Object.isFunction(selector) && Object.isUndefined(callback)) {
+      callback = selector, selector = null;
+    }
+
+    return new Event.Handler(element, eventName, selector, callback).start();
+  }
+
+  Object.extend(Event, Event.Methods);
+
+  Object.extend(Event, {
+    fire:          fire,
+    observe:       observe,
+    stopObserving: stopObserving,
+    on:            on
+  });
+
+  Element.addMethods({
+    fire:          fire,
+
+    observe:       observe,
+
+    stopObserving: stopObserving,
+
+    on:            on
+  });
+
+  Object.extend(document, {
+    fire:          fire.methodize(),
+
+    observe:       observe.methodize(),
+
+    stopObserving: stopObserving.methodize(),
+
+    on:            on.methodize(),
+
+    loaded:        false
+  });
+
+  if (window.Event) Object.extend(window.Event, Event);
+  else window.Event = Event;
+})();
 
 (function() {
   /* Support for the DOMContentLoaded event is based on work by Dan Webb,
-     Matthias Miller, Dean Edwards and John Resig. */
+     Matthias Miller, Dean Edwards, John Resig, and Diego Perini. */
 
   var timer;
 
   function fireContentLoadedEvent() {
     if (document.loaded) return;
-    if (timer) window.clearInterval(timer);
-    document.fire("dom:loaded");
+    if (timer) window.clearTimeout(timer);
     document.loaded = true;
+    document.fire('dom:loaded');
+  }
+
+  function checkReadyState() {
+    if (document.readyState === 'complete') {
+      document.stopObserving('readystatechange', checkReadyState);
+      fireContentLoadedEvent();
+    }
+  }
+
+  function pollDoScroll() {
+    try { document.documentElement.doScroll('left'); }
+    catch(e) {
+      timer = pollDoScroll.defer();
+      return;
+    }
+    fireContentLoadedEvent();
   }
 
   if (document.addEventListener) {
-    if (Prototype.Browser.WebKit) {
-      timer = window.setInterval(function() {
-        if (/loaded|complete/.test(document.readyState))
-          fireContentLoadedEvent();
-      }, 0);
-
-      Event.observe(window, "load", fireContentLoadedEvent);
-
-    } else {
-      document.addEventListener("DOMContentLoaded",
-        fireContentLoadedEvent, false);
-    }
-
+    document.addEventListener('DOMContentLoaded', fireContentLoadedEvent, false);
   } else {
-    document.write("<script id=__onDOMContentLoaded defer src=//:><\/script>");
-    $("__onDOMContentLoaded").onreadystatechange = function() {
-      if (this.readyState == "complete") {
-        this.onreadystatechange = null;
-        fireContentLoadedEvent();
-      }
-    };
+    document.observe('readystatechange', checkReadyState);
+    if (window == top)
+      timer = pollDoScroll.defer();
   }
+
+  Event.observe(window, 'load', fireContentLoadedEvent);
 })();
+
+Element.addMethods();
+
 /*------------------------------- DEPRECATED -------------------------------*/
 
 Hash.toQueryString = Object.toQueryString;
@@ -4160,16 +5879,9 @@ var Insertion = {
 
 var $continue = new Error('"throw $continue" is deprecated, use "return" instead');
 
-// This should be moved to script.aculo.us; notice the deprecated methods
-// further below, that map to the newer Element methods.
 var Position = {
-  // set to true if needed, warning: firefox performance problems
-  // NOT neeeded for page scrolling, only if draggable contained in
-  // scrollable elements
   includeScrollOffsets: false,
 
-  // must be called before calling withinIncludingScrolloffset, every time the
-  // page is scrolled
   prepare: function() {
     this.deltaX =  window.pageXOffset
                 || document.documentElement.scrollLeft
@@ -4181,7 +5893,6 @@ var Position = {
                 || 0;
   },
 
-  // caches x/y coordinate pair to use with overlap
   within: function(element, x, y) {
     if (this.includeScrollOffsets)
       return this.withinIncludingScrolloffsets(element, x, y);
@@ -4208,7 +5919,6 @@ var Position = {
             this.xcomp <  this.offset[0] + element.offsetWidth);
   },
 
-  // within must be called directly before
   overlap: function(mode, element) {
     if (!mode) return 0;
     if (mode == 'vertical')
@@ -4219,7 +5929,6 @@ var Position = {
         element.offsetWidth;
   },
 
-  // Deprecation layer -- use newer Element methods now (1.5.2).
 
   cumulativeOffset: Element.Methods.cumulativeOffset,
 
@@ -4319,7 +6028,60 @@ Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
 
-Element.addMethods();
+(function() {
+  window.Selector = Class.create({
+    initialize: function(expression) {
+      this.expression = expression.strip();
+    },
+
+    findElements: function(rootElement) {
+      return Prototype.Selector.select(this.expression, rootElement);
+    },
+
+    match: function(element) {
+      return Prototype.Selector.match(element, this.expression);
+    },
+
+    toString: function() {
+      return this.expression;
+    },
+
+    inspect: function() {
+      return "#<Selector: " + this.expression + ">";
+    }
+  });
+
+  Object.extend(Selector, {
+    matchElements: function(elements, expression) {
+      var match = Prototype.Selector.match,
+          results = [];
+
+      for (var i = 0, length = elements.length; i < length; i++) {
+        var element = elements[i];
+        if (match(element, expression)) {
+          results.push(Element.extend(element));
+        }
+      }
+      return results;
+    },
+
+    findElement: function(elements, expression, index) {
+      index = index || 0;
+      var matchIndex = 0, element;
+      for (var i = 0, length = elements.length; i < length; i++) {
+        element = elements[i];
+        if (Prototype.Selector.match(element, expression) && index === matchIndex++) {
+          return Element.extend(element);
+        }
+      }
+    },
+
+    findChildElements: function(element, expressions) {
+      var selector = expressions.toArray().join(', ');
+      return Prototype.Selector.select(selector, element || document);
+    }
+  });
+})();
 
 
 // Copyright (c) 2005-2008 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
@@ -7383,6 +9145,3290 @@ Form.Element.DelayedObserver = Class.create({
 });
 
 
+/*
+ * Creating and deleting IMG nodes seems to cause memory leaks in WebKit, but
+ * there are also reports that keeping the same node and replacing src can cause
+ * memory leaks (also in WebKit).
+ *
+ * So we don't have to depend on doing one or the other in other code, abstract
+ * this.  Use ImgPool.get() and ImgPool.release() to retrieve a new IMG node and
+ * return it.  We can choose here to either keep a pool, to avoid constantly
+ * creating new ones, or to throw them away and create new ones, to avoid changing
+ * src.
+ *
+ * This doesn't clear styles or any other properties.  To avoid leaking things from
+ * one type of image to another, use separate pools for each.
+ */
+
+var ImgPoolHandlerWebKit = Class.create({
+  initialize: function()
+  {
+    this.pool = [];
+    this.pool_waiting = [];
+    this.blank_image_loaded_event = this.blank_image_loaded_event.bind(this);
+  },
+
+  get: function()
+  {
+    if(this.pool.length == 0)
+    {
+      // debug("No images in pool; creating blank");
+      return $(document.createElement("IMG"));
+    }
+
+    // debug("Returning image from pool");
+    return this.pool.pop();
+  },
+
+  release: function(img)
+  {
+    /*
+     * Replace the image with a blank, so when it's reused it doesn't show the previously-
+     * loaded image until the new one is available.  Don't reuse the image until the blank
+     * image is loaded.
+     *
+     * This also encourages the browser to abort any running download, so if we have a large
+     * PNG downloading that we've cancelled it won't continue and download the whole thing.
+     * Note that Firefox will stop a download if we do this, but not if we only remove an
+     * image from the document.
+     */
+    img.observe("load", this.blank_image_loaded_event);
+    this.pool_waiting.push(img);
+    img.src = "/images/blank.png";
+  },
+
+  blank_image_loaded_event: function(event)
+  {
+    var img = event.target;
+    img.stopObserving("load", this.blank_image_loaded_event);
+    this.pool_waiting = this.pool_waiting.without(img);
+    this.pool.push(img);
+  }
+});
+
+var ImgPoolHandlerDummy = Class.create({
+  get: function()
+  {
+    return $(document.createElement("IMG"));
+  },
+
+  release: function(img)
+  {
+    img.src = "/images/blank.png";
+  }
+});
+
+/* Create an image pool handler.  If the URL hash value "image-pools" is specified,
+ * force image pools on or off for debugging; otherwise enable them only when needed. */
+var ImgPoolHandler = function()
+{
+  var use_image_pools = Prototype.Browser.WebKit;
+  var hash_value = UrlHash.get("image-pools");
+  if(hash_value != null)
+    use_image_pools = (hash_value != "0");
+
+  if(use_image_pools)
+    return new ImgPoolHandlerWebKit(arguments);
+  else
+    return new ImgPoolHandlerDummy(arguments);
+}
+
+
+
+PostLoader = function()
+{
+  document.on("viewer:need-more-thumbs", this.need_more_post_data.bindAsEventListener(this));
+  document.on("viewer:perform-search", this.perform_search.bindAsEventListener(this));
+
+  this.hashchange_tags = this.hashchange_tags.bind(this);
+  UrlHash.observe("tags", this.hashchange_tags);
+
+  this.cached_posts = new Hash();
+  this.cached_pools = new Hash();
+  this.sample_preload_container = null;
+  this.preloading_sample_for_post_id = null;
+
+  this.load({results_mode: "center-on-current"});
+}
+
+PostLoader.prototype.need_more_post_data = function()
+{
+  /* We'll receive this message often once we're close to needing more posts.  Only
+   * start loading more data the first time. */
+  if(this.loaded_extended_results)
+    return;
+
+  this.load({extending: true});
+}
+
+
+/*
+ * This is a response time optimization.  If we know the sample URL of what we want to display,
+ * we can start loading it from the server without waiting for the full post/index.json response
+ * to come back and tell us.  This saves us the time of a round-trip before we start loading the
+ * image.  The common case is if the user was on post/index and clicked on a link with "use
+ * post browser" enabled.  This allows us to start loading the image immediately, without waiting
+ * for any other network activity.
+ *
+ * We only do this for the sample image, to get a head-start loading it.  This is safe because
+ * the image URLs are immutable (or effectively so).  The rest of the post information isn't cached.
+ */
+PostLoader.prototype.preload_sample_image = function()
+{
+  var post_id = UrlHash.get("post-id");
+  if(this.preloading_sample_for_post_id == post_id)
+    return;
+  this.preloading_sample_for_post_id = post_id;
+
+  if(this.sample_preload_container)
+  {
+    this.sample_preload_container.destroy();
+    this.sample_preload_container = null;
+  }
+
+  if(post_id == null)
+    return;
+
+  /* If this returns null, the browser doesn't support this. */
+  var cached_sample_urls = Post.get_cached_sample_urls();
+  if(cached_sample_urls == null)
+    return;
+
+  if(!(String(post_id) in cached_sample_urls))
+    return;
+  var sample_url = cached_sample_urls[String(post_id)];
+
+  /* If we have an existing preload_container, just add to it and allow any other
+   * preloads to continue. */
+  debug("Advance preloading sample image for post " + post_id);
+  this.sample_preload_container = new PreloadContainer();
+  this.sample_preload_container.preload(sample_url);
+}
+
+PostLoader.prototype.server_load_pool = function()
+{
+  if(this.result.pool_id == null)
+    return;
+
+  if(!this.result.disable_cache)
+  {
+    var pool = this.cached_pools.get(this.result.pool_id);
+    if(pool)
+    {
+      this.result.pool = pool;
+      this.request_finished();
+      return;
+    }
+  }
+
+  new Ajax.Request("/pool/show.json", {
+    parameters: { id: this.result.pool_id },
+    method: "get",
+    onCreate: function(resp) {
+      this.current_ajax_requests.push(resp.request);
+    }.bind(this),
+
+    onComplete: function(resp) {
+      this.current_ajax_requests = this.current_ajax_requests.without(resp.request);
+      this.request_finished();
+    }.bind(this),
+
+    onSuccess: function(resp) {
+      if(this.current_ajax_requests.indexOf(resp.request) == -1)
+        return;
+
+      this.result.pool = resp.responseJSON;
+      this.cached_pools.set(this.result.pool_id, this.result.pool);
+    }.bind(this)
+  });
+}
+
+PostLoader.prototype.server_load_posts = function()
+{
+  var tags = this.result.tags;
+
+  // Put holds:false at the beginning, so the search can override it.  Put limit: at
+  // the end, so it can't.
+  var search = "holds:false " + tags + " limit:" + this.result.post_limit;
+
+  if(!this.result.disable_cache)
+  {
+    var results = this.cached_posts.get(search);
+    if(results)
+    {
+      this.result.posts = results;
+
+      /* Don't Post.register the results when serving out of cache.  They're already
+       * registered, and the data in the post registry may be more current than the
+       * cached search results. */
+      this.request_finished();
+      return;
+    }
+  }
+
+  new Ajax.Request("/post/index.json", {
+    parameters: {
+      tags: search,
+      api_version: 2,
+      filter: 1,
+      include_tags: 1,
+      include_votes: 1,
+      include_pools: 1
+    },
+    method: "get",
+
+    onCreate: function(resp) {
+      this.current_ajax_requests.push(resp.request);
+    }.bind(this),
+
+    onComplete: function(resp) {
+      this.current_ajax_requests = this.current_ajax_requests.without(resp.request);
+      this.request_finished();
+    }.bind(this),
+
+    onSuccess: function(resp) {
+      if(this.current_ajax_requests.indexOf(resp.request) == -1)
+        return;
+    
+      var resp = resp.responseJSON;
+      this.result.posts = resp.posts;
+
+      Post.register_resp(resp);
+
+      this.cached_posts.set(search, this.result.posts);
+    }.bind(this),
+
+    onFailure: function(resp) {
+      var error = "error " + resp.status;
+      if(resp.responseJSON)
+        error = resp.responseJSON.reason;
+
+      notice("Error loading posts: " + error);
+      this.result.error = true;
+    }.bind(this)
+  });
+}
+
+PostLoader.prototype.request_finished = function()
+{
+  if(this.current_ajax_requests.length)
+    return;
+
+  /* Event handlers for the events we fire below might make requests back to us.  Save and
+   * clear this.result before firing the events, so that behaves properly. */
+  var result = this.result;
+  this.result = null;
+
+  /* If server_load_posts hit an error, it already displayed it; stop. */
+  if(result.error != null)
+    return;
+
+  /* If we have no search tags (result.tags == null, result.posts == null), then we're just
+   * displaying a post with no search, eg. "/post/browse#12345".  We'll still fire off the
+   * same code path to make the post display in the view. */
+  var new_post_ids = [];
+  if(result.posts != null)
+  {
+    for(var i = 0; i < result.posts.length; ++i)
+      new_post_ids.push(result.posts[i].id);
+  }
+
+  document.fire("viewer:displayed-pool-changed", { pool: result.pool });
+  document.fire("viewer:searched-tags-changed", { tags: result.tags });
+
+  /* Tell the thumbnail viewer whether it should allow scrolling over the left side. */
+  var can_be_extended_further = true;
+
+  /* If we're reading from a pool, we requested a large block already. */
+  if(result.pool)
+    can_be_extended_further = false;
+
+  /* If we're already extending, don't extend further. */
+  if(result.load_options.extending)
+    can_be_extended_further = false;
+
+  /* If we received fewer results than we requested we're at the end of the results,
+   * so don't waste time requesting more. */
+  if(new_post_ids.length < result.post_limit)
+  {
+    debug("Received posts fewer than requested (" + new_post_ids.length + " < " + result.post_limit + "), clamping");
+    can_be_extended_further = false;
+  }
+
+  /* Now that we have the result, update the URL hash.  Firing loaded-posts may change
+   * the displayed post, causing the post ID in the URL hash to change, so use set_deferred
+   * to help ensure these happen atomically. */
+  UrlHash.set_deferred({tags: result.tags});
+
+  document.fire("viewer:loaded-posts", {
+    tags: result.tags, /* this will be null if no search was actually performed (eg. URL with a post-id and no tags) */
+    post_ids: new_post_ids,
+    pool: result.pool,
+    extending: result.load_options.extending,
+    can_be_extended_further: can_be_extended_further,
+    load_options: result.load_options
+  });
+}
+
+/* If extending is true, load a larger set of posts. */
+PostLoader.prototype.load = function(load_options)
+{
+  if(!load_options)
+    load_options = {}
+
+  var disable_cache = load_options.disable_cache;
+  var extending = load_options.extending;
+
+  var tags = load_options.tags;
+  if(tags == null)
+    tags = UrlHash.get("tags");
+
+  /* If neither a search nor a post-id is specified, set a default search. */
+  if(!extending && tags == null && UrlHash.get("post-id") == null)
+  {
+    UrlHash.set({tags: ""});
+
+    /* We'll receive another hashchange message for setting "tags".  Don't load now or we'll
+     * end up loading twice. */
+    return;
+  }
+
+  debug("PostLoader.load(" + extending + ", " + disable_cache + ")");
+
+  this.preload_sample_image();
+
+  this.loaded_extended_results = extending;
+
+  /* Discard any running AJAX requests. */
+  this.current_ajax_requests = [];
+
+  this.result = {};
+  this.result.load_options = load_options;
+  this.result.tags = tags;
+  this.result.disable_cache = disable_cache;
+
+  if(this.result.tags == null)
+  {
+    /* If no search is specified, don't run one; return empty results. */
+    this.request_finished();
+    return;
+  }
+
+  /* See if we have a pool search.  This only checks for pool:id searches, not pool:*name* searches;
+   * we want to know if we're displaying posts only from a single pool. */
+  var pool_id = null;
+  this.result.tags.split(" ").each(function(tag) {
+    var m = tag.match(/^pool:(\d+)/);
+    if(!m)
+      return;
+    pool_id = parseInt(m[1]);
+  });
+
+  /* If we're loading from a pool, load the pool's data. */
+  this.result.pool_id = pool_id;
+
+  /* Load the posts to display.  If we're loading a pool, load all posts (up to 1000);
+   * otherwise set a limit. */
+  var limit = extending? 1000:100;
+  if(pool_id != null)
+    limit = 1000;
+  this.result.post_limit = limit;
+
+
+  /* Make sure that request_finished doesn't consider this request complete until we've
+   * actually started every request. */
+  this.current_ajax_requests.push(null);
+
+  this.server_load_pool();
+  this.server_load_posts();
+
+  this.current_ajax_requests = this.current_ajax_requests.without(null);
+  this.request_finished();
+}
+
+PostLoader.prototype.hashchange_tags = function()
+{
+  var tags = UrlHash.get("tags");
+
+  if(tags == this.last_seen_tags)
+    return;
+  this.last_seen_tags = tags;
+
+  debug("changed tags");
+  this.load();
+}
+
+PostLoader.prototype.perform_search  = function(event)
+{
+  var tags = event.memo.tags;
+  this.last_seen_tags = tags;
+  var results_mode = event.memo.results_mode || "center-on-first";
+  debug("do search: " + tags);
+
+  this.load({tags: tags, results_mode: results_mode});
+}
+
+
+
+/*
+ * Handle the thumbnail view, and navigation for the main view.
+ *
+ * Handle a large number (thousands) of entries cleanly.  Thumbnail nodes are created
+ * as needed, and destroyed when they scroll off screen.  This gives us constant
+ * startup time, loads thumbnails on demand, allows preloading thumbnails in advance
+ * by creating more nodes in advance, and keeps memory usage constant.
+ */
+ThumbnailView = function(container, view)
+{
+  this.container = container;
+  this.view = view;
+  this.post_ids = [];
+  this.post_frames = [];
+  this.expanded_post_idx = null;
+  this.centered_post_idx = null;
+  this.centered_post_offset = 0;
+  this.last_mouse_x = 0;
+  this.last_mouse_y = 0;
+  this.thumb_container_shown = true;
+  this.allow_wrapping = true;
+  this.thumb_preload_container = new PreloadContainer();
+  this.unused_thumb_pool = [];
+
+  /* The [first, end) range of posts that are currently inside .post-browser-posts. */
+  this.posts_populated = [0, 0];
+
+  document.on("DOMMouseScroll", this.document_mouse_wheel_event.bindAsEventListener(this));
+  document.on("mousewheel", this.document_mouse_wheel_event.bindAsEventListener(this));
+
+  document.on("viewer:displayed-image-loaded", this.displayed_image_loaded_event.bindAsEventListener(this));
+  document.on("viewer:set-active-post", function(e) {
+    var post_id_and_frame = [e.memo.post_id, e.memo.post_frame];
+    this.set_active_post(post_id_and_frame, e.memo.lazy, e.memo.center_thumbs);
+  }.bindAsEventListener(this));
+  document.on("viewer:show-next-post", function(e) { this.show_next_post(e.memo.prev); }.bindAsEventListener(this));
+
+  document.on("viewer:scroll", function(e) { this.scroll(e.memo.left); }.bindAsEventListener(this));
+  document.on("viewer:set-thumb-bar", function(e) {
+    if(e.memo.toggle)
+      this.show_thumb_bar(!this.thumb_container_shown);
+    else
+      this.show_thumb_bar(e.memo.set);
+  }.bindAsEventListener(this));
+  document.on("viewer:loaded-posts", this.loaded_posts_event.bindAsEventListener(this));
+
+  this.hashchange_post_id = this.hashchange_post_id.bind(this);
+  UrlHash.observe("post-id", this.hashchange_post_id);
+  UrlHash.observe("post-frame", this.hashchange_post_id);
+
+  new DragElement(this.container, { ondrag: this.container_ondrag.bind(this) });
+
+  Element.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
+
+  this.container.on("mousemove", this.container_mousemove_event.bindAsEventListener(this));
+  this.container.on("mouseover", this.container_mouseover_event.bindAsEventListener(this));
+  this.container.on("mouseout", this.container_mouseout_event.bindAsEventListener(this));
+  this.container.on("click", this.container_click_event.bindAsEventListener(this));
+  this.container.on("dblclick", ".post-thumb,.browser-thumb-hover-overlay",
+      this.container_dblclick_event.bindAsEventListener(this));
+
+  /* Prevent the default behavior of left-clicking on the expanded thumbnail overlay.  It's
+   * handled by container_click_event. */
+  this.container.down(".browser-thumb-hover-overlay").on("click", function(event) {
+    if(event.isLeftClick())
+      event.preventDefault();
+  }.bindAsEventListener(this));
+
+  /*
+   * For Android browsers, we're set to 150 DPI, which (in theory) scales us to a consistent UI size
+   * based on the screen DPI.  This means that we can determine the physical screen size from the
+   * window resolution: 150x150 is 1"x1".  Set a thumbnail scale based on this.  On a 320x480 HVGA
+   * phone screen the thumbnails are about 2x too big, so set thumb_scale to 0.5.
+   *
+   * For iOS browsers, there's no way to set the viewport based on the DPI, so it's fixed at 1x.
+   * (Note that on Retina screens the browser lies: even though we request 1x, it's actually at
+   * 0.5x and our screen dimensions work as if we're on the lower-res iPhone screen.  We can mostly
+   * ignore this.)  CSS inches aren't implemented (the DPI is fixed at 96), so that doesn't help us.
+   * Fall back on special-casing individual iOS devices.
+   */
+  this.config = { };
+  if(navigator.userAgent.indexOf("iPad") != -1)
+  {
+    this.config.thumb_scale = 1.0;
+  }
+  else if(navigator.userAgent.indexOf("iPhone") != -1 || navigator.userAgent.indexOf("iPod") != -1)
+  {
+    this.config.thumb_scale = 0.5;
+  }
+  else if(navigator.userAgent.indexOf("Android") != -1)
+  {
+    /* We may be in landscape or portrait; use out the narrower dimension. */
+    var width = Math.min(window.innerWidth, window.innerHeight);
+
+    /* Scale a 320-width screen to 0.5, up to 1.0 for a 640-width screen.  Remember
+     * that this width is already scaled by the DPI of the screen due to target-densityDpi,
+     * so these numbers aren't actually real pixels, and this scales based on the DPI
+     * and size of the screen rather than the pixel count. */
+    this.config.thumb_scale = scale(width, 320, 640, 0.5, 1.0);
+    debug("Unclamped thumb scale: " + this.config.thumb_scale);
+
+    /* Clamp to [0.5,1.0]. */
+    this.config.thumb_scale = Math.min(this.config.thumb_scale, 1.0);
+    this.config.thumb_scale = Math.max(this.config.thumb_scale, 0.5);
+
+    debug("startup, window size: " + window.innerWidth + "x" + window.innerHeight);
+  }
+  else
+  {
+    /* Unknown device, or not a mobile device. */
+    this.config.thumb_scale = 1.0;
+  }
+  debug("Thumb scale: " + this.config.thumb_scale);
+
+  this.config_changed();
+
+  /* Send the initial viewer:thumb-bar-changed event. */
+  this.thumb_container_shown = false;
+  this.show_thumb_bar(true);
+}
+
+ThumbnailView.prototype.window_resize_event = function(e)
+{
+  if(e.stopped)
+    return;
+  if(this.thumb_container_shown)
+    this.center_on_post_for_scroll(this.centered_post_idx);
+}
+
+/* Show the given posts.  If extending is true, post_ids are meant to extend a previous
+ * search; attempt to continue where we left off. */
+ThumbnailView.prototype.loaded_posts_event = function(event)
+{
+  var post_ids = event.memo.post_ids;
+
+  var old_post_ids = this.post_ids;
+  var old_centered_post_idx = this.centered_post_idx;
+  this.remove_all_posts();
+
+  /* Filter blacklisted posts. */
+  post_ids = post_ids.reject(Post.is_blacklisted);
+
+  this.post_ids = [];
+  this.post_frames = [];
+
+  for(var i = 0; i < post_ids.length; ++i)
+  {
+    var post_id = post_ids[i];
+    var post = Post.posts.get(post_id);
+    if(post.frames.length > 0)
+    {
+      for(var frame_idx = 0; frame_idx < post.frames.length; ++frame_idx)
+      {
+        this.post_ids.push(post_id);
+        this.post_frames.push(frame_idx);
+      }
+    }
+    else
+    {
+      this.post_ids.push(post_id);
+      this.post_frames.push(-1);
+    }
+  }
+
+  this.allow_wrapping = !event.memo.can_be_extended_further;
+
+  /* Show the results box or "no results".  Do this before updating the results box to make sure
+   * the results box isn't hidden when we update, which will make offsetLeft values inside it zero
+   * and break things.  If the reason we have no posts is because we didn't do a search at all,
+   * don't show no-results. */
+  this.container.down(".post-browser-no-results").show(event.memo.tags != null && this.post_ids.length == 0);
+  this.container.down(".post-browser-posts").show(this.post_ids.length != 0);
+
+  if(event.memo.extending)
+  {
+    /*
+     * We're extending a previous search with more posts.  The new post list we get may
+     * not line up with the old one: the post we're focused on may no longer be in the
+     * search, or may be at a different index.
+     *
+     * Find a nearby post in the new results.  Start searching at the post we're already
+     * centered on.  If that doesn't match, move outwards from there.  Only look forward
+     * a little bit, or we may match a post that was never seen and jump forward too far
+     * in the results.
+     */
+    var post_id_search_order = sort_array_by_distance(old_post_ids.slice(0, old_centered_post_idx+3), old_centered_post_idx);
+    var initial_post_id = null;
+    for(var i = 0; i < post_id_search_order.length; ++i)
+    {
+      var post_id_to_search = post_id_search_order[i];
+      var post = Post.posts.get(post_id_to_search);
+      if(post != null)
+      {
+        initial_post_id = post.id;
+        break;
+      }
+    }
+    debug("center-on-" + initial_post_id);
+
+    /* If we didn't find anything that matched, go back to the start. */
+    if(initial_post_id == null)
+    {
+      this.centered_post_offset = 0;
+      initial_post_id = new_post_ids[0];
+    }
+
+    var center_on_post_idx = this.post_ids.indexOf(initial_post_id);
+    this.center_on_post_for_scroll(center_on_post_idx);
+  }
+  else
+  {
+    /*
+     * A new search has completed.
+     *
+     * results_mode can be one of the following:
+     *
+     * "center-on-first"
+     * Don't change the active post.  Center the results on the first result.  This is used
+     * when performing a search by clicking on a tag, where we don't want to center on the
+     * post we're on (since it'll put us at some random spot in the results when the user
+     * probably wants to browse from the beginning), and we don't want to change the displayed
+     * post either.
+     *
+     * "center-on-current"
+     * Don't change the active post.  Center the results on the existing current item,
+     * if possible.  This is used when we want to show a new search without disrupting the
+     * shown post, such as the "child posts" link in post info, and when loading the initial
+     * URL hash when we start up.
+     *
+     * "jump-to-first"
+     * Set the active post to the first result, and center on it.  This is used after making
+     * a search in the tags box.
+     */
+    var results_mode = event.memo.load_options.results_mode || "center-on-current";
+
+    var initial_post_id_and_frame;
+    if(results_mode == "center-on-first" || results_mode == "jump-to-first")
+      initial_post_id_and_frame = [this.post_ids[0], this.post_frames[0]];
+    else
+      initial_post_id_and_frame = this.get_current_post_id_and_frame();
+
+    var center_on_post_idx = this.get_post_idx(initial_post_id_and_frame);
+    if(center_on_post_idx == null)
+      center_on_post_idx = 0;
+
+    this.centered_post_offset = 0;
+    this.center_on_post_for_scroll(center_on_post_idx);
+
+    /* If no post is currently displayed and we just completed a search, set the current post.
+     * This happens when first initializing; we wait for the first search to complete to retrieve
+     * info about the post we're starting on, instead of making a separate query. */
+    if(results_mode == "jump-to-first" || this.view.wanted_post_id == null)
+      this.set_active_post(initial_post_id_and_frame, false, false, true);
+  }
+
+  if(event.memo.tags == null)
+  {
+    /* If tags is null then no search has been done, which means we're on a URL
+     * with a post ID and no search, eg. "/post/browse#12345".  Hide the thumb
+     * bar, so we'll just show the post. */
+    this.show_thumb_bar(false);
+  }
+}
+
+ThumbnailView.prototype.container_ondrag = function(e)
+{
+  this.centered_post_offset -= e.dX;
+  this.center_on_post_for_scroll(this.centered_post_idx);
+}
+
+ThumbnailView.prototype.container_mouseover_event = function(event)
+{
+  var li = $(event.target);
+  if(!li.hasClassName(".post-thumb"))
+    li = li.up(".post-thumb");
+  if(li)
+    this.expand_post(li.post_idx);
+}
+
+ThumbnailView.prototype.container_mouseout_event = function(event)
+{
+  /* If the mouse is leaving the hover overlay, hide it. */
+  var target = $(event.target);
+  if(!target.hasClassName(".browser-thumb-hover-overlay"))
+    target = target.up(".browser-thumb-hover-overlay");
+  if(target)
+    this.expand_post(null);
+}
+
+ThumbnailView.prototype.hashchange_post_id = function()
+{
+  var post_id_and_frame = this.get_current_post_id_and_frame();
+  if(post_id_and_frame[0] == null)
+    return;
+
+  /* If we're already displaying this post, ignore the hashchange.  Don't center on the
+   * post if this is just a side-effect of clicking a post, rather than the user actually
+   * changing the hash. */
+  var post_id = post_id_and_frame[0];
+  var post_frame = post_id_and_frame[1];
+  if(post_id == this.view.displayed_post_id &&
+      post_frame == this.view.displayed_post_frame)
+  {
+//    debug("ignored-hashchange");
+    return;
+  }
+
+  var new_post_idx = this.get_post_idx(post_id_and_frame);
+  this.centered_post_offset = 0;
+  this.center_on_post_for_scroll(new_post_idx);
+  this.set_active_post(post_id_and_frame, false, false, true);
+}
+
+/* Search for the given post ID and frame in the current search results, and return its
+ * index.  If the given post isn't in post_ids, return null. */
+ThumbnailView.prototype.get_post_idx = function(post_id_and_frame)
+{
+  var post_id = post_id_and_frame[0];
+  var post_frame = post_id_and_frame[1];
+
+  var post_idx = this.post_ids.indexOf(post_id);
+  if(post_idx == -1)
+    return null;
+  if(post_frame == -1)
+    return post_idx;
+
+  /* A post-frame is specified.  Search for a matching post-id and post-frame.  We assume
+   * here that all frames for a post are grouped together in post_ids. */
+  var post_frame_idx = post_idx;
+  while(post_frame_idx < this.post_ids.length && this.post_ids[post_frame_idx] == post_id)
+  {
+    if(this.post_frames[post_frame_idx] == post_frame)
+      return post_frame_idx;
+    ++post_frame_idx;
+  }
+
+  /* We found a matching post, but not a matching frame.  Return the post. */
+  return post_idx;
+}
+
+/* Return the post and frame that's currently being displayed in the main view, based
+ * on the URL hash.  If no post is displayed and no search results are available,
+ * return [null, null]. */
+ThumbnailView.prototype.get_current_post_id_and_frame = function()
+{
+  var post_id = UrlHash.get("post-id");
+  if(post_id == null)
+  {
+    if(this.post_ids.length == 0)
+      return [null, null];
+    else
+      return [this.post_ids[0], this.post_frames[0]];
+  }
+  post_id = parseInt(post_id);
+
+  var post_frame = UrlHash.get("post-frame");
+
+  // If no frame is set, attempt to resolve the post_frame we'll display, if the post data
+  // is already loaded.  Otherwise, post_frame will remain null.
+  if(post_frame == null)
+    post_frame = this.view.get_default_post_frame(post_id);
+
+  return [post_id, post_frame];
+}
+
+/* Track the mouse cursor when it's within the container. */
+ThumbnailView.prototype.container_mousemove_event = function(e)
+{
+  var x = e.pointerX() - document.documentElement.scrollLeft;
+  var y = e.pointerY() - document.documentElement.scrollTop;
+  this.last_mouse_x = x;
+  this.last_mouse_y = y;
+}
+
+ThumbnailView.prototype.document_mouse_wheel_event = function(event)
+{
+  event.stop();
+
+  var val;
+  if(event.wheelDelta)
+  {
+    val = event.wheelDelta;
+  } else if (event.detail) {
+    val = -event.detail;
+  }
+
+  if(this.thumb_container_shown)
+    document.fire("viewer:scroll", { left: val >= 0 });
+  else
+    document.fire("viewer:show-next-post", { prev: val >= 0 });
+}
+
+/* Set the post that's shown in the view.  The thumbs will be centered on the post
+ * if center_thumbs is true.  See BrowserView.prototype.set_post for an explanation
+ * of no_hash_change. */
+ThumbnailView.prototype.set_active_post = function(post_id_and_frame, lazy, center_thumbs, no_hash_change, replace_history)
+{
+  /* If no post is specified, do nothing.  This will happen if a search returns
+   * no results. */
+  if(post_id_and_frame[0] == null)
+    return;
+
+  this.view.set_post(post_id_and_frame[0], post_id_and_frame[1], lazy, no_hash_change, replace_history);
+
+  if(center_thumbs)
+  {
+    var post_idx = this.get_post_idx(post_id_and_frame);
+    this.centered_post_offset = 0;
+    this.center_on_post_for_scroll(post_idx);
+  }
+}
+
+ThumbnailView.prototype.set_active_post_idx = function(post_idx, lazy, center_thumbs, no_hash_change, replace_history)
+{
+  if(post_idx == null)
+    return;
+
+  var post_id = this.post_ids[post_idx];
+  var post_frame = this.post_frames[post_idx];
+  this.set_active_post([post_id, post_frame], lazy, center_thumbs, no_hash_change, replace_history);
+}
+
+ThumbnailView.prototype.show_next_post = function(prev)
+{
+  if(this.post_ids.length == 0)
+    return;
+
+  var current_idx = this.get_post_idx([this.view.wanted_post_id, this.view.wanted_post_frame]);
+
+  /* If the displayed post isn't in the thumbnails and we're changing posts, start
+   * at the beginning. */
+  if(current_idx == null)
+    current_idx = 0;
+
+  var add = prev? -1:+1;
+  if(this.post_frames[current_idx] != this.view.wanted_post_frame && add == +1)
+  {
+    /*
+     * We didn't find an exact match for the frame we're displaying, which usually means
+     * we viewed a post frame, and then the user changed the view to the main post, and
+     * the main post isn't in the thumbnails.
+     *
+     * It's strange to be on the main post, to hit pgdn, and to end up on the second frame
+     * because the nearest match was the first frame.  Instead, we should end up on the first
+     * frame.  To do that, just don't add anything to the index.
+     */
+    debug("Snapped the display to the nearest frame");
+    if(add == +1)
+      add = 0;
+  }
+
+  var new_idx = current_idx;
+  new_idx += add;
+
+  new_idx += this.post_ids.length;
+  new_idx %= this.post_ids.length;
+
+  var wrapped = (prev && new_idx > current_idx) || (!prev && new_idx < current_idx);
+  if(wrapped)
+  {
+    /* Only allow wrapping over the edge if we've already expanded the results. */
+    if(!this.allow_wrapping)
+      return;
+    if(!this.thumb_container_shown && prev)
+      notice("Continued from the end");
+    else if(!this.thumb_container_shown && !prev)
+      notice("Starting over from the beginning");
+  }
+
+  this.set_active_post_idx(new_idx, true, true, false, true);
+}
+
+/* Scroll the thumbnail view left or right.  Don't change the displayed post. */
+ThumbnailView.prototype.scroll = function(left)
+{
+  /* There's no point in scrolling the list if it's not visible. */
+  if(!this.thumb_container_shown)
+    return;
+  var new_idx = this.centered_post_idx;
+
+  /* If we're not centered on the post, and we're moving towards the center,
+   * don't jump past the post. */
+  if(this.centered_post_offset > 0 && left)
+    ;
+  else if(this.centered_post_offset < 0 && !left)
+    ;
+  else
+    new_idx += (left? -1:+1);
+
+  // Snap to the nearest post.
+  this.centered_post_offset = 0;
+
+  /* Wrap the new index. */
+  if(new_idx < 0)
+  {
+    /* Only allow scrolling over the left edge if we've already expanded the results. */
+    if(!this.allow_wrapping)
+      new_idx = 0;
+    else
+      new_idx = this.post_ids.length - 1;
+  }
+  else if(new_idx >= this.post_ids.length)
+  {
+    if(!this.allow_wrapping)
+      new_idx = this.post_ids.length - 1;
+    else
+      new_idx = 0;
+  }
+
+  this.center_on_post_for_scroll(new_idx);
+}
+
+/* Hide the hovered post, if any, call center_on_post(post_idx), then hover over the correct post again. */
+ThumbnailView.prototype.center_on_post_for_scroll = function(post_idx)
+{
+  if(this.thumb_container_shown)
+    this.expand_post(null);
+
+  this.center_on_post(post_idx);
+
+  /*
+   * Now that we've re-centered, we need to expand the correct image.  Usually, we can just
+   * wait for the mouseover event to fire, since we hid the expanded thumb overlay and the
+   * image underneith it is now under the mouse.  However, browsers are badly broken here.
+   * Opera doesn't fire mouseover events when the element under the cursor is hidden.  FF
+   * fires the mouseover on hide, but misses the mouseout when the new overlay is shown, so
+   * the next time it's hidden mouseover events are lost.
+   *
+   * Explicitly figure out which item we're hovering over and expand it.
+   */
+  if(this.thumb_container_shown)
+  {
+    var element = document.elementFromPoint(this.last_mouse_x, this.last_mouse_y);
+    element = $(element);
+    if(element)
+    {
+      var li = element.up(".post-thumb");
+      if(li)
+        this.expand_post(li.post_idx);
+    }
+  }
+}
+
+ThumbnailView.prototype.remove_post = function(right)
+{
+  if(this.posts_populated[0] == this.posts_populated[1])
+    return false; /* none to remove */
+
+  var node = this.container.down(".post-browser-posts");
+  if(right)
+  {
+    --this.posts_populated[1];
+    var node_to_remove = node.lastChild;
+  }
+  else
+  {
+    ++this.posts_populated[0];
+    var node_to_remove = node.firstChild;
+  }
+
+  /* Remove the thumbnail that's no longer visible, and put it in unused_thumb_pool
+   * so we can reuse it later.  This won't grow out of control, since we'll always use
+   * an item from the pool if available rather than creating a new one. */
+  var item = node.removeChild(node_to_remove);
+  this.unused_thumb_pool.push(item);
+  return true;
+}
+
+ThumbnailView.prototype.remove_all_posts = function()
+{
+  while(this.remove_post(true))
+    ;
+}
+
+/* Add the next thumbnail to the left or right side. */
+ThumbnailView.prototype.add_post_to_display = function(right)
+{
+  var node = this.container.down(".post-browser-posts");
+  if(right)
+  {
+    var post_idx_to_populate = this.posts_populated[1];
+    if(post_idx_to_populate == this.post_ids.length)
+      return false;
+    ++this.posts_populated[1];
+
+    var thumb = this.create_thumb(post_idx_to_populate);
+    node.insertBefore(thumb, null);
+  }
+  else
+  {
+    if(this.posts_populated[0] == 0)
+      return false;
+    --this.posts_populated[0];
+    var post_idx_to_populate = this.posts_populated[0];
+    var thumb = this.create_thumb(post_idx_to_populate);
+    node.insertBefore(thumb, node.firstChild);
+  }
+  return true;
+}
+
+/* Fill the container so post_idx is visible. */
+ThumbnailView.prototype.populate_post = function(post_idx)
+{
+  if(this.is_post_idx_shown(post_idx))
+    return;
+
+  /* If post_idx is on the immediate border of what's already displayed, add it incrementally, and
+   * we'll cull extra posts later.  Otherwise, clear all of the posts and populate from scratch. */
+  if(post_idx == this.posts_populated[1])
+  {
+    this.add_post_to_display(true);
+    return;
+  }
+  else if(post_idx == this.posts_populated[0])
+  {
+    this.add_post_to_display(false);
+    return;
+  }
+
+  /* post_idx isn't on the boundary, so we're jumping posts rather than scrolling.
+   * Clear the container and start over. */ 
+  this.remove_all_posts();
+
+  var node = this.container.down(".post-browser-posts");
+
+  var thumb = this.create_thumb(post_idx);
+  node.appendChild(thumb);
+  this.posts_populated[0] = post_idx;
+  this.posts_populated[1] = post_idx + 1;
+}
+
+ThumbnailView.prototype.is_post_idx_shown = function(post_idx)
+{
+  if(post_idx >= this.posts_populated[1])
+    return false;
+  return post_idx >= this.posts_populated[0];
+}
+
+/* Return the total width of all thumbs to the left or right of post_idx, not
+ * including itself. */
+ThumbnailView.prototype.get_width_adjacent_to_post = function(post_idx, right)
+{
+  var post = $("p" + post_idx);
+  if(right)
+  {
+    var rightmost_node = post.parentNode.lastChild;
+    if(rightmost_node == post)
+      return 0;
+    var right_edge = rightmost_node.offsetLeft + rightmost_node.offsetWidth;
+    var center_post_right_edge = post.offsetLeft + post.offsetWidth;
+    return right_edge - center_post_right_edge
+  }
+  else
+  {
+    return post.offsetLeft;
+  }
+}
+
+/* Center the thumbnail strip on post_idx.  If post_id isn't in the display, do nothing.
+ * Fire viewer:need-more-thumbs if we're scrolling near the edge of the list. */
+ThumbnailView.prototype.center_on_post = function(post_idx)
+{
+  if(!this.post_ids)
+  {
+    debug("unexpected: center_on_post has no post_ids");
+    return;
+  }
+
+  var post_id = this.post_ids[post_idx];
+  if(Post.posts.get(post_id) == null)
+    return;
+
+  if(post_idx > this.post_ids.length*3/4)
+  {
+    /* We're coming near the end of the loaded posts, so load more.  We may be currently
+     * in the middle of setting up the post; defer this, so we finish what we're doing first. */
+    (function() {
+      document.fire("viewer:need-more-thumbs", { view: this });
+    }).defer();
+  }
+
+  this.centered_post_idx = post_idx;
+
+  /* If we're not expanded, we can't figure out how to center it since we'll have no width.
+   * Also, don't cause thumbnails to be loaded if we're hidden.  Just set centered_post_idx,
+   * and we'll come back here when we're displayed. */
+  if(!this.thumb_container_shown)
+    return;
+
+  /* If centered_post_offset is high enough to put the actual center post somewhere else,
+   * adjust it towards zero and change centered_post_idx.  This keeps centered_post_idx
+   * pointing at the item that's actually centered. */
+  while(1)
+  {
+    var post = $("p" + this.centered_post_idx);
+    if(!post)
+      break;
+    var pos = post.offsetWidth/2 + this.centered_post_offset;
+    if(pos >= 0 && pos < post.offsetWidth)
+      break;
+
+    var next_post_idx = this.centered_post_idx + (this.centered_post_offset > 0? +1:-1);
+    var next_post = $("p" + next_post_idx);
+    if(next_post == null)
+      break;
+
+    var current_post_center = post.offsetLeft + post.offsetWidth/2;
+    var next_post_center = next_post.offsetLeft + next_post.offsetWidth/2;
+    var distance = next_post_center - current_post_center;
+    this.centered_post_offset -= distance;
+    this.centered_post_idx = next_post_idx;
+
+    post_idx = this.centered_post_idx;
+    break;
+  }
+
+  this.populate_post(post_idx);
+
+  /* Make sure that we have enough posts populated around the one we're centering
+   * on to fill the display.  If we have too many nodes, remove some. */
+  for(var direction = 0; direction < 2; ++direction)
+  {
+    var right = !!direction;
+
+    /* We need at least this.container.offsetWidth/2 in each direction.  Load a little more, to
+     * reduce flicker. */
+    var minimum_distance = this.container.offsetWidth/2;
+    minimum_distance *= 1.25;
+    var maximum_distance = minimum_distance + 500;
+    while(true)
+    {
+      var added = false;
+      var width = this.get_width_adjacent_to_post(post_idx, right);
+
+      /* If we're offset to the right then we need more data to the left, and vice versa. */
+      width += this.centered_post_offset * (right? -1:+1);
+      if(width < 0)
+        width = 1;
+
+      if(width < minimum_distance)
+      {
+        /* We need another post.  Stop if there are no more posts to add. */
+        if(!this.add_post_to_display(right))
+          break;
+        added = false;
+      }
+      else if(width > maximum_distance)
+      {
+        /* We have a lot of posts off-screen.  Remove one. */
+        this.remove_post(right);
+
+        /* Sanity check: we should never add and remove in the same direction.  If this
+         * happens, the distance between minimum_distance and maximum_distance may be less
+         * than the width of a single thumbnail. */
+        if(added)
+        {
+          alert("error");
+          break;
+        }
+      }
+      else
+      {
+        break;
+      }
+    }
+  }
+
+  this.preload_thumbs();
+
+  /* We always center the thumb.  Don't clamp to the edge when we're near the first or last
+   * item, so we always have empty space on the sides for expanded landscape thumbnails to
+   * be visible. */
+  var thumb = $("p" + post_idx);
+  var center_on_position = this.container.offsetWidth/2;
+
+  var shift_pixels_right = center_on_position - thumb.offsetWidth/2 - thumb.offsetLeft;
+  shift_pixels_right -= this.centered_post_offset;
+  shift_pixels_right = Math.round(shift_pixels_right);
+
+  var node = this.container.down(".post-browser-scroller");
+  node.setStyle({left: shift_pixels_right + "px"});
+}
+
+/* Preload thumbs on the boundary of what's actually displayed. */
+ThumbnailView.prototype.preload_thumbs = function()
+{
+  var post_idxs = [];
+  for(var i = 0; i < 5; ++i)
+  {
+    var preload_post_idx = this.posts_populated[0] - i - 1;
+    if(preload_post_idx >= 0)
+      post_idxs.push(preload_post_idx);
+
+    var preload_post_idx = this.posts_populated[1] + i;
+    if(preload_post_idx < this.post_ids.length)
+      post_idxs.push(preload_post_idx);
+  }
+
+  /* Remove any preloaded thumbs that are no longer in the preload list. */
+  this.thumb_preload_container.get_all().each(function(element) {
+    var post_idx = element.post_idx;
+    if(post_idxs.indexOf(post_idx) != -1)
+    {
+      /* The post is staying loaded.  Clear the value in post_idxs, so we don't load it
+       * again down below. */
+      post_idxs[post_idx] = null;
+      return;
+    }
+
+    /* The post is no longer being preloaded.  Remove the preload. */
+    this.thumb_preload_container.cancel_preload(element);
+  }.bind(this));
+
+  /* Add new preloads. */
+  for(var i = 0; i < post_idxs.length; ++i)
+  {
+    var post_idx = post_idxs[i];
+    if(post_idx == null)
+      continue;
+
+    var post_id = this.post_ids[post_idx];
+    var post = Post.posts.get(post_id);
+
+    var post_frame = this.post_frames[post_idx];
+    var url;
+    if(post_frame != -1)
+      url = post.frames[post_frame].preview_url;
+    else
+      url = post.preview_url;
+
+    var element = this.thumb_preload_container.preload(url);
+    element.post_idx = post_idx;
+  }
+}
+
+ThumbnailView.prototype.expand_post = function(post_idx)
+{
+  /* Thumbs on click for touchpads doesn't make much sense anyway--touching the thumb causes it
+   * to be loaded.  It also triggers a bug in iPhone WebKit (covering up the original target of
+   * a mouseover during the event seems to cause the subsequent click event to not be delivered).
+   * Just disable hover thumbnails for touchscreens.  */
+  if(Prototype.BrowserFeatures.Touchscreen)
+    return;
+
+  if(!this.thumb_container_shown)
+    return;
+
+  var post_id = this.post_ids[post_idx];
+
+  var overlay = this.container.down(".browser-thumb-hover-overlay");
+  overlay.hide();
+  overlay.down("IMG").src = "about:blank";
+
+  this.expanded_post_idx = post_idx;
+  if(post_idx == null)
+    return;
+
+  var post = Post.posts.get(post_id);
+  if(post.status == "deleted")
+    return;
+
+  var thumb = $("p" + post_idx);
+
+  var bottom = this.container.down(".browser-bottom-bar").offsetHeight;
+  overlay.style.bottom = bottom + "px";
+
+  var post_frame = this.post_frames[post_idx];
+  var image_width, image_url;
+  if(post_frame != -1)
+  {
+    var frame = post.frames[post_frame];
+    image_width = frame.preview_width;
+    image_url = frame.preview_url;
+  }
+  else
+  {
+    image_width = post.actual_preview_width;
+    image_url = post.preview_url;
+  }
+
+  var left = thumb.cumulativeOffset().left - image_width/2 + thumb.offsetWidth/2;
+  overlay.style.left = left + "px";
+
+  /* If the hover thumbnail overflows the right edge of the viewport, it'll extend the document and
+   * allow scrolling to the right, which we don't want.  overflow: hidden doesn't fix this, since this
+   * element is absolutely positioned.  Set the max-width to clip the right side of the thumbnail if
+   * necessary. */
+  var max_width = document.viewport.getDimensions().width - left;
+  overlay.style.maxWidth = max_width + "px";
+  overlay.href = "/post/browse#" + post.id + this.view.post_frame_hash(post, post_frame);
+  overlay.down("IMG").src = image_url;
+  overlay.show();
+}
+
+ThumbnailView.prototype.create_thumb = function(post_idx)
+{
+  var post_id = this.post_ids[post_idx];
+  var post_frame = this.post_frames[post_idx];
+
+  var post = Post.posts.get(post_id);
+
+  /*
+   * Reuse thumbnail blocks that are no longer in use, to avoid WebKit memory leaks: it
+   * doesn't like creating and deleting lots of images (or blocks with images inside them).
+   *
+   * Thumbnails are hidden until they're loaded, so we don't show ugly load-borders.  This
+   * also keeps us from showing old thumbnails before the new image is loaded.  Use visibility:
+   * hidden, not display: none, or the size of the image won't be defined, which breaks
+   * center_on_post.
+   */
+  if(this.unused_thumb_pool.length == 0)
+  {
+    var div =
+      '<div class="inner">' +
+        '<a class="thumb" tabindex="-1">' +
+          '<img alt="" class="preview" onload="this.style.visibility = \'visible\';">' +
+        '</a>' +
+      '</div>';
+    var item = $(document.createElement("li"));
+    item.innerHTML = div;
+    item.className = "post-thumb";
+  }
+  else
+  {
+    var item = this.unused_thumb_pool.pop();
+  }
+    
+  item.id = "p" + post_idx;
+  item.post_idx = post_idx;
+  item.down("A").href = "/post/browse#" + post.id + this.view.post_frame_hash(post, post_frame);
+
+  /* If the image is already what we want, then leave it alone.  Setting it to what it's
+   * already set to won't necessarily cause onload to be fired, so it'll never be set
+   * back to visible. */
+  var img = item.down("IMG");
+  var url;
+  if(post_frame != -1)
+    url = post.frames[post_frame].preview_url;
+  else
+    url = post.preview_url;
+  if(img.src != url)
+  {
+    img.style.visibility = "hidden";
+    img.src = url;
+  }
+
+  this.set_thumb_dimensions(item);
+  return item;
+}
+
+ThumbnailView.prototype.set_thumb_dimensions = function(li)
+{
+  var post_idx = li.post_idx;
+  var post_id = this.post_ids[post_idx];
+  var post_frame = this.post_frames[post_idx];
+  var post = Post.posts.get(post_id);
+
+  var width, height;
+  if(post_frame != -1)
+  {
+    var frame = post.frames[post_frame];
+    width = frame.preview_width;
+    height = frame.preview_height;
+  }
+  else
+  {
+    width = post.actual_preview_width;
+    height = post.actual_preview_height;
+  }
+
+  width *= this.config.thumb_scale;
+  height *= this.config.thumb_scale;
+
+  /* This crops blocks that are too wide, but doesn't pad them if they're too
+   * narrow, since that creates odd spacing. 
+   *
+   * If the height of this block is changed, adjust .post-browser-posts-container in
+   * config_changed. */
+  var block_size = [Math.min(width, 200 * this.config.thumb_scale), 200 * this.config.thumb_scale];
+  var crop_left = Math.round((width - block_size[0]) / 2);
+  var pad_top = Math.max(0, block_size[1] - height);
+
+  var inner = li.down(".inner");
+  inner.actual_width = block_size[0];
+  inner.actual_height = block_size[1];
+  inner.setStyle({width: block_size[0] + "px", height: block_size[1] + "px"});
+
+  var img = inner.down("img");
+  img.width = width;
+  img.height = height;
+  img.setStyle({marginTop: pad_top + "px", marginLeft: -crop_left + "px"});
+}
+
+ThumbnailView.prototype.config_changed = function()
+{
+  /* Adjust the size of the container to fit the thumbs at the current scale.  They're the
+   * height of the thumb block, plus ten pixels for padding at the top and bottom. */
+  var container_height = 200*this.config.thumb_scale + 10;
+  this.container.down(".post-browser-posts-container").setStyle({height: container_height + "px"});
+
+  this.container.select("LI.post-thumb").each(this.set_thumb_dimensions.bind(this));
+
+  this.center_on_post_for_scroll(this.centered_post_idx);
+}
+
+/* Handle clicks and doubleclicks on thumbnails.  These events are handled by
+ * the container, so we don't need to put event handlers on every thumb. */
+ThumbnailView.prototype.container_click_event = function(event)
+{
+  /* Ignore the click if it was stopped by the DragElement. */
+  if(event.stopped)
+    return;
+
+  if($(event.target).up(".browser-thumb-hover-overlay"))
+  {
+    /* The hover overlay was clicked.  When the user clicks a thumbnail, this is
+     * usually what happens, since the hover overlay covers the actual thumbnail. */
+    this.set_active_post_idx(this.expanded_post_idx);
+    event.preventDefault();
+    return;
+  }
+
+  var li = $(event.target).up(".post-thumb");
+  if(li == null)
+    return;
+
+  /* An actual thumbnail was clicked.  This can happen if we don't have the expanded
+   * thumbnails for some reason. */
+  event.preventDefault();
+  this.set_active_post_idx(li.post_idx);
+}
+
+ThumbnailView.prototype.container_dblclick_event = function(event)
+{
+  if(event.button)
+    return;
+
+  event.preventDefault();
+  this.show_thumb_bar(false);
+}
+
+ThumbnailView.prototype.show_thumb_bar = function(shown)
+{
+  if(this.thumb_container_shown == shown)
+    return;
+  this.thumb_container_shown = shown;
+  this.container.show(shown);
+
+  /* If the centered post was changed while we were hidden, it wasn't applied by
+   * center_on_post, so do it now. */
+  this.center_on_post_for_scroll(this.centered_post_idx);
+
+  document.fire("viewer:thumb-bar-changed", {
+    shown: this.thumb_container_shown,
+    height: this.thumb_container_shown? this.container.offsetHeight:0
+  });
+}
+
+/* Return the next or previous post, wrapping around if necessary. */
+ThumbnailView.prototype.get_adjacent_post_idx_wrapped = function(post_idx, next)
+{
+  post_idx += next? +1:-1;
+  post_idx = (post_idx + this.post_ids.length) % this.post_ids.length;
+  return post_idx;
+}
+
+ThumbnailView.prototype.displayed_image_loaded_event = function(event)
+{
+  /* If we don't have a loaded search, then we don't have any nearby posts to preload. */
+  if(this.post_ids == null)
+    return;
+
+  var post_id = event.memo.post_id;
+  var post_frame = event.memo.post_frame;
+  var post_idx = this.get_post_idx([post_id, post_frame]);
+  if(post_idx == null)
+    return;
+
+  /*
+   * The image in the post we're displaying is finished loading.
+   *
+   * Preload the next and previous posts.  Normally, one or the other of these will
+   * already be in cache.
+   *
+   * Include the current post in the preloads, so if we switch from a frame back to
+   * the main image, the frame itself will still be loaded.
+   */
+  var post_ids_to_preload = [];
+  post_ids_to_preload.push([this.post_ids[post_idx], this.post_frames[post_idx]]);
+  var adjacent_post_idx = this.get_adjacent_post_idx_wrapped(post_idx, true);
+  if(adjacent_post_idx != null)
+    post_ids_to_preload.push([this.post_ids[adjacent_post_idx], this.post_frames[adjacent_post_idx]]);
+  var adjacent_post_idx = this.get_adjacent_post_idx_wrapped(post_idx, false);
+  if(adjacent_post_idx != null)
+    post_ids_to_preload.push([this.post_ids[adjacent_post_idx], this.post_frames[adjacent_post_idx]]);
+  this.view.preload(post_ids_to_preload);
+}
+
+
+/* This handler handles global keypress bindings, and fires viewer: events. */
+function InputHandler()
+{
+  TrackFocus();
+
+  /*
+   * Keypresses are aggrevating:
+   *
+   * Opera can only stop key events from keypress, not keydown.
+   *
+   * Chrome only sends keydown for non-alpha keys, not keypress.
+   *
+   * In Firefox, keypress's keyCode value for non-alpha keys is always 0.
+   *
+   * Alpha keys can always be detected with keydown.  Don't use keypress; Opera only provides
+   * charCode to that event, and it's affected by the caps state, which we don't want.
+   *
+   * Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
+   * keydown in other browsers.
+   */
+  var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
+  document.on(keypress_event_name, this.document_keypress_event.bindAsEventListener(this));
+}
+
+InputHandler.prototype.handle_keypress = function(e)
+{
+  var key = e.charCode;
+  if(!key)
+    key = e.keyCode; /* Opera */
+  if(key == Event.KEY_ESC)
+  {
+    if(document.focusedElement && document.focusedElement.blur && !document.focusedElement.hasClassName("no-blur-on-escape"))
+    {
+      document.focusedElement.blur();
+      return true;
+    }
+  }
+
+  var target = e.target;
+  if(target.tagName == "INPUT" || target.tagName == "TEXTAREA")
+    return false;
+
+  if(key == 63) // ?, f
+  {
+    debug("xxx");
+    document.fire("viewer:show-help");
+    return true;
+  }
+
+  if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey)
+    return false;
+  var grave_keycode = Prototype.Browser.WebKit? 192: 96;
+  if(key == 32) // space
+    document.fire("viewer:set-thumb-bar", { toggle: true });
+  else if(key == 49) // 1
+    document.fire("viewer:vote", { score: 1 });
+  else if(key == 50) // 2
+    document.fire("viewer:vote", { score: 2 });
+  else if(key == 51) // 3
+    document.fire("viewer:vote", { score: 3 });
+  else if(key == grave_keycode) // `
+    document.fire("viewer:vote", { score: 0 });
+  else if(key == 65 || key == 97) // A, b
+    document.fire("viewer:show-next-post", { prev: true });
+  else if(key == 69 || key == 101) // E, e
+    document.fire("viewer:edit-post");
+  else if(key == 83 || key == 115) // S, s
+    document.fire("viewer:show-next-post", { prev: false });
+  else if(key == 70 || key == 102) // F, f
+    document.fire("viewer:focus-tag-box");
+  else if(key == 86 || key == 118) // V, v
+    document.fire("viewer:view-large-toggle");
+  else if(key == Event.KEY_PAGEUP)
+    document.fire("viewer:show-next-post", { prev: true });
+  else if(key == Event.KEY_PAGEDOWN)
+    document.fire("viewer:show-next-post", { prev: false });
+  else if(key == Event.KEY_LEFT)
+    document.fire("viewer:scroll", { left: true });
+  else if(key == Event.KEY_RIGHT)
+    document.fire("viewer:scroll", { left: false });
+  else
+    return false;
+  return true;
+}
+
+InputHandler.prototype.document_keypress_event = function(e)
+{
+  //alert(e.charCode + ", " + e.keyCode);
+  if(this.handle_keypress(e))
+    e.stop();
+}
+
+
+
+/*
+ * We have a few competing goals:
+ *
+ * First, be as responsive as possible.  Preload nearby post HTML and their images.
+ *
+ * If data in a post page changes, eg. if the user votes, then coming back to the page
+ * later should retain the changes.  This means either requesting the page again, or
+ * retaining the document node and reusing it, so we preserve the changes that were
+ * made in-place.
+ *
+ * Don't use too much memory.  If we keep every document node in memory as we use it,
+ * the images will probably be kept around too.  Release older nodes, so the browser
+ * is more likely to release images that havn't been used in a while.
+ *
+ * We do the following:
+ * - When we load a new post, it's formatted and its scripts are evaluated normally.
+ * - When we're replacing the displayed post, its node is stashed away in a node cache.
+ * - If we come back to the post while it's in the node cache, we'll use the node directly.
+ * - HTML and images for posts are preloaded.  We don't use a simple mechanism like
+ *   Preload.preload_raw, because Opera's caching is broken for XHR and it'll always
+ *   do a slow revalidation.
+ * - We don't depend on browser caching for HTML.  That would require us to expire a
+ *   page when we switch away from it if we've made any changes (eg. voting), so we
+ *   don't pull an out-of-date page next time.  This is slower, and would require us
+ *   to be careful about expiring the cache.
+ */
+
+BrowserView = function(container)
+{
+  this.container = container;
+
+  /* The post that we currently want to display.  This will be either one of the
+   * current html_preloads, or be the displayed_post_id. */
+  this.wanted_post_id = null;
+  this.wanted_post_frame = null;
+
+  /* The post that's currently actually being displayed. */
+  this.displayed_post_id = null;
+  this.displayed_post_frame = null;
+
+  this.current_ajax_request = null;
+  this.last_preload_request = [];
+  this.last_preload_request_active = false;
+
+  this.image_pool = new ImgPoolHandler();
+  this.img_box = this.container.down(".image-box");
+  this.container.down(".image-canvas");
+
+  /* In Opera 10.63, the img.complete property is not reset to false after changing the
+   * src property.  Blits from images to the canvas silently fail, with nothing being
+   * blitted and no exception raised.  This causes blank canvases to be displayed, because
+   * we have no way of telling whether the image is blittable or if the blit succeeded. */
+  if(!Prototype.Browser.Opera)
+    this.canvas = create_canvas_2d();
+  if(this.canvas)
+  {
+    this.canvas.hide();
+    this.img_box.appendChild(this.canvas);
+  }
+  this.zoom_level = 0;
+
+  /* True if the post UI is visible. */
+  this.post_ui_visible = true;
+
+  this.update_navigator = this.update_navigator.bind(this);
+
+  Event.on(window, "resize", this.window_resize_event.bindAsEventListener(this));
+  document.on("viewer:vote", function(event) { if(this.vote_widget) this.vote_widget.vote(event.memo.score); }.bindAsEventListener(this));
+
+  if(TagCompletion)
+    TagCompletion.init();
+
+  /* Double-clicking the main image, or on nothing, toggles the thumb bar. */
+  this.container.down(".image-container").on("dblclick", ".image-container", function(event) {
+    /* Watch out: Firefox fires dblclick events for all buttons, with the standard
+     * button maps, but IE only fires it for left click and doesn't set button at
+     * all, so event.isLeftClick won't work. */
+    if(event.button)
+      return;
+
+    event.stop();
+    document.fire("viewer:set-thumb-bar", {toggle: true});
+  }.bindAsEventListener(this));
+
+  /* Image controls: */
+  document.on("viewer:view-large-toggle", function(e) { this.toggle_view_large_image(); }.bindAsEventListener(this));
+  this.container.down(".post-info").on("click", ".toggle-zoom", function(e) { e.stop(); this.toggle_view_large_image(); }.bindAsEventListener(this));
+  this.container.down(".parent-post").down("A").on("click", this.parent_post_click_event.bindAsEventListener(this));
+  this.container.down(".child-posts").down("A").on("click", this.child_posts_click_event.bindAsEventListener(this));
+
+  this.container.down(".post-frames").on("click", ".post-frame-link", function(e, item) {
+    e.stop();
+
+    /* Change the displayed post frame to the one that was clicked.  Since all post frames
+     * are usually displayed in the thumbnail view, set center_thumbs to true to recenter
+     * on the thumb that was clicked, so it's clearer what's happening. */
+    document.fire("viewer:set-active-post", {post_id: this.displayed_post_id, post_frame: item.post_frame, center_thumbs: true});
+  }.bind(this));
+
+  /* We'll receive this message from the thumbnail view when the overlay is
+   * visible on the bottom of the screen, to tell us how much space is covered up
+   * by it. */
+  this.thumb_bar_height = 0;
+  document.on("viewer:thumb-bar-changed", function(e) {
+    /* Update the thumb bar height and rescale the image to fit the new area. */
+    this.thumb_bar_height = e.memo.height;
+    this.update_image_window_size();
+
+    this.set_post_ui(e.memo.shown);
+    this.scale_and_position_image(true);
+  }.bindAsEventListener(this));
+
+/*
+  OnKey(79, null, function(e) {
+    this.zoom_level -= 1;
+    this.scale_and_position_image(true);
+    this.update_navigator();
+    return true;
+  }.bindAsEventListener(this));
+
+  OnKey(80, null, function(e) {
+    this.zoom_level += 1;
+    this.scale_and_position_image(true);
+    this.update_navigator();
+    return true;
+  }.bindAsEventListener(this));
+*/
+  /* Hide member-only and moderator-only controls: */
+  $(document.body).pickClassName("is-member", "not-member", User.is_member_or_higher());
+  $(document.body).pickClassName("is-moderator", "not-moderator", User.is_mod_or_higher());
+
+  var tag_span = this.container.down(".post-tags");
+  tag_span.on("click", ".post-tag", function(e, element) {
+    e.stop();
+    document.fire("viewer:perform-search", {tags: element.tag_name});
+  }.bind(this));
+
+  /* These two links do the same thing, but one is shown to approve a pending post
+   * and the other is shown to unflag a flagged post, so they prompt differently. */
+  this.container.down(".post-approve").on("click", function(e) {
+    e.stop();
+    if(!confirm("Approve this post?"))
+      return;
+    var post_id = this.displayed_post_id;
+    Post.approve(post_id, false);
+  }.bindAsEventListener(this));
+
+  this.container.down(".post-unflag").on("click", function(e) {
+    e.stop();
+    if(!confirm("Unflag this post?"))
+      return;
+    var post_id = this.displayed_post_id;
+    Post.unflag(post_id);
+  }.bindAsEventListener(this));
+
+  this.container.down(".post-delete").on("click", function(e) {
+    e.stop();
+    var post = Post.posts.get(this.displayed_post_id);
+    var default_reason = "";
+    if(post.flag_detail)
+      default_reason = post.flag_detail.reason;
+
+    var reason = prompt("Reason:", default_reason);
+    if(!reason || reason == "")
+      return;
+    var post_id = this.displayed_post_id;
+    Post.approve(post_id, reason);
+  }.bindAsEventListener(this));
+
+  this.container.down(".post-undelete").on("click", function(e) {
+    e.stop();
+    if(!confirm("Undelete this post?"))
+      return;
+    var post_id = this.displayed_post_id;
+    Post.undelete(post_id);
+  }.bindAsEventListener(this));
+  
+  this.container.down(".flag-button").on("click", function(e) {
+    e.stop();
+    var post_id = this.displayed_post_id;
+    Post.flag(post_id);
+  }.bindAsEventListener(this));
+
+  this.container.down(".activate-post").on("click", function(e) {
+    e.stop();
+
+    var post_id = this.displayed_post_id;
+    if(!confirm("Activate this post?"))
+      return;
+    Post.update_batch([{ id: post_id, is_held: false }], function()
+    {
+      var post = Post.posts.get(post_id);
+      if(post.is_held)
+        notice("Couldn't activate post");
+      else
+        notice("Activated post");
+    }.bind(this));
+  }.bindAsEventListener(this));
+
+  this.container.down(".reparent-post").on("click", function(e) {
+    e.stop();
+
+    if(!confirm("Make this post the parent?"))
+      return;
+
+    var post_id = this.displayed_post_id;
+    var post = Post.posts.get(post_id);
+    if(post == null)
+      return;
+
+    Post.reparent_post(post_id, post.parent_id, false);
+  }.bindAsEventListener(this));
+
+  this.container.down(".pool-info").on("click", ".remove-pool-from-post", function(e, element)
+  {
+    e.stop();
+    var pool_info = element.up(".pool-info");
+    var pool = Pool.pools.get(pool_info.pool_id);
+    var pool_name = pool.name.replace(/_/g, ' ');
+    if(!confirm("Remove this post from pool #" + pool_info.pool_id + ": " + pool_name + "?"))
+      return;
+
+    Pool.remove_post(pool_info.post_id, pool_info.pool_id);
+  }.bind(this));
+  
+  /* Post editing: */
+  var post_edit = this.container.down(".post-edit");
+  post_edit.down("FORM").on("submit", function(e) { e.stop(); this.edit_save(); }.bindAsEventListener(this));
+  this.container.down(".show-tag-edit").on("click", function(e) { e.stop(); this.edit_show(true); }.bindAsEventListener(this));
+  this.container.down(".edit-save").on("click", function(e) { e.stop(); this.edit_save(); }.bindAsEventListener(this));
+  this.container.down(".edit-cancel").on("click", function(e) { e.stop(); this.edit_show(false); }.bindAsEventListener(this));
+
+  this.edit_post_area_changed = this.edit_post_area_changed.bind(this);
+  post_edit.down(".edit-tags").on("paste", function(e) { this.edit_post_area_changed.defer(); }.bindAsEventListener(this));
+  post_edit.down(".edit-tags").on("keydown", function(e) { this.edit_post_area_changed.defer(); }.bindAsEventListener(this));
+  new TagCompletionBox(post_edit.down(".edit-tags"));
+
+  this.container.down(".post-edit").on("keydown", function(e) {
+    /* Don't e.stop() KEY_ESC, so we fall through and let handle_keypress unfocus the
+     * form entry, if any.  Otherwise, Chrome gets confused and leaves the focus on the
+     * hidden input, where it'll steal keystrokes. */
+    if (e.keyCode == Event.KEY_ESC) { this.edit_show(false); }
+    else if (e.keyCode == Event.KEY_RETURN) { e.stop(); this.edit_save(); }
+  }.bindAsEventListener(this));
+
+  /* When the edit-post hotkey is pressed (E), force the post UI open and show editing. */
+  document.on("viewer:edit-post", function(e) {
+    document.fire("viewer:set-thumb-bar", { set: true });
+    this.edit_show(true);
+  }.bindAsEventListener(this));
+
+  /* When the post that's currently being displayed is updated by an API call, update
+   * the displayed info. */
+  document.on("posts:update", function(e) {
+    if(e.memo.post_ids.get(this.displayed_post_id) == null)
+      return;
+    this.set_post_info();
+  }.bindAsEventListener(this));
+
+  this.vote_widget = new VoteWidget(this.container.down(".vote-container"));
+
+  this.blacklist_override_post_id = null;
+  this.container.down(".show-blacklisted").on("click", function(e) { e.preventDefault(); }.bindAsEventListener(this));
+  this.container.down(".show-blacklisted").on("dblclick", function(e) {
+    e.stop();
+    this.blacklist_override_post_id = this.displayed_post_id;
+    var post = Post.posts.get(this.displayed_post_id);
+    this.set_main_image(post, this.displayed_post_frame);
+  }.bindAsEventListener(this));
+
+
+  this.img_box.on("viewer:center-on", function(e) { this.center_image_on(e.memo.x, e.memo.y); }.bindAsEventListener(this));
+
+  this.navigator = new Navigator(this.container.down(".image-navigator"), this.img_box);
+
+  this.container.on("swipe:horizontal", function(e) { document.fire("viewer:show-next-post", { prev: e.memo.right }); }.bindAsEventListener(this));
+
+  if(Prototype.BrowserFeatures.Touchscreen)
+  {
+    this.create_voting_popup();
+    this.image_swipe = new SwipeHandler(this.container.down(".image-container"));
+  }
+
+  /* Create the frame editor.  This must be created before image_dragger, since it takes priority
+   * for drags. */
+  this.container.down(".edit-frames-button").on("click", function(e) { e.stop(); this.show_frame_editor(); }.bindAsEventListener(this));
+  this.frame_editor = new FrameEditor(this.container.down(".frame-editor"), this.img_box, this.container.down(".frame-editor-popup"),
+  {
+    onClose: function() {
+      this.hide_frame_editor();
+    }.bind(this)
+  });
+
+  /* If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
+   * dragging too. */
+  if(this.image_swipe == null)
+    this.image_dragger = new WindowDragElementAbsolute(this.img_box, this.update_navigator);
+}
+
+BrowserView.prototype.create_voting_popup = function()
+{
+  /* Create the low-level voting widget. */
+  var popup_vote_widget_container = this.container.down(".vote-popup-container");
+  popup_vote_widget_container.show();
+  this.popup_vote_widget = new VoteWidget(popup_vote_widget_container);
+
+  var flash = this.container.down(".vote-popup-flash");
+
+  /* vote-popup-expand is the part that's always present and is clicked to display the
+   * voting popup.  Create a dragger on it, and pass the position down to the voting
+   * popup as we drag around. */
+  var popup_expand = this.container.down(".vote-popup-expand");
+  popup_expand.show();
+
+  var last_dragged_over = null;
+
+  this.popup_vote_dragger = new DragElement(popup_expand, {
+    ondown: function(drag) {
+      /* Stop the touchdown/mousedown events, so this drag takes priority over any
+       * others.  In particular, we don't want this.image_swipe to also catch this
+       * as a drag. */
+      drag.latest_event.stop();
+
+      flash.hide();
+      flash.removeClassName("flash-star");
+
+      this.popup_vote_widget.set_mouseover(null);
+      last_dragged_over = null;
+      popup_vote_widget_container.removeClassName("vote-popup-hidden");
+    }.bind(this),
+
+    onup: function(drag) {
+      /* If we're cancelling the drag, don't activate the vote, if any. */
+      if(drag.cancelling)
+      {
+        debug("cancelling drag");
+        last_dragged_over = null;
+      }
+
+      /* Call even if star_container is null or not a star, so we clear any mouseover. */
+      this.popup_vote_widget.set_mouseover(last_dragged_over);
+
+      var star = this.popup_vote_widget.activate_item(last_dragged_over);
+
+      /* If a vote was made, flash the vote star. */
+      if(star != null)
+      {
+        /* Set the star-# class to color the star. */
+        for(var i = 0; i < 4; ++i)
+          flash.removeClassName("star-" + i);
+        flash.addClassName("star-" + star);
+
+        flash.show();
+
+        /* Center the element on the screen. */
+        var offset = this.image_window_size;
+        var flash_x = offset.width/2 - flash.offsetWidth/2;
+        var flash_y = offset.height/2 - flash.offsetHeight/2;
+        flash.setStyle({left: flash_x + "px", top: flash_y + "px"});
+        flash.addClassName("flash-star");
+      }
+
+      popup_vote_widget_container.addClassName("vote-popup-hidden");
+      last_dragged_over = null;
+    }.bind(this),
+
+    ondrag: function(drag) {
+      last_dragged_over = document.elementFromPoint(drag.x, drag.y);
+      this.popup_vote_widget.set_mouseover(last_dragged_over);
+    }.bind(this)
+  });
+}
+
+
+BrowserView.prototype.set_post_ui = function(visible)
+{
+  /* Disable the post UI by default on touchscreens; we don't have an interface
+   * to toggle it. */
+  if(Prototype.BrowserFeatures.Touchscreen)
+    visible = false;
+
+  /* If we don't have a post displayed, always hide the post UI even if it's currently
+   * shown. */
+  this.container.down(".post-info").show(visible && this.displayed_post_id != null);
+
+  if(visible == this.post_ui_visible)
+    return;
+
+  this.post_ui_visible = visible;
+  if(this.navigator)
+    this.navigator.set_autohide(!visible);
+
+  /* If we're hiding the post UI, cancel the post editor if it's open. */
+  if(!this.post_ui_visible)
+    this.edit_show(false);
+}
+
+
+BrowserView.prototype.image_loaded_event = function(event)
+{
+  /* Record that the image is completely available, so it can be blitted to the canvas.
+   * This is different than img.complete, which is true if the image has completed downloading
+   * but hasn't yet been decoded, so isn't yet completely available.  This generally happens
+   * if we query img.completed quickly after setting img.src and the image data is cached. */
+  this.img.fully_loaded = true;
+
+  document.fire("viewer:displayed-image-loaded", { post_id: this.displayed_post_id, post_frame: this.displayed_post_frame });
+  this.update_canvas();
+}
+
+/* Return true if last_preload_request includes [post_id, post_frame]. */
+BrowserView.prototype.post_frame_list_includes = function(post_id_list, post_id, post_frame)
+{
+  var found_preload = post_id_list.find(function(post) { return post[0] == post_id && post[1] == post_frame; });
+  return found_preload != null;
+}
+
+/* Begin preloading the HTML and images for the given post IDs. */
+BrowserView.prototype.preload = function(post_ids)
+{
+  /* We're being asked to preload post_ids.  Only do this if it seems to make sense: if
+   * the user is actually traversing posts that are being preloaded.  Look at the previous
+   * call to preload().  If it didn't include the current post, then skip the preload. */
+  var last_preload_request = this.last_preload_request;
+  this.last_preload_request = post_ids;
+
+  if(!this.post_frame_list_includes(last_preload_request, this.wanted_post_id, this.wanted_post_frame))
+  {
+    // debug("skipped-preload(" + post_ids.join(",") + ")");
+    this.last_preload_request_active = false;
+    return;
+  }
+  this.last_preload_request_active = true;
+  // debug("preload(" + post_ids.join(",") + ")");
+  
+  var new_preload_container = new PreloadContainer();
+  for(var i = 0; i < post_ids.length; ++i)
+  {
+    var post_id = post_ids[i][0];
+    var post_frame = post_ids[i][1];
+    var post = Post.posts.get(post_id);
+
+    if(post_frame != -1)
+    {
+      var frame = post.frames[post_frame];
+      new_preload_container.preload(frame.url);
+    }
+    else
+      new_preload_container.preload(post.sample_url);
+  }
+
+  /* If we already were preloading images, we created the new preloads before
+   * deleting the old ones.  That way, any images that are still being preloaded
+   * won't be deleted and recreated, possibly causing the download to be interrupted
+   * and resumed. */
+  if(this.preload_container)
+    this.preload_container.destroy();
+  this.preload_container = new_preload_container;
+}
+
+BrowserView.prototype.load_post_id_data = function(post_id)
+{
+  debug("load needed");
+
+  // If we already have a request in flight, don't start another; wait for the
+  // first to finish.
+  if(this.current_ajax_request != null)
+    return;
+
+  new Ajax.Request("/post/index.json", {
+    parameters: {
+      tags: "id:" + post_id,
+      api_version: 2,
+      filter: 1,
+      include_tags: "1",
+      include_votes: "1",
+      include_pools: 1
+    },
+    method: "get",
+
+    onCreate: function(resp) {
+      this.current_ajax_request = resp.request;
+    }.bind(this),
+
+    onSuccess: function(resp) {
+      if(this.current_ajax_request != resp.request)
+        return;
+
+      /* If no posts were returned, then the post ID we're looking up doesn't exist;
+       * treat this as a failure. */
+      var resp = resp.responseJSON;
+      this.success = resp.posts.length > 0;
+      if(!this.success)
+      {
+        notice("Post #" + post_id + " doesn't exist");
+        return;
+      }
+
+      Post.register_resp(resp);
+    }.bind(this),
+
+    onComplete: function(resp) {
+      if(this.current_ajax_request == resp.request)
+        this.current_ajax_request = null;
+
+      /* If the request failed and we were requesting wanted_post_id, don't keep trying. */
+      var success = resp.request.success() && this.success;
+      if(!success && post_id == this.wanted_post_id)
+      {
+        /* As a special case, if the post we requested doesn't exist and we aren't displaying
+         * anything at all, force the thumb bar open so we don't show nothing at all. */
+        if(this.displayed_post_id == null)
+          document.fire("viewer:set-thumb-bar", {set: true});
+
+        return;
+      }
+
+      /* This will either load the post we just finished, or request data for the
+       * one we want. */
+      this.set_post(this.wanted_post_id, this.wanted_post_frame);
+    }.bind(this),
+
+    onFailure: function(resp) {
+      notice("Error " + resp.status + " loading post");
+    }.bind(this)
+  });
+}
+
+BrowserView.prototype.set_viewing_larger_version = function(b)
+{
+  this.viewing_larger_version = b;
+
+  var post = Post.posts.get(this.displayed_post_id);
+  var can_zoom = post != null && post.jpeg_url != post.sample_url;
+  this.container.down(".zoom-icon-none").show(!can_zoom);
+  this.container.down(".zoom-icon-in").show(can_zoom && !this.viewing_larger_version);
+  this.container.down(".zoom-icon-out").show(can_zoom && this.viewing_larger_version);
+
+  /* When we're on the regular version and we're on a touchscreen, disable drag
+   * scrolling so we can use it to switch images instead. */
+  if(Prototype.BrowserFeatures.Touchscreen && this.image_dragger)
+    this.image_dragger.set_disabled(!b);
+
+  /* Only allow dragging to create new frames when not viewing the large version,
+   * since we need to be able to drag the image. */
+  if(this.frame_editor)
+  {
+    this.frame_editor.set_drag_to_create(!b);
+    this.frame_editor.set_show_corner_drag(!b);
+  }
+}
+
+BrowserView.prototype.set_main_image = function(post, post_frame)
+{
+  /*
+   * Clear the previous post, if any.  Don't keep the old IMG around; create a new one, or
+   * we may trigger long-standing memory leaks in WebKit, eg.:
+   * https://bugs.webkit.org/show_bug.cgi?id=31253
+   *
+   * This also helps us avoid briefly displaying the old image with the new dimensions, which
+   * can otherwise take some hoop jumping to prevent.
+   */
+  if(this.img != null)
+  {
+    this.img.stopObserving();
+    this.img.parentNode.removeChild(this.img);
+    this.image_pool.release(this.img);
+    this.img = null;
+  }
+
+  /* If this post is blacklisted, show a message instead of displaying it. */
+  var hide_post = Post.is_blacklisted(post.id) && post.id != this.blacklist_override_post_id;
+  this.container.down(".blacklisted-message").show(hide_post);
+  if(hide_post)
+    return;
+
+  this.img = this.image_pool.get();
+  this.img.className = "main-image";
+
+  if(this.canvas)
+    this.canvas.hide();
+  this.img.show();
+
+  /*
+   * Work around an iPhone bug.  If a touchstart event is sent to this.img, and then
+   * (due to a swipe gesture) we remove the image and replace it with a new one, no
+   * touchend is ever delivered, even though it's the containing box listening to the
+   * event.  Work around this by setting the image to pointer-events: none, so clicks on
+   * the image will actually be sent to the containing box directly.
+   */
+  this.img.setStyle({pointerEvents: "none"});
+
+  this.img.on("load", this.image_loaded_event.bindAsEventListener(this));
+
+  this.img.fully_loaded = false;
+  if(post_frame != -1 && post_frame < post.frames.length)
+  {
+    var frame = post.frames[post_frame];
+    this.img.src = frame.url;
+    this.img_box.original_width = frame.width;
+    this.img_box.original_height = frame.height;
+    this.img_box.show();
+  }
+  else if(this.viewing_larger_version && post.jpeg_url)
+  {
+    this.img.src = post.jpeg_url;
+    this.img_box.original_width = post.jpeg_width;
+    this.img_box.original_height = post.jpeg_height;
+    this.img_box.show();
+  }
+  else if(!this.viewing_larger_version && post.sample_url)
+  {
+    this.img.src = post.sample_url;
+    this.img_box.original_width = post.sample_width;
+    this.img_box.original_height = post.sample_height;
+    this.img_box.show();
+  }
+  else
+  {
+    /* Having no sample URL is an edge case, usually from deleted posts.  Keep the number
+     * of code paths smaller by creating the IMG anyway, but not showing it. */
+    this.img_box.hide();
+  }
+
+  this.container.down(".image-box").appendChild(this.img);
+
+  if(this.viewing_larger_version)
+  {
+    this.navigator.set_image(post.preview_url, post.actual_preview_width, post.actual_preview_height);
+    this.navigator.set_autohide(!this.post_ui_visible);
+  }
+  this.navigator.enable(this.viewing_larger_version);
+
+  this.scale_and_position_image();
+}
+
+/*
+ * Display post_id.  If post_frame is not null, set the specified frame.
+ *
+ * If no_hash_change is true, the UrlHash will not be updated to reflect the new post.
+ * This should be used when this is called to load the post already reflected by the
+ * URL hash.  For example, the hash "#/pool:123" shows pool 123 in the thumbnails and
+ * shows its first post in the view.  It should *not* change the URL hash to reflect
+ * the actual first post (eg. #12345/pool:123).  This will insert an unwanted history
+ * state in the browser, so the user has to go back twice to get out.
+ *
+ * no_hash_change should also be set when loading a state as a result of hashchange,
+ * for similar reasons.
+ */
+BrowserView.prototype.set_post = function(post_id, post_frame, lazy, no_hash_change, replace_history)
+{
+  if(post_id == null)
+    throw "post_id must not be null";
+
+  /* If there was a lazy load pending, cancel it. */
+  this.cancel_lazily_load();
+
+  this.wanted_post_id = post_id;
+  this.wanted_post_frame = post_frame;
+  this.wanted_post_no_hash_change = no_hash_change;
+  this.wanted_post_replace_history = replace_history;
+
+  if(post_id == this.displayed_post_id && post_frame == this.displayed_post_frame)
+    return;
+
+  /* If a lazy load was requested and we're not yet loading the image for this post,
+   * delay loading. */
+  var is_cached = this.last_preload_request_active && this.post_frame_list_includes(this.last_preload_request, post_id, post_frame);
+  if(lazy && !is_cached)
+  {
+    this.lazy_load_timer = window.setTimeout(function() {
+      this.lazy_load_timer = null;
+      this.set_post(this.wanted_post_id, this.wanted_post_frame, false, this.wanted_post_no_hash_change, this.wanted_post_replace_history);
+    }.bind(this), 500);
+    return;
+  }
+
+  this.hide_frame_editor();
+
+  var post = Post.posts.get(post_id);
+  if(post == null)
+  {
+    /* The post we've been asked to display isn't loaded.  Request a load and come back. */
+    if(this.displayed_post_id == null)
+      this.container.down(".post-info").hide();
+
+    this.load_post_id_data(post_id);
+    return;
+  }
+
+  if(post_frame == null) {
+    // If post_frame is unspecified and we have a frame, display the first.
+    post_frame = this.get_default_post_frame(post_id);
+
+    // We know what frame we actually want to display now, so update wanted_post_frame.
+    this.wanted_post_frame = post_frame;
+  }
+
+  /* If post_frame doesn't exist, just display the main post. */
+  if(post_frame != -1 && post.frames.length <= post_frame)
+    post_frame = -1;
+
+  this.displayed_post_id = post_id;
+  this.displayed_post_frame = post_frame;
+  if(!no_hash_change) {
+    var post_frame_hash = this.get_post_frame_hash(post, post_frame);
+    UrlHash.set_deferred({"post-id": post_id, "post-frame": post_frame_hash}, replace_history);
+  }
+
+  this.set_viewing_larger_version(false);
+
+  this.set_main_image(post, post_frame);
+
+  if(this.vote_widget)
+    this.vote_widget.set_post_id(post.id);
+  if(this.popup_vote_widget)
+    this.popup_vote_widget.set_post_id(post.id);
+
+  document.fire("viewer:displayed-post-changed", { post_id: post_id, post_frame: post_frame });
+
+  this.set_post_info();
+
+  /* Hide the editor when changing posts. */
+  this.edit_show(false);
+}
+
+/* Return the frame spec for the hash, eg. "-0".
+ *
+ * If the post has no frames, then just omit the frame spec.  If the post has any frames,
+ * then return the frame number or "-F" for the full image. */
+BrowserView.prototype.post_frame_hash = function(post, post_frame)
+{
+  if(post.frames.length == 0)
+    return "";
+  return "-" + (post_frame == -1? "F":post_frame);
+}
+
+/* Return the default frame to display for the given post.  If the post isn't loaded,
+ * we don't know which frame we'll display and null will be returned.  This corresponds
+ * to a hash of #1234, where no frame is specified (eg. #1234-F, #1234-0). */
+BrowserView.prototype.get_default_post_frame = function(post_id)
+{
+  var post = Post.posts.get(post_id);
+  if(post == null)
+    return null;
+  
+  return post.frames.length > 0? 0: -1;
+}
+
+BrowserView.prototype.get_post_frame_hash = function(post, post_frame)
+{
+/* 
+ * Omitting the frame in the hash selects the default frame: the first frame if any,
+ * otherwise the full image.  If we're setting the hash to a post_frame which would be
+ * selected by this default, omit the frame so this default is used.  For example, if
+ * post #1234 has one frame and post_frame is 0, it would be selected by the default,
+ * so omit the frame and use a hash of #1234, not #1234-0.
+ *
+ * This helps normalize the hash.  Otherwise, loading /#1234 will update the hash to
+ * /#1234-in set_post, causing an unwanted history entry.
+ */
+  var default_frame = post.frames.length > 0? 0:-1;
+  if(post_frame == default_frame)
+    return null;
+  else
+    return post_frame;
+}
+/* Set the post info box for the currently displayed post. */
+BrowserView.prototype.set_post_info = function()
+{
+  var post = Post.posts.get(this.displayed_post_id);
+  if(!post)
+    return;
+
+  this.container.down(".post-id").setTextContent(post.id);
+  this.container.down(".post-id-link").href = "/post/show/" + post.id;
+  this.container.down(".posted-by").show(post.creator_id != null);
+  this.container.down(".posted-at").setTextContent(time_ago_in_words(new Date(post.created_at*1000)));
+
+  /* Fill in the pool list. */
+  var pool_info = this.container.down(".pool-info");
+  while(pool_info.firstChild)
+    pool_info.removeChild(pool_info.firstChild);
+  if(post.pool_posts)
+  {
+    post.pool_posts.each(function(pp) {
+      var pool_post = pp[1];
+      var pool_id = pool_post.pool_id;
+      var pool = Pool.pools.get(pool_id);
+
+      var pool_title = pool.name.replace(/_/g, " ");
+      var sequence = pool_post.sequence;
+      if(sequence.match(/^[0-9]/))
+        sequence = "#" + sequence;
+
+      var html = 
+        '<div class="pool-info">Post ${sequence} in <a class="pool-link" href="/post/browse#/pool:${pool_id}">${desc}</a> ' +
+        '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)';
+
+      if(Pool.can_edit_pool(pool))
+        html += '<span class="advanced-editing"> (<a href="#" class="remove-pool-from-post">remove</a>)</div></span>';
+
+      var div = html.subst({
+        sequence: sequence,
+        pool_id: pool_id,
+        desc: pool_title.escapeHTML()
+      }).createElement();
+
+      div.post_id = post.id;
+      div.pool_id = pool_id;
+
+      pool_info.appendChild(div);
+    }.bind(this));
+  }
+
+  if(post.creator_id != null)
+  {
+    this.container.down(".posted-by").down("A").href = "/user/show/" + post.creator_id;
+    this.container.down(".posted-by").down("A").setTextContent(post.author);
+  }
+
+  this.container.down(".post-dimensions").setTextContent(post.width + "x" + post.height);
+  this.container.down(".post-source").show(post.source != "");
+  if(post.source != "")
+  {
+    var text = post.source;
+    var url = null;
+
+    var m = post.source.match(/^http:\/\/.*pixiv\.net\/img\/(\w+)\/(\d+)\.\w+$/);
+    if(m)
+    {
+      text = "pixiv #" + m[2] + " (" + m[1] + ")";
+      url = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + m[2];
+    }
+    else if(post.source.substr(0, 7) == "http://")
+    {
+      text = text.substr(7);
+      if(text.substr(0, 4) == "www.")
+        text = text.substr(4);
+      if(text.length > 20)
+        text = text.substr(0, 20) + "...";
+      url = post.source;
+    }
+
+    var source_box = this.container.down(".post-source");
+
+    source_box.down("A").show(url != null);
+    source_box.down("SPAN").show(url == null);
+    if(url)
+    {
+      source_box.down("A").href = url;
+      source_box.down("A").setTextContent(text);
+    }
+    else
+    {
+      source_box.down("SPAN").setTextContent(text);
+    }
+
+  }
+
+  if(post.frames.length > 0)
+  {
+    /* Hide this with a class rather than by changing display, so show_frame_editor
+     * and hide_frame_editor can hide and unhide this separately. */
+    this.container.down(".post-frames").removeClassName("no-frames");
+
+    var frame_list = this.container.down(".post-frame-list");
+    while(frame_list.firstChild)
+      frame_list.removeChild(frame_list.firstChild);
+
+    for(var i = -1; i < post.frames.length; ++i)
+    {
+      var text = i == -1? "main": (i+1);
+
+      var a = document.createElement("a");
+      a.href = "/post/browse#" + post.id  + this.post_frame_hash(post, i);
+
+      a.className = "post-frame-link";
+      if(this.displayed_post_frame == i)
+        a.className += " current-post-frame";
+
+      a.setTextContent(text);
+      a.post_frame = i;
+      frame_list.appendChild(a);
+    }
+  }
+  else
+  {
+    this.container.down(".post-frames").addClassName("no-frames");
+  }
+
+
+  var ratings = {s: "Safe", q: "Questionable", e: "Explicit"};
+  this.container.down(".post-rating").setTextContent(ratings[post.rating]);
+  this.container.down(".post-score").setTextContent(post.score);
+  this.container.down(".post-hidden").show(!post.is_shown_in_index);
+
+  this.container.down(".post-info").show(this.post_ui_visible);
+
+  var file_extension = function(path)
+  {
+    var m = path.match(/.*\.([^.]+)/);
+    if(!m)
+      return "";
+    return m[1];
+  }
+
+  var has_sample = (post.sample_url != post.file_url);
+  var has_jpeg = (post.jpeg_url != post.file_url);
+  var has_image = post.file_url != null && !has_sample;
+
+  /* Hide the whole download-links box if there are no downloads available, usually
+   * because of a deleted post. */
+  this.container.down(".download-links").show(has_image || has_sample || has_jpeg);
+
+  this.container.down(".download-image").show(has_image);
+  if(has_image)
+  {
+    this.container.down(".download-image").href = post.file_url;
+    this.container.down(".download-image-desc").setTextContent(number_to_human_size(post.file_size) + " " + file_extension(post.file_url.toUpperCase()));
+  }
+
+  this.container.down(".download-jpeg").show(has_sample);
+  if(has_sample)
+  {
+    this.container.down(".download-jpeg").href = has_jpeg? post.jpeg_url: post.file_url;
+    var image_desc = number_to_human_size(has_jpeg? post.jpeg_file_size: post.file_size) /*+ " " + post.jpeg_width + "x" + post.jpeg_height*/ + " JPG";
+    this.container.down(".download-jpeg-desc").setTextContent(image_desc);
+  }
+
+  this.container.down(".download-png").show(has_jpeg);
+  if(has_jpeg)
+  {
+    this.container.down(".download-png").href = post.file_url;
+    var png_desc = number_to_human_size(post.file_size) /*+ " " + post.width + "x" + post.height*/ + " " + file_extension(post.file_url.toUpperCase());
+    this.container.down(".download-png-desc").setTextContent(png_desc);
+  }
+
+  /* For links that are handled by click events, try to set the href so that copying the
+   * link will give a similar effect.  For example, clicking parent-post will call set_post
+   * to display it, and the href links to /post/browse#12345. */
+  var parent_post = this.container.down(".parent-post");
+  parent_post.show(post.parent_id != null);
+  if(post.parent_id)
+    parent_post.down("A").href = "/post/browse#" + post.parent_id;
+
+  var child_posts = this.container.down(".child-posts");
+  child_posts.show(post.has_children);
+  if(post.has_children)
+    child_posts.down("A").href = "/post/browse#/parent:" + post.id;
+
+
+  /* Create the tag links. */
+  var tag_span = this.container.down(".post-tags");
+  var first = true;
+  while(tag_span.firstChild)
+    tag_span.removeChild(tag_span.firstChild);
+
+
+  var tags_by_type = Post.get_post_tags_with_type(post);
+  tags_by_type.each(function(t) {
+      var tag = t[0];
+      var type = t[1];
+
+      var span = $(document.createElement("SPAN", ""));
+      span = $(span);
+      span.className = "tag-type-" + type;
+
+      var space = document.createTextNode(" ");
+      span.appendChild(space);
+
+      var a = $(document.createElement("A", ""));
+      a.href = "/post/browse#/" + window.encodeURIComponent(tag);
+      a.tag_name = tag;
+      a.className = "post-tag tag-type-" + type;
+
+      /* Break tags with zero-width spaces, so long tags can be wrapped. */
+      var tag_with_breaks = tag.replace(/_/g, "_\u200B");
+      a.setTextContent(tag_with_breaks);
+      span.appendChild(a);
+      tag_span.appendChild(span);
+  });
+
+  var flag_post = this.container.down(".flag-button");
+  flag_post.show(post.status == "active");
+
+  this.container.down(".post-approve").show(post.status == "flagged" || post.status == "pending");
+  this.container.down(".post-delete").show(post.status != "deleted");
+  this.container.down(".post-undelete").show(post.status == "deleted");
+
+  var flagged = this.container.down(".flagged-info");
+  flagged.show(post.status == "flagged");
+  if(post.status == "flagged" && post.flag_detail)
+  {
+    var by = flagged.down(".by");
+    flagged.down(".flagged-by-box").show(post.flag_detail.user_id != null);
+    if(post.flag_detail.user_id != null)
+    {
+      by.setTextContent(post.flag_detail.flagged_by);
+      by.href = "/user/show/" + post.flag_detail.user_id;
+    }
+
+    var reason = flagged.down(".reason");
+    reason.setTextContent(post.flag_detail.reason);
+  }
+
+  /* Moderators can unflag images, and the person who flags an image can unflag it himself. */
+  var is_flagger = post.flag_detail && post.flag_detail.user_id == User.get_current_user_id();
+  var can_unflag = flagged && (User.is_mod_or_higher() || is_flagger);
+  flagged.down(".post-unflag").show(can_unflag);
+
+  var pending = this.container.down(".status-pending");
+  pending.show(post.status == "pending");
+  this.container.down(".pending-reason-box").show(post.flag_detail && post.flag_detail.reason);
+  if(post.flag_detail)
+    this.container.down(".pending-reason").setTextContent(post.flag_detail.reason);
+
+  var deleted = this.container.down(".status-deleted");
+  deleted.show(post.status == "deleted");
+  if(post.status == "deleted")
+  {
+    var by_container = deleted.down(".by-container");
+    by_container.show(post.flag_detail.flagged_by != null);
+
+    var by = by_container.down(".by");
+    by.setTextContent(post.flag_detail.flagged_by);
+    by.href = "/user/show/" + post.flag_detail.user_id;
+
+    var reason = deleted.down(".reason");
+    reason.setTextContent(post.flag_detail.reason);
+  }
+
+  this.container.down(".status-held").show(post.is_held);
+  var has_permission = User.get_current_user_id() == post.creator_id || User.is_mod_or_higher();
+  this.container.down(".activate-post").show(has_permission);
+}
+
+BrowserView.prototype.edit_show = function(shown)
+{
+  var post = Post.posts.get(this.displayed_post_id);
+  if(!post)
+    shown = false;
+
+  if(!User.is_member_or_higher())
+    shown = false;
+
+  this.edit_shown = shown;
+  this.container.down(".post-tags-box").show(!shown);
+  this.container.down(".post-edit").show(shown);
+  if(!shown)
+  {
+    /* Revert all changes. */
+    this.frame_editor.discard();
+    return;
+  }
+
+  this.select_edit_box(".post-edit-main");
+
+  /* This returns [tag, tag type].  We only want the tag; we call this so we sort the
+   * tags consistently. */
+  var tags_by_type = Post.get_post_tags_with_type(post);
+  var tags = tags_by_type.pluck(0);
+
+  tags = tags.join(" ") + " ";
+
+  this.container.down(".edit-tags").old_value = tags;
+  this.container.down(".edit-tags").value = tags;
+  this.container.down(".edit-source").value = post.source;
+  this.container.down(".edit-parent").value = post.parent_id;
+  this.container.down(".edit-shown-in-index").checked = post.is_shown_in_index;
+
+  var rating_class = new Hash({ s: ".edit-safe", q: ".edit-questionable", e: ".edit-explicit" });
+  this.container.down(rating_class.get(post.rating)).checked = true;
+
+  this.edit_post_area_changed();
+
+  this.container.down(".edit-tags").focus();
+}
+
+/* Set the size of the tag edit area to the size of its contents. */
+BrowserView.prototype.edit_post_area_changed = function()
+{
+  var post_edit = this.container.down(".post-edit");
+  var element = post_edit.down(".edit-tags");
+  element.style.height = "0px";
+  element.style.height = element.scrollHeight + "px";
+if(0)
+{
+  var rating = null;
+  var source = null;
+  var parent_id = null;
+  element.value.split(" ").each(function(tag)
+  {
+    /* This mimics what the server side does; it does prevent metatags from using
+     * uppercase in source: metatags. */
+    tag = tag.toLowerCase();
+    /* rating:q or just q: */
+    var m = tag.match(/^(rating:)?([qse])$/);
+    if(m)
+    {
+      rating = m[2];
+      return;
+    }
+
+    var m = tag.match(/^(parent):([0-9]+)$/);
+    if(m)
+    {
+      if(m[1] == "parent")
+        parent_id = m[2];
+    }
+
+    var m = tag.match(/^(source):(.*)$/);
+    if(m)
+    {
+      if(m[1] == "source")
+        source = m[2];
+    }
+  }.bind(this));
+
+  debug("rating: " + rating);
+  debug("source: " + source);
+  debug("parent: " + parent_id);
+}
+}
+
+BrowserView.prototype.edit_save = function()
+{
+  var save_completed = function()
+  {
+    notice("Post saved");
+
+    /* If we're still showing the post we saved, hide the edit area. */
+    if(this.displayed_post_id == post_id)
+      this.edit_show(false);
+  }.bind(this);
+  var post_id = this.displayed_post_id;
+  
+  /* If we're in the frame editor, save it.  Don't save the hidden main editor. */
+  if(this.frame_editor)
+  {
+    if(this.frame_editor.is_opened())
+    {
+      this.frame_editor.save(save_completed);
+      return;
+    }
+  }
+
+  var edit_tags = this.container.down(".edit-tags");
+  var tags = edit_tags.value;
+
+  /* Opera doesn't blur the field automatically, even when we hide it later. */
+  edit_tags.blur();
+
+  /* Find which rating is selected. */
+  var rating_class = new Hash({ s: ".edit-safe", q: ".edit-questionable", e: ".edit-explicit" });
+  var selected_rating = "s";
+  rating_class.each(function(c) {
+    if(this.container.down(c[1]).checked)
+      selected_rating = c[0];
+  }.bind(this));
+
+  /* update_batch will give us updates for any related posts, as well as the one we're
+   * updating. */
+  Post.update_batch([{
+    id: post_id,
+    tags: this.container.down(".edit-tags").value,
+    old_tags: this.container.down(".edit-tags").old_value,
+    source: this.container.down(".edit-source").value,
+    parent_id: this.container.down(".edit-parent").value,
+    is_shown_in_index: this.container.down(".edit-shown-in-index").checked,
+    rating: selected_rating
+  }], save_completed);
+}
+
+BrowserView.prototype.window_resize_event = function(e)
+{
+  if(e.stopped)
+    return;
+  this.update_image_window_size();
+  this.scale_and_position_image(true);
+}
+
+BrowserView.prototype.toggle_view_large_image = function()
+{
+  var post = Post.posts.get(this.displayed_post_id);
+  if(post == null)
+    return;
+  if(this.img == null)
+    return;
+
+  if(post.jpeg_url == post.sample_url)
+  {
+    /* There's no larger version to display. */
+    return;
+  }
+
+  /* Toggle between the sample and JPEG version. */
+  this.set_viewing_larger_version(!this.viewing_larger_version);
+  this.set_main_image(post); // XXX frame
+}
+
+/* this.image_window_size is the size of the area where the image is visible. */
+BrowserView.prototype.update_image_window_size = function()
+{
+  this.image_window_size = getWindowSize();
+
+  /* If the thumb bar is shown, exclude it from the window height and fit the image
+   * in the remainder.  Since the bar is at the bottom, we don't need to do anything to
+   * adjust the top. */
+  this.image_window_size.height -= this.thumb_bar_height;
+
+  this.image_window_size.height = Math.max(this.image_window_size.height, 0); /* clamp to 0 if there's no space */
+
+  /* When the window size changes, update the navigator since the cursor will resize to
+   * match. */
+  this.update_navigator();
+}
+
+BrowserView.prototype.scale_and_position_image = function(resizing)
+{
+  var img_box = this.img_box;
+  if(!this.img)
+    return;
+  var original_width = img_box.original_width;
+  var original_height = img_box.original_height;
+
+  var post = Post.posts.get(this.displayed_post_id);
+  if(!post)
+  {
+    debug("unexpected: displayed post " + this.displayed_post_id + " unknown");
+    return;
+  }
+
+  var window_size = this.image_window_size;
+
+  var ratio = 1.0;
+  if(!this.viewing_larger_version)
+  {
+    /* Zoom the image to fit the viewport. */
+    var ratio = window_size.width / original_width;
+    if (original_height * ratio > window_size.height)
+      ratio = window_size.height / original_height;
+  }
+
+  ratio *= Math.pow(0.9, this.zoom_level);
+
+  this.displayed_image_width = Math.round(original_width * ratio);
+  this.displayed_image_height = Math.round(original_height * ratio);
+
+  this.img.width = this.displayed_image_width;
+  this.img.height = this.displayed_image_height;
+
+  this.update_canvas();
+
+  if(this.frame_editor)
+    this.frame_editor.set_image_dimensions(this.displayed_image_width, this.displayed_image_height);
+
+  /* If we're resizing and showing the full-size image, don't snap the position
+   * back to the default. */
+  if(resizing && this.viewing_larger_version)
+    return;
+
+  var x = 0.5;
+  var y = 0.5;
+  if(this.viewing_larger_version)
+  {
+    /* Align the image to the top of the screen. */
+    y = this.image_window_size.height/2;
+    y /= this.displayed_image_height;
+  }
+
+  this.center_image_on(x, y);
+}
+
+/* x and y are [0,1]. */
+BrowserView.prototype.update_navigator = function()
+{
+  if(!this.navigator)
+    return;
+  if(!this.img)
+    return;
+
+  /* The coordinates of the image located at the top-left corner of the window: */
+  var scroll_x = -this.img_box.offsetLeft;
+  var scroll_y = -this.img_box.offsetTop;
+
+  /* The coordinates at the center of the window: */
+  x = scroll_x + this.image_window_size.width/2;
+  y = scroll_y + this.image_window_size.height/2;
+
+  var percent_x = x / this.displayed_image_width;
+  var percent_y = y / this.displayed_image_height;
+
+  var height_percent = this.image_window_size.height / this.displayed_image_height;
+  var width_percent = this.image_window_size.width / this.displayed_image_width;
+  this.navigator.image_position_changed(percent_x, percent_y, height_percent, width_percent);
+}
+
+/*
+ * If Canvas support is available, we can accelerate drawing.
+ *
+ * Most browsers are slow when resizing large images.  In the best cases, it results in
+ * dragging the image around not being smooth (all browsers except Chrome).  In the worst
+ * case it causes rendering the page to be very slow; in Chrome, drawing the thumbnail
+ * strip under a large resized image is unusably slow.
+ *
+ * If Canvas support is enabled, then once the image is fully loaded, blit the image into
+ * the canvas at the size we actually want to display it at.  This avoids most scaling
+ * performance issues, because it's not rescaling the image constantly while dragging it
+ * around.
+ *
+ * Note that if Chrome fixes its slow rendering of boxes *over* the image, then this may
+ * be unnecessary for that browser.  Rendering the image itself is very smooth; Chrome seems
+ * to prescale the image just once, which is what we're doing.
+ *
+ * Limitations:
+ * - If full-page zooming is being used, it'll still scale at runtime.
+ * - We blit the entire image at once.  It's more efficient to blit parts of the image
+ *   as necessary to paint, but that's a lot more work.
+ * - Canvas won't blit partially-loaded images, so we do nothing until the image is complete.
+ */
+BrowserView.prototype.update_canvas = function()
+{
+  if(!this.img.fully_loaded)
+  {
+    debug("image incomplete; can't render to canvas");
+    return false;
+  }
+
+  if(!this.canvas)
+    return;
+
+  /* If the contents havn't changed, skip the blit.  This happens frequently when resizing
+   * the window when not fitting the image to the screen. */
+  if(this.canvas.rendered_url == this.img.src &&
+      this.canvas.width == this.displayed_image_width &&
+      this.canvas.height == this.displayed_image_height)
+  {
+    // debug(this.canvas.rendered_url + ", " + this.canvas.width + ", " + this.canvas.height)
+    // debug("Skipping canvas blit");
+    return;
+  }
+
+  this.canvas.rendered_url = this.img.src;
+  this.canvas.width = this.displayed_image_width;
+  this.canvas.height = this.displayed_image_height;
+  var ctx = this.canvas.getContext("2d");
+  ctx.drawImage(this.img, 0, 0, this.displayed_image_width, this.displayed_image_height);
+  this.canvas.show();
+  this.img.hide();
+
+  return true;
+}
+
+
+BrowserView.prototype.center_image_on = function(percent_x, percent_y)
+{
+  var x = percent_x * this.displayed_image_width;
+  var y = percent_y * this.displayed_image_height;
+
+  var scroll_x = x - this.image_window_size.width/2;
+  scroll_x = Math.round(scroll_x);
+
+  var scroll_y = y - this.image_window_size.height/2;
+  scroll_y = Math.round(scroll_y);
+
+  this.img_box.setStyle({left: -scroll_x + "px", top: -scroll_y + "px"});
+
+  this.update_navigator();
+}
+
+BrowserView.prototype.cancel_lazily_load = function()
+{
+  if(this.lazy_load_timer == null)
+    return;
+
+   window.clearTimeout(this.lazy_load_timer);
+   this.lazy_load_timer = null;
+}
+
+/* Update the window title when the display changes. */
+WindowTitleHandler = function()
+{
+  this.searched_tags = "";
+  this.post_id = null;
+  this.post_frame = null;
+  this.pool = null;
+
+  document.on("viewer:searched-tags-changed", function(e) {
+    this.searched_tags = e.memo.tags || "";
+    this.update();
+  }.bindAsEventListener(this));
+
+  document.on("viewer:displayed-post-changed", function(e) {
+    this.post_id = e.memo.post_id;
+    this.post_frame = e.memo.post_id;
+    this.update();
+  }.bindAsEventListener(this));
+
+  document.on("viewer:displayed-pool-changed", function(e) {
+    this.pool = e.memo.pool;
+    this.update();
+  }.bindAsEventListener(this));
+
+  this.update();
+}
+
+WindowTitleHandler.prototype.update = function()
+{
+  var post = Post.posts.get(this.post_id);
+
+  if(this.pool)
+  {
+    var title = this.pool.name.replace(/_/g, " ");
+
+    if(post && post.pool_posts)
+    {
+      var pool_post = post.pool_posts.get(this.pool.id);
+      if(pool_post)
+      {
+        var sequence = pool_post.sequence;
+        title += " ";
+        if(sequence.match(/^[0-9]/))
+          title += "#";
+        title += sequence;
+      }
+    }
+  }
+  else
+  {
+    var title = "/" + this.searched_tags.replace(/_/g, " ");
+  }
+
+  title += " - Browse";
+  document.title = title;
+}
+
+BrowserView.prototype.parent_post_click_event = function(event)
+{
+  event.stop();
+
+  var post = Post.posts.get(this.displayed_post_id);
+  if(post == null || post.parent_id == null)
+    return;
+
+  this.set_post(post.parent_id);
+}
+
+BrowserView.prototype.child_posts_click_event = function(event)
+{
+  event.stop();
+
+  /* Search for this post's children.  Set the results mode to center-on-current, so we
+   * focus on the current item. */
+  document.fire("viewer:perform-search", {
+    tags: "parent:" + this.displayed_post_id,
+    results_mode: "center-on-current"
+  });
+}
+
+BrowserView.prototype.select_edit_box = function(className)
+{
+  if(this.shown_edit_container)
+    this.shown_edit_container.hide();
+  this.shown_edit_container = this.container.down(className);
+  this.shown_edit_container.show();
+}
+
+BrowserView.prototype.show_frame_editor = function()
+{
+  this.select_edit_box(".frame-editor");
+
+  /* If we're displaying a frame and not the whole image, switch to the main image. */
+  var post_frame = null;
+  if(this.displayed_post_frame != -1)
+  {
+    post_frame = this.displayed_post_frame;
+    document.fire("viewer:set-active-post", {post_id: this.displayed_post_id, post_frame: -1});
+  }
+
+  this.frame_editor.open(this.displayed_post_id);
+  this.container.down(".post-frames").hide();
+
+  /* If we were on a frame when opened, focus the frame we were on.  Otherwise,
+   * leave it on the default. */
+  if(post_frame != null)
+    this.frame_editor.focus(post_frame);
+}
+
+BrowserView.prototype.hide_frame_editor = function()
+{
+  this.frame_editor.discard();
+  this.container.down(".post-frames").show();
+}
+
+var Navigator = function(container, target)
+{
+  this.container = container;
+  this.target = target;
+  this.hovering = false;
+  this.autohide = false;
+  this.img = this.container.down(".image-navigator-img");
+  this.container.show();
+
+  this.handlers = [];
+  this.handlers.push(this.container.on("mousedown", this.mousedown_event.bindAsEventListener(this)));
+  this.handlers.push(this.container.on("mouseover", this.mouseover_event.bindAsEventListener(this)));
+  this.handlers.push(this.container.on("mouseout", this.mouseout_event.bindAsEventListener(this)));
+
+  this.dragger = new DragElement(this.container, {
+    snap_pixels: 0,
+    onenddrag: this.enddrag.bind(this),
+    ondrag: this.ondrag.bind(this)
+  });
+}
+
+Navigator.prototype.set_image = function(image_url, width, height)
+{
+  this.img.src = image_url;
+  this.img.width = width;
+  this.img.height = height;
+}
+
+Navigator.prototype.enable = function(enabled)
+{
+  this.container.show(enabled);
+}
+
+Navigator.prototype.mouseover_event = function(e)
+{
+  if(e.relatedTarget && e.relatedTarget.isParentNode(this.container))
+    return;
+  debug("over " + e.target.className + ", " + this.container.className + ", " + e.target.isParentNode(this.container));
+  this.hovering = true;
+  this.update_visibility();
+}
+
+Navigator.prototype.mouseout_event = function(e)
+{
+  if(e.relatedTarget && e.relatedTarget.isParentNode(this.container))
+    return;
+  debug("out " + e.target.className);
+  this.hovering = false;
+  this.update_visibility();
+}
+
+Navigator.prototype.mousedown_event = function(e)
+{
+  var x = e.pointerX();
+  var y = e.pointerY();
+  var coords = this.get_normalized_coords(x, y);
+  this.center_on_position(coords);
+}
+
+Navigator.prototype.enddrag = function(e)
+{
+  this.shift_lock_anchor = null;
+  this.locked_to_x = null;
+  this.update_visibility();
+}
+
+Navigator.prototype.ondrag = function(e)
+{
+  var coords = this.get_normalized_coords(e.x, e.y);
+  if(e.latest_event.shiftKey != (this.shift_lock_anchor != null))
+  {
+    /* The shift key has been pressed or released. */
+    if(e.latest_event.shiftKey)
+    {
+      /* The shift key was just pressed.  Remember the position we were at when it was
+       * pressed. */
+      this.shift_lock_anchor = [coords[0], coords[1]];
+    }
+    else
+    {
+      /* The shift key was released. */
+      this.shift_lock_anchor = null;
+      this.locked_to_x = null;
+    }
+  }
+
+  this.center_on_position(coords);
+}
+
+Navigator.prototype.image_position_changed = function(percent_x, percent_y, height_percent, width_percent)
+{
+  /* When the image is moved or the visible area is resized, update the cursor rectangle. */
+  var cursor = this.container.down(".navigator-cursor");
+  cursor.setStyle({
+    top: this.img.height * (percent_y - height_percent/2) + "px",
+    left: this.img.width * (percent_x - width_percent/2) + "px",
+    width: this.img.width * width_percent + "px",
+    height: this.img.height * height_percent + "px"
+  });
+}
+
+Navigator.prototype.get_normalized_coords = function(x, y)
+{
+  var offset = this.img.cumulativeOffset();
+  x -= offset.left;
+  y -= offset.top;
+  x /= this.img.width;
+  y /= this.img.height;
+  return [x, y];
+
+}
+
+/* x and y are absolute window coordinates. */
+Navigator.prototype.center_on_position = function(coords)
+{
+  if(this.shift_lock_anchor)
+  {
+    if(this.locked_to_x == null)
+    {
+      /* Only change the coordinate with the greater delta. */
+      var change_x = Math.abs(coords[0] - this.shift_lock_anchor[0]);
+      var change_y = Math.abs(coords[1] - this.shift_lock_anchor[1]);
+
+      /* Only lock to moving vertically or horizontally after we've moved a small distance
+       * from where shift was pressed. */
+      if(change_x > 0.1 || change_y > 0.1)
+        this.locked_to_x = change_x > change_y;
+    }
+
+    /* If we've chosen an axis to lock to, apply it. */
+    if(this.locked_to_x != null)
+    {
+      if(this.locked_to_x)
+        coords[1] = this.shift_lock_anchor[1];
+      else
+        coords[0] = this.shift_lock_anchor[0];
+    }
+  }
+
+  coords[0] = Math.max(0, Math.min(coords[0], 1));
+  coords[1] = Math.max(0, Math.min(coords[1], 1));
+
+  this.target.fire("viewer:center-on", {x: coords[0], y: coords[1]});
+}
+
+Navigator.prototype.set_autohide = function(autohide)
+{
+  this.autohide = autohide;
+  this.update_visibility();
+}
+
+Navigator.prototype.update_visibility = function()
+{
+  var box = this.container.down(".image-navigator-box");
+  var visible = !this.autohide || this.hovering || this.dragger.dragging;
+  box.style.visibility = visible? "visible":"hidden";
+}
+
+Navigator.prototype.destroy = function()
+{
+  this.dragger.destroy();
+
+  this.handlers.each(function(h) { h.stop(); });
+  this.dragger = this.handlers = null;
+
+  this.container.hide();
+}
+
+
+
+
 // script.aculo.us builder.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
 
 // Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
@@ -7591,6 +12637,21 @@ Comment = {
         notice("Error deleting comment: " + resp.reason)
       }
     })
+  },
+
+  show_translated: function(id, translated) {
+    var element = $("c" + id);
+    element.down(".body").show(translated);
+    element.down(".untranslated-body").show(!translated);
+    element.down(".show-translated").show(translated);
+    element.down(".show-untranslated").show(!translated);
+  },
+
+  show_reply_form: function(post_id)
+  {
+    $("respond-link-" + post_id).hide();
+    $("reply-" + post_id).show();
+    $("reply-" + post_id).down("textarea").focus();
   }
 }
 
@@ -7636,6 +12697,66 @@ function number_to_human_size(size, precision)
 
   text = text.gsub(/([0-9]\.\d*?)0+ /, '#{1} ' ).gsub(/\. /,' ');
   return text;
+}
+
+function time_ago_in_words(from_time, to_time)
+{
+  if(to_time == null)
+    to_time = new Date();
+
+  var from_time = from_time.valueOf();
+  var to_time = to_time.valueOf();
+  distance_in_seconds = Math.abs((to_time - from_time)/1000).round();
+  distance_in_minutes = (distance_in_seconds/60).round();
+
+  if(distance_in_minutes <= 1)
+    return "1 minute";
+
+  if(distance_in_minutes <= 44)
+    return distance_in_minutes + " minutes";
+
+  if(distance_in_minutes <= 89)
+    return "1 hour";
+
+  if(distance_in_minutes <= 1439)
+  {
+    var hours = distance_in_minutes / 60;
+    hours = (hours - 0.5).round(); // round down
+    return hours + " hours";
+  }
+
+  if(distance_in_minutes <= 2879)
+    return "1 day";
+
+  if(distance_in_minutes <= 43199)
+  {
+    var days = distance_in_minutes / 1440;
+    days = (days - 0.5).round(); // round down
+    return days + " days";
+  }
+
+  if(distance_in_minutes <= 86399)
+    return "1 month";
+
+  if(distance_in_minutes <= 525959)
+  {
+    var months = distance_in_minutes / 43200;
+    months = (months - 0.5).round(); // round down
+    return months + " months";
+  }
+
+  var years = (distance_in_minutes / 525960).toFixed(1);
+  return years + " years";
+}
+
+scale = function(x, l1, h1, l2, h2)
+{
+  return ((x - l1) * (h2 - l2) / (h1 - l1) + l2);
+}
+
+clamp = function(n, min, max)
+{
+  return Math.max(Math.min(n, max), min);
 }
 
 var ClearNoticeTimer;
@@ -7686,6 +12807,42 @@ Object.extend(Element.Methods, {
       return $(element).showBase();
     else
       return $(element).hide();
+  },
+  setClassName: function(element, className, enabled) {
+    if(enabled)
+      return $(element).addClassName(className);
+    else
+      return $(element).removeClassName(className);
+  },
+  pickClassName: function(element, classNameEnabled, classNameDisabled, enabled) {
+    $(element).setClassName(classNameEnabled, enabled);
+    $(element).setClassName(classNameDisabled, !enabled);
+  },
+  isParentNode: function(element, parentNode) {
+    while(element) {
+      if(element == parentNode)
+        return true;
+      element = element.parentNode;
+    }
+    return false;
+  },
+  setTextContent: function(element, text)
+  {
+    if(element.innerText != null)
+      element.innerText = text;
+    else
+      element.textContent = text;
+    return element;
+  },
+  recursivelyVisible: function(element)
+  {
+    while(element != document.documentElement)
+    {
+      if(!element.visible())
+        return false;
+      element = element.parentNode;
+    }
+    return true;
   }
 });
 Element.addMethods()
@@ -7755,7 +12912,7 @@ function OnKey(key, options, press, release)
       return;
     if (e.ctrlKey != !!options.ctrlKey)
       return;
-    if(KeysDown[e.keyCode])
+    if (!options.allowRepeat && KeysDown[e.keyCode])
       return;
 
     KeysDown[e.keyCode] = true
@@ -7779,12 +12936,23 @@ function InitTextAreas()
     if(!form)
       return;
 
+    if(elem.set_login_handler)
+      return;
+    elem.set_login_handler = true;
+
     OnKey(13, { ctrlKey: true, AllowInputFields: true, AllowTextAreaFields: true, Element: elem}, function(f) {
-      $(form).submitWithLogin();
+      $(form).simulate_submit();
     });
   });
 }
 
+function InitAdvancedEditing()
+{
+  if(Cookie.get("show_advanced_editing") != "1")
+    return;
+
+  $(document.documentElement).removeClassName("hide-advanced-editing");
+}
 
 /* When we resume a user submit after logging in, we want to run submit events, as
  * if the submit had happened normally again, but submit() doesn't do this.  Run
@@ -7849,6 +13017,829 @@ clone_event = function(orig)
   }
 }
 
+Object.extend(String.prototype, {
+  subst: function(subs) {
+    var text = this;
+    for(var s in subs)
+    {
+      var r = new RegExp("\\${" + s + "}", "g");
+      var to = subs[s];
+      if(to == null) to = "";
+      text = text.replace(r, to);
+    }
+
+    return text;
+  },
+
+  createElement: function() {
+    var container = document.createElement("div");
+    container.innerHTML = this;
+    return container.removeChild(container.firstChild);
+  }
+});
+
+function createElement(type, className, html)
+{
+  var element = $(document.createElement(type));
+  element.className = className;
+  element.innerHTML = html;
+  return element;
+}
+
+/* Prototype calls onSuccess instead of onFailure when the user cancelled the AJAX
+ * request.  Fix that with a monkey patch, so we don't have to track changes inside
+ * prototype.js. */
+Ajax.Request.prototype.successBase = Ajax.Request.prototype.success;
+Ajax.Request.prototype.success = function()
+{
+  try {
+    if(this.transport.getAllResponseHeaders() == null)
+      return false;
+  } catch (e) {
+    /* FF throws an exception if we call getAllResponseHeaders on a cancelled request. */
+    return false;
+  }
+
+  return this.successBase();
+}
+
+/* Work around a Prototype bug; it discards exceptions instead of letting them fall back
+ * to the browser where they'll be logged. */
+Ajax.Responders.register({
+  onException: function(request, exception) {
+    /* Report the error here; don't wait for onerror to get it, since the exception
+     * isn't passed to it so the stack trace is lost.  */
+    var data = "";
+    if(request.url)
+      data += "AJAX URL: " + request.url + "\n";
+
+    try {
+      var params = request.parameters;
+      for(key in params)
+      {
+        var text = params[key];
+        var length = text.length;
+        if(text.length > 1024)
+          text = text.slice(0, 1024) + "...";
+        data += "Parameter (" + length + "): " + key + "=" + text + "\n";
+      }
+    } catch(e) {
+      data += "Couldn't get response parameters: " + e + "\n";
+    }
+
+    try {
+      var text = request.transport.responseText;
+      var length = text.length;
+      if(text.length > 1024)
+        text = text.slice(0, 1024) + "...";
+      data += "Response (" + length + "): ->" + text + "<-\n";
+    } catch(e) {
+      data += "Couldn't get response text: " + e + "\n";
+    }
+
+    ReportError(null, null, null, exception, data);
+
+    (function() {
+      throw exception;
+    }).defer();
+  }
+});
+
+/*
+ * In Firefox, exceptions thrown from event handlers tend to get lost.  Sometimes they
+ * trigger window.onerror, but not reliably.  Catch exceptions out of event handlers and
+ * throw them from a deferred context, so they'll make it up to the browser to be
+ * logged.
+ *
+ * This depends on bindAsEventListener actually only being used for event listeners,
+ * since it eats exceptions.
+ *
+ * Only do this in Firefox; not all browsers preserve the call stack in the exception,
+ * so this can lose information if used when it's not needed.
+ */
+if(Prototype.Browser.Gecko)
+Function.prototype.bindAsEventListener = function()
+{
+  var __method = this, args = $A(arguments), object = args.shift();
+  return function(event) {
+    try {
+      return __method.apply(object, [event || window.event].concat(args));
+    } catch(exception) {
+      (function() { throw exception; }).defer();
+    }
+  }
+}
+
+window.onerror = function(error, file, line)
+{
+  ReportError(error, file, line, null);
+}
+
+/*
+ * Return the values of list starting at idx and moving outwards.
+ *
+ * sort_array_by_distance([0,1,2,3,4,5,6,7,8,9], 5)
+ * [5,4,6,3,7,2,8,1,9,0]
+ */
+sort_array_by_distance = function(list, idx)
+{
+  var ret = [];
+  ret.push(list[idx]);
+  for(var distance = 1; ; ++distance)
+  {
+    var length = ret.length;
+    if(idx-distance >= 0)
+      ret.push(list[idx-distance]);
+    if(idx+distance < list.length)
+      ret.push(list[idx+distance]);
+    if(length == ret.length)
+      break;
+  }
+
+  return ret;
+}
+
+/* Return the squared distance between two points. */
+distance_squared = function(x1, y1, x2, y2)
+{
+  return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
+}
+
+/* Return the size of the window. */
+getWindowSize = function()
+{
+  var size = {};
+  if(window.innerWidth != null)
+  {
+    size.width = window.innerWidth;
+    size.height = window.innerHeight;
+  }
+  else
+  {
+    /* IE: */
+    size.width = document.documentElement.clientWidth;
+    size.height = document.documentElement.clientHeight;
+  }
+  return size;
+}
+
+/* If 2d canvases are supported, return one.  Otherwise, return null. */
+create_canvas_2d = function()
+{
+  var canvas = document.createElement("canvas");
+  if(canvas.getContext && canvas.getContext("2d"))
+    return canvas;
+  return null;
+}
+
+Prototype.Browser.AndroidWebKit = (navigator.userAgent.indexOf("Android") != -1 && navigator.userAgent.indexOf("WebKit") != -1);
+
+/* Some UI simply doesn't make sense on a touchscreen, and may need to be disabled or changed.
+ * It'd be nice if this could be done generically, but this is the best available so far ... */
+Prototype.BrowserFeatures.Touchscreen = (function() {
+  /* iOS WebKit has window.Touch, a constructor for Touch events. */
+  if(window.Touch)
+    return true;
+
+  // Mozilla/5.0 (Linux; U; Android 2.2; en-us; sdk Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1
+  if(navigator.userAgent.indexOf("Mobile Safari/") != -1)
+    return true;
+
+  // Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile/8C134
+  if(navigator.userAgent.indexOf("Mobile/") != -1)
+    return true;
+
+  return false;
+})();
+
+
+/* When element is dragged, the document moves around it.  If scroll_element is true, the
+ * element should be positioned (eg. position: absolute), and the element itself will be
+ * scrolled. */
+DragElement = function(element, options)
+{
+  $(document.body).addClassName("not-dragging");
+
+  this.options = options || {};
+  if(this.options.snap_pixels == null)
+    this.options.snap_pixels = 10;
+  this.ignore_mouse_events_until = null;
+
+  this.mousemove_event = this.mousemove_event.bindAsEventListener(this);
+  this.mousedown_event = this.mousedown_event.bindAsEventListener(this);
+  this.dragstart_event = this.dragstart_event.bindAsEventListener(this);
+  this.mouseup_event = this.mouseup_event.bindAsEventListener(this);
+  this.click_event = this.click_event.bindAsEventListener(this);
+  this.selectstart_event = this.selectstart_event.bindAsEventListener(this);
+
+  this.touchmove_event = this.touchmove_event.bindAsEventListener(this);
+  this.touchstart_event = this.touchstart_event.bindAsEventListener(this);
+  this.touchend_event = this.touchend_event.bindAsEventListener(this);
+
+  this.move_timer_update = this.move_timer_update.bind(this);
+
+  this.element = element;
+  this.dragging = false;
+
+  this.drag_handlers = [];
+  this.handlers = [];
+
+  /*
+   * Starting drag on mousedown works in most browsers, but has an annoying side-
+   * effect: we need to stop the event to prevent any browser drag operations from
+   * happening, and that'll also prevent clicking the element from focusing the
+   * window.  Stop the actual drag in dragstart.  We won't get mousedown in
+   * Opera, but we don't need to stop it there either.
+   *
+   * Sometimes drag events can leak through, and attributes like -moz-user-select may
+   * be needed to prevent it.
+   */
+  if(!options.no_mouse)
+  {
+    this.handlers.push(element.on("mousedown", this.mousedown_event));
+    this.handlers.push(element.on("dragstart", this.dragstart_event));
+  }
+
+  if(!options.no_touch)
+  {
+    this.handlers.push(element.on("touchstart", this.touchstart_event));
+    this.handlers.push(element.on("touchmove", this.touchmove_event));
+  }
+
+  /*
+   * We may or may not get a click event after mouseup.  This is a pain: if we get a
+   * click event, we need to cancel it if we dragged, but we may not get a click event
+   * at all; detecting whether a click event came from the drag or not is difficult.
+   * Cancelling mouseup has no effect.  FF, IE7 and Opera still send the click event
+   * if their dragstart or mousedown event is cancelled; WebKit doesn't.
+   */
+  if(!Prototype.Browser.WebKit)
+    this.handlers.push(element.on("click", this.click_event));
+}
+
+DragElement.prototype.destroy = function()
+{
+  this.stop_dragging(null, true);
+  this.handlers.each(function(h) { h.stop(); });
+  this.handlers = [];
+}
+
+DragElement.prototype.move_timer_update = function()
+{
+  this.move_timer = null;
+
+  if(!this.options.ondrag)
+    return;
+
+  if(this.last_event_params == null)
+    return;
+
+  var last_event_params = this.last_event_params;
+  this.last_event_params = null;
+
+  var x = last_event_params.x;
+  var y = last_event_params.y;
+
+  var anchored_x = x - this.anchor_x;
+  var anchored_y = y - this.anchor_y;
+
+  var relative_x = x - this.last_x;
+  var relative_y = y - this.last_y;
+  this.last_x = x;
+  this.last_y = y;
+
+  if(this.options.ondrag)
+    this.options.ondrag({
+      dragger: this,
+      x: x,
+      y: y,
+      aX: anchored_x,
+      aY: anchored_y,
+      dX: relative_x,
+      dY: relative_y,
+      latest_event: last_event_params.event
+    });
+}
+
+DragElement.prototype.mousemove_event = function(event)
+{
+  event.stop();
+  
+  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+
+  var x = event.pointerX() - scrollLeft;
+  var y = event.pointerY() - scrollTop;
+  this.handle_move_event(event, x, y);
+}
+
+DragElement.prototype.touchmove_event = function(event)
+{
+  /* Ignore touches other than the one we started with. */
+  var touch = null;
+  for(var i = 0; i < event.changedTouches.length; ++i)
+  {
+    var t = event.changedTouches[i];
+    if(t.identifier == this.dragging_touch_identifier)
+    {
+      touch = t;
+      break;
+    }
+  }
+  if(touch == null)
+    return;
+
+  event.preventDefault();
+
+  /* If a touch drags over the bottom navigation bar in Safari and is released while outside of
+   * the viewport, the touchend event is never sent.  Work around this by cancelling the drag
+   * if we get too close to the end.  Don't do this if we're in standalone (web app) mode, since
+   * there's no navigation bar. */
+  if(!window.navigator.standalone && touch.pageY > window.innerHeight-10)
+  {
+    debug("Dragged off the bottom");
+    this.stop_dragging(event, true);
+    return;
+  }
+
+  var x = touch.pageX;
+  var y = touch.pageY;
+
+  this.handle_move_event(event, x, y);
+}
+
+DragElement.prototype.handle_move_event = function(event, x, y)
+{
+  if(!this.dragging)
+    return;
+
+  if(!this.dragged)
+  {
+    var distance = Math.pow(x - this.anchor_x, 2) + Math.pow(y - this.anchor_y, 2);
+    var snap_pixels = this.options.snap_pixels;
+    snap_pixels *= snap_pixels;
+
+    if(distance < snap_pixels) // 10 pixels
+      return;
+  }
+
+  if(!this.dragged)
+  {
+    if(this.options.onstartdrag)
+    {
+      /* Call the onstartdrag callback.  If it returns true, cancel the drag. */
+      if(this.options.onstartdrag({ handler: this, latest_event: event }))
+      {
+        this.dragging = false;
+        return;
+      }
+    }
+
+    this.dragged = true;
+    
+    $(document.body).addClassName(this.overriden_drag_class || "dragging");
+    $(document.body).removeClassName("not-dragging");
+  }
+
+  this.last_event_params = {
+    x: x,
+    y: y,
+    event: event
+  };
+
+  if(this.dragging_by_touch && Prototype.Browser.AndroidWebKit)
+  {
+    /* Touch events on Android tend to queue up when they come in faster than we
+     * can process.  Set a timer, so we discard multiple events in quick succession. */
+    if(this.move_timer == null)
+      this.move_timer = window.setTimeout(this.move_timer_update, 10);
+  }
+  else
+  {
+    this.move_timer_update();
+  }
+}
+
+DragElement.prototype.mousedown_event = function(event)
+{
+  if(!event.isLeftClick())
+    return;
+
+  /* Check if we're temporarily ignoring mouse events. */
+  if(this.ignore_mouse_events_until != null)
+  {
+    var now = (new Date()).valueOf();
+    if(now < this.ignore_mouse_events_until)
+      return;
+
+    this.ignore_mouse_events_until = null;
+  }
+  var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+  var x = event.pointerX() - scrollLeft;
+  var y = event.pointerY() - scrollTop;
+
+  this.start_dragging(event, false, x, y, 0);
+}
+
+DragElement.prototype.touchstart_event = function(event)
+{
+  /* If we have multiple touches, find the first one that actually refers to us. */
+  var touch = null;
+  for(var i = 0; i < event.changedTouches.length; ++i)
+  {
+    var t = event.changedTouches[i];
+    if(!t.target.isParentNode(this.element))
+      continue;
+    touch = t;
+    break;
+  }
+  if(touch == null)
+    return;
+
+  var x = touch.pageX;
+  var y = touch.pageY;
+  
+  this.start_dragging(event, true, x, y, touch.identifier);
+}
+
+DragElement.prototype.start_dragging = function(event, touch, x, y, touch_identifier)
+{
+  if(this.dragging_touch_identifier != null)
+    return;
+
+  /* If we've been started with a touch event, only listen for touch events.  If we've
+   * been started with a mouse event, only listen for mouse events.  We may receive
+   * both sets of events, and the anchor coordinates for the two may not be compatible. */
+  this.drag_handlers.push(document.on("selectstart", this.selectstart_event));
+  this.drag_handlers.push(Element.on(window, "pagehide", this.pagehide_event.bindAsEventListener(this)));
+  if(touch)
+  {
+    this.drag_handlers.push(document.on("touchend", this.touchend_event));
+    this.drag_handlers.push(document.on("touchcancel", this.touchend_event));
+    this.drag_handlers.push(document.on("touchmove", this.touchmove_event));
+  }
+  else
+  {
+    this.drag_handlers.push(document.on("mouseup", this.mouseup_event));
+    this.drag_handlers.push(document.on("mousemove", this.mousemove_event));
+  }
+
+  this.dragging = true;
+  this.dragged = false;
+  this.dragging_by_touch = touch;
+  this.dragging_touch_identifier = touch_identifier;
+
+  this.anchor_x = x;
+  this.anchor_y = y;
+  this.last_x = this.anchor_x;
+  this.last_y = this.anchor_y;
+
+  if(this.options.ondown)
+    this.options.ondown({
+      dragger: this,
+      x: x,
+      y: y,
+      latest_event: event
+    });
+}
+
+DragElement.prototype.pagehide_event = function(event)
+{
+  this.stop_dragging(event, true);
+}
+
+DragElement.prototype.touchend_event = function(event)
+{
+  /* If our touch was released, stop the drag. */
+  for(var i = 0; i < event.changedTouches.length; ++i)
+  {
+    var t = event.changedTouches[i];
+    if(t.identifier == this.dragging_touch_identifier)
+    {
+      this.stop_dragging(event, event.type == "touchcancel");
+
+      /*
+       * Work around a bug on iPhone.  The mousedown and mouseup events are sent after
+       * the touch is released, instead of when they should be (immediately following
+       * touchstart and touchend).  This means we'll process each touch as a touch,
+       * then immediately after as a mouse press, and fire ondown/onup events for each.
+       *
+       * We can't simply ignore mouse presses if touch events are supported; some devices
+       * will support both touches and mice and both types of events will always need to
+       * be handled.
+       *
+       * After a touch is released, ignore all mouse presses for a little while.  It's
+       * unlikely that the user will touch an element, then immediately click it.
+       */
+      this.ignore_mouse_events_until = (new Date()).valueOf() + 500;
+      return;
+    }
+  }
+}
+
+DragElement.prototype.mouseup_event = function(event)
+{
+  if(!event.isLeftClick())
+    return;
+
+  this.stop_dragging(event, false);
+}
+
+/* If cancelling is true, we're stopping for a reason other than an explicit mouse/touch
+ * release. */
+DragElement.prototype.stop_dragging = function(event, cancelling)
+{
+  if(this.dragging)
+  {
+    this.dragging = false;
+    $(document.body).removeClassName(this.overriden_drag_class || "dragging");
+    $(document.body).addClassName("not-dragging");
+
+    if(this.options.onenddrag)
+      this.options.onenddrag(this);
+  }
+
+  this.drag_handlers.each(function(h) { h.stop(); });
+  this.drag_handlers = [];
+  this.dragging_touch_identifier = null;
+
+  if(this.options.onup)
+    this.options.onup({
+      dragger: this,
+      latest_event: event,
+      cancelling: cancelling
+    });
+}
+
+DragElement.prototype.click_event = function(event)
+{
+  /* If this click was part of a drag, cancel the click. */
+  if(this.dragged)
+    event.stop();
+  this.dragged = false;
+}
+
+DragElement.prototype.dragstart_event = function(event)
+{
+  event.preventDefault();
+}
+
+DragElement.prototype.selectstart_event = function(event)
+{
+  /* We need to stop selectstart to prevent drag selection in Chrome.  However, we need
+   * to work around a bug: if we stop the event of an INPUT element, it'll prevent focusing
+   * on that element entirely.  We shouldn't prevent selecting the text in the input box,
+   * either. */
+  if(event.target.tagName != "INPUT")
+    event.stop();
+}
+
+/* When element is dragged, the document moves around it.  If scroll_element is true, the
+ * element should be positioned (eg. position: absolute), and the element itself will be
+ * scrolled. */
+WindowDragElement = function(element)
+{
+  this.element = element;
+  this.dragger = new DragElement(element, {
+    no_touch: true,
+    ondrag: this.ondrag.bind(this),
+    onstartdrag: this.startdrag.bind(this)
+  });
+}
+
+WindowDragElement.prototype.startdrag = function()
+{
+  this.scroll_anchor_x = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
+  this.scroll_anchor_y = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+}
+
+WindowDragElement.prototype.ondrag = function(e)
+{
+  var scrollLeft = this.scroll_anchor_x - e.aX;
+  var scrollTop = this.scroll_anchor_y - e.aY;
+  scrollTo(scrollLeft, scrollTop);
+}
+
+/* element should be positioned (eg. position: absolute).  When the element is dragged,
+ * scroll it around. */
+WindowDragElementAbsolute = function(element, ondrag_callback)
+{
+  this.element = element;
+  this.ondrag_callback = ondrag_callback;
+  this.disabled = false;
+  this.dragger = new DragElement(element, {
+    ondrag: this.ondrag.bind(this),
+    onstartdrag: this.startdrag.bind(this)
+  });
+}
+
+WindowDragElementAbsolute.prototype.set_disabled = function(b) { this.disabled = b; }
+
+WindowDragElementAbsolute.prototype.startdrag = function()
+{
+  if(this.disabled)
+    return true; /* cancel */
+
+  this.scroll_anchor_x = this.element.offsetLeft;
+  this.scroll_anchor_y = this.element.offsetTop;
+  return false;
+}
+
+WindowDragElementAbsolute.prototype.ondrag = function(e)
+{
+  var scrollLeft = this.scroll_anchor_x + e.aX;
+  var scrollTop = this.scroll_anchor_y + e.aY;
+
+  /* Don't allow dragging the image off the screen; there'll be no way to
+   * get it back. */
+  var window_size = getWindowSize();
+  var min_visible = Math.min(100, this.element.offsetWidth);
+  scrollLeft = Math.max(scrollLeft, min_visible - this.element.offsetWidth);
+  scrollLeft = Math.min(scrollLeft, window_size.width - min_visible);
+
+  var min_visible = Math.min(100, this.element.offsetHeight);
+  scrollTop = Math.max(scrollTop, min_visible - this.element.offsetHeight);
+  scrollTop = Math.min(scrollTop, window_size.height - min_visible);
+  this.element.setStyle({left: scrollLeft + "px", top: scrollTop + "px"});
+
+  if(this.ondrag_callback)
+    this.ondrag_callback();
+}
+
+WindowDragElementAbsolute.prototype.destroy = function()
+{
+  this.dragger.destroy();
+}
+
+/* Track the focused element, and store it in document.focusedElement.. */
+function TrackFocus()
+{
+  document.focusedElement = null;
+  if(document.addEventListener)
+  {
+    document.addEventListener("focus", function(e)
+    {
+      document.focusedElement = e.target;
+    }.bindAsEventListener(this), true);
+  }
+  document.observe("focusin", function(event) {
+    document.focusedElement = event.srcElement;
+  }.bindAsEventListener(this));
+}
+
+function FormatError(message, file, line, exc, info)
+{
+  var report = "";
+  report += "Error: " + message + "\n";
+
+  if(info != null)
+    report += info;
+
+  report += "UA: " + window.navigator.userAgent + "\n";
+  report += "URL: " + window.location.href + "\n";
+
+  var cookies = document.cookie;
+  cookies = cookies.replace(/(pass_hash)=[0-9a-f]{40}/, "$1=(removed)");
+  try {
+    report += "Cookies: " + decodeURIComponent(cookies) + "\n";
+  } catch(e) {
+    report += "Cookies (couldn't decode): " + cookies + "\n";
+  }
+
+  if("localStorage" in window)
+  {
+    /* FF's localStorage is broken; we can't iterate over it.  Name the keys we use explicitly. */
+    var keys = [];
+    try {
+      for(key in localStorage)
+        keys.push(keys);
+    } catch(e) {
+      keys = ["sample_urls", "sample_url_fifo", "tag_data", "tag_data_version", "recent_tags", "tag_data_format"];
+    }
+
+    for(var i = 0; i < keys.length; ++i)
+    {
+      var key = keys[i];
+      try {
+        if(!(key in localStorage))
+          continue;
+
+        var data = localStorage[key];
+        var length = data.length;
+        if(data.length > 512)
+          data = data.slice(0, 512);
+
+        report += "localStorage." + key + " (size: " + length + "): " + data + "\n";
+      } catch(e) {
+        report += "(ignored errors retrieving localStorage for " + key + ": " + e + ")\n";
+      }
+    }
+  }
+
+  if(exc && exc.stack)
+    report += "\n" + exc.stack + "\n";
+
+  if(file)
+  {
+    report += "File: " + file;
+    if(line != null)
+      report += " line " + line + "\n";
+  }
+
+  return report;
+}
+
+var reported_error = false;
+function ReportError(message, file, line, exc, info)
+{
+  if(navigator.userAgent.match(/.*MSIE [67]/))
+    return;
+
+  /* Only attempt to report an error once per page load. */
+  if(reported_error)
+    return;
+  reported_error = true;
+
+  /* Only report an error at most once per hour. */
+  if(document.cookie.indexOf("reported_error=1") != -1)
+    return;
+
+  var expiration = new Date();
+  expiration.setTime(expiration.getTime() + (60 * 60 * 1000));
+  document.cookie = "reported_error=1; path=/; expires=" + expiration.toGMTString();
+
+  var report = FormatError(exc? exc.message:message, file, line, exc, info);
+
+  try {
+    new Ajax.Request("/user/error.json", {
+      parameters: { report: report }
+    });
+  } catch(e) {
+    alert("Error: " + e);
+  }
+}
+
+function LocalStorageDisabled()
+{
+  if(!("localStorage" in window))
+    return "unsupported";
+
+  var cleared_storage = false;
+  while(1)
+  {
+    try {
+      /* We can't just access a property to test it; that detects it being disabled in FF, but
+       * not in Chrome. */
+      localStorage.x = 1;
+      if(localStorage.x != 1)
+        throw "disabled";
+      delete localStorage.x;
+      return null;
+    } catch(e) {
+      /* If local storage is full, we may not be able to even run this test.  If that ever happens
+       * something is wrong, so after a failure clear localStorage once and try again.  This call
+       * may fail, too; ignore that and we'll catch the problem on the next try. */
+      if(!cleared_storage)
+      {
+        cleared_storage = true;
+        try {
+          localStorage.clear();
+        } catch(e) { }
+        continue;
+      }
+      if(navigator.userAgent.indexOf("Gecko/") != -1)
+      {
+        // If the user or an extension toggles about:config dom.storage.enabled, this happens:
+        if(e.message.indexOf("Security error") != -1)
+          return "ff-disabled";
+      }
+
+      /* Chrome unhelpfully reports QUOTA_EXCEEDED_ERR if local storage is disabled, which
+       * means we can't easily detect it being disabled and show a tip to the user. */
+      return "error";
+    }
+  }
+}
+
+/* Chrome 10/WebKit braindamage; stop breaking things intentionally just to create
+ * busywork for everyone else: */
+if(!("URL" in window) && "webkitURL" in window)
+  window.URL = window.webkitURL;
+
+/* For Chrome 9: */
+if("createObjectURL" in window && !("URL" in window))
+{
+  window.URL = {
+    createObjectURL: function(blob) { return window.createObjectURL(blob); },
+    revokeObjectURL: function(url) { window.revokeObjectURL(url); }
+  }
+}
+
+/* Allow CSS styles for WebKit. */
+if(navigator.userAgent.indexOf("AppleWebKit/") != -1)
+  document.documentElement.className += " webkit";
+
 
 
 Cookie = {
@@ -7860,7 +13851,7 @@ Cookie = {
     var date = new Date()
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000))
     var expires = "; expires=" + date.toGMTString()
-    document.cookie = name + "=" + value + expires + "; path=/"
+    document.cookie = name + "=" + window.encodeURIComponent(value) + expires + "; path=/"
   },
 
   raw_get: function(name) {
@@ -7885,6 +13876,15 @@ Cookie = {
   get: function(name) {
     return this.unescape(this.raw_get(name))
   },
+
+  get_int: function(name) {
+    var value = Cookie.get(name);
+    value = parseInt(value);
+    if(value)
+      return value;
+    else
+      return 0;
+  },
   
   remove: function(name) {
     Cookie.put(name, "", -1)
@@ -7904,6 +13904,12 @@ Cookie = {
     
     if (this.get("has_mail") == "1") {
       $("has-mail-notice").show()
+    }
+  
+    var mod_pending = this.get("mod_pending");
+    if (mod_pending && parseInt(mod_pending) > "0") {
+      if($("moderate"))
+        $("moderate").addClassName("mod-pending")
     }
   
     if (this.get("forum_updated") == "1") {
@@ -9276,6 +15282,128 @@ Object.extend( Object.extend( Cropper.ImgWithPreview.prototype, Cropper.Img.prot
 });
 
 
+DebugWindow = function()
+{
+  this.shown = false;
+  this.log_data = [];
+  this.hooks = [];
+  this.counter = 0;
+  this.update = this.update.bind(this);
+
+  this.hashchange_debug = this.hashchange_debug.bind(this);
+  UrlHash.observe("debug", this.hashchange_debug);
+  this.hashchange_debug();
+
+  this.log("*** Started");
+}
+
+DebugWindow.prototype.create_container = function()
+{
+  if(this.container)
+    return;
+
+  var div = document.createElement("DIV");
+  div = $(div);
+  div.className = "debug-box";
+  div.setStyle({position: "fixed", top: "0px", right: "0px", height: "25%", backgroundColor: "#000", fontSize: "100%"});
+  document.body.appendChild(div);
+  this.container = div;
+
+  this.shown_debug = "";
+}
+
+DebugWindow.prototype.destroy_container = function()
+{
+  if(!this.container)
+    return;
+  document.body.removeChild(this.container);
+  this.container = null;
+}
+
+DebugWindow.prototype.log = function(s)
+{
+  /*
+   * Output to the console log, if any.
+   *
+   * In FF4, this goes to the Web Console.  (It doesn't go to the error console; it should.)
+   * On Android, this goes to logcat.
+   * On iPhone, this goes to the intrusive Debug Console if it's turned on (no way to redirect
+   * it outside of the phone).
+   */
+  if(window.console && window.console.log)
+    console.log(s);
+
+  ++this.counter;
+  this.log_data.push(this.counter + ": " + s);
+  var lines = 10;
+  if(this.log_data.length > lines)
+    this.log_data = this.log_data.slice(1, lines+1);
+  if(this.shown)
+    this.update.defer();
+}
+
+DebugWindow.prototype.hashchange_debug = function()
+{
+  var debug = UrlHash.get("debug");
+  if(debug == null)
+    debug = "0";
+  debug = (debug == "1");
+
+  if(debug == this.shown)
+    return;
+
+  this.shown = debug;
+  if(debug)
+    this.create_container();
+  else
+    this.destroy_container();
+
+  this.update();
+}
+
+DebugWindow.prototype.add_hook = function(func)
+{
+  this.hooks.push(func);
+}
+
+DebugWindow.prototype.update = function()
+{
+  if(!this.container)
+    return;
+
+  var s = "";
+  for(var i = 0; i < this.hooks.length; ++i)
+  {
+    var func = this.hooks[i];
+    s += func() + "<br>";
+  }
+  s += this.log_data.join("<br>");
+
+  if(s == this.shown_debug)
+    return;
+
+  this.shown_debug = s;
+  this.container.update(s);
+}
+
+/*
+ * Return a function, debug(), which logs to a debug window.  The actual debug
+ * handler is an attribute of the function.
+ *
+ * var debug = NewDebug();
+ * debug("text");
+ * debug.handler.add_hook();
+ */
+NewDebug = function()
+{
+  var debug_handler = new DebugWindow();
+  var debug = debug_handler.log.bind(debug_handler);
+  debug.handler = debug_handler;
+  return debug;
+}
+
+
+
 Dmail = {
   respond: function(to) {
     $("dmail_to_name").value = to
@@ -9326,6 +15454,8 @@ Forum = {
     new Ajax.Request("/forum/mark_all_read", {
       onComplete: function() {
         $$("span.forum-topic").invoke("removeClassName", "unread-topic")
+        $$("div.forum-update").invoke("removeClassName", "forum-update")
+        main_menu.mark_forum_posts_read();
         notice("Marked all topics as read")
       }
     })
@@ -9341,8 +15471,10 @@ Forum = {
         $('reply').show()
         var stripped_body = resp.body.replace(/\[quote\](?:.|\n|\r)+?\[\/quote\][\n\r]*/gm, "")
         $('forum_post_body').value += '[quote]' + resp.creator + ' said:\n' + stripped_body + '\n[/quote]\n\n'
-				$("respond-link").hide()
-				$("forum_post_body").focus()
+        if($("respond-link"))
+          $("respond-link").hide();
+        if($("forum_post_body"))
+          $("forum_post_body").focus();
       },
       onFailure: function(req) {
         notice("Error quoting forum post")
@@ -9578,7 +15710,6 @@ History = {
 
 
 InlineImage = {
-  images: new Hash,
   mouse_down: null,
   zoom_levels:
   [
@@ -9592,89 +15723,78 @@ InlineImage = {
       return 1 / InlineImage.zoom_levels[-level];
   },
 
-  register: function(id, inline)
+  register: function(id, data)
   {
-    inline.html_id = id;
-    inline.div = $(id);
-    InlineImage.images.set(id, inline);
+    var container = $(id);
+    data.html_id = id;
+    container.inline_image = data;
+    
+    /* initted is set to true after the image has been opened and the large images
+     * inside have been created by expand(). */
+    data.initted = false;
+    data.expanded = false;
+    data.toggled_from = null;
+    data.current = -1;
+    data.zoom_level = 0;
+
+    {
+      var ui_html = "";
+      if(data.images.length > 1)
+      {
+        for(var idx = 0; idx < data.images.length; ++idx)
+        {
+          // html_id looks like "inline-123-456".  Mark the button for each individual image as "inline-123-456-2".
+          var button_id = data.html_id + "-" + idx;
+          var text = data.images[idx].description.escapeHTML();
+          if(text == "")
+            text = "#" + (idx + 1);
+
+          ui_html += "<a href='#' id='" + button_id + "' class='select-image' onclick='InlineImage.show_image_no(\"" + data.html_id + "\", " + idx + "); return false;'>" + text + "</a>";
+        }
+      }
+      ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", +1); return false;'>+</a>";
+      ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", -1); return false;'>-</a>";
+      var zoom_id = data.html_id + "-zoom";
+      ui_html += "<a href='#' id='" + zoom_id + "' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", 0); return false;'>100%</a>";
+      ui_html += "<a href='#' class='select-image' onclick='InlineImage.close(\"" + data.html_id + "\"); return false;'>Close</a>";
+
+      ui_html += "<a href='/inline/edit/" + data.id + "' class='edit-link'>Image&nbsp;#" + data.id + "</a>";
+
+      container.down(".expanded-image-ui").innerHTML = ui_html;
+    }
+
+    container.down(".inline-thumb").observe("click", function(e) {
+      e.stop();
+      InlineImage.expand(data.html_id);
+    });
+    container.observe("dblclick", function(e) {
+      e.stop();
+    });
+
+    var viewer_img = container.down(".main-inline-image");
+
+    /* If the expanded image has more than one image to choose from, clicking it will
+     * temporarily show the next image.  Only show a pointer cursor if this is available. */
+    if(data.images.length > 1)
+      viewer_img.addClassName("clickable");
+
+    viewer_img.observe("mousedown", function(e) {
+      if(e.button != 0)
+        return;
+
+      data.toggled_from = data.current;
+      var idx = (data.current + 1) % data.images.length;
+      InlineImage.show_image_no(data.html_id, idx);
+      InlineImage.mouse_down = data;
+
+      /* We need to stop the event, so dragging the mouse after clicking won't turn it
+       * into a drag in Firefox.  If that happens, we won't get the mouseup. */
+      e.stop();
+    });
   },
 
   init: function()
   {
-    InlineImage.images.each(function(data) {
-      data[1].initted = false;
-      data[1].expanded = false;
-      data[1].toggled_from = null;
-      data[1].current = -1;
-      data[1].zoom_level = 0;
-    });
-
-    var images = $$(".inline-image");
-    images.each(function(div) {
-      var id = div.id;
-      var data = InlineImage.images.get(id);
-
-      if(data.div.initted)
-	return;
-
-      data.div.initted = true;
-
-      {
-        var ui_html = "";
-        if(data.images.length > 1)
-        {
-          for(var idx = 0; idx < data.images.length; ++idx)
-          {
-            // html_id looks like "inline-123-456".  Mark the button for each individual image as "inline-123-456-2".
-            var button_id = data.html_id + "-" + idx;
-            var text = data.images[idx].description.escapeHTML();
-            if(text == "")
-              text = "#" + (idx + 1);
-
-            ui_html += "<a href='#' id='" + button_id + "' class='select-image' onclick='InlineImage.show_image_no(\"" + data.html_id + "\", " + idx + "); return false;'>" + text + "</a>";
-          }
-        }
-        ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", +1); return false;'>+</a>";
-        ui_html += "<a href='#' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", -1); return false;'>-</a>";
-        var zoom_id = data.html_id + "-zoom";
-        ui_html += "<a href='#' id='" + zoom_id + "' class='select-image' onclick='InlineImage.zoom(\"" + data.html_id + "\", 0); return false;'>100%</a>";
-        ui_html += "<a href='#' class='select-image' onclick='InlineImage.close(\"" + data.html_id + "\"); return false;'>Close</a>";
-
-        ui_html += "<a href='/inline/edit/" + data.id + "' class='edit-link'>Image&nbsp;#" + data.id + "</a>";
-
-        data.div.down(".expanded-image-ui").innerHTML = ui_html;
-      }
-
-      div.down(".inline-thumb").observe("click", function(e) {
-        e.stop();
-        InlineImage.expand(data.html_id);
-      });
-      div.observe("dblclick", function(e) {
-        e.stop();
-      });
-
-      var viewer_img = data.div.down(".main-inline-image");
-
-      /* If the expanded image has more than one image to choose from, clicking it will
-       * temporarily show the next image.  Only show a pointer cursor if this is available. */
-      if(data.images.length > 1)
-        viewer_img.addClassName("clickable");
-
-      viewer_img.observe("mousedown", function(e) {
-        if(e.button != 0)
-          return;
-
-        data.toggled_from = data.current;
-        var idx = (data.current + 1) % data.images.length;
-        InlineImage.show_image_no(data.html_id, idx);
-        InlineImage.mouse_down = data;
-
-        /* We need to stop the event, so dragging the mouse after clicking won't turn it
-         * into a drag in Firefox.  If that happens, we won't get the mouseup. */
-        e.stop();
-      });
-    });
-
     /* Mouseup events aren't necessarily sent to the same element that received the mousedown,
      * so we need to track which element received a mousedown and handle mouseup globally. */
     document.observe("mouseup", function(e) {
@@ -9694,7 +15814,8 @@ InlineImage = {
 
   expand: function(id)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     data.expanded = true;
 
     if(!data.initted)
@@ -9718,28 +15839,30 @@ InlineImage = {
         img_html += "<img src='" + src + "' id='" + img_id + "' width=" + width + " height=" + height + " style='display: none;'>";
       }
 
-      var viewer_img = data.div.down(".main-inline-image");
+      var viewer_img = container.down(".main-inline-image");
       viewer_img.innerHTML = img_html;
     }
 
-    data.div.down(".inline-thumb").hide();
+    container.down(".inline-thumb").hide();
     InlineImage.show_image_no(data.html_id, 0);
-    data.div.down(".expanded-image").show();
+    container.down(".expanded-image").show();
 
-    // data.div.down(".expanded-image").scrollIntoView();
+    // container.down(".expanded-image").scrollIntoView();
   },
 
   close: function(id)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     data.expanded = false;
-    data.div.down(".expanded-image").hide();
-    data.div.down(".inline-thumb").show();
+    container.down(".expanded-image").hide();
+    container.down(".inline-thumb").show();
   },
 
   show_image_no: function(id, idx)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     var images = data["images"];
     var image = images[idx];
     var zoom = InlineImage.get_zoom(data.zoom_level);
@@ -9792,7 +15915,8 @@ InlineImage = {
 
   zoom: function(id, dir)
   {
-    var data = InlineImage.images.get(id);
+    var container = $(id);
+    var data = container.inline_image;
     if(dir == 0)
       data.zoom_level = 0; // reset
     else
@@ -9814,6 +15938,569 @@ InlineImage = {
 }
 
 
+var align_element_to_menu = function(submenu, menu_item_elem)
+{
+  /* Align the top of the dropdown to the bottom-left of the menu link. */
+  var offset = menu_item_elem.cumulativeOffset();
+  var left = offset.left - 3;
+
+  {
+    /* If this would result in the menu falling off the right side of the screen,
+     * push it left. */
+    var right_edge = submenu.offsetWidth + offset.left;
+    var right_overlap = right_edge - document.body.offsetWidth;
+    if(right_overlap > 0)
+      left -= right_overlap;
+  }
+
+  submenu.style.left = left + "px";
+
+  /* offset.top is the top of the menu item text. */
+  var bottom = offset.top;
+
+  /* We want to align to the bottom, not the top, so add the height of the text. */
+  if(menu_item_elem.getBoundingClientRect)
+  {
+    /* This is needed in Chrome, where the scrollHeight of our text item is always 0. */
+    var height = menu_item_elem.getBoundingClientRect().bottom - menu_item_elem.getBoundingClientRect().top;
+    bottom += height;
+  }
+  else
+  {
+    bottom += menu_item_elem.scrollHeight;
+  }
+  submenu.style.top = bottom + "px";
+}
+
+function MainMenu(container, def)
+{
+  this.container = container;
+  this.def = def;
+  this.submenu = null;
+  this.shown_def = null;
+  this.focused_menu_item = null;
+  this.dropdownTimer = null;
+  this.dragging = null;
+  this.dragging_over = null;
+
+  this.document_mouseup_event = this.document_mouseup.bindAsEventListener(this);
+  this.document_click_event = this.document_click.bindAsEventListener(this);
+  this.mousemove_during_dropdown_timer_event = this.mousemove_during_dropdown_timer.bindAsEventListener(this);
+}
+
+MainMenu.prototype.get_elem_for_top_item = function(item)
+{
+    return this.container.down(".top-item-" + item.name);
+}
+
+/* This must be called to initialize the menus. */
+MainMenu.prototype.init = function()
+{
+  for(var i = 0; i < this.def.length; ++i)
+  {
+    var item = this.def[i];
+    var elem = this.get_elem_for_top_item(item);
+
+    /* Remove any empty submenus. */
+    if(item.sub && !item.sub.length)
+      item.sub = null;
+
+    /* The submenu, if open, is a child of elem.  Bind these events to the top
+     * menu link, not to elem.  (We don't really need to do this anymore, but
+     * it doesn't hurt.) */
+    var a = elem.down("a");
+
+    /* Implement the dropdown timer.  Start counting when the mouse goes down, and stop if
+     * the mouse comes up for any reason.  This prevents the dropdown from flickering open
+     * every time a top-level link is clicked. */
+    a.observe("mousedown", this.top_menu_mousedown.bindAsEventListener(this, item));
+    a.observe("click", this.top_menu_click.bindAsEventListener(this));
+    a.observe("mouseover", this.top_menu_mouseover.bindAsEventListener(this, item));
+
+    /* IE8 needs this one to prevent dragging: */
+    a.observe("dragstart", function(event) { event.stop(); }.bindAsEventListener(this));
+  }
+
+  var bound_remove_submenu = this.remove_submenu.bindAsEventListener(this);
+  Element.observe(window, "blur", bound_remove_submenu);
+  Element.observe(window, "pageshow", bound_remove_submenu);
+  Element.observe(window, "pagehide", bound_remove_submenu);
+}
+
+MainMenu.prototype.get_submenu = function(name)
+{
+  for(var i = 0; i < this.def.length; ++i)
+  {
+    if(this.def[i].name == name)
+      return this.def[i];
+  }
+  return null;
+}
+
+MainMenu.prototype.show_submenu = function(parent_menu_element, def)
+{
+  if(this.shown_def == def)
+    return;
+  this.remove_submenu();
+
+  if(!def.sub)
+  {
+    this.shown_def = def;
+    return;
+  }
+
+  var menu_item_elem = this.get_elem_for_top_item(def);
+  menu_item_elem.addClassName("selected-menu");
+
+  this.shown_def = def;
+
+  /* Create the dropdown menu. */
+  var html = "";
+  var id = "";
+  if(def.html_id)
+    id = 'id="' + def.html_id + '" ';
+  html += "<div " + id + "class='dropdown-menu'>";
+        
+  for(var i = 0; i < def.sub.length; ++i)
+  {
+    var item = def.sub[i];
+
+    /* IE8 acts funny if we test item.separator directly when it's undefined. */
+    if(item.separator == true)
+    {
+      html += '<div class="separator"></div>';
+      continue;
+    }
+
+    var class_names = "submenu";
+    class_names += " submenu-item-" + i;
+    if(item.class_names)
+      class_names += " " + item.class_names.join(" ");
+
+    
+    html += "<a class='" + class_names + "' href=\"" + (item.dest || "#") + "\">";
+    html += item.label.replace(" ", "&nbsp;", "g");
+    html += "</a>";
+  }
+  html += "</div>";
+
+  /* Create the menu. */
+  this.submenu = document.createElement("div");
+  /* Note that we should be positioning relative to the viewport; our relative parent
+   * should be document.body.  However, don't parent our submenu directly to the body,
+   * since that breaks on some pages in IE8. */
+  this.container.insertBefore(this.submenu, this.container.firstChild);
+  $(this.submenu).replace(html);
+  this.submenu = this.container.down(".dropdown-menu");
+
+  align_element_to_menu(this.submenu, menu_item_elem);
+
+  var bound_remove_submenu = this.remove_submenu.bind(this);
+  var menu_item_mouseover_event = function(event) {
+    this.hovering_over_item(event.target);
+  }.bindAsEventListener(this);
+
+  var menu_item_mouseout_event = function(event) {
+    this.hovering_over_item(null);
+  }.bindAsEventListener(this);
+
+  /* Bind events to the new submenu. */
+  for(var i = 0; i < def.sub.length; ++i)
+  {
+    var elem = this.submenu.down(".submenu-item-" + i);
+    if(!elem)
+      continue;
+
+    var item = def.sub[i];
+    if(item.func)
+    {
+      elem.observe("click", function(event, item)
+      {
+        event.stop();
+        item.func(event, this, def, item);
+      }.bindAsEventListener(this, item));
+    }
+
+    /* If this menu item requires a login, attach the login handler. */
+    if(item.login)
+      elem.observe("click", User.run_login_onclick);
+
+    /* Keep track of which menu item we're hovering over. */
+    elem.observe("mouseover", menu_item_mouseover_event);
+    elem.observe("mouseout", menu_item_mouseout_event);
+  }
+}
+
+MainMenu.prototype.remove_submenu = function()
+{
+  if(this.submenu)
+  {
+    this.submenu.parentNode.removeChild(this.submenu);
+    this.submenu = null;
+  }
+
+  if(this.shown_def)
+  {
+    var menu_item_elem = this.get_elem_for_top_item(this.shown_def);
+    menu_item_elem.removeClassName("selected-menu");
+    this.shown_def = null;
+  }
+}
+
+MainMenu.prototype.stop_dropdown_timer = function()
+{
+  if(!this.dropdownTimer)
+    return;
+
+  clearTimeout(this.dropdownTimer);
+  this.dropdownTimer = null;
+
+  document.stopObserving("mousemove", this.mousemove_during_dropdown_timer_event);
+}
+
+MainMenu.prototype.hovering_over_item = function(element)
+{
+  if(this.focused_menu_item)
+    this.focused_menu_item.removeClassName("focused-menu-item");
+
+  /* Keep track of which menu item we're hovering over. */
+  this.focused_menu_item = element;
+
+  /* Mark the hovered item.  For some reason, :hover CSS rules don't work while
+   * a mouse button is depressed in WebKit. */
+  if(element)
+    element.addClassName("focused-menu-item");
+}
+
+/* Stop the drag, either because the mouse button was released or some other
+ * event cancelled it.  Close the menu and clean up. */
+MainMenu.prototype.stop_drag = function()
+{
+  if(!this.dragging)
+    return;
+  this.dragging = null;
+  this.dragging_over = null;
+  this.hovering_over_item(null);
+
+  document.stopObserving("mouseup", this.document_mouseup_event);
+  document.stopObserving("click", this.document_click_event);
+
+  this.stop_dropdown_timer();
+  this.remove_submenu();
+};
+
+MainMenu.prototype.top_menu_mousedown = function(event, def)
+{
+  if(!event.isLeftClick())
+    return;
+
+  // preventDefault here will stop the mousedown from starting a drag, which will cancel
+  // the click in mouse browsers and do other things we don't want.  Don't use stop();
+  // if we call stopPropagation we'll also stop clicks.
+  event.preventDefault();
+      
+  /* Stop the previous drag event, which probably shouldn't still be active. */
+  this.stop_drag();
+
+  document.observe("mouseup", this.document_mouseup_event);
+  document.observe("click", this.document_click_event);
+
+  this.dragging = [event.clientX, event.clientY];
+  this.dragging_over = def;
+
+  /* Start the timer before we show the dropdown automatically, and set up the
+   * mousemove event to show the dropdown immediately if we're dragged before that
+   * happens. */
+  document.observe("mousemove", this.mousemove_during_dropdown_timer_event);
+  this.dropdownTimer = window.setTimeout(function()
+  {
+    if(this.dragging_over)
+      this.show_submenu(event.target, this.dragging_over);
+  }.bind(this), 250);
+}
+
+/*
+ * We received a click while the mouse was already held down.  This probably means the
+ * user right- or middle-clicked a menu item while holding the menu open with the left
+ * mouse button.  In this case, let the browser do whatever it's going to do (probably
+ * open the menu item in a new window), and simply close the menu so releasing the left
+ * button doesn't activate the item a second time.
+ *
+ * Ordinary menu selections are handled in document_mouseup.
+ */
+MainMenu.prototype.document_click = function(event)
+{
+  if(event.isLeftClick())
+    return;
+  this.stop_drag();
+}
+
+MainMenu.prototype.document_mouseup = function(event)
+{
+  if(!event.isLeftClick())
+  {
+    /* The user right- or middle-clicked, so we need to close the menu.  We can't
+     * do this from onclick, since WebKit doesn't yet send onclick for non-primary
+     * buttons.  However, we can't actually remove the menu right now, since that'll
+     * cause Gecko to never send the click.  Defer it, so the menu will be closed
+     * after the click event finishes. */
+    this.stop_drag.bind(this).defer();
+    return;
+  }
+
+  if(this.dropdownTimer)
+  {
+    clearTimeout(this.dropdownTimer);
+    this.dropdownTimer = null;
+  }
+
+  var menu_was_shown = this.shown_def;
+  var hovered_menu_item = this.focused_menu_item;
+  this.stop_drag();
+  if(!menu_was_shown)
+    return;
+
+  /* We'll only get this event if the menu was opened.  Prevent the click from
+   * occuring if the menu was opened.  Just stopping the event won't do it. */
+  event.stop();
+  this.cancel_next_click = true;
+
+  /* Tricky: we can't be absolutely certain that this mouseup will result in a
+   * click event.  Clear cancel_next_click if the event doesn't arrive. */
+  (function() { this.cancel_next_click = false; }.bind(this)).defer();
+
+  if(!hovered_menu_item)
+    return;
+
+  /* Simulate a click, so JS anchors work properly. */
+  if(document.createEvent)
+  {
+    var ev = document.createEvent("MouseEvents");
+    ev.initMouseEvent("click", true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+    if(hovered_menu_item.dispatchEvent(ev) && !ev.stopped)
+      window.location.href = hovered_menu_item.href;
+  }
+  else
+  {
+    /* IE.  Don't use hovered_menu_item.click(); it won't work in IE7. */
+    if(hovered_menu_item.fireEvent("onclick"))
+      window.location.href = hovered_menu_item.href;
+  }
+};
+
+MainMenu.prototype.mousemove_during_dropdown_timer = function(event)
+{
+  event.returnValue = false;
+  event.preventDefault();
+
+  if(!this.dropdownTimer)
+    return;
+
+  /* If we've dragged downward before the menu is shown, show it. */
+  if(event.clientY - this.dragging[1] < 3)
+    return;
+
+  /* Dragging opens the dropdown immediately, so stop the dropdown timer if
+   * it's running. */
+  this.stop_dropdown_timer();
+
+  this.show_submenu(event.target, this.dragging_over);
+};
+
+MainMenu.prototype.top_menu_click = function(event)
+{
+  this.stop_drag();
+
+  if(this.cancel_next_click)
+  {
+    /* If a click arrives after the dropdown menu was opened, ignore it.  Note that by
+     * the time we get here, the dropdown menu will usually have already been closed by
+     * mouseup, so we can't just check this.shown_def. */
+    this.cancel_next_click = false;
+    event.stop();
+  }
+}
+
+MainMenu.prototype.top_menu_mouseover = function(event, def)
+{
+  if(this.dragging)
+  {
+    /* We're dragging, and the mouse moved from one menu item to another before
+     * the item was displayed.  Update, so we show the new item. */
+    this.dragging_over = def;
+  }
+
+  /* If we hover over a top-level menu item while the dropdown is open,
+   * show the new menu. */
+  if(!this.shown_def)
+    return;
+  this.show_submenu(event.target, def);
+}
+
+MainMenu.prototype.add_forum_posts_to_submenu = function()
+{
+  var menu = this.get_submenu("forum").sub;
+  if(!menu)
+    return;
+
+  var forum_posts = Cookie.get("current_forum_posts");
+  if(!forum_posts)
+    return;
+  var forum_posts = forum_posts.evalJSON();
+  if(!forum_posts.length)
+    return;
+
+  var any_unread = false;
+  for(var i = 0; i < forum_posts.length; ++i)
+    if(forum_posts[i][2])
+      any_unread = true;
+  if(any_unread)
+    menu.push({ label: "Mark&nbsp;all&nbsp;read", func: Forum.mark_all_read });
+
+  menu.push({ separator: true });
+
+  for(var i = 0; i < forum_posts.length; ++i)
+  {
+    /* [title, id, unread, last_page_no] */
+    var fp = forum_posts[i];
+    var dest = "/forum/show/" + fp[1];
+    if(parseInt(fp[3]) > "1")
+	    dest += "?page=" + fp[3];
+    menu.push({
+      label: fp[0], dest: dest, class_names: ["forum-topic"]
+    });
+
+    /* Bold the item if it's unread. */
+    if(fp[2])
+      menu[menu.length-1].class_names.push("unread-topic");
+  }
+}
+
+MainMenu.prototype.mark_forum_posts_read = function()
+{
+  var menu = this.get_submenu("forum").sub;
+  if(!menu)
+    return;
+
+  for(var i = 0; i < menu.length; ++i)
+  {
+    if(!menu[i].class_names)
+      continue;
+    menu[i].class_names = menu[i].class_names.reject(function(x) { return x == "unread-topic"; });
+  }
+}
+
+/* This shows a popup search box, contained within container like a submenu, aligned
+ * to the specified element (normally a menu item).  The popup will destroy itself when
+ * finished. */
+function QuickSearch(container, html, align_to)
+{
+  html = "<div class='dropdown-menu'>" + html + "</div>";
+
+  this.container = container;
+
+  this.hide_event = this.hide_event.bindAsEventListener(this);
+  this.on_document_keydown_event = this.on_document_keydown_event.bindAsEventListener(this);
+  this.document_mousedown_event = this.document_mousedown_event.bindAsEventListener(this);
+
+  /* Create the contents. */
+  this.submenu = document.createElement("div");
+
+  /* Note that we should be positioning relative to the viewport; our relative parent
+   * should be document.body.  However, don't parent our submenu directly to the body,
+   * since that breaks on some pages in IE8. */
+  this.container.insertBefore(this.submenu, this.container.firstChild);
+  $(this.submenu).replace(html);
+  this.submenu = this.container.down(".dropdown-menu");
+
+  align_element_to_menu(this.submenu, align_to);
+
+  /* We watch for escape presses on the document instead of the element, so even if
+   * the element doesn't receive focus for some reason, pressing escape still closes
+   * it. */
+  document.observe("keydown", this.on_document_keydown_event);
+  document.observe("mousedown", this.document_mousedown_event);
+
+  Element.observe(window, "pageshow", this.hide_event);
+  Element.observe(window, "pagehide", this.hide_event);
+
+  /* This stuff is specific to the actual content of the box: focus the form, and
+   * hide it on submit. */
+  this.submenu.down(".default").focus();
+  this.submenu.select("form").each(function(e) {
+    e.observe("submit", this.hide_event);
+  }.bind(this));
+}
+
+QuickSearch.prototype.on_document_keydown_event = function(event) {
+  if (event.keyCode == Event.KEY_ESC)
+    this.hide();
+}
+
+QuickSearch.prototype.document_mousedown_event = function(event)
+{
+  if($(event.target).isParentNode(this.submenu))
+    return;
+  this.hide();
+}
+
+QuickSearch.prototype.hide_event = function(event)
+{
+  this.hide();
+};
+
+QuickSearch.prototype.hide = function()
+{
+  if(!this.submenu)
+    return;
+
+  /* Remove the menu from the document.  We need to work around a FF3.6 bug here: if
+   * we simply remove the item from the document while a form dropdown box is open,
+   * the dropdown won't disappear.  We need to hide() first to cause it to be dropped,
+   * and defer removing the element until after we return in order to let it take
+   * effect. */
+  this.submenu.hide();
+  (function(elem) {
+    elem.parentNode.removeChild(elem);
+  }).curry(this.submenu).defer();
+
+  this.submenu = null;
+  document.stopObserving("keydown", this.on_document_keydown_event);
+  document.stopObserving("mousedown", this.document_mousedown_event);
+  Element.stopObserving(window, "blur", this.hide_event);
+  Element.stopObserving(window, "pageshow", this.hide_event);
+  Element.stopObserving(window, "pagehide", this.hide_event);
+}
+
+/* Create functions that can be used as the func parameter to a menu item to
+ * open quick searches. */
+function MakeSearchHandler(search_path, id, submit_button_text)
+{
+  var ShowSearch = function(event, menu, def, item)
+  {
+    var html = "";
+    html += '<form action="' + search_path + '" method="get">';
+    html += '<input id="' + id + '" name="' + id + '" size="30" type="text" class="default">';
+    html += '<br>';
+    html += '<input style="margin-top: 0.25em;" type="submit" value="' + submit_button_text + '">';
+    html += '</form>';
+
+    new QuickSearch(menu.container, html, menu.get_elem_for_top_item(def));
+  }
+  return ShowSearch;
+}
+
+ShowPostSearch = MakeSearchHandler("/post", "tags", "Search posts");
+ShowCommentSearch = MakeSearchHandler("/comment/search", "query", "Search comments");
+ShowNoteSearch = MakeSearchHandler("/note/search", "query", "Search notes");
+ShowArtistSearch = MakeSearchHandler("/artist", "name", "Search artists");
+ShowTagSearch = MakeSearchHandler("/tag", "name", "Search tags");
+ShowPoolSearch = MakeSearchHandler("/pool", "query", "Search pools");
+ShowWikiSearch = MakeSearchHandler("/wiki", "query", "Search wiki");
+ShowForumSearch = MakeSearchHandler("/forum/search", "query", "Search forums");
+
+
+
 // The following are instance methods and variables
 var Note = Class.create({
   initialize: function(id, is_new, raw_body) {
@@ -9823,6 +16510,7 @@ var Note = Class.create({
     
     this.id = id
     this.is_new = is_new
+    this.document_observers = [];
 
     // Cache the elements
     this.elements = {
@@ -10053,15 +16741,32 @@ var Note = Class.create({
     }
   },
 
+  addDocumentObserver: function(name, func)
+  {
+    document.observe(name, func);
+    this.document_observers.push([name, func]);
+  },
+
+  clearDocumentObservers: function(name, handler)
+  {
+    for(var i = 0; i < this.document_observers.length; ++i)
+    {
+      var observer = this.document_observers[i];
+      document.stopObserving(observer[0], observer[1]);
+    }
+
+    this.document_observers = [];
+  },
+
   // Start dragging the note
   dragStart: function(e) {
     if (Note.debug) {
       console.debug("Note#dragStart (id=%d)", this.id)
     }
     
-    document.observe("mousemove", this.drag.bindAsEventListener(this))
-    document.observe("mouseup", this.dragStop.bindAsEventListener(this))
-    document.observe("selectstart", function() {return false})
+    this.addDocumentObserver("mousemove", this.drag.bindAsEventListener(this))
+    this.addDocumentObserver("mouseup", this.dragStop.bindAsEventListener(this))
+    this.addDocumentObserver("selectstart", function() {return false})
 
     this.cursorStartX = e.pointerX()
     this.cursorStartY = e.pointerY()
@@ -10079,7 +16784,7 @@ var Note = Class.create({
       console.debug("Note#dragStop (id=%d)", this.id)
     }
     
-    document.stopObserving()
+    this.clearDocumentObservers()
 
     this.cursorStartX = null
     this.cursorStartY = null
@@ -10093,8 +16798,8 @@ var Note = Class.create({
   },
 
   ratio: function() {
-    return this.elements.image.width / this.elements.image.getAttribute("orig_width")
-    // var ratio = this.elements.image.width / this.elements.image.getAttribute("orig_width")
+    return this.elements.image.width / this.elements.image.getAttribute("large_width")
+    // var ratio = this.elements.image.width / this.elements.image.getAttribute("large_width")
     // if (this.elements.image.scale_factor != null)
       // ratio *= this.elements.image.scale_factor;
     // return ratio
@@ -10139,9 +16844,9 @@ var Note = Class.create({
       return
     }
 
-    document.observe("mousemove", this.editDrag.bindAsEventListener(this))
-    document.observe("mouseup", this.editDragStop.bindAsEventListener(this))
-    document.observe("selectstart", function() {return false})
+    this.addDocumentObserver("mousemove", this.editDrag.bindAsEventListener(this))
+    this.addDocumentObserver("mouseup", this.editDragStop.bindAsEventListener(this))
+    this.addDocumentObserver("selectstart", function() {return false})
 
     this.elements.editBox = $('edit-box');
     this.cursorStartX = e.pointerX()
@@ -10156,7 +16861,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#editDragStop (id=%d)", this.id)
     }
-    document.stopObserving()
+    this.clearDocumentObservers()
 
     this.cursorStartX = null
     this.cursorStartY = null
@@ -10192,9 +16897,9 @@ var Note = Class.create({
     this.boundsY = new ClipRange(10, this.elements.image.clientHeight - this.boxStartY - 5)
     this.dragging = true
 
-    document.stopObserving()
-    document.observe("mousemove", this.resize.bindAsEventListener(this))
-    document.observe("mouseup", this.resizeStop.bindAsEventListener(this))
+    this.clearDocumentObservers()
+    this.addDocumentObserver("mousemove", this.resize.bindAsEventListener(this))
+    this.addDocumentObserver("mouseup", this.resizeStop.bindAsEventListener(this))
     
     e.stop()
     this.bodyHide()
@@ -10206,7 +16911,7 @@ var Note = Class.create({
       console.debug("Note#resizeStop (id=%d)", this.id)
     }
     
-    document.stopObserving()
+    this.clearDocumentObservers()
 
     this.boxCursorStartX = null
     this.boxCursorStartY = null
@@ -10389,7 +17094,7 @@ var Note = Class.create({
     if (this.is_new) {
       notice("This note has no history")
     } else {
-      location.pathname = '/note/history/' + this.id
+      location.pathname = '/history?search=notes:' + this.id
     }
     
     e.stop()
@@ -10535,6 +17240,51 @@ Object.extend(Note, {
 
 
 Pool = {
+  pools: new Hash(),
+  register: function(pool)
+  {
+    Pool.pools.set(pool.id, pool);
+  },
+
+  register_pools: function(pools)
+  {
+    if(pools != null)
+      pools.each(function(pool) { Pool.register(pool); });
+  },
+
+  register_pool_posts: function(pool_posts, posts)
+  {
+    /*
+     * pool_post is an array of individual posts in pools.  It contains only data for posts
+     * listed in posts.
+     *
+     * This means that a pool_post not existing in pool_posts only indicates the post is
+     * no longer in the pool only if that post is listed in posts.
+     *
+     * We don't need to clear the pool_posts entry in posts, because the posts registered
+     * by this function are always newly registered via Post.register_resp; pool_posts is
+     * already empty.
+     */
+    pool_posts.each(function(pool_post) {
+      var post = Post.posts.get(pool_post.post_id);
+      if(post)
+      {
+        if(!post.pool_posts)
+          post.pool_posts = new Hash();
+        post.pool_posts.set(pool_post.pool_id, pool_post);
+      }
+    });
+
+  },
+
+  can_edit_pool: function(pool)
+  {
+    if(!User.is_member_or_higher())
+      return false;
+
+   return pool.is_public || pool.user_id == User.get_current_user_id();
+  },
+
   add_post: function(post_id, pool_id) {
     notice("Adding to pool...")
 
@@ -10556,31 +17306,101 @@ Pool = {
   },
 
   remove_post: function(post_id, pool_id) {
-    new Ajax.Request('/pool/remove_post.json', {
-      parameters: {
-        "post_id": post_id,
-        "pool_id": pool_id
-      },
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-        
-        if (resp.success) {
-          notice("Post removed from pool")
-          if($("p" + post_id))
-            $("p" + post_id).remove()            
-          if($("pool" + pool_id))
-            $("pool" + pool_id).remove()            
-        } else {
-          notice("Error: " + resp.reason)
-        }          
+    var complete = function()
+    {
+      notice("Post removed from pool")
+      if($("p" + post_id))
+        $("p" + post_id).addClassName("deleted");
+      if($("pool" + pool_id))
+        $("pool" + pool_id).remove()            
+    }
+
+    Post.make_request('/pool/remove_post.json', { "post_id": post_id, "pool_id": pool_id }, complete);
+  },
+
+  transfer_post: function(old_post_id, new_post_id, pool_id, sequence)
+  {
+    Post.update_batch(
+      [{ id: old_post_id, tags: "-pool:" + pool_id, old_tags: "" },
+       { id: new_post_id, tags: "pool:" + pool_id + ":" + sequence, old_tags: "" }],
+      function() {
+        notice("Pool post transferred to parent")
+
+	/* We might be on the parent or child, which will do different things to
+	 * the pool status display.  Just reload the page. */
+	document.location.reload();
       }
-    })
+    );
+  },
+
+  detach_post: function(post_id, pool_id, is_parent)
+  {
+    Post.update_batch(
+      [{ id: post_id, tags: "-pool:" + pool_id, old_tags: "" }],
+      function() {
+        notice("Post detached")
+        if(is_parent) {
+          var elem = $("pool-detach-" + pool_id + "-" + post_id);
+          if(elem)
+            elem.remove()
+        } else {
+          if($("pool" + pool_id))
+            $("pool" + pool_id).remove()
+        }
+      }
+    );
+  },
+
+  /* This matches PoolPost.pretty_sequence. */
+  post_pretty_sequence: function(sequence)
+  {
+    if(sequence.match(/^[0-9]+.*/))
+      return "#" + sequence;
+    else
+      return "\"" + sequence + "\"";
+  },
+
+  change_sequence: function(post_id, pool_id, old_sequence)
+  {
+    new_sequence = prompt("Please enter the new page number:", old_sequence);
+    if(new_sequence == null)
+      return;
+    if(new_sequence.indexOf(" ") != -1)
+    {
+      notice("Invalid page number");
+      return;
+    }
+
+    Post.update_batch(
+      [{ id: post_id, tags: "pool:" + pool_id + ":" + new_sequence, old_tags: "" }],
+      function() {
+        notice("Post updated")
+        var elem = $("pool-seq-" + pool_id);
+        if(!Object.isUndefined(elem.innerText))
+          elem.innerText = Pool.post_pretty_sequence(new_sequence);
+        else
+          elem.textContent = Pool.post_pretty_sequence(new_sequence);
+      }
+    );
   }
 }
 
 
 Post = {
   posts: new Hash(),
+  tag_types: new Hash(),
+  votes: new Hash(),
+
+  tag_type_names: [
+    "general",
+    "artist",
+    "",
+    "copyright",
+    "character",
+    "circle",
+    "faults"
+  ],
+
 
 	find_similar: function() {
 		var old_source_name = $("post_source").name
@@ -10601,31 +17421,68 @@ Post = {
 		$("edit-form").action = old_action
 	},
 
-  approve: function(post_id) {
+  make_request: function(path, params, finished)
+  {
+    return new Ajax.Request(path, {
+      parameters: params,
+      
+      onFailure: function(req) {
+        var resp = req.responseJSON;
+	notice("Error: " + resp.reason);
+      },
+
+      onSuccess: function(resp) {
+        var resp = resp.responseJSON
+        Post.register_resp(resp);
+
+        /* Fire posts:update, to allow observers to update their display on change. */
+        var post_ids = new Hash();
+        for(var i = 0; i < resp.posts.length; ++i)
+          post_ids.set(resp.posts[i].id, true);
+
+        document.fire("posts:update", {
+          resp: resp,
+          post_ids: post_ids
+        });
+
+        if(finished)
+          finished(resp);
+      }
+    });
+  },
+
+  /* If delete_reason is a string, delete the post with the given reason.  If delete_reason
+   * is null, approve the post.  (XXX: rename to Post.moderate) */
+  approve: function(post_id, delete_reason, finished) {
     notice("Approving post #" + post_id)
     var params = {}
     params["ids[" + post_id + "]"] = "1"
-    params["commit"] = "Approve"
-    
-    new Ajax.Request("/post/moderate.json", {
-      parameters: params,
-      
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-        
-        if (resp.success) {
-          notice("Post approved")
-          if ($("p" + post_id)) {
-            $("p" + post_id).down("img").removeClassName("pending")
-          }
-          if ($("pending-notice")) {
-            $("pending-notice").hide()
-          }
-        } else {
-          notice("Error: " + resp.reason)
+    params["commit"] = delete_reason? "Delete":"Approve"
+    if(delete_reason)
+      params["reason"] = delete_reason
+
+    var completion = function()
+    {
+      notice(delete_reason? "Post deleted":"Post approved");
+      if(finished)
+        finished(post_id);
+      else
+      {
+        if ($("p" + post_id)) {
+          $("p" + post_id).removeClassName("pending")
+        }
+        if ($("pending-notice")) {
+          $("pending-notice").hide()
         }
       }
-    })
+    }
+
+    return Post.make_request("/post/moderate.json", params, completion);
+  },
+
+  undelete: function(post_id, finished)
+  {
+    return Post.make_request("/post/undelete.json", {id: post_id}, finished);
   },
 
   applied_list: [],
@@ -10658,6 +17515,17 @@ Post = {
   update_batch: function(posts, finished) {
     var original_count = posts.length;
 
+    if(TagCompletion)
+    {
+      /* Tell TagCompletion about recently used tags. */
+      posts.each(function(post) {
+        if(post.tags == null)
+          return;
+
+        TagCompletion.add_recent_tags_from_update(post.tags, post.old_tags);
+      });
+    }
+
     /* posts is a hash of id: { post }.  Convert this to a Rails-format object array. */
     var params_array = [];                  
     posts.each(function(post) {
@@ -10667,48 +17535,44 @@ Post = {
       });
     });
 
-    var params = params_array.join("&");
+    var complete = function(resp)
+    {
+      resp.posts.each(function(post) {
+        Post.update_styles(post);
 
-    new Ajax.Request('/post/update_batch.json', {
-      parameters: params,
-
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-
-        if (resp.success) {
-          // Update the stored posts.
-          resp.posts.each(function(post) {
-            /* Only register posts that we already knew about.  We may receive information about
-             * posts that we don't care about (new parent posts that aren't displayed in our index). */
-            if(Post.posts.get(post.id))
-              Post.register(post)
-            Post.update_styles(post);
-          });
-
-          notice((original_count == 1? "Post": "Posts") + " updated");
-
-          if(finished)
-            finished(resp.posts);
+        var element = $$("#p" + post.id + " > .directlink")
+        if (element.length > 0) {
+          element[0].addClassName("tag-script-applied")
+          Post.applied_list.push(element[0])
         }
-      }
-    });
+      });
+
+      notice((original_count == 1? "Post": "Posts") + " updated");
+
+      if(finished)
+        finished(resp.posts);
+    }
+
+    var params = params_array.join("&");
+    Post.make_request("/post/update_batch.json", params, complete);
   },
 
   update_styles: function(post)
   {
     var e = $("p" + post.id);
-    var img = e.down("IMG");
+    if(!e) return;
     if(post["has_children"])
-      img.addClassName("has-children");
+      e.addClassName("has-children");
     else
-      img.removeClassName("has-children");
+      e.removeClassName("has-children");
 
     if(post["parent_id"])
-      img.addClassName("has-parent");
+      e.addClassName("has-parent");
     else
-      img.removeClassName("has-parent");
+      e.removeClassName("has-parent");
   },
 
+  /* Deprecated; use Post.update_batch instead. */
   update: function(post_id, params, finished) {
     notice('Updating post #' + post_id)
     params["id"] = post_id
@@ -10724,6 +17588,7 @@ Post = {
 
           // Update the stored post.
           Post.register(resp.post)
+          Post.register_tags(resp.tags);
 
           Post.update_styles(resp.post);
 
@@ -10768,7 +17633,9 @@ Post = {
   {
     var post_ids = [];
     Post.posts.each(function(pair) {
-      post_ids.push(pair.key);
+      /* Only activate posts that are actually displayed; we may have others registered. */
+      if($("p" + pair.key))
+        post_ids.push(pair.key);
     });
     Post.activate_posts(post_ids, function(resp) {
       if(resp.count == 0)
@@ -10783,8 +17650,9 @@ Post = {
    * and doesn't return errors for individual posts. */
   activate_post: function(post_id)
   {
-     Post.update(post_id, { "post[is_held]": false }, function(post)
+     Post.update_batch([{ id: post_id, is_held: false }], function()
      {
+       var post = Post.posts.get(post_id);
        if(post.is_held)
          notice("Couldn't activate post");
        else
@@ -10792,59 +17660,19 @@ Post = {
      });
   },
 
-  vote_set_stars: function(post_id, vote, temp) {
-    if(!temp && $("add-to-favs"))
+
+  init_add_to_favs: function(post_id, add_to_favs, remove_from_favs) {
+    var update_add_to_favs = function(e)
     {
-      if (vote >= 3) {
-        $("add-to-favs").hide()
-        $("remove-from-favs").show()
-      } else {
-        $("remove-from-favs").hide()
-        $("add-to-favs").show()
-      }
+      if(e != null && e.memo.post_ids.get(post_id) == null)
+        return;
+      var vote = Post.votes.get(post_id) || 0;
+      add_to_favs.show(vote < 3);
+      remove_from_favs.show(vote >= 3);
     }
 
-    // TODO: cache the stars so we don't have to do a dom query every time
-    var stars = $("stars-" + post_id).select("a")
-    stars.each(function(star) {
-      var matches = star.id.match(/^star-(-?\d+)-(\d+)$/)
-      if(!matches)
-        return;
-      var star_vote = parseInt(matches[1])
-      var post_id = parseInt(matches[2])
-      var on = star.down(".score-on")
-      var off = star.down(".score-off")
-
-      if (vote != null && vote >= star_vote)
-      {
-        on.addClassName("score-visible");
-        off.removeClassName("score-visible");
-      }
-      else
-      {
-        on.removeClassName("score-visible");
-        off.addClassName("score-visible");
-      }
-    })
-  },
-
-  vote_mouse_over: function(desc, post_id, vote) {
-    Post.vote_set_stars(post_id, vote, true);
-    $("vote-desc-" + post_id).update(desc)
-  },
-	
-  vote_mouse_out: function(desc, post_id, vote) {
-    var post = Post.posts.get(post_id)
-    Post.vote_set_stars(post_id, post.vote);
-    $("vote-desc-" + post_id).update()
-  },
-
-  init_vote: function(post_id, vote) {
-    var post = Post.posts.get(post_id)
-    if(!post)
-      return
-    post.vote = vote
-    Post.vote_set_stars(post_id, post.vote);
+    update_add_to_favs();
+    document.on("posts:update", update_add_to_favs);
   },
 
   vote: function(post_id, score) {
@@ -10852,71 +17680,130 @@ Post = {
       return;
     
     notice("Voting...")
-
-    var post = Post.posts.get(post_id)
-
-    options = {
-            "id": post_id,
-            "score": score
-    }
-    
-    new Ajax.Request("/post/vote.json", {
-      parameters: options,
-
-      onComplete: function(resp) {
-        var resp = resp.responseJSON
-
-        if (resp.success) {
-          $("post-score-" + resp.post_id).update(resp.score)
-          var post = Post.posts.get(resp.post_id)
-          if(post)
-            post.vote = resp.vote
-          Post.vote_set_stars(resp.post_id, resp.vote)
-          notice("Vote saved")
-
-          if ($("favorited-by")) {
-            $("favorited-by").update(Favorite.link_to_users(resp.votes["3"]))
-          }
-        } else {
-          notice(resp.reason)
-          post.current_vote = old_vote
-        }
-      }
-    })
+    Post.make_request("/post/vote.json", { id: post_id, score: score }, function(resp) { notice("Vote saved"); });
   },
 
-  flag: function(id) {
+  flag: function(id, finished) {
     var reason = prompt("Why should this post be flagged for deletion?", "")
-
-    if (!reason) {
-      return false
-    }
+    if (!reason)
+      return false;
   
-    new Ajax.Request("/post/flag.json", {
-      parameters: {
-        "id": id,
-        "reason": reason
-      },
-    
-      onFailure: function(req) {
-        var resp = req.responseJSON
-	notice(resp.reason);
-      },
-
-      onSuccess: function(req) {
-        notice("Post was flagged for deletion")
-        $("p" + id).down("img").addClassName("flagged")
+    var complete = function()
+    {
+      notice("Post was flagged for deletion");
+      if(finished)
+        finished(id);
+      else
+      {
+        var e = $("p" + id);
+        if(e)
+          e.addClassName("flagged");
       }
-    })
+    }
+
+    return Post.make_request("/post/flag.json", { "id": id, "reason": reason }, complete);
+  },
+
+  unflag: function(id, finished) {
+    var complete = function()
+    {
+      notice("Post was approved");
+      if(finished)
+        finished(id);
+      else
+      {
+        var e = $("p" + id);
+        if(e)
+          e.removeClassName("flagged");
+      }
+    }
+
+    return Post.make_request("/post/flag.json", { id: id, unflag: 1 }, complete);
   },
 
   observe_text_area: function(field_id) {
     $(field_id).observe("keydown", function(e) {
       if (e.keyCode == Event.KEY_RETURN) {
-        this.up("form").submitWithLogin()
-        e.stop()
+        e.stop();
+        this.up("form").simulate_submit();
       }
     })
+  },
+
+  /* 
+   * Group tags by type. 
+   *
+   * Post.get_post_tags_by_type(post)
+   * -> {general: ["tagme"], faults: ["fixme", "crease"]}
+   */
+  get_post_tags_by_type: function(post)
+  {
+    var results = new Hash;
+
+    post.tags.each(function(tag)
+    {
+      var tag_type = Post.tag_types.get(tag);
+
+      /* We can end up not knowing a tag's type due to tag script editing giving us
+       * tags we weren't told the type of. */
+      if(!tag_type)
+        tag_type = "general";
+      var list = results.get(tag_type);
+      if(!list)
+      {
+        list = [];
+        results.set(tag_type, list);
+      }
+      list.push(tag);
+    });
+
+    return results;
+  },
+
+  /* 
+   * Get post tags with their types.
+   *
+   * Post.get_post_tags_with_type(post)
+   * -> [["tagme", "general"], ["fixme", "faults"], ["crease", "faults"]]
+   *
+   * The results will be sorted by type.
+   */
+  get_post_tags_with_type: function(post)
+  {
+    var tag_types = Post.get_post_tags_by_type(post);
+    var types = tag_types.keys();
+
+    var type_order = ["artist", "circle", "copyright", "character", "faults", "general"];
+    types = types.sort(function(a, b) {
+      var a_idx = type_order.indexOf(a);
+      if(a_idx == -1) a_idx = 999;
+      var b_idx = type_order.indexOf(b);
+      if(b_idx == -1) b_idx = 999;
+      return a_idx - b_idx;
+    });
+
+    var results = new Array;
+    types.each(function(type) {
+      var tags = tag_types.get(type);
+      tags.each(function(tag) {
+        results.push([tag, type]);
+      });
+    });
+    return results;
+  },
+
+  /* Register all data from a generic post response. */
+  register_resp: function(resp) {
+    if(resp.posts)
+      Post.register_posts(resp.posts);
+    if(resp.tags)
+      Post.register_tags(resp.tags);
+    if(resp.votes)
+      Post.register_votes(resp.votes);
+    if(resp.pools)
+      Pool.register_pools(resp.pools);
+    if(resp.pool_posts)
+      Pool.register_pool_posts(resp.pool_posts, resp.posts);
   },
 
   register: function(post) {
@@ -10925,40 +17812,70 @@ Post = {
     post.match_tags.push("rating:" + post.rating.charAt(0))
     post.match_tags.push("status:" + post.status)
 
-    if(Post.post_tags)
-    {
-      /* Group tags by type. */
-      post.tags_by_type = new Hash;
-
-      post.tags.each(function(tag)
-      {
-        var tag_type = Post.post_tags[tag];
-
-	/* We can end up not knowing a tag's type due to tag script editing giving us
-	 * tags we weren't told the type of. */
-	if(!tag_type)
-          tag_type = "general";
-        var list = post.tags_by_type.get(tag_type);
-        if(!list)
-        {
-          list = [];
-          post.tags_by_type.set(tag_type, list);
-        }
-        list.push(tag);
-      });
-    };
-
     this.posts.set(post.id, post)
+  },
+
+  register_posts: function(posts) {
+    posts.each(function(post) { Post.register(post); });
+  },
+
+  unregister_all: function() {
+    this.posts = new Hash();
+  },
+
+  /* Post.register_tags({tagme: "general"}); */
+  register_tags: function(tags, no_send_to_completion) {
+    this.tag_types.update(tags);
+
+    /* If no_send_to_completion is true, this data is coming from completion, so there's
+     * no need to send it back. */
+    if(TagCompletion && !no_send_to_completion)
+      TagCompletion.update_tag_types();
+  },
+
+  /* Post.register_votes({12345: 1}) */
+  register_votes: function(votes) {
+    this.votes.update(votes);
   },
 
   blacklists: [],
 
   is_blacklisted: function(post_id) {
-    var post = this.posts.get(post_id)
-    var has_tag = post.match_tags.member.bind(post.match_tags)
-    return Post.blacklists.any(function(b) {
-      return (b.require.all(has_tag) && !b.exclude.any(has_tag))
-    })
+    var post = Post.posts.get(post_id)
+    var has_tag = function(tag) { return post.match_tags.indexOf(tag) != -1; };
+
+    /* This is done manually, since this needs to be fast and Prototype's functions are
+     * too slow. */
+    var blacklist_applies = function(b)
+    {
+      var require = b.require;
+      var require_len = require.length;
+      for(var j = 0; j < require_len; ++j)
+      {
+        if(!has_tag(require[j]))
+          return false;
+      }
+
+      var exclude = b.exclude;
+      var exclude_len = exclude.length;
+      for(var j = 0; j < exclude_len; ++j)
+      {
+        if(has_tag(exclude[j]))
+          return false;
+      }
+
+      return true;
+    }
+
+    var blacklists = Post.blacklists;
+    var len = blacklists.length;
+    for(var i = 0; i < len; ++i)
+    {
+      var b = blacklists[i];
+      if(blacklist_applies(b))
+        return true;
+    }
+    return false;
   },
 
   apply_blacklists: function() {	
@@ -10991,8 +17908,28 @@ Post = {
       count += bld
       if (Post.blacklist_options.replace)
       {
-        thumb.src = bld ? "/blacklisted-preview.png" : post.preview_url
-        thumb.removeClassName("javascript-hide");
+        if(bld)
+        {
+          thumb.src = "about:blank";
+
+          /* Trying to work around Firefox displaying the old thumb.src briefly before loading
+           * the blacklisted thumbnail, even though they're applied at the same time: */
+          var f = function(event)
+          {
+            var img = event.target;
+            img.stopObserving("load");
+            img.stopObserving("error");
+            img.src = "/blacklisted-preview.png";
+            img.removeClassName("javascript-hide");
+          }
+          thumb.observe("load", f)
+          thumb.observe("error", f)
+        }
+        else
+        {
+          thumb.src = post.preview_url;
+          thumb.removeClassName("javascript-hide");
+        }
       }
       else
       {
@@ -11201,22 +18138,24 @@ Post = {
   resize_image: function() {
     var img = $("image");
 
-    if ((img.scale_factor == 1) || (img.scale_factor == null)) {
+    if(img.original_width == null)
+    {
       img.original_width = img.width;
       img.original_height = img.height;
-      var client_width = $("right-col").clientWidth - 15;
-      var client_height = $("right-col").clientHeight;
-
-      if (img.width > client_width) {
-        var ratio = img.scale_factor = client_width / img.width;
-        img.width = img.width * ratio;
-        img.height = img.height * ratio;
-      }
-    } else {
-      img.scale_factor = 1;
-      img.width = img.original_width;
-      img.height = img.original_height;
     }
+
+    var ratio = 1;
+    if ((img.scale_factor == 1) || (img.scale_factor == null)) {
+      /* Use clientWidth for sizing the width, and the window height for the height.
+       * This prevents needing to scroll horizontally to center the image. */
+      var client_width = $("right-col").clientWidth - 15;
+      var client_height = window.innerHeight - 15;
+      ratio = Math.min(ratio, client_width / img.original_width);
+      ratio = Math.min(ratio, client_height / img.original_height);
+    }
+    img.width = img.original_width * ratio;
+    img.height = img.original_height * ratio;
+    img.scale_factor = ratio;
   
     if (window.Note) {
       for (var i=0; i<window.Note.all.length; ++i) {
@@ -11225,13 +18164,96 @@ Post = {
     }
   },
   
-  highres: function() {
-    var img = $("image");
-    
-    if (img.src == $("highres").href) {
+  get_scroll_offset_to_center: function(element)
+  {
+    var window_size = document.viewport.getDimensions();
+    var offset = element.cumulativeOffset();
+    var left_spacing = (window_size.width - element.offsetWidth) / 2;
+    var top_spacing = (window_size.height - element.offsetHeight) / 2;
+    var scroll_x = offset.left - left_spacing;
+    var scroll_y = offset.top - top_spacing;
+    return [scroll_x, scroll_y];
+  },
+  center_image: function(img)
+  {
+    /* Make sure we have enough space to scroll far enough to center the image.  Set a
+     * minimum size on the body to give us more space on the right and bottom, and add
+     * a padding to the image to give more space on the top and left. */
+    if(!img)
+      img = $("image");
+    if(!img)
       return;
+
+    /* Any existing padding (possibly from a previous call to this function) will be
+     * included in cumulativeOffset and throw things off, so clear it. */
+    img.setStyle({paddingLeft: 0, paddingTop: 0});
+
+    var target_offset = Post.get_scroll_offset_to_center(img);
+    var padding_left = -target_offset[0];
+    if(padding_left < 0) padding_left = 0;
+    img.setStyle({paddingLeft: padding_left + "px"});
+
+    var padding_top = -target_offset[1];
+    if(padding_top < 0) padding_top = 0;
+    img.setStyle({paddingTop: padding_top + "px"});
+
+    var window_size = document.viewport.getDimensions();
+    var required_width = target_offset[0] + window_size.width;
+    var required_height = target_offset[1] + window_size.height;
+    $(document.body).setStyle({minWidth: required_width + "px", minHeight: required_height + "px"});
+
+    /* Resizing the body may shift the image to the right, since it's centered in the content.
+     * Recalculate offsets with the new cumulativeOffset. */
+    var target_offset = Post.get_scroll_offset_to_center(img);
+    window.scroll(target_offset[0], target_offset[1]);
+  },
+
+  scale_and_fit_image: function(img)
+  {
+    if(!img)
+      img = $("image");
+    if(!img)
+      return;
+
+    if(img.original_width == null)
+    {
+      img.original_width = img.width;
+      img.original_height = img.height;
+    }
+    var window_size = document.viewport.getDimensions();
+    var client_width = window_size.width;
+    var client_height = window_size.height;
+
+    /* Zoom the image to fit the viewport. */
+    var ratio = client_width / img.original_width;
+    if (img.original_height * ratio > client_height)
+      ratio = client_height / img.original_height;
+    if(ratio < 1)
+    {
+      img.width = img.original_width * ratio;
+      img.height = img.original_height * ratio;
     }
 
+    this.center_image(img);
+
+    Post.adjust_notes();
+  },
+
+  adjust_notes: function() {
+    if (!window.Note)
+      return;
+    for (var i=0; i<window.Note.all.length; ++i) {
+      window.Note.all[i].adjustScale()
+    }
+  },
+
+
+  highres: function() {
+    var img = $("image");
+    if(img.already_resized)
+      return;
+    img.already_resized = true;
+    
     // un-resize
     if ((img.scale_factor != null) && (img.scale_factor != 1)) {
       Post.resize_image();
@@ -11240,9 +18262,12 @@ Post = {
     var f = function() {
       img.stopObserving("load")
       img.stopObserving("error")
-      img.height = img.getAttribute("orig_height");
-      img.width = img.getAttribute("orig_width");
-      img.src = $("highres").href;
+      img.original_height = null;
+      img.original_width = null;
+      var highres = $("highres-show");
+      img.height = highres.getAttribute("link_height");
+      img.width = highres.getAttribute("link_width");
+      img.src = highres.href;
 
       if (window.Note) {
         window.Note.all.invoke("adjustScale")
@@ -11255,7 +18280,8 @@ Post = {
     // Clear the image before loading the new one, so it doesn't show the old image
     // at the new resolution while the new one loads.  Hide it, so we don't flicker
     // a placeholder frame.
-    $('resized_notice').hide();
+    if($('resized_notice'))
+      $('resized_notice').hide();
     img.height = img.width = 0
     img.src = "about:blank"
   },
@@ -11294,12 +18320,12 @@ Post = {
     });
   },
 
-  init_hover_thumb: function(hover, post_id, thumb)
+  init_hover_thumb: function(hover, post_id, thumb, container)
   {
     /* Hover thumbs trigger rendering bugs in IE7. */
     if(Prototype.Browser.IE)
       return;
-    hover.observe("mouseover", function(e) { Post.hover_thumb_mouse_over(post_id, hover, thumb); });
+    hover.observe("mouseover", function(e) { Post.hover_thumb_mouse_over(post_id, hover, thumb, container); });
     hover.observe("mouseout", function(e) { if(e.relatedTarget == thumb) return; Post.hover_thumb_mouse_out(thumb); });
     if(!thumb.hover_init) {
       thumb.hover_init = true;
@@ -11308,12 +18334,12 @@ Post = {
 
   },
 
-  hover_thumb_mouse_over: function(post_id, AlignItem, image)
+  hover_thumb_mouse_over: function(post_id, AlignItem, image, container)
   {
     var post = Post.posts.get(post_id);
     image.hide();
 
-    var offset = AlignItem.viewportOffset();
+    var offset = AlignItem.cumulativeOffset();
     image.style.width = "auto";
     image.style.height = "auto";
     if(Post.is_blacklisted(post_id))
@@ -11325,12 +18351,26 @@ Post = {
       image.src = post.preview_url;
       if(post.status != "deleted")
       {
-        image.style.width = post.preview_width + "px";
-        image.style.height = post.preview_height + "px";
+        image.style.width = post.actual_preview_width + "px";
+        image.style.height = post.actual_preview_height + "px";
       }
     }
 
-    image.style.top = offset.top-3 + "px";
+    var container_top = container.cumulativeOffset().top;
+    var container_bottom = container_top + container.getHeight() - 1;
+
+    /* Normally, align to the item we're hovering over.  If the image overflows over
+     * the bottom edge of the container, shift it upwards to stay in the container,
+     * unless the container's too small and that would put it over the top. */
+    var y = offset.top-2; /* -2 for top 2px border */
+    if(y + image.getHeight() > container_bottom)
+    {
+      var bottom_aligned_y = container_bottom - image.getHeight() - 4; /* 4 for top 2px and bottom 2px borders */
+      if(bottom_aligned_y >= container_top)
+        y = bottom_aligned_y;
+    }
+
+    image.style.top = y + "px";
     image.show();
   },
 
@@ -11355,6 +18395,15 @@ Post = {
     })
   },
 
+  hover_info_pin: function(post_id)
+  {
+    var post = null;
+    if(post_id != null)
+      post = Post.posts.get(post_id);    
+    Post.hover_info_pinned_post = post;
+    Post.hover_info_update();
+  },
+
   hover_info_mouseover: function(post_id)
   {
     var post = Post.posts.get(post_id);    
@@ -11364,7 +18413,7 @@ Post = {
     Post.hover_info_update();
   },
 
-  hover_info_mouseout: function(post_id)
+  hover_info_mouseout: function()
   {
     if(Post.hover_info_hovered_post == null)
       return;
@@ -11375,28 +18424,37 @@ Post = {
   hover_info_hovered_post: null,
   hover_info_displayed_post: null,
   hover_info_shift_held: false,
+  hover_info_pinned_post: null, /* pinned by something like the edit menu; shift state and mouseover is ignored */
 
   hover_info_update: function()
   {
-    var post = Post.hover_info_hovered_post;
-    if(!Post.hover_info_shift_held)
-      post = null;
+    var post = Post.hover_info_pinned_post;
+    if(!post)
+    {
+      post = Post.hover_info_hovered_post;
+      if(!Post.hover_info_shift_held)
+        post = null;
+    }
 
     if(Post.hover_info_displayed_post == post)
       return;
     Post.hover_info_displayed_post = post;
 
     var hover = $("index-hover-info");
+    var overlay = $("index-hover-overlay");
     if(!post)
     {
       hover.hide();
+      overlay.hide();
+      overlay.down("IMG").src = "about:blank";
       return;
     }
     hover.down("#hover-dimensions").innerHTML = post.width + "x" + post.height;
     hover.select("#hover-tags SPAN A").each(function(elem) {
       elem.innerHTML = "";
     });
-    post.tags_by_type.each(function(key) {
+    var tags_by_type = Post.get_post_tags_by_type(post);
+    tags_by_type.each(function(key) {
       var elem = $("hover-tag-" + key[0]);
       var list = []
       key[1].each(function(tag) { list.push(tag); });
@@ -11414,6 +18472,20 @@ Post = {
       hover.down("#hover-not-shown").hide();
     else
       hover.down("#hover-not-shown").show();
+    hover.down("#hover-is-parent").show(post.has_children);
+    hover.down("#hover-is-child").show(post.parent_id != null);
+    hover.down("#hover-is-pending").show(post.status == "pending");
+    hover.down("#hover-is-flagged").show(post.status == "flagged");
+    var set_text_content = function(element, text)
+    {
+      (element.innerText || element).textContent = text;
+    }
+
+    if(post.status == "flagged")
+    {
+      hover.down("#hover-flagged-reason").setTextContent(post.flag_detail.reason);
+      hover.down("#hover-flagged-by").setTextContent(post.flag_detail.flagged_by);
+    }
 
     hover.down("#hover-file-size").innerHTML = number_to_human_size(post.file_size);
     hover.down("#hover-author").innerHTML = post.author;
@@ -11426,8 +18498,8 @@ Post = {
     var hover_width = hover.scrollWidth;
     var hover_height = hover.scrollHeight;
 
-    var hover_thumb = $("p" + post.id);
-    var thumb_offset = hover_thumb.positionedOffset();
+    var hover_thumb = $("p" + post.id).down("IMG");
+    var thumb_offset = hover_thumb.cumulativeOffset();
     var thumb_center_x = thumb_offset[0] + hover_thumb.scrollWidth/2;
     var thumb_top_y = thumb_offset[1];
     var x = thumb_center_x - hover_width/2;
@@ -11440,6 +18512,17 @@ Post = {
     if(x + hover_width > client_width) x = client_width - hover_width;
     hover.style.left = x + "px";
     hover.style.top = y + "px";
+
+    overlay.down("A").href = (User.get_use_browser()?  "/post/browse#":"/post/show/") + post.id;
+    overlay.down("IMG").src = post.preview_url;
+    
+    /* This doesn't always align properly in Firefox if full-page zooming is being
+     * used. */
+    var x = thumb_center_x - post.actual_preview_width/2;
+    var y = thumb_offset[1];
+    overlay.style.left = x + "px";
+    overlay.style.top = y + "px";
+    overlay.show();
   },
 
   hover_info_shift_down: function()
@@ -11474,6 +18557,7 @@ Post = {
 
     document.observe("blur", function(e) { Post.hover_info_shift_up(); });
 
+    var overlay = $("index-hover-overlay");
     Post.posts.each(function(p) {
       var post_id = p[0]
       var post = p[1]
@@ -11482,10 +18566,11 @@ Post = {
       if(span == null)
         return;
 
-      span.down("SPAN").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
-      span.down("SPAN").observe("mouseout", function(e) { Post.hover_info_mouseout(post_id); });
+      span.down("A").observe("mouseover", function(e) { Post.hover_info_mouseover(post_id); });
+      span.down("A").observe("mouseout", function(e) { if(e.relatedTarget && e.relatedTarget.isParentNode(overlay)) return; Post.hover_info_mouseout(); });
     });
 
+    overlay.observe("mouseout", function(e) { Post.hover_info_mouseout(); });
   },
 
   highlight_posts_with_tag: function(tag)
@@ -11494,6 +18579,8 @@ Post = {
       var post_id = p[0]
       var post = p[1]
       var thumb = $("p" + post.id);
+      if(!thumb)
+        return;
 
       if(tag && post.tags.indexOf(tag) != -1)
       {
@@ -11502,15 +18589,1535 @@ Post = {
         thumb.removeClassName("highlighted-post");
       }
     });
+  },
+
+  reparent_post: function(post_id, old_parent_id, has_grandparent, finished)
+  {
+    /* If the parent has a parent, this is too complicated to handle automatically. */
+    if(has_grandparent)
+    {
+      alert("The parent post has a parent, so this post can't be automatically reparented.");
+      return;
+    }
+
+    /*
+     * Request a list of child posts.
+     * The parent post itself will be returned by parent:.  This is expected; it'll cause us
+     * to parent the post to itself, which unparents it from the old parent.
+     */
+    var change_requests = [];
+    new Ajax.Request("/post/index.json", {
+      parameters: { tags: "parent:" + old_parent_id },
+      
+      onComplete: function(resp) {
+        var resp = resp.responseJSON
+	for(var i = 0; i < resp.length; ++i)
+	{
+          var post = resp[i];
+          if(post.id == old_parent_id && post.parent_id != null)
+          {
+            alert("The parent post has a parent, so this post can't be automatically reparented.");
+            return;
+          }
+	  change_requests.push({ id: resp[i].id, tags: "parent:" + post_id, old_tags: "" });
+        }
+
+	/* We have the list of changes to make in change_requests.  Send a batch
+	 * request. */
+        if(finished == null)
+          finished = function() { document.location.reload() };
+	Post.update_batch(change_requests, finished);
+      }
+    });
+  },
+  get_url_for_post_in_pool: function(post_id, pool_id)
+  {
+    return "/post/show/" + post_id + "?pool_id=" + pool_id;
+  },
+  jump_to_post_in_pool: function(post_id, pool_id)
+  {
+    if(post_id == null)
+    {
+      notice("No more posts in this pool");
+      return;
+    }
+    window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id);
+  },
+
+  /*
+   * If the user has global browser links enabled, apply them.  This changes all links
+   * from /post/show/123 to /post/browse#123, and /pool/show/123 to /post/browse#/pool:123.
+   * 
+   * We do this in JS, so it applies without affecting memcached pages, and applies to
+   * things like preformatted, translated DText blocks.
+   *
+   * This is only done if the user's "Use post browser" (User.use_browser) setting is enabled.
+   */
+  InitBrowserLinks: function()
+  {
+    if(!User.get_use_browser())
+      return;
+
+    /*
+     * Break out the controller, action, ID and anchor:
+     * http://url.com/post/show/123#anchor
+     */
+    var parse_url = function(href)
+    {
+      var match = href.match(/^(http:\/\/[^\/]+)\/([a-z]+)\/([a-z]+)\/([0-9]+)([^#]*)(#.*)?$/);
+      if(!match)
+        return null;
+
+      return {
+        controller: match[2],
+        action: match[3],
+        id: match[4],
+        hash: match[6]
+      };
+    }
+
+    /*
+     * Parse an index search URL and return the tags.  Only accept URLs with no other parameters;
+     * this shouldn't match the paginator in post/index.
+     *
+     * http://url.com/post?tags=tagme
+     */
+    var parse_index_url = function(href)
+    {
+      var match = href.match(/^(http:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/);
+      if(!match)
+        return null;
+      return match[3];
+    }
+
+    /* If the current page is /pool/show, make post links include both the post ID and
+     * the pool ID, eg. "#12345/pool:123". */
+    var current = parse_url(document.location.href);
+    var current_pool_id = null;
+    if(current && current.controller == "pool" && current.action == "show")
+      current_pool_id = current.id;
+
+    $$("A").each(function(a) {
+      if(a.hasClassName("no-browser-link") || a.up(".no-browser-link"))
+        return;
+
+      var tags = parse_index_url(a.href);
+      if(tags != null)
+      {
+        a.href = "/post/browse#/" + tags;
+        return;
+      }
+      var target = parse_url(a.href);
+      if(!target)
+        return;
+
+      /* If the URL has a hash, then it's something like a post comment link, so leave it
+       * alone. */
+      if(target.hash)
+        return;
+
+      if(target.controller == "post" && target.action == "show")
+      {
+        var url = "/post/browse#" + target.id;
+        if(current_pool_id != null)
+          url += "/pool:" + current_pool_id;
+        a.browse_href = url;
+        a.orig_href = a.href;
+      }
+      else if(target.controller == "pool" && target.action == "show")
+      {
+        a.browse_href = "/post/browse#/pool:" + target.id;
+        a.orig_href = a.href;
+      }
+
+      if(a.browse_href)
+        a.href = a.browse_href;
+    });
+  },
+
+  /* Handle the sample URL cache.  This allows pages that statically know sample URLs for
+   * files (post/index) to communicate that to dynamic pages that normally get it from
+   * XHR (post/browse). */
+  cached_sample_urls: null,            
+
+  /* Return an object containing cached sample URLs, eg. {"12345": "http://example.com/image.jpg"}.
+   * If the browser lacks support for this, return null.  If the stored data is invalid or doesn't
+   * yet exist, return {}. */
+  get_cached_sample_urls: function()
+  {
+    if(LocalStorageDisabled())
+      return null;
+
+    /* If the data format is out of date, clear it. */
+    if(localStorage.sample_url_format != 2)
+      Post.clear_sample_url_cache();
+
+    if(Post.cached_sample_urls != null)
+      return Post.cached_sample_urls;
+
+    try {
+      var sample_urls = JSON.parse(window.localStorage.sample_urls);
+    } catch(SyntaxError) {
+      return {};
+    }
+
+    if(sample_urls == null)
+      return {};
+
+    Post.cached_sample_urls = sample_urls;
+    return sample_urls;
+  },
+
+  clear_sample_url_cache: function()
+  {
+    if("sample_urls" in localStorage)
+      delete window.localStorage.sample_urls;
+    if("sample_url_fifo" in localStorage)
+      delete window.localStorage.sample_url_fifo;
+    localStorage.sample_url_format = 2;
+  },
+
+  /* Save all loaded posts to the sample URL cache, and expire old data. */
+  cache_sample_urls: function()
+  {
+    var sample_urls = Post.get_cached_sample_urls();
+    if(sample_urls == null)
+      return;
+
+    /* Track post URLs in the order we see them, and push old data out. */
+    var fifo = window.localStorage.sample_url_fifo || null;
+    fifo = fifo? fifo.split(","): [];
+
+    Post.posts.each(function(id_and_post) {
+      var post = id_and_post[1];
+      if(post.sample_url)
+        sample_urls[post.id] = post.sample_url;
+      fifo.push(post.id);
+    });
+
+    /* Erase all but the most recent 1000 items. */
+    fifo = fifo.splice(-1000);
+
+    /* Make a set of the FIFO, so we can do lookups quickly. */
+    var fifo_set = {}
+    fifo.each(function(post_id) { fifo_set[post_id] = true; });
+
+    /* Make a list of items no longer in the FIFO to be deleted. */
+    var post_ids_to_expire = [];
+    for(post_id in sample_urls)
+    {
+      if(!(post_id in fifo_set))
+        post_ids_to_expire.push(post_id);
+    }
+
+    /* Erase items no longer in the FIFO. */
+    post_ids_to_expire.each(function(post_id) { delete sample_urls[post_id]; });
+
+    /* Save the cached items and FIFO back to localStorage. */
+    Post.cached_sample_urls = sample_urls;
+    try {
+      window.localStorage.sample_urls = JSON.stringify(sample_urls);
+      window.localStorage.sample_url_fifo = fifo.join(",");
+    } catch(e) {
+      /* If this fails for some reason, clear the data. */
+      Post.clear_sample_url_cache();
+      throw(e);
+    }
+  },
+
+  prompt_to_delete: function(post_id, completed)
+  {
+    if(completed == null)
+      completed = function() { window.location.reload(); };
+
+    var flag_detail = Post.posts.get(post_id).flag_detail
+    var default_reason = flag_detail? flag_detail.reason:"";
+    var reason = prompt('Reason:', default_reason);
+    if(!reason)
+      return false;
+
+    Post.approve(post_id, reason, completed);
+    return true;
   }
 }
+
+
+var create_drag_box = function(div)
+{
+  var create_handle = function(cursor, style)
+  {
+    var handle = $(document.createElement("div"));
+    handle.style.position = "absolute";
+    handle.className = "frame-box-handle " + cursor;
+    handle.frame_drag_cursor = cursor;
+
+    handle.style.pointerEvents = "all";
+    div.appendChild(handle);
+    for(s in style)
+    {
+      handle.style[s] = style[s];
+    }
+    return handle;
+  }
+
+  /* Create the corner handles after the edge handles, so they're on top. */
+  create_handle("n-resize", {top: "-5px", width: "100%", height: "10px"});
+  create_handle("s-resize", {bottom: "-5px", width: "100%", height: "10px"});
+  create_handle("w-resize", {left: "-5px", height: "100%", width: "10px"});
+  create_handle("e-resize", {right: "-5px", height: "100%", width: "10px"});
+  create_handle("nw-resize", {top: "-5px", left: "-5px", height: "10px", width: "10px"});
+  create_handle("ne-resize", {top: "-5px", right: "-5px", height: "10px", width: "10px"});
+  create_handle("sw-resize", {bottom: "-5px", left: "-5px", height: "10px", width: "10px"});
+  create_handle("se-resize", {bottom: "-5px", right: "-5px", height: "10px", width: "10px"});
+}
+
+var apply_drag = function(dragging_mode, x, y, image_dimensions, box)
+{
+  var move_modes = {
+    "move": { left: +1, top: +1, bottom: +1, right: +1 },
+    "n-resize": { top: +1 },
+    "s-resize": { bottom: +1 },
+    "w-resize": { left: +1 },
+    "e-resize": { right: +1 },
+    "nw-resize": { top: +1, left: +1 },
+    "ne-resize": { top: +1, right: +1 },
+    "sw-resize": { bottom: +1, left: +1 },
+    "se-resize": { bottom: +1, right: +1 }
+  }
+  var mode = move_modes[dragging_mode];
+  var result = {
+    left: box.left,
+    top: box.top,
+    width: box.width,
+    height: box.height
+  };
+  var right = result.left + result.width;
+  var bottom = result.top + result.height;
+
+  if(dragging_mode == "move")
+  {
+    /* In move mode, clamp the movement.  In other modes, clip the size below. */
+    x = clamp(x, -result.left, image_dimensions.width-right);
+    y = clamp(y, -result.top, image_dimensions.height-bottom);
+  }
+
+  /* Apply the drag. */
+  if(mode.top != null)     result.top += y * mode.top;
+  if(mode.left != null)    result.left += x * mode.left;
+  if(mode.right != null)   right += x * mode.right;
+  if(mode.bottom != null)  bottom += y * mode.bottom;
+
+  if(dragging_mode != "move")
+  {
+    /* Only clamp the dimensions that were modified. */
+    if(mode.left != null)   result.left = clamp(result.left, 0, right-1);
+    if(mode.top != null)    result.top = clamp(result.top, 0, bottom-1);
+    if(mode.bottom != null) bottom = clamp(bottom, result.top+1, image_dimensions.height);
+    if(mode.right != null)  right = clamp(right, result.left+1, image_dimensions.width);
+  }
+
+  result.width = right - result.left;
+  result.height = bottom - result.top;
+  return result;
+}
+
+/*
+ * Given a frame, its post and an image, return the frame's rectangle scaled to
+ * the size of the image.
+ */
+var frame_dimensions_to_image = function(frame, image, post)
+{
+  var result = {
+    top: frame.source_top,
+    left: frame.source_left,
+    width: frame.source_width,
+    height: frame.source_height
+  };
+  result.left *= image.width / post.width;
+  result.top *= image.height / post.height;
+  result.width *= image.width / post.width;
+  result.height *= image.height / post.height;
+
+  result.top = Math.round(result.top); result.left = Math.round(result.left);
+  result.width = Math.round(result.width); result.height = Math.round(result.height);
+
+  return result;
+}
+
+/*
+ * Convert dimensions scaled to an image back to the source resolution.
+ */
+var frame_dimensions_from_image = function(frame, image, post)
+{
+  var result = {
+    source_top: frame.top,
+    source_left: frame.left,
+    source_width: frame.width,
+    source_height: frame.height
+  };
+
+  /* Scale the coordinates back into the source resolution. */
+  result.source_top /= image.height / post.height;
+  result.source_left /= image.width / post.width;
+  result.source_height /= image.height / post.height;
+  result.source_width /= image.width / post.width;
+
+  result.source_top = Math.round(result.source_top); result.source_left = Math.round(result.source_left);
+  result.source_width = Math.round(result.source_width); result.source_height = Math.round(result.source_height);
+  return result;
+}
+
+FrameEditor = function(container, image_container, popup_container, options)
+{
+  this.container = container;
+  this.popup_container = popup_container;
+  this.image_container = image_container;
+  this.options = options;
+  this.show_corner_drag = true;
+
+  this.image_frames = [];
+
+  /* Event handlers which are set only while the tag editor is open: */
+  this.open_handlers = [];
+
+  /* Set up the four parts of the corner dragger. */
+  var popup_parts = [".frame-editor-nw", ".frame-editor-ne", ".frame-editor-sw", ".frame-editor-se"];
+  this.corner_draggers = [];
+  for(var i = 0; i < popup_parts.length; ++i)
+  {
+    var part = popup_parts[i];
+    var div = this.popup_container.down(part);
+    var corner_dragger = new CornerDragger(div, part, {
+      onUpdate: function() {
+        this.update_frame_in_list(this.editing_frame);
+        this.update_image_frame(this.editing_frame);
+      }.bind(this)
+    });
+    this.corner_draggers.push(corner_dragger);
+  }
+
+  /* Create the main frame.  This sits on top of the image, receives mouse events and
+   * holds the individual frames. */
+  var div = $(document.createElement("div"));
+  div.style.position = "absolute";
+  div.style.left = "0";
+  div.style.top = "0";
+  div.className = "frame-editor-main-frame";
+  this.image_container.appendChild(div);
+  this.main_frame = div;
+  this.main_frame.hide();
+
+  /* Frame editor buttons: */
+  this.container.down(".frame-editor-add").on("click", function(e) { e.stop(); this.add_frame(); }.bindAsEventListener(this));
+
+  /* Buttons in the frame table: */
+  this.container.on("click", ".frame-label", function(e, element) {
+    e.stop();
+    var frame_idx = element.up(".frame-row").frame_idx;
+    this.focus(frame_idx);
+  }.bind(this));
+
+  this.container.on("click", ".frame-delete", function(e, element) {
+    e.stop();
+    var frame_idx = element.up(".frame-row").frame_idx;
+    this.delete_frame(frame_idx);
+  }.bind(this));
+
+  this.container.on("click", ".frame-up", function(e, element) {
+    e.stop();
+    var frame_idx = element.up(".frame-row").frame_idx;
+    this.move_frame(frame_idx, frame_idx-1);
+  }.bind(this));
+
+  this.container.on("click", ".frame-down", function(e, element) {
+    e.stop();
+    var frame_idx = element.up(".frame-row").frame_idx;
+    this.move_frame(frame_idx, frame_idx+1);
+  }.bind(this));
+
+  this.container.down("table").on("change", function(e) {
+    this.form_data_changed();
+  }.bind(this));
+}
+
+FrameEditor.prototype.move_frame = function(frame_idx, frame_idx_target)
+{
+  var post = Post.posts.get(this.post_id);
+
+  frame_idx_target = Math.max(frame_idx_target, 0);
+  frame_idx_target = Math.min(frame_idx_target, post.frames_pending.length-1);
+  if(frame_idx == frame_idx_target)
+    return;
+
+  var frame = post.frames_pending[frame_idx];
+  post.frames_pending.splice(frame_idx, 1);
+  post.frames_pending.splice(frame_idx_target, 0, frame);
+
+  this.repopulate_table();
+
+  /* Reset the focus.  If the item that was moved was focused, focus on it in
+   * its new position. */
+  var editing_frame = this.editing_frame == frame_idx? frame_idx_target:this.editing_frame;
+  this.editing_frame = null;
+  this.focus(editing_frame);
+}
+
+FrameEditor.prototype.form_data_changed = function()
+{
+  var post = Post.posts.get(this.post_id);
+  for(var i = 0; i < post.frames_pending.length; ++i)
+    this.update_frame_from_list(i);
+  this.update();
+}
+
+FrameEditor.prototype.set_drag_to_create = function(enable)
+{
+  this.drag_to_create = enable;
+}
+
+FrameEditor.prototype.update_show_corner_drag = function()
+{
+  var shown = this.post_id != null && this.editing_frame != null && this.show_corner_drag;
+  if(Prototype.Browser.WebKit)
+  {
+    /* Work around a WebKit (maybe just a Chrome) issue.  Images are downloaded immediately, but
+     * they're only decompressed the first time they're actually painted on screen.  This happens
+     * late, after all style is applied: hiding with display: none, visibility: hidden or even
+     * opacity: 0 causes the image to not be decoded until it's displayed, which causes a huge
+     * UI hitch the first time the user drags a box.  Work around this by setting opacity very
+     * small; it'll trick it into decoding the image, but it'll clip to 0 when rendered. */
+    if(shown)
+    {
+      this.popup_container.style.opacity = 1;
+      this.popup_container.style.pointerEvents = "";
+      this.popup_container.style.position = "static";
+    }
+    else
+    {
+      this.popup_container.style.opacity = 0.001;
+
+      /* Make sure the invisible element doesn't interfere with the page; disable pointer-events
+       * so it doesn't receive clicks, and set it to absolute so it doesn't affect the size of its
+       * containing box. */
+      this.popup_container.style.pointerEvents = "none";
+      this.popup_container.style.position = "absolute";
+      this.popup_container.style.top = "0px";
+      this.popup_container.style.right = "0px";
+    }
+    this.popup_container.show();
+  }
+  else
+  {
+    this.popup_container.show(shown);
+  }
+
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].update();
+}
+
+FrameEditor.prototype.set_show_corner_drag = function(enable)
+{
+  this.show_corner_drag = enable;
+  this.update_show_corner_drag();
+}
+
+FrameEditor.prototype.set_image_dimensions = function(width, height)
+{
+  var editing_frame = this.editing_frame;
+  var post_id = this.post_id;
+
+  this.close();
+
+  this.image_dimensions = {width: width, height: height};
+  this.main_frame.style.width = this.image_dimensions.width + "px";
+  this.main_frame.style.height = this.image_dimensions.height + "px";
+
+  if(post_id != null)
+  {
+    this.open(post_id);
+    this.focus(editing_frame);
+  }
+}
+
+/*
+ * Like document.elementFromPoint, but returns an array of all elements at the given point.
+ * If a top element is specified, stop if it's reached without including it in the list.
+ *
+ */
+var elementArrayFromPoint = function(x, y, top)
+{
+  var elements = [];
+  while(1)
+  {
+    var element = document.elementFromPoint(x, y);
+    if(element == this.main_frame || element == document.documentElement)
+      break;
+    element.original_display = element.style.display;
+    element.style.display = "none";
+    elements.push(element);
+  }
+
+  /* Restore the elements we just hid. */
+  elements.each(function(e) {
+    e.style.display = e.original_display;
+    e.original_display = null;
+  });
+
+  return elements;
+}
+
+FrameEditor.prototype.is_opened = function()
+{
+  return this.post_id != null;
+}
+
+/* Open the frame editor if it isn't already, and focus on the specified frame. */
+FrameEditor.prototype.open = function(post_id)
+{
+  if(this.image_dimensions == null)
+    throw "Must call set_image_dimensions before open";
+  if(this.post_id != null)
+    return;
+  this.post_id = post_id;
+  this.editing_frame = null;
+  this.dragging_item = null;
+
+  this.container.show();
+  this.main_frame.show();
+  this.update_show_corner_drag();
+
+  var post = Post.posts.get(this.post_id);
+
+  /* Tell the corner draggers which post we're working on now, so they'll start
+   * loading the JPEG version immediately if necessary.  Otherwise, we'll start
+   * loading it the first time we focus a frame, which will hitch the editor for
+   * a while in Chrome. */
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].set_post_id(this.post_id);
+
+  this.open_handlers.push(
+    document.on("keydown", function(e) {
+      if (e.keyCode == Event.KEY_ESC) { this.discard(); }
+    }.bindAsEventListener(this))
+  )
+
+  /* If we havn't done so already, make a backup of this post's frames.  We'll restore
+   * from this later if the user cancels the edit. */
+  this.original_frames = Object.toJSON(post.frames_pending);
+
+  this.repopulate_table();
+
+  this.create_dragger();
+
+  if(post.frames_pending.length > 0)
+    this.focus(0);
+
+  this.update();
+}
+
+FrameEditor.prototype.create_dragger = function()
+{
+  if(this.dragger)
+    this.dragger.destroy();
+
+  this.dragger = new DragElement(this.main_frame, {
+    ondown: function(e) {
+      var post = Post.posts.get(this.post_id);
+
+      /*
+       * Figure out which element(s) we're clicking on.  The click may lie on a spot
+       * where multiple frames overlap; make a list.
+       *
+       * Temporarily enable pointerEvents on the frames, so elementFromPoint will
+       * resolve them.
+       */
+      this.image_frames.each(function(frame) { frame.style.pointerEvents = "all"; });
+      var clicked_elements = elementArrayFromPoint(e.x, e.y, this.main_frame);
+      this.image_frames.each(function(frame) { frame.style.pointerEvents = "none"; });
+
+      /* If we clicked on a handle, prefer it over frame bodies at the same spot. */
+      var element = null;
+      clicked_elements.each(function(e) {
+        /* If a handle was clicked, always prefer it.  Use the first handle we find,
+         * so we prefer the corner handles (which are always on top) to edge handles. */
+        if(element == null && e.hasClassName("frame-box-handle"))
+          element = e;
+      }.bind(this));
+
+      /* If a handle wasn't clicked, prefer the frame that's currently focused. */
+      if(element == null)
+      {
+        clicked_elements.each(function(e) {
+          if(!e.hasClassName("frame-editor-frame-box"))
+            e = e.up(".frame-editor-frame-box");
+          if(this.image_frames.indexOf(e) == this.editing_frame)
+            element = e;
+        }.bind(this));
+      }
+
+      /* Otherwise, just use the first item that was found. */
+      if(element == null)
+        element = clicked_elements[0];
+
+      /* If a handle was clicked on, find the frame element that contains it. */
+      var frame_element = element;
+      if(!frame_element.hasClassName("frame-editor-frame-box"))
+        frame_element = frame_element.up(".frame-editor-frame-box");
+
+      /* If we didn't click on a frame box at all, create a new one. */
+      if(frame_element == null)
+      {
+        if(!this.drag_to_create)
+          return;
+
+        this.dragging_new = true;
+      }
+      else
+        this.dragging_new = false;
+
+      /* If the element we actually clicked on was one of the edge handles, set the drag
+       * mode based on which one was clicked. */
+      if(element.hasClassName("frame-box-handle"))
+        this.dragging_mode = element.frame_drag_cursor
+      else
+        this.dragging_mode = "move";
+
+      if(frame_element && frame_element.hasClassName("frame-editor-frame-box"))
+      {
+        var frame_idx = this.image_frames.indexOf(frame_element);
+        this.dragging_idx = frame_idx;
+
+        var frame = post.frames_pending[this.dragging_idx];
+        this.dragging_anchor = frame_dimensions_to_image(frame, this.image_dimensions, post);
+      }
+
+      this.focus(this.dragging_idx);
+
+      /* If we're dragging a handle, override the drag class so the pointer will
+       * use the handle pointer instead of the drag pointer. */
+      this.dragger.overriden_drag_class = this.dragging_mode == "move"? null: this.dragging_mode;
+
+      this.dragger.options.snap_pixels = this.dragging_new? 10:0;
+
+      /* Stop propagation of the event, so any other draggers in the chain don't start.  In
+       * particular, when we're dragging inside the image, we need to stop WindowDragElementAbsolute.
+       * Only do this if we're actually dragging, not if we aborted due to this.drag_to_create. */
+      e.latest_event.stopPropagation();
+    }.bind(this),
+
+    onup: function(e) {
+      this.dragging_idx = null;
+      this.dragging_anchor = null;
+    }.bind(this),
+
+    ondrag: function(e) {
+      var post = Post.posts.get(this.post_id);
+
+      if(this.dragging_new)
+      {
+        /* Pick a dragging mode based on which way we were dragged.  This is a
+         * little funny; we should probably be able to drag freely, not be fixed
+         * to the first direction we drag. */
+        if(e.aX > 0 && e.aY > 0)        this.dragging_mode = "se-resize";
+        else if(e.aX > 0 && e.aY < 0)   this.dragging_mode = "ne-resize";
+        else if(e.aX < 0 && e.aY > 0)   this.dragging_mode = "sw-resize";
+        else if(e.aX < 0 && e.aY < 0)   this.dragging_mode = "nw-resize";
+        else return;
+
+        this.dragging_new = false;
+
+        /* Create a new, empty frame.  When we get to the regular drag path below we'll
+         * give it its real size, based on how far we've dragged so far. */
+        var frame_offset = this.main_frame.cumulativeOffset();
+        var dims = {
+          left: e.dragger.anchor_x - frame_offset.left,
+          top: e.dragger.anchor_y - frame_offset.top,
+          height: 0,
+          width: 0
+        };
+        this.dragging_anchor = dims;
+
+        var source_dims = frame_dimensions_from_image(dims, this.image_dimensions, post);
+        this.dragging_idx = this.add_frame(source_dims);
+        post.frames_pending[this.editing_frame] = source_dims;
+      }
+
+      if(this.dragging_idx == null)
+        return;
+
+      var dims = apply_drag(this.dragging_mode, e.aX, e.aY, this.image_dimensions, this.dragging_anchor);
+
+      /* Scale the changed dimensions back to the source resolution and apply them
+       * to the frame. */
+      var source_dims = frame_dimensions_from_image(dims, this.image_dimensions, post);
+      post.frames_pending[this.editing_frame] = source_dims;
+
+      this.update_frame_in_list(this.editing_frame);
+      this.update_image_frame(this.editing_frame);
+    }.bind(this)
+  });
+}
+
+FrameEditor.prototype.repopulate_table = function()
+{
+  var post = Post.posts.get(this.post_id);
+
+  /* Clear the table. */
+  var tbody = this.container.down(".frame-list").down("TBODY");
+  while(tbody.firstChild)
+    tbody.removeChild(tbody.firstChild);
+
+  /* Clear the image frames. */
+  this.image_frames.each(function(f) {
+    f.parentNode.removeChild(f);
+  }.bind(this));
+  this.image_frames = [];
+
+  for(var i = 0; i < post.frames_pending.length; ++i)
+  {
+    this.add_frame_to_list(i);
+    this.create_image_frame();
+    this.update_image_frame(i);
+  }
+}
+
+FrameEditor.prototype.update = function()
+{
+  this.update_show_corner_drag();
+
+  if(this.image_dimensions == null)
+    return;
+
+  var post = Post.posts.get(this.post_id);
+  if(post != null)
+  {
+    for(var i = 0; i < post.frames_pending.length; ++i)
+      this.update_image_frame(i);
+  }
+}
+
+/* If the frame editor is open, discard changes and close it. */
+FrameEditor.prototype.discard = function()
+{
+  if(this.post_id == null)
+    return;
+
+  /* Save revert_to, and close the editor before reverting, to make sure closing
+   * the editor doesn't change anything. */
+  var revert_to = this.original_frames;
+  var post_id = this.post_id;
+  this.close();
+
+  /* Revert changes. */
+  var post = Post.posts.get(post_id);
+  post.frames_pending = revert_to.evalJSON();
+}
+
+/* Get the frames specifier for the post's frames. */
+FrameEditor.prototype.get_current_frames_spec = function()
+{
+  var post = Post.posts.get(this.post_id);
+  var frame = post.frames_pending;
+  var frame_specs = [];
+  post.frames_pending.each(function(frame) {
+    var s = frame.source_left + "x" + frame.source_top + "," + frame.source_width + "x" + frame.source_height;
+    frame_specs.push(s);
+  }.bind(this));
+  return frame_specs.join(";");
+}
+
+
+/* Return true if the frames have been changed. */
+FrameEditor.prototype.changed = function()
+{
+  var post = Post.posts.get(this.post_id);
+  var spec = this.get_current_frames_spec();
+  return spec != post.frames_pending_string;
+}
+
+/* Save changes to the post, if any.  If not null, call finished on completion. */
+FrameEditor.prototype.save = function(finished)
+{
+  if(this.post_id == null)
+  {
+    if(finished)
+      finished();
+    return;
+  }
+
+  /* Save the current post_id, so it's preserved when the AJAX completion function
+   * below is run. */
+  var post_id = this.post_id;
+  var post = Post.posts.get(post_id);
+  var frame = post.frames_pending;
+
+  var spec = this.get_current_frames_spec();
+  if(spec == post.frames_pending_string)
+  {
+    if(finished)
+      finished();
+    return;
+  }
+
+  Post.update_batch([{
+    id: post_id,
+    frames_pending_string: spec
+  }], function(posts)
+  {
+    if(this.post_id == post_id)
+    {
+      /* The registered post has been changed, and we're still displaying it.  Grab the
+       * new version, and updated original_frames so we no longer consider this post
+       * changed. */
+      var post = Post.posts.get(post_id);
+      this.original_frames = Object.toJSON(post.frames_pending);
+
+      /* In the off-chance that the frames_pending that came back differs from what we
+       * requested, update the display. */
+      this.update();
+    }
+
+    if(finished)
+      finished();
+  }.bind(this));
+}
+
+FrameEditor.prototype.create_image_frame = function()
+{
+  var div = $(document.createElement("div"));
+  div.className = "frame-editor-frame-box";
+
+  /* Disable pointer-events on the image frame, so the handle cursors always
+   * show up even when an image frame lies on top of it. */
+  div.style.pointerEvents = "none";
+
+  // div.style.opacity=0.1;
+  this.main_frame.appendChild(div);
+  this.image_frames.push(div);
+
+  create_drag_box(div);
+
+
+}
+
+FrameEditor.prototype.update_image_frame = function(frame_idx)
+{
+  var post = Post.posts.get(this.post_id);
+  var frame = post.frames_pending[frame_idx];
+
+  /* If the focused frame is being modified, update the corner dragger as well. */
+  if(frame_idx == this.editing_frame)
+  {
+    for(var i = 0; i < this.corner_draggers.length; ++i)
+      this.corner_draggers[i].update();
+  }
+
+  var dimensions = frame_dimensions_to_image(frame, this.image_dimensions, post);
+
+  var div = this.image_frames[frame_idx];
+  div.style.left = dimensions.left + "px";
+  div.style.top = dimensions.top + "px";
+  div.style.width = dimensions.width + "px";
+  div.style.height = dimensions.height + "px";
+
+  if(frame_idx == this.editing_frame)
+    div.addClassName("focused-frame-box");
+  else
+    div.removeClassName("focused-frame-box");
+}
+
+/* Append the given frame to the editor list. */
+FrameEditor.prototype.add_frame_to_list = function(frame_idx)
+{
+  var tbody = this.container.down(".frame-list").down("TBODY");
+  var tr = $(document.createElement("TR"));
+  tr.className = "frame-row frame-" + frame_idx;
+  tr.frame_idx = frame_idx;
+  tbody.appendChild(tr);
+
+  var html = "<td><span class='frame-label'>Frame " + frame_idx + "</span></td>";
+  html += "<td><input class='frame-left frame-dims' size=4></td>";
+  html += "<td><input class='frame-top frame-dims' size=4></td>";
+  html += "<td><input class='frame-width frame-dims' size=4></td>";
+  html += "<td><input class='frame-height frame-dims' size=4></td>";
+  html += "<td><a class='frame-delete frame-button-box' href='#'>X</a></td>";
+  html += "<td><a class='frame-up frame-button-box' href='#'>⇡</a></td>";
+  html += "<td><a class='frame-down frame-button-box' href='#'>⇣</a></td>";
+  tr.innerHTML = html;
+
+  this.update_frame_in_list(frame_idx);
+}
+
+/* Update the fields of frame_idx in the table. */
+FrameEditor.prototype.update_frame_in_list = function(frame_idx)
+{
+  var post = Post.posts.get(this.post_id);
+  var frame = post.frames_pending[frame_idx];
+
+  var tbody = this.container.down(".frame-list").down("TBODY");
+  var tr = tbody.down(".frame-" + frame_idx);
+
+  tr.down(".frame-left").value = frame.source_left;
+  tr.down(".frame-top").value = frame.source_top;
+  tr.down(".frame-width").value = frame.source_width;
+  tr.down(".frame-height").value = frame.source_height;
+}
+
+/* Commit changes in the frame list to the frame. */
+FrameEditor.prototype.update_frame_from_list = function(frame_idx)
+{
+  var post = Post.posts.get(this.post_id);
+  var frame = post.frames_pending[frame_idx];
+
+  var tbody = this.container.down(".frame-list").down("TBODY");
+  var tr = tbody.down(".frame-" + frame_idx);
+
+  frame.source_left = tr.down(".frame-left").value;
+  frame.source_top = tr.down(".frame-top").value;
+  frame.source_width = tr.down(".frame-width").value;
+  frame.source_height = tr.down(".frame-height").value;
+}
+
+/* Add a new default frame to the end of the list, update the table, and edit the new frame. */
+FrameEditor.prototype.add_frame = function(new_frame)
+{
+  var post = Post.posts.get(this.post_id);
+
+  if(new_frame == null)
+    new_frame = {
+      source_top: post.height * 1/4,
+      source_left: post.width * 1/4,
+      source_width: post.width / 2,
+      source_height: post.height / 2
+    };
+
+  post.frames_pending.push(new_frame);
+  this.add_frame_to_list(post.frames_pending.length-1);
+  this.create_image_frame();
+  this.update_image_frame(post.frames_pending.length-1);
+
+  this.focus(post.frames_pending.length-1);
+  return post.frames_pending.length-1;
+}
+
+/* Delete the specified frame. */
+FrameEditor.prototype.delete_frame = function(frame_idx)
+{
+  var post = Post.posts.get(this.post_id);
+
+  /* If we're editing this frame, switch to a nearby one. */
+  var switch_to_frame = null;
+  if(this.editing_frame == frame_idx)
+  {
+    switch_to_frame = this.editing_frame;
+    this.focus(null);
+
+    /* If we're deleting the bottom item on the list, switch to the item above it instead. */
+    if(frame_idx == post.frames_pending.length-1)
+      --switch_to_frame;
+
+    /* If that put it over the top, we're deleting the only item.  Focus no item. */
+    if(switch_to_frame < 0)
+      switch_to_frame = null;
+  }
+
+  /* Remove the frame from the array. */
+  post.frames_pending.splice(frame_idx, 1);
+
+  /* Renumber the table. */
+  this.repopulate_table();
+
+  /* Focus switch_to_frame, if any. */
+  this.focus(switch_to_frame);
+}
+
+FrameEditor.prototype.focus = function(post_frame)
+{
+  if(this.editing_frame == post_frame)
+    return;
+
+  if(this.editing_frame != null)
+  {
+    var row = this.container.down(".frame-" + this.editing_frame);
+    row.removeClassName("frame-focused");
+  }
+
+  this.editing_frame = post_frame;
+
+  if(this.editing_frame != null)
+  {
+    var row = this.container.down(".frame-" + this.editing_frame);
+    row.addClassName("frame-focused");
+  }
+
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].set_post_frame(this.editing_frame);
+
+  this.update();
+}
+
+/* Close the frame editor.  Local changes are not saved or reverted. */
+FrameEditor.prototype.close = function()
+{
+  if(this.post_id == null)
+    return;
+  this.post_id = null;
+
+  this.editing_frame = null;
+
+  for(var i = 0; i < this.corner_draggers.length; ++i)
+    this.corner_draggers[i].set_post_id(null);
+
+  if(this.keydown_handler)
+  {
+    this.open_handlers.each(function(h) { h.stop(); });
+    this.open_handlers = [];
+  }
+
+  if(this.dragger)
+    this.dragger.destroy();
+  this.dragger = null;
+
+  this.container.hide();
+  this.main_frame.hide();
+  this.update_show_corner_drag();
+
+  /* Clear the row table. */
+  var tbody = this.container.down(".frame-list").down("TBODY");
+  while(tbody.firstChild)
+    tbody.removeChild(tbody.firstChild);
+
+  this.original_frames = null;
+  this.update();
+
+  if(this.options.onClose)
+    this.options.onClose(this);
+}
+
+/* Create the specified corner dragger. */
+CornerDragger = function(container, part, options)
+{
+  this.container = container;
+  this.part = part;
+  this.options = options;
+
+  var box = container.down(".frame-editor-popup-div");
+
+  /* Create a div inside each .frame-editor-popup-div floating on top of the image
+   * to show the border of the frame. */
+  var frame_box = $(document.createElement("div"));
+  frame_box.className = "frame-editor-frame-box";
+  create_drag_box(frame_box);
+  box.appendChild(frame_box);
+
+  this.dragger = new DragElement(box, {
+    snap_pixels: 0,
+
+    ondown: function(e) {
+      var element = document.elementFromPoint(e.x, e.y);
+
+      /* If we clicked on a drag handle, use that handle.  Otherwise, choose the corner drag
+       * handle for the corner we're in. */
+      if(element.hasClassName("frame-box-handle")) this.dragging_mode = element.frame_drag_cursor;
+      else if(part == ".frame-editor-nw") this.dragging_mode = "nw-resize";
+      else if(part == ".frame-editor-ne") this.dragging_mode = "ne-resize";
+      else if(part == ".frame-editor-sw") this.dragging_mode = "sw-resize";
+      else if(part == ".frame-editor-se") this.dragging_mode = "se-resize";
+
+      var post = Post.posts.get(this.post_id);
+      var frame = post.frames_pending[this.post_frame];
+      this.dragging_anchor = frame_dimensions_to_image(frame, this.image_dimensions, post);
+
+      /* When dragging a handle, hide the cursor to get it out of the way. */
+      this.dragger.overriden_drag_class = this.dragging_mode == "move"? null: "hide-cursor";
+
+      /* Stop propagation of the event, so any other draggers in the chain don't start.  In
+       * particular, when we're dragging inside the image, we need to stop WindowDragElementAbsolute.
+       * Only do this if we're actually dragging, not if we aborted due to this.drag_to_create. */
+      e.latest_event.stopPropagation();
+    }.bind(this),
+
+    ondrag: function(e) {
+      var post = Post.posts.get(this.post_id);
+
+      /* Invert the motion, since we're dragging the image around underneith the
+       * crop frame instead of dragging the crop frame around. */
+      var dims = apply_drag(this.dragging_mode, -e.aX, -e.aY, this.image_dimensions, this.dragging_anchor);
+
+      /* Scale the changed dimensions back to the source resolution and apply them
+       * to the frame. */
+      var source_dims = frame_dimensions_from_image(dims, this.image_dimensions, post);
+      post.frames_pending[this.post_frame] = source_dims;
+
+      if(this.options.onUpdate)
+        this.options.onUpdate();
+    }.bind(this)
+  });
+
+  this.update();
+}
+
+/*
+ * Set the post to show in the corner dragger.  If post_id is null, clear any displayed
+ * post.
+ *
+ * When the post ID is set, the post frame is always cleared.
+ */
+CornerDragger.prototype.set_post_id = function(post_id)
+{
+  this.post_id = post_id;
+  this.post_frame = null;
+
+  var url = null;
+  var img = this.container.down("img");
+  if(post_id != null)
+  {
+    var post = Post.posts.get(this.post_id);
+    this.image_dimensions = {
+      width: post.jpeg_width, height: post.jpeg_height
+    };
+
+    url = post.jpeg_url;
+    img.width = this.image_dimensions.width;
+    img.height = this.image_dimensions.height;
+  }
+
+  /* Don't change the image if it's already set; it causes Chrome to reprocess the
+   * image. */
+  if(img.src != url)
+  {
+    img.src = url;
+  
+    if(Prototype.Browser.WebKit && url)
+    {
+      /* Decoding in Chrome takes long enough to be visible.  Hourglass the cursor while it runs. */
+      document.documentElement.addClassName("hourglass");
+      (function() { document.documentElement.removeClassName("hourglass"); }.defer());
+    }
+  }
+
+  this.update();
+}
+
+CornerDragger.prototype.set_post_frame = function(post_frame)
+{
+  this.post_frame = post_frame;
+
+  this.update();
+}
+
+CornerDragger.prototype.update = function()
+{
+  if(this.post_id == null || this.post_frame == null)
+    return;
+
+  var post = Post.posts.get(this.post_id);
+  var frame = post.frames_pending[this.post_frame];
+  var dims = frame_dimensions_to_image(frame, this.image_dimensions, post);
+
+  var div = this.container;
+
+  /* Update the drag/frame box. */
+  var box = this.container.down(".frame-editor-frame-box");
+  box.style.left = dims.left + "px";
+  box.style.top = dims.top + "px";
+  box.style.width = dims.width + "px";
+  box.style.height = dims.height + "px";
+
+  /* Recenter the corner box. */
+  var top = dims.top;
+  var left = dims.left;
+  if(this.part == ".frame-editor-ne" || this.part == ".frame-editor-se")
+    left += dims.width;
+  if(this.part == ".frame-editor-sw" || this.part == ".frame-editor-se")
+    top += dims.height;
+
+  var offset_height = div.offsetHeight/2;
+  var offset_width = div.offsetWidth/2;
+  /*
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-ne") offset_height -= div.offsetHeight/4;
+  if(this.part == ".frame-editor-sw" || this.part == ".frame-editor-se") offset_height += div.offsetHeight/4;
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-sw") offset_width -= div.offsetWidth/4;
+  if(this.part == ".frame-editor-ne" || this.part == ".frame-editor-se") offset_width += div.offsetWidth/4;
+  */
+  left -= offset_width;
+  top -= offset_height;
+
+  /* If the region is small enough that we don't have enough to fill the corner
+   * frames, push the frames inward so they line up. */
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-sw")
+    left = Math.min(left, dims.left + dims.width/2 - div.offsetWidth);
+  if(this.part == ".frame-editor-ne" || this.part == ".frame-editor-se")
+    left = Math.max(left, dims.left + dims.width/2);
+  if(this.part == ".frame-editor-nw" || this.part == ".frame-editor-ne")
+    top = Math.min(top, dims.top + dims.height/2 - div.offsetHeight);
+  if(this.part == ".frame-editor-sw" || this.part == ".frame-editor-se")
+    top = Math.max(top, dims.top + dims.height/2);
+
+  var img = this.container.down(".frame-editor-popup-div");
+  img.style.marginTop = (-top) + "px";
+  img.style.marginLeft = (-left) + "px";
+}
+
+
+
+var PostUploadForm = function(form, progress)
+{
+  var XHRLevel2 = "XMLHttpRequest" in window && (new XMLHttpRequest().upload != null);
+  var SupportsFormData = "FormData" in window;
+  if(!XHRLevel2 || !SupportsFormData)
+    return;
+  
+  this.form_element = form;
+  this.cancel_element = this.form_element.down(".cancel");
+
+  this.progress = progress;
+  this.document_title = document.documentElement.down("TITLE");
+  this.document_title_orig = this.document_title.textContent;
+  this.current_request = null;
+  this.form_element.on("submit", this.form_submit_event.bindAsEventListener(this));
+  this.cancel_element.on("click", this.click_cancel.bindAsEventListener(this));
+
+  var keypress_event_name = window.opera || Prototype.Browser.Gecko? "keypress":"keydown";
+  document.on(keypress_event_name, this.document_keydown_event.bindAsEventListener(this));
+}
+
+PostUploadForm.prototype.set_progress = function(f)
+{
+  var percent = f * 100;
+  this.progress.down(".upload-progress-bar-fill").style.width = percent + "%";
+  this.document_title.textContent = this.document_title_orig + " (" + percent.toFixed(0) + "%)";
+}
+
+PostUploadForm.prototype.request_starting = function()
+{
+  this.form_element.down(".submit").hide();
+  this.cancel_element.show();
+  this.progress.show();
+  document.documentElement.addClassName("progress");
+}
+
+PostUploadForm.prototype.request_ending = function()
+{
+  this.form_element.down(".submit").show();
+  this.cancel_element.hide();
+  this.progress.hide();
+  this.document_title.textContent = this.document_title_orig;
+  document.documentElement.removeClassName("progress");
+}
+
+PostUploadForm.prototype.document_keydown_event = function(e)
+{
+  var key = e.charCode;
+  if(!key)
+    key = e.keyCode; /* Opera */
+  if(key != Event.KEY_ESC)
+    return;
+  this.cancel();
+}
+
+PostUploadForm.prototype.click_cancel = function(e)
+{
+  e.stop();
+  this.cancel();
+}
+
+
+PostUploadForm.prototype.form_submit_event = function(e)
+{
+  /* This submit may have been stopped by User.run_login_onsubmit. */
+  if(e.stopped)
+    return;
+
+  if(this.current_request != null)
+    return;
+
+  $("post-exists").hide();
+  $("post-upload-error").hide();
+
+  /* If the files attribute isn't supported, or we have no file (source upload), use regular
+   * form submission. */
+  var post_file = $("post_file");
+  if(post_file.files == null || post_file.files.length == 0)
+    return;
+
+  e.stop();
+
+  this.set_progress(0);
+  this.request_starting();
+
+  var form_data = new FormData(this.form_element);
+
+  var onprogress = function(e)
+  {
+    var done = e.loaded;
+    var total = e.total;
+    this.set_progress(total? (done/total):1);
+  }.bind(this);
+
+  this.current_request = new Ajax.Request("/post/create.json", {
+    contentType: null,
+    method: "post",
+    postBody: form_data,
+    onCreate: function(resp)
+    {
+      var xhr = resp.request.transport;
+      xhr.upload.onprogress = onprogress;
+    },
+
+    onComplete: function(resp)
+    {
+      this.current_request = null;
+      this.request_ending();
+
+      var json = resp.responseJSON;
+      if(!json)
+        return;
+
+      if(!json.success)
+      {
+        if(json.location)
+        {
+          var a = $("post-exists-link");
+          a.setTextContent("post #" + json.post_id);
+          a.href = json.location;
+          $("post-exists").show();
+          return;
+        }
+
+        $("post-upload-error").setTextContent(json.reason);
+        $("post-upload-error").show();
+
+        return;
+      }
+
+      /* If a post/similar link was given and similar results exists, go to them.  Otherwise,
+       * go to the new post. */
+      var target = json.location;
+      if(json.similar_location && json.has_similar_hits)
+        target = json.similar_location;
+      window.location.href = target;
+    }.bind(this)
+  });
+}
+
+/* Cancel the running request, if any. */
+PostUploadForm.prototype.cancel = function()
+{
+  if(this.current_request == null)
+    return;
+
+  /* Don't clear this.current_request; it'll be done by the onComplete callback. */
+  this.current_request.transport.abort();
+}
+
+/*
+ * When file_field is changed to an image, run an image search and put a summary in
+ * results.
+ */
+UploadSimilarSearch = function(file_field, results)
+{
+  if(!ThumbnailUserImage)
+    return;
+
+  this.file_field = file_field;
+  this.results = results;
+
+  file_field.on("change", this.field_changed_event.bindAsEventListener(this));
+}
+
+UploadSimilarSearch.prototype.field_changed_event = function(event)
+{
+  this.results.hide();
+
+  if(this.file_field.files == null || this.file_field.files.length == 0)
+    return;
+
+  this.results.innerHTML = "Searching...";
+  this.results.show();
+
+  var file = this.file_field.files[0];
+  var similar = new ThumbnailUserImage(file, this.thumbnail_complete.bind(this));
+}
+
+UploadSimilarSearch.prototype.thumbnail_complete = function(result)
+{
+  if(!result.success)
+  {
+    this.results.innerHTML = "Image load failed.";
+    this.results.show();
+    return;
+  }
+
+  /* Grab a data URL from the canvas; this is what we'll send to the server. */
+  var data_url = result.canvas.toDataURL();
+
+  /* Create the FormData containing the thumbnail image we're sending. */
+  var form_data = new FormData();
+  form_data.append("url", data_url);
+
+  var req = new Ajax.Request("/post/similar.json", {
+    method: "post",
+    postBody: form_data,
+
+    /* Tell Prototype not to change XHR's contentType; it breaks FormData. */
+    contentType: null,
+
+    onComplete: function(resp)
+    {
+      this.results.innerHTML = "";
+      this.results.show();
+
+      var json = resp.responseJSON;
+      if(!json.success)
+      {
+        this.results.innerHTML = json.reason;
+        return;
+      }
+
+      if(json.posts.length > 0)
+      {
+        var posts = [];
+        var shown_posts = 3;
+        json.posts.slice(0, shown_posts).each(function(post) {
+            var url;
+            if(User.get_use_browser())
+              url = "/post/browse#" + post.id;
+            else
+              url = "/post/show/" + post.id;
+            var s = "<a href='" + url + "'>post #" + post.id + "</a>";
+            posts.push(s);
+        });
+        var post_links = posts.join(", ");
+        var see_all = "<a href='/post/similar?search_id=" + json.search_id + "'>(see all)</a>";
+        var html = "Similar posts " + see_all + ": " + post_links;
+
+        if(json.posts.length > shown_posts)
+        {
+          var remaining_posts = json.posts.length - shown_posts;
+          html += " (" + remaining_posts + " more)";
+        }
+
+        this.results.innerHTML = html;
+      }
+      else
+      {
+        this.results.innerHTML = "No similar posts found.";
+      }
+    }.bind(this)
+  });
+}
+
 
 
 PostModeMenu = {
   mode: "view",
 
-  init: function() {
+  init: function(pool_id) {
     try {	/* This part doesn't work on IE7; for now, let's allow execution to continue so at least some initialization is run */
+
+    /* If pool_id isn't null, it's the pool that we're currently searching for. */
+    this.pool_id = pool_id;
 
     var color_element = $("mode-box")
     this.original_style = { border: color_element.getStyle("border") }
@@ -11588,6 +20195,8 @@ PostModeMenu = {
       return {background: "#A3A"}
     } else if (s == "reparent-quick") {
       return {background: "#CCA"}
+    } else if (s == "remove-from-pool") {
+      return {background: "#CCA"}
     } else if (s == 'reparent') {
       return {background: "#0C0"}
     } else if (s == 'dupe') {
@@ -11632,20 +20241,15 @@ PostModeMenu = {
     }
 
     if (s.value == "edit") {
-      var post = Post.posts.get(post_id)
-      $("id").value = post_id
-      $("post[old_tags]").value = post.tags.join(" ")
-      $("post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1)
-      $("quick-edit").show()
-      $("post_tags").focus()
+      post_quick_edit.show(post_id);
     } else if (s.value == 'vote') {
-      Post.vote(this.vote_score, post_id, {})
+      Post.vote(post_id, this.vote_score)
     } else if (s.value == 'rating-q') {
-      Post.update(post_id, {"post[rating]": "questionable"})
+      Post.update_batch([{id: post_id, rating: "questionable"}]);
     } else if (s.value == 'rating-s') {
-      Post.update(post_id, {"post[rating]": "safe"})
+      Post.update_batch([{id: post_id, rating: "safe"}]);
     } else if (s.value == 'rating-e') {
-      Post.update(post_id, {"post[rating]": "explicit"})
+      Post.update_batch([{id: post_id, rating: "explicit"}]);
     } else if (s.value == 'reparent') {
       if(post_id == id)
        return false;
@@ -11655,15 +20259,17 @@ PostModeMenu = {
        return false;
       TagScript.run(post_id, "duplicate parent:" + id)
     } else if (s.value == 'lock-rating') {
-      Post.update(post_id, {"post[is_rating_locked]": "1"})
+      Post.update_batch([{id: post_id, is_rating_locked: "1"}]);
     } else if (s.value == 'lock-note') {
-      Post.update(post_id, {"post[is_note_locked]": "1"})
+      Post.update_batch([{id: post_id, is_note_locked: "1"}]);
     } else if (s.value == 'flag') {
       Post.flag(post_id)
     } else if (s.value == "approve") {
       Post.approve(post_id)
     } else if (s.value == 'add-to-pool') {
       Pool.add_post(post_id, 0)
+    } else if (s.value == "remove-from-pool") {
+      Pool.remove_post(post_id, PostModeMenu.pool_id);
     }
 
     event.stopPropagation();
@@ -11808,7 +20414,7 @@ TagScript = {
     this.TagEditArea.value = Cookie.get("tag-script")
   },
   save: function() {
-    Cookie.put("tag-script", encodeURIComponent(this.TagEditArea.value))
+    Cookie.put("tag-script", this.TagEditArea.value)
   },
 
   init: function(element, x) {
@@ -11860,7 +20466,7 @@ TagScript = {
       }
     } else if (command == "[reset]") {
       return []
-    } else if (command[0] == "-") {
+    } else if (command[0] == "-" && command.indexOf("-pool:") != 0) {
       return tags.reject(function(x) {return x == command.substr(1, 100)})
     } else {
       tags.push(command)
@@ -11868,7 +20474,7 @@ TagScript = {
     }
   },
 
-  run: function(post_ids, tag_script) {
+  run: function(post_ids, tag_script, finished) {
     if(!Object.isArray(post_ids))
       post_ids = $A([post_ids]);
 
@@ -11891,9 +20497,64 @@ TagScript = {
     });
 
     notice("Updating " + posts.length + (post_ids.length == 1? " post": " posts") );
-    Post.update_batch(posts);
+    Post.update_batch(posts, finished);
   }
 }
+
+function PostQuickEdit(container)
+{
+  this.container = container;
+  this.submit_event = this.submit_event.bindAsEventListener(this);
+
+  this.container.down("form").observe("submit", this.submit_event);
+  this.container.down(".cancel").observe("click", function(e) {
+    e.preventDefault();
+    this.hide();
+  }.bindAsEventListener(this));
+  this.container.down("#post_tags").observe("keydown", function(e) {
+    if(e.keyCode == Event.KEY_ESC)
+    {
+      e.stop();
+      this.hide();
+      return;
+    }
+
+    if(e.keyCode != Event.KEY_RETURN)
+      return;
+    this.submit_event(e);
+  }.bindAsEventListener(this));
+}
+
+PostQuickEdit.prototype.show = function(post_id)
+{
+  Post.hover_info_pin(post_id);
+
+  var post = Post.posts.get(post_id);
+  this.post_id = post_id;
+  this.old_tags = post.tags.join(" ");
+
+  this.container.down("#post_tags").value = post.tags.join(" ") + " rating:" + post.rating.substr(0, 1) + " ";
+  this.container.show();
+  this.container.down("#post_tags").focus();
+}
+
+PostQuickEdit.prototype.hide = function()
+{
+  this.container.hide();
+  Post.hover_info_pin(null);
+}
+
+PostQuickEdit.prototype.submit_event = function(e)
+{
+  e.stop();
+  this.hide();
+
+  Post.update_batch([{id: this.post_id, tags: this.container.down("#post_tags").value, old_tags: this.old_tags}], function() {
+    notice("Post updated");
+    this.hide();
+  }.bind(this));
+}
+
 
 
 PostTagHistory = {
@@ -12101,6 +20762,69 @@ PostTagHistory = {
 }
 
 
+var _preload_image_pool = null;
+
+PreloadContainer = function()
+{
+  /* Initialize the pool the first time we make a container, since we may not
+   * have ImgPoolHandler when the file is loaded. */
+  if(_preload_image_pool == null)
+      _preload_image_pool = new ImgPoolHandler();
+
+  this.container = $(document.createElement("div"));
+  this.container.style.display = "none";
+  document.body.appendChild(this.container);
+
+  this.active_preloads = 0;
+
+  this.on_image_complete_event = this.on_image_complete_event.bindAsEventListener(this);
+}
+
+PreloadContainer.prototype.cancel_preload = function(img)
+{
+  img.stopObserving();
+  this.container.removeChild(img);
+  _preload_image_pool.release(img);
+  if(img.active)
+    --this.active_preloads;
+}
+
+PreloadContainer.prototype.preload = function(url)
+{
+  ++this.active_preloads;
+
+  var imgTag = _preload_image_pool.get();
+  imgTag.observe("load", this.on_image_complete_event);
+  imgTag.observe("error", this.on_image_complete_event);
+  imgTag.src = url;
+  imgTag.active = true;
+
+  this.container.appendChild(imgTag);
+  return imgTag;
+}
+
+/* Return an array of all preloads. */
+PreloadContainer.prototype.get_all = function()
+{
+  return this.container.childElements();
+}
+
+PreloadContainer.prototype.destroy = function()
+{
+  this.get_all().each(function(img) {
+    this.cancel_preload(img);
+  }.bind(this));
+
+  document.body.removeChild(this.container);
+}
+
+PreloadContainer.prototype.on_image_complete_event = function(event)
+{
+  --this.active_preloads;
+  event.target.active = false;
+}
+
+
 Preload = {
   /*
    * Thumbnail preloading.
@@ -12123,30 +20847,154 @@ Preload = {
    */
   preload_list: [],
   preload_container: null,
-  preload: function(url)
+  preload_raw_urls: [],
+  preload_started: false,
+  onload_event_initialized: false,
+
+  get_default_preload_container: function()
   {
     if(!this.preload_container)
-    {
-      this.preload_container = document.createElement("div");
-      this.preload_container.style.display = "none";
-      document.body.appendChild(this.preload_container);
-      Event.observe(window, "load", function() { Preload.start_preload(); } );
-    }
+      this.preload_container = new PreloadContainer();
 
-    Preload.preload_list.push(url);
+    return this.preload_container;
+  },
+  init: function()
+  {
+    if(this.onload_event_initialized)
+      return;
+
+    this.onload_event_initialized = true;
+    Event.observe(window, "load", function() { Preload.preload_started = true; Preload.start_preload(); } );
   },
 
+  /* Preload the given URL once window.load has fired. */
+  preload: function(url)
+  {
+    var container = this.get_default_preload_container();
+
+    Preload.init();
+    Preload.preload_list.push([url, container]);
+    Preload.start_preload();
+  },
+
+  /* Load the given URL with an AJAX request.  This is used to load things that aren't
+   * images. */
+  preload_raw: function(url)
+  {
+    Preload.init();
+    Preload.preload_raw_urls.push(url);
+    Preload.start_preload();
+  },
+
+  create_raw_preload: function(url)
+  {
+    return new Ajax.Request(url, {
+      method: "get",
+      evalJSON: false,
+      evalJS: false,
+      parameters: null
+    });
+  },
   start_preload: function()
   {
-    var preload = this.preload_container;
+    if(!Preload.preload_started)
+      return;
+
     for(var i=0; i < Preload.preload_list.length; ++i)
     {
-      var imgTag = document.createElement("img");
-      imgTag.src = Preload.preload_list[i];
-      preload.appendChild(imgTag);
+      var preload = Preload.preload_list[i];
+      var container = preload[1];
+      container.preload(preload[0]);
     }
+    Preload.preload_list.length = [];
+
+    for(var i=0; i < Preload.preload_raw_urls.length; ++i)
+    {
+      var url = Preload.preload_raw_urls[i];
+      Preload.create_raw_preload(url);
+    }
+    Preload.preload_raw_urls = [];
   }
 }
+
+
+ReferralBanner = function(ref)
+{
+  /* Stop if > privileged: */
+  if(User.get_current_user_level() > 30)
+  {
+    this.container = null;
+    return;
+  }
+
+  this.container = ref;
+  if(!ref)
+    return;
+
+  this.container.down(".close-button").on("click", function(e) {
+    e.stop();
+    this.container.removeClassName("shown");
+  }.bind(this));
+}
+
+ReferralBanner.prototype.show_referral = function()
+{
+  if(!this.container)
+    return;
+
+  this.container.show();
+
+  /* If we don't defer after removing display: none, the -webkit-transition won't transition
+   * from the correct position. */
+  (function() {
+    this.container.addClassName("shown");
+  }).bind(this).defer();
+}
+
+
+ReferralBanner.prototype.increment_view_count = function()
+{
+  var view_count = Cookie.get_int("viewed");
+  ++view_count;
+
+  Cookie.put("viewed", view_count);
+  return view_count;
+}
+
+ReferralBanner.prototype.increment_views_and_check_referral = function()
+{
+  var delay_between_referral_reset = 60*60*24;
+  var view_count_before_referral = 9999;
+
+  var view_count = this.increment_view_count();
+
+  /* sref is the last time we showed the referral.  As long as it's set, we won't show
+   * it again. */
+  var referral_last_shown = Cookie.get_int("sref");
+  var now = new Date().getTime() / 1000;
+
+  /* If the last time the referral was shown was a long time ago, clear everything and start over.
+   * Once we clear this, vref is set and we'll start counting views from there.
+   *
+   * Also clear the timer if it's in the future; this can happen if the clock was adjusted. */
+  if(referral_last_shown && (referral_last_shown > now || now - referral_last_shown >= delay_between_referral_reset))
+  {
+    Cookie.put("sref", 0);
+    referral_last_shown = 0;
+    Cookie.put("vref", view_count - 1);
+  }
+
+  if(referral_last_shown)
+    return;
+
+  var view_count_start = Cookie.get_int("vref");
+  if(view_count >= view_count_start && view_count - view_count_start < view_count_before_referral)
+    return;
+
+  Cookie.put("sref", now);
+  this.show_referral();
+}
+
 
 
 RelatedTags = {
@@ -12365,6 +21213,250 @@ var Scriptaculous = {
 }
 
 Scriptaculous.load();
+
+/*
+ * file must be a Blob object.  Create and return a thumbnail of the image.
+ * Perform an image search using post/similar.
+ *
+ * On completion, onComplete(result) will be called, where result is an object with
+ * these properties:
+ *
+ * success: true or false.
+ *
+ * On failure:
+ * aborted: true if failure was due to a user abort.
+ * chromeFailure: If true, the image loaded but was empty.  Chrome probably ran out
+ * of memory, but the selected file may be a valid image.
+ *
+ * On success:
+ * canvas: On success, the canvas containing the thumbnailed image.
+ *
+ */
+ThumbnailUserImage = function(file, onComplete)
+{
+  /* Create the shared image pool, if we havn't yet. */
+  if(ThumbnailUserImage.image_pool == null)
+    ThumbnailUserImage.image_pool = new ImgPoolHandler();
+
+  this.file = file;
+  this.canvas = create_canvas_2d();
+  this.image = ThumbnailUserImage.image_pool.get();
+  this.onComplete = onComplete;
+
+  this.url = URL.createObjectURL(this.file);
+
+  this.image.on("load", this.image_load_event.bindAsEventListener(this));
+  this.image.on("abort", this.image_abort_event.bindAsEventListener(this));
+  this.image.on("error", this.image_error_event.bindAsEventListener(this));
+
+  document.documentElement.addClassName("progress");
+
+  this.image.src = this.url;
+}
+
+/* This is a shared pool; for clarity, don't put it in the prototype. */
+ThumbnailUserImage.image_pool = null;
+
+/* Cancel any running request.  The onComplete callback will not be called.
+ * The object must not be reused. */
+ThumbnailUserImage.prototype.destroy = function()
+{
+  document.documentElement.removeClassName("progress");
+
+  this.onComplete = null;
+
+  this.image.stopObserving();
+  ThumbnailUserImage.image_pool.release(this.image);
+  this.image = null;
+
+  if(this.url != null)
+  {
+    URL.revokeObjectURL(this.url);
+    this.url = null;
+  }
+}
+
+ThumbnailUserImage.prototype.completed = function(result)
+{
+  if(this.onComplete)
+    this.onComplete(result);
+  this.destroy();
+}
+
+/* When the image finishes loading after form_submit_event sets it, update the canvas
+ * thumbnail from it. */
+ThumbnailUserImage.prototype.image_load_event = function(e)
+{
+  /* Reduce the image size to thumbnail resolution. */
+  var width = this.image.width;
+  var height = this.image.height;
+  var max_width = 128;
+  var max_height = 128;
+  if(width > max_width)
+  {
+    var ratio = max_width/width;
+    height *= ratio; width *= ratio;
+  }
+  if(height > max_height)
+  {
+    var ratio = max_height/height;
+    height *= ratio; width *= ratio;
+  }
+  width = Math.round(width);
+  height = Math.round(height);
+
+  /* Set the canvas to the image size we want. */
+  var canvas = this.canvas;
+  canvas.width = width;
+  canvas.height = height;
+
+  /* Blit the image onto the canvas. */
+  var ctx = canvas.getContext("2d");
+
+  /* Clear the canvas, so check_image_contents can check that the data was correctly loaded. */
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.drawImage(this.image, 0, 0, canvas.width, canvas.height);
+
+  if(!this.check_image_contents())
+  {
+    this.completed({ success: false, chromeFailure: true });
+    return;
+  }
+
+  this.completed({ success: true, canvas: this.canvas });
+}
+
+/*
+ * Work around a Chrome bug.  When very large images fail to load, we still get
+ * onload and the image acts like a loaded, completely transparent image, instead
+ * of firing onerror.  This makes it difficult to tell if the image actually loaded
+ * or not.  Check that the image loaded by looking at the results; reject the image
+ * if it's completely transparent.
+ */
+ThumbnailUserImage.prototype.check_image_contents = function()
+{
+  var ctx = this.canvas.getContext("2d");
+  var image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+  var data = image.data;
+
+  /* Iterate through the alpha components, and search for any nonzero value. */
+  var idx = 3;
+  var max_idx = image.width * image.height * 4;
+  while(idx < max_idx)
+  {
+    if(data[idx] != 0)
+      return true;
+    idx += 4;
+  }
+  return false;
+}
+
+ThumbnailUserImage.prototype.image_abort_event = function(e)
+{
+  this.completed({ success: false, aborted: true });
+}
+
+/* This happens on normal errors, usually because the file isn't a supported image. */
+ThumbnailUserImage.prototype.image_error_event = function(e)
+{
+  this.completed({ success: false });
+}
+
+/* If the necessary APIs aren't supported, don't use ThumbnailUserImage. */
+if(!("URL" in window) || create_canvas_2d() == null)
+  ThumbnailUserImage = null;
+
+SimilarWithThumbnailing = function(form)
+{
+  this.similar = null;
+  this.form = form;
+  this.force_file = null;
+
+  form.on("submit", this.form_submit_event.bindAsEventListener(this));
+}
+
+SimilarWithThumbnailing.prototype.form_submit_event = function(e)
+{
+  var post_file = this.form.down("#file");
+
+  /* If the files attribute isn't supported, or we have no file (source upload), use regular
+   * form submission. */
+  if(post_file.files == null || post_file.files.length == 0)
+    return;
+
+  /* If we failed to load the image last time due to a silent Chrome error, continue with
+   * the submission normally this time. */
+  var file = post_file.files[0];
+  if(this.force_file && this.force_file == file)
+  {
+    this.force_file = null;
+    return;
+  }
+
+  e.stop();
+
+  if(this.similar)
+    this.similar.destroy();
+  this.similar = new ThumbnailUserImage(file, this.complete.bind(this));
+}
+
+/* Submit a post/similar request using the image currently in the canvas. */
+SimilarWithThumbnailing.prototype.complete = function(result)
+{
+  if(result.chromeFailure)
+  {
+    notice("The image failed to load; submitting normally...");
+
+    this.force_file = this.file;
+
+    /* Resend the submit event.  Defer it, so the notice can take effect before we
+     * navigate off the page. */
+    (function() { this.form.simulate_submit(); }).bind(this).defer();
+    return;
+  }
+
+  if(!result.success)
+  {
+    if(!result.aborted)
+      alert("The file couldn't be loaded.");
+    return;
+  }
+
+  /* Grab a data URL from the canvas; this is what we'll send to the server. */
+  var data_url = result.canvas.toDataURL();
+
+  /* Create the FormData containing the thumbnail image we're sending. */
+  var form_data = new FormData();
+  form_data.append("url", data_url);
+
+  var req = new Ajax.Request("/post/similar.json", {
+    method: "post",
+    postBody: form_data,
+
+    /* Tell Prototype not to change XHR's contentType; it breaks FormData. */
+    contentType: null,
+
+    onComplete: function(resp)
+    {
+      var json = resp.responseJSON;
+      if(!json.success)
+      {
+        notice(json.reason);
+        return;
+      }
+
+      /* Redirect to the search results. */
+      window.location.href = "/post/similar?search_id=" + json.search_id;
+    }
+  });
+}
+
+/* If the necessary APIs aren't supported, don't use SimilarWithThumbnailing. */
+if(!("FormData" in window) || !ThumbnailUserImage)
+  SimilarWithThumbnailing = null;
+
+
 
 // script.aculo.us slider.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
 
@@ -12698,6 +21790,1455 @@ if(Prototype.Browser.Gecko && navigator.userAgent.indexOf("Win") > 0){
   else
     Sound.play = function(){}
 }
+
+
+/* 
+ * The tag blob looks like this:
+ *
+ * 1:tagme 2:fixed
+ *
+ * where the initial number is the tag type, and a space after each tag is guaranteed, including
+ * after the final one.  Spaces and colons are disallowed in tags, so they don't need escaping.
+ * This can be searched quickly with regexes:
+ *
+ * ':tagme '   - whole tag match
+ * ':tag'      - tag prefix match
+ * ':t[^ ]*g'  - substring match
+ * ':[^ ]*me '  - suffix match
+ * ':[^ ]*t[^ ]*g[^ ]*m' - ordered character match
+ */
+TagCompletionClass = function()
+{
+  /* Don't load the tag data out of localStorage until it's needed. */
+  this.loading = false;
+  this.loaded = false;
+
+  /* If the data format is out of date, clear it. */
+  var current_version = 5;
+  if(localStorage.tag_data_format != current_version)
+  {
+    delete localStorage.tag_data;
+    delete localStorage.tag_data_version;
+    delete localStorage.recent_tags;
+    localStorage.tag_data_format = current_version;
+  }
+
+  /* Pull in recent tags.  This is entirely local data and not too big, so always load it. */
+  this.recent_tags = localStorage.recent_tags || "";
+
+  this.load_data_complete_callbacks = [];
+
+  this.rapid_backspaces_received = 0;
+  this.updates_deferred = false;
+}
+
+TagCompletionClass.prototype.init = function(current_version)
+{
+  if(this.loaded)
+    return;
+  this.most_recent_tag_data_version = current_version;
+}
+
+/*
+ * If cached data is available, load it.  If the cached data is out of date, run an
+ * update asynchronously.  Return true if data is available and tag completions may
+ * be done, whether or not the data is current.  Call onComplete when up-to-date tag
+ * data is available; if the current cached data is known to be current, it will be
+ * called before this function returns.
+ *
+ * If this is called multiple times before the tag load completes, the data will only be loaded
+ * once, but all callbacks will be called.
+ */
+TagCompletionClass.prototype.load_data = function(onComplete)
+{
+  /* If we're already fully loaded, just run the callback and return. */
+  if(this.loaded)
+  {
+    if(onComplete)
+      onComplete();
+    return this.tag_data != null;
+  }
+
+  /* Add the callback to the list. */
+  if(onComplete)
+    this.load_data_complete_callbacks.push(onComplete);
+
+  /* If we're already loading, let the existing request finish; it'll run the callback. */
+  if(this.loading)
+    return this.tag_data != null;
+  this.loading = true;
+
+  var complete = function()
+  {
+    this.loading = false;
+    this.loaded = true;
+
+    /* Now that we have the tag types loaded, update any tag types that we have loaded. */
+    this.update_tag_types();
+
+    var callbacks = this.load_data_complete_callbacks;
+    this.load_data_complete_callbacks = [];
+
+    callbacks.each(function(callback) {
+      callback();
+    }.bind(this));
+  }.bind(this);
+
+  /* If we have data available, load it. */
+  if(localStorage.tag_data != null)
+    this.tag_data = localStorage.tag_data;
+
+  /* If we've been told the current tag data revision and we're already on it, or if we havn't
+   * been told the revision at all, use the data we have. */
+  if(localStorage.tag_data != null)
+  {
+    if(this.most_recent_tag_data_version == null || localStorage.tag_data_version == this.most_recent_tag_data_version)
+    {
+      // console.log("Already on most recent tag data version");
+      complete();
+      return this.tag_data != null;
+    }
+  }
+  
+  /* Request the tag data from the server.  Tell the server the data version we already
+   * have. */
+  var params = {};
+  if(localStorage.tag_data_version != null)
+    params.version = localStorage.tag_data_version;
+
+  var req = new Ajax.Request("/tag/summary.json", {
+    parameters: params,
+    onSuccess: function(resp)
+    {
+      var json = resp.responseJSON;
+
+      /* If unchanged is true, tag_data_version is already current; this means we weren't told
+       * the current data revision to start with but we're already up to date. */
+      if(json.unchanged)
+      {
+        // console.log("Tag data unchanged");
+        this.tag_data = localStorage.tag_data;
+        complete();
+        return;
+      }
+
+      /* We've received new tag data; save it. */
+      // console.log("Storing new tag data");
+      this.tag_data = json.data;
+      localStorage.tag_data = this.tag_data;
+      localStorage.tag_data_version = json.version;
+
+      complete();
+    }.bind(this)
+  });
+
+  return this.tag_data != null;
+}
+
+/* When form is submitted, call add_recent_tags_from_update for the given tags and old_tags
+ * fields. */
+TagCompletionClass.prototype.observe_tag_changes_on_submit = function(form, tags_field, old_tags_field)
+{
+  return form.on("submit", function(e) {
+    var old_tags = old_tags_field? old_tags_field.value:null;
+    TagCompletion.add_recent_tags_from_update(tags_field.value, old_tags);
+  });
+}
+
+/* From a tag string, eg. "1`tagme`alias`alias2`", retrieve the tag name "tagme". */
+var get_tag_from_string = function(tag_string)
+{
+  var m = tag_string.match(/\d+`([^`]*)`.*/);
+  if(!m)
+    throw "Unparsable cached tag: '" + tag_string + "'";
+  return m[1];
+}
+
+/*
+ * Like string.split, but rather than each item of data being separated by the separator,
+ * each item of data ends in the separator; that is, the final item is followed by the
+ * separator.
+ *
+ * "a b c " -> ["a", "b", "c"].
+ *
+ * If the final item doesn't end in the separator, throw an exception.
+ *
+ */
+var split_data = function(str, separator)
+{
+  var result = str.split(separator);
+  if(result.length != 0)
+  {
+    if(result[result.length-1] != "")
+      throw "String doesn't end in separator";
+    result.pop();
+  }
+
+  return result;
+}
+
+var join_data = function(items, separator)
+{
+  if(items.length == 0)
+    return "";
+  return items.join(separator) + separator;
+}
+
+/* Update the cached types of all known tags in tag_data and recent_tags. */
+TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_add)
+{
+  var tag_map = {};
+
+  /* Make a mapping of tags to indexes. */
+  var split_tags = split_data(tags, " ");
+  var idx = 0;
+  split_tags.each(function(tag) {
+    if(tag == "")
+      return;
+    var tag_name = get_tag_from_string(tag);
+
+    tag_map[tag_name] = idx;
+    ++idx;
+  });
+
+  /*
+   * For each known tag type, mark the type in the tag cache.  We receive this info when
+   * we download the tag types, so this is just updating any changes. 
+   *
+   * This is set up to iterate only over known types, and not over the entire list of
+   * tags, so when we have a lot of tags we minimize the amount of work we have to do
+   * on every tag.
+   */
+  Post.tag_types.each(function(tag_and_type) {
+    var tag = tag_and_type[0];
+    var tag_type = tag_and_type[1];
+    var tag_type_idx = Post.tag_type_names.indexOf(tag_type);
+    if(tag_type_idx == -1)
+      throw "Unknown tag type " + tag_type;
+
+    if(!(tag in tag_map))
+    {
+      /* This tag is known in Post.tag_types, but isn't a known tag.  If allow_add is true,
+       * add it to the end.  This is for updating new tags that have shown up on the server,
+       * not for adding new recent tags. */
+      if(allow_add)
+      {
+        var tag_string = tag_type_idx + "`" + tag + "`";
+        split_tags.push(tag_string);
+      }
+    }
+    else
+    {
+      /* This is a known tag; this is the usual case.  Parse out the complete tag from the
+       * original string, and update the tag type index. */
+      var tag_idx = tag_map[tag];
+      var existing_tag = split_tags[tag_idx];
+
+      var m = existing_tag.match(/\d+(`.*)/);
+      var new_tag_string = tag_type_idx + m[1];
+
+      split_tags[tag_idx] = new_tag_string;
+    }
+  });
+
+  return join_data(split_tags, " ");
+}
+
+TagCompletionClass.prototype.update_tag_types = function()
+{
+  /* This function is always called, because we receive tag type data for most pages.
+   * Only actually update tag types if the tag data is already loaded. */
+  if(!this.loaded)
+    return;
+
+  /* Update both tag_data and recent_tags; only add new entries to tag_data. */
+  this.tag_data = this.update_tag_types_for_list(this.tag_data, true);
+  localStorage.tag_data = this.tag_data;
+
+  this.recent_tags = this.update_tag_types_for_list(this.recent_tags, false);
+  localStorage.recent_tags = this.recent_tags;
+}
+
+TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
+{
+  /* Split the tag by character. */
+  var letters = tag.split("");
+
+  /*
+   * We can do a few search methods:
+   *
+   * 1: Ordinary prefix search.
+   * 2: Name search. "aaa_bbb" -> "aaa*_bbb*|bbb*_aaa*".
+   * 3: Contents search; "tgm" -> "t*g*m*" -> "tagme".  The first character is still always
+   * matched exactly.
+   *
+   * Avoid running multiple expressions.  Instead, combine these into a single one, then run
+   * each part on the results to determine which type of result it is.  Always show prefix and
+   * name results before contents results.
+   */
+  var regex_parts = [];
+
+  /* Allow basic word prefix matches.  "tag" matches at the beginning of any word
+   * in a tag, eg. both "tagme" and "dont_tagme". */
+  /* Add the regex for ordinary prefix matches. */
+  var s = "(([^`]*_)?";
+  letters.each(function(letter) {
+    var escaped_letter = RegExp.escape(letter);
+    s += escaped_letter;
+  });
+  s += ")";
+  regex_parts.push(s);
+
+  /* Allow "fir_las" to match both "first_last" and "last_first". */
+  if(tag.indexOf("_") != -1)
+  {
+    var first = tag.split("_", 1)[0];
+    var last = tag.slice(first.length + 1);
+
+    first = RegExp.escape(first);
+    last = RegExp.escape(last);
+
+    var s = "(";
+    s += "(" + first + "[^`]*_" + last + ")";
+    s += "|";
+    s += "(" + last + "[^`]*_" + first + ")";
+    s += ")";
+    regex_parts.push(s);
+  }
+
+  /* Allow "tgm" to match "tagme".  If top_results_only is set, we only want primary results,
+   * so omit this match. */
+  if(!options.top_results_only)
+  {
+    var s = "(";
+    letters.each(function(letter) {
+      var escaped_letter = RegExp.escape(letter);
+      s += escaped_letter;
+      s += '[^`]*';
+    });
+    s += ")";
+    regex_parts.push(s);
+  }
+
+  /* The space is included in the result, so the result tags can be matched with the
+   * same regexes, for in reorder_search_results. 
+   *
+   * (\d)+  match the alias ID                      1`
+   * [^ ]*: start at the beginning of any alias     1`foo`bar`
+   * ... match ...
+   * [^`]*` all matches are prefix matches          1`foo`bar`tagme`
+   * [^ ]*  match any remaining aliases             1`foo`bar`tagme`tag_me`
+   */
+  var regex_string = regex_parts.join("|");
+  regex_string = "(\\d+)[^ ]*`(" + regex_string + ")[^`]*`[^ ]* ";
+
+  return new RegExp(regex_string, options.global? "g":"");
+}
+
+TagCompletionClass.prototype.retrieve_tag_search = function(re, source, options)
+{
+  var results = [];
+  
+  var max_results = 10;
+  if(options.max_results != null)
+    max_results = options.max_results;
+
+  while(results.length < max_results)
+  {
+    var m = re.exec(source);
+    if(!m)
+      break;
+
+    var tag = m[0];
+    /* Ignore this tag.  We need a better way to blackhole tags. */
+    if(tag.indexOf(":deletethistag:") != -1)
+      continue;
+    if(results.indexOf(tag) == -1)
+      results.push(tag);
+  }
+  return results;
+}
+
+
+/* Mark a tag as recently used.  Recently used tags are matched before other tags. */
+TagCompletionClass.prototype.add_recent_tag = function(tag)
+{
+  /* Don't add tags that will make the data unparsable. */
+  if(tag.indexOf(" ") != -1 || tag.indexOf("`") != -1)
+    throw "Invalid recent tag: " + tag;
+
+  this.remove_recent_tag(tag);
+
+  /* Look up the tag type if we know it. */
+  var tag_type = Post.tag_types.get(tag) || "general";
+  var tag_type_idx = Post.tag_type_names.indexOf(tag_type);
+
+  /* We should know all tag types. */
+  if(tag_type_idx == -1)
+    throw "Unknown tag type: " + tag_type;
+
+  /* Add the tag to the front.  Always append a space, not just between entries. */
+  var tag_entry = tag_type_idx + "`" + tag + "` ";
+  this.recent_tags = tag_entry + this.recent_tags;
+
+  /* If the recent tags list is too big, remove data from the end. */
+  var max_recent_tags_size = 1024*16;
+  if(this.recent_tags.length > max_recent_tags_size * 10/9)
+  {
+    /* Be sure to leave the trailing space in place. */
+    var purge_at = this.recent_tags.indexOf(" ", max_recent_tags_size);
+    if(purge_at != -1)
+      this.recent_tags = this.recent_tags.slice(0, purge_at+1);
+  }
+
+  localStorage.recent_tags = this.recent_tags;
+}
+
+/* Remove the tag from the recent tag list. */
+TagCompletionClass.prototype.remove_recent_tag = function(tag)
+{
+  var escaped_tag = RegExp.escape(tag);
+  var re = new RegExp("\\d`" + escaped_tag + "` ", "g");
+  this.recent_tags = this.recent_tags.replace(re, "");
+  localStorage.recent_tags = this.recent_tags;
+}
+
+/* Add as recent tags all tags which are in tags and not in old_tags.  If this is from an
+ * edit form, old_tags must be the hidden old_tags value in the edit form; if this is
+ * from a search form, old_tags must be null. */
+TagCompletionClass.prototype.add_recent_tags_from_update = function(tags, old_tags)
+{
+  tags = tags.split(" ");
+  if(old_tags != null)
+    old_tags = old_tags.split(" ");
+
+  tags.each(function(tag) {
+    /* Ignore invalid tags. */
+    if(tag.indexOf("`") != -1)
+      return;
+    /* Ignore rating shortcuts. */
+    if("sqe".indexOf(tag) != -1)
+      return;
+    /* Ignore tags that the user didn't just add. */
+    if(old_tags && old_tags.indexOf(tag) != -1)
+      return;
+
+    /*
+     * We may be adding tags from an edit form or a search form.  If we're on an edit
+     * form, old_tags is set; if we're on a search form, old_tags is null.
+     *
+     * If we're on a search form, ignore non-metatags that don't exist in tag_data.  This
+     * will just allow adding typos to recent tag data.
+     *
+     * If we're on an edit form, allow these completely new tags to be added, since the
+     * edit form is going to create them.
+     */
+    if(old_tags == null && tag.indexOf(":") == -1)
+    {
+      if(this.tag_data.indexOf("`" + tag + "`") == -1)
+        return;
+    }
+
+    this.add_recent_tag(tag);
+  }.bind(this));
+}
+
+/*
+ * Contents matches (t*g*m -> tagme) are lower priority than other results.  Within
+ * each search type (recent and main), sort them to the bottom.
+ */
+TagCompletionClass.prototype.reorder_search_results = function(tag, results)
+{
+  var re = this.create_tag_search_regex(tag, { top_results_only: true, global: false });
+  var top_results = [];
+  var bottom_results = [];
+
+  results.each(function(tag) {
+    if(re.test(tag))
+      top_results.push(tag);
+    else
+      bottom_results.push(tag);
+  });
+  return top_results.concat(bottom_results);
+}
+
+/*
+ * Return an array of completions for a tag.  Tag types of returned tags will be
+ * registered in Post.tag_types, if necessary.
+ *
+ * options = {
+ *   max_results: 10
+ * }
+ *
+ * [["tag1", "tag2", "tag3"], 1]
+ *
+ * The value 1 is the number of results from the beginning which come from recent_tags,
+ * rather than tag_data.
+ */
+TagCompletionClass.prototype.complete_tag = function(tag, options)
+{
+  if(this.tag_data == null)
+    throw "Tag data isn't loaded";
+
+  if(options == null)
+    options = {};
+
+  if(tag == "")
+    return [[], 0];
+
+  /* Make a list of all results; this will be ordered recent tags first, other tags
+   * sorted by tag count.  Request more results than we need, since we'll reorder
+   * them below before cutting it off. */
+  var re = this.create_tag_search_regex(tag, { global: true });
+  var recent_results = this.retrieve_tag_search(re, this.recent_tags, {max_results: 100});
+  var main_results = this.retrieve_tag_search(re, this.tag_data, {max_results: 100});
+
+  recent_results = this.reorder_search_results(tag, recent_results);
+  main_results = this.reorder_search_results(tag, main_results);
+
+  var recent_result_count = recent_results.length;
+  var results = recent_results.concat(main_results);
+
+  /* Hack: if the search is one of the ratings shortcuts, put that at the top, even though
+   * it's not a real tag. */
+  if("sqe".indexOf(tag) != -1)
+    results.unshift("0`" + tag + "` ");
+
+  results = results.slice(0, options.max_results != null? options.max_results:10);
+  recent_result_count = Math.min(results.length, recent_result_count);
+
+  /* Strip the "1`" tag type prefix off of each result. */
+  var final_results = [];
+  var tag_types = {};
+  var final_aliases = [];
+  results.each(function(tag) {
+    var m = tag.match(/(\d+)`([^`]*)`(([^ ]*)`)? /);
+    if(!m)
+    {
+      ReportError("Unparsable cached tag: '" + tag + "'", null, null, null, null);
+      throw "Unparsable cached tag: '" + tag + "'";
+    }
+
+    var tag = m[2];
+    var tag_type = Post.tag_type_names[m[1]];
+    var aliases = m[4];
+    if(m[4])
+      aliases = aliases.split("`");
+    else
+      aliases = [];
+    tag_types[tag] = tag_type;
+
+    if(final_results.indexOf(tag) == -1)
+    {
+      final_results.push(tag);
+      final_aliases.push(aliases);
+    }
+  });
+
+  /* Register tag types of results with Post. */
+  Post.register_tags(tag_types, true);
+
+  return [final_results, recent_result_count, final_aliases];
+}
+
+/* This is only supported if the browser supports localStorage.  Also disable this if
+ * addEventListener is missing; IE has various problems that aren't worth fixing. */
+if(!LocalStorageDisabled() && "addEventListener" in document)
+  TagCompletion = new TagCompletionClass();
+else
+  TagCompletion = null;
+
+TagCompletionBox = function(input_field)
+{
+  this.input_field = input_field;
+  this.update = this.update.bind(this);
+  this.last_value = this.input_field.value;
+
+  /* Disable browser autocomplete. */
+  this.input_field.setAttribute("autocomplete", "off");
+
+  var html = '<div class="tag-completion-box"><ul class="color-tag-types"></ul></div>';
+  var div = html.createElement();
+  div.tabindex = -1;
+  document.body.appendChild(div);
+  this.completion_box = div;
+
+  document.on("mousedown", function(event) {
+    if(event.target.isParentNode(this.input_field) || event.target.isParentNode(this.completion_box))
+      return;
+    this.hide();
+  }.bindAsEventListener(this));
+
+  this.input_field.on("mousedown", this.input_mouse.bindAsEventListener(this));
+  this.input_field.on("mouseup", this.input_mouse.bindAsEventListener(this));
+  this.input_field.parentNode.addEventListener("keydown", this.input_keydown.bindAsEventListener(this), true); // need to use addEventListener for this since Prototype is broken
+  this.input_field.on("keypress", this.input_keypress.bindAsEventListener(this));
+
+  this.completion_box.on("mouseover", ".completed-tag", function(event, element) {
+    this.focus_element(element);
+  }.bind(this));
+
+  this.completion_box.on("click", "li", this.click_result.bind(this));
+
+  this.hide();
+}
+
+TagCompletionBox.prototype.input_mouse = function(event)
+{
+  this.update.defer();
+}
+
+TagCompletionBox.prototype.input_keydown = function(event)
+{
+  if(event.target != this.input_field)
+    return;
+
+  /* Handle backspaces even when hidden. */
+  if(event.keyCode == Event.KEY_BACKSPACE)
+  {
+    /*
+     * If the user holds down backspace to delete tags, don't spend time updating the
+     * autocomplete; if it's too slow it may slow down the input.  However, we don't
+     * want to always delay autocomplete on backspace; it looks unresponsive.
+     *
+     * Count the number of backspaces we receive less than 100ms apart.  Defer updates
+     * after we receive two or more in rapid succession, so we'll defer when backspace
+     * is held down but not when being depressed.
+     *
+     * Note that this is done this way rather than by tracking the pressed state with
+     * keydown/keyup, because this way we don't need to deal with lost keyup events if
+     * focus is lost while the key is pressed.  There's no way to become desynced this way.
+     */
+    ++this.rapid_backspaces_received;
+
+    if(this.backspace_timeout)
+      clearTimeout(this.backspace_timeout);
+    this.backspace_timeout = setTimeout(function() {
+      this.rapid_backspaces_received = 0;
+    }.bind(this), 100);
+
+    if(this.rapid_backspaces_received > 1)
+    {
+      this.updates_deferred = true;
+      if(this.defer_timeout != null)
+        clearTimeout(this.defer_timeout);
+      this.defer_timeout = setTimeout(function() {
+        this.updates_deferred = false;
+        this.update();
+      }.bind(this), 100);
+    }
+  }
+
+  if(!this.shown)
+  {
+    this.update.defer();
+    return;
+  }
+
+  if(event.keyCode == Event.KEY_DOWN)
+  {
+    event.stop();
+    this.select_next(true);
+  }
+  else if(event.keyCode == Event.KEY_UP)
+  {
+    event.stop();
+    this.select_next(false);
+  }
+  else if(event.keyCode == Event.KEY_ESC)
+  {
+    event.stop();
+    this.hide();
+  }
+  else if(event.keyCode == Event.KEY_RETURN)
+  {
+    var focused = this.completion_box.down(".focused");
+    if(focused)
+    {
+      event.stop();
+      this.set_current_word(focused.result_tag);
+    }
+    else
+      this.hide();
+  }
+  else
+  {
+    this.update.defer();
+  }
+}
+
+TagCompletionBox.prototype.focus_element = function(element)
+{
+  if(element == null)
+    throw "Can't select no element";
+
+  var previous = this.completion_box.down(".focused");
+  if(previous)
+    previous.removeClassName("focused");
+  if(element)
+    element.addClassName("focused");
+}
+
+TagCompletionBox.prototype.select_next = function(next)
+{
+  var focused = this.completion_box.down(".focused");
+  var siblings = next? focused.nextSiblings(): focused.previousSiblings();
+  var new_focus = Prototype.Selector.find(siblings, ".completed-tag", 0);
+  if(new_focus == null)
+    new_focus = this.completion_box.down(next? ".completed-tag":".completed-tag:last-child");
+
+  this.focus_element(new_focus);
+}
+
+
+TagCompletionBox.prototype.show = function()
+{
+  this.shown = true;
+  var offset = this.input_field.cumulativeOffset();
+  this.completion_box.style.top = (offset.top + this.input_field.offsetHeight) + "px";
+  this.completion_box.style.left = offset.left + "px";
+  this.completion_box.style.minWidth = this.input_field.offsetWidth + "px";
+}
+
+
+TagCompletionBox.prototype.hide = function()
+{
+  this.shown = false;
+  this.current_tag = null;
+  this.completion_box.hide();
+}
+
+TagCompletionBox.prototype.click_result = function(event, element)
+{
+  event.stop();
+  if(event.target.hasClassName("remove-recent-tag"))
+  {
+    TagCompletion.remove_recent_tag(element.result_tag);
+    this.update(true);
+    return;
+  }
+  this.set_current_word(element.result_tag);
+}
+
+TagCompletionBox.prototype.get_input_word_offset = function(field)
+{
+  var text = field.value;
+  var start_idx = text.lastIndexOf(" ", field.selectionStart-1);
+  if(start_idx == -1)
+    start_idx = 0;
+  else
+    ++start_idx; // skip the space itself
+
+  var end_idx = text.indexOf(" ", field.selectionStart);
+  if(end_idx == -1)
+    end_idx = text.length;
+
+  return {
+    start: start_idx,
+    end: end_idx
+  };
+}
+
+/* Replace the tag under the cursor. */
+TagCompletionBox.prototype.set_current_word = function(tag)
+{
+  var offset = this.get_input_word_offset(this.input_field);
+  var text = this.input_field.value;
+  var before = text.substr(0, offset.start);
+  var after = text.substr(offset.end);
+  var tag_text = tag;
+
+  /* If there's only whitespace after the tag, remove it.  We'll add a single space
+   * below. */
+  if(after.match(/^ +$/))
+    after = "";
+
+  /* If we're at the end of the string, or if there's only whitespace after the tag,
+   * insert a space after the tag. */
+  if(after == "")
+    tag_text += " ";
+
+  this.input_field.value = before + tag_text + after;
+  
+  /* Position the cursor at the end of the tag we just inserted. */
+  var cursor_position = before.length + tag_text.length;
+  this.input_field.selectionStart = this.input_field.selectionEnd = cursor_position;
+
+  TagCompletion.add_recent_tag(tag);
+
+  this.hide();
+}
+
+TagCompletionBox.prototype.update = function(force)
+{
+  if(this.updates_deferred && !force)
+    return;
+
+  /* If the tag data hasn't been loaded, run the load and rerun the update when it
+   * completes. */
+  if(TagCompletion.tag_data == null)
+  {
+    /* If this returns true, we'll display with the data we have now.  If this happens,
+     * don't update during the callback; it's bad UI to be changing the list out from
+     * under the user at a seemingly random time. */
+    var data_available = TagCompletion.load_data(function() {
+      if(data_available)
+        return;
+
+      /* After the load completes, force an update, even though the tag we're completing
+       * hasn't changed; the tag data may have. */
+      this.current_tag = null;
+      this.update();
+    }.bind(this));
+
+    if(!data_available)
+      return;
+  }
+
+  /* Figure out the tag the cursor is on. */
+  var offset = this.get_input_word_offset(this.input_field);
+  var tag = this.input_field.value.substr(offset.start, offset.end-offset.start);
+
+  if(tag == this.current_tag && !force)
+    return;
+
+  this.hide();
+
+  /* Don't show the autocomplete unless the contents actually change, so we can still
+   * navigate multiline tag input boxes with the arrow keys. */
+  if(this.last_value == this.input_field.value && !force)
+    return;
+  this.last_value = this.input_field.value;
+
+  this.current_tag = tag;
+
+  /* Don't display if the input field itself is hidden. */
+  if(!this.input_field.recursivelyVisible())
+    return;
+
+  var tags_and_recent_count = TagCompletion.complete_tag(tag);
+  var tags = tags_and_recent_count[0];
+  var tag_aliases = tags_and_recent_count[2];
+  var recent_result_count = tags_and_recent_count[1];
+  if(tags.length == 0)
+    return;
+
+  if(tags.length == 1 && tags[0] == tag)
+  {
+    /* There's only one result, and it's the tag already in the field; don't
+     * show the list. */
+    return;
+  }
+
+  this.show();
+
+  /* Clear any old results. */
+  var ul = this.completion_box.down("UL");
+  this.completion_box.hide();
+  while(ul.firstChild)
+    ul.removeChild(ul.firstChild);
+
+  for(var i = 0; i < tags.length; ++i)
+  {
+    var tag = tags[i];
+
+    var li = document.createElement("LI");
+    li.className = "completed-tag";
+    li.setTextContent(tag);
+    ul.appendChild(li);
+
+    /* If we have any aliases, show the first one. */
+    var aliases = tag_aliases[i];
+    if(aliases.length > 0)
+    {
+      var span = document.createElement("span");
+      span.className = "completed-tag-alias";
+      span.setTextContent(aliases[0]);
+      li.appendChild(span);
+    }
+
+    var tag_type = Post.tag_types.get(tag);
+    li.className += " tag-type-" + tag_type;
+    if(i < recent_result_count)
+    {
+      li.className += " recent-tag";
+
+      var h = "<a class='remove-recent-tag' href='#'>X</a>'";
+      li.appendChild(h.createElement());
+    }
+    li.result_tag = tag;
+  }
+
+  this.completion_box.show();
+
+  /* Focus the first item. */
+  this.focus_element(this.completion_box.down(".completed-tag"));
+}
+
+TagCompletionBox.prototype.input_keypress = function(event)
+{
+  this.update.defer();
+}
+
+/* If tag completion isn't supported, disable TagCompletionBox. */
+if(TagCompletion == null || !("addEventListener" in document))
+  TagCompletionBox = function() {};
+
+
+
+/*
+ * This file implements several helpers for fixing up full-page web apps on touchscreen
+ * browsers:
+ *
+ * AndroidDetectWindowSize
+ * EmulateDoubleClick
+ * ResponsiveSingleClick
+ * PreventDragScrolling
+ *
+ * Most of these are annoying hacks to work around the fact that WebKit on browsers was
+ * designed with displaying scrolling webpages in mind, apparently without consideration
+ * for full-screen applications: pages that should fill the screen at all times.  Most
+ * of the browser mobile hacks no longer make sense: separate display viewports, touch
+ * dragging, double-click zooming and their associated side-effects.
+ */
+
+
+/*
+ * AndroidDetectWindowSize
+ *
+ * Implementing a full-page web app for Android is hard, because if you set the page to
+ * "width: 100%; height: 100%;" it'll eat a big chunk of the screen with the address bar
+ * which can't be scrolled off in that configuration.  We have to play games to figure out
+ * the real size of the window, and set the body size to it explicitly.  This handler does
+ * the following:
+ *
+ * - capture resize events
+ * - cancel the resize event; we'll fire it again when we're done
+ * - enable a large padding div, to ensure that we can scroll the window downward
+ * - window.scrollTo(0, 99999999) to scroll the address bar off screen, which increases the window
+ *   size to the maximum.  We use a big value here, because Android has a broken scrollTo, which
+ *   animates to the specified position.  If we say (0, 1), then it'll take a while to scroll
+ *   there; by giving it a huge value, it'll scroll past the scrollbar in one frame.
+ * - wait a little while.  We need to wait for one frame of scrollTo's animation, but we don't
+ *   know how long that'll be, so we need to poll with a timer periodically, checking
+ *   document.body.scrollTop.
+ * - set the body to the size of the window
+ * - hide the padding div
+ * - synthesize a new resize event to continue other event handlers that we originally cancelled
+ *
+ * resize will always be fired at least once as a result of constructing this class.
+ *
+ * This is only used on Android.
+ */
+
+function AndroidDetectWindowSize()
+{
+  $("sizing-body").setStyle({overflow: "hidden"});
+
+  /* This is shown to make sure we can scroll the address bar off.  It goes outside
+   * of #sizing-body, so it's not clipped.  By not changing #sizing-body itself, we
+   * avoid reflowing the entire document more than once, when we finish. */
+  this.padding = document.createElement("DIV");
+  this.padding.setStyle({width: "1px", height: "5000px"});
+  this.padding.style.visibility = "hidden";
+  this.padding.hide();
+  document.documentElement.appendChild(this.padding);
+
+  this.window_size = [0, 0];
+  this.finish = this.finish.bind(this);
+  this.event_onresize = this.event_onresize.bindAsEventListener(this);
+
+  this.finish_timer = null;
+  this.last_window_orientation = window.orientation;
+
+  window.addEventListener("resize", this.event_onresize, true);
+
+  this.active = false;
+
+  /* Kick off a detection cycle.  On Android 2.1, we can't do this immediately after onload; for
+   * some reason this triggers some very strange browser bug where the screen will jitter up and
+   * down, as if our scrollTo is competing against the browser trying to scroll somewhere.  For
+   * older browsers, delay before starting.  This is no longer needed on Android 2.2. */
+  var delay_seconds = 0;
+  var m = navigator.userAgent.match(/Android (\d+\.\d+)/);
+  if(m && parseFloat(m[1]) < 2.2)
+  {
+    debug("Delaying bootstrapping due to Android version " + m[1]);
+    delay_seconds = 1;
+  }
+
+  /* When this detection cycle completes, a resize event will be fired so listeners can
+   * act on the detected window size. */
+  this.begin.bind(this).delay(delay_seconds);
+}
+
+/* Return true if Android resize handling is needed. */
+AndroidDetectWindowSize.required = function()
+{
+  // XXX: be more specific
+  return navigator.userAgent.indexOf("Android") != -1;
+}
+
+/* After we set the window size, dispatch a resize event so other listeners will notice
+ * it. */
+AndroidDetectWindowSize.prototype.dispatch_resize_event = function()
+{
+  debug("dispatch final resize event");
+  var e = document.createEvent("Event");
+  e.initEvent("resize", true, true);
+  document.documentElement.dispatchEvent(e);
+}
+
+AndroidDetectWindowSize.prototype.begin = function()
+{
+  if(this.active)
+    return;
+
+  var initial_window_size = this.current_window_size();
+  if(this.window_size && initial_window_size[0] == this.window_size[0] && initial_window_size[1] == this.window_size[1])
+  {
+    debug("skipped window size detection");
+    return;
+  }
+
+  debug("begin window size detection, " + initial_window_size[0] + "x" + initial_window_size[1] + " at start (scroll pos " + document.documentElement.scrollHeight + ")");
+  this.active = true;
+  this.padding.show();
+
+  /* If we set a sizing-body the last time, remove it before running again. */
+  $("sizing-body").setStyle({width: "0px", height: "0px"});
+
+  window.scrollTo(0, 99999999);
+  this.finish_timer = window.setTimeout(this.finish, 0);
+}
+
+AndroidDetectWindowSize.prototype.end = function()
+{
+  if(!this.active)
+    return;
+  this.active = false;
+
+  if(this.begin_timer != null)
+    window.clearTimeout(this.begin_timer);
+  this.begin_timer = null;
+
+  if(this.finish_timer != null)
+    window.clearTimeout(this.finish_timer);
+  this.finish_timer = null;
+
+  this.padding.hide();
+}
+
+AndroidDetectWindowSize.prototype.current_window_size = function()
+{
+  var size = [window.innerWidth, window.innerHeight];
+
+  // We need to fudge the height up a pixel, or in many cases we'll end up with a white line
+  // at the bottom of the screen (or the top in 2.3).  This seems to be sub-pixel rounding
+  // error.
+  ++size[1];
+
+  return size;
+}
+
+AndroidDetectWindowSize.prototype.finish = function()
+{
+  if(!this.active)
+    return;
+  debug("window size detection: finish(), at " + document.body.scrollTop);
+
+  /* scrollTo is supposed to be synchronous.  Android's animates.  Worse, the time it'll
+   * update the animation is nondeterministic; it might happen as soon as we return from
+   * calling scrollTo, or it might take a while.  Check whether we've scrolled down; if
+   * we're still at the top, keep waiting. */
+  if(document.body.scrollTop == 0)
+  {
+    console.log("Waiting for scroll...");
+    this.finish_timer = window.setTimeout(this.finish, 10);
+    return;
+  }
+
+  /* The scroll may still be trying to run. */
+  window.scrollTo(document.body.scrollLeft, document.body.scrollTop);
+  this.end();
+
+  this.window_size = this.current_window_size();
+
+  debug("new window size: " + this.window_size[0] + "x" + this.window_size[1]);
+  $("sizing-body").setStyle({width: this.window_size[0] + "px", height: (this.window_size[1]) + "px"});
+
+  this.dispatch_resize_event();
+}
+
+AndroidDetectWindowSize.prototype.event_onresize = function(e)
+{
+  if(this.last_window_orientation != window.orientation)
+  {
+    e.stop();
+
+    this.last_window_orientation = window.orientation;
+    if(this.active)
+    {
+      /* The orientation changed while we were in the middle of detecting the resolution.
+       * Start over. */
+      debug("Orientation changed while already detecting window size; restarting");
+      this.end();
+    }
+    else
+    {
+      debug("Resize received with an orientation change; beginning");
+    }
+
+    this.begin();
+    return;
+  }
+
+  if(this.active)
+  {
+    /* Suppress resize events while we're active, since many of them will fire.
+     * Once we finish, we'll fire a single one. */
+    debug("stopping resize event while we're active");
+    e.stop();
+    return;
+  }
+}
+
+
+/*
+ * Work around a bug on many touchscreen browsers: even when the page isn't
+ * zoomable, dblclick is never fired.  We have to emulate it.
+ *
+ * This isn't an exact emulation of the event behavior:
+ *
+ * - It triggers from touchstart rather than mousedown.  The second mousedown
+ *   of a double click isn't being fired reliably in Android's WebKit.
+ *
+ * - preventDefault on the triggering event should prevent a dblclick, but
+ *   we can't find out if it's been called; there's nothing like Firefox's
+ *   getPreventDefault.  We could mostly emulate this by overriding
+ *   Event.preventDefault to set a flag that we can read.
+ *
+ * - The conditions for a double click won't match the ones of the platform.
+ *
+ * This is needed on Android and iPhone's WebKit.
+ *
+ * Note that this triggers a minor bug on Android: after firing a dblclick event,
+ * we no longer receive mousemove events until the touch is released, which means
+ * PreventDragScrolling can't cancel dragging.
+ */
+
+function EmulateDoubleClick()
+{
+  this.touchstart_event = this.touchstart_event.bindAsEventListener(this);
+  this.touchend_event = this.touchend_event.bindAsEventListener(this);
+  this.last_click = null;
+
+  window.addEventListener("touchstart", this.touchstart_event, false);
+  window.addEventListener("touchend", this.touchend_event, false);
+}
+
+EmulateDoubleClick.prototype.touchstart_event = function(event)
+{
+  var this_touch = event.changedTouches[0];
+  var last_click = this.last_click;
+
+  /* Don't store event.changedTouches or any of its contents.  Some browsers modify these
+   * objects in-place between events instead of properly returning unique events. */
+  var this_click = {
+    timeStamp: event.timeStamp,
+    target: event.target,
+    identifier: this_touch.identifier,
+    position: [this_touch.screenX, this_touch.screenY],
+    clientPosition: [this_touch.clientX, this_touch.clientY]
+  }
+  this.last_click = this_click;
+
+  if(last_click == null)
+      return;
+
+  /* If the first tap was never released then this is a multitouch double-tap.
+   * Clear the original tap and don't fire anything. */
+  if(event.touches.length > 1)
+    return;
+
+  /* Check that not too much time has passed. */
+  var time_since_previous = event.timeStamp - last_click.timeStamp;
+  if(time_since_previous > 500)
+    return;
+
+  /* Check that the clicks aren't too far apart. */
+  var distance = Math.pow(this_touch.screenX - last_click.position[0], 2) + Math.pow(this_touch.screenY - last_click.position[1], 2);
+  if(distance > 500)
+    return;
+
+  if(event.target != last_click.target)
+    return;
+
+  /* Synthesize a dblclick event.  Use the coordinates of the first click as the location
+   * and not the second click, since if the position matters the user's first click of
+   * a double-click is probably more precise than the second. */
+  var e = document.createEvent("MouseEvent");
+  e.initMouseEvent("dblclick", true, true, window, 
+                     2,
+                     last_click.position[0], last_click.position[1],
+                     last_click.clientPosition[0], last_click.clientPosition[1],
+                     false, false,
+                     false, false,
+                     0, null);
+
+  this.last_click = null;
+  event.target.dispatchEvent(e);
+}
+
+EmulateDoubleClick.prototype.touchend_event = function(event)
+{
+  if(this.last_click == null)
+    return;
+
+  var last_click_identifier = this.last_click.identifier;
+  if(last_click_identifier == null)
+    return;
+
+  var last_click_position = this.last_click.position;
+  var this_click = event.changedTouches[0];
+  if(this_click.identifier == last_click_identifier)
+  {
+    /* If the touch moved too far when it was removed, don't fire a doubleclick; for
+     * example, two quick swipe gestures aren't a double-click. */
+    var distance = Math.pow(this_click.screenX - last_click_position[0], 2) + Math.pow(this_click.screenY - last_click_position[1], 2);
+    if(distance > 500)
+    {
+      this.last_click = null;
+      return;
+    }
+  }
+}
+
+/* 
+ * Mobile WebKit has serious problems with the click event: it delays them for the
+ * entire double-click timeout, and if a double-click happens it doesn't deliver the
+ * click at all.  This makes clicks unresponsive, and it has this behavior even
+ * when the page can't be zoomed, which means nothing happens at all.
+ *
+ * Generate click events from touchend events to bypass this mess.
+ */
+ResponsiveSingleClick = function()
+{
+  this.click_event = this.click_event.bindAsEventListener(this);
+  this.touchstart_event = this.touchstart_event.bindAsEventListener(this);
+  this.touchend_event = this.touchend_event.bindAsEventListener(this);
+
+  this.last_touch = null;
+
+  window.addEventListener("touchstart", this.touchstart_event, false);
+  window.addEventListener("touchend", this.touchend_event, false);
+
+  /* This is a capturing listener, so we can intercept clicks before they're
+   * delivered to anyone. */
+  window.addEventListener("click", this.click_event, true);
+}
+
+ResponsiveSingleClick.prototype.touchstart_event = function(event)
+{
+  /* If we get a touch while we already have a touch, it's multitouch, which is never
+   * a click, so cancel the click. */
+  if(this.last_touch != null)
+  {
+    debug("Cancelling click (multitouch)");
+    this.last_touch = null;
+    return;
+  }
+
+  /* Watch out: in older versions of WebKit, the event.touches array and the items inside
+   * it are actually modified in-place when the user drags.  That means that we can't just
+   * save the entire array for comparing in touchend. */
+  var touch = event.changedTouches[0];
+  this.last_touch = [touch.screenX, touch.screenY];
+}
+
+ResponsiveSingleClick.prototype.touchend_event = function(event)
+{
+  var last_touch = this.last_touch;
+  if(last_touch == null)
+    return;
+  this.last_touch = null;
+
+  var touch = event.changedTouches[0];
+  var this_touch = [touch.screenX, touch.screenY];
+
+  /* Don't trigger a click if the point has moved too far. */
+  var distance = distance_squared(this_touch[0], this_touch[1], last_touch[0], last_touch[1]);
+  if(distance > 50)
+    return;
+
+  var e = document.createEvent("MouseEvent");
+  e.initMouseEvent("click", true, true, window, 
+                     1,
+                     touch.screenX, touch.screenY,
+                     touch.clientX, touch.clientY, 
+                     false, false,
+                     false, false,
+                     0, /* touch clicks are always button 0 - maybe not for multitouch */
+                     null);
+  e.synthesized_click = true;
+
+  /* If we dispatch the click immediately, EmulateDoubleClick won't receive a
+   * touchstart for the next click.  Defer dispatching it until we return. */
+  (function() { event.target.dispatchEvent(e); }).defer();
+}
+
+/* Capture and cancel all clicks except the ones we generate. */
+ResponsiveSingleClick.prototype.click_event = function(event)
+{
+  if(!event.synthesized_click)
+    event.stop();
+}
+
+/* Stop all touchmove events on the document, to prevent dragging the window around. */
+PreventDragScrolling = function()
+{
+  Element.observe(document, "touchmove", function(event) {
+    event.preventDefault();
+  });
+}
+
+
+/*
+ * Save the URL hash to local DOM storage when it changes.  When called, restores the
+ * previously saved hash.
+ *
+ * This is used on the iPhone only, and only when operating in web app mode (window.standalone).
+ * The iPhone doesn't update the URL hash saved in the web app shortcut, nor does it
+ * remember the current URL when using make-believe multitasking, which means every time
+ * you switch out and back in you end up back to wherever you were when you first created
+ * the web app shortcut.  Saving the URL hash allows switching out and back in without losing
+ * your place.
+ *
+ * This should only be used in environments where it's been tested and makes sense.  If used
+ * in a browser, or in a web app environment that properly tracks the URL hash, this will
+ * just interfere with normal operation.
+ */
+var MaintainUrlHash = function()
+{
+  /* This requires DOM storage. */
+  if(LocalStorageDisabled())
+    return;
+
+  /* When any part of the URL hash changes, save it. */
+  var update_stored_hash = function(changed_hash_keys, old_hash, new_hash)
+  {
+    var hash = localStorage.current_hash = UrlHash.get_raw_hash();
+  }
+  UrlHash.observe(null, update_stored_hash);
+
+  /* Restore the previous hash, if any. */
+  var hash = localStorage.getItem("current_hash");
+  if(hash)
+    UrlHash.set_raw_hash(hash);
+}
+
+/*
+ * In some versions of the browser, iPhones don't send resize events after an
+ * orientation change, so we need to fire it ourself.  Try not to do this if not
+ * needed, so we don't fire spurious events.
+ *
+ * This is never needed in web app mode.
+ *
+ * Needed on user-agents:
+ * iPhone OS 4_0_2 ... AppleWebKit/532.9 ... Version/4.0.5
+ * iPhone OS 4_1 ... AppleWebKit/532.9 ... Version/4.0.5
+ *
+ * Not needed on:
+ * (iPad, OS 3.2)
+ * CPU OS 3_2 ... AppleWebKit/531.1.10 ... Version/4.0.4 
+ * iPhone OS 4_2 ... AppleWebKit/533.17.9 ... Version/5.0.2
+ *
+ * This seems to be specific to Version/4.0.5.
+ */
+var SendMissingResizeEvents = function()
+{
+  if(window.navigator.standalone)
+    return;
+  if(navigator.userAgent.indexOf("Version/4.0.5") == -1)
+    return;
+
+  var last_seen_orientation = window.orientation;
+  window.addEventListener("orientationchange", function(e) {
+    if(last_seen_orientation == window.orientation)
+      return;
+    last_seen_orientation = window.orientation;
+
+    debug("dispatch fake resize event");
+    var e = document.createEvent("Event");
+    e.initEvent("resize", true, true);
+    document.documentElement.dispatchEvent(e);
+  }, true);
+}
+
+var InitializeFullScreenBrowserHandlers = function()
+{
+  /* These handlers deal with heavily browser-specific issues.  Only install them
+   * on browsers that have been tested to need them. */
+  if(navigator.userAgent.indexOf("Android") != -1 && navigator.userAgent.indexOf("WebKit") != -1)
+  {
+    new ResponsiveSingleClick();
+    new EmulateDoubleClick();
+  }
+  else if((navigator.userAgent.indexOf("iPhone") != -1 || navigator.userAgent.indexOf("iPad") != -1 || navigator.userAgent.indexOf("iPod") != -1)
+      && navigator.userAgent.indexOf("WebKit") != -1)
+  {
+    new ResponsiveSingleClick();
+    new EmulateDoubleClick();
+
+    /* In web app mode only: */
+    if(window.navigator.standalone)
+      MaintainUrlHash();
+
+    SendMissingResizeEvents();
+  }
+
+  PreventDragScrolling();
+}
+
+SwipeHandler = function(element)
+{
+  this.element = element;
+  this.dragger = new DragElement(element, { ondrag: this.ondrag.bind(this), onstartdrag: this.startdrag.bind(this) });
+}
+
+SwipeHandler.prototype.startdrag = function()
+{
+  this.swiped_horizontal = false;
+  this.swiped_vertical = false;
+}
+
+SwipeHandler.prototype.ondrag = function(e)
+{
+  if(!this.swiped_horizontal)
+  {
+    // XXX: need a guessed DPI
+    if(Math.abs(e.aX) > 100)
+    {
+      this.element.fire("swipe:horizontal", {right: e.aX > 0});
+      this.swiped_horizontal = true;
+    }
+  }
+
+  if(!this.swiped_vertical)
+  {
+    if(Math.abs(e.aY) > 100)
+    {
+      this.element.fire("swipe:vertical", {down: e.aY > 0});
+      this.swiped_vertical = true;
+    }
+  }
+}
+
+SwipeHandler.prototype.destroy = function()
+{
+  this.dragger.destroy();
+}
+
 
 
 // script.aculo.us unittest.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
@@ -13270,23 +23811,334 @@ Test.context = function(name, spec, log){
 };
 
 
+UrlHashHandler = function()
+{
+  this.observers = new Hash();
+  this.normalize = function(h) { }
+  this.denormalize = function(h) { }
+  this.deferred_sets = [];
+  this.deferred_replace = false;
+
+  this.current_hash = this.parse(this.get_raw_hash());
+  this.normalize(this.current_hash);
+
+  /* The last value received by the hashchange event: */
+  this.last_hashchange = this.current_hash.clone();
+
+  this.hashchange_event = this.hashchange_event.bindAsEventListener(this);
+
+  Element.observe(window, "hashchange", this.hashchange_event);
+}
+
+UrlHashHandler.prototype.fire_observers = function(old_hash, new_hash)
+{
+  var all_keys = old_hash.keys();
+  all_keys = all_keys.concat(new_hash.keys());
+  all_keys = all_keys.uniq();
+
+  var changed_hash_keys = [];
+  all_keys.each(function(key) {
+      var old_value = old_hash.get(key);
+      var new_value = new_hash.get(key);
+      if(old_value != new_value)
+        changed_hash_keys.push(key);
+  }.bind(this));
+
+  var observers_to_call = [];
+  changed_hash_keys.each(function(key) {
+    var observers = this.observers.get(key);
+    if(observers == null)
+      return;
+    observers_to_call = observers_to_call.concat(observers);
+  }.bind(this));
+
+  var universal_observers = this.observers.get(null);
+  if(universal_observers != null)
+    observers_to_call = observers_to_call.concat(universal_observers);
+
+  observers_to_call.each(function(observer) {
+    observer(changed_hash_keys, old_hash, new_hash);
+  });
+}
+
+/*
+ * Set handlers to normalize and denormalize the URL hash.
+ *
+ * Denormalizing a URL hash can convert the URL hash to something clearer for URLs.  Normalizing
+ * it reverses any denormalization, giving names to parameters.
+ *
+ * For example, if a normalized URL is
+ *
+ * http://www.example.com/app#show?id=1
+ *
+ * where the hash is {"": "show", id: "1"}, a denormalized URL may be
+ *
+ * http://www.example.com/app#show/1
+ *
+ * The denormalize callback will only be called with normalized input.  The normalize callback
+ * may receive any combination of normalized or denormalized input.
+ */
+UrlHashHandler.prototype.set_normalize = function(norm, denorm)
+{
+  this.normalize = norm;
+  this.denormalize = denorm;
+  
+  this.normalize(this.current_hash);
+  this.set_all(this.current_hash.clone());
+}
+
+UrlHashHandler.prototype.hashchange_event = function(event)
+{
+  var old_hash = this.last_hashchange.clone();
+  this.normalize(old_hash);
+
+  var raw = this.get_raw_hash();
+  var new_hash = this.parse(raw);
+  this.normalize(new_hash);
+
+  this.current_hash = new_hash.clone();
+  this.last_hashchange = new_hash.clone();
+
+  this.fire_observers(old_hash, new_hash);
+}
+
+/*
+ * Parse a hash, returning a Hash.
+ *
+ * #a/b?c=d&e=f -> {"": 'a/b', c: 'd', e: 'f'}
+ */
+UrlHashHandler.prototype.parse = function(hash)
+{
+  if(hash == null)
+    hash = "";
+  if(hash.substr(0, 1) == "#")
+    hash = hash.substr(1);
+
+  var hash_path = hash.split("?", 1)[0];
+  var hash_query = hash.substr(hash_path.length+1);
+
+  hash_path = window.decodeURIComponent(hash_path);
+
+  var query_params = new Hash();
+  query_params.set("", hash_path);
+
+  if(hash_query != "")
+  {
+    var hash_query_values = hash_query.split("&");
+    for(var i = 0; i < hash_query_values.length; ++i)
+    {
+      var keyval = hash_query_values[i]; /* a=b */
+      var key = keyval.split("=", 1)[0];
+
+      /* If the key is blank, eg. "#path?a=b&=d", then ignore the value.  It'll overwrite
+       * the path, which is confusing and never what's wanted. */
+      if(key == "")
+        continue;
+
+      var value = keyval.substr(key.length+1);
+      key = window.decodeURIComponent(key);
+      value = window.decodeURIComponent(value);
+      query_params.set(key, value);
+    }
+  }
+  return query_params;
+}
+
+UrlHashHandler.prototype.construct = function(hash)
+{
+  var s = "#";
+  var path = hash.get("");
+  if(path != null)
+  {
+    /* For the path portion, we only need to escape the params separator ? and the escape
+     * character % itself.  Don't use encodeURIComponent; it'll encode far more than necessary. */
+    path = path.replace(/%/g, "%25").replace(/\?/g, "%3f");
+    s += path;
+  }
+
+  var params = [];
+  hash.each(function(k) {
+    var key = k[0], value = k[1];
+    if(key == "")
+      return;
+    if(value == null)
+      return;
+
+    key = window.encodeURIComponent(key);
+    value = window.encodeURIComponent(value);
+    params.push(key + "=" + value);
+  });
+  if(params.length != 0)
+    s += "?" + params.join("&");
+
+  return s;
+}
+
+UrlHashHandler.prototype.get_raw_hash = function()
+{
+  /*
+   * Firefox doesn't handle window.location.hash correctly; it decodes the contents,
+   * where all other browsers give us the correct data.  http://stackoverflow.com/questions/1703552
+   */
+  var pre_hash_part = window.location.href.split("#", 1)[0];
+  return window.location.href.substr(pre_hash_part.length);
+}
+
+UrlHashHandler.prototype.set_raw_hash = function(hash)
+{
+  var query_params = this.parse(hash);
+  this.set_all(query_params);
+}
+
+UrlHashHandler.prototype.get = function(key)
+{
+  return this.current_hash.get(key);
+}
+
+/*
+ * Set keys in the URL hash.
+ *
+ * UrlHash.set({id: 50});
+ *
+ * If replace is true and the History API is available, replace the state instead
+ * of pushing it.
+ */
+UrlHashHandler.prototype.set = function(hash, replace)
+{
+  var new_hash = this.current_hash.merge(hash);
+  this.normalize(new_hash);
+  this.set_all(new_hash, replace);
+}
+
+/*
+ * Each call to UrlHash.set() will immediately set the new hash, which will create a new
+ * browser history slot.  This isn't always wanted.  When several changes are being made
+ * in response to a single action, all changes should be made simultaeously, so only a
+ * single history slot is created.  Making only a single call to set() is difficult when
+ * these changes are made by unrelated parts of code.
+ *
+ * Defer changes to the URL hash.  If several calls are made in quick succession, buffer
+ * the changes.  When a short timer expires, make all changes at once.  This will never
+ * happen before the current Javascript call completes, because timers will never interrupt
+ * running code.
+ *
+ * UrlHash.set() doesn't do this, because set() guarantees that the hashchange event will
+ * be fired and complete before the function returns.
+ *
+ * If replace is true and the History API is available, replace the state instead of pushing
+ * it.  If any set_deferred call consolidated into a single update has replace = false, the
+ * new state will be pushed.
+ */
+UrlHashHandler.prototype.set_deferred = function(hash, replace)
+{
+  this.deferred_sets.push(hash);
+  if(replace)
+    this.deferred_replace = true;
+
+  var set = function()
+  {
+    this.deferred_set_timer = null;
+
+    var new_hash = this.current_hash;
+    this.deferred_sets.each(function(m) {
+      new_hash = new_hash.merge(m);
+    });
+    this.normalize(new_hash);
+    this.set_all(new_hash, this.deferred_replace);
+    this.deferred_sets = [];
+
+    this.hashchange_event(null);
+    this.deferred_replace = false;
+  }.bind(this);
+
+  if(this.deferred_set_timer == null)
+    this.deferred_set_timer = set.defer();
+}
+
+
+UrlHashHandler.prototype.set_all = function(query_params, replace)
+{
+  query_params = query_params.clone();
+
+  this.normalize(query_params);
+  this.current_hash = query_params.clone();
+
+  this.denormalize(query_params);
+
+  var new_hash = this.construct(query_params);
+  if(window.location.hash != new_hash)
+  {
+    /* If the History API is available, use it to support URL replacement.  FF4.0's pushState
+     * is broken; don't use it. */
+    if(window.history && window.history.replaceState && window.history.pushState &&
+        !navigator.userAgent.match("Firefox/[45]\."))
+    {
+      var url = window.location.protocol + "//" + window.location.host + window.location.pathname + new_hash;
+      if(replace)
+        window.history.replaceState({}, window.title, url);
+      else
+        window.history.pushState({}, window.title, url);
+    }
+    else
+    {
+      window.location.hash = new_hash;
+    }
+  }
+
+  /* Explicitly fire the hashchange event, so it's handled quickly even if the browser
+   * doesn't support the event.  It's harmless if we get this event multiple times due
+   * to the browser delivering it normally due to our change. */
+  this.hashchange_event(null);
+}
+
+
+/* Observe changes to the specified key.  If key is null, watch for all changes. */
+UrlHashHandler.prototype.observe = function(key, func)
+{
+  var observers = this.observers.get(key);
+  if(observers == null)
+  {
+    observers = [];
+    this.observers.set(key, observers);
+  }
+
+  if(observers.indexOf(func) != -1)
+    return;
+
+  observers.push(func);
+}
+
+UrlHashHandler.prototype.stopObserving = function(key, func)
+{
+  var observers = this.observers.get(key);
+  if(observers == null)
+    return;
+
+  observers = observers.without(func);
+  this.observers.set(key, observers);
+}
+
+UrlHash = new UrlHashHandler();
+
+
+
 User = {
   disable_samples: function() {
     new Ajax.Request("/user/update.json", {
       parameters: {
-  "user[show_samples]": false
+        "user[show_samples]": false
       },
 
       onComplete: function(resp) {
-  var resp = resp.responseJSON
+        var resp = resp.responseJSON
 
-  if (resp.success) {
-    $("resized_notice").hide();
-    $("samples_disabled").show();
-    Post.highres();
-  } else {
-    notice("Error: " + resp.reason)
-  }
+        if (resp.success) {
+          $("resized_notice").hide();
+          $("samples_disabled").show();
+          Post.highres();
+        } else {
+          notice("Error: " + resp.reason)
+        }
       }
     })
   },
@@ -13374,10 +24226,11 @@ User = {
     });
   },
 
-  set_login: function(username, pass_hash)
+  set_login: function(username, pass_hash, user_info)
   {
     Cookie.put("login", username)
     Cookie.put("pass_hash", pass_hash)
+    Cookie.put("user_info", user_info)
   },
 
   check_name_timer: null,
@@ -13493,7 +24346,25 @@ User = {
     /* event is not available when we get to the callback in IE7. */
     var e = clone_event(event);
 
-    return User.run_login(true, function() { target.simulate_anchor_click(e); });
+    if(User.run_login(true, function() {
+        if(target.hasClassName("login-button"))
+        {
+          /* This is a login button, and not an action that happened to need login.  After
+           * a successful login, don't click the button; that'll just go to the login page.
+           * Instead, just reload the current page. */
+          Cookie.put("notice", "You have been logged in.");
+          document.location.reload();
+          return;
+        }
+        target.simulate_anchor_click(e);
+      }))
+      return true;
+
+    /* Login is running, so stop the event.  Don't just return false; call stop(), so
+     * event.stopped is available to the caller if we've been sent this message via
+     * Element.dispatchEvent. */
+    event.stop();
+    return false;
   },
 
   /* Handle login from an onsubmit.  If login is needed, stop the event and resubmit
@@ -13748,7 +24619,7 @@ User = {
           User.create(username, password, null, function(resp) {
             if(resp.response == "success")
             {
-              User.set_login(resp.name, resp.pass_hash);
+              User.set_login(resp.name, resp.pass_hash, resp.user_info);
               User.close(true);
             }
             else if(resp.response == "error")
@@ -13775,7 +24646,7 @@ User = {
           notice("Incorrect password");
           return;
         }
-        User.set_login(resp.name, resp.pass_hash);
+        User.set_login(resp.name, resp.pass_hash, resp.user_info);
         User.close(true);
       });
     }
@@ -13818,22 +24689,68 @@ User = {
         }
       }
     });
+  },
+
+  set_pool_browse_mode: function(browse_mode) {
+    new Ajax.Request("/user/update.json", {
+      parameters: {
+        "user[pool_browse_mode]": browse_mode
+      },
+
+      onComplete: function(resp) {
+        var resp = resp.responseJSON;
+
+        if (resp.success) {
+          window.location.reload();
+        } else {
+          notice("Error: " + resp.reason);
+        }
+      }
+    });
+  },
+
+  get_current_user_info: function()
+  {
+    var user_info = Cookie.get("user_info");
+    if(!user_info)
+      return null;
+    return user_info.split(";");
+  },
+  get_current_user_info_field: function(idx, def)
+  {
+    var user_info = User.get_current_user_info();
+    if(!user_info)
+      return def;
+    if(idx >= user_info.length)
+      return def;
+    return user_info[idx];
+  },
+  get_current_user_id: function()
+  {
+    return parseInt(User.get_current_user_info_field(0, 0));
+  },
+
+  get_current_user_level: function()
+  {
+    return parseInt(User.get_current_user_info_field(1, 0));
+  },
+
+  get_use_browser: function()
+  {
+    var setting = User.get_current_user_info_field(2, "0");
+    return setting == "1";
+  },
+
+  is_member_or_higher: function()
+  {
+    return User.get_current_user_level() >= 20;
+  },
+
+  is_mod_or_higher: function()
+  {
+    return User.get_current_user_level() >= 40;
   }
 }
-
-/* This should be done in User.init(), but that doesn't work in IE (for some reason). */
-Element.addMethods("FORM", {
-  submitWithLogin: function(form)
-  {
-    if(!form.hasClassName("need-signup"))
-    {
-      form.submit();
-      return;
-    }
-
-    User.run_login(false, function() { form.submit() });
-  }
-});
 
 
 
@@ -13855,3 +24772,168 @@ UserRecord = {
     })
   }
 }
+
+
+VoteWidget = function(container)
+{
+  this.container = container;
+  this.post_id = null;
+  this.displayed_hover = -1;
+  this.displayed_set = -1;
+
+  if(container.down(".vote-up"))
+    container.down(".vote-up").on("click", function(e) { e.stop(); this.vote_up(); }.bindAsEventListener(this));
+
+  var vote_descs =
+  {
+    "0": "Remove vote",
+    "1": "Good",
+    "2": "Great",
+    "3": "Favorite"
+  };
+
+  for(var stars = 0; stars <= 3; ++stars)
+  {
+    var s = this.container.down(".star-" + stars);
+    if(!s)
+      continue;
+    s.star = stars;
+    s.desc = vote_descs[stars];
+  }
+
+  this.container.on("click", ".star", function(e) { e.stop(); this.activate_item(e.target); }.bindAsEventListener(this));
+  this.container.on("mouseover", ".star", function(e) { this.set_mouseover(e.target); }.bindAsEventListener(this));
+  this.container.on("mouseout", ".star", function(e) { this.set_mouseover(e.relatedTarget); }.bindAsEventListener(this));
+
+  document.on("posts:update", this.post_update_event.bindAsEventListener(this));
+}
+
+VoteWidget.prototype.get_star_element = function(element)
+{
+  if(!element)
+    return null;
+  if(element.hasClassName("star"))
+    return element;
+  else
+    return element.up(".star");
+}
+
+VoteWidget.prototype.set_mouseover = function(element)
+{
+  if(element)
+    element = this.get_star_element(element);
+  if(!element)
+  {
+    this.set_stars(null);
+    var text = this.container.down(".vote-desc");
+    if(text)
+      text.update();
+    return false;
+  }
+  else
+  {
+    this.set_stars(element.star);
+    var text = this.container.down(".vote-desc");
+    if(text)
+      text.update(element.desc);
+    return true;
+  }
+}
+
+VoteWidget.prototype.activate_item = function(element)
+{
+  element = this.get_star_element(element);
+  if(!element)
+    return null;
+  this.vote(element.star);
+  return element.star;
+}
+
+
+/* One or more posts have been updated; see if the vote we should be displaying
+ * has changed. */
+VoteWidget.prototype.post_update_event = function(e)
+{
+  var post_id = this.post_id;
+  if(e.memo.post_ids.get(post_id) == null)
+    return;
+
+  this.set_stars(this.displayed_hover);
+
+  if(this.container.down("#post-score-" + post_id))
+  {
+    var post = Post.posts.get(post_id);
+    if(post)
+      this.container.down("#post-score-" + post_id).update(post.score)
+  }
+
+  if(e.memo.resp.voted_by && this.container.down("#favorited-by")) {
+    this.container.down("#favorited-by").update(Favorite.link_to_users(e.memo.resp.voted_by["3"]))
+  }
+}
+
+VoteWidget.prototype.set_post_id = function(post_id)
+{
+  var vote = Post.votes.get(post_id) || 0;
+  this.post_id = post_id;
+  this.set_stars(null);
+}
+
+VoteWidget.prototype.init_hotkeys = function()
+{
+  OnKey(192, null, function(e) { this.vote(+0); return true; }.bindAsEventListener(this)); // `
+  OnKey(49, null, function(e) { this.vote(+1); return true; }.bindAsEventListener(this));
+  OnKey(50, null, function(e) { this.vote(+2); return true; }.bindAsEventListener(this));
+  OnKey(51, null, function(e) { this.vote(+3); return true; }.bindAsEventListener(this));
+}
+
+VoteWidget.prototype.vote_up = function()
+{
+  var current_vote = Post.votes.get(this.post_id);
+  return this.vote(current_vote + 1);
+}
+
+VoteWidget.prototype.vote = function(score)
+{
+  return Post.vote(this.post_id, score);
+}
+
+var array_select = function(list, y, n, val)
+{
+  if(val)
+    list.push(y);
+  else
+    list.push(n);
+}
+
+VoteWidget.prototype.set_stars = function(hovered_vote)
+{
+  var set_vote = Post.votes.get(this.post_id);
+
+  if(this.displayed_hover == hovered_vote && this.displayed_set == set_vote)
+    return;
+  this.displayed_hover = hovered_vote;
+  this.displayed_set = set_vote;
+
+  for(var star_vote = 0; star_vote <= 3; ++star_vote)
+  {
+    var star = this.container.down(".star-" + star_vote);
+    if(!star)
+      continue;
+    var className = star.className;
+    className = className.replace(/(star-hovered|star-unhovered|star-hovered-upto|star-hovered-after|star-set|star-unset|star-set-upto|star-set-after)(\s+|$)/g, " ");
+    className = className.strip();
+    var classes = className.split(" ");
+
+    if(hovered_vote != null)
+    {
+      array_select(classes, "star-hovered", "star-unhovered", hovered_vote == star_vote);
+      array_select(classes, "star-hovered-upto", "star-hovered-after", hovered_vote >= star_vote);
+    }
+    array_select(classes, "star-set", "star-unset", set_vote != null && set_vote == star_vote);
+    array_select(classes, "star-set-upto", "star-set-after", set_vote != null && set_vote >= star_vote);
+
+    star.className = classes.join(" ");
+  }
+}
+

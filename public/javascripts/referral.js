@@ -44,7 +44,7 @@ ReferralBanner.prototype.increment_view_count = function()
 ReferralBanner.prototype.increment_views_and_check_referral = function()
 {
   var delay_between_referral_reset = 60*60*24;
-  var view_count_before_referral = 15;
+  var view_count_before_referral = 9999;
 
   var view_count = this.increment_view_count();
 

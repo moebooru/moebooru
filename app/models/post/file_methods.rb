@@ -20,7 +20,7 @@ module PostFileMethods
     m.before_validation_on_create :generate_preview
     m.before_validation_on_create :move_file
   end
-  
+
   def strip_exif
 	  if file_ext.downcase == "jpg" then
 		  system ("/usr/bin/jhead -purejpg #{tempfile_path}")

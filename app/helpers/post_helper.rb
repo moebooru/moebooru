@@ -75,13 +75,25 @@ module PostHelper
     div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
     
     if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then
-      dl_width = post.jpeg_width.to_i
-      dl_height = post.jpeg_height.to_i
-      dl_url = post.jpeg_url
+        if(post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
+          dl_width = post.jpeg_width.to_i
+          dl_height = post.jpeg_height.to_i
+          dl_url = post.sample_url
+        else
+          dl_width = post.jpeg_width.to_i
+          dl_height = post.jpeg_height.to_i
+          dl_url = post.jpeg_url
+        end
     else
-      dl_width = post.width.to_i
-      dl_height = post.height.to_i
-      dl_url = post.file_url
+        if(post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
+          dl_width = post.width.to_i
+          dl_height = post.height.to_i
+          dl_url = post.sample_url
+        else
+          dl_width = post.width.to_i
+          dl_height = post.height.to_i
+          dl_url = post.file_url
+        end
     end
 
     directlink_info = 

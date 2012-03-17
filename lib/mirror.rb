@@ -4,7 +4,7 @@ module Mirrors
   def ssh_open_pipe(mirror, command, timeout=30)
     remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
     ret = nil
-    IO.popen("/usr/bin/ssh -o Compression=no -o BatchMode=yes -o ConnectTimeout=#{timeout} #{remote_user_host} '#{command}'") do |f|
+    IO.popen("/usr/bin/ssh -o ServerAliveInterval=30 -o Compression=no -o BatchMode=yes -o ConnectTimeout=#{timeout} #{remote_user_host} '#{command}'") do |f|
       ret = yield(f)
     end
     if ($? & 0xFF) != 0 then

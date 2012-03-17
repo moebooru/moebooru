@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+ENV['NEWRELIC_ENABLE'] = 'false'
 require 'rubygems'
 require 'daemons'
 

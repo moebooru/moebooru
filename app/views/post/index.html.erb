@@ -58,7 +58,6 @@
     <% if CONFIG["can_see_ads"].call(@current_user) %>
     <%= render :partial => "vertical" %>
     <% end %>
-
   </div>
   <div class="content">    
     <% if @ambiguous_tags.any? %>
@@ -66,7 +65,10 @@
         The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>
       </div>
     <% end %>
-    
+     <% if CONFIG["can_see_ads"].call(@current_user) %>
+      <%= CONFIG["ad_code_index_bottom"] %>
+    <% end %>
+   
     <div id="quick-edit" style="display: none;" class="top-corner-float">
       <% form_tag(:action => "update") do %>
         <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 

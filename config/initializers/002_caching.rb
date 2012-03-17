@@ -1,6 +1,4 @@
 if CONFIG["enable_caching"]
-  require 'memcache'
-  require 'memcache_util'
   require 'cache'
   require 'memcache_util_store'
 else

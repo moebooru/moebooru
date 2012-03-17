@@ -4,9 +4,6 @@
 # Mod by Geoffrey Grosenbach http://topfunky.com
 
 begin
-  require 'cgi/session'
-  require 'memcache_util'
-
   class CGI
     class Session
       # MemCache-based session storage class.

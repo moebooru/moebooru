@@ -7,7 +7,7 @@ gem 'diff-lcs'
 gem 'gchartrb'
 gem 'json'
 gem 'hpricot'
-gem 'memcache-client'
+gem 'memcache-client', :require => ['memcache', 'memcache_util']
 gem 'mime-types'
 gem 'unicorn'
 gem 'redhillonrails_core'

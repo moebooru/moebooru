@@ -265,6 +265,82 @@ class Pool < ActiveRecord::Base
       end
       return true
     end
+    
+    #nginx version
+    def get_zip_data(options={})
+      return "" if pool_posts.empty?
+
+      jpeg = options[:jpeg] || false
+
+      buf = []
+
+      # Pad sequence numbers in filenames to the longest sequence number.  Ignore any text
+      # after the sequence for padding; for example, if we have 1, 5, 10a and 12, then pad
+      # to 2 digits.
+
+      # Always pad to at least 3 digits.
+      max_sequence_digits = 3
+      pool_posts.each do |pool_post|
+        filtered_sequence = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)?)?.*/, '\1') # 45a -> 45
+        filtered_sequence.split(/-/).each { |p|
+          max_sequence_digits = [p.length, max_sequence_digits].max
+        }
+      end
+
+      filename_count = {}
+      pool_posts.each do |pool_post|
+        post = pool_post.post
+        next if post.status == 'deleted'
+
+        # Strip RAILS_ROOT/public off the file path, so the paths are relative to document-root.
+        if jpeg && post.has_jpeg?
+          path = post.jpeg_path
+          file_ext = "jpg"
+        else
+          path = post.file_path
+          file_ext = post.file_ext
+        end
+        path = path[(RAILS_ROOT + "/public").length .. path.length]
+
+        # For padding filenames, break numbers apart on hyphens and pad each part.  For
+        # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
+        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) { |m|
+          if $1 != ""
+            suffix = $3
+            numbers = $1.split(/-/).map { |p|
+              "%0*i" % [max_sequence_digits, p.to_i]
+            }.join("-")
+            "%s%s" % [numbers, suffix]
+          else
+            "%s" % [$3]
+          end
+        }
+
+        #filename = "%0*i" % [max_sequence_digits, pool_post.sequence]
+
+        # Avoid duplicate filenames.
+        filename_count[filename] ||= 0
+        filename_count[filename] = filename_count[filename] + 1
+        if filename_count[filename] > 1
+          filename << " (%i)" % [filename_count[filename]]
+        end
+        filename << ".%s" % [file_ext]
+
+        #buf << "#{filename}\n"
+        #buf << "#{path}\n"
+        if jpeg && post.has_jpeg?
+          file_size = post.jpeg_size
+          crc32 = post.jpeg_crc32
+        else
+          file_size = post.file_size
+          crc32 = post.crc32
+        end
+        crc32 = "%x" % crc32
+        buf += [{ :filename => filename, :path => path, :file_size => file_size, :crc32 => crc32 }]
+      end
+
+      return buf
+    end
 
     # Generate a mod_zipfile control file for this pool.
     def get_zip_control_file(options={})

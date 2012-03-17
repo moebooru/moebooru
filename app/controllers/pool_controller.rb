@@ -332,12 +332,13 @@ class PoolController < ApplicationController
     render :layout => false
   end
 
-  # Generate a ZIP control file for lighttpd, and redirect to the ZIP.
+  # Generate a ZIP control file for nginx, and redirect to the ZIP.
   if CONFIG["pool_zips"]
     def zip
       pool = Pool.find(params[:id], :include => [:pool_posts => :post])
-      control_path = pool.get_zip_control_file_path(params)
-      redirect_to pool.get_zip_url(control_path, params)
+      @pool_zip = pool.get_zip_data(params)
+      headers["X-Archive-Files"] = "zip"
+      render :layout => false
     end
   end
 

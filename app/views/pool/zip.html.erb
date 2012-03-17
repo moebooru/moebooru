@@ -1,2 +1,1 @@
-<%- @pool_zip.each do |data| %><%= "%s    %s    %s    %s" % [data[:crc32], data[:file_size], data[:path], data[:filename]] %>
-<%- end %>
+<%- @pool_zip.each do |data| %><%="%s %s %s %s\n" % [data[:crc32], data[:file_size], data[:path], data[:filename]] %><%- end %>

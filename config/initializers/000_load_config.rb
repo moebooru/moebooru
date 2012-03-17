@@ -24,8 +24,6 @@ require 'danbooru_image_resizer/danbooru_image_resizer'
 require 'html_4_tags'
 require 'google_chart' if CONFIG["enable_reporting"]
 require Rails.root.join('config/core_extensions')
-require 'json'
-require 'json/add/core'
 require 'fix_form_tag'
 require 'download'
 require 'sys/cpu' if CONFIG["load_average_threshold"]

@@ -5,7 +5,7 @@
 CONFIG["app_name"] = "yande.re"
 CONFIG["server_host"] = "yande.re"
 #CONFIG["server_host"] = "76.73.1.90"
-CONFIG["url_base"] = "http://" + CONFIG["server_host"]	# set this to "" to get relative image urls
+CONFIG["url_base"] = "https://" + CONFIG["server_host"]	# set this to "" to get relative image urls
 CONFIG["admin_contact"] = "admin@yande.re"
 CONFIG["email_from"] = "moe@yande.re"
 CONFIG["image_store"] = :remote_hierarchy
@@ -15,7 +15,7 @@ CONFIG["image_servers"] = [
 #        { :server => "http://haruka.imouto.org", :aliases => ["http://haruka2.imouto.org", "http://haruka3.imouto.org"], :traffic => 1, :previews_only => true, :nozipfile => true },
 #        { :server => "http://yusa.imouto.org", :traffic => 4, :nopreview => true },
 #        { :server => "http://kobato.imouto.org", :traffic => 4 },
-        { :server => "http://ayase.yande.re", :traffic => 4 },
+ #       { :server => "http://ayase.yande.re", :traffic => 4 },
 #        { :server => "http://lenin.caltech.edu", :traffic => 0.001, :nozipfile => true },
 #        { :server => "http://ranka.imouto.org", :traffic => 1, :previews_only => true } #:nozipfile => true, :nopreview => true }
 ]

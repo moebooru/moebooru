@@ -1494,6 +1494,10 @@ span.stars .star-3 { color:#ff0; }
 	outline: none;
 }
 
+a.star {
+  background: transparent url("") no-repeat;
+}
+
 .standard-vote-widget .star-set-upto:after { content: "★"; }
 .standard-vote-widget .star-set-after:after { content: "☆"; }
 .standard-vote-widget .star-hovered-upto:after { content: "★"; }

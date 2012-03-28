@@ -48,6 +48,8 @@ a:link {
   text-decoration: none;
 }
 
+a.star { background: transparent url("") no-repeat; }
+
 .blacklisted-tags-disabled {
   color: #AAA !important;
 }

@@ -102,11 +102,10 @@
         <li><%= link_to "Logout", :controller => "user", :action => "logout" %></li>
         <li><%= link_to "My Profile", :controller => "user", :action => "show", :id => @current_user.id %></li>
         <li><%= link_to "Records", :controller => "user_record", :action => "index" %></li>
-        <li><a href="/user_record/index">Records</a></li>
-        <li><a href="/user/edit">Settings</a></li>
-        <li><a href="/user/show_blocked_users">Blocked Users</a></li>
-        <li><a href="/user/change_password">Change Password</a></li>
-        <li><a href="/user/invites">Invites</a></li>
+        <li><%= link_to "Settings", :controller => "user", :action => "edit" %></li>
+        <li><%= link_to "Blocked Users", :controller => "user", :action => "show_blocked_users" %></li>
+        <li><%= link_to "Change Password", :controller => "user", :action => "change_password" %></li>
+        <li><%= link_to "Invites", :controller => "user", :action => "invites" %></li>
       <% end %>
       <li><%= link_to "Help", :controller => "help", :action => "users" %></li>
       <li><%= link_to "Listing", :controller => "user", :action => "index" %></li>

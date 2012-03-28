@@ -94,9 +94,9 @@
     <ul>
       <li><h4>Users</h4></li>
       <% if @current_user.id == 0 %>
-        <li><a href="/user/login">Login</a></li>
-        <li><a href="/user/signup">Signup</a></li>
-        <li><a href="/user/reset_password">Reset Password</a></li>
+        <li><%= link_to "Login", :controller => "user", :action => "login" %></li>
+        <li><%= link_to "Signup", :controller => "user", :action => "signup" %></li>
+        <li><%= link_to "Reset Password", :controller => "user", :action => "reset_password" %></li>
       <% else %>
         <li><a href="/user/home">Home</a></li>
         <li><a href="/user/logout">Logout</a></li>

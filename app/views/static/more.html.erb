@@ -93,21 +93,22 @@
   <div>
     <ul>
       <li><h4>Users</h4></li>
-      <li><a href="/help/users">Help</a></li>
-      <li><a href="/user/show_blocked_users">Blocked Users</a></li>
-      <li><a href="/user/change_password">Change Password</a></li>
-      <li><a href="/user/home">Home</a></li>
-      <li><a href="/user/invites">Invites</a></li>
-      <li><a href="/user/index">Listing</a></li>
-      <li><a href="/user/login">Login</a></li>
-      <li><a href="/user/logout">Logout</a></li>
-      <% unless @current_user.nil? %>
+      <% if @current_user.id == 0 %>
+        <li><a href="/user/login">Login</a></li>
+        <li><a href="/user/signup">Signup</a></li>
+      <% else %>
+        <li><a href="/user/home">Home</a></li>
+        <li><a href="/user/logout">Logout</a></li>
         <li><a href="/user/show/<%= @current_user.id %>">My Profile</a></li>
+        <li><a href="/user_record/index">Records</a></li>
+        <li><a href="/user/reset_password">Reset Password</a></li>
+        <li><a href="/user/edit">Settings</a></li>
+        <li><a href="/user/show_blocked_users">Blocked Users</a></li>
+        <li><a href="/user/change_password">Change Password</a></li>
+        <li><a href="/user/invites">Invites</a></li>
       <% end %>
-      <li><a href="/user_record/index">Records</a></li>
-      <li><a href="/user/reset_password">Reset Password</a></li>
-      <li><a href="/user/edit">Settings</a></li>
-      <li><a href="/user/signup">Signup</a></li>
+      <li><a href="/help/users">Help</a></li>
+      <li><a href="/user/index">Listing</a></li>
       <li><a href="/static/terms_of_service">Terms of Service</a></li>
     </ul>
     <% if @current_user.is_admin_or_higher? %>

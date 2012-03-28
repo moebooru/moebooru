@@ -107,9 +107,9 @@
         <li><a href="/user/change_password">Change Password</a></li>
         <li><a href="/user/invites">Invites</a></li>
       <% end %>
-      <li><a href="/help/users">Help</a></li>
-      <li><a href="/user/index">Listing</a></li>
-      <li><a href="/static/terms_of_service">Terms of Service</a></li>
+      <li><%= link_to "Help", :controller => "help", :action => "users" %></li>
+      <li><%= link_to "Listing", :controller => "user", :action => "index" %></li>
+      <li><%= link_to "Terms of Service", :controller => "static", :action => "terms_of_service" %></li>
     </ul>
     <% if @current_user.is_admin_or_higher? %>
       <ul>

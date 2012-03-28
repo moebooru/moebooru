@@ -1,5 +1,5 @@
 <div id="static-more">
-  <h2><%= link_to CONFIG['app_name'], root_url, :id => "site-link" %></h2>
+  <h2><%= link_to CONFIG['app_name'], root_url, :id => 'site-link' %></h2>
   <div>
     <ul>
       <li><h4>Posts</h4></li>
@@ -86,36 +86,36 @@
     </ul>
     <ul>
       <li><h4>Miscellaneous</h4></li>
-      <li><%= link_to "Source", "http://bitbucket.org/edogawaconan/moebooru" %></li>
-      <li><%= link_to "Original Danbooru", "http://trac.donmai.us" %></li>
+      <li><%= link_to 'Source', 'http://bitbucket.org/edogawaconan/moebooru' %></li>
+      <li><%= link_to 'Original Danbooru', 'http://trac.donmai.us' %></li>
     </ul>
   </div>
   <div>
     <ul>
       <li><h4>Users</h4></li>
       <% if @current_user.id == 0 %>
-        <li><%= link_to "Login", :controller => "user", :action => "login" %></li>
-        <li><%= link_to "Signup", :controller => "user", :action => "signup" %></li>
-        <li><%= link_to "Reset Password", :controller => "user", :action => "reset_password" %></li>
+        <li><%= link_to 'Login', :controller => 'user', :action => 'login' %></li>
+        <li><%= link_to 'Signup', :controller => 'user', :action => 'signup' %></li>
+        <li><%= link_to 'Reset Password', :controller => 'user', :action => 'reset_password' %></li>
       <% else %>
-        <li><%= link_to "Home", :controller => "user", :action => "home" %></li>
-        <li><%= link_to "Logout", :controller => "user", :action => "logout" %></li>
-        <li><%= link_to "My Profile", :controller => "user", :action => "show", :id => @current_user.id %></li>
-        <li><%= link_to "Records", :controller => "user_record", :action => "index" %></li>
-        <li><%= link_to "Settings", :controller => "user", :action => "edit" %></li>
-        <li><%= link_to "Blocked Users", :controller => "user", :action => "show_blocked_users" %></li>
-        <li><%= link_to "Change Password", :controller => "user", :action => "change_password" %></li>
-        <li><%= link_to "Invites", :controller => "user", :action => "invites" %></li>
+        <li><%= link_to 'Home', :controller => 'user', :action => 'home' %></li>
+        <li><%= link_to 'Logout', :controller => 'user', :action => 'logout' %></li>
+        <li><%= link_to 'My Profile', :controller => 'user', :action => 'show', :id => @current_user.id %></li>
+        <li><%= link_to 'Records', :controller => 'user_record', :action => 'index' %></li>
+        <li><%= link_to 'Settings', :controller => 'user', :action => 'edit' %></li>
+        <li><%= link_to 'Blocked Users', :controller => 'user', :action => 'show_blocked_users' %></li>
+        <li><%= link_to 'Change Password', :controller => 'user', :action => 'change_password' %></li>
+        <li><%= link_to 'Invites', :controller => 'user', :action => 'invites' %></li>
       <% end %>
-      <li><%= link_to "Help", :controller => "help", :action => "users" %></li>
-      <li><%= link_to "Listing", :controller => "user", :action => "index" %></li>
-      <li><%= link_to "Terms of Service", :controller => "static", :action => "terms_of_service" %></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'users' %></li>
+      <li><%= link_to 'Listing', :controller => 'user', :action => 'index' %></li>
+      <li><%= link_to 'Terms of Service', :controller => 'static', :action => 'terms_of_service' %></li>
     </ul>
     <% if @current_user.is_admin_or_higher? %>
       <ul>
         <li><h4>Admin</h4></li>
-        <li><%= link_to "Edit User", :controller => "admin", :action => "edit_user" %>
-        <li><%= link_to "Reset Password", :controller => "admin", :action => "reset_password" %>
+        <li><%= link_to 'Edit User', :controller => 'admin', :action => 'edit_user' %>
+        <li><%= link_to 'Reset Password', :controller => 'admin', :action => 'reset_password' %>
       </ul>
     <% end %>
   </div>

@@ -114,8 +114,8 @@
     <% if @current_user.is_admin_or_higher? %>
       <ul>
         <li><h4>Admin</h4></li>
-        <li><a href="/admin/edit_user">Edit User</a></li>   
-        <li><a href="/admin/reset_password">Reset Password</a></li>     
+        <li><%= link_to "Edit User", :controller => "admin", :action => "edit_user" %>
+        <li><%= link_to "Reset Password", :controller => "admin", :action => "reset_password" %>
       </ul>
     <% end %>
   </div>

@@ -119,7 +119,7 @@ module SimilarImages
 	if element.attributes["sim"].to_f >= threshold
 	  service = element.attributes["service"]
 	  if service == "e-shuushuu.net" then # hack
-	    image = element.get_elements(".//image")[0]
+	    image = element.get_elements(".//post")[0]
 	  else
 	    image = element.get_elements(".//post")[0]
 	  end

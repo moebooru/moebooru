@@ -4,10 +4,10 @@
 	<title><%= h CONFIG["app_name"] %>/<%= h params[:tags] %></title>
 	<link>http://<%= h CONFIG["server_host"] %>/</link>
 	<description><%= h CONFIG["app_name"] %>PicLens RSS Feed</description>
-	<% unless @posts.is_first_page? %>
+	<% unless @posts.current_page == 1 %>
 	  <%= tag("atom:link", {:rel => "previous", :href => url_for(:only_path => false, :controller => "post", :action => "piclens", :page => @posts.previous_page, :tags => params[:tags])}, false) %>
 	<% end %>
-	<% unless @posts.is_last_page? %>
+	<% unless @posts.next_page.nil? %>
     <%= tag("atom:link", {:rel => "next", :href => url_for(:only_path => false, :controller => "post", :action => "piclens", :page => @posts.next_page, :tags => params[:tags])}, false) %>
   <% end %>
 

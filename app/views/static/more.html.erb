@@ -18,71 +18,70 @@
     </ul>
     <ul>
       <li><h4>Tools</h4></li>
-      <li><a href="/help/bookmarklet">Bookmarklet</a></li>
-      <li><a href="http://unbuffered.info/danbooruup">Firefox Extension</a></li>
-      <li><a href="/help/api">API Documentation</a></li>
+      <li><%= link_to 'Bookmarklet', :controller => 'help', :action => 'bookmarklet' %></li>
+      <li><%= link_to 'Firefox Extension', 'http://unbuffered.info/danbooruup' %></li>
+      <li><%= link_to 'API Documentation', :controller => 'help', :action => 'api' %></li>
     </ul>
-    <% if CONFIG["enable_reporting"] %>
+    <% if CONFIG['enable_reporting'] %>
       <ul>
         <li><h4>Reports</h4></li>
-        <li><a href="/report/note_updates">Note Updates</a></li>
-        <li><a href="/report/tag_updates">Tag Updates</a></li>
-        <li><a href="/report/wiki_updates">Wiki Updates</a></li>
-        <li><a href="/report/post_uploads">Post Uploads</a></li>
-        <li><a href="/report/votes">User Votes</a></li>
-	<!-- <li><a href="/stats/awstats.danbooru.html">Web Server Statitics</a></li> -->
-	<li><a href="/job_task/index">Job Tasks</a></li>
+        <li><%= link_to 'Note Updates', :controller => 'report', :action => 'note_updates' %></li>
+        <li><%= link_to 'Tag Updates', :controller => 'report', :action => 'tag_updates' %></li>
+        <li><%= link_to 'Wiki Updates', :controller => 'report', :action => 'wiki_updates' %></li>
+        <li><%= link_to 'Post Uploads', :controller => 'report', :action => 'post_uploads' %></li>
+        <li><%= link_to 'User Votes', :controller => 'report', :action => 'votes' %></li>
+        <li><%= link_to 'Job Tasks', :controller => 'job_task', :action => 'index' %></li>
       </ul>
     <% end %>
   </div>
   <div>
     <ul>
       <li><h4>Tags</h4></li>
-      <li><a href="/help/tags">Help</a></li>
-      <li><a href="/tag_alias/index">Aliases</a></li>
-      <li><a href="/tag_implication/index">Implications</a></li>
-      <li><a href="/tag/edit">Edit</a></li>
-      <li><a href="/tag/cloud">List (cloud view)</a></li>
-      <li><a href="/tag/index">List (all)</a></li>
-      <li><a href="/tag/mass_edit">Mass Edit</a></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'tags' %></li>
+      <li><%= link_to 'Aliases', :controller => 'tag_alias', :action => 'index' %></li>
+      <li><%= link_to 'Implications', :controller => 'tag_implication', :action => 'index' %></li>
+      <li><%= link_to 'Edit', :controller => 'tag', :action => 'edit' %></li>
+      <li><%= link_to 'List (cloud view)', :controller => 'tag', :action => 'cloud' %></li>
+      <li><%= link_to 'List (all)', :controller => 'tag', :action => 'index' %></li>
+      <li><%= link_to 'Mass Edit', :controller => 'tag', :action => 'mass_edit' %></li>
     </ul>
     <ul>
       <li><h4>Notes</h4></li>
-      <li><a href="/help/notes">Help</a></li>
-      <li><a href="/note/history">History</a></li>
-      <li><a href="/note/index">Listing</a></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'notes' %></li>
+      <li><%= link_to 'History', :controller => 'note', :action => 'history' %></li>
+      <li><%= link_to 'Listing', :controller => 'note', :action => 'index' %></li>
     </ul>
-    <% if CONFIG["enable_artists"] %>
+    <% if CONFIG['enable_artists'] %>
       <ul>
         <li><h4>Artists</h4></li>
-        <li><a href="/help/artists">Help</a></li>
-        <li><a href="/artist/index">Listing</a></li>
+        <li><%= link_to 'Help', :controller => 'help', :action => 'artists' %></li>
+        <li><%= link_to 'Listing', :controller => 'artist', :action => 'index' %></li>
       </ul>
     <% end %>
     <ul>
       <li><h4>Pools</h4></li>
-      <li><a href="/help/pools">Help</a></li>
-      <li><a href="/pool/index">Listing</a></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'pools' %></li>
+      <li><%= link_to 'Listing', :controller => 'pool', :action => 'index' %></li>
     </ul>
   </div>
   <div>
     <ul>
       <li><h4>Comments</h4></li>
-      <li><a href="/help/comments">Help</a></li>
-      <li><a href="/comment/index">Listing</a></li>
-      <li><a href="/comment/moderate">Moderate</a></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'comments' %></li>
+      <li><%= link_to 'Listing', :controller => 'comment', :action => 'index' %></li>
+      <li><%= link_to 'Moderate', :controller => 'comment', :action => 'moderate' %></li>
     </ul>
     <ul>
       <li><h4>Forum</h4></li>
-      <li><a href="/help/forum">Help</a></li>
-      <li><a href="/forum/index">Listing</a></li>
-      <li><a href="/inline/index">Inline Images</a></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'forum' %></li>
+      <li><%= link_to 'Listing', :controller => 'forum', :action => 'index' %></li>
+      <li><%= link_to 'Inline Images', :controller => 'inline', :action => 'index' %></li>
     </ul>
     <ul>
       <li><h4>Wiki</h4></li>
-      <li><a href="/help/wiki">Help</a></li>
-      <li><a href="/wiki/index">Listing</a></li>
-      <li><a href="/wiki/history">History</a></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'wiki' %></li>
+      <li><%= link_to 'Listing', :controller => 'wiki', :action => 'index' %></li>
+      <li><%= link_to 'History', :controller => 'wiki', :action => 'history' %></li>
     </ul>
     <ul>
       <li><h4>Miscellaneous</h4></li>

@@ -3,18 +3,18 @@
   <div>
     <ul>
       <li><h4>Posts</h4></li>
-      <li><a href="/help/posts">Help</a></li>
-      <li><a href="/post/atom">Atom Feed</a></li>
-      <li><a href="/post/index">Listing</a></li>
-      <li><a href="/post/similar">Image Search</a></li>
-      <li><a href="/post/popular_recent">Popular (last 24 hours)</a></li>
-      <li><a href="/post/popular_by_day">Popular (by day)</a></li>
-      <li><a href="/post/popular_by_week">Popular (by week)</a></li>
-      <li><a href="/post/popular_by_month">Popular (by month)</a></li>
-      <li><a href="/post/random">Random</a></li>
-      <li><a href="/post/deleted_index">Recent Deletions</a></li>
-      <li><a href="/history/index">History</a></li>
-      <li><a href="/post/upload">Upload</a></li>
+      <li><%= link_to 'Help', :controller => 'help', :action => 'posts' %></li>
+      <li><%= link_to 'Atom Feed', :controller => 'post', :action => 'atom' %></li>
+      <li><%= link_to 'Listing', :controller => 'post', :action => 'index' %></li>
+      <li><%= link_to 'Image Search', :controller => 'post', :action => 'similar' %></li>
+      <li><%= link_to 'Popular (last 24 hours)', :controller => 'post', :action => 'popular_recent' %></li>
+      <li><%= link_to 'Popular (by day)', :controller => 'post', :action => 'popular_by_day' %></li>
+      <li><%= link_to 'Popular (by week)', :controller => 'post', :action => 'popular_by_week' %></li>
+      <li><%= link_to 'Popular (by month)', :controller => 'post', :action => 'popular_by_month' %></li>
+      <li><%= link_to 'Random', :controller => 'post', :action => 'random' %></li>
+      <li><%= link_to 'Recent Deletions', :controller => 'post', :action => 'deleted_index' %></li>
+      <li><%= link_to 'History', :controller => 'history', :action => 'index' %></li>
+      <li><%= link_to 'Upload', :controller => 'post', :action => 'upload' %></li>
     </ul>
     <ul>
       <li><h4>Tools</h4></li>

@@ -1,8 +1,0 @@
-<div>
-  <h5>Tags</h5>
-  <ul id="tag-sidebar">
-    <%= tag_links(@tags[:exclude], :prefix => "-") %>
-    <%= tag_links(@tags[:include], :with_aliases => @include_tag_reverse_aliases) %>
-    <%= tag_links(Tag.find_related(@tags[:related].to_a)) %>
-  </ul>
-</div>

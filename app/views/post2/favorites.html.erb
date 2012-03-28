@@ -1,8 +1,0 @@
-<h3>Favorited by</h3>
-<ul>
-<%- @users.each do |u| %>
-  <li><%= link_to h(u.pretty_name), :controller => "post", :action => "index", :tags => "vote:3:#{u.name} order:vote" %></li>
-<%- end %>
-</ul>
-
-<%= render :partial => "footer" %>

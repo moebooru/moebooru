@@ -118,11 +118,7 @@ module SimilarImages
       doc.elements.each("matches/match") { |element| 
 	if element.attributes["sim"].to_f >= threshold
 	  service = element.attributes["service"]
-	  if service == "e-shuushuu.net" then # hack
-	    image = element.get_elements(".//image")[0]
-	  else
-	    image = element.get_elements(".//post")[0]
-	  end
+	  image = element.get_elements(".//post")[0]
           
 	  id = image.attributes["id"]
 	  md5 = element.attributes["md5"]

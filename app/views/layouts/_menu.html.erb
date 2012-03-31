@@ -40,8 +40,6 @@
   posts_menu.push(<%= make_sub_item("Search&nbsp;posts", :controller => :post, :action => "index") %>);
   posts_menu[posts_menu.length-1].func = ShowPostSearch;
   posts_menu.push(<%= make_sub_item("Upload", :controller => :post, :action => "upload") %>);
-  /* <%= make_sub_item("Subscriptions", :controller => :post, :action => "index") %>, */
-  <!-- <li id="my-subscriptions-container"><%= link_to "Subscriptions", "/", :id => "my-subscriptions" %> -->
   posts_menu.push(<%= make_sub_item("Random", :controller => :post, :tags => "order:random") %>);
   posts_menu.push(<%= make_sub_item("Popular", :controller => :post, :action => "popular_recent") %>);
   posts_menu.push(<%= make_sub_item("Image&nbsp;Search", :controller => :post, :action => "similar") %>);

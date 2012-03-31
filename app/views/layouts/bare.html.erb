@@ -10,14 +10,14 @@
   <%= stylesheet_link_tag "default" %>
   <%= javascript_include_tag :all, :cache => "application" %>
   <%= CONFIG["custom_html_headers"] %>
-  <%= yield :html_header %>
+  <%= yield(:html_header) %>
 </head>
 <body class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %> hide-advanced-editing">
   <%= render :partial => "layouts/notice" %>
   <div id="content">
     <%= yield %>
   </div>
-  <%= yield :post_cookie_javascripts %>
+  <%= yield(:post_cookie_javascripts) %>
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-291955-10']);

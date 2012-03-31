@@ -2,9 +2,9 @@
 
 <feed xmlns="http://www.w3.org/2005/Atom">
 	<title><%= h CONFIG["app_name"] %></title>
-	<link href="https://<%= h CONFIG["server_host"] %>/post/atom" rel="self"/>
-  <link href="https://<%= h CONFIG["server_host"] %>/post/index" rel="alternate"/>
-  <id>https://<%= h CONFIG["server_host"] %>/post/atom?tags=<%= h params[:tags] %></id>
+	<link href="<%= scheme %><%= h CONFIG["server_host"] %>/post/atom" rel="self"/>
+  <link href="<%= scheme %><%= h CONFIG["server_host"] %>/post/index" rel="alternate"/>
+  <id><%= scheme %><%= h CONFIG["server_host"] %>/post/atom?tags=<%= h params[:tags] %></id>
   <% if @posts.any? %>
     <updated><%= @posts[0].created_at.gmtime.xmlschema %></updated>
   <% end %>
@@ -12,16 +12,16 @@
   <% @posts.each do |post| %>
     <entry>
       <title><%= h post.cached_tags %></title>
-      <link href="https://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %>" rel="alternate"/>
+      <link href="<%= scheme %><%= h CONFIG["server_host"] %>/post/show/<%= post.id %>" rel="alternate"/>
       <% if post.source =~ /^http/ %>
         <link href="<%= h post.source %>" rel="related"/>
       <% end %>
-      <id>https://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %></id>
+      <id><%= scheme %><%= h CONFIG["server_host"] %>/post/show/<%= post.id %></id>
       <updated><%= post.created_at.gmtime.xmlschema %></updated>
       <summary><%= h post.cached_tags %></summary>
       <content type="xhtml">
         <div xmlns="http://www.w3.org/1999/xhtml">
-          <a href="https://<%= h CONFIG["server_host"] %>/post/show/<%= post.id %>">
+          <a href="<%= scheme %><%= h CONFIG["server_host"] %>/post/show/<%= post.id %>">
             <img src="<%= post.preview_url %>"/>
           </a>
         </div>

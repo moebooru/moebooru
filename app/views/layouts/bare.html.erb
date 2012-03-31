@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
-<html class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %> hide-advanced-editing">
+<html>
 <head>
   <title><%= @page_title %></title>
   <meta name="description" content="yande.re - A Danbooru focusing on High Resolution Anime Scans, Ecchi Scans, Hentai Scans, Moe Scans, and Bishoujo Scans; unlimited downloads. ">
@@ -11,7 +11,7 @@
   <%= CONFIG["custom_html_headers"] %>
   <%= @content_for_html_header %>
 </head>
-<body>
+<body class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %> hide-advanced-editing">
   <%= render :partial => "layouts/notice" %>
   <div id="content">
     <%= @content_for_layout %>    

@@ -48,6 +48,8 @@ a:link {
   text-decoration: none;
 }
 
+a.star { background: transparent url("") no-repeat; }
+
 .blacklisted-tags-disabled {
   color: #AAA !important;
 }
@@ -1492,10 +1494,6 @@ span.stars .star-3 { color:#ff0; }
 
 .star:focus {
 	outline: none;
-}
-
-a.star {
-  background: transparent url("") no-repeat;
 }
 
 .standard-vote-widget .star-set-upto:after { content: "★"; }

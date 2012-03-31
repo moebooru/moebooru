@@ -1,3 +1,3 @@
-#!/usr/local/bin/ruby
-require File.dirname(__FILE__) + '/../../config/boot'
+#!/usr/bin/env ruby
+require File.expand_path('../../../config/boot',  __FILE__)
 require 'commands/performance/profiler'

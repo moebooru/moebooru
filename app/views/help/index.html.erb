@@ -1,43 +1,43 @@
 <div class="help">
   <h1>Help</h1>
   <ul class="link-page">
-    <li><a href="/help/about">» About Danbooru</a></li>
-    <li><a href="/help/faq">» Frequently Asked Questions</a></li>
-    <li><a href="/help/start">» Getting Started</a></li>
-    <li><a href="/help/users">» Accounts</a></li>
-    <li><a href="/help/api">» API</a></li>
-    <% if CONFIG["enable_artists"] %>
-      <li><a href="/help/artists">» Artists</a></li>
-    <% end %>
-    <li><a href="/help/bookmarklet">» Bookmarklet</a></li>
-    <li><a href="/help/trac">» Bugs</a></li>
-    <li><a href="/help/cheatsheet">» Cheat Sheet</a></li>
-    <li><a href="/help/comments">» Comments</a></li>
-    <li><a href="/help/dtext">» DText</a></li>
-    <li><a href="/help/extension">» Firefox Extension</a></li>
-    <% if CONFIG["image_samples"] %>
-      <li><a href="/help/image_sampling">» Image Sampling</a></li>
-    <% end %>
-    <li><a href="/help/irc">» IRC</a></li>
-    <li><a href="/help/notes">» Notes</a></li>
-    <li><a href="/help/pools">» Pools</a></li>
-    <li><a href="/help/posts">» Posts</a></li>
-    <% if CONFIG["enable_parent_posts"] %>
-      <li><a href="/help/post_relationships">» Post Relationships</a></li>
-    <% end %>
-    <li><a href="/help/ratings">» Ratings</a></li>
-    <li><a href="/help/source_code">» Source Code</a></li>
-    <li><a href="/help/tag_scripts">» Tag Scripts</a></li>
-    <li><a href="/help/tags">» Tags</a></li>
-    <li><a href="/help/tag_aliases">» Tag Aliases</a></li>
-    <li><a href="/help/tag_implications">» Tag Implications</a></li>
-    <li><a href="/help/mass_tag_edit">» Mass Tag Edit</a></li>
-    <li><a href="/help/trac">» Suggestions</a></li>
-    <li><a href="/help/voting">» Voting</a></li>
-    <li><a href="/help/wiki">» Wiki</a></li>
+    <li><%= link_to '» About Danbooru', :controller => 'help', :action => 'about' %></li>
+    <li><%= link_to '» Frequently Asked Questions', :controller => 'help', :action => 'faq' %></li>
+    <li><%= link_to '» Getting Started', :controller => 'help', :action => 'start' %></li>
+    <li><%= link_to '» Accounts', :controller => 'help', :action => 'users' %></li>
+    <li><%= link_to '» API', :controller => 'help', :action => 'api' %></li>
+    <%- if CONFIG["enable_artists"] -%>
+      <li><%= link_to '» Artists', :controller => 'help', :action => 'artists' %></li>
+    <%- end -%>
+    <li><%= link_to '» Bookmarklet', :controller => 'help', :action => 'bookmarklet' %></li>
+    <li><%= link_to '» Bugs', :controller => 'help', :action => 'trac' %></li>
+    <li><%= link_to '» Cheat Sheet', :controller => 'help', :action => 'cheatsheet' %></li>
+    <li><%= link_to '» Comments', :controller => 'help', :action => 'comments' %></li>
+    <li><%= link_to '» DText', :controller => 'help', :action => 'dtext' %></li>
+    <li><%= link_to '» Firefox Extension', :controller => 'help', :action => 'extension' %></li>
+    <%- if CONFIG["image_samples"] -%>
+      <li><%= link_to '» Image Sampling', :controller => 'help', :action => 'image_sampling' %></li>
+    <%- end -%>
+    <li><%= link_to '» IRC', :controller => 'help', :action => 'irc' %></li>
+    <li><%= link_to '» Notes', :controller => 'help', :action => 'notes' %></li>
+    <li><%= link_to '» Pools', :controller => 'help', :action => 'pools' %></li>
+    <li><%= link_to '» Posts', :controller => 'help', :action => 'posts' %></li>
+    <%- if CONFIG["enable_parent_posts"] -%>
+      <li><%= link_to '» Post Relationships', :controller => 'help', :action => 'post_relationships' %></li>
+    <%- end -%>
+    <li><%= link_to '» Ratings', :controller => 'help', :action => 'ratings' %></li>
+    <li><%= link_to '» Source Code', :controller => 'help', :action => 'source_code' %></li>
+    <li><%= link_to '» Tag Scripts', :controller => 'help', :action => 'tag_scripts' %></li>
+    <li><%= link_to '» Tags', :controller => 'help', :action => 'tags' %></li>
+    <li><%= link_to '» Tag Aliases', :controller => 'help', :action => 'tag_aliases' %></li>
+    <li><%= link_to '» Tag Implications', :controller => 'help', :action => 'tag_implications' %></li>
+    <li><%= link_to '» Mass Tag Edit', :controller => 'help', :action => 'mass_tag_edit' %></li>
+    <li><%= link_to '» Suggestions', :controller => 'help', :action => 'trac' %></li>
+    <li><%= link_to '» Voting', :controller => 'help', :action => 'voting' %></li>
+    <li><%= link_to '» Wiki', :controller => 'help', :action => 'wiki' %></li>
   </ul>
 </div>
 
-<% content_for("subnavbar") do %>
+<%- content_for("subnavbar") do -%>
   <li><%= link_to "Help", :action => "index" %></li>
-<% end %>
+<%- end -%>

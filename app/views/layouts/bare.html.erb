@@ -8,7 +8,7 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
   <%= stylesheet_link_tag "default" %>
-  <%= javascript_include_tag :all, :cache => "application" %>
+  <%= javascript_include_tag :all, :cache => 'cached/all' %>
   <%= CONFIG["custom_html_headers"] %>
   <%= @content_for_html_header %>
 <script type="text/javascript">

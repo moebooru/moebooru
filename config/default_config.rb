@@ -1,5 +1,5 @@
-# The version of this Danbooru.
-CONFIG["version"] = "2.3.0-alpha"
+# The version of this Moebooru.
+CONFIG["version"] = "2.3.0-beta"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"

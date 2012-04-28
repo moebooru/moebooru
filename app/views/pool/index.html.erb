@@ -18,6 +18,7 @@
         <th width="*">Creator</th>
         <th width="*">Posts</th>
         <th width="*">Created</th>
+	<th width="*">Updated</th>
       </tr>
     </thead>
     <tbody>
@@ -27,6 +28,7 @@
           <td><%= h(p.user.pretty_name) %></td>
           <td><%= p.post_count %></td>
           <td><%= time_ago_in_words(p.created_at) %> ago</td>
+          <td><%= time_ago_in_words(p.updated_at) %> ago</td>
         </tr>
       <% end %>
     </tbody>

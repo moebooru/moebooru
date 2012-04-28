@@ -14,10 +14,24 @@
       <%= render :partial => "post/show_partials/statistics_panel" %>
       <%= render :partial => "post/show_partials/options_panel" %>
       <%= render :partial => "post/show_partials/related_posts_panel" %>
-<g:plusone size="small" annotation="inline"></g:plusone>
-  <br>
-  <a href = "http://novelnews.net/" target = "_blank"><img src="/images/encubed-01.png" alt="encubed" width=100 height=30 /></a>
-  <br>
+ <br />
+<a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="https://yande.re/post"></a>
+<noscript><a href="http://flattr.com/thing/638629/yande-re" target="_blank">
+<img src="https://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript>
+</br />
+<!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style ">
+<a class="addthis_button_preferred_1"></a>
+<a class="addthis_button_preferred_2"></a>
+<a class="addthis_button_preferred_3"></a>
+<a class="addthis_button_preferred_4"></a>
+<a class="addthis_button_compact"></a>
+<a class="addthis_counter addthis_bubble_style"></a>
+</div>
+<script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f84f4451238fdf5"></script>
+<!-- AddThis Button END -->
+<br />
+<br />
   <a href = "http://konachan.com/" target = "_blank"><img src="/images/konachan.png" alt="konachan" width=100 height=30 /></a>
   <% if CONFIG["can_see_ads"].call(@current_user) %>
   <%= render :partial => "vertical" %>

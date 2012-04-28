@@ -68,9 +68,16 @@ module TagRelatedTagMethods
     end
 
     def find_related(tags)
-      if tags.is_a?(Array) && tags.size > 1
-        return calculate_related(tags)
-      elsif tags.to_s != ""
+      if tags.is_a?(Array)
+        if tags.size == 1
+          # Replace tags array into its first element
+          # to be searched again later below.
+          tags = tags.first
+        else
+          return calculate_related(tags)
+        end
+      end
+      if tags.to_s != ""
         t = find_by_name(tags.to_s)
         if t
           return t.related

@@ -1,16 +1,3 @@
 <%=
-if(@post.rating == "e" || @post.rating == "q" || @post.tags.include?("swimsuits") || @post.tags.include?("bra") || @post.tags.include?("pantsu") || @post.tags.include?("undressing"))
 	print_advertisement("horizontal")
-else
-	'<script type="text/javascript"><!--
-google_ad_client = "ca-pub-4985435874424704";
-/* ad */
-google_ad_slot = "6419965602";
-google_ad_width = 728;
-google_ad_height = 90;
-//-->
-</script>
-<script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>'
-end
 %>

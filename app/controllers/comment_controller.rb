@@ -76,7 +76,7 @@ class CommentController < ApplicationController
         @current_user.update_attribute(:last_comment_read_at, newest_comment.created_at)
       end
 
-      @posts = @posts.select {|x| x.can_be_seen_by?(@current_user, {:show_deleted => true})}.paginate
+      @posts = @posts.delete_if {|x| not x.can_be_seen_by?(@current_user, {:show_deleted => true})}
     end
   end
 

@@ -2,8 +2,8 @@ CONFIG = {}
 
 require 'languages'
 
-require "#{RAILS_ROOT}/config/default_config"
-require "#{RAILS_ROOT}/config/local_config"
+require File.expand_path('../../default_config', __FILE__)
+require File.expand_path('../../local_config', __FILE__)
 
 CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
 

@@ -55,6 +55,11 @@
 
     <%= render :partial => 'blacklists' %>
     <%= render :partial => 'tags', :locals => {:include_tag_hover_highlight=>true} %>
+
+    <a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="https://yande.re/post"></a>
+    <noscript><a href="https://flattr.com/thing/638629/yande-re" target="_blank">
+    <img src="https://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript><br />
+
     <% if CONFIG["can_see_ads"].call(@current_user) %>
     <%= render :partial => "vertical" %>
     <% end %>

@@ -82,7 +82,7 @@ class ApplicationController < ActionController::Base
     end
 
     def set_current_user
-      if RAILS_ENV == "test" && session[:user_id]
+      if Rails.env == "test" && session[:user_id]
         @current_user = User.find_by_id(session[:user_id])
       end
 

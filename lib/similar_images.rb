@@ -202,7 +202,7 @@ module SimilarImages
     return ret
   end
 
-  SEARCH_CACHE_DIR = "#{RAILS_ROOT}/public/data/search"
+  SEARCH_CACHE_DIR = "#{Rails.root}/public/data/search"
   # Save a file locally to be searched for.  Returns the path to the saved file, and
   # the search ID which can be passed to find_saved_search.
   def save_search

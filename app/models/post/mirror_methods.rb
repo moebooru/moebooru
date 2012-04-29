@@ -16,7 +16,7 @@ module PostMirrorMethods
     files_to_copy = files_to_copy.uniq
 
     # CONFIG[:data_dir] is equivalent to our local_base.
-    local_base = "#{RAILS_ROOT}/public/data/"
+    local_base = "#{Rails.root}/public/data/"
 
     dirs = []
     files_to_copy.each { |file|

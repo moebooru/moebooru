@@ -5,7 +5,7 @@ module PostImageStoreMethods
     end
 
     def file_path
-      "#{RAILS_ROOT}/public/data/image/#{file_hierarchy}/#{file_name}"
+      "#{Rails.root}/public/data/image/#{file_hierarchy}/#{file_name}"
     end
 
     def file_url
@@ -18,16 +18,16 @@ module PostImageStoreMethods
 
     def preview_path
       if status == "deleted"
-        "#{RAILS_ROOT}/public/deleted-preview.png"
+        "#{Rails.root}/public/deleted-preview.png"
       elsif image?
-        "#{RAILS_ROOT}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
+        "#{Rails.root}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
       else
-        "#{RAILS_ROOT}/public/download-preview.png"
+        "#{Rails.root}/public/download-preview.png"
       end
     end
 
     def sample_path
-      "#{RAILS_ROOT}/public/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
+      "#{Rails.root}/public/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
     end
 
     def preview_url
@@ -39,7 +39,7 @@ module PostImageStoreMethods
     end
 
     def jpeg_path
-      "#{RAILS_ROOT}/public/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
+      "#{Rails.root}/public/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
     end
 
     def store_jpeg_url

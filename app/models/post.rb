@@ -1,4 +1,4 @@
-Dir["#{RAILS_ROOT}/app/models/post/**/*.rb"].each {|x| require_dependency x}
+Dir["#{Rails.root}/app/models/post/**/*.rb"].each {|x| require_dependency x}
 
 class Post < ActiveRecord::Base
   STATUSES = %w(active pending flagged deleted)

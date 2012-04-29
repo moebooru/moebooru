@@ -196,8 +196,8 @@ class PostFrames < ActiveRecord::Base
     image_size[:crop_left] = source_left.to_f
     image_size[:crop_right] = source_left + source_width
 
-    image_tempfile_path = "#{RAILS_ROOT}/public/data/#{Process.pid}.frame.jpg"
-    preview_tempfile_path = "#{RAILS_ROOT}/public/data/#{Process.pid}.frame-preview.jpg"
+    image_tempfile_path = "#{Rails.root}/public/data/#{Process.pid}.frame.jpg"
+    preview_tempfile_path = "#{Rails.root}/public/data/#{Process.pid}.frame-preview.jpg"
 
     preview_size = PostFrames.frame_preview_dimensions(self)
 
@@ -240,10 +240,10 @@ class PostFrames < ActiveRecord::Base
   end
 
   def file_path
-    return "#{RAILS_ROOT}/public/data/frame/#{PostFrames.filename(self)}"
+    return "#{Rails.root}/public/data/frame/#{PostFrames.filename(self)}"
   end
 
   def preview_path
-    return "#{RAILS_ROOT}/public/data/frame-preview/#{PostFrames.filename(self)}"
+    return "#{Rails.root}/public/data/frame-preview/#{PostFrames.filename(self)}"
   end
 end

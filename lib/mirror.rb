@@ -58,7 +58,7 @@ module Mirrors
   # and the file should be treated as completely unwarehoused.
   def copy_file_to_mirrors(file, options={})
     # CONFIG[:data_dir] is equivalent to our local_base.
-    local_base = "#{RAILS_ROOT}/public/data/"
+    local_base = "#{Rails.root}/public/data/"
     options = { :timeout => 30 }.merge(options)
 
     if file[0,local_base.length] != local_base then

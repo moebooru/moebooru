@@ -84,11 +84,11 @@ module PostFileMethods
   end
 
   def tempfile_path
-    "#{RAILS_ROOT}/public/data/#{Process.pid}.upload"
+    "#{Rails.root}/public/data/#{Process.pid}.upload"
   end
 
   def tempfile_preview_path
-    "#{RAILS_ROOT}/public/data/#{Process.pid}-preview.jpg"
+    "#{Rails.root}/public/data/#{Process.pid}-preview.jpg"
   end
 
   # Generate MD5 and CRC32 hashes for the file.  Do this before generating samples, so if this
@@ -372,7 +372,7 @@ module PostFileMethods
   end
   
   def tempfile_sample_path
-    "#{RAILS_ROOT}/public/data/#{Process.pid}-sample.jpg"
+    "#{Rails.root}/public/data/#{Process.pid}-sample.jpg"
   end
 
   def generate_sample(force_regen = false)
@@ -496,7 +496,7 @@ module PostFileMethods
   def get_sample_height(user = nil) get_file_sample(user)[:height] end
 
   def tempfile_jpeg_path
-    "#{RAILS_ROOT}/public/data/#{Process.pid}-jpeg.jpg"
+    "#{Rails.root}/public/data/#{Process.pid}-jpeg.jpg"
   end
 
   # If the JPEG version needs to be generated (or regenerated), output it to tempfile_jpeg_path.  On

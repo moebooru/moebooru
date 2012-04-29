@@ -1,6 +1,6 @@
 if true
   path = ""
-  path += "#{RAILS_ROOT}/" if defined?(RAILS_ROOT)
+  path += "#{Rails.root}/" if defined?(RAILS_ROOT)
   path += "public/javascripts"
 
   if not File.writable?(path)

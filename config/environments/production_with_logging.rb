@@ -15,6 +15,6 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors if you bad email addresses should just be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-config.log_path = "#{RAILS_ROOT}/log/production_with_logging.log"
+config.log_path = "#{Rails.root}/log/production_with_logging.log"
 #config.log_level = :error
 config.log_level = :debug

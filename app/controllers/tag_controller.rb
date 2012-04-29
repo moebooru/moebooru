@@ -86,10 +86,10 @@ class TagController < ApplicationController
       fmt.xml do
         order = nil if params[:order] == nil
         conds = conds.join(" AND ")
-        if conds == "true" && CONFIG["web_server"] == "nginx" && File.exists?("#{RAILS_ROOT}/public/tags.xml")
+        if conds == "true" && CONFIG["web_server"] == "nginx" && File.exists?("#{Rails.root}/public/tags.xml")
           # Special case: instead of rebuilding a list of every tag every time, cache it locally and tell the web
           # server to stream it directly. This only works on Nginx.
-          response.headers["X-Accel-Redirect"] = "#{RAILS_ROOT}/public/tags.xml"
+          response.headers["X-Accel-Redirect"] = "#{Rails.root}/public/tags.xml"
           render :nothing => true
         else
           render :xml => Tag.find(:all, :order => order, :limit => limit, :conditions => [conds, *cond_params]).to_xml(:root => "tags")

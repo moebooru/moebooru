@@ -348,7 +348,7 @@ class UserController < ApplicationController
   def error
     report = params[:report]
     
-    file = "#{RAILS_ROOT}/log/user_errors.log"
+    file = "#{Rails.root}/log/user_errors.log"
     File.open(file, "a") do |f|
       f.write(report + "\n\n\n-------------------------------------------\n\n\n")
     end

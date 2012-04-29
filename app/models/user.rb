@@ -474,7 +474,7 @@ class User < ActiveRecord::Base
     end
 
     def avatar_path
-      "#{RAILS_ROOT}/public/data/avatars/#{self.id}.jpg"
+      "#{Rails.root}/public/data/avatars/#{self.id}.jpg"
     end
 
     def set_avatar(params)
@@ -495,7 +495,7 @@ class User < ActiveRecord::Base
         return false
       end
 
-      tempfile_path = "#{RAILS_ROOT}/public/data/#{Process.pid}.avatar.jpg"
+      tempfile_path = "#{Rails.root}/public/data/#{Process.pid}.avatar.jpg"
 
       def reduce_and_crop(image_width, image_height, params)
         cropped_image_width = image_width * (params[:right].to_f - params[:left].to_f)

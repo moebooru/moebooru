@@ -1,4 +1,4 @@
-Dir["#{RAILS_ROOT}/app/models/tag/**/*.rb"].each {|x| require_dependency x}
+Dir["#{Rails.root}/app/models/tag/**/*.rb"].each {|x| require_dependency x}
 
 class Tag < ActiveRecord::Base
   include TagTypeMethods

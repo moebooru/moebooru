@@ -7,7 +7,7 @@ Rails::Initializer.run do |config|
   config.frameworks -= [:action_web_service]
 
   # Add additional load paths for your own custom dirs
-  config.autoload_paths += ["#{RAILS_ROOT}/app/models/post", "#{RAILS_ROOT}/app/models/post/image_store"]
+  config.autoload_paths += ["#{Rails.root}/app/models/post", "#{Rails.root}/app/models/post/image_store"]
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug
@@ -15,7 +15,7 @@ Rails::Initializer.run do |config|
 
   # Enable page/fragment caching by setting a file-based store
   # (remember to create the caching directory and make it readable to the application)
-  # config.action_controller.fragment_cache_store = :file_store, "#{RAILS_ROOT}/cache"
+  # config.action_controller.fragment_cache_store = :file_store, "#{Rails.root}/cache"
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector

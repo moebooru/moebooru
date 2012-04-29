@@ -254,7 +254,7 @@ class Pool < ActiveRecord::Base
         type = "normal"
       end
 
-      "#{RAILS_ROOT}/public/data/zips/%s-pool-%08i-%i" % [type, self.id, time.to_i]
+      "#{Rails.root}/public/data/zips/%s-pool-%08i-%i" % [type, self.id, time.to_i]
     end
 
     def all_posts_in_zip_are_warehoused?(options={})

@@ -277,7 +277,7 @@ class ApplicationController < ActionController::Base
     current_load = Sys::CPU.load_avg[1]
     
     if request.get? && request.env["HTTP_USER_AGENT"] !~ /Google/ && current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
-      render :file => "#{RAILS_ROOT}/public/503.html", :status => 503
+      render :file => "#{Rails.root}/public/503.html", :status => 503
       return false
     end
   end  

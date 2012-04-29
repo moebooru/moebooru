@@ -591,7 +591,7 @@ var Note = Class.create({
     if (this.is_new) {
       notice("This note has no history")
     } else {
-      location.pathname = '/history?search=notes:' + this.id
+      location.href = '/history?search=notes:' + this.id
     }
     
     e.stop()

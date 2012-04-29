@@ -197,7 +197,7 @@ class User < ActiveRecord::Base
         return uploaded_tags unless uploaded_tags == nil
       end
 
-      if RAILS_ENV == "test"
+      if Rails.env == "test"
         # disable filtering in test mode to simplify tests
         popular_tags = ""
       else
@@ -248,7 +248,7 @@ class User < ActiveRecord::Base
         return favorite_tags unless favorite_tags == nil
       end
 
-      if RAILS_ENV == "test"
+      if Rails.env == "test"
         # disable filtering in test mode to simplify tests
         popular_tags = ""
       else

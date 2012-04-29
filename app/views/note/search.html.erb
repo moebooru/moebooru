@@ -12,7 +12,7 @@
           <%= link_to image_tag(note.post.preview_url, :width => note.post.preview_dimensions[0], :height => note.post.preview_dimensions[1]), :controller => "post", :action => "show", :id => note.post_id %>
         </div>
         <div style="float: left;">
-          <%= hs note.formatted_body %>
+          <%= sanitize note.formatted_body %>
         </div>
       </div>
     <% end %>

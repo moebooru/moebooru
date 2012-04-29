@@ -81,7 +81,7 @@ class NoteController < ApplicationController
     note.ip_addr = request.remote_ip
 
     if note.save
-      respond_to_success("Note updated", {:action => "index"}, :api => {:new_id => note.id, :old_id => params[:id].to_i, :formatted_body => HTML5Sanitizer::hs(note.formatted_body)})
+      respond_to_success("Note updated", {:action => "index"}, :api => {:new_id => note.id, :old_id => params[:id].to_i, :formatted_body => ActionController::Base.helpers.sanitize(note.formatted_body)})
     else
       respond_to_error(note, :controller => "post", :action => "show", :id => note.post_id)
     end

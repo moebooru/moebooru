@@ -1,1 +1,0 @@
-AssetCache.clear_js_cache

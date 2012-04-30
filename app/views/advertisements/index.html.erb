@@ -5,6 +5,7 @@
     <tr>
       <th>#</th>
       <th>Image URL</th>
+      <th>Referral URL</th>
       <th>Width</th>
       <th>Height</th>
       <th>Ad Type</th>
@@ -18,6 +19,7 @@
       <tr>
         <td><%= link_to(ad.id, ad) %></td>
         <td><%= link_to(ad.image_url, ad.image_url) %></td>
+        <td><%= link_to(ad.referral_url, ad.referral_url) %></td>
         <td><%= ad.width %></td>
         <td><%= ad.height %></td>
         <td><%= ad.ad_type %></td>

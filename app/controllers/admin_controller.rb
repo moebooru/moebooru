@@ -1,6 +1,6 @@
 class AdminController < ApplicationController
   layout "default"
-  before_filter :admin_only, :except => [:cache_stats]
+  before_filter :admin_user, :except => :cache_stats
 
   def index
     set_title "Admin"

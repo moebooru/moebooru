@@ -397,4 +397,10 @@ class ApplicationController < ActionController::Base
       cookies["notice"] = flash[:notice]
     end
   end
+
+  private
+
+    def admin_user
+      redirect_to root_path unless @current_user.is_admin?
+    end
 end

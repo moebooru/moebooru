@@ -14,6 +14,10 @@ class AdvertisementsController < ApplicationController
     @ad = Advertisement.new
   end
 
+  def edit
+    @ad = Advertisement.find(params[:id])
+  end
+
   def redirect
     ad = Advertisement.find(params[:id])
     ad.increment!(:hit_count)

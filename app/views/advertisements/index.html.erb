@@ -1,0 +1,32 @@
+<h4>Advertisement Statistics</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Image Url</th>
+      <th>Width</th>
+      <th>Height</ht>
+      <th>Ad Type</th>
+      <th>Status</th>
+      <th>Hit Count</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @ads.each do |ad| %>
+      <tr>
+        <td><%= link_to(ad.id, ad) %></td>
+        <td><%= link_to(ad.image_url, ad.image_url) %></td>
+        <td><%= ad.width %></td>
+        <td><%= ad.height %></td>
+        <td><%= ad.ad_type %></td>
+        <td><%= ad.status %></td>
+        <td><%= ad.hit_count %></td>
+        <td><%= link_to('Edit', edit_advertisement_path(ad)) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= will_paginate(@ads) %>

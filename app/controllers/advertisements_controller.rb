@@ -1,13 +1,10 @@
 class AdvertisementsController < ApplicationController
-  layout "bare"
+  layout 'default'
   before_filter :admin_only, :only => [:reset_stats]
 
-  def redirect_ad
-    ad = Advertisement.find(params[:id])
-    ad.increment!(:hit_count)
-    redirect_to ad.referral_url
+  def index
+    @ads = Advertisement.paginate(:page => params[:page], :per_page => 100)
   end
-
   def redirect
     ad = Advertisement.find(params[:id])
     ad.increment!(:hit_count)

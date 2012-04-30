@@ -8,6 +8,12 @@ class AdvertisementsController < ApplicationController
     redirect_to ad.referral_url
   end
 
+  def redirect
+    ad = Advertisement.find(params[:id])
+    ad.increment!(:hit_count)
+    redirect_to ad.referral_url
+  end
+
   def show_stats
     @ads = Advertisement.find(:all, :order => "id")
     render :layout => "default"

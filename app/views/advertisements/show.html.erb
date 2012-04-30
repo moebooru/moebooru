@@ -1,0 +1,33 @@
+<h4>Advertisement #<%= @ad.id %></h4>
+
+<div>
+  <label>Id</label>
+  <%= @ad.id %>
+</div>
+<div>
+  <label>Image URL</label>
+  <%= @ad.image_url %>
+</div>
+<div>
+  <label>Width</label>
+  <%= @ad.width %>
+</div>
+<div>
+  <label>Height</label>
+  <%= @ad.height %>
+</div>
+<div>
+  <label>Ad Type</label>
+  <%= @ad.ad_type %>
+</div>
+<div>
+  <label>Status</label>
+  <%= @ad.status %>
+</div>
+<div>
+  <label>Hit Count</label>
+  <%= @ad.hit_count %>
+</div>
+
+<%= link_to 'Edit', edit_advertisement_path(@ad) %>
+<%= link_to 'Back', advertisements_path %>

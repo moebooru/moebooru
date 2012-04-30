@@ -5,6 +5,11 @@ class AdvertisementsController < ApplicationController
   def index
     @ads = Advertisement.paginate(:page => params[:page], :per_page => 100)
   end
+
+  def show
+    @ad = Advertisement.find(params[:id])
+  end
+
   def redirect
     ad = Advertisement.find(params[:id])
     ad.increment!(:hit_count)

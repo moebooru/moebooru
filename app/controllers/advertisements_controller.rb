@@ -14,8 +14,28 @@ class AdvertisementsController < ApplicationController
     @ad = Advertisement.new
   end
 
+  def create
+    @ad = Advertisement.new(params[:advertisement])
+    if @ad.save
+      flash[:success] = 'Advertisement added'
+      redirect_to @ad
+    else
+      render :new
+    end
+  end
+
   def edit
     @ad = Advertisement.find(params[:id])
+  end
+
+  def update
+    @ad = Advertisement.find(params[:id])
+    if @ad.update_attributes(params[:advertisement])
+      flash[:success] = 'Advertisement updated'
+      redirect_to @ad
+    else
+      render :edit
+    end
   end
 
   def redirect

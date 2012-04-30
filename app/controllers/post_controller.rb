@@ -18,7 +18,7 @@ class PostController < ApplicationController
     around_filter :cache_action, :only => [:index, :atom, :piclens]
   end
 
-  helper :wiki, :tag, :comment, :pool, :favorite, :advertisement
+  helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
 
   def verify_action(options)
     redirect_to_proc = false

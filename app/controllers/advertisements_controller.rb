@@ -1,4 +1,4 @@
-class AdvertisementController < ApplicationController
+class AdvertisementsController < ApplicationController
   layout "bare"
   before_filter :admin_only, :only => [:reset_stats]
 

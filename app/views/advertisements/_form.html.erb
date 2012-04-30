@@ -1,0 +1,19 @@
+<% form_for(@ad) do |f| %>
+  <%= f.error_messages %>
+
+  <div>
+    <%= f.label :image_url %>
+    <%= f.text_field :image_url %>
+  </div>
+  <div>
+    <%= f.label :ad_type %>
+    <%= f.select :ad_type, ['horizontal', 'vertical'] %>
+  </div>
+  <div>
+    <%= f.label :status %>
+    <%= f.text_field :status %>
+  </div>
+  <div>
+    <%= f.submit %>
+  </div>
+<% end %>

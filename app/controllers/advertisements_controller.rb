@@ -49,6 +49,13 @@ class AdvertisementsController < ApplicationController
     redirect_to advertisements_path
   end
 
+  def destroy
+    @ad = Advertisement.find(params[:id])
+    @ad.destroy
+    flash[:notice] = "Deleted advertisement #{@ad.id}"
+    redirect_to advertisements_path
+  end
+
   def redirect
     ad = Advertisement.find(params[:id])
     ad.increment!(:hit_count)

@@ -15,6 +15,7 @@
         <th>Status</th>
         <th>Hit Count</th>
         <th></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -30,6 +31,7 @@
           <td><%= ad.status %></td>
           <td><%= ad.hit_count %></td>
           <td><%= link_to('Edit', edit_advertisement_path(ad)) %></td>
+          <td><%= link_to('Delete', ad, :confirm => 'Are you sure?', :method => :delete) %></td>
         </tr>
       <% end %>
     </tbody>

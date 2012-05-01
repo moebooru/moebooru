@@ -1,35 +1,43 @@
 <h4>Advertisement Statistics</h4>
 
-<table>
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Image URL</th>
-      <th>Referral URL</th>
-      <th>Width</th>
-      <th>Height</th>
-      <th>Ad Type</th>
-      <th>Status</th>
-      <th>Hit Count</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @ads.each do |ad| %>
+<% form_tag update_multiple_advertisements_path do |f| %>
+  <% ads = [] %>
+  <table>
+    <thead>
       <tr>
-        <td><%= link_to(ad.id, ad) %></td>
-        <td><%= link_to(ad.image_url, ad.image_url) %></td>
-        <td><%= link_to(ad.referral_url, ad.referral_url) %></td>
-        <td><%= ad.width %></td>
-        <td><%= ad.height %></td>
-        <td><%= ad.ad_type %></td>
-        <td><%= ad.status %></td>
-        <td><%= ad.hit_count %></td>
-        <td><%= link_to('Edit', edit_advertisement_path(ad)) %></td>
+        <th></th>
+        <th>#</th>
+        <th>Image URL</th>
+        <th>Referral URL</th>
+        <th>Width</th>
+        <th>Height</th>
+        <th>Ad Type</th>
+        <th>Status</th>
+        <th>Hit Count</th>
+        <th></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @ads.each do |ad| %>
+        <tr>
+          <td><%= check_box_tag 'advertisement_ids[]', ad.id %></td>
+          <td><%= link_to(ad.id, ad) %></td>
+          <td><%= link_to(ad.image_url, ad.image_url) %></td>
+          <td><%= link_to(ad.referral_url, ad.referral_url) %></td>
+          <td><%= ad.width %></td>
+          <td><%= ad.height %></td>
+          <td><%= ad.ad_type %></td>
+          <td><%= ad.status %></td>
+          <td><%= ad.hit_count %></td>
+          <td><%= link_to('Edit', edit_advertisement_path(ad)) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<%= submit_tag 'Reset Hit Count', :name => 'do_reset_hit_count' %>
+<%= submit_tag 'Delete', :name => 'do_delete' %>
+<% end %>
 
 <%= link_to('Add', new_advertisement_path) %>
 <%= will_paginate(@ads) %>

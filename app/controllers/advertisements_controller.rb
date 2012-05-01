@@ -38,6 +38,17 @@ class AdvertisementsController < ApplicationController
     end
   end
 
+  def update_multiple
+    ids = params[:advertisement_ids].map{ |a| a.to_i }
+    if params[:do_delete]
+      Advertisement.destroy_all :id => ids
+    elsif params[:do_reset_hit_count]
+      Advertisement.reset_hit_count ids
+    end
+    flash[:success] = 'Advertisements updated'
+    redirect_to advertisements_path
+  end
+
   def redirect
     ad = Advertisement.find(params[:id])
     ad.increment!(:hit_count)

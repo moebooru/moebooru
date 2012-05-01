@@ -39,7 +39,12 @@ class AdvertisementsController < ApplicationController
   end
 
   def update_multiple
-    ids = params[:advertisement_ids].map{ |a| a.to_i }
+    if params[:advertisement_ids]
+      ids = params[:advertisement_ids].map{ |a| a.to_i }
+    else
+      flash[:notice] = 'No advertisement selected'
+      redirect_to advertisements_path and return
+    end
     if params[:do_delete]
       Advertisement.destroy_all :id => ids
     elsif params[:do_reset_hit_count]

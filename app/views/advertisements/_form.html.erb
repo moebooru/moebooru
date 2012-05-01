@@ -25,6 +25,12 @@
     <%= f.label :status %>
     <%= f.text_field :status %>
   </div>
+  <% if action_name == 'edit' %>
+    <div>
+      <%= f.label :reset_hit_count %>
+      <%= f.check_box :reset_hit_count %>
+    </div>
+  <% end %>
   <div>
     <%= f.submit %>
   </div>

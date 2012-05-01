@@ -34,4 +34,5 @@
 </div>
 
 <%= link_to 'Edit', edit_advertisement_path(@ad) %>
+<%= link_to 'Delete', @ad, :confirm => 'Are you sure?', :method => :delete
 <%= link_to 'Back', advertisements_path %>

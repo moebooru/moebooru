@@ -2,7 +2,7 @@
 ^\.redcar$
 ^db/.*\.sqlite3$
 ^(log|tmp)/
-^config/(database\.yml|unicorn\.rb|local_config\.rb)$
+^config/(newrelic\.yml|database\.yml|unicorn\.rb|local_config\.rb)$
 ^public/system/photos/
 \.(swp|orig)$
 ^[^/]+\.war

@@ -5,19 +5,19 @@
 #include <algorithm>
 using namespace std;
 
-void PNG::Error(png_struct *png, const char *error)
+void PNG::Error(png_structp png, const char *error)
 {
-	png_error_info *info = (png_error_info *) png->error_ptr;
+	png_error_info *info = (png_error_info *) png_get_error_ptr(png);
 	strncpy(info->err, error, 1024);
 	info->err[1023] = 0;
-	longjmp(png->jmpbuf, 1);
+	longjmp(png_jmpbuf(png), 1);
 }
 
-void PNG::Warning(png_struct *png, const char *warning)
+void PNG::Warning(png_structp png, const char *warning)
 {
 }
 
-void PNG::InfoCallback(png_struct *png, png_info *info_ptr)
+void PNG::InfoCallback(png_structp png, png_infop info_ptr)
 {
 	PNG *data = (PNG *) png_get_progressive_ptr(png);
 
@@ -47,7 +47,7 @@ void PNG::InfoCallback(png_struct *png, png_info *info_ptr)
 	data->m_pOutputFilter->Init(width, height, 4);
 }
 
-void PNG::RowCallback(png_struct *png, png_byte *new_row, png_uint_32 row_num, int pass)
+void PNG::RowCallback(png_structp png, png_byte *new_row, png_uint_32 row_num, int pass)
 {
 	PNG *data = (PNG *) png_get_progressive_ptr(png);
 
@@ -70,7 +70,7 @@ void PNG::RowCallback(png_struct *png, png_byte *new_row, png_uint_32 row_num, i
 		data->m_Rows.DiscardRows(row_num+1);
 }
 
-void PNG::EndCallback(png_struct *png, png_info *info)
+void PNG::EndCallback(png_structp png, png_infop info)
 {
 	PNG *data = (PNG *) png_get_progressive_ptr(png);
 	data->m_Done = true;
@@ -84,14 +84,14 @@ bool PNG::Read(FILE *f, Filter *pOutput, char error[1024])
 	png_error_info err;
 	err.err = error;
 
-	png_struct *png = png_create_read_struct(PNG_LIBPNG_VER_STRING, &err, Error, Warning);
+	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, &err, Error, Warning);
 	if(png == NULL)
 	{
 		sprintf(error, "creating png_create_read_struct failed");
 		return false;
 	}
 
-	png_info *info_ptr = png_create_info_struct(png);
+	png_infop info_ptr = png_create_info_struct(png);
 	if(info_ptr == NULL)
 	{
 		png_destroy_read_struct(&png, NULL, NULL);
@@ -99,7 +99,7 @@ bool PNG::Read(FILE *f, Filter *pOutput, char error[1024])
 		return false;
 	}
 
-	if(setjmp(png->jmpbuf))
+	if(setjmp(png_jmpbuf(png)))
 	{
 		png_destroy_read_struct(&png, &info_ptr, NULL);
 		return false;

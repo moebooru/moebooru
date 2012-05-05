@@ -1276,7 +1276,7 @@ Post = {
      */
     var parse_url = function(href)
     {
-      var match = href.match(/^(http:\/\/[^\/]+)\/([a-z]+)\/([a-z]+)\/([0-9]+)([^#]*)(#.*)?$/);
+      var match = href.match(/^(https?:\/\/[^\/]+)\/([a-z]+)\/([a-z]+)\/([0-9]+)([^#]*)(#.*)?$/);
       if(!match)
         return null;
 
@@ -1296,7 +1296,7 @@ Post = {
      */
     var parse_index_url = function(href)
     {
-      var match = href.match(/^(http:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/);
+      var match = href.match(/^(https?:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/);
       if(!match)
         return null;
       return match[3];

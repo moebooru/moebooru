@@ -93,6 +93,7 @@ class User < ActiveRecord::Base
 
   module UserCountMethods
     module ClassMethods
+      # TODO: This isn't used anymore. Should be safe to delete.
       def fast_count
         return select_value_sql("SELECT row_count FROM table_data WHERE name = 'users'").to_i
       end
@@ -331,7 +332,7 @@ class User < ActiveRecord::Base
     end
 
     def set_role
-      if User.fast_count == 0
+      if User.first.nil?
         self.level = CONFIG["user_levels"]["Admin"]
       elsif CONFIG["enable_account_email_activation"]
         self.level = CONFIG["user_levels"]["Unactivated"]

@@ -48,8 +48,13 @@
       <tbody>
         <% @users.each do |user| %>
           <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to_unless user["id"].nil?, h(user["name"]), :controller => "user", :action => "show", :id => user["user_id"] %></td>
-            <td><%= link_to_unless user["id"].nil?, user["change_count"], @change_params.call(user["user_id"]) %></td>
+            <% if not user['id'].nil? %>
+              <td><%= link_to(user['name'], :controller => :user, :action => :show, :id => user['id'])%></td>
+              <td><%= link_to(user['change_count'], @change_params.call(user['name']))%></td>
+            <% else %>
+              <td><%= user['name'] %></td>
+              <td><%= user['change_count'] %></td>
+            <% end %>
             <td><%= number_to_percentage 100 * user["change_count"] / user["sum"], :precision => 1 %></td>
           </tr>
         <% end %>

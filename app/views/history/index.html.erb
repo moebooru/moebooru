@@ -31,11 +31,11 @@
             elsif @options[:show_name]
               ts.add(15) # name
             else
-              ts.add(4) # id
+              ts.add(6) # id
             end
             ts.add(5) # date
             ts.add(10) # user
-            ts.add(80) # change
+            ts.add(79) # change
           %>
           <% if @type == "all" %>
             <th width="<%= ts.get %>">Type</th>

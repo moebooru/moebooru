@@ -3,13 +3,14 @@ class WikiPageVersion < ActiveRecord::Base
     return User.find_name(self.user_id)
   end
 
-  def what_updated
+  def diff(target)
     what = []
-    if self.version > 1
-      what += [:body] if self.body != self.prev.body
-      what += [:title] if self.title != self.prev.title
-      what += [:is_locked] if self.is_locked != self.prev.is_locked
-    else
+    if target
+      what += [:body] if self.body != target.body
+      what += [:title] if self.title != target.title
+      what += [:is_locked] if self.is_locked != target.is_locked
+    end
+    if self.version == 1
       what += [:initial]
     end
     return what

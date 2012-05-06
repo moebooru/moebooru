@@ -10,20 +10,23 @@ module WikiHelper
 
   # Generates content for "Changes" column on history page.
   # Not filtered, must return HTML-safe string.
-  def page_change(w)
-    if w.what_updated.empty?
+  # a is current
+  # b is previous (or what's a compared to)
+  def page_change(a, b)
+    changes = a.diff(b)
+    if changes.empty?
       'No change'
     else
-      w.what_updated.map do |c|
-        case c
+      changes.map do |change|
+        case change
         when :initial
           'first version'
         when :body
           'content update'
         when :title
-          "page rename (#{h w.title} ← #{h w.prev.title})"
+          "page rename (#{h a.title} ← #{h b.prev.title})"
         when :is_locked
-          w.is_locked ? 'page lock' : 'page unlock'
+          a.is_locked ? 'page lock' : 'page unlock'
         end
       end.join(', ').capitalize
     end

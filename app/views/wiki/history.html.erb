@@ -26,7 +26,7 @@
             <td><%= radio_button_tag "to", wiki_page.version, i == 0, :id => "to_#{wiki_page.version}" %></td>
             <td><%= link_to wiki_page.updated_at.strftime("%Y-%m-%d %I:%M"), :action => "show", :title => wiki_page.title, :version => wiki_page.version %></td>
             <td><%= link_to wiki_page.author, :controller => :user, :action => :show, :id => wiki_page.user_id %></td>
-            <td class="change"><%= page_change(wiki_page) %></td>
+            <td class="change"><%= page_change(wiki_page, @wiki_pages[i + 1]) %></td>
           </tr>
         <% end %>
       </tbody>

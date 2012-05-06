@@ -28,11 +28,11 @@ private:
 	bool m_Done;
 	int m_Passes;
 
-	static void Error(png_struct *png, const char *error);
-	static void Warning(png_struct *png, const char *warning);
-	static void InfoCallback(png_struct *png, png_info *info_ptr);
-	static void RowCallback(png_struct *png, png_byte *new_row, png_uint_32 row_num, int pass);
-	static void EndCallback(png_struct *png, png_info *info);
+	static void Error(png_structp png, const char *error);
+	static void Warning(png_structp png, const char *warning);
+	static void InfoCallback(png_structp png, png_infop info_ptr);
+	static void RowCallback(png_structp png, png_byte *new_row, png_uint_32 row_num, int pass);
+	static void EndCallback(png_structp png, png_infop info);
 };
 
 #endif

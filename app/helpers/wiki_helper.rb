@@ -24,11 +24,11 @@ module WikiHelper
         when :body
           'content update'
         when :title
-          "page rename (#{h a.title} ← #{h b.prev.title})"
+          "page rename (#{h a.title} ← #{h b.title})"
         when :is_locked
           a.is_locked ? 'page lock' : 'page unlock'
         end
-      end.join(', ').capitalize
+      end.join(', ')
     end
   end
 end

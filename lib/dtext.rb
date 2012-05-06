@@ -37,7 +37,7 @@ module DText
   
       url = "(h?ttps?:\\/\\/(?:[a-zA-Z0-9_\\-#~%.,:;\\(\\)\\[\\]$@!&=+?\\/#]|#{utf8_char})+)"
     else
-      url = "(h?ttps?://[^ |]+)"
+      url = "(h?ttps?://(?:[^\s|])+)"
     end
     str.gsub!(/#{url}|&lt;&lt;#{url}(?:\|(.+?))?&gt;&gt;|&quot;(.+?)&quot;:#{url}/m) do |link| # url or <<url|text>> or "text":url
       if $1 then

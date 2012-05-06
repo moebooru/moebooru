@@ -154,7 +154,7 @@ class WikiController < ApplicationController
     elsif params[:id]
       wiki_id = params[:id]
     end
-    @wiki_pages = WikiPageVersion.all(:conditions => { :wiki_page_id => wiki_id }, :order => 'updated_at DESC')
+    @wiki_pages = WikiPageVersion.all(:conditions => { :wiki_page_id => wiki_id }, :order => 'version DESC')
 
     respond_to_list("wiki_pages")
   end

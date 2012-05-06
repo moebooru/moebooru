@@ -6,7 +6,8 @@ class WikiPage < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :title, :case_sensitive => false
   validates_presence_of :body
-  
+  before_validation_on_update :ensure_changed
+
   class << self
     def generate_sql(options)
       joins = []
@@ -100,4 +101,18 @@ class WikiPage < ActiveRecord::Base
   def to_json(*args)
     {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_json(*args)
   end
+
+  protected
+    def ensure_changed
+      changed = false
+      latest = self.versions.latest
+      if self.body != latest.body
+        changed = true
+      elsif self.title != latest.title
+        changed = true
+      elsif self.is_locked != latest.is_locked
+        changed = true
+      end
+      return changed
+    end
 end

@@ -1,7 +1,7 @@
 class PoolPost < ActiveRecord::Base
   set_table_name "pools_posts"
   belongs_to :post
-  belongs_to :pool
+  belongs_to :pool, :touch => true
   belongs_to :next_post, :class_name => "Post", :foreign_key => "next_post_id"
   belongs_to :prev_post, :class_name => "Post", :foreign_key => "prev_post_id"
   versioned_parent :pool

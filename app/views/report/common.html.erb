@@ -50,7 +50,7 @@
           <tr class="<%= cycle 'even', 'odd' %>">
             <% if not user['id'].nil? %>
               <td><%= link_to(user['name'], :controller => :user, :action => :show, :id => user['id'])%></td>
-              <td><%= link_to(user['change_count'], @change_params.call(user['name']))%></td>
+              <td><%= link_to(user['change_count'], @change_params.call(user['id']))%></td>
             <% else %>
               <td><%= user['name'] %></td>
               <td><%= user['change_count'] %></td>

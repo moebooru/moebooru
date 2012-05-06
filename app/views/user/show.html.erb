@@ -70,7 +70,7 @@
     </tr>
     <tr>
       <td><strong>Tag Edits</strong></td>
-      <td><%= link_to History.count(:all, :conditions => "user_id = #{@user.id} AND group_by_table = 'posts'"), :controller => "history", :action => "post", :search => "user:#{@user.name}" %></td>
+      <td><%= link_to History.count(:all, :conditions => "user_id = #{@user.id} AND group_by_table = 'posts'"), :controller => "history", :action => "index", :search => "type:post user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong>Note Edits</strong></td>

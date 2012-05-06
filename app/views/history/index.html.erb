@@ -23,29 +23,15 @@
     <table width="100%" class="highlightable" id="history">
       <thead>
         <tr>
-          <%
-            ts = ApplicationHelper::TableScale.new
-            ts.add(4) if @type == "all" # type
-            ts.add(1) # box
-            if @options[:specific_object]
-            elsif @options[:show_name]
-              ts.add(15) # name
-            else
-              ts.add(4) # id
-            end
-            ts.add(8) # date
-            ts.add(10) # user
-            ts.add(77) # change
-          %>
           <% if @type == "all" %>
-            <th width="<%= ts.get %>">Type</th>
+            <th>Type</th>
           <% end %>
-          <th width="<%= ts.get %>"></th>
+          <th></th>
           <% if @options[:specific_object] %>
           <% elsif @options[:show_name] %>
-            <th width="<%= ts.get %>"><%= @type.singularize.capitalize %></th>
+            <th><%= @type.singularize.capitalize %></th>
           <% else %>
-            <th width="<%= ts.get %>">
+            <th>
               <% if @type == "all" %>
                 Id
               <% else %>
@@ -53,9 +39,9 @@
               <% end %>
             </th>
           <% end %>
-          <th width="<%= ts.get %>" style="min-width: 10em">Date</th>
-          <th width="<%= ts.get %>">User</th>
-          <th width="<%= ts.get %>">Change</th>
+          <th>Date</th>
+          <th>User</th>
+          <th>Change</th>
         </tr>
       </thead>
       <tbody>

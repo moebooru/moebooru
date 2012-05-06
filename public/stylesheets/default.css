@@ -2283,3 +2283,11 @@ P,.inline-image + .inline-image > .inline-thumb
   top: 1em;
 }
 
+table#history {
+  white-space: nowrap;
+}
+
+table#history td.change {
+  width: 100%;
+  white-space: normal;
+}

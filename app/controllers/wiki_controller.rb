@@ -150,7 +150,8 @@ class WikiController < ApplicationController
     set_title "Wiki History"
 
     if params[:title]
-      wiki_id = WikiPage.find_by_title(params[:title]).id
+      wiki = WikiPage.find_by_title(params[:title])
+      wiki_id = wiki.id if wiki
     elsif params[:id]
       wiki_id = params[:id]
     end

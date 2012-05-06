@@ -5,7 +5,7 @@
   <table>
     <thead>
       <tr>
-        <th></th>
+        <th class="center"><%= check_box_tag('check_all', 'check_all', false, :onClick => "checkbox_toggle(this, 'advertisement_ids[]');") %></th>
         <th>#</th>
         <th>Image URL</th>
         <th>Referral URL</th>
@@ -21,7 +21,7 @@
     <tbody>
       <% @ads.each do |ad| %>
         <tr>
-          <td><%= check_box_tag 'advertisement_ids[]', ad.id %></td>
+          <td class="center"><%= check_box_tag 'advertisement_ids[]', ad.id %></td>
           <td><%= link_to(ad.id, ad) %></td>
           <td><%= link_to(ad.image_url, ad.image_url) %></td>
           <td><%= link_to(ad.referral_url, ad.referral_url) %></td>
@@ -43,3 +43,11 @@
 
 <%= link_to('Add', new_advertisement_path) %>
 <%= will_paginate(@ads) %>
+
+<script type="text/javascript">
+  function checkbox_toggle(source, name) {
+    checkboxes = document.getElementsByName(name);
+    for(var i in checkboxes)
+      checkboxes[i].checked = source.checked;
+  }
+</script>

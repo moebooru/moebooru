@@ -2291,3 +2291,7 @@ table#history td.change {
   width: 100%;
   white-space: normal;
 }
+
+table .center {
+  text-align: center;
+}

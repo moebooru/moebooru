@@ -15,7 +15,7 @@ module WikiHelper
   def page_change(a, b)
     changes = a.diff(b)
     if changes.empty?
-      'No change'
+      'no change'
     else
       changes.map do |change|
         case change

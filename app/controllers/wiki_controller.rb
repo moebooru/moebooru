@@ -149,7 +149,12 @@ class WikiController < ApplicationController
   def history
     set_title "Wiki History"
 
-    @wiki_pages = WikiPageVersion.find(:all, :conditions => ["title = ?", params[:title]], :order => "updated_at DESC")
+    if params[:title]
+      wiki_id = WikiPage.find_by_title(params[:title]).id
+    elsif params[:id]
+      wiki_id = params[:id]
+    end
+    @wiki_pages = WikiPageVersion.all(:conditions => { :wiki_page_id => wiki_id }, :order => 'updated_at DESC')
 
     respond_to_list("wiki_pages")
   end

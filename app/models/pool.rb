@@ -62,6 +62,8 @@ class Pool < ActiveRecord::Base
           pool_post.active = true
           pool_post.sequence = seq
           pool_post.save!
+          # Set updated_at (Update pool `update time`)
+          touch
         else
           PoolPost.create(:pool_id => id, :post_id => post_id, :sequence => seq)
         end
@@ -83,6 +85,7 @@ class Pool < ActiveRecord::Base
         if pool_post then
           pool_post.active = false
           pool_post.save!
+          touch
 
           self.reload # saving pool_post modified us
           update_pool_links

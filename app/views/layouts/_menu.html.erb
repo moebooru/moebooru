@@ -11,8 +11,7 @@
 
     if(Cookie.get("user_id"))
     {
-      var profile_item = <%= make_sub_item("My&nbsp;Profile", :controller => :user, :action => "show") %>;
-      profile_item.dest += "/" + Cookie.get("user_id")
+      var profile_item = <%= make_sub_item("My&nbsp;Profile", :controller => :user, :action => "show", :id => @current_user.id) %>;
       account_menu.push(profile_item);
     }
 

@@ -4,13 +4,15 @@
   <% form_tag({:action => "diff"}, :method => :get) do %>
     <%= hidden_field_tag "title", params[:title] %>
 
-    <table width="100%">
+    <table id="history" width="100%">
       <thead>
         <tr>
-          <th width="5%">From</th>
-          <th width="5%">To</th>
-          <th width="90%">Last edited</th>
-        </tr>       
+          <th>From</th>
+          <th>To</th>
+          <th>Date</th>
+          <th>User</th>
+          <th>Changes</th>
+        </tr>
       </thead>
       <tfoot>
         <tr>
@@ -20,11 +22,13 @@
       <tbody>
         <% @wiki_pages.each_with_index do |wiki_page, i| %>
           <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= radio_button_tag "from", wiki_page.version, i==1, :id => "from_#{wiki_page.version}" %></td>
-            <td><%= radio_button_tag "to", wiki_page.version, i==0, :id => "to_#{wiki_page.version}" %></td>
-            <td><%= link_to wiki_page.updated_at.strftime("%m/%d %I:%M"), :action => "show", :title => wiki_page.title, :version => wiki_page.version %> by <%= h wiki_page.author %></td>
+            <td><%= radio_button_tag "from", wiki_page.version, i == 1, :id => "from_#{wiki_page.version}" %></td>
+            <td><%= radio_button_tag "to", wiki_page.version, i == 0, :id => "to_#{wiki_page.version}" %></td>
+            <td><%= link_to wiki_page.updated_at.strftime("%Y-%m-%d %I:%M"), :action => "show", :title => wiki_page.title, :version => wiki_page.version %></td>
+            <td><%= link_to wiki_page.author, :controller => :user, :action => :show, :id => wiki_page.user_id %></td>
+            <td class="change"><%= page_change(wiki_page) %></td>
           </tr>
-        <% end %>       
+        <% end %>
       </tbody>
     </table>
   <% end %>

@@ -5,7 +5,7 @@ class WikiPage < ActiveRecord::Base
   before_save :normalize_title
   belongs_to :user
   validates_uniqueness_of :title, :case_sensitive => false
-  validates_presence_of :body
+  validates_presence_of :body, :title
 
   class << self
     def generate_sql(options)

@@ -9,7 +9,8 @@ class WikiPageVersion < ActiveRecord::Base
       what += [:body] if self.body != target.body
       what += [:title] if self.title != target.title
       what += [:is_locked] if self.is_locked != target.is_locked
-    else
+    end
+    if self.version == 1
       what += [:initial]
     end
     return what

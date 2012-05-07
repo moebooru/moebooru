@@ -6,20 +6,20 @@
     <% end %>
   </div>
   
-  <table class="highlightable" width="100%">
+  <table class="nowrap highlightable" width="100%">
     <thead>
       <tr>
-        <th width="65%">Title</th>
-        <th width="10%">Created by</th>
-        <th width="10%">Updated by</th>
-        <th width="10%">Updated</th>
-        <th width="5%">Responses</th>
+        <th>Title</th>
+        <th>Created by</th>
+        <th>Updated by</th>
+        <th>Updated</th>
+        <th>Responses</th>
       </tr>
     </thead>
     <tbody>
       <% @forum_posts.each do |fp| %>
         <% content_tag :tr, :class => cycle('even', 'odd') do %>
-          <td>
+          <td class="wrap full">
             <% if @current_user.is_a?(User) && fp.updated_at > @current_user.last_forum_topic_read_at %>
               <span class="forum-topic unread-topic"><% if fp.is_sticky? %>Sticky: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
             <% else %>

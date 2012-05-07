@@ -32,7 +32,7 @@ def upload_jpeg(path)
 	upload_file(path, "image/jpeg", File.basename(path))
 end
 
-class Test::Unit::TestCase
+class ActiveSupport::TestCase
   self.use_transactional_fixtures = true
   self.use_instantiated_fixtures = false
 end

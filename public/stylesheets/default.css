@@ -2295,3 +2295,15 @@ table#history td.change {
 table .center {
   text-align: center;
 }
+
+table.nowrap {
+  white-space: nowrap;
+}
+
+table td.wrap {
+  white-space: normal;
+}
+
+table td.full {
+  width: 100%;
+}

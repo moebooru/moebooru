@@ -3,8 +3,8 @@ Dir["#{Rails.root}/app/models/post/**/*.rb"].each {|x| require_dependency x}
 class Post < ActiveRecord::Base
   STATUSES = %w(active pending flagged deleted)
   
-  define_callbacks :after_delete
-  define_callbacks :after_undelete
+  define_callbacks :delete
+  define_callbacks :undelete
   has_many :notes, :order => "id desc"
   has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
@@ -14,7 +14,7 @@ class Post < ActiveRecord::Base
   attr_accessor :updater_ip_addr, :updater_user_id
   attr_accessor :metatag_flagged
   has_many :avatars, :class_name => "User", :foreign_key => "avatar_post_id"
-  after_delete :clear_avatars
+  set_callback :delete, :before, :clear_avatars
   after_save :commit_flag
   
   include PostSqlMethods
@@ -49,14 +49,16 @@ class Post < ActiveRecord::Base
   end
 
   def delete
-    self.update_attributes(:status => "deleted")
-    self.run_callbacks(:after_delete)
+    run_callbacks :delete do
+      self.update_attributes(:status => "deleted")
+    end
   end
 
   def undelete
     return if self.status == "active"
-    self.update_attributes(:status => "active")
-    self.run_callbacks(:after_undelete)
+    run_callbacks :undelete do
+      self.update_attributes(:status => "active")
+    end
   end
   
   def can_user_delete?(user)

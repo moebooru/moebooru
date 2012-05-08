@@ -33,5 +33,4 @@ require 'download'
 require 'sys/cpu' if CONFIG["load_average_threshold"]
 require 'fileutils'
 require 'versioning'
-require 'error_logging'
 require 'dtext'

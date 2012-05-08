@@ -47,3 +47,7 @@ Moebooru::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 end
+Moebooru::Application.config.middleware.use ExceptionNotifier,
+  :email_prefix => "[#{CONFIG['app_name']}] ",
+  :sender_address => %{"notifier" },
+  :exception_recipients => CONFIG['admin_contact']

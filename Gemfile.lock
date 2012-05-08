@@ -102,7 +102,7 @@ PLATFORMS
 DEPENDENCIES
   daemons
   diff-lcs
-  exception_notification (~> 2.3.0)
+  exception_notification
   gchartrb
   geoip
   hpricot

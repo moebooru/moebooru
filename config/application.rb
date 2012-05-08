@@ -9,8 +9,6 @@ module Moebooru
   class Application < Rails::Application
     config.autoload_paths += [config.root.join('lib')]
     config.encoding = 'utf-8'
-    # Skip frameworks you're not going to use
-    config.frameworks -= [:action_web_service]
   
     # Add additional load paths for your own custom dirs
     config.autoload_paths += ["#{Rails.root}/app/models/post", "#{Rails.root}/app/models/post/image_store"]

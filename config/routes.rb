@@ -1,13 +1,20 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :advertisements, :member => { :redirect => :get }, :collection => { :update_multiple => :post }
-  map.root :controller => 'static', :action => 'index'
-  map.connect 'post/show/:id/:tag_title', :controller => 'post', :action => 'show', :requirements => {:id => /\d+/}
-  map.connect 'pool/zip/:id/:filename', :controller => 'pool', :action => 'zip', :requirements => {:id => /\d+/, :filename => /.*/}
-  map.connect ':controller/:action/:id.:format', :requirements => {:id => /[-\d]+/}
-  map.connect ':controller/:action/:id', :requirements => {:id => /[-\d]+/}
-  map.connect ':controller/:action.:format'
-  map.connect ':controller/:action'
+Moebooru::Application.routes.draw do
+  resources :advertisements do
+    collection do
+  post :update_multiple
+  end
+    member do
+  get :redirect
+  end
+  
+  end
 
-  map.connect 'histogram', :controller => 'post', :action => 'histogram'
-  map.connect 'download', :controller => 'post', :action => 'download'
+  match '/' => 'static#index'
+  match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }
+  match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :id => /\d+/, :filename => /.*/ }
+  match '/:controller(/:action(/:id))'
+  match ':controller/:action.:format' => '#index'
+  match ':controller/:action' => '#index'
+  match 'histogram' => 'post#histogram'
+  match 'download' => 'post#download'
 end

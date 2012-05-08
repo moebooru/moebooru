@@ -134,7 +134,7 @@ module ApplicationHelper
     end
   end
 
-  def time_ago_in_words(time)
+  def time_ago_in_words(from_time)
     to_time = Time.now
     distance_in_minutes = (((to_time - from_time).abs)/60).round
 

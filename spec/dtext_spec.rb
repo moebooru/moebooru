@@ -49,7 +49,7 @@ end
 describe "Paragraph" do
   it "- ended with a blank line" do
     p("Hello there\nDon't believe we've met before.\n\nhaha").should(
-      eq "<p>Hello there<br>Don't believe we've me before.</p>haha"
+      eq "<p>Hello there<br>Don't believe we've met before.</p>haha"
     )
     p("not a paragraph?").should_not eq "<p>not a paragraph?</p>"
     p("this is a paragraph\n\n").should eq "<p>this is a paragraph</p>"

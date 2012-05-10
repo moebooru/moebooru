@@ -1,7 +1,10 @@
 module PostCountMethods
   module ClassMethods
     def fast_count(tags = nil)
+      # A small sanitation
+      tags = tags.to_s.strip.gsub(/ +/, ' ')
       cache_version = Cache.get("$cache_version").to_i
+      # Use SHA1 hash of tags query for memcache key
       tags_hash = Digest::SHA1.hexdigest(tags)
       key = "post-count/v=#{cache_version}/#{tags_hash}"
 

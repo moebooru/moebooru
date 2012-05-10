@@ -50,27 +50,16 @@ module TagTypeMethods
       post_tags = post_tags.map { |p| "tag_type:#{p}" }
       post_tags = Set.new(post_tags)
 
-      # Memcache is dropping our connection if we make too make requests at once.  Request
-      # tag types max_tags_per_query at a time.
       results = {}
       got_keys = Set.new
       tags_to_query = post_tags.to_a
-      max_tags_per_query = 1000
-      start_at = 0
-      begin
-        while start_at < tags_to_query.length do
-          tag_types = Rails.cache.read_multi(tags_to_query.slice(start_at, max_tags_per_query))
-          start_at += max_tags_per_query
-
-          # Strip off "tag_type:" from the result keys.
-          tag_types.each { |key, value| results[key[9..-1]] = value }
-
-          # Find which keys we didn't get from cache and fill them in.  This will also
-          # populate the cache.
-          got_keys.merge(tag_types.keys)
-        end
-        tag_types ||= {}
-      end
+      tag_types = Rails.cache.read_multi(*tags_to_query)
+      # Strip off "tag_type:" from the result keys.
+      tag_types.each { |key, value| results[key[9..-1]] = value }
+      # Find which keys we didn't get from cache and fill them in.  This will also
+      # populate the cache.
+      got_keys.merge(tag_types.keys)
+      tag_types ||= {}
 
       needed_keys = post_tags - got_keys
       needed_keys.each { |key|

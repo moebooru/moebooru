@@ -67,8 +67,8 @@ class JobTask < ActiveRecord::Base
   end
   
   def execute_calculate_tag_subscriptions
-    return if Cache.get("delay-tag-sub-calc")
-    Cache.put("delay-tag-sub-calc", "1", 360.minutes)
+    return if Rails.cache.read("delay-tag-sub-calc")
+    Rails.cache.write("delay-tag-sub-calc", "1", :expires_in => 360.minutes)
     TagSubscription.process_all
     update_attributes(:data => {:last_run => Time.now.strftime("%Y-%m-%d %H:%M")})
   end

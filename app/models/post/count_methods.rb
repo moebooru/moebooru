@@ -3,12 +3,12 @@ module PostCountMethods
     def fast_count(tags = nil)
       # A small sanitation
       tags = tags.to_s.strip.gsub(/ +/, ' ')
-      cache_version = Cache.get("$cache_version").to_i
+      cache_version = Rails.cache.read("$cache_version").to_i
       # Use SHA1 hash of tags query for memcache key
       tags_hash = Digest::SHA1.hexdigest(tags)
       key = "post-count/v=#{cache_version}/#{tags_hash}"
 
-      count = Cache.get(key) {
+      count = Rails.cache.fetch(key) {
         Post.count_by_sql(Post.generate_sql(tags, :count => true))
       }.to_i
 

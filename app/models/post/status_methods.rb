@@ -63,7 +63,7 @@ module PostStatusMethods
         execute_sql(sql, *cond_params)
       end
 
-      Cache.expire if count > 0
+      Rails.cache.expire if count > 0
 
       return count
     end

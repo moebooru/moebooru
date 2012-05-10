@@ -370,7 +370,7 @@ class PostController < ApplicationController
         if split_tags.any?
           @tags = Tag.parse_query(tags)
         else
-          @tags = Cache.get("$poptags", 1.hour) do
+          @tags = Rails.cache.fetch("$poptags", :expires_in => 1.hour) do
             {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25, :exclude_types => CONFIG["exclude_from_tag_sidebar"])}
           end
         end

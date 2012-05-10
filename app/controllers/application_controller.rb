@@ -303,7 +303,7 @@ class ApplicationController < ActionController::Base
       key, expiry = get_cache_key(controller_name, action_name, params, :user => @current_user)
       
       if key && key.size < 200
-        cached = Cache.get(key)
+        cached = Rails.cache.read(key)
 
         unless cached.blank?
           render :text => cached, :layout => false
@@ -314,7 +314,7 @@ class ApplicationController < ActionController::Base
       yield
 
       if key && response.headers['Status'] =~ /^200/
-        Cache.put(key, response.body, expiry)
+        Rails.cache.write(key, response.body, expiry)
       end
     else
       yield

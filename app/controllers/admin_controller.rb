@@ -59,7 +59,7 @@ class AdminController < ApplicationController
       keys << "stats/page/level=#{level}&page=20+"        
     end
 
-    @post_stats = keys.inject({}) {|h, k| h[k] = Cache.get(k); h}
+    @post_stats = keys.inject({}) {|h, k| h[k] = Rails.cache.read(k); h}
   end
   
   def reset_post_stats
@@ -77,7 +77,7 @@ class AdminController < ApplicationController
     end
     
     keys.each do |key|
-      CACHE.set(key, 0)
+      Rails.cache.write(key, 0)
     end
     
     redirect_to :action => "cache_stats"

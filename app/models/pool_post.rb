@@ -30,7 +30,7 @@ class PoolPost < ActiveRecord::Base
 
   # Changing pool orderings affects pool sorting in the index.
   def expire_cache
-    Cache.expire
+    Rails.cache.expire
   end
 
   module ApiMethods

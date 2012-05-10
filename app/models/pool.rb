@@ -145,7 +145,7 @@ class Pool < ActiveRecord::Base
     end
 
     def expire_cache
-      Cache.expire
+      Rails.cache.expire
     end
   end
   

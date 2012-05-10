@@ -28,7 +28,7 @@ module TagTypeMethods
       tag_name = tag_name.gsub(/\s/, "_")
       
       if CONFIG["enable_caching"]
-        return Cache.get("tag_type:#{tag_name}", 1.day) do
+        return Rails.cache.fetch("tag_type:#{tag_name}", :expires_in => 1.day) do
           type_name_helper(tag_name)
         end
       else
@@ -59,7 +59,7 @@ module TagTypeMethods
       start_at = 0
       begin
         while start_at < tags_to_query.length do
-          tag_types = CACHE.get_multi(tags_to_query.slice(start_at, max_tags_per_query))
+          tag_types = Rails.cache.read_multi(tags_to_query.slice(start_at, max_tags_per_query))
           start_at += max_tags_per_query
 
           # Strip off "tag_type:" from the result keys.
@@ -69,16 +69,7 @@ module TagTypeMethods
           # populate the cache.
           got_keys.merge(tag_types.keys)
         end
-      rescue MemCache::MemCacheError
-        tag_types = {}
-      rescue NameError => e
-        # get_multi in activesupport-2.2.2 has a bug in exception handling; it tries to
-        # access "server" out of scope, causing it to raise NameError.  This happens if
-        # the above EPIPE error triggers.  If this happens despite running smaller queries,
-        # log it and reste the memcache connection.
-        logger.warn("Unexpected MemCache error: #{e}")
-        CACHE.reset
-        tag_types = {}
+        tag_types ||= {}
       end
 
       needed_keys = post_tags - got_keys

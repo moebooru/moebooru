@@ -12,11 +12,11 @@ module CacheHelper
     end
     
     if tags.empty? || tags.any? {|x| x =~ /(?:^-|[*:])/}
-      version = Cache.get("$cache_version").to_i
+      version = Rails.cache.read("$cache_version").to_i
       tags = tags.join(",")
     else
       version = "?"
-      tags = tags.map {|x| x + ":" + Cache.get("tag:#{x}").to_i.to_s}.join(",")
+      tags = tags.map {|x| x + ":" + Rails.cache.read("tag:#{x}").to_i.to_s}.join(",")
     end
     
     ["#{base}/v=#{version}&t=#{tags}&p=#{page}&ul=#{user_level}&l=#{limit}", 0]

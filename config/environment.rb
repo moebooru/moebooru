@@ -2,12 +2,19 @@ RAILS_GEM_VERSION = '2.3.14' unless defined? RAILS_GEM_VERSION
 
 require File.join(File.dirname(__FILE__), 'boot')
 
+CONFIG ||= {}
+require 'languages'
+require "#{Rails.root}/config/default_config"
+require "#{Rails.root}/config/local_config"
+
 Rails::Initializer.run do |config|
   # Skip frameworks you're not going to use
   config.frameworks -= [:action_web_service]
 
   # Add additional load paths for your own custom dirs
   config.autoload_paths += ["#{Rails.root}/app/models/post", "#{Rails.root}/app/models/post/image_store"]
+
+  config.cache_store = :mem_cache_store, CONFIG['memcache_servers'], { :namespace => CONFIG['app_name'], :compress => true }
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug

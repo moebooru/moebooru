@@ -314,7 +314,7 @@ class ApplicationController < ActionController::Base
       yield
 
       if key && response.headers['Status'] =~ /^200/
-        Rails.cache.write(key, response.body, expiry)
+        Rails.cache.write(key, response.body, :expires_in => expiry)
       end
     else
       yield

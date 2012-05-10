@@ -28,7 +28,7 @@ module TagTypeMethods
       tag_name = tag_name.gsub(/\s/, "_")
       
       if CONFIG["enable_caching"]
-        return Rails.cache.fetch("tag_type:#{tag_name}", :expires_in => 1.day) do
+        return Rails.cache.fetch(Tag.cache_key_enc(tag_name), :expires_in => 1.day) do
           type_name_helper(tag_name)
         end
       else
@@ -47,25 +47,24 @@ module TagTypeMethods
 
     # Get all tag types for the given tags.
     def batch_get_tag_types(post_tags)
-      post_tags = post_tags.map { |p| "tag_type:#{p}" }
       post_tags = Set.new(post_tags)
 
       results = {}
       got_keys = Set.new
-      tags_to_query = post_tags.to_a
-      tag_types = Rails.cache.read_multi(*tags_to_query)
-      # Strip off "tag_type:" from the result keys.
-      tag_types.each { |key, value| results[key[9..-1]] = value }
+      tags_to_query = post_tags.to_a.map { |n| Tag.cache_key_enc(n) }
+      cached_tag_types = Rails.cache.read_multi(*tags_to_query)
+      if cached_tag_types
+        tag_types = Hash[cached_tag_types.map { |key, value| [cache_key_dec(key), value] }]
+      else
+        tag_types = {}
+      end
+      tag_types.each { |key, value| results[key] = value }
+
       # Find which keys we didn't get from cache and fill them in.  This will also
       # populate the cache.
-      got_keys.merge(tag_types.keys)
-      tag_types ||= {}
-
-      needed_keys = post_tags - got_keys
-      needed_keys.each { |key|
-        key =~ /tag_type:(.*)/
-        tag_name = $1
-        results[tag_name] = type_name(tag_name)
+      needed_tags = post_tags - tag_types.keys
+      needed_tags.each { |tag|
+        results[tag] = type_name(tag)
       }
 
       return results

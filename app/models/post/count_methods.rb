@@ -2,10 +2,8 @@ module PostCountMethods
   module ClassMethods
     def fast_count(tags = nil)
       cache_version = Cache.get("$cache_version").to_i
-      key = "post-count/v=#{cache_version}/#{tags}"
-
-      # memcached protocol is dumb so we need to escape spaces
-      key = key.gsub(/-/, "--").gsub(/ /, "-_")
+      tags_hash = Digest::SHA1.hexdigest(tags)
+      key = "post-count/v=#{cache_version}/#{tags_hash}"
 
       count = Cache.get(key) {
         Post.count_by_sql(Post.generate_sql(tags, :count => true))

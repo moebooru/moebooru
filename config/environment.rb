@@ -14,7 +14,11 @@ Rails::Initializer.run do |config|
   # Add additional load paths for your own custom dirs
   config.autoload_paths += ["#{Rails.root}/app/models/post", "#{Rails.root}/app/models/post/image_store"]
 
-  config.cache_store = :mem_cache_store, CONFIG['memcache_servers'], { :namespace => CONFIG['app_name'], :compress => true }
+  # Workaround for dalli since we're loading it a bit too early
+  require 'active_support'
+  # And dalli itself requires this
+  require 'active_support/cache/dalli_store23'
+  config.cache_store = :dalli_store, CONFIG['memcache_servers'], { :namespace => CONFIG['app_name'], :compress => true }
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug

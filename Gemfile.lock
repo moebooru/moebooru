@@ -14,6 +14,7 @@ GEM
     builder (3.0.0)
     chardet (0.9.0)
     daemons (1.1.8)
+    dalli (1.0.5)
     diff-lcs (1.1.3)
     exception_notification (2.3.3.0)
     gchartrb (0.8)
@@ -26,7 +27,6 @@ GEM
       hoe (>= 1.2.0)
     json (1.7.0)
     kgio (2.7.4)
-    memcache-client (1.8.5)
     mime-types (1.18)
     newrelic_rpm (3.3.4.1)
     pg (0.13.2)
@@ -56,6 +56,7 @@ PLATFORMS
 
 DEPENDENCIES
   daemons
+  dalli (~> 1.0.0)
   diff-lcs
   exception_notification (~> 2.3.0)
   gchartrb
@@ -63,7 +64,6 @@ DEPENDENCIES
   hpricot
   html5
   json
-  memcache-client
   mime-types
   newrelic_rpm
   pg

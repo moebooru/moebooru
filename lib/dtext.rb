@@ -2,16 +2,16 @@ require 'nokogiri'
 
 module DText
   def parse(str)
-    # split str into lines (separated by single new line)
-    # prepare state stack
-    # start from empty state
 
     state = []
 
     # Normalize newlines
-    str.gsub(/(\r?\n){3,}/m, "\n\n")
+    str.gsub!(/\r/m, "\n")
+    str.gsub!(/\n{3,}/m, "\n\n")
 
-    data = str.split("\n")
+    # Keep newline, use carriage return for split
+    str.gsub!(/(\n+)/m, '\1' + "\r")
+    data = str.split("\r")
 
     data.each do |d|
 

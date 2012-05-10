@@ -18,6 +18,7 @@ module CacheHelper
       version = "?"
       tags = tags.map {|x| x + ":" + Rails.cache.read("tag:#{x}").to_i.to_s}.join(",")
     end
+    tags = Base64.urlsafe_encode64(tags)
     
     ["#{base}/v=#{version}&t=#{tags}&p=#{page}&ul=#{user_level}&l=#{limit}", 0]
   end

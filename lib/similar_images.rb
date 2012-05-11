@@ -119,6 +119,7 @@ module SimilarImages
 	if element.attributes["sim"].to_f >= threshold
 	  service = element.attributes["service"]
 	  image = element.get_elements(".//post")[0]
+    image ||= element.get_elements('.//image')[0]
           
 	  id = image.attributes["id"]
 	  md5 = element.attributes["md5"]

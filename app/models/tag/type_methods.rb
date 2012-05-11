@@ -28,7 +28,7 @@ module TagTypeMethods
       tag_name = tag_name.gsub(/\s/, "_")
       
       if CONFIG["enable_caching"]
-        return Rails.cache.fetch(Tag.cache_key_enc(tag_name), :expires_in => 1.day) do
+        return Rails.cache.fetch(Tag.cache_type_key_enc(tag_name), :expires_in => 1.day) do
           type_name_helper(tag_name)
         end
       else
@@ -51,10 +51,10 @@ module TagTypeMethods
 
       results = {}
       got_keys = Set.new
-      tags_to_query = post_tags.to_a.map { |n| Tag.cache_key_enc(n) }
+      tags_to_query = post_tags.to_a.map { |n| Tag.cache_type_key_enc(n) }
       cached_tag_types = Rails.cache.read_multi(*tags_to_query)
       if cached_tag_types
-        tag_types = Hash[cached_tag_types.map { |key, value| [cache_key_dec(key), value] }]
+        tag_types = Hash[cached_tag_types.map { |key, value| [cache_type_key_dec(key), value] }]
       else
         tag_types = {}
       end

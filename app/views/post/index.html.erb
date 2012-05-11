@@ -1,7 +1,7 @@
 <div id="post-list"> 
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">
-      Maybe you meant: <%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence(:connector => "or") %>
+      Maybe you meant: <%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence({ :two_words_connector => ' or ', :last_word_connector => ', or ' }) %>
     </div>
   <% end %>
 

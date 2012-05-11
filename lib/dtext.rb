@@ -6,7 +6,7 @@ module DText
     state = []
 
     # Normalize newlines
-    str.gsub!(/\r/m, "\n")
+    str.gsub!(/(\r?\n)/m, "\n")
     str.gsub!(/\n{3,}/m, "\n\n")
 
     # Keep newline, use carriage return for split

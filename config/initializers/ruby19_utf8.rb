@@ -40,7 +40,12 @@ if RUBY_VERSION.to_f >= 1.9
           when Array
             value.map { |e| normalize_parameters(e) }
           else
-            value.force_encoding(Encoding::UTF_8) if value.respond_to?(:force_encoding)
+            if value.respond_to?(:force_encoding)
+              value.force_encoding(Encoding::UTF_8)
+              if !value.valid_encoding?
+                value.force_encoding(Encoding::BINARY).encode!(Encoding::UTF_8, :invalid => :replace, :undef => :replace)
+              end
+            end
             value
           end
         end

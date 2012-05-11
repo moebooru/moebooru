@@ -8,7 +8,7 @@
 ^[^/]+\.war
 ^bin/
 ~$
-^public/data/
+^public/data(/|$)
 ^public/javascripts/cached/all\.js
 \.(s?o)$
 (extconf\.h|Makefile|mkmf\.log)$

@@ -350,7 +350,7 @@ class UserController < ApplicationController
     
     file = "#{Rails.root}/log/user_errors.log"
     File.open(file, "a") do |f|
-      f.write(report + "\n\n\n-------------------------------------------\n\n\n")
+      f.write(report.to_s + "\n\n\n-------------------------------------------\n\n\n")
     end
 
     render :json => {:success => true}

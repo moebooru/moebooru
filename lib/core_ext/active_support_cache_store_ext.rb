@@ -5,14 +5,6 @@ module ActiveSupport::Cache
         cache_version = read("$cache_version").to_i
   
         write("$cache_version", cache_version + 1)
-  
-        if tags
-          tags.scan(/\S+/).each do |x|
-            key = "tag:#{x}"
-            key_version = read(key).to_i
-            write(key, key_version + 1)
-          end
-        end
     end
     
     def expire_tag_version

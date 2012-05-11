@@ -1,3 +1,4 @@
+# encoding: utf-8
 class TagSubscription < ActiveRecord::Base
   belongs_to :user
   before_create :initialize_post_ids
@@ -5,7 +6,7 @@ class TagSubscription < ActiveRecord::Base
   named_scope :visible, :conditions => "is_visible_on_profile = TRUE"
 
   def normalize_name
-    self.name = name.gsub(/\W/, "_")
+    self.name = name.gsub(/\P{Word}/, '_')
   end
   
   def initialize_post_ids

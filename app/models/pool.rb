@@ -335,7 +335,7 @@ class Pool < ActiveRecord::Base
           file_size = post.file_size
           crc32 = post.crc32
         end
-        crc32 = "%x" % crc32
+        crc32 = crc32 ? "%x" % crc32.to_i : '-'
         buf += [{ :filename => filename, :path => path, :file_size => file_size, :crc32 => crc32 }]
       end
 

@@ -130,7 +130,7 @@ class WikiController < ApplicationController
       if @page.save
         respond_to_success("Page reverted", :action => "show", :title => params[:title])
       else
-        respond_to_error(@page)
+        respond_to_error("Error reverting page", { :action => 'show', :title => params[:title] })
       end
     end
   end

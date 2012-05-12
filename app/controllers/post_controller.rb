@@ -292,9 +292,9 @@ class PostController < ApplicationController
     
     q = Tag.parse_query(tags)
 
-    limit = params[:limit].to_i if params.has_key?(:limit)
-    limit ||= q[:limit].to_i if q.has_key?(:limit)
-    limit ||= 16
+    limit = params[:limit].to_i
+    limit = q[:limit].to_i if q.has_key?(:limit)
+    limit = 16 if limit <= 0
     limit = 1000 if limit > 1000
 
     count = 0

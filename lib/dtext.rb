@@ -24,15 +24,18 @@ module DText
 
   def parseinline(str)
     str = CGI.escapeHTML str
+    parseurl str
     str.gsub! /\[(\/?b)\]/, '<\1>'
     str.gsub! /\[(\/)?i\]/, '<\1em>'
     str.gsub! /[Pp]ost #(\d+)/, '<a href="/post/show/\1">post #\1</a>'
     str.gsub! /[Ff]orum #(\d+)/, '<a href="/forum/show/\1">forum #\1</a>'
     str.gsub! /[Cc]omment #(\d+)/, '<a href="/comment/show/\1">comment #\1</a>'
     str.gsub! /[Pp]ool #(\d+)/, '<a href="/pool/show/\1">pool #\1</a>'
-    # parseurl str
+    str.gsub! /\[spoilers?\]/, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">'
+    str.gsub! /\[spoilers?=(.+)\]/, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">'
+    str.gsub! /\[\/spoilers?\]/, '</span>'
     str.gsub! /\n/, '<br>'
-    return str
+    str
   end
 
   def parseline(str, state)
@@ -67,7 +70,9 @@ module DText
       html << "</ul>" 
       return html + parseline(str, state)
     end
-    html << str.gsub(/\*+\s+(.+)\n*/, '<li>\1</li>')
+    html << str.gsub(/\*+\s+(.+)\n*/) do 
+      "<li>#{parseinline($1)}</li>"
+    end
   end
 
   def parseparagraph(str, state)

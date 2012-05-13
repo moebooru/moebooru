@@ -24,17 +24,30 @@ module DText
 
   def parseinline(str)
     str = CGI.escapeHTML str
-    parseurl str
+    str.gsub!(/\[\[(.+?)\|(.+?)\]\]/) do
+      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML($1.tr(" ", "_")))}\">#{$2}</a>"
+    end
+    str.gsub!(/\[\[(.+?)\]\]/) do
+      t = $1 if $1
+      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML(t.tr(" ", "_")))}\">#{t}</a>"
+    end
+    str.gsub!(/\{\{(.+?)\}\}/) do
+      t = $1 if $1
+      "<a href=\"/post/index?tags=#{CGI.escape(CGI.unescapeHTML(t))}\">#{t}</a>"
+    end
     str.gsub! /\[b\](.+)\[\/b\]/, '<strong>\1</strong>'
     str.gsub! /\[i\](.+)\[\/i\]/, '<em>\1</em>'
-    str.gsub! /[Pp]ost #(\d+)/, '<a href="/post/show/\1">post #\1</a>'
-    str.gsub! /[Ff]orum #(\d+)/, '<a href="/forum/show/\1">forum #\1</a>'
-    str.gsub! /[Cc]omment #(\d+)/, '<a href="/comment/show/\1">comment #\1</a>'
-    str.gsub! /[Pp]ool #(\d+)/, '<a href="/pool/show/\1">pool #\1</a>'
+    str.gsub! /(^|\s+)[Pp]ost #(\d+)(\s+|$)/, '\1<a href="/post/show/\2">post #\2</a>\3'
+    str.gsub! /(^|\s+)[Ff]orum #(\d+)(\s+|$)/, '\1<a href="/forum/show/\2">forum #\2</a>\3'
+    str.gsub! /(^|\s+)[Cc]omment #(\d+)(\s+|$)/, '\1<a href="/comment/show/\2">comment #\2</a>\3'
+    str.gsub! /(^|\s+)[Pp]ool #(\d+)(\s+|$)/, '\1<a href="/pool/show/\2">pool #\2</a>\3'
     str.gsub! /\[spoilers?\]/, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">'
     str.gsub! /\[spoilers?=(.+?)\]/, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">'
     str.gsub! /\[\/spoilers?\]/, '</span>'
+    str.gsub! /\[quote\]/, '<blockquote><div>'
+    str.gsub! /\[\/quote\]/, '</div></blockquote>'
     str.gsub! /\n/, '<br>'
+    str = parseurl str
     str
   end
 
@@ -50,7 +63,6 @@ module DText
   end
 
   def parselist(str, state)
-    parseinline str
     html = ""
     if not state.last =~ /\d/
       state.push "1"

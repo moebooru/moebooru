@@ -45,7 +45,7 @@ module DText
       tag = $1 if $1
       str = "<#{tag}>#{parseinline($2)}</#{tag}>"
     else
-      parseparagraph str, state
+      parseinline str
     end
   end
 
@@ -73,14 +73,6 @@ module DText
     html << str.gsub(/\*+\s+(.+)\n*/) do 
       "<li>#{parseinline($1)}</li>"
     end
-  end
-
-  def parseparagraph(str, state)
-    html = ""
-    html << str.gsub(/(.+)/m) do
-      parseinline($1)
-    end
-    html
   end
 
   def parseurl(str)

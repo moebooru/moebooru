@@ -32,7 +32,7 @@ module DText
     str.gsub! /[Cc]omment #(\d+)/, '<a href="/comment/show/\1">comment #\1</a>'
     str.gsub! /[Pp]ool #(\d+)/, '<a href="/pool/show/\1">pool #\1</a>'
     str.gsub! /\[spoilers?\]/, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">'
-    str.gsub! /\[spoilers?=(.+)\]/, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">'
+    str.gsub! /\[spoilers?=(.+?)\]/, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">'
     str.gsub! /\[\/spoilers?\]/, '</span>'
     str.gsub! /\n/, '<br>'
     str

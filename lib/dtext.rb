@@ -11,6 +11,9 @@ module DText
     str.gsub!(/(\r?\n)/, "\n")
     str.gsub!(/\n{3,}/, "\n\n")
 
+    # sanitize
+    str = CGI.escapeHTML str
+
     # Keep newline, use carriage return for split
     str.gsub!(/(\n+)/, '\1' + "\r")
     data = str.split("\r")
@@ -23,10 +26,9 @@ module DText
   end
 
   def parseinline(str)
-    str = CGI.escapeHTML str
     parseurl str
-    str.gsub! /\[(\/)?b\]/, '<\1strong>'
-    str.gsub! /\[(\/)?i\]/, '<\1em>'
+    str.gsub! /\[b\](.+)\[\/b\]/, '<strong>\1</strong>'
+    str.gsub! /\[i\](.+)\[\/i\]/, '<em>\1</em>'
     str.gsub! /[Pp]ost #(\d+)/, '<a href="/post/show/\1">post #\1</a>'
     str.gsub! /[Ff]orum #(\d+)/, '<a href="/forum/show/\1">forum #\1</a>'
     str.gsub! /[Cc]omment #(\d+)/, '<a href="/comment/show/\1">comment #\1</a>'

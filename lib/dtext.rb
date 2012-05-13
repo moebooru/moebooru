@@ -52,7 +52,7 @@ module DText
   def parselist(str, state)
     parseinline str
     html = ""
-    if state.last == 'newline'
+    if not state.last =~ /\d/
       state.push "1"
       html << "<ul>"
     else

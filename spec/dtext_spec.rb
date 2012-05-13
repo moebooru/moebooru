@@ -5,7 +5,7 @@ describe "DText" do
   test.each do |t|
     match = t.gsub /\.txt$/, '.html'
     it t do
-      p(r(t)).should eq(r(match))
+      p(r(t)).should eq(h(match))
     end
   end
 end

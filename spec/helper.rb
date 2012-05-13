@@ -1,4 +1,5 @@
 require './lib/dtext.rb'
+require 'nokogiri'
 
 include DText
 
@@ -27,4 +28,8 @@ def r(f)
     return ""
   end
   ct.strip
+end
+
+def h(f)
+  Nokogiri::HTML::DocumentFragment.parse(r(f)).to_html
 end

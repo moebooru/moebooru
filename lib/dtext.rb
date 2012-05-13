@@ -25,7 +25,7 @@ module DText
   def parseinline(str)
     str = CGI.escapeHTML str
     parseurl str
-    str.gsub! /\[(\/?b)\]/, '<\1>'
+    str.gsub! /\[(\/)?b\]/, '<\1strong>'
     str.gsub! /\[(\/)?i\]/, '<\1em>'
     str.gsub! /[Pp]ost #(\d+)/, '<a href="/post/show/\1">post #\1</a>'
     str.gsub! /[Ff]orum #(\d+)/, '<a href="/forum/show/\1">forum #\1</a>'

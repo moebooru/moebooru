@@ -6,7 +6,7 @@ include DText
 TestDir = "./tests"
 
 def p(str)
-  DText.parse(str).gsub! /[\n\s]+/, ""
+  DText.parse(str)
 end
 
 def find_test()
@@ -31,5 +31,5 @@ def r(f)
 end
 
 def h(f)
-  Nokogiri::HTML::DocumentFragment.parse(r(f)).to_html.gsub! /[\n\s]+/, ""
+  Nokogiri::HTML::DocumentFragment.parse(r(f)).to_html
 end

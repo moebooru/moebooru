@@ -39,7 +39,7 @@ module DText
   end
 
   def parseline(str, state)
-    if state.last.to_s =~ /\d/ or str =~ /^\*+/
+    if state.last.to_s =~ /\d/ or str =~ /^\*+\s+/
       parselist str, state
     elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
       tag = $1 if $1

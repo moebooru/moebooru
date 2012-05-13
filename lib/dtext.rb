@@ -3,7 +3,7 @@ require 'nokogiri'
 
 module DText
   def parse(str)
-    state = [:newline]
+    state = ['newline']
     result = ""
 
     # Normalize newlines
@@ -39,7 +39,7 @@ module DText
   end
 
   def parseline(str, state)
-    if state.last.to_s =~ /\d/ or str =~ /^\*+\s+/
+    if state.last =~ /\d/ or str =~ /^\*+\s+/
       parselist str, state
     elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
       tag = $1 if $1
@@ -52,7 +52,7 @@ module DText
   def parselist(str, state)
     parseinline str
     html = ""
-    if state.last == :newline
+    if state.last == 'newline'
       state.push "1"
       html << "<ul>"
     else
@@ -77,14 +77,14 @@ module DText
 
   def parseparagraph(str, state)
     html = ""
-    if state.last == :newline
-      state.push :p
+    if state.last == 'newline'
+      state.push 'p'
       html << "<p>"
     end
     html << str.gsub(/(.+)\n*$/) do
       parseinline($1)
     end
-    if state.last == :p and str =~ /\n\n$/
+    if state.last == 'p' and str =~ /\n\n$/
       state.pop
       html << "</p>"
     end

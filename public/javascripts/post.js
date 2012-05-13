@@ -522,7 +522,7 @@ Post = {
       {
         if(bld)
         {
-          thumb.src = "about:blank";
+          thumb.src = "/images/blank.gif";
 
           /* Trying to work around Firefox displaying the old thumb.src briefly before loading
            * the blacklisted thumbnail, even though they're applied at the same time: */
@@ -895,7 +895,7 @@ Post = {
     if($('resized_notice'))
       $('resized_notice').hide();
     img.height = img.width = 0
-    img.src = "about:blank"
+    img.src = "/images/blank.gif"
   },
 
   set_same_user: function(creator_id)
@@ -1058,7 +1058,7 @@ Post = {
     {
       hover.hide();
       overlay.hide();
-      overlay.down("IMG").src = "about:blank";
+      overlay.down("IMG").src = "/images/blank.gif";
       return;
     }
     hover.down("#hover-dimensions").innerHTML = post.width + "x" + post.height;

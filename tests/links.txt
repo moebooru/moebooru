@@ -1,0 +1,3 @@
+link to wiki [[5 nen me no houkago]]
+another link [[5 nen me no houkago|kantoku]]
+search tag {{kantoku yuuhi}}

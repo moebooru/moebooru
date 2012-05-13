@@ -67,7 +67,7 @@ module DText
     end
     if str =~ /^[^\*]/
       state.pop
-      html << "</ul>" 
+      html << "</ul>"
       return html + parseline(str, state)
     end
     html << str.gsub(/\*+\s+(.+)\n*/) do 
@@ -77,16 +77,8 @@ module DText
 
   def parseparagraph(str, state)
     html = ""
-    if state.last == 'newline'
-      state.push 'p'
-      html << "<p>"
-    end
-    html << str.gsub(/(.+)\n*$/) do
+    html << str.gsub(/(.+)/m) do
       parseinline($1)
-    end
-    if state.last == 'p' and str =~ /\n\n$/
-      state.pop
-      html << "</p>"
     end
     html
   end

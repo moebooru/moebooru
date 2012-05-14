@@ -956,7 +956,7 @@ Post = {
     image.style.height = "auto";
     if(Post.is_blacklisted(post_id))
     {
-      image.src = "/preview/blacklisted.png";
+      image.src = "/images/blacklisted-preview.png";
     }
     else
     {

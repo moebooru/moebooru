@@ -42,14 +42,14 @@ module DText
     str.gsub!(/#{url}|&lt;&lt;#{url}(?:\|(.+?))?&gt;&gt;|&quot;(.+?)&quot;:#{url}/m) do |link| # url or <<url|text>> or "text":url
       if $1 then
         text = $1
-	link = text.gsub(/[.;,:'"]+$/, "")
+        link = text.gsub(/[.;,:'"]+$/, "")
       elsif $2
         link = $2
-	if $3 then
-	  text = $3
-	else
-	  text = $2
-	end
+        if $3 then
+          text = $3
+        else
+          text = $2
+        end
       else
         text = $4
         link = $5

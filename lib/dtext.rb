@@ -70,10 +70,10 @@ module DText
     else
       n = str.split()[0].count("*")
       if n < state.last.to_i
-        html << '</ul></li>' * (state.last.to_i - n)
+        html << '</ul>' * (state.last.to_i - n)
         state[-1] = n.to_s
       elsif n > state.last.to_i
-        html << '<li><ul>'
+        html << '<ul>'
         state[-1] = (state.last.to_i + 1).to_s
       end
     end

@@ -47,7 +47,7 @@ module DText
     str.gsub! /\[quote\]/, '<blockquote><div>'
     str.gsub! /\[\/quote\]/, '</div></blockquote>'
     str.gsub! /\n/, '<br>'
-    str = parseurl str
+    str = parseurl(CGI.unescapeHTML(str))
     str
   end
 
@@ -87,7 +87,21 @@ module DText
     end
   end
 
+  def url_pattern()
+    /(h?ttps?:\/\/([\w\-_]+)(\.[\w\-_]+)*(:\d+)*(\/[^\s]*)*)/
+  end
+
   def parseurl(str)
+    str = str.gsub(/\s+<<\s*(.+?)\s+\|\s+(.+?)\s*>>\s+/) do |match|
+      link = $1 if $1
+      name = $2 if $2
+      if link =~ url_pattern
+        " <a href=\"#{$1}\">#{name}</a> "
+      end
+    end
+    str = str.gsub(/\s+"(.+?)":#{url_pattern}/, ' <a href="\2">\1</a>')
+    str = str.gsub(/\s+<<\s*#{url_pattern}\s*>>\s+/, ' <a href="\1">\1</a> ')
+    str = str.gsub(/\s+#{url_pattern}/, ' <a href="\1">\1</a>')
     str
   end
 end

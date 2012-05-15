@@ -872,13 +872,12 @@ Post = {
     }
 
     var f = function() {
-      img.stopObserving("load")
-      img.stopObserving("error")
       img.original_height = null;
       img.original_width = null;
       var highres = $("highres-show");
       img.height = highres.getAttribute("link_height");
       img.width = highres.getAttribute("link_width");
+      $("note-container").insert({after: img});
       img.src = highres.href;
 
       if (window.Note) {
@@ -886,16 +885,16 @@ Post = {
       }
     }
     
-    img.observe("load", f)
-    img.observe("error", f)
 
     // Clear the image before loading the new one, so it doesn't show the old image
     // at the new resolution while the new one loads.  Hide it, so we don't flicker
     // a placeholder frame.
     if($('resized_notice'))
       $('resized_notice').hide();
-    img.height = img.width = 0
-    img.src = "/images/blank.gif"
+    img.height = img.width = 0;
+    img.src = "";
+    img.remove();
+    f(img);
   },
 
   set_same_user: function(creator_id)

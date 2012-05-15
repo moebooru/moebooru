@@ -99,7 +99,7 @@ module DText
       end
     end
     str = str.gsub(/(^|\s+)"(.+?)":#{url_pattern}/, '\1<a href="\3">\2</a>')
-    str = str.gsub(/(^|\s+)<<\s*#{url_pattern}\s*>>(?=\s+|$)/, '\1<a href="\2">\2</a>\6')
+    str = str.gsub(/(^|\s+)<<\s*#{url_pattern}\s*>>(?=\s+|$)/, '\1<a href="\2">\2</a>\7')
     str = str.gsub(/(^|\s+)#{url_pattern}/, '\1<a href="\2">\2</a>')
     str
   end

@@ -3,4 +3,4 @@ in the next line lets put "this link":http://www.google.co.id/#hl=id&gs_nf=1&cp=
 And for the last here is the good one http://fudanchii.net.
 https://192.168.0.131
 http://localhost
-<<https://yande.re>>
+<<https://yande.re/test/aloha>>

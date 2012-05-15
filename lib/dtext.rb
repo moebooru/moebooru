@@ -89,16 +89,17 @@ module DText
 
   def parseurl(str)
     url_pattern = /(h?ttps?:\/\/([\w\-_]+)(\.[\w\-_]+)*(:\d+)*(\/[^\s]*)*)/
-    str = str.gsub(/\s+<<\s*(.+?)\s*\|\s*(.+?)\s*>>\s+/) do |match|
-      link = $1 if $1
-      name = $2 if $2
+    str = str.gsub(/(^|\s+)<<\s*(.+?)\s*\|\s*(.+?)\s*>>(\s+|$)/) do |match|
+      link = $2 if $2
+      name = $3 if $3
+      trail= $4 if $4
       if link =~ url_pattern
-        " <a href=\"#{$1}\">#{name}</a> "
+        " <a href=\"#{$1}\">#{name}</a>#{trail}"
       end
     end
-    str = str.gsub(/\s+"(.+?)":#{url_pattern}/, ' <a href="\2">\1</a>')
-    str = str.gsub(/\s+<<\s*#{url_pattern}\s*>>\s+/, ' <a href="\1">\1</a> ')
-    str = str.gsub(/\s+#{url_pattern}/, ' <a href="\1">\1</a>')
+    str = str.gsub(/(^|\s+)"(.+?)":#{url_pattern}/, '\1<a href="\3">\2</a>')
+    str = str.gsub(/(^|\s+)<<\s*#{url_pattern}\s*>>(?=\s+|$)/, '\1<a href="\2">\2</a>\6')
+    str = str.gsub(/(^|\s+)#{url_pattern}/, '\1<a href="\2">\2</a>')
     str
   end
 

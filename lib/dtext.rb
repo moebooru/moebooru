@@ -77,7 +77,7 @@ module DText
         state[-1] = (state.last.to_i + 1).to_s
       end
     end
-    if str =~ /^[^\*]/
+    if not str =~ /^\*+\s+/
       state.pop
       html << "</ul>"
       return html + parseline(str, state)
@@ -87,11 +87,8 @@ module DText
     end
   end
 
-  def url_pattern()
-    /(h?ttps?:\/\/([\w\-_]+)(\.[\w\-_]+)*(:\d+)*(\/[^\s]*)*)/
-  end
-
   def parseurl(str)
+    url_pattern = /(h?ttps?:\/\/([\w\-_]+)(\.[\w\-_]+)*(:\d+)*(\/[^\s]*)*)/
     str = str.gsub(/\s+<<\s*(.+?)\s*\|\s*(.+?)\s*>>\s+/) do |match|
       link = $1 if $1
       name = $2 if $2
@@ -104,4 +101,6 @@ module DText
     str = str.gsub(/\s+#{url_pattern}/, ' <a href="\1">\1</a>')
     str
   end
+
+  module_function :parse, :parseline, :parseinline, :parselist, :parseurl
 end

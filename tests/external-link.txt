@@ -4,3 +4,4 @@ And for the last here is the good one http://fudanchii.net.
 https://192.168.0.131
 http://localhost
 <<https://yande.re/test/aloha>>
+(https://192.168.0.131)

@@ -90,11 +90,12 @@ module DText
   def parseurl(str)
     url_pattern = /(h?ttps?:\/\/([\w\-_]+)(\.[\w\-_]+)*(:\d+)*(\/[^\s]*)*)/
     str = str.gsub(/(^|\s+)<<\s*(.+?)\s*\|\s*(.+?)\s*>>(\s+|$)/) do |match|
+      head = $1 if $1
       link = $2 if $2
       name = $3 if $3
-      trail= $4 if $4
+      tail= $4 if $4
       if link =~ url_pattern
-        " <a href=\"#{$1}\">#{name}</a>#{trail}"
+        "#{head}<a href=\"#{$1}\">#{name}</a>#{tail}"
       end
     end
     str = str.gsub(/(^|\s+)"(.+?)":#{url_pattern}/, '\1<a href="\3">\2</a>')

@@ -1,3 +1,3 @@
-So this is the link to the <<https://bitbucket.org/edogawaconan/moebooru/wiki/DText | wiki>> also test if two <<http://translate.google.com/#ja|en|にゃ | links>> will work in one line
+So this is the link to the <<https://bitbucket.org/edogawaconan/moebooru/wiki/DText|wiki>> also test if two "links":http://translate.google.com/#ja|en|にゃ will work in one line
 in the next line lets put "this link":http://www.google.co.id/#hl=id&gs_nf=1&cp=20&gs_id=3c&xhr=t&q=puppet,+chef,+salt,&pf=p&output=search&sclient=psy-ab&oq=puppet,+chef,+salt,+&aq=f&aqi=&aql=&gs_l=&pbx=1&bav=on.2,or.r_gc.r_pw.r_qf.,cf.osb&fp=47876603bef70883&biw=1366&bih=654 sample of bad link.
 And for the last here is the good one http://fudanchii.net.

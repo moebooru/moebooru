@@ -92,7 +92,7 @@ module DText
   end
 
   def parseurl(str)
-    str = str.gsub(/\s+<<\s*(.+?)\s+\|\s+(.+?)\s*>>\s+/) do |match|
+    str = str.gsub(/\s+<<\s*(.+?)\s*\|\s*(.+?)\s*>>\s+/) do |match|
       link = $1 if $1
       name = $2 if $2
       if link =~ url_pattern

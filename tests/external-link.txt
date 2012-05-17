@@ -1,7 +1,9 @@
-So this is the link to the <<https://bitbucket.org/edogawaconan/moebooru/wiki/DText|wiki>> also test if two "links":http://translate.google.com/#ja|en|にゃ will work in one line
+So this is the link to the <<ttps://bitbucket.org/edogawaconan/moebooru/wiki/DText|wiki>> also test if two "links":http://translate.google.com/#ja|en|にゃ will work in one line
 in the next line lets put "this link":http://www.google.co.id/#hl=id&gs_nf=1&cp=20&gs_id=3c&xhr=t&q=puppet,+chef,+salt,&pf=p&output=search&sclient=psy-ab&oq=puppet,+chef,+salt,+&aq=f&aqi=&aql=&gs_l=&pbx=1&bav=on.2,or.r_gc.r_pw.r_qf.,cf.osb&fp=47876603bef70883&biw=1366&bih=654 sample of bad link.
 And for the last here is the good one http://fudanchii.net.
 https://192.168.0.131
-http://localhost
+http://localhost http://[1080:0:0:0:8:800:200C:417A]/index.html
 <<https://yande.re/test/aloha>> <<this is | not a link>>
-http://127.0.0.1/welp https://127.0.0.1/welp
+ttp://127.0.0.1/welp ttps://127.0.0.1/welp
+http://[3ffe:2a00:100:7031::1]
+ttp://[::192.9.5.5]/ipng

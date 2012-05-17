@@ -4,4 +4,4 @@ And for the last here is the good one http://fudanchii.net.
 https://192.168.0.131
 http://localhost
 <<https://yande.re/test/aloha>> <<this is | not a link>>
-(https://192.168.0.131)
+http://127.0.0.1/welp https://127.0.0.1/welp

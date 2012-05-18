@@ -10,6 +10,7 @@ module DText
     str.strip
     str.gsub!(/(\r?\n)/, "\n")
     str.gsub!(/\n{3,}/, "\n\n")
+    str = CGI.escapeHTML str
 
     # Keep newline, use carriage return for split
     str.gsub!(/(\n+)/, '\1' + "\r")
@@ -23,7 +24,6 @@ module DText
   end
 
   def parseinline(str)
-    str = CGI.escapeHTML str
     str.gsub!(/\[\[(.+?)\|(.+?)\]\]/) do
       "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML($1.tr(" ", "_")))}\">#{$2}</a>"
     end

@@ -44,7 +44,7 @@ module DText
     str.gsub! /\[spoilers?=(.+?)\](.+)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">\2</span>'
     str.gsub! /\[spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><div class="spoilertext" style="display: none">'
     str.gsub! /\[spoilers?=(.+?)\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><div class="spoilertext" style="display: none">'
-    str.gsub! /\[\/spoilers?\]\n?/, '</div>'
+    str.gsub! /\[\/spoilers?\]/, '</div>'
     str.gsub! /\[quote\]/, '<blockquote><div>'
     str.gsub! /\[\/quote\]/, '</div></blockquote>'
     str = parseurl(str)

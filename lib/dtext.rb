@@ -28,12 +28,10 @@ module DText
       "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML($1.tr(" ", "_")))}\">#{$2}</a>"
     end
     str.gsub!(/\[\[(.+?)\]\]/) do
-      t = $1 if $1
-      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML(t.tr(" ", "_")))}\">#{t}</a>"
+      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML($1.tr(" ", "_")))}\">#{$1}</a>"
     end
     str.gsub!(/\{\{(.+?)\}\}/) do
-      t = $1 if $1
-      "<a href=\"/post/index?tags=#{CGI.escape(CGI.unescapeHTML(t))}\">#{t}</a>"
+      "<a href=\"/post/index?tags=#{CGI.escape(CGI.unescapeHTML($1))}\">#{$1}</a>"
     end
     str.gsub! /\[b\](.+)\[\/b\]/, '<strong>\1</strong>'
     str.gsub! /\[i\](.+)\[\/i\]/, '<em>\1</em>'
@@ -55,8 +53,7 @@ module DText
     if state.last =~ /\d/ or str =~ /^\*+\s+/
       parselist str, state
     elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
-      tag = $1 if $1
-      str = "<#{tag}>#{parseinline($2)}</#{tag}>"
+      str = "<#{$1}>#{parseinline($2)}</#{$1}>"
     else
       parseinline str
     end
@@ -90,8 +87,8 @@ module DText
   def parseurl(str)
     url = /(h?ttps?:\/\/\[?(:{0,2}[\w\-]+)((:{1,2}|\.)[\w\-]+)*\]?(:\d+)*(\/[^\s\n]*)*)/
     str = str.gsub(/&lt;&lt;\s*([^\s]+?)\s*\|\s*(.+?)\s*&gt;&gt;/) do
-      link = $1 if $1
-      name = $2 if $2
+      link = $1
+      name = $2
       if link =~ url
         "<a href=\"#{link}\">#{name}</a>"
       end

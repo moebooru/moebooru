@@ -19,7 +19,7 @@ module DText
     data.each do |d|
       result << parseline(d, state)
     end
-    result = parseinline(result).gsub(/<br>[\n\s]*(<\/div>)/, '\1')
+    result = parseinline(result)
 
     Nokogiri::HTML::DocumentFragment.parse(result).to_html
   end
@@ -58,6 +58,7 @@ module DText
     str.gsub! /\[\/quote\]/, '</div></blockquote>'
 
     str = parseurl(str)
+    str.gsub! /\n+(<\/div>)/, '\1'
     str.gsub! /\n/, '<br>'
     str
   end

@@ -19,6 +19,7 @@ module DText
     data.each do |d|
       result << parseline(d, state)
     end
+    result = parseinline(result)
 
     Nokogiri::HTML::DocumentFragment.parse(result).to_html
   end
@@ -53,9 +54,9 @@ module DText
     if state.last =~ /\d/ or str =~ /^\*+\s+/
       parselist str, state
     elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
-      str = "<#{$1}>#{parseinline($2)}</#{$1}>"
+      str = "<#{$1}>#{$2}</#{$1}>"
     else
-      parseinline str
+      str
     end
   end
 
@@ -80,7 +81,7 @@ module DText
       return html + parseline(str, state)
     end
     html << str.gsub(/\*+\s+(.+)\n*/) do 
-      "<li>#{parseinline($1)}</li>"
+      "<li>#{$1}</li>"
     end
   end
 

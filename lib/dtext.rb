@@ -107,7 +107,7 @@ module DText
     end
     str = str.gsub(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')
        .gsub(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')
-       .gsub(/(^|[\s\(]+)#{url}/, '\1<a href="\2">\2</a>')
+       .gsub(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')
        .gsub(/<a href="ttp/, '<a href="http')
   end
 

@@ -95,7 +95,7 @@ blockquote {
   background: #AAA;
 }
 
-blockquote p {
+blockquote p, blockquote div {
   color: black;
   margin-bottom: 0em;
 }

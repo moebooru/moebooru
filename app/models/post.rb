@@ -178,8 +178,10 @@ class Post < ActiveRecord::Base
     if source =~ /pixiv\.net\/img\//
       img_id = source[/(\d+)\.\w+$/, 1]
       "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{img_id}"
-    else
+    elsif source =~ /\Ahttps?:\/\//i
       source
+    else
+      "http://#{source}"
     end
   end
   def service

@@ -98,11 +98,13 @@ module DText
 
   def parseurl(str)
     url = /(h?ttps?:\/\/\[?(:{0,2}[\w\-]+)((:{1,2}|\.)[\w\-]+)*\]?(:\d+)*(\/[^\s\n]*)*)/
-    str = str.gsub(/&lt;&lt;\s*([^\s]+?)\s*\|\s*(.+?)\s*&gt;&gt;/) do
+    str = str.gsub(/&lt;&lt;\s*([^\s]+?)\s*\|\s*(.+?)\s*&gt;&gt;/) do |match|
       link = $1
       name = $2
-      if link =~ url
+      if link =~ /\A#{url}/
         "<a href=\"#{link}\">#{name}</a>"
+      else
+        match
       end
     end
     str = str.gsub(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')

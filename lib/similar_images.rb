@@ -101,59 +101,65 @@ module SimilarImages
     next_id = 1
     server_responses.map do |server, xml|
       doc = begin
-        REXML::Document.new xml
+        Nokogiri::XML xml
       rescue Exception => e
         errors[server] = { :message=>"parse error" }
         next
       end
 
       if doc.root.name=="error"
-        errors[server] = { :message=>doc.root.attributes["message"] }
+        errors[server] = { :message=>doc.root[:message] }
         next
       end
         
-      threshold = options[:threshold] || doc.root.attributes["threshold"]
-      threshold = threshold.to_f
+      threshold = (options[:threshold] || doc.root[:threshold]).to_f
 
-      doc.elements.each("matches/match") { |element| 
-	if element.attributes["sim"].to_f >= threshold
-	  service = element.attributes["service"]
-	  image = element.get_elements(".//post")[0]
-    image ||= element.get_elements('.//image')[0]
-          
-	  id = image.attributes["id"]
-	  md5 = element.attributes["md5"]
+      doc.search('matches/match').each do |element|
+        if element[:sim].to_f >= threshold and element[:sim].to_f > 0
+          service = element[:service]
+          image = element.search('[id]').first
 
-	  if service == local_service
-	    post = Post.find(:first, :conditions => ["id = ?", id])
+          begin
+            id = image[:id]
+          rescue
+            raise doc.to_xml
+          end
+          md5 = element[:md5]
+
+          if service == local_service
+            post = Post.find(:first, :conditions => ["id = ?", id])
             unless post.nil? || post == options[:source]
-	      posts += [post]
-	      similarity[post] = element.attributes["sim"].to_f
-	    end
-	  elsif service
-	    post = ExternalPost.new()
-	    post.id = "#{next_id}"
-	    next_id = next_id + 1
-	    post.md5 = md5
-	    post.preview_url = element.attributes["preview"]
-	    if service == "gelbooru.com" then # hack
-	      post.url = "http://" + service + "/index.php?page=post&s=view&id=" + id
-	    elsif service == "e-shuushuu.net" then # hack
-	      post.url = "http://" + service + "/image/" + id + "/"
-	    else
-	      post.url = "http://" + service + "/post/show/" + id
-	    end
-		    post.service = service
-	    post.width = element.attributes["width"].to_i
-	    post.height = element.attributes["height"].to_i
-	    post.tags = image.attributes["tags"] || ""
-	    post.rating = image.attributes["rating"] || "s"
-	    posts_external += [post]
+              posts += [post]
+              similarity[post] = element[:sim].to_f
+            end
+          elsif service
+            post = ExternalPost.new()
+            post.id = "#{next_id}"
+            next_id = next_id + 1
+            post.md5 = md5
+            post.preview_url = element[:preview]
+            if service == "gelbooru.com" then # hack
+              post.url = "http://" + service + "/index.php?page=post&s=view&id=" + id
+            elsif service == "e-shuushuu.net" then # hack
+              post.url = "http://" + service + "/image/" + id + "/"
+            else
+              begin
+              post.url = "http://" + service + "/post/show/" + id
+              rescue
+                raise element.to_xml
+              end
+            end
+            post.service = service
+            post.width = element[:width].to_i
+            post.height = element[:height].to_i
+            post.tags = image[:tags] || ""
+            post.rating = image[:rating] || "s"
+            posts_external += [post]
 
-	    similarity[post] = element.attributes["sim"].to_f
-	  end
-	end
-      }
+            similarity[post] = element[:sim].to_f
+          end
+        end
+      end
     end
 
     posts = posts.sort { |a, b| similarity[b] <=> similarity[a] }

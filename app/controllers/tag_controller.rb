@@ -211,4 +211,13 @@ class TagController < ApplicationController
 
     @tags = Tag.count_by_period(@day, @day.next_month)
   end
+
+  def show
+    begin
+      name = Tag.find(params[:id], :select => :name).name
+    rescue
+      raise ActionController::RoutingError.new('Not Found')
+    end
+    redirect_to :controller => :wiki, :action => :show, :title => name
+  end
 end

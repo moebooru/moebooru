@@ -119,11 +119,7 @@ module SimilarImages
           service = element[:service]
           image = element.search('[id]').first
 
-          begin
-            id = image[:id]
-          rescue
-            raise doc.to_xml
-          end
+          id = image[:id]
           md5 = element[:md5]
 
           if service == local_service

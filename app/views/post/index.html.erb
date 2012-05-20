@@ -67,7 +67,7 @@
   <div class="content">    
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
-        The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>
+        The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)}.join(', ') %>
       </div>
     <% end %>
      <% if CONFIG["can_see_ads"].call(@current_user) %>

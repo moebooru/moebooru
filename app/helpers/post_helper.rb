@@ -85,7 +85,7 @@ module PostHelper
           dl_url = post.jpeg_url
         end
     else
-        if(post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?) and post.is_a?(Post)
+        if(post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
           dl_width = post.width.to_i
           dl_height = post.height.to_i
           dl_url = post.sample_url

@@ -141,6 +141,7 @@ module SimilarImages
             else
               post.url = "http://" + service + "/post/show/" + id
             end
+            post.sample_url = image[:sample_url] || post.url
             post.service = service
             post.width = element[:width].to_i
             post.height = element[:height].to_i

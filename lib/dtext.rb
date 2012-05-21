@@ -98,19 +98,11 @@ module DText
 
   def parseurl(str)
     url = /(h?ttps?:\/\/\[?(:{0,2}[\w\-]+)((:{1,2}|\.)[\w\-]+)*\]?(:\d+)*(\/[^\s\n]*)*)/
-    str = str.gsub(/&lt;&lt;\s*([^\s]+?)\s*\|\s*(.+?)\s*&gt;&gt;/) do |match|
-      link = $1
-      name = $2
-      if link =~ /\A#{url}/
-        "<a href=\"#{link}\">#{name}</a>"
-      else
-        match
-      end
-    end
-    str = str.gsub(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')
-       .gsub(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')
-       .gsub(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')
-       .gsub(/<a href="ttp/, '<a href="http')
+    str = str.gsub(/&lt;&lt;\s*#{url}\s*\|\s*(.+?)\s*&gt;&gt;/, '<a href="\1">\7</a>')
+      .gsub(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')
+      .gsub(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')
+      .gsub(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')
+      .gsub(/<a href="ttp/, '<a href="http')
   end
 
   module_function :parse, :parseline, :parseinline, :parselist, :parseurl

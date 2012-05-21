@@ -139,11 +139,7 @@ module SimilarImages
             elsif service == "e-shuushuu.net" then # hack
               post.url = "http://" + service + "/image/" + id + "/"
             else
-              begin
               post.url = "http://" + service + "/post/show/" + id
-              rescue
-                raise element.to_xml
-              end
             end
             post.service = service
             post.width = element[:width].to_i

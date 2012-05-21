@@ -33,11 +33,11 @@ class NoteController < ApplicationController
     set_title "Note History"
 
     if params[:id]
-      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC", :conditions => ["note_id = ?", params[:id]])
+      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC", :conditions => ["note_id = ?", params[:id].to_i])
     elsif params[:post_id]
-      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["post_id = ?", params[:post_id]])
+      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["post_id = ?", params[:post_id].to_i])
     elsif params[:user_id]
-      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["user_id = ?", params[:user_id]])
+      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["user_id = ?", params[:user_id].to_i])
     else
       @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC")
     end

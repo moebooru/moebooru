@@ -6,26 +6,30 @@ module DText
     state = ['newline']
     result = ""
 
-    # Normalize newlines
+    # Normalize newlines.
     str.strip
     str.gsub!(/(\r?\n)/, "\n")
     str.gsub!(/\n{3,}/, "\n\n")
     str = CGI.escapeHTML str
 
-    # Keep newline, use carriage return for split
+    # Keep newline, use carriage return for split.
     str.gsub!(/(\n+)/, '\1' + "\r")
     data = str.split("\r")
 
+    # Parse header and list first, line by line.
     data.each do |d|
       result << parseline(d, state)
     end
+
+    # Parse inline tags as a whole.
     result = parseinline(result)
 
+    # Nokogiri ensures valid html output.
     Nokogiri::HTML::DocumentFragment.parse(result).to_html
   end
 
   def parseinline(str)
-    #short links subtitution:
+    # Short links subtitution:
     str.gsub!(/\[\[(.+?)\|(.+?)\]\]/) do # [[title|label]] ;link to wiki, with label
       "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML($1.tr(" ", "_")))}\">#{$2}</a>"
     end
@@ -36,7 +40,7 @@ module DText
       "<a href=\"/post/index?tags=#{CGI.escape(CGI.unescapeHTML($1))}\">#{$1}</a>"
     end
 
-    # Miscellaneous single line tags subtitution
+    # Miscellaneous single line tags subtitution.
     str.gsub! /\[b\](.+)\[\/b\]/, '<strong>\1</strong>'
     str.gsub! /\[i\](.+)\[\/i\]/, '<em>\1</em>'
     str.gsub! /(post #(\d+))/i, '<a href="/post/show/\2">\1</a>'
@@ -44,20 +48,22 @@ module DText
     str.gsub! /(comment #(\d+))/i, '<a href="/comment/show/\2">\1</a>'
     str.gsub! /(pool #(\d+))/i, '<a href="/pool/show/\2">\1</a>'
 
-    # Single line spoiler tags
+    # Single line spoiler tags.
     str.gsub! /\[spoilers?\](.+)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>'
     str.gsub! /\[spoilers?=(.+?)\](.+)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">\2</span>'
 
-    # Multi line spoiler tags
+    # Multi line spoiler tags.
     str.gsub! /\[spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><div class="spoilertext" style="display: none">'
     str.gsub! /\[spoilers?=(.+?)\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><div class="spoilertext" style="display: none">'
     str.gsub! /\[\/spoilers?\]/, '</div>'
 
-    # Quote
+    # Quote.
     str.gsub! /\[quote\]/, '<blockquote><div>'
     str.gsub! /\[\/quote\]/, '</div></blockquote>'
 
     str = parseurl(str)
+
+    # Extraneous newline before closing div is unnecessary.
     str.gsub! /\n+(<\/div>)/, '\1'
     str.gsub! /\n/, '<br>'
     str
@@ -97,12 +103,15 @@ module DText
   end
 
   def parseurl(str)
+    # Basic URL pattern
     url = /(h?ttps?:\/\/\[?(:{0,2}[\w\-]+)((:{1,2}|\.)[\w\-]+)*\]?(:\d+)*(\/[^\s\n]*)*)/
+
+    # Substitute url tag in this form:                                   <<url|label>>
     str = str.gsub(/&lt;&lt;\s*#{url}\s*\|\s*(.+?)\s*&gt;&gt;/, '<a href="\1">\7</a>')
-      .gsub(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')
-      .gsub(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')
-      .gsub(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')
-      .gsub(/<a href="ttp/, '<a href="http')
+      .gsub(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')  # "label":url
+      .gsub(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')       #     <<url>>
+      .gsub(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')                 #         url
+      .gsub(/<a href="ttp/, '<a href="http') # Fix ttp(s) scheme
   end
 
   module_function :parse, :parseline, :parseinline, :parselist, :parseurl

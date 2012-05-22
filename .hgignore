@@ -4,7 +4,7 @@
 ^(log|tmp)/
 ^config/(newrelic\.yml|database\.yml|unicorn\.rb|local_config\.rb)$
 ^public/system/photos/
-\.(swp|orig)$
+\.(swp|orig|rbc)$
 ^[^/]+\.war
 ^bin/
 ~$

@@ -9,7 +9,6 @@ gem 'json'
 gem 'hpricot'
 gem 'dalli', '~> 1.0.0'
 gem 'mime-types'
-gem 'unicorn'
 gem 'redhillonrails_core'
 gem 'geoip'
 gem 'repeated_auto_complete'
@@ -19,3 +18,5 @@ gem 'sitemap_generator'
 gem 'daemons'
 gem 'newrelic_rpm'
 gem 'nokogiri'
+gem 'unicorn', :platforms => :mri
+gem 'puma', :platforms => [:jruby, :rbx]

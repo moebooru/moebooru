@@ -30,7 +30,7 @@ module DText
     str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>')
     str.gsub!(/\[spoilers?(=(.+?))\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\2</span></span><span class="spoilertext" style="display: none">\3</span>')
 
-    if RUBY_VERSION < '1.9' then
+    if RUBY_VERSION < '1.9' and RUBY_ENGINE == 'ruby'
       # Ruby regexes are in the localization dark ages, so we need to match UTF-8 characters
       # manually:
       utf8_char = '[\xC0-\xFF][\x80-\xBF]+'

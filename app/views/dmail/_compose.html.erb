@@ -30,6 +30,7 @@
 <% end %>
 <script type="text/javascript">
   $('dmail-preview').observe('click', function(event) {
+    $('dmail-preview-area').innerHTML = '<em>Loading preview...</em>';
     new Ajax.Updater('dmail-preview-area', '/dmail/preview', { parameters: 'body=' + encodeURIComponent($('dmail_body').value) });
     event.stop(); //Stop the browser from actually going to href.
   });

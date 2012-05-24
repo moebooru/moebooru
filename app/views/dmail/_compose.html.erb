@@ -5,7 +5,11 @@
     <tfoot>
       <tr>
         <td></td>
-        <td><%= submit_tag "Send" %></td>
+        <td><%= submit_tag "Send" -%> <%= link_to 'Preview', '#', :id => 'dmail-preview' -%></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><div style="width: 400px" id="dmail-preview-area"></div></td>
       </tr>
     </tfoot>
     <tbody>
@@ -24,3 +28,9 @@
     </tbody>
   </table>
 <% end %>
+<script type="text/javascript">
+  $('dmail-preview').observe('click', function(event) {
+    new Ajax.Updater('dmail-preview-area', '/dmail/preview', { parameters: 'body=' + encodeURIComponent($('dmail_body').value) });
+    event.stop(); //Stop the browser from actually going to href.
+  });
+</script>

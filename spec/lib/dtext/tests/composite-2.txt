@@ -1,0 +1,22 @@
+h1. header
+A paragraph, notice the
+blank line between each tags?
+
+h3. another header
+[spoiler]
+I have spoiler
+[/spoiler]
+[spoilers]morespoiler[/spoilers]
+[spoiler=is this a spoiler?]spoilersssss[/spoilers]
+[spoilers=guess what is this] a
+spoilers
+[/spoiler]
+
+h2. list a-list
+* list
+** [b]nested[/b]
+* list
+** nested
+*** [i]more nested?[/i]
+this will inherit the last nested list
+* list

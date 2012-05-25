@@ -20,3 +20,7 @@ gem 'newrelic_rpm'
 gem 'nokogiri'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
+
+group :development do
+  gem 'rspec'
+end

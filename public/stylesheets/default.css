@@ -1223,6 +1223,7 @@ div#wiki-show > div#body {
   width: 50em;
   text-align: left;
   float: left;
+  padding-bottom: 1em;
 }
 
 div#wiki-show > div#body ul {

@@ -60,14 +60,8 @@ module ApplicationHelper
   end
 
   def format_text(text, options = {})
-    content_tag :div do
-      # The parses is more or less html safe
-      content = DText.parse(text).html_safe
-      # FIXME: Should use stylesheet.
-      #        This extra crap is currently required to give some spacing to the pages.
-      content << tag(:br)
-      content << "&nbsp;"
-    end
+    # The parses is more or less html safe
+    DText.parse(text).html_safe
   end
 
   def format_inline(inline, num, id, preview_html=nil)

@@ -63,8 +63,10 @@ module DText
 
     str = parseurl(str)
 
-    # Extraneous newline before closing div is unnecessary.
+    # Extraneous newlines before closing div are unnecessary.
     str.gsub! /\n+(<\/div>)/, '\1'
+    # So are after headers and lists
+    str.gsub! /(<\/ul>|<\/h\d+>)\n+/, '\1'
     str.gsub! /\n/, '<br>'
     str
   end

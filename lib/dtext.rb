@@ -30,11 +30,11 @@ module DText
 
   def parseinline(str)
     # Short links subtitution:
-    str.gsub!(/\[\[(.+?)\|(.+?)\]\]/) do # [[title|label]] ;link to wiki, with label
-      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML($1.tr(" ", "_")))}\">#{$2}</a>"
-    end
-    str.gsub!(/\[\[(.+?)\]\]/) do # [[title]] ;link to wiki
-      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML($1.tr(" ", "_")))}\">#{$1}</a>"
+    str.gsub!(/\[\[(.+?)\]\]/) do # [[title]] or [[title|label]] ;link to wiki
+      data = $1.split('|', 2)
+      title = data[0]
+      label = data[1].nil? ? title : data[1]
+      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML(title.tr(" ", "_")))}\">#{label}</a>"
     end
     str.gsub!(/\{\{(.+?)\}\}/) do # {{post tags here}} ;search post with tags
       "<a href=\"/post/index?tags=#{CGI.escape(CGI.unescapeHTML($1))}\">#{$1}</a>"

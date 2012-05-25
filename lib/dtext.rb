@@ -13,7 +13,7 @@ module DText
     str = CGI.escapeHTML str
 
     # Keep newline, use carriage return for split.
-    str.gsub!(/(\n+)/, '\1' + "\r")
+    str.gsub!("\n", "\n\r")
     data = str.split("\r")
 
     # Parse header and list first, line by line.
@@ -85,7 +85,7 @@ module DText
       state.push "1"
       html << "<ul>"
     else
-      n = str.split()[0].count("*")
+      n = (str.split()[0] || "").count("*")
       if n < state.last.to_i
         html << '</ul>' * (state.last.to_i - n)
         state[-1] = n.to_s

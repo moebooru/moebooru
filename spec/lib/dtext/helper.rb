@@ -3,7 +3,7 @@ require 'nokogiri'
 
 include DText
 
-TestDir = "./tests"
+TestDir = File.expand_path('../tests', __FILE__)
 
 def p(str)
   DText.parse(str).gsub(/>\s*</, "><").gsub(/\n*/, "")

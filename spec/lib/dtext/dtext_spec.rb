@@ -1,4 +1,4 @@
-require 'helper.rb'
+require File.expand_path('../helper.rb', __FILE__)
 
 describe "DText" do
   test = find_test()

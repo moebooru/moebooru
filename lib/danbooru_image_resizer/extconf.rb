@@ -4,8 +4,10 @@ require 'mkmf'
 
 CONFIG['CC'] = "g++"
 CONFIG['LDSHARED'] = CONFIG['LDSHARED'].sub(/^cc /,'g++ ')	# otherwise we would not link with the C++ runtime
-$LDFLAGS << " -L/usr/X11R6/lib"
-$INCFLAGS << " -I/usr/local/include"
+gdc = with_config('gd-config') || 'gdlib-config'
+$LDFLAGS += " #{`"#{gdc}" --ldflags`.chomp}"
+$INCFLAGS += " #{`"#{gdc}" --cflags`.chomp}"
+$CFLAGS += " #{`"#{gdc}" --cflags`.chomp}"
 
 dir_config("gd")
 dir_config("jpeg")

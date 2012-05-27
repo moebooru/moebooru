@@ -4,7 +4,8 @@ include ERB::Util
 
 class Pool < ActiveRecord::Base  
   belongs_to :user
-  
+  validates_presence_of :name
+
   class PostAlreadyExistsError < Exception
   end
   

@@ -52,7 +52,11 @@ module TagTypeMethods
       results = {}
       got_keys = Set.new
       tags_to_query = post_tags.to_a.map { |n| Tag.cache_type_key_enc(n) }
-      cached_tag_types = Rails.cache.read_multi(*tags_to_query)
+      cached_tag_types = begin
+        Rails.cache.read_multi(*tags_to_query)
+      rescue
+        nil
+      end
       if cached_tag_types
         tag_types = Hash[cached_tag_types.map { |key, value| [cache_type_key_dec(key), value] }]
       else

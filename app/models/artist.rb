@@ -214,6 +214,7 @@ class Artist < ActiveRecord::Base
   
   before_validation :normalize
   validates_uniqueness_of :name
+  validates_presence_of :name
   belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
   attr_accessor :updater_ip_addr
 

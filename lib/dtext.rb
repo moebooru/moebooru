@@ -65,8 +65,8 @@ module DText
 
     # Extraneous newlines before closing div are unnecessary.
     str.gsub! /\n+(<\/div>)/, '\1'
-    # So are after headers and lists
-    str.gsub! /(<\/ul>|<\/h\d+>)\n+/, '\1'
+    # So are after headers, lists, and blockquotes.
+    str.gsub! /(<\/(ul|h\d+|blockquote)>)\n+/, '\1'
     str.gsub! /\n/, '<br>'
     str
   end

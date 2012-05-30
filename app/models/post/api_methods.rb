@@ -111,9 +111,7 @@ module PostApiMethods
       if not options[:exclude_votes] then
         vote_map = {}
         if not posts.empty? then
-          post_ids = posts.map { |p| p.id }.join(",")
-          sql = "SELECT v.* FROM post_votes v WHERE v.user_id = %i AND v.post_id IN (%s)" % [user.id, post_ids]
-          votes = PostVotes.find_by_sql(sql)
+          votes = PostVotes.where(:user_id => user.id, :post_id => posts)
           votes.each { |v|
             vote_map[v.post_id] = v.score
           }

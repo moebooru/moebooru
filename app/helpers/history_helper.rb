@@ -192,7 +192,7 @@ module HistoryHelper
       html << " (#{link_to("%i more..." % hidden, :search => "change:%i" % history.id)})"
     end
 
-    return html
+    return html.html_safe
   end
 
   def format_change(history, change, options, table_options)
@@ -274,8 +274,8 @@ module HistoryHelper
         changes = Post.tag_changes(change, previous, change.latest)
 
         list = []
-        list += tag_list(changes[:added_tags], :obsolete => changes[:obsolete_added_tags], :prefix => "+", :class => "added")
-        list += tag_list(changes[:removed_tags], :obsolete => changes[:obsolete_removed_tags], :prefix=>"-", :class => "removed")
+        list << tag_list(changes[:added_tags], :obsolete => changes[:obsolete_added_tags], :prefix => "+", :class => "added")
+        list << tag_list(changes[:removed_tags], :obsolete => changes[:obsolete_removed_tags], :prefix=>"-", :class => "removed")
 
         if options[:show_all_tags]
           list += tag_list(changes[:unchanged_tags], :prefix => "", :class => "unchanged")

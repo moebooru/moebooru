@@ -22,7 +22,7 @@ module ActiveRecord
   module Versioning
     def self.included(base)
       base.extend ClassMethods
-      base.define_callbacks :after_undo
+      base.define_callbacks :undo
     end
 
     def remember_new

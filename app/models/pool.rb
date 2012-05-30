@@ -21,7 +21,7 @@ class Pool < ActiveRecord::Base
       m.versioned :description, :default => ""
       m.versioned :is_public, :default => true
       m.versioned :is_active, :default => true
-      m.after_undo :update_pool_links
+      m.set_callback :undo, :after, :update_pool_links
       m.after_save :expire_cache
     end
     

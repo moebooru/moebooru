@@ -158,9 +158,7 @@ module ApplicationHelper
   end
   
   def content_for_prefix(name, &block)
-    existing_content_for = instance_variable_get("@content_for_#{name}").to_s
-    new_content_for      = (block_given? ? capture(&block) : content) + existing_content_for
-    instance_variable_set("@content_for_#{name}", new_content_for)
+    @_content_for[:name] = (block_given? ? capture(&block) : content) + @_content_for[:name]
   end
 
   def navigation_links(post)

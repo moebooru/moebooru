@@ -48,7 +48,7 @@
 </head>
 <body>
   <div id="header">
-    <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/", :id=>"ruu") %><span><%= tag_header(h(params[:tags])) %></span></h2>
+    <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/", :id=>"ruu") %><span><%= tag_header(params[:tags]) %></span></h2>
     <%= render :partial => "layouts/menu" %>
   </div>
   <%= render :partial => "layouts/login" %>

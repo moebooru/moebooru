@@ -121,7 +121,7 @@ module ApplicationHelper
 
   def tag_header(tags)
     unless tags.blank?
-      '/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")
+      ('/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")).html_safe
     end
   end
   

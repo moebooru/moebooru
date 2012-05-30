@@ -126,17 +126,17 @@
     <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General" && k != "Faults"}.each do |name, value| %>
       <tr>
         <th>Favorite <%= name.pluralize %></th>
-        <td><%= @user.voted_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "vote:3:#{@user.name} #{tag['tag']} order:vote"}.join(", ")%></td>
+        <td><%= @user.voted_tags(:type => value).map {|tag| link_to tag["tag"].tr("_", " "), :controller => "post", :action => "index", :tags => "vote:3:#{@user.name} #{tag['tag']} order:vote"}.join(", ").html_safe %></td>
       </tr>
     <% end %>
     <tr>
       <th>Uploaded Tags</th>
-      <td><%= @user.uploaded_tags.map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+      <td><%= @user.uploaded_tags.map {|tag| link_to tag["tag"].tr("_", " "), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ").html_safe %></td>
     </tr>
     <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General" && k != "Faults"}.each do |name, value| %>
       <tr>
         <th>Uploaded <%= name.pluralize %></th>
-        <td><%= @user.uploaded_tags(:type => value).map {|tag| link_to h(tag["tag"].tr("_", " ")), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ")%></td>
+        <td><%= @user.uploaded_tags(:type => value).map {|tag| link_to tag["tag"].tr("_", " "), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ").html_safe %></td>
       </tr>
     <% end %>
   </table>
@@ -144,7 +144,7 @@
 
 <% @user.tag_subscriptions.visible.each do |tag_subscription| %>
   <div style="margin-bottom: 1em; float: left; clear: both;">
-    <h4>Tag Subscription: <%= h tag_subscription.name %> <%= link_to "&raquo;", :controller => "post", :action => "index", :tags => "sub:#{@user.name}:#{tag_subscription.name}" %></h4>
+    <h4>Tag Subscription: <%= tag_subscription.name %> <%= link_to "»", :controller => "post", :action => "index", :tags => "sub:#{@user.name}:#{tag_subscription.name}" %></h4>
     <%= render :partial => "post/posts", :locals => {:posts => @user.tag_subscription_posts(5, tag_subscription.name).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
   </div>
 <% end %>

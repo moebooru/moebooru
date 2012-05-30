@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/edogawaconan/auto_complete-rails3.git
-  revision: 2234de4cf4e4e876e9e67762ae05ae7c59f19f42
+  revision: 307826610e88cd9fbc0cc5a77b7a9df42f7f32b4
   specs:
     auto_complete-rails3 (0.1.3)
 

@@ -38,7 +38,7 @@ GEM
     builder (2.1.2)
     chardet (0.9.0)
     daemons (1.1.8)
-    dalli (1.0.5)
+    dalli (2.0.5)
     diff-lcs (1.1.3)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -111,7 +111,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
-    will_paginate (2.3.16)
+    will_paginate (3.0.3)
 
 PLATFORMS
   ruby
@@ -119,7 +119,7 @@ PLATFORMS
 DEPENDENCIES
   auto_complete-rails3!
   daemons
-  dalli (~> 1.0.0)
+  dalli
   diff-lcs
   exception_notification
   gchartrb
@@ -137,4 +137,4 @@ DEPENDENCIES
   rspec
   sitemap_generator
   unicorn
-  will_paginate (~> 2.3.16)
+  will_paginate

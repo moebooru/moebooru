@@ -139,7 +139,7 @@ module PostHelper
     li_class += " pending" if post.is_pending?
     # We need to specify a width on the <li>, since IE7 won't figure it out on its own.
     item = %{<li style="width: #{block_size[0]+10}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>}
-    return item
+    return item.html_safe
   end
 
   def print_ext_similarity_preview(post, options = {})

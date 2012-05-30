@@ -1,3 +1,4 @@
+require File.expand_path '../../lib/languages', __FILE__
 # The version of this Moebooru.
 CONFIG["version"] = "3.0.0-alpha"
 

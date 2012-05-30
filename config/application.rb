@@ -1,5 +1,8 @@
 # Put this in config/application.rb
 require File.expand_path('../boot', __FILE__)
+CONFIG = {}
+require File.expand_path('../default_config', __FILE__)
+require File.expand_path('../local_config', __FILE__)
 
 require 'rails/all'
 

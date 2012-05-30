@@ -278,7 +278,7 @@ module HistoryHelper
         list << tag_list(changes[:removed_tags], :obsolete => changes[:obsolete_removed_tags], :prefix=>"-", :class => "removed")
 
         if options[:show_all_tags]
-          list += tag_list(changes[:unchanged_tags], :prefix => "", :class => "unchanged")
+          list << tag_list(changes[:unchanged_tags], :prefix => "", :class => "unchanged")
         end
         html << list.join(" ")
       end

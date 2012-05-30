@@ -128,7 +128,7 @@
 
 <%= render :partial => "footer" %>
 
-<% if @content_for_subnavbar %>
+<% if content_for? :subnavbar %>
   <!-- Align the links to the content, not the window. -->
   <div style="clear: both;">
     <div class="sidebar">&nbsp;</div>
@@ -138,6 +138,6 @@
       </ul>
     </div>
   </div>
-  <% @content_for_subnavbar = nil %>
+  <% @_content_for[:subnavbar] = nil %>
 <% end %>
 

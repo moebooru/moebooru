@@ -164,8 +164,8 @@ class Pool < ActiveRecord::Base
       }
     end
     
-    def to_json(*params)
-      api_attributes.to_json(*params)
+    def as_json(*params)
+      api_attributes.as_json(*params)
     end
 
     def to_xml(options = {})

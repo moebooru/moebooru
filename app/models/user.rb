@@ -176,8 +176,8 @@ class User < ActiveRecord::Base
       end
     end
 
-    def to_json(*args)
-      {:name => name, :blacklisted_tags => blacklisted_tags_array, :id => id}.to_json(*args)
+    def as_json(*args)
+      {:name => name, :blacklisted_tags => blacklisted_tags_array, :id => id}.as_json(*args)
     end
 
     def user_info_cookie

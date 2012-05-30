@@ -101,8 +101,8 @@ class WikiPage < ActiveRecord::Base
     {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_xml(options.reverse_merge(:root => "wiki_page"))
   end
 
-  def to_json(*args)
-    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.to_json(*args)
+  def as_json(*args)
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version}.as_json(*args)
   end
 
   protected

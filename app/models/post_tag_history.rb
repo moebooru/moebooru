@@ -96,7 +96,7 @@ class PostTagHistory < ActiveRecord::Base
     {:id => id, :post_id => post_id, :tags => tags}.to_xml(options.reverse_merge(:root => "tag_history"))
   end
 
-  def to_json(*args)
-    {:id => id, :post_id => post_id, :tags => tags}.to_json(*args)
+  def as_json(*args)
+    {:id => id, :post_id => post_id, :tags => tags}.as_json(*args)
   end
 end

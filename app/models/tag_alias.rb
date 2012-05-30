@@ -99,7 +99,7 @@ class TagAlias < ActiveRecord::Base
     api_attributes.to_xml(options.reverse_merge(:root => "tag_alias"))
   end
 
-  def to_json(*args)
-    return api_attributes.to_json(*args)
+  def as_json(*args)
+    return api_attributes.as_json(*args)
   end
 end

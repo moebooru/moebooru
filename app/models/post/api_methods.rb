@@ -63,8 +63,8 @@ module PostApiMethods
     return ret
   end
 
-  def to_json(*args)
-    return api_attributes.to_json(*args)
+  def as_json(*args)
+    return api_attributes.as_json(*args)
   end
 
   def to_xml(options = {})

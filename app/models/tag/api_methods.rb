@@ -17,8 +17,8 @@ module TagApiMethods
     api_attributes.to_xml(options.merge(:root => "tag"))
   end
 
-  def to_json(*args)
-    api_attributes.to_json(*args)
+  def as_json(*args)
+    api_attributes.as_json(*args)
   end
 
   module ClassMethods

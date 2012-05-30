@@ -28,7 +28,7 @@ class WikiPageVersion < ActiveRecord::Base
     {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version, :post_id => post_id}.to_xml(options.reverse_merge(:root => "wiki_page_version"))
   end
 
-  def to_json(*args)
-    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version, :post_id => post_id}.to_json(*args)
+  def as_json(*args)
+    {:id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version, :post_id => post_id}.as_json(*args)
   end
 end

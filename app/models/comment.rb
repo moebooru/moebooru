@@ -178,7 +178,7 @@ class Comment < ActiveRecord::Base
     return api_attributes.to_xml(options.reverse_merge(:root => "comment"))
   end
 
-  def to_json(*args)
-    return api_attributes.to_json(*args)
+  def as_json(*args)
+    return api_attributes.as_json(*args)
   end
 end

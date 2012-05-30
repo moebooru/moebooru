@@ -20,7 +20,6 @@ require 'aws/s3' if [:amazon_s3, :local_flat_with_amazon_s3_backup].include?(CON
 require 'danbooru_image_resizer/danbooru_image_resizer'
 require 'google_chart' if CONFIG["enable_reporting"]
 require 'core_extensions'
-require 'fix_form_tag'
 require 'download'
 require 'sys/cpu' if CONFIG["load_average_threshold"]
 require 'fileutils'

@@ -3,7 +3,7 @@
   <%= cloud_view(@tags, 1.5) %>
 </div>
 
-<% content_for("footer") do %>
+<% content_for :footer do %>
   <li><%= link_to "Popular (by day)", :action => "popular_by_day" %></li>
   <li><%= link_to "Popular (by week)", :action => "popular_by_week" %></li>
   <li><%= link_to "Popular (by month)", :action => "popular_by_month" %></li>

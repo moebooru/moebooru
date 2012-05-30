@@ -132,7 +132,7 @@ class User < ActiveRecord::Base
 
       def find_name(user_id)
         if CONFIG["enable_caching"]
-          return Cache.get("user_name:#{user_id}") do
+          return Rails.cache.fetch("user_name:#{user_id}") do
             find_name_helper(user_id)
           end
         else
@@ -159,7 +159,7 @@ class User < ActiveRecord::Base
     end
 
     def update_cached_name
-      Cache.put("user_name:#{id}", name)
+      Rails.cache.write("user_name:#{id}", name)
     end
   end
   
@@ -194,7 +194,7 @@ class User < ActiveRecord::Base
       type = options[:type]
 
       if CONFIG["enable_caching"]
-        uploaded_tags = Cache.get("uploaded_tags/#{id}/#{type}")
+        uploaded_tags = Rails.cache.read("uploaded_tags/#{id}/#{type}")
         return uploaded_tags unless uploaded_tags == nil
       end
 
@@ -235,7 +235,7 @@ class User < ActiveRecord::Base
       uploaded_tags = select_all_sql(sql)
 
       if CONFIG["enable_caching"]
-        Cache.put("uploaded_tags/#{id}/#{type}", uploaded_tags, 1.day)
+        Rails.cache.write("uploaded_tags/#{id}/#{type}", uploaded_tags, :expires_in => 1.day)
       end
 
       return uploaded_tags
@@ -245,7 +245,7 @@ class User < ActiveRecord::Base
       type = options[:type]
 
       if CONFIG["enable_caching"]
-        favorite_tags = Cache.get("favorite_tags/#{id}/#{type}")
+        favorite_tags = Rails.cache.read("favorite_tags/#{id}/#{type}")
         return favorite_tags unless favorite_tags == nil
       end
 
@@ -286,7 +286,7 @@ class User < ActiveRecord::Base
       favorite_tags = select_all_sql(sql)
 
       if CONFIG["enable_caching"]
-        Cache.put("favorite_tags/#{id}/#{type}", favorite_tags, 1.day)
+        Rails.cache.write("favorite_tags/#{id}/#{type}", favorite_tags, :expires_in => 1.day)
       end
 
       return favorite_tags
@@ -311,10 +311,10 @@ class User < ActiveRecord::Base
     end
 
     def held_post_count
-      version = Cache.get("$cache_version").to_i
+      version = Rails.cache.read("$cache_version").to_i
       key = "held-post-count/v=#{version}/u=#{self.id}"
 
-      return Cache.get(key) {
+      return Rails.cache.fetch(key) {
         Post.count(:conditions => ["user_id = ? AND is_held AND status <> 'deleted'", self.id])
       }.to_i
     end

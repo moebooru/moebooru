@@ -1,13 +1,14 @@
 module PostCountMethods
   module ClassMethods
     def fast_count(tags = nil)
-      cache_version = Cache.get("$cache_version").to_i
-      key = "post-count/v=#{cache_version}/#{tags}"
+      # A small sanitation
+      tags = tags.to_s.strip.gsub(/ +/, ' ')
+      cache_version = Rails.cache.read("$cache_version").to_i
+      # Use base64 encoding of tags query for memcache key
+      tags_base64 = Base64.urlsafe_encode64(tags)
+      key = "post-count/v=#{cache_version}/#{tags_base64}"
 
-      # memcached protocol is dumb so we need to escape spaces
-      key = key.gsub(/-/, "--").gsub(/ /, "-_")
-
-      count = Cache.get(key) {
+      count = Rails.cache.fetch(key) {
         Post.count_by_sql(Post.generate_sql(tags, :count => true))
       }.to_i
 

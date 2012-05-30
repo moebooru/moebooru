@@ -1,10 +1,3 @@
-CONFIG = {}
-
-require 'languages'
-
-require File.expand_path('../../default_config', __FILE__)
-require File.expand_path('../../local_config', __FILE__)
-
 CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
 
 %w(session_secret_key user_password_salt).each do |key|

@@ -33,7 +33,7 @@ module TagApiMethods
       summary_version = Tag.get_summary_version
       key = "tag_summary/#{summary_version}"
 
-      data = Cache.get(key, 3600) do
+      data = Rails.cache.fetch(key, :expires_in => 1.hour) do
         data = Tag.get_json_summary_no_cache
         data.to_json
       end
@@ -78,7 +78,7 @@ module TagApiMethods
 
     # Return the cache version of the summary.
     def get_summary_version
-      return Cache.get("$tag_version") do 0 end
+      return Rails.cache.fetch("$tag_version") do 0 end
     end
   end
 end

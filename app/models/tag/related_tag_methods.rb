@@ -2,7 +2,7 @@ module TagRelatedTagMethods
   module ClassMethods
     def calculate_related_by_type(tag, type, limit = 25)
       if CONFIG["enable_caching"] && tag.size < 230
-        results = Cache.get("reltagsbytype/#{type}/#{tag}")
+        results = Rails.cache.read("reltagsbytype/#{type}/#{Tag.cache_key_enc(tag)}")
         
         if results
           return JSON.parse(results)
@@ -33,7 +33,7 @@ module TagRelatedTagMethods
         post_count = 12 if post_count < 12
         post_count = 200 if post_count > 200
         
-        Cache.put("reltagsbytype/#{type}/#{tag}", results.map {|x| {"name" => x["name"], "post_count" => x["post_count"]}}.to_json, post_count.hours)
+        Rails.cache.write("reltagsbytype/#{type}/#{Tag.cache_key_enc(tag)}", results.map {|x| {"name" => x["name"], "post_count" => x["post_count"]}}.to_json, :expires_in => post_count.hours)
       end
       
       return results

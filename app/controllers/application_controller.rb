@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'digest/md5'
 
 class ApplicationController < ActionController::Base
@@ -98,7 +99,7 @@ class ApplicationController < ActionController::Base
         @current_user = User.authenticate_hash(params[:login], params[:password_hash])
       end
 
-      if @current_user == nil && params[:user]
+      if @current_user == nil && params[:user].is_a?(Hash)
         @current_user = User.authenticate(params[:user][:name], params[:user][:password])
       end
 
@@ -289,7 +290,9 @@ class ApplicationController < ActionController::Base
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).downcase.scan(/\S+/))
-      tags += cookies["recent_tags"].to_s.scan(/\S+/)
+      # FIXME: this causes error without force_encoding.
+      #        And probably still does even with one.
+      tags += cookies["recent_tags"].to_s.force_encoding(Encoding::UTF_8).scan(/\S+/)
       cookies["recent_tags"] = tags.slice(0, 20).join(" ")
     end
   end
@@ -303,7 +306,7 @@ class ApplicationController < ActionController::Base
       key, expiry = get_cache_key(controller_name, action_name, params, :user => @current_user)
       
       if key && key.size < 200
-        cached = Cache.get(key)
+        cached = Rails.cache.read(key)
 
         unless cached.blank?
           render :text => cached, :layout => false
@@ -314,7 +317,7 @@ class ApplicationController < ActionController::Base
       yield
 
       if key && response.headers['Status'] =~ /^200/
-        Cache.put(key, response.body, expiry)
+        Rails.cache.write(key, response.body, :expires_in => expiry)
       end
     else
       yield

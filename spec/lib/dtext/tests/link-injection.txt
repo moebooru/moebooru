@@ -1,0 +1,10 @@
+<<javascript:alert(1);http://test.com|pwned>>
+<<javascript:alert(1);/*
+http://fudanchii.net
+*/|lol>>
+"lol":javascript:alert(1);http://nyahahaha.com
+<<http://fudanchii.net|my site>>
+<<javascript:alert(1);http://fudanchii.net>>
+javascript:alert(1);/*
+http://fudanchii.net
+*/

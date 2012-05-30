@@ -4,7 +4,8 @@ include ERB::Util
 
 class Pool < ActiveRecord::Base  
   belongs_to :user
-  
+  validates_presence_of :name
+
   class PostAlreadyExistsError < Exception
   end
   
@@ -145,7 +146,7 @@ class Pool < ActiveRecord::Base
     end
 
     def expire_cache
-      Cache.expire
+      Rails.cache.expire
     end
   end
   
@@ -335,7 +336,7 @@ class Pool < ActiveRecord::Base
           file_size = post.file_size
           crc32 = post.crc32
         end
-        crc32 = "%x" % crc32
+        crc32 = crc32 ? "%x" % crc32.to_i : '-'
         buf += [{ :filename => filename, :path => path, :file_size => file_size, :crc32 => crc32 }]
       end
 

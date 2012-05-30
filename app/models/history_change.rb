@@ -5,6 +5,9 @@ class HistoryChange < ActiveRecord::Base
 
   def options
     # FIXME: I don't know what I did here.
+    # Apparently the return changes between 1.8 and 1.9 -
+    # this workaround were found somewhere I couldn't remember.
+    # - edogawaconan
     opts = master_class.get_versioned_attribute_options(field) or {}
     if opts.class.to_s == "Array" then
       opts = opts.reduce({}) {|h,pairs| pairs.each {|k,v| h[k] = v}; h}

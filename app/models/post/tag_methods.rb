@@ -251,7 +251,7 @@ module PostTagMethods
         end
 
         if any_new_tags then
-          Cache.expire_tag_version
+          Rails.cache.expire_tag_version
         end
       end
 

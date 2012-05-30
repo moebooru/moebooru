@@ -28,7 +28,7 @@ module TagTypeMethods
       tag_name = tag_name.gsub(/\s/, "_")
       
       if CONFIG["enable_caching"]
-        return Cache.get("tag_type:#{tag_name}", 1.day) do
+        return Rails.cache.fetch(Tag.cache_type_key_enc(tag_name), :expires_in => 1.day) do
           type_name_helper(tag_name)
         end
       else
@@ -47,45 +47,28 @@ module TagTypeMethods
 
     # Get all tag types for the given tags.
     def batch_get_tag_types(post_tags)
-      post_tags = post_tags.map { |p| "tag_type:#{p}" }
       post_tags = Set.new(post_tags)
 
-      # Memcache is dropping our connection if we make too make requests at once.  Request
-      # tag types max_tags_per_query at a time.
       results = {}
       got_keys = Set.new
-      tags_to_query = post_tags.to_a
-      max_tags_per_query = 1000
-      start_at = 0
-      begin
-        while start_at < tags_to_query.length do
-          tag_types = CACHE.get_multi(tags_to_query.slice(start_at, max_tags_per_query))
-          start_at += max_tags_per_query
-
-          # Strip off "tag_type:" from the result keys.
-          tag_types.each { |key, value| results[key[9..-1]] = value }
-
-          # Find which keys we didn't get from cache and fill them in.  This will also
-          # populate the cache.
-          got_keys.merge(tag_types.keys)
-        end
-      rescue MemCache::MemCacheError
-        tag_types = {}
-      rescue NameError => e
-        # get_multi in activesupport-2.2.2 has a bug in exception handling; it tries to
-        # access "server" out of scope, causing it to raise NameError.  This happens if
-        # the above EPIPE error triggers.  If this happens despite running smaller queries,
-        # log it and reste the memcache connection.
-        logger.warn("Unexpected MemCache error: #{e}")
-        CACHE.reset
+      tags_to_query = post_tags.to_a.map { |n| Tag.cache_type_key_enc(n) }
+      cached_tag_types = begin
+        Rails.cache.read_multi(*tags_to_query)
+      rescue
+        nil
+      end
+      if cached_tag_types
+        tag_types = Hash[cached_tag_types.map { |key, value| [cache_type_key_dec(key), value] }]
+      else
         tag_types = {}
       end
+      tag_types.each { |key, value| results[key] = value }
 
-      needed_keys = post_tags - got_keys
-      needed_keys.each { |key|
-        key =~ /tag_type:(.*)/
-        tag_name = $1
-        results[tag_name] = type_name(tag_name)
+      # Find which keys we didn't get from cache and fill them in.  This will also
+      # populate the cache.
+      needed_tags = post_tags - tag_types.keys
+      needed_tags.each { |tag|
+        results[tag] = type_name(tag)
       }
 
       return results

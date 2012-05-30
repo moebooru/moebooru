@@ -4,11 +4,11 @@
 ^(log|tmp)/
 ^config/(newrelic\.yml|database\.yml|unicorn\.rb|local_config\.rb)$
 ^public/system/photos/
-\.(swp|orig)$
+\.(swp|orig|rbc)$
 ^[^/]+\.war
 ^bin/
 ~$
-^public/data/
+^public/data(/|$)
 ^public/javascripts/cached/all\.js
 \.(s?o)$
 (extconf\.h|Makefile|mkmf\.log)$

@@ -122,6 +122,8 @@ class UserController < ApplicationController
       ret[:pass_hash] = user.password_hash
       ret[:user_info] = user.user_info_cookie
       respond_to_success("Successful", {}, :api => {:response => "success"}.merge(ret))
+    else
+      redirect_to root_path
     end
   end
 
@@ -242,6 +244,7 @@ class UserController < ApplicationController
       end
     else
       @user = User.new
+      redirect_to root_path if params[:format] and params[:format] != 'html'
     end
   end
   
@@ -350,7 +353,7 @@ class UserController < ApplicationController
     
     file = "#{Rails.root}/log/user_errors.log"
     File.open(file, "a") do |f|
-      f.write(report + "\n\n\n-------------------------------------------\n\n\n")
+      f.write(report.to_s + "\n\n\n-------------------------------------------\n\n\n")
     end
 
     render :json => {:success => true}

@@ -522,7 +522,7 @@ Post = {
       {
         if(bld)
         {
-          thumb.src = "about:blank";
+          thumb.src = "/images/blank.gif";
 
           /* Trying to work around Firefox displaying the old thumb.src briefly before loading
            * the blacklisted thumbnail, even though they're applied at the same time: */
@@ -872,13 +872,12 @@ Post = {
     }
 
     var f = function() {
-      img.stopObserving("load")
-      img.stopObserving("error")
       img.original_height = null;
       img.original_width = null;
       var highres = $("highres-show");
       img.height = highres.getAttribute("link_height");
       img.width = highres.getAttribute("link_width");
+      $("note-container").insert({after: img});
       img.src = highres.href;
 
       if (window.Note) {
@@ -886,16 +885,16 @@ Post = {
       }
     }
     
-    img.observe("load", f)
-    img.observe("error", f)
 
     // Clear the image before loading the new one, so it doesn't show the old image
     // at the new resolution while the new one loads.  Hide it, so we don't flicker
     // a placeholder frame.
     if($('resized_notice'))
       $('resized_notice').hide();
-    img.height = img.width = 0
-    img.src = "about:blank"
+    img.height = img.width = 0;
+    img.src = "";
+    img.remove();
+    f(img);
   },
 
   set_same_user: function(creator_id)
@@ -956,7 +955,7 @@ Post = {
     image.style.height = "auto";
     if(Post.is_blacklisted(post_id))
     {
-      image.src = "/preview/blacklisted.png";
+      image.src = "/images/blacklisted-preview.png";
     }
     else
     {
@@ -1058,7 +1057,7 @@ Post = {
     {
       hover.hide();
       overlay.hide();
-      overlay.down("IMG").src = "about:blank";
+      overlay.down("IMG").src = "/images/blank.gif";
       return;
     }
     hover.down("#hover-dimensions").innerHTML = post.width + "x" + post.height;

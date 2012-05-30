@@ -1,137 +1,122 @@
-# encoding: utf-8
-
 require 'cgi'
-require 'hpricot'
+require 'nokogiri'
 
 module DText
-  def parse_inline(str)
-    str = CGI.escapeHTML(str)
-    str.gsub!(/\[\[.+?\]\]/m) do |tag|
-      tag = tag[2..-3]
-      if tag =~ /^(.+?)\|(.+)$/
-        tag = $1
-        name = $2
-        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag.tr(" ", "_"))) + '">' + name + '</a>'
-      else
-        '<a href="/wiki/show?title=' + CGI.escape(CGI.unescapeHTML(tag.tr(" ", "_"))) + '">' + tag + '</a>'
-      end
-    end
-    str.gsub!(/\{\{.+?\}\}/m) do |tag|
-      tag = tag[2..-3]
-      '<a href="/post/index?tags=' + CGI.escape(CGI.unescapeHTML(tag)) + '">' + tag + '</a>'
-    end
-    str.gsub!(/[Pp]ost #(\d+)/, '<a href="/post/show/\1">post #\1</a>')
-    str.gsub!(/[Ff]orum #(\d+)/, '<a href="/forum/show/\1">forum #\1</a>')
-    str.gsub!(/[Cc]omment #(\d+)/, '<a href="/comment/show/\1">comment #\1</a>')
-    str.gsub!(/[Pp]ool #(\d+)/, '<a href="/pool/show/\1">pool #\1</a>')
-    str.gsub!(/\n/m, "<br>")
-    str.gsub!(/\[b\](.+?)\[\/b\]/, '<strong>\1</strong>')
-    str.gsub!(/\[i\](.+?)\[\/i\]/, '<em>\1</em>')
-    str.gsub!(/\[spoilers?\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>')
-    str.gsub!(/\[spoilers?(=(.+?))\](.+?)\[\/spoilers?\]/m, '<span href="#" class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\2</span></span><span class="spoilertext" style="display: none">\3</span>')
+  def parse(str)
+    state = ['newline']
+    result = ""
 
-    if RUBY_VERSION < '1.9' then
-      # Ruby regexes are in the localization dark ages, so we need to match UTF-8 characters
-      # manually:
-      utf8_char = '[\xC0-\xFF][\x80-\xBF]+'
-  
-      url = "(h?ttps?:\\/\\/(?:[a-zA-Z0-9_\\-#~%.,:;\\(\\)\\[\\]$@!&=+?\\/#]|#{utf8_char})+)"
-    else
-      url = "(h?ttps?://(?:[^\s|])+)"
-    end
-    str.gsub!(/#{url}|&lt;&lt;#{url}(?:\|(.+?))?&gt;&gt;|&quot;(.+?)&quot;:#{url}/m) do |link| # url or <<url|text>> or "text":url
-      if $1 then
-        text = $1
-	link = text.gsub(/[.;,:'"]+$/, "")
-      elsif $2
-        link = $2
-	if $3 then
-	  text = $3
-	else
-	  text = $2
-	end
-      else
-        text = $4
-        link = $5
-      end
+    # Normalize newlines.
+    str.strip
+    str.gsub!(/(\r?\n)/, "\n")
+    str.gsub!(/\n{3,}/, "\n\n")
+    str = CGI.escapeHTML str
 
-      if link =~ /^ttp/ then link = "h" + link end
-      '<a href="' + link + '">' + text + '</a>'
+    # Keep newline, use carriage return for split.
+    str.gsub!("\n", "\n\r")
+    data = str.split("\r")
+
+    # Parse header and list first, line by line.
+    data.each do |d|
+      result << parseline(d, state)
     end
+
+    # Parse inline tags as a whole.
+    result = parseinline(result)
+
+    # Nokogiri ensures valid html output.
+    Nokogiri::HTML::DocumentFragment.parse(result).to_html
+  end
+
+  def parseinline(str)
+    # Short links subtitution:
+    str.gsub!(/\[\[(.+?)\]\]/) do # [[title]] or [[title|label]] ;link to wiki
+      data = $1.split('|', 2)
+      title = data[0]
+      label = data[1].nil? ? title : data[1]
+      "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML(title.tr(" ", "_")))}\">#{label}</a>"
+    end
+    str.gsub!(/\{\{(.+?)\}\}/) do # {{post tags here}} ;search post with tags
+      "<a href=\"/post/index?tags=#{CGI.escape(CGI.unescapeHTML($1))}\">#{$1}</a>"
+    end
+
+    # Miscellaneous single line tags subtitution.
+    str.gsub! /\[b\](.+)\[\/b\]/, '<strong>\1</strong>'
+    str.gsub! /\[i\](.+)\[\/i\]/, '<em>\1</em>'
+    str.gsub! /(post #(\d+))/i, '<a href="/post/show/\2">\1</a>'
+    str.gsub! /(forum #(\d+))/i, '<a href="/forum/show/\2">\1</a>'
+    str.gsub! /(comment #(\d+))/i, '<a href="/comment/show/\2">\1</a>'
+    str.gsub! /(pool #(\d+))/i, '<a href="/pool/show/\2">\1</a>'
+
+    # Single line spoiler tags.
+    str.gsub! /\[spoilers?\](.+)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>'
+    str.gsub! /\[spoilers?=(.+?)\](.+)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">\2</span>'
+
+    # Multi line spoiler tags.
+    str.gsub! /\[spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><div class="spoilertext" style="display: none">'
+    str.gsub! /\[spoilers?=(.+?)\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><div class="spoilertext" style="display: none">'
+    str.gsub! /\[\/spoilers?\]/, '</div>'
+
+    # Quote.
+    str.gsub! /\[quote\]/, '<blockquote><div>'
+    str.gsub! /\[\/quote\]/, '</div></blockquote>'
+
+    str = parseurl(str)
+
+    # Extraneous newlines before closing div are unnecessary.
+    str.gsub! /\n+(<\/div>)/, '\1'
+    # So are after headers, lists, and blockquotes.
+    str.gsub! /(<\/(ul|h\d+|blockquote)>)\n+/, '\1'
+    str.gsub! /\n/, '<br>'
     str
   end
 
-  def parse_list(str)
+  def parseline(str, state)
+    if state.last =~ /\d/ or str =~ /^\*+\s+/
+      parselist str, state
+    elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
+      str = "<#{$1}>#{$2}</#{$1}>"
+    else
+      str
+    end
+  end
+
+  def parselist(str, state)
     html = ""
-    layout = []
-    nest = 0
-
-    str.split(/\n/).each do |line|
-      if line =~ /^\s*(\*+) (.+)/
-        nest = $1.size
-        content = parse_inline($2)
-      else
-        content = parse_inline(line)
+    if not state.last =~ /\d/
+      state.push "1"
+      html << "<ul>"
+    else
+      n = (str.split()[0] || "").count("*")
+      if n < state.last.to_i
+        html << '</ul>' * (state.last.to_i - n)
+        state[-1] = n.to_s
+      elsif n > state.last.to_i
+        html << '<ul>'
+        state[-1] = (state.last.to_i + 1).to_s
       end
-
-      if nest > layout.size
-        html += "<ul>"
-        layout << "ul"
-      end
-
-      while nest < layout.size
-        elist = layout.pop
-        if elist
-          html += "</#{elist}>"
-        end
-      end
-
-      html += "<li>#{content}</li>"
     end
-
-    while layout.any?
-      elist = layout.pop
-      html += "</#{elist}>"
+    if not str =~ /^\*+\s+/
+      state.pop
+      html << "</ul>"
+      return html + parseline(str, state)
     end
-
-    html
+    html << str.gsub(/\*+\s+(.+)\n*/, '<li>\1</li>')
   end
 
-  def parse(str)
-    # Make sure quote tags are surrounded by newlines
-    str.gsub!(/\s*\[quote\]\s*/m, "\n\n[quote]\n\n")
-    str.gsub!(/\s*\[\/quote\]\s*/m, "\n\n[/quote]\n\n")
-    str.gsub!(/(?:\r?\n){3,}/, "\n\n")
-    str.strip!
-    blocks = str.split(/(?:\r?\n){2}/)
-    
-    html = blocks.map do |block|
-      case block
-      when /^(h[1-6])\.\s*(.+)$/
-        tag = $1
-        content = $2
-        "<#{tag}>" + parse_inline(content) + "</#{tag}>"
+  def parseurl(str)
+    # Basic URL pattern
+    url = /(h?ttps?:\/\/\[?(:{0,2}[\w\-]+)((:{1,2}|\.)[\w\-]+)*\]?(:\d+)*(\/[^\s\n]*)*)/
 
-      when /^\s*\*+ /
-        parse_list(block)
-        
-      when "[quote]"
-        '<blockquote>'
-        
-      when "[/quote]"
-        '</blockquote>'
-
-      else
-        '<p>' + parse_inline(block) + "</p>"
-      end
-    end
-
-    html.join("")
+    # Substitute url tag in this form:                                   <<url|label>>
+    str = str.gsub(/&lt;&lt;\s*#{url}\s*\|\s*(.+?)\s*&gt;&gt;/, '<a href="\1">\7</a>')
+      .gsub(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')  # "label":url
+      .gsub(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')       #     <<url>>
+      .gsub(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')                 #         url
+      .gsub(/<a href="ttp/, '<a href="http') # Fix ttp(s) scheme
   end
-  
-  module_function :parse_inline
-  module_function :parse_list
-  module_function :parse
+
+  module_function :parse, :parseline, :parseinline, :parselist, :parseurl
 
   # Split a DText-formatted block (an HTML fragment) into individual quote blocks.  This
   # changes:
@@ -202,4 +187,3 @@ module DText
 
   module_function :split_block, :split_blocks, :combine_block, :combine_blocks, :add_html_class
 end
-

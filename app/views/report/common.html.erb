@@ -63,7 +63,7 @@
   </div>
 </div>
 
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <li><%= link_to "Tags", :action => "tag_updates", :start_date => @start_date, :end_date => @end_date %></li>
   <li><%= link_to "Notes", :action => "note_updates", :start_date => @start_date, :end_date => @end_date %></li>
   <li><%= link_to "Wiki", :action => "wiki_updates", :start_date => @start_date, :end_date => @end_date %></li>

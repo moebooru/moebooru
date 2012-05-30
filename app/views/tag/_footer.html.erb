@@ -1,4 +1,4 @@
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <li><%= link_to "List", :controller => "tag", :action => "index" %></li>
   <li><%= link_to "Popular", :controller => "tag", :action => "popular_by_day" %></li>
   <li><%= link_to "Aliases", :controller => "tag_alias", :action => "index" %></li>
@@ -7,6 +7,6 @@
     <li><%= link_to "Mass edit", :controller => "tag", :action => "mass_edit" %></li>
   <% end %>
   <li><%= link_to "Edit", :controller => "tag", :action => "edit" %></li>
-  <%= @content_for_footer %>
+  <%= yield :footer %>
   <li><%= link_to "Help", :controller => "help", :action => "tags" %></li>
 <% end %>

@@ -1,7 +1,7 @@
 <div id="post-list"> 
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">
-      Maybe you meant: <%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence(:connector => "or") %>
+      Maybe you meant: <%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence({ :two_words_connector => ' or ', :last_word_connector => ', or ' }) %>
     </div>
   <% end %>
 
@@ -67,7 +67,7 @@
   <div class="content">    
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
-        The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)} %>
+        The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)}.join(', ') %>
       </div>
     <% end %>
      <% if CONFIG["can_see_ads"].call(@current_user) %>
@@ -134,7 +134,7 @@
     <div class="sidebar">&nbsp;</div>
     <div class="footer" style="clear: none;">
       <ul class="flat-list" id="subnavbar">
-        <%= @content_for_subnavbar %>
+        <%= yield :subnavbar %>
       </ul>
     </div>
   </div>

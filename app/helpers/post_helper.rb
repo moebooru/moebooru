@@ -164,8 +164,8 @@ module PostHelper
     return item
   end
 
-  def vote_tooltip_widget()
-    return %{<span class="vote-desc"></span>}
+  def vote_tooltip_widget
+    '<span class="vote-desc"></span>'.html_safe
   end
 
   def vote_widget(user, className="standard-vote-widget")

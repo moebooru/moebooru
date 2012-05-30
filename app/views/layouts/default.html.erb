@@ -79,7 +79,7 @@
 
   <div id="content">
     <%= yield %>
-    <% if @content_for_subnavbar %>
+    <% if content_for? :subnavbar %>
       <div class="footer">
         <%= yield :above_footer %>
         <ul class="flat-list" id="subnavbar">

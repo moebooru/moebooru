@@ -40,6 +40,8 @@ GEM
       activemodel (= 3.0.12)
       activesupport (= 3.0.12)
     activesupport (3.0.12)
+    acts_as_versioned (0.6.0)
+      activerecord (~> 3.0.0.beta4)
     arel (2.0.10)
     builder (2.1.2)
     chardet (0.9.0)
@@ -123,6 +125,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts_as_versioned
   auto_complete-rails3!
   daemons
   dalli

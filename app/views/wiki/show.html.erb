@@ -107,7 +107,7 @@
   <% end %>
   <br>
 
-  <% content_for("subnavbar") do %>
+  <% content_for :subnavbar do %>
     <% if @artist %>
       <li><%= link_to "Edit Artist", :controller => "artist", :action => "update", :id => @artist.id %></li>
       <% if can_access?(:privileged) %>

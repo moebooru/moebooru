@@ -1,4 +1,4 @@
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <li><%= link_to "List", :controller => "post", :action => "index" %></li>
   <li><%= link_to "Browse", :controller => "post", :action => "browse" %></li>
   <li><%= link_to "Upload", :controller => "post", :action => "upload" %></li>
@@ -13,6 +13,6 @@
   <% if @current_user.is_janitor_or_higher? %>
     <li><%= link_to "Moderate", {:controller => "post", :action => "moderate"}, :id => "moderate" %></li>
   <% end %>
-  <%= @content_for_footer %>
+  <%= yield :footer %>
   <li><%= link_to "Help", :controller => "help", :action => "posts" %></li>
 <% end %>

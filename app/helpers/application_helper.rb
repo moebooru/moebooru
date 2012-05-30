@@ -183,7 +183,7 @@ module ApplicationHelper
       end
     end
 
-    return html.join("\n")
+    return html.join("\n").html_safe
   end  
   
   def make_menu_item(label, url_options = {}, options = {})

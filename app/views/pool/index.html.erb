@@ -39,7 +39,7 @@
   <%= will_paginate(@pools) %>
 </div>
 
-<% content_for("post_cookie_javascripts") do %>
+<% content_for :post_cookie_javascripts do %>
 <script type="text/javascript">
   var thumb = $("hover-thumb");
   <% @samples.each do |pool, post| %>

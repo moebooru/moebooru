@@ -4,6 +4,6 @@
   <p>The core of Danbooru is represented by <a href="/help/posts">posts</a> and <a href="/help/tags">tags</a>. Posts are the content, and tags are how you find the posts.</p>
 </div>
 
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <li><%= link_to "Help", :action => "index" %></li>
 <% end %>

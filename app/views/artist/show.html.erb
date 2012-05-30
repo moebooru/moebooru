@@ -55,7 +55,7 @@
   </ul>
   </div>
   
-  <% content_for("footer") do %>
+  <% content_for :footer do %>
     <li><%= link_to "Edit", :action => "update", :id => @artist.id %></li>
     <li><%= link_to "Delete", :action => "destroy", :id => @artist.id %></li>
     <% unless @artist.alias_id %>

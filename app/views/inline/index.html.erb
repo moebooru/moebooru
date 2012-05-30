@@ -38,7 +38,7 @@
 <% form_tag({:action => "create"}, :id => "create-new") do %>
 <% end %>
 
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <li><%= link_to "Create", "#", :level => :member, :onclick => "$('create-new').submit(); return false;" %></li>
 <% end %>
 

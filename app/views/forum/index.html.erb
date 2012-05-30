@@ -47,7 +47,7 @@
     <%= will_paginate(@forum_posts) %>
   </div>
 
-  <% content_for("subnavbar") do %>
+  <% content_for :subnavbar do %>
     <li><%= link_to "New topic", :action => "new" %></li>
     <% unless @current_user.is_anonymous? %>
       <li><%= link_to_function "Mark all read", "Forum.mark_all_read()" %></li>

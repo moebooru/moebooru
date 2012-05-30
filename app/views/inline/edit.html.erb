@@ -170,7 +170,7 @@ function orderShift(id, direction) {
   <%= hidden_field_tag "id", @inline.id %>
 <% end %>
 
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <% if @current_user.has_permission?(@inline) %>
     <li><%= link_to "Delete", "#", :onclick => "if(confirm('Delete this group of images?')) $('delete-group').submit(); return false;" %></li>
     <li><%= link_to "Crop", :action => "crop", :id => @inline.id %></li>

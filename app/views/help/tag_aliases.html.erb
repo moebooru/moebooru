@@ -6,6 +6,6 @@
   <p>While anyone can <%= link_to "suggest", :controller => "tag_alias", :action => "index" %> an alias, only an administrator can approve it.</p>
 </div>
 
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <li><%= link_to "Help", :action => "index" %></li>
 <% end %>

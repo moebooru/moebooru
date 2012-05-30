@@ -49,7 +49,7 @@
       <%= render :partial => "post/show_partials/comments" %>
     </div>
 
-    <% content_for("post_cookie_javascripts") do %>
+    <% content_for :post_cookie_javascripts do %>
       <script type="text/javascript">
         Post.observe_text_area("post_tags")
 

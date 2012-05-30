@@ -82,7 +82,7 @@
     <%= link_to_function "Undo", "History.undo(false)", :level => :member, :id => "undo" %> |
     <%= link_to_function "Redo", "History.undo(true)", :level => :member, :id => "redo" %>
   </div>
-  <% content_for("subnavbar") do %>
+  <% content_for :subnavbar do %>
     <li><%= link_to "All", :action => "index" %></li>
     <li><%= link_to "Posts", :action => "index", :search => "type:posts" %></li>
     <li><%= link_to "Pools", :action => "index", :search => "type:pools" %></li>
@@ -90,7 +90,7 @@
   <% end %>
 </div>
 
-<% content_for("post_cookie_javascripts") do %>
+<% content_for :post_cookie_javascripts do %>
 <script type="text/javascript">
   var thumb = $("hover-thumb");
   <% @changes.each do |change| %>

@@ -41,7 +41,7 @@
   InlineImage.init();
 </script>
 
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <% unless @forum_post.is_locked? %>
     <li><%= link_to_function "Reply", "Element.toggle('reply')" %></li>
   <% end %>

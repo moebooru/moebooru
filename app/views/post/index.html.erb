@@ -92,7 +92,7 @@
   </div>
 </div>
 
-<% content_for("post_cookie_javascripts") do %>
+<% content_for :post_cookie_javascripts do %>
 <script type="text/javascript">
   post_quick_edit = new PostQuickEdit($("quick-edit"));
 
@@ -121,7 +121,7 @@
 </script>
 <% end %>
 
-<% content_for("html_header") do %>
+<% content_for :html_header do %>
   <%= auto_discovery_link_tag_with_id :rss, {:controller => "post", :action => "piclens", :tags => params[:tags], :page => params[:page]}, {:id => 'pl'} %>
   <%= navigation_links(@posts) %>
 <% end %>

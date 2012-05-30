@@ -166,7 +166,7 @@
   </span>
 </div>
 
-<% content_for("post_cookie_javascripts") do %>
+<% content_for :post_cookie_javascripts do %>
 <script type="text/javascript">
   var main_menu = new MainMenu($("main-menu"), def);
   main_menu.add_forum_posts_to_submenu();

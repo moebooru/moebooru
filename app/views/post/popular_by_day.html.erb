@@ -4,7 +4,7 @@
   <%= render :partial => "posts", :locals => {:posts => @posts} %>
 </div>
 
-<% content_for("subnavbar") do %>
+<% content_for :subnavbar do %>
   <li><%= link_to "Popular", :controller => "post", :action => "popular_by_day", :month => @day.month, :day => @day.day, :year => @day.year %></li>
   <li><%= link_to "Popular (by week)", :controller => "post", :action => "popular_by_week", :year => @day.year, :month => @day.month, :day => @day.day %></li>
   <li><%= link_to "Popular (by month)", :controller => "post", :action => "popular_by_month", :year => @day.year, :month => @day.month %></li>

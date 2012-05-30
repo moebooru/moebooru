@@ -32,7 +32,7 @@
   <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
 </div>
 
-<% content_for("footer") do %>
+<% content_for :footer do %>
   <% if CONFIG["pool_zips"] %>
     <% zip_params = {} %>
     <% has_jpeg = CONFIG["jpeg_enable"] && @pool.has_jpeg_zip?(zip_params) %>
@@ -52,7 +52,7 @@
   <% end %>
 <% end %>
 
-<% content_for("footer_final") do %>
+<% content_for :footer_final do %>
   <br>
   <% if @current_user.can_change?(@pool, :posts) %>
     <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>

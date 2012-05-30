@@ -210,12 +210,12 @@ module ApplicationHelper
     item = make_menu_item(*options)
     @top_menu_items ||= []
     @top_menu_items << item
-    return item.to_json
+    return json_escape item.to_json.html_safe
   end
 
   def make_sub_item(*options)
     item = make_menu_item(*options)
-    return item.to_json
+    return json_escape item.to_json.html_safe
   end
 
   def get_help_action_for_controller(controller)

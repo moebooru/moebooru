@@ -109,7 +109,7 @@ module ApplicationHelper
       text << '<script language="javascript">' + list.join("\n") + '</script>'
     end
 
-    text
+    text.html_safe
   end
   
   def id_to_color(id)

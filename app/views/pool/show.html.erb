@@ -37,12 +37,12 @@
     <% zip_params = {} %>
     <% has_jpeg = CONFIG["jpeg_enable"] && @pool.has_jpeg_zip?(zip_params) %>
     <% if has_jpeg %>
-      <li><%= link_to_pool_zip "Download&nbsp;JPGs", @pool, zip_params.merge({:jpeg => true}) %></li>
+      <li><%= link_to_pool_zip "Download JPGs", @pool, zip_params.merge({:jpeg => true}) %></li>
     <% end %>
     <% li_class = has_jpeg ? "advanced-editing":"" %>
     <li class="<%= li_class %>"><%= link_to_pool_zip "Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
   <% end %>
-  <li><%= link_to "Index&nbsp;view", :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
+  <li><%= link_to "Index view", :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
   <% if not @current_user.is_anonymous? %>
   <li><%= link_to_function "Toggle view", "User.set_pool_browse_mode(#{ j(1-@browse_mode)});" %></li>
   <% end %>
@@ -59,14 +59,14 @@
     <li><%= link_to "Import", :action => "import", :id => params[:id] %></li>
     <% if @current_user.is_contributor_or_higher? %>
       <li><%= link_to "Copy", :action => "copy", :id => params[:id] %></li>
-      <li><%= link_to "Transfer&nbsp;post&nbsp;data", :action => "transfer_metadata", :to => params[:id] %></li>
+      <li><%= link_to "Transfer post data", :action => "transfer_metadata", :to => params[:id] %></li>
     <% end %>
   <% end %>
   <li><%= link_to "History", :controller => "history", :action => "index", :search => "pool:#{params[:id]}" %></li>
   <% if @current_user.can_change?(@pool, :posts) %>
   <li class="advanced-editing del-mode">
     <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
-    <label for="del-mode">Delete&nbsp;mode</label>
+    <label for="del-mode">Delete mode</label>
   </li>
   <% end %>
 <% end %>

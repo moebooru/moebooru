@@ -988,8 +988,7 @@ div#paginator a.arrow:hover {
   color: #33CFFF;
 }
 
-div.pagination em.current {
-  border: 1px solid #AAA;
+div.pagination .current {
   font-style: normal;
 }
 

@@ -60,7 +60,7 @@ module TagHelper
       end
     end
 
-    return html
+    return html.html_safe
   end
 
   def cloud_view(tags, divisor = 6)

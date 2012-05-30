@@ -182,7 +182,7 @@ module PostHelper
     end
     
     html << %{</span>}
-    return html
+    return html.html_safe
   end
 
   def get_service_icon(service)

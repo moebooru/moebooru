@@ -58,7 +58,7 @@
       <li><%= link_to_function "Approve", "if (confirm('Do you really want to approve this post?')) {Post.approve(#{@post.id})}" %></li>
     <% end %>
     <% unless @post.is_deleted? %>
-      <li id="add-to-pool" class="advanced-editing"><%= link_to_remote "Add to pool", :update => "add-to-pool", :url => {:controller => "pool", :action => "select", :post_id => @post.id}, :method => "get" %></li>
+      <li id="add-to-pool" class="advanced-editing"><%= link_to "Add to pool", {:controller => "pool", :action => "select", :post_id => @post.id}, :remote => true %></li>
     <% end %>
     <li id="set-avatar"><%= link_to "Set avatar", :controller => "user", :action => "set_avatar", :id => @post.id %></li>
     <li><%= link_to "Post history", :controller => "history", :action => "index", :search => "post:#{@post.id}" %></li>

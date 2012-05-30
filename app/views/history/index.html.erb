@@ -2,8 +2,7 @@
   <div style="margin-bottom: 1em;">
     <ul class="history-header">
       <% if @type == "all" || @type == "posts" %>
-        <li>&raquo; <%= link_to @options[:show_all_tags]? "Showing all tags":"Showing only changed tags",
-                  :controller => "post", :action => "similar", :params => params.merge({:show_all_tags=>@options[:show_all_tags]? 0:1}) %></li>
+        <li>» <%= link_to @options[:show_all_tags]? "Showing all tags":"Showing only changed tags", params.merge({:show_all_tags=>@options[:show_all_tags]? 0:1}) %></li>
       <% end %>
 
       <%# If we're searching for a specific object, omit the id/name column and

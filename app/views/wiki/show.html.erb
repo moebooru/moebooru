@@ -85,7 +85,7 @@
     <%= link_to "View Posts", :controller => "post", :action => "index", :tags => params[:title] %> |
     <%= link_to "Edit", :controller => "wiki", :action => "edit", :title => params[:title] %>
   <% else %>
-    <%= link_to_unless @page.first_version?, "&lt;&lt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version-1 %>
+    <%= link_to_unless @page.first_version?, "<<", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version-1 %>
     <%= link_to "View posts", :controller => "post", :action => "index", :tags => @page.title %>
     | <%= link_to "History", :controller => "wiki", :action => "history", :title => @page.title %>
     <% if not @page.is_locked? %>
@@ -103,7 +103,7 @@
       | <%= link_to "Rename", :action => "rename", :title => @page.title %>
       <% end %>
     <% end %>
-    <%= link_to_unless @page.last_version?, "&gt;&gt;", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1 %>
+    <%= link_to_unless @page.last_version?, ">>", :controller => "wiki", :action => "show", :title => @page.title, :version => @page.version + 1 %>
   <% end %>
   <br>
 

@@ -21,6 +21,10 @@ gem 'nokogiri'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 
+# FIXME: this shouldn't be used anymore.
+#        Search *_remote tags to find its users.
+gem 'prototype_legacy_helper', '0.0.0', :git => 'git://github.com/rails/prototype_legacy_helper.git'
+
 group :development do
   gem 'rspec'
 end

@@ -21,7 +21,7 @@ module AvatarHelper
     return "" if not defined?(@posts_to_send)
     ret = ""
     @posts_to_send.uniq.each do |post|
-      ret << %{Post.register(#{ post.to_json })\n}
+      ret << %{Post.register(#{ json_escape post.to_json.html_safe })\n}
     end
     ret << %{Post.init_blacklisted()}
     ret

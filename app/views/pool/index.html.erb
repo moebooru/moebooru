@@ -43,7 +43,7 @@
 <script type="text/javascript">
   var thumb = $("hover-thumb");
   <% @samples.each do |pool, post| %>
-    Post.register(<%= post.to_json %>);
+    Post.register(<%= json_escape post.to_json.html_safe %>);
     var hover_row = $("p<%= pool.id %>");
     var container = hover_row.up("TABLE");
     Post.init_hover_thumb(hover_row, <%= post.id %>, thumb, container);

@@ -3,7 +3,7 @@
     <h2>Nobody here but us chickens!</h2>
   <% else %>
     <% if @post.can_be_seen_by?(@current_user) %>
-      <script type="text/javascript"> Post.register_resp(<%= Post.batch_api_data([@post]).to_json %>); </script>
+      <script type="text/javascript"> Post.register_resp(<%= json_escape Post.batch_api_data([@post]).to_json.html_safe %>); </script>
     <% end %>
 
     <%= render :partial => "post/show_partials/status_notices" %>
@@ -70,7 +70,7 @@
 
         <% browser_url = "/post/browse##{@post.id}" %>
         <% browser_url += "/pool:#{@following_pool_post.pool_id}" if not @following_pool_post.nil? %>
-        OnKey(66, { AlwaysAllowOpera: true }, function(e) { window.location.href = <%= browser_url.to_json %>; });
+        OnKey(66, { AlwaysAllowOpera: true }, function(e) { window.location.href = <%= json_escape browser_url.to_json.html_safe %>; });
       </script>
     <% end %>
   <% end %>

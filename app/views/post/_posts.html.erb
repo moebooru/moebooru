@@ -27,7 +27,7 @@
 <script type="text/javascript">
   var blacklist_options = {};
   <% if @search_id %>
-    blacklist_options.exclude = <%= @search_id.to_json %>;
+    blacklist_options.exclude = <%= json_escape @search_id.to_json.html_safe %>;
   <% end %>
   Post.init_blacklisted(blacklist_options)
 

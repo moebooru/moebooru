@@ -50,7 +50,7 @@
   <% end %>
 
   <script type="text/javascript">
-    Post.register_resp(<%= Post.batch_api_data(@posts).to_json %>);
+    Post.register_resp(<%= json_escape Post.batch_api_data(@posts).to_json.html_safe %>);
     <% @posts.each do |post| %>
       var container = $("comments-for-p<%= post.id %>").down(".vote-container");
       var widget = new VoteWidget(container);

@@ -111,7 +111,7 @@
     var cells = $$(".checkbox-cell")
     $$(".checkbox-cell").invoke("observe", "click", function(e) {this.up().firstDescendant().down("input").click()})
     <% (@pending_posts + @flagged_posts).uniq.each do |post| %>
-      Post.register(<%= post.to_json %>)
+      Post.register(<%= json_escape post.to_json.html_safe %>)
     <% end %>
   </script>
 </div>

@@ -22,7 +22,7 @@
     return false
   }
 
-  Post.register_resp(<%= Post.batch_api_data(@posts).to_json %>);
+  Post.register_resp(<%= json_escape Post.batch_api_data(@posts).to_json.html_safe %>);
 </script>
 <%= render :partial => "post/hover" %>
 

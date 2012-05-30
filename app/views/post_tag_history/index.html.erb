@@ -62,7 +62,7 @@
   var thumb = $("hover-thumb");
   <% @change_list.each do |change| %>
     PostTagHistory.add_change(<%= change[:change].id %>, <%= change[:change].post_id %>, '<%= escape_javascript(change[:change].author) %>')
-    Post.register(<%= change[:change].post.to_json %>)
+    Post.register(<%= json_escape change[:change].post.to_json.html_safe %>)
     Post.init_hover_thumb($("r<%= change[:change].id %>"), <%= change[:change].post.id %>, thumb);
   <% end %>
   Post.init_blacklisted({replace: true});

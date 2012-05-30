@@ -95,7 +95,7 @@
     InitAdvancedEditing();
     Post.InitBrowserLinks();
     if(TagCompletion)
-      TagCompletion.init(<%= Tag.get_summary_version.to_json %>);
+      TagCompletion.init(<%= json_escape Tag.get_summary_version.to_json.html_safe %>);
   </script>
 
   <!--[if lt IE 7]>

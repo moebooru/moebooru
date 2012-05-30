@@ -1,4 +1,7 @@
 require 'translate'
+# FIXME: god, why I need this. Anyway, the required helper functions should be
+#        moved to library instead. It's not really "view" helper anymore.
+include ApplicationHelper
 
 class Comment < ActiveRecord::Base
   validates_format_of :body, :with => /\S/, :message => 'has no content'
@@ -34,11 +37,7 @@ class Comment < ActiveRecord::Base
   end
 
   def get_formatted_body
-    # We need to instantiate a template to get access to template helpers.
-    template = ActionView::Base.new(CommentController.view_paths)
-    template.helpers.send :include, CommentController.master_helper_module
-
-    return template.format_inlines(template.format_text(self.body, :mode => :comment), self.id)
+    return format_inlines(format_text(self.body, :mode => :comment), self.id)
   end
 
   def update_fragments

@@ -347,7 +347,7 @@ module HistoryHelper
       when "active"
         html << (change.value == 't' ? added : removed)
 
-        html << link_to("post&nbsp;#%i" % change.obj.post_id, :controller => "post", :action => "show", :id => change.obj.post_id)
+        html << link_to("post #%i" % change.obj.post_id, :controller => "post", :action => "show", :id => change.obj.post_id)
 
       when "sequence"
         seq = "order:%i:%s" % [change.obj.post_id, change.value]

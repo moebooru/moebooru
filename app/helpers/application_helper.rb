@@ -158,7 +158,8 @@ module ApplicationHelper
   end
   
   def content_for_prefix(name, &block)
-    @_content_for[:name] = (block_given? ? capture(&block) : content) + @_content_for[:name]
+    content_prefix = capture(&block) if block_given?
+    @_content_for[name] = content_prefix + @_content_for[name] if content_prefix
   end
 
   def navigation_links(post)

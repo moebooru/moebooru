@@ -18,7 +18,7 @@
     document.getElementsByTagName("head")[0].appendChild(style);
   </script>
 
-  <%= @content_for_html_header %>
+  <%= yield :html_header %>
   <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
   <%= stylesheet_link_tag "default" %>
 
@@ -78,12 +78,12 @@
   </div>
 
   <div id="content">
-    <%= @content_for_layout %>
+    <%= yield %>
     <% if @content_for_subnavbar %>
       <div class="footer">
-        <%= @content_for_above_footer %>
+        <%= yield :above_footer %>
         <ul class="flat-list" id="subnavbar">
-          <%= @content_for_subnavbar %>
+          <%= yield :subnavbar %>
         </ul>
       </div>
     <% end %>
@@ -104,7 +104,7 @@
         $("old-browser").show();
     </script>
   <![endif]-->
-  <%= @content_for_post_cookie_javascripts %>
+  <%= yield :post_cookie_javascripts %>
 
   <script type="text/javascript">
     var _gaq = _gaq || [];

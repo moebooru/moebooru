@@ -1,5 +1,5 @@
 <div id="tag-list">
-  <h1><%= link_to '&laquo;', :controller => "tag", :action => "popular_by_day", :year => @day.yesterday.year, :month => @day.yesterday.month, :day => @day.yesterday.day %> <%= @day.strftime("%B %d, %Y") %> <%= link_to_unless @day >= Time.now, '&raquo;', :controller => "tag", :action => "popular_by_day", :year => @day.tomorrow.year, :month => @day.tomorrow.month, :day => @day.tomorrow.day %></h1>
+  <h1><%= link_to '«', :controller => "tag", :action => "popular_by_day", :year => @day.yesterday.year, :month => @day.yesterday.month, :day => @day.yesterday.day %> <%= @day.strftime("%B %d, %Y") %> <%= link_to_unless @day >= Time.now, '»', :controller => "tag", :action => "popular_by_day", :year => @day.tomorrow.year, :month => @day.tomorrow.month, :day => @day.tomorrow.day %></h1>
   <%= cloud_view(@tags, 1.5) %>
 </div>
 

@@ -9,7 +9,7 @@
           show it once at the top.  %>
       <% if @options[:specific_object] && !@changes.empty? %>
         <li>
-          &raquo; History for <%= @type.singularize %>:
+          » History for <%= @type.singularize %>:
           <%= link_to @options[:show_name] ? @changes.first.group_by_obj.pretty_name : @changes.first.group_by_id, :controller => @changes.first.get_group_by_controller, :action => "show", :id => @changes.first.group_by_id %>
         </li>
       <% end %>

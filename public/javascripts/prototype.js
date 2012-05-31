@@ -1551,8 +1551,14 @@ Ajax.Request = Class.create(Ajax.Base, {
     };
 
     if (this.method == 'post') {
-      headers['Content-type'] = this.options.contentType +
-        (this.options.encoding ? '; charset=' + this.options.encoding : '');
+      /* Don't touch contentType if we've been told not to.
+       * ...by setting contentType to null
+       * this is used to allow Ajax(ish) file upload.
+       */
+      if (this.options.contentType != null) {
+        headers['Content-type'] = this.options.contentType +
+          (this.options.encoding ? '; charset=' + this.options.encoding : '');
+      }
 
       /* Force "Connection: close" for older Mozilla browsers to work
        * around a bug where XMLHttpRequest sends an incorrect

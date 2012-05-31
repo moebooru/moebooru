@@ -119,6 +119,9 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    verification (1.0.1)
+      actionpack (~> 3.0.0)
+      activesupport (~> 3.0.0)
     will_paginate (3.0.3)
 
 PLATFORMS
@@ -147,4 +150,5 @@ DEPENDENCIES
   rspec
   sitemap_generator
   unicorn
+  verification
   will_paginate

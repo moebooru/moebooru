@@ -12,8 +12,10 @@
   <%= render :partial => "posts", :locals => {:posts => @posts} %>
 </div>
 
-<div class="footer">
-  <%= link_to "Popular", :controller => "post", :action => "popular_by_day", :year => @start.year, :month => @start.month, :day => @start.day %> |
-  <%= link_to "Popular (by week)", :controller => "post", :action => "popular_by_week", :year => @start.year, :month => @start.month, :day => @start.day %> |
-  <%= link_to "Popular (by month)", :controller => "post", :action => "popular_by_month", :year => @start.year, :month => @start.month %>
-</div>
+<% content_for :subnavbar do %>
+  <li><%= link_to "Popular", :controller => "post", :action => "popular_by_day", :year => @start.year, :month => @start.month, :day => @start.day %></li>
+  <li><%= link_to "Popular (by week)", :controller => "post", :action => "popular_by_week", :year => @start.year, :month => @start.month, :day => @start.day %></li>
+  <li><%= link_to "Popular (by month)", :controller => "post", :action => "popular_by_month", :year => @start.year, :month => @start.month %></li>
+<% end %>
+
+<%= render 'footer' %>

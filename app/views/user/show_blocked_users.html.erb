@@ -1,6 +1,6 @@
 <div class="section">
   <h6>Blocked Users</h6>
-  <% form_tag(:action => "unblock") do %>
+  <%= form_tag(:action => "unblock") do %>
     <table width="100%" class="highlightable">
       <thead>
         <tr>
@@ -29,7 +29,7 @@
   <% end %>
 
   <h6>Blocked IPs</h6>
-  <% form_tag(:controller => "blocks", :action => "unblock_ip") do %>
+  <%= form_tag(:controller => "blocks", :action => "unblock_ip") do %>
     <table width="100%" class="highlightable">
       <thead>
         <tr>
@@ -58,7 +58,7 @@
       </tbody>
     </table>
   <% end %>
-  <% form_tag(:controller => "blocks", :action => "block_ip") do %>
+  <%= form_tag(:controller => "blocks", :action => "block_ip") do %>
     <table class="form">
       <tfoot>
         <tr>

@@ -1,7 +1,7 @@
 <%= render :partial => "sidebar" %>
 
 <div class="content">
-  <% form_tag({:action => "diff"}, :method => :get) do %>
+  <%= form_tag({:action => "diff"}, :method => :get) do %>
     <%= hidden_field_tag "title", params[:title] %>
 
     <table id="history" width="100%">

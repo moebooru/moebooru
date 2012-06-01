@@ -1,7 +1,7 @@
 <div class="sidebar">
   <div style="margin-bottom: 1em;">
     <h6>Search</h6>
-    <% form_tag({:action => "index"}, :method => "get") do %>
+    <%= form_tag({:action => "index"}, :method => "get") do %>
       <%= text_field_tag "query", params[:query], :size => 20, :id => "search-box" %>
     <% end %>
   </div>

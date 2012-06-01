@@ -43,31 +43,31 @@
 </table>
 
 <div class="batch-buttons">
-  <% form_tag({:action => "create"}, :method => :get) do %>
+  <%= form_tag({:action => "create"}, :method => :get) do %>
     <%= submit_tag("Queue uploads", :name => "queue") %>
   <% end %>
 
-  <% form_tag({:action => "update"}) do %>
+  <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "retry" %>
     <%= submit_tag("Retry failed") %>
   <% end %>
 
-  <% form_tag({:action => "update"}) do %>
+  <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "clear_finished" %>
     <%= submit_tag("Clear finished uploads") %>
   <% end %>
 
-  <% form_tag({:action => "update"}) do %>
+  <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "abort_all" %>
     <%= submit_tag("Cancel all uploads") %>
   <% end %>
 
-  <% form_tag({:action => "update"}) do %>
+  <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "pause" %>
     <%= submit_tag("Pause") %>
   <% end %>
 
-  <% form_tag({:action => "update"}) do %>
+  <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "unpause" %>
     <%= submit_tag("Resume") %>
   <% end %>

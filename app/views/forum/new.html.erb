@@ -5,7 +5,7 @@
   </div>
 
   <div id="reply" style="clear: both;">
-    <% form_tag({:action => "create"}) do %>
+    <%= form_tag({:action => "create"}) do %>
       <%= hidden_field "forum_post", "parent_id", :value => params["parent_id"] %>
       <table>
         <tr>

@@ -3,7 +3,7 @@
 
 <div style="margin-bottom: 2em">
   <h6>Invite User</h6>
-  <% form_tag({:action => "invites"}, :onsubmit => "return confirm('Are you sure you want to invite ' + $F('user_name') + '?')") do %>
+  <%= form_tag({:action => "invites"}, :onsubmit => "return confirm('Are you sure you want to invite ' + $F('user_name') + '?')") do %>
     <table width="100%">
       <tfoot>
         <tr>

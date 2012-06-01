@@ -4,7 +4,7 @@
   <h2 class="wiki-title"><%= h(@wiki_page.pretty_title) %> (Editing)</h2>
   <div id="wiki-view">
   </div>
-  <% form_tag({:action => "update"}, :level=>:member) do %>
+  <%= form_tag({:action => "update"}, :level=>:member) do %>
     <%= hidden_field "wiki_page", "title", :value => @wiki_page.title %>
     <%= render :partial => 'edit_buttons' %>
   <% end %>

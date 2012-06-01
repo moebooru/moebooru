@@ -6,7 +6,7 @@
     <%= inline_image_tag(@image, {:use_sample => true}, {:id => "image"}) %>
   </div>
 
-  <% form_tag({:action => "crop"}, :id => "crop", :level => :member) do %>
+  <%= form_tag({:action => "crop"}, :id => "crop", :level => :member) do %>
     <%= hidden_field_tag "id", @image.id %>
     <%= hidden_field_tag "left", 0 %>
     <%= hidden_field_tag "right", 0 %>

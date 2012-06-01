@@ -4,7 +4,7 @@
   <%= image_tag @post.preview_url %>
 <% end %>
 
-<% form_tag(:action => "destroy") do %>
+<%= form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>
   <label>Reason</label> <%= text_field_tag "reason" %>
   <% if @post.is_deleted? %>

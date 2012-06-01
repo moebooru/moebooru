@@ -3,7 +3,7 @@
 <div class="content" style="float: left; width: 40em;">
   <div id="wiki-view">
   </div>
-  <% form_tag({:action => "create"}, :level=>:member) do %>
+  <%= form_tag({:action => "create"}, :level=>:member) do %>
     <%= text_field "wiki_page", "title" %>
     <%= render :partial => 'edit_buttons' %>
   <% end %>

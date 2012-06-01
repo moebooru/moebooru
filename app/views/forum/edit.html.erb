@@ -1,7 +1,7 @@
 <div id="preview" style="display: none; margin: 1em 0; width: 60em;">
 </div>
 
-<% form_tag(:action => "update") do %>
+<%= form_tag(:action => "update") do %>
   <%= hidden_field_tag "id", params[:id] %>
   <table>
     <tr><td><label for="forum_post_title">Title</label></td><td><%= text_field "forum_post", "title", :size => 60 %></td></tr>

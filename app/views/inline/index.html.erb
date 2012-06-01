@@ -35,7 +35,7 @@
   <%= will_paginate(@inlines) %>
 </div>
 
-<% form_tag({:action => "create"}, :id => "create-new") do %>
+<%= form_tag({:action => "create"}, :id => "create-new") do %>
 <% end %>
 
 <% content_for :subnavbar do %>

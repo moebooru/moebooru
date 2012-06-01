@@ -1,6 +1,6 @@
 <% if not @urls %>
   <div id="batch-post-source">
-    <% form_tag({:action => "create"}, :level => :contributor, :method => "get", :id => "edit-form") do %>
+    <%= form_tag({:action => "create"}, :level => :contributor, :method => "get", :id => "edit-form") do %>
       <div id="posts">
         <table class="form">
           <tbody>
@@ -23,7 +23,7 @@
   <div id="post-add">
     <div id="static_notice" style="display: none;"></div>
 
-    <% form_tag({:action => "enqueue"}, :level => :contributor, :multipart => true, :id => "edit-form") do %>
+    <%= form_tag({:action => "enqueue"}, :level => :contributor, :multipart => true, :id => "edit-form") do %>
       <div id="posts">
         <table class="form">
           <tbody>

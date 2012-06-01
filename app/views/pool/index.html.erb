@@ -1,6 +1,6 @@
 <div id="pool-index">
   <div style="margin-bottom: 2em;">
-    <% form_tag({:action => "index"}, :method => :get) do %>
+    <%= form_tag({:action => "index"}, :method => :get) do %>
       <% if params.has_key?(:order) %>
       <%= hidden_field_tag "order", params[:order] %>
       <% end %>

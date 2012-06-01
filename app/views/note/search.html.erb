@@ -1,6 +1,6 @@
 <h4>Search</h4>
 
-<% form_tag({:action => "search"}, :method => :get) do %>
+<%= form_tag({:action => "search"}, :method => :get) do %>
   <%= text_field_tag "query", params[:query], :size => 40 %> <%= submit_tag "Search" %>
 <% end %>
 

@@ -4,7 +4,7 @@
   <div id="preview" style="display: none; margin: 1em 0;">
   </div>
 
-  <% form_tag({:action => "update"}, :level => :member) do %>
+  <%= form_tag({:action => "update"}, :level => :member) do %>
     <%= hidden_field_tag "id", @artist.id %>
     
     <table class="form">

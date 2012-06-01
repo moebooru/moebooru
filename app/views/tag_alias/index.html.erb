@@ -1,5 +1,5 @@
 <div style="margin-bottom: 1em;">
-  <% form_tag({:action => "index"}, :method => :get) do %>
+  <%= form_tag({:action => "index"}, :method => :get) do %>
     <%= text_field_tag "query", params[:query] %> 
     <%= submit_tag "Search Aliases" %>
     <%= submit_tag "Search Implications" %>  
@@ -7,7 +7,7 @@
 </div>
 
 <div id="aliases">
-  <% form_tag(:action => "update") do %>
+  <%= form_tag(:action => "update") do %>
     <table width="100%" class="highlightable">
       <thead>
         <tr>
@@ -50,7 +50,7 @@
 </div>
 
 <div id="add-box" style="display: none;">
-  <% form_tag(:action => "create") do %>
+  <%= form_tag(:action => "create") do %>
     <h4>Add Alias</h4>
     <p>You can suggest a new alias, but it must be approved by an administrator before it is activated.</p>  
 

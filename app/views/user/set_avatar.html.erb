@@ -7,7 +7,7 @@
     <%= image_tag(@post.sample_url, :id => "image", :width => @post.get_sample_width, :height => @post.get_sample_height) %>
   </div>
 
-  <% form_tag({:controller => "user", :action => "set_avatar"}, :level => :member) do %>
+  <%= form_tag({:controller => "user", :action => "set_avatar"}, :level => :member) do %>
     <%= hidden_field_tag "post_id", @params[:id] %>
     <% if @params[:user_id] %>
       <%= hidden_field_tag "user_id", @params[:user_id] %>

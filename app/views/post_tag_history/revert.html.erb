@@ -4,7 +4,7 @@
 
 <p>Are you sure you want to revert the tags for this post to: <code><%= h @change.tags %></code>?</p>
 
-<% form_tag(:action => "revert") do %>
+<%= form_tag(:action => "revert") do %>
   <%= hidden_field_tag "id", params[:id] %>
   <%= submit_tag "Yes" %>
   <%= submit_tag "No" %>

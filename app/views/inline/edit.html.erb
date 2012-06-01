@@ -16,7 +16,7 @@
 
 
   <div id="post-add" style="display: none;">
-    <% form_tag({:action => "add_image"}, :level => :member, :multipart => true) do %>
+    <%= form_tag({:action => "add_image"}, :level => :member, :multipart => true) do %>
       <%= hidden_field_tag "id", @inline.id %>
       <div id="posts">
         <table class="form">
@@ -48,12 +48,12 @@
 
 <div id="inline-edit">
   <% for image in @inline.inline_images %>
-    <% form_tag({:action => "delete_image"}, :id => "delete-image-%i" % image.id) do %>
+    <%= form_tag({:action => "delete_image"}, :id => "delete-image-%i" % image.id) do %>
       <%= hidden_field_tag "id", image.id %>
     <% end %>
   <% end %>
 
-  <% form_tag(:action => "update") do %>
+  <%= form_tag(:action => "update") do %>
     <label for="inline_description">Description:</label>
     <br>
     <span id="inline-description">
@@ -163,10 +163,10 @@ function orderShift(id, direction) {
 
 </script>
 
-<% form_tag({:action => "delete"}, :id => "delete-group") do %>
+<%= form_tag({:action => "delete"}, :id => "delete-group") do %>
   <%= hidden_field_tag "id", @inline.id %>
 <% end %>
-<% form_tag({:action => "copy"}, :id => "copy-group") do %>
+<%= form_tag({:action => "copy"}, :id => "copy-group") do %>
   <%= hidden_field_tag "id", @inline.id %>
 <% end %>
 

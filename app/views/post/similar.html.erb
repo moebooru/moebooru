@@ -96,7 +96,7 @@
     <div class="content">
       <div id="quick-edit" style="display: none; margin-bottom: 1em;">
 	<h4>Edit Tags</h4>
-	<% form_tag(:action => "update") do %>
+	<%= form_tag(:action => "update") do %>
 	  <%= hidden_field_tag "id", "" %>
 	  <%= hidden_field_tag "post[old_tags]", "" %>
 	  <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
@@ -106,7 +106,7 @@
       </div>
 
       <% unless @initial %>
-      <% form_tag({:controller => "post", :action => "similar"}, :multipart => true, :id => "similar-form") do %>
+      <%= form_tag({:controller => "post", :action => "similar"}, :multipart => true, :id => "similar-form") do %>
         <input name="forcegray" type="hidden" value="<%= h(@params[:forcegray]) %>">
         <input name="services" type="hidden" value="<%= h(@params[:services]) %>">
         <input name="threshold" type="hidden" value="<%= h(@params[:threshold]) %>">

@@ -18,7 +18,7 @@
     </p>
   <% end %>
   
-  <% form_tag({:action => "authenticate"}) do %>
+  <%= form_tag({:action => "authenticate"}) do %>
     <%= hidden_field_tag "url", params[:url] %>
     <table class="form">
       <tr>

@@ -1,5 +1,5 @@
 <% if @from.nil? then %>
-  <% form_tag({:controller => "pool", :action => "transfer_metadata"}, :method => "get") do %>
+  <%= form_tag({:controller => "pool", :action => "transfer_metadata"}, :method => "get") do %>
   <%= hidden_field_tag "to", @to.id %>
   Transfer from pool number:
   <%= text_field_tag "from", "", :class => "fp", :size => 5, :tabindex => 1 %>
@@ -27,7 +27,7 @@
 
 <div> <%= link_to("Reverse", {:action => "transfer_metadata", :from => @to.id, :to => @from.id}) %> the transfer </div>
 
-<% form_tag(:controller => "post", :action => "update_batch") do %>
+<%= form_tag(:controller => "post", :action => "update_batch") do %>
 <%= hidden_field_tag "url", (url_for :controller => "pool", :action => "show", :id => @to.id) %>
   <table>
     <thead>

@@ -1,6 +1,6 @@
 <h4>Add Record for <%= h(@user.pretty_name) %></h4>
 
-<% form_tag(:action => "create") do %>
+<%= form_tag(:action => "create") do %>
   <%= hidden_field_tag "user_id", @user.id %>
   <table width="100%">
     <tbody>

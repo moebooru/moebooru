@@ -1,6 +1,6 @@
 <div id="forum">
   <div id="search" style="margin-bottom: 1em;">
-    <% form_tag({:action => "search"}, :method => :get) do %>
+    <%= form_tag({:action => "search"}, :method => :get) do %>
       <%= text_field_tag "query", params[:query], :size => 40 %>
       <%= submit_tag "Search"%>
     <% end %>
@@ -59,7 +59,7 @@
   </div>
 
   <div id="reply" style="display: none;">
-    <% form_tag({:action => "create"}, :level => :member) do %>
+    <%= form_tag({:action => "create"}, :level => :member) do %>
       <%= hidden_field "forum_post", "parent_id", :value => params["parent_id"] %>
       <table>
         <tr>

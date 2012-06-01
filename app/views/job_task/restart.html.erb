@@ -1,6 +1,6 @@
 <h4>Restart Job #<%= @job_task.id %></h4>
 
-<% form_tag(:action => "restart") do %>
+<%= form_tag(:action => "restart") do %>
   <%= submit_tag "Yes" %>
   <%= button_to_function "No", "location.back()" %>
 <% end %>

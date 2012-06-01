@@ -6,7 +6,7 @@
 <% else %>
   <p>By creating an account, you are agreeing to the <a href="/static/terms_of_service">terms of service</a>. <strong>Remember that this site is open to web crawlers, so people will be able to easily search your name.</strong></p>
   
-  <% form_tag(:controller => "user", :action => "create") do %>
+  <%= form_tag(:controller => "user", :action => "create") do %>
     <table class="form">
       <tfoot>
         <tr>

@@ -4,7 +4,7 @@
 
 <p>Select a pool to add this post to:</p>
 
-<% form_tag(:action => "add_post") do %>
+<%= form_tag(:action => "add_post") do %>
   <%= hidden_field_tag("post_id", @post.id) %>
   
   <table>

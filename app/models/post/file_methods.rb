@@ -22,9 +22,12 @@ module PostFileMethods
   end
 
   def strip_exif
-	  if file_ext.downcase == "jpg" then
-		  system("/usr/bin/jhead -purejpg #{tempfile_path}")
-	  end
+    if file_ext.downcase == 'jpg' then
+      # FIXME: awesome way to strip EXIF.
+      #        This will silently fail on systems without jhead in their PATH
+      #        and may cause confusion for some bored ones.
+      system('jhead', '-purejpg', tempfile_path)
+    end
   end
   
   def ensure_tempfile_exists

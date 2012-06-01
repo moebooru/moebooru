@@ -6,19 +6,19 @@ require "zlib"
 # to be called in a specific order, they've been bundled into one module.
 module PostFileMethods
   def self.included(m)
-    m.before_validation_on_create :download_source
-    m.before_validation_on_create :ensure_tempfile_exists
-    m.before_validation_on_create :determine_content_type
-    m.before_validation_on_create :validate_content_type
-    m.before_validation_on_create :strip_exif
-    m.before_validation_on_create :generate_hash
-    m.before_validation_on_create :set_image_dimensions
-    m.before_validation_on_create :set_image_status
-    m.before_validation_on_create :check_pending_count
-    m.before_validation_on_create :generate_sample
-    m.before_validation_on_create :generate_jpeg
-    m.before_validation_on_create :generate_preview
-    m.before_validation_on_create :move_file
+    m.before_validation :download_source, :on => :create
+    m.before_validation :ensure_tempfile_exists, :on => :create
+    m.before_validation :determine_content_type, :on => :create
+    m.before_validation :validate_content_type, :on => :create
+    m.before_validation :strip_exif, :on => :create
+    m.before_validation :generate_hash, :on => :create
+    m.before_validation :set_image_dimensions, :on => :create
+    m.before_validation :set_image_status, :on => :create
+    m.before_validation :check_pending_count, :on => :create
+    m.before_validation :generate_sample, :on => :create
+    m.before_validation :generate_jpeg, :on => :create
+    m.before_validation :generate_preview, :on => :create
+    m.before_validation :move_file, :on => :create
   end
 
   def strip_exif

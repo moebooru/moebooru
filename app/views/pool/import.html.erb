@@ -3,14 +3,14 @@
 <p>You can perform a tag search and import all the matching posts into this pool.</p>
 
 <div style="margin-bottom: 1em;">
-  <% form_remote_tag(:url => {:action => "import", :format => "js"}, :method => :get) do %>
+  <%= form_remote_tag(:url => {:action => "import", :format => "js"}, :method => :get) do %>
     <%= text_field_tag "query", params[:query], :size => 50 %> <%= submit_tag "Search" %>
   <% end %>
 </div>
 
 <div>
   <ul id="post-list-posts">
-  <% form_tag(:action => "import") do %>
+  <%= form_tag(:action => "import") do %>
     <%= hidden_field_tag "id", @pool.id %>
     
     <div id="posts">

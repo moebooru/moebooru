@@ -1,5 +1,5 @@
 <div id="edit" style="display: none;">
-  <% form_tag({:controller => "post", :action => "update", :id => @post.id}, :id => "edit-form", :level => :member) do %>
+  <%= form_tag({:controller => "post", :action => "update", :id => @post.id}, :id => "edit-form", :level => :member) do %>
     <%= hidden_field_tag "post[old_tags]", @post.cached_tags %>
     <table class="form">
       <tfoot>

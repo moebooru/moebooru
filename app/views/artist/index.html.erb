@@ -1,6 +1,6 @@
 <div id="artist-index">
   <div id="search-form" style="margin-bottom: 1em;">
-    <% form_tag({:action => "index"}, :method => :get) do %>
+    <%= form_tag({:action => "index"}, :method => :get) do %>
       <%= text_field_tag "name", params[:name], :size => 40 %> <%= submit_tag "Search" %>
       <br />
       <%= select_tag "order", options_for_select([["Name", "name"], ["Date", "date"]],[params[:order] || ""]) %>
@@ -19,7 +19,7 @@
       </thead>
       <tbody>
         <% @artists.each do |artist| %>
-          <% content_tag(:tr, :class => cycle('even', 'odd'), :id => "artist-#{artist.id}") do %>
+          <%= content_tag(:tr, :class => cycle('even', 'odd'), :id => "artist-#{artist.id}") do %>
             <td>
               <%= link_to_unless artist.alias_id, "P", {:controller => "post", :action => "index", :tags => artist.name}, :title => "Find posts for artist" %>
               <%= link_to "E", {:action => "update", :id => artist.id}, :title => "Edit artist" %> 

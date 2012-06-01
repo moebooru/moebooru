@@ -15,17 +15,17 @@
       <tbody>
         <% @users.each do |user| %>
           <tr class="<%= cycle 'even', 'odd' %>">
-            <td><%= link_to_unless user["user_id"].nil?, h(user["name"]), :controller => "user", :action => "show", :id => user["user_id"] %></td>
-            <td><%= link_to_unless user["user_id"].nil?, user["change_count"], :controller => "post", :action => "index", :tags => "vote:>=1:#{user["name"]} order:vote" %></td>
+            <td><%= link_to_unless user['id'].nil?, user['name'], :controller => 'user', :action => 'show', :id => user['id'] %></td>
+            <td><%= link_to_unless user['id'].nil?, user['change_count'], :controller => 'post', :action => 'index', :tags => "vote:>=1:#{user['name']} order:vote" %></td>
 	    <td>
               <span class="stars" style="white-space: nowrap">
                 <% (1..3).each do |vote| %>
-                    <% count = (user["votes"] && user["votes"][vote]) || "0" %>
+                    <% count = (user['votes'] && user['votes'][vote]) || '0' %>
                     <% text = "#{h count} <span class='score-on score-voted score-visible'>★</span>".html_safe %>
-                    <% if user["user_id"].nil? %>
-                    <%= content_tag :span, text, :class => "star star-#{vote}" %>
+                    <% if user['id'].nil? %>
+                      <%= content_tag :span, text, :class => "star star-#{vote}" %>
                     <% else %>
-                    <%= link_to text, {:controller => "post", :action => "index", :tags => "vote:>=#{vote}:#{user["name"]} order:vote"}, :class => "star star-#{vote}" %>
+                      <%= link_to text, {:controller => "post", :action => "index", :tags => "vote:>=#{vote}:#{user['name']} order:vote"}, :class => "star star-#{vote}" %>
                     <% end %>
                 <% end %>
               <span>

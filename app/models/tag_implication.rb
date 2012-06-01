@@ -51,6 +51,8 @@ class TagImplication < ActiveRecord::Base
   def self.with_implied(tags)
     return [] if tags.blank?
     all = []
+    tags = tags.split if tags.respond_to? :split
+    tags = [tags] unless tags.respond_to? :each
 
     tags.each do |tag|
       all << tag

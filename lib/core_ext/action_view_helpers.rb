@@ -61,6 +61,7 @@ module ActionView
       # execute this action.  User.js uses this to determine whether it should ask
       # the user to create an account.
       alias_method :orig_link_to_function, :link_to_function
+      def link_to_function(name, function, html_options={})
         html_options = args.extract_options!
         if html_options[:level]
           if _moebooru_need_signup?(html_options[:level]) && args[0]

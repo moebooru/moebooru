@@ -9,13 +9,13 @@ class HistoryChange < ActiveRecord::Base
     # this workaround were found somewhere I couldn't remember.
     # - edogawaconan
     if RUBY_VERSION >= '1.9'
-      opts = master_class.get_versioned_attribute_options(field) or {}
+      opts = master_class.get_versioned_attribute_options(field) || {}
       if opts.is_a? Array then
         opts = opts.reduce({}) {|h,pairs| pairs.each {|k,v| h[k] = v}; h}
       end
       return opts
     end
-    return master_class.get_versioned_attribute_options(field) or {}
+    return master_class.get_versioned_attribute_options(field) || {}
   end
 
   def master_class

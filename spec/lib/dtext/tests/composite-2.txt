@@ -15,8 +15,8 @@ spoilers
 h2. list a-list
 * list
 ** [b]nested[/b]
-* list
-** nested
+* [b]list[/b]
+** [i]nested[/i]
 *** [i]more nested?[/i]
 this will inherit the last nested list
 * list

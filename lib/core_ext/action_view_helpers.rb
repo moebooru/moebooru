@@ -11,10 +11,10 @@ module ActionView
       def _moebooru_need_signup?(level)
         return CONFIG['starting_level'] >= User.get_user_level(level)
       end
+      module_function :_moebooru_need_signup?
     end
 
     module TagHelper
-      include MoebooruTagHelper
       # submit_tag "Search" generates a submit tag that adds "commit=Search" to the URL,
       # which is ugly and unnecessary.  Override TagHelper#tag and remove this globally.
       alias_method :orig_tag, :tag
@@ -28,7 +28,7 @@ module ActionView
       alias_method :orig_tag_options, :tag_options
       def tag_options(options, escape = true)
         level = options['level']
-        if level and _moebooru_need_signup?(level)
+        if level and MoebooruTagHelper._moebooru_need_signup?(level)
           options.delete 'level'
           options['onclick'] = "if(!User.run_login_onclick(event)) return false; #{options['onclick'] || 'return true;'}"
         end
@@ -37,14 +37,13 @@ module ActionView
     end
 
     module FormTagHelper
-      include MoebooruTagHelper
       # Add the need-signup class if signing up would allow a logged-out user to
       # execute this action.  User.js uses this to determine whether it should ask
       # the user to create an account.
       alias_method :orig_form_tag, :form_tag
       def form_tag(url_for_options = {}, options = {}, *parameters_for_url, &block)
         if options[:level]
-          if _moebooru_need_signup?(options[:level])
+          if MoebooruTagHelper._moebooru_need_signup?(options[:level])
             classes = (options[:class] || '').split(' ')
             classes += ['need-signup']
             options[:class] = classes.join(' ')
@@ -56,7 +55,6 @@ module ActionView
     end
 
     module JavaScriptHelper
-      include MoebooruTagHelper
       # Add the need-signup class if signing up would allow a logged-out user to
       # execute this action.  User.js uses this to determine whether it should ask
       # the user to create an account.
@@ -64,7 +62,7 @@ module ActionView
       def link_to_function(name, *args, &block)
         html_options = args.extract_options!
         if html_options[:level]
-          if _moebooru_need_signup?(html_options[:level]) && args[0]
+          if MoebooruTagHelper._moebooru_need_signup?(html_options[:level]) && args[0]
             args[0] = "User.run_login(false, function() { #{args[0]} })"
           end
           html_options.delete :level
@@ -80,7 +78,7 @@ module ActionView
       def button_to_function(name, *args, &block)
         html_options = args.extract_options!
         if html_options[:level]
-          if _moebooru_need_signup?(html_options[:level]) && args[0]
+          if MoebooruTagHelper._moebooru_need_signup?(html_options[:level]) && args[0]
             args[0] = "User.run_login(false, function() { #{args[0]} })"
           end
         html_options.delete :level

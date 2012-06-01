@@ -75,7 +75,7 @@
     <% end %>
    
     <div id="quick-edit" style="display: none;" class="top-corner-float">
-      <% form_tag(:action => "update") do %>
+      <%= form_tag(:action => "update") do %>
         <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
         <%= submit_tag "Update" %>
         <%= tag(:input, :type => 'button', :value => "Cancel", :class => "cancel") %>

@@ -8,7 +8,7 @@
       <li>
     </ul>
 
-    <% form_tag("#", :id=>"blacklisted-tag-add", :level => :member) do %>
+    <%= form_tag("#", :id=>"blacklisted-tag-add", :level => :member) do %>
       <div>
         » <%= text_field_tag("add-blacklist", "", :size => 20) %>
         <%= link_to_function "Add", "Post.blacklist_add_commit();", :class => "text-button", :style=>"padding: 0px 4px", :level => :blocked %>

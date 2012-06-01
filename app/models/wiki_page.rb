@@ -6,7 +6,7 @@ class WikiPage < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :title, :case_sensitive => false
   validates_presence_of :body, :title
-  before_validation_on_update :ensure_changed
+  before_validation :ensure_changed, :on => :update
 
   class << self
     def generate_sql(options)

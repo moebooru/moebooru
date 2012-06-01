@@ -26,13 +26,13 @@ require "fileutils"
 
 class InlineImage < ActiveRecord::Base
   belongs_to :inline
-  before_validation_on_create :download_source
-  before_validation_on_create :determine_content_type
-  before_validation_on_create :set_image_dimensions
-  before_validation_on_create :generate_sample
-  before_validation_on_create :generate_preview
-  before_validation_on_create :move_file
-  before_validation_on_create :set_default_sequence
+  before_validation :download_source, :on => :create
+  before_validation :determine_content_type, :on => :create
+  before_validation :set_image_dimensions, :on => :create
+  before_validation :generate_sample, :on => :create
+  before_validation :generate_preview, :on => :create
+  before_validation :move_file, :on => :create
+  before_validation :set_default_sequence, :on => :create
   after_destroy :delete_file
   before_create :validate_uniqueness
 

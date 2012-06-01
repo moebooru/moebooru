@@ -21,7 +21,10 @@
               <span class="stars" style="white-space: nowrap">
                 <% (1..3).each do |vote| %>
                     <% count = (user['votes'] && user['votes'][vote]) || '0' %>
-                    <% text = "#{h count} <span class='score-on score-voted score-visible'>★</span>".html_safe %>
+                    <% text = capture do %>
+                      <%= count %>
+                      <span class='score-on score-voted score-visible'>★</span>
+                    <% end %>
                     <% if user['id'].nil? %>
                       <%= content_tag :span, text, :class => "star star-#{vote}" %>
                     <% else %>

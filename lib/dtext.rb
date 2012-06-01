@@ -41,16 +41,16 @@ module DText
     end
 
     # Miscellaneous single line tags subtitution.
-    str.gsub! /\[b\](.+)\[\/b\]/, '<strong>\1</strong>'
-    str.gsub! /\[i\](.+)\[\/i\]/, '<em>\1</em>'
+    str.gsub! /\[b\](.+?)\[\/b\]/, '<strong>\1</strong>'
+    str.gsub! /\[i\](.+?)\[\/i\]/, '<em>\1</em>'
     str.gsub! /(post #(\d+))/i, '<a href="/post/show/\2">\1</a>'
     str.gsub! /(forum #(\d+))/i, '<a href="/forum/show/\2">\1</a>'
     str.gsub! /(comment #(\d+))/i, '<a href="/comment/show/\2">\1</a>'
     str.gsub! /(pool #(\d+))/i, '<a href="/pool/show/\2">\1</a>'
 
     # Single line spoiler tags.
-    str.gsub! /\[spoilers?\](.+)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>'
-    str.gsub! /\[spoilers?=(.+?)\](.+)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">\2</span>'
+    str.gsub! /\[spoilers?\](.+?)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><span class="spoilertext" style="display: none">\1</span>'
+    str.gsub! /\[spoilers?=(.+?)\](.+?)\[\/spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><span class="spoilertext" style="display: none">\2</span>'
 
     # Multi line spoiler tags.
     str.gsub! /\[spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><div class="spoilertext" style="display: none">'

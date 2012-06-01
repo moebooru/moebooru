@@ -114,6 +114,7 @@ module DText
     str.gsub!(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')       #     <<url>>
     str.gsub!(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')                 #         url
     str.gsub!(/<a href="ttp/, '<a href="http') # Fix ttp(s) scheme
+    return str
   end
 
   module_function :parse, :parseline, :parseinline, :parselist, :parseurl

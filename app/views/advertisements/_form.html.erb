@@ -1,5 +1,5 @@
-<% form_for(@ad) do |f| %>
-  <%= f.error_messages %>
+<% form_for @ad do |f| %>
+  <%= render 'shared/error_messages', :object => f.object %>
 
   <div>
     <%= f.label :image_url %>

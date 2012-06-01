@@ -242,7 +242,7 @@ class ApplicationController < ActionController::Base
   end
   def time_end
     t = Time.now - @start
-    File.open("/tmp/temp", 'a+') {|f| f.write("%.3f %s %15s %s\n" % [t, @current_user_country, request.remote_ip, request.request_uri])}
+    File.open("/tmp/temp", 'a+') {|f| f.write("%.3f %s %15s %s\n" % [t, @current_user_country, request.remote_ip, request.fullpath])}
   end
 
   protected :build_cache_key

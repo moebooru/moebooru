@@ -1,5 +1,6 @@
 class Advertisement < ActiveRecord::Base
   validates_inclusion_of :ad_type, :in => %w(horizontal vertical)
+  validates_presence_of :image_url, :referral_url, :ad_type, :status, :width, :height
 
   def self.random(type = 'vertical')
     self.find(:first, :conditions => { :ad_type => type, :status => 'active' }, :order => 'random()')

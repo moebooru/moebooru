@@ -9,7 +9,6 @@ class UserController < ApplicationController
   before_filter :post_member_only, :only => [:set_avatar]
   helper :post, :tag_subscription
   helper :avatar
-  filter_parameter_logging :password
   auto_complete_for :user, :name
 
   protected

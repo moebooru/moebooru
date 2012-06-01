@@ -55,7 +55,7 @@ class InlineImage < ActiveRecord::Base
     post = Post.find_by_id(id)
     file = post.file_path
 
-    FileUtils.ln_s(file.local_path, tempfile_image_path)
+    FileUtils.ln_s(file.tempfile.path, tempfile_image_path)
 
     self.received_file = true
     self.md5 = post.md5
@@ -72,8 +72,8 @@ class InlineImage < ActiveRecord::Base
   def file=(f)
     return if f.nil? || f.size == 0
 
-    if f.local_path
-      FileUtils.cp(f.local_path, tempfile_image_path)
+    if f.tempfile.path
+      FileUtils.cp(f.tempfile.path, tempfile_image_path)
     else
       File.open(tempfile_image_path, 'wb') {|nf| nf.write(f.read)}
     end
@@ -206,12 +206,15 @@ class InlineImage < ActiveRecord::Base
 
   def move_file
     return true if not file_needs_move
+    FileUtils.mkdir_p(File.dirname(file_path));
     FileUtils.mv(tempfile_image_path, file_path)
 
     if File.exists?(tempfile_preview_path)
+      FileUtils.mkdir_p(File.dirname(preview_path));
       FileUtils.mv(tempfile_preview_path, preview_path)
     end
     if File.exists?(tempfile_sample_path)
+      FileUtils.mkdir_p(File.dirname(sample_path));
       FileUtils.mv(tempfile_sample_path, sample_path)
     end
     self.file_needs_move = false

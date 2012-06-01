@@ -5,46 +5,6 @@ module ApplicationHelper
     request.ssl? ? 'https://' : 'http://'
   end
 
-  class TableScale
-    def add(*list)
-      @val = nil
-      @list ||= []
-      list.each { |val|
-        @list << val.to_f
-      }
-      @idx ||= 0
-    end
-
-    def get
-      @idx += 1
-      get_idx(@idx - 1)
-    end
-
-    def get_idx(n)
-      if !@val then
-        # Scale the list to sum to 100%.
-        #
-        # Both FF3 and Opera treat values under 1% as unspecified.  (Why?)  If any value
-        # is less than 1%, clamp it to 1% and recompute the remainder.
-        @val = @list
-        indexes = []
-        @val.each_index { |idx| indexes << idx }
-        while !indexes.empty?
-          sum = @val.length - indexes.length # 1% for each 1% value we excluded
-          indexes.each { |idx| sum += @val[idx] }
-          break if sum == 0
-
-          indexes.each { |idx| @val[idx] = [@val[idx] / (sum/100), 1].max }
-          new_indexes = []
-          indexes.each { |idx| new_indexes << idx if @val[idx] > 1 }
-          break if indexes.length == new_indexes.length
-          indexes = new_indexes
-        end
-      end
-      "%.2f%%" % @val[n]
-    end
-  end
-
   def navbar_link_to(text, options, html_options = nil)
     if options[:controller] == params[:controller]
       klass = "current-page"

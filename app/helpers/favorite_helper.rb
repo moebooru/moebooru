@@ -11,10 +11,10 @@ module FavoriteHelper
 
       if users.size > 6
         html << content_tag("span", :id => "remaining-favs", :style => "display: none;") do
-          ", " + users.slice(6..-1).map {|user| link_to(user.pretty_name, {:controller => "user", :action => "show", :id => user.id})}.join(", ")
+          ", " + users.slice(6..-1).map {|user| link_to(user.pretty_name, {:controller => "user", :action => "show", :id => user.id})}.join(", ").html_safe
         end
         html << content_tag("span", :id => "remaining-favs-link") do
-          " (" + link_to_function("#{users.size - 6} more", "$('remaining-favs').show(); $('remaining-favs-link').hide()") + ")"
+          " (" + link_to_function("#{users.size - 6} more", "$('remaining-favs').show(); $('remaining-favs-link').hide()") + ")".html_safe
         end
       end
     end

@@ -3,7 +3,7 @@ h1. Moebooru
 This project is based on original Moebooru which is being used in "yande.re Image Board":http://yande.re. Changes compared to original Moebooru:
 
 * Requires Ruby 1.9
-* Uses Rails 2.3
+* Uses Rails 3.0 (woohoo)
 * Uses Bundler
 * Updated gems
 * Pool ZIP support for nginx (with @mod_zip@)
@@ -17,7 +17,7 @@ h2. Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application requires:
 
-* Ruby 1.9
+* Ruby 1.9 (1.8 should also works, too)
 * PostgreSQL (tested with 8.4)
 * Bundler gem
 * GD image library header
@@ -39,5 +39,6 @@ h2. Plans
 
 * Bug fixes
 * Documentation
-* Switch to RMagick
+* Switch to ImageScience/ImageVoodo
+* JRuby and Rubinius support
 * And more!

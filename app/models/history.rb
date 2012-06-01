@@ -82,33 +82,34 @@ class History < ActiveRecord::Base
 
     stack.reverse.each do |node|
       object = node[:o]
-      changes = node[:changes]
-      if changes
-        changes.each do |change|
-          if redo_change
-            redo_func = ("%s_redo" % change.field).to_sym
-            if object.respond_to?(redo_func) then
-              object.send(redo_func, change)
-            else
-              object.attributes = { change.field.to_sym => change.value }
-            end
-          else
-            undo_func = ("%s_undo" % change.field).to_sym
-            if object.respond_to?(undo_func) then
-              object.send(undo_func, change)
-            else
-              if change.previous
-                previous = change.previous.value 
+      object.run_callbacks :undo do
+        changes = node[:changes]
+        if changes
+          changes.each do |change|
+            if redo_change
+              redo_func = ("%s_redo" % change.field).to_sym
+              if object.respond_to?(redo_func) then
+                object.send(redo_func, change)
               else
-                previous = change.options[:default] # when :allow_reverting_to_default
+                object.attributes = { change.field.to_sym => change.value }
               end
-              object.attributes = { change.field.to_sym => previous }
+            else
+              undo_func = ("%s_undo" % change.field).to_sym
+              if object.respond_to?(undo_func) then
+                object.send(undo_func, change)
+              else
+                if change.previous
+                  previous = change.previous.value 
+                else
+                  previous = change.options[:default] # when :allow_reverting_to_default
+                end
+                object.attributes = { change.field.to_sym => previous }
+              end
             end
           end
         end
       end
 
-      object.run_callbacks(:after_undo)
       object.save!
     end
   end

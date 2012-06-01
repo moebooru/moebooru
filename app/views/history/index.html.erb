@@ -71,7 +71,7 @@
   </div>
     <div class="history-search-row">
       <div>
-        <% form_tag({:action => "index"}, :method => :get) do %>
+        <%= form_tag({:action => "index"}, :method => :get) do %>
           <%= text_field_tag "search", params[:search], :id => "search", :size => 20 %> <%= submit_tag "Search" %>
         <% end %>
       </div>

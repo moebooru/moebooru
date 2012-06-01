@@ -1,12 +1,12 @@
 <div style="margin-bottom: 1em;">
-  <% form_tag({:action => "index"}, :method => :get) do %>
+  <%= form_tag({:action => "index"}, :method => :get) do %>
     <%= text_field_tag "query", params[:query] %> 
     <%= submit_tag "Search Implications" %>  
     <%= submit_tag "Search Aliases" %>
   <% end %>  
 </div>
 
-<% form_tag(:action => "update") do %>
+<%= form_tag(:action => "update") do %>
   <table class="highlightable" width="100%">
     <thead>
       <tr>
@@ -48,7 +48,7 @@
 <% end %>
 
 <div id="add-box" style="display: none;">
-  <% form_tag(:action => "create") do %>
+  <%= form_tag(:action => "create") do %>
     <h4>Add Implication</h4>
     <p>You can suggest a new implication, but it must be approved by a moderator before it is activated.</p>  
     <p>The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.</p>

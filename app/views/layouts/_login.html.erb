@@ -20,7 +20,7 @@
           If you supplied an email address when you signed up, you can have your password reset.
         </p>
 
-        <% form_tag({:action => "authenticate"}, :id=>"login-popup") do %>
+        <%= form_tag({:action => "authenticate"}, :id=>"login-popup") do %>
           <div style="position: absolute; top: 0; right: 0;">
             <a href="#" id="login-popup-cancel" style="font-size: 1.2em; padding: 2px;">ⓧ</a>
           </div>

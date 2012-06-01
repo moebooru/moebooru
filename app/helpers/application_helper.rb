@@ -86,8 +86,8 @@ module ApplicationHelper
       </div>
     }
     inline_id = "inline-%s-%i" % [id, num]
-    script = 'InlineImage.register("%s", %s);' % [inline_id, inline.to_json]
-    return block, script, inline_id
+    script = 'InlineImage.register("%s", %s);' % [inline_id, json_escape(inline.to_json.html_safe)]
+    return block.html_safe, script.html_safe, inline_id
   end
 
   def format_inlines(text, id)

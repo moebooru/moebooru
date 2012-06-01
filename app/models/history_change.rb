@@ -9,7 +9,7 @@ class HistoryChange < ActiveRecord::Base
     # this workaround were found somewhere I couldn't remember.
     # - edogawaconan
     opts = master_class.get_versioned_attribute_options(field) or {}
-    if opts.class.to_s == "Array" then
+    if opts.is_a? Array then
       opts = opts.reduce({}) {|h,pairs| pairs.each {|k,v| h[k] = v}; h}
     end
     return opts

@@ -36,9 +36,7 @@ module Moebooru
     # (enables use of different database adapters for development and test environments)
     config.active_record.schema_format = :sql
   
-    #testing new relic
-  #  config.gem "newrelic_rpm"
-  config.action_mailer.smtp_settings = { :openssl_verify_mode => 'none', :domain => CONFIG['server_host'] }
+    config.action_mailer.smtp_settings = { :openssl_verify_mode => 'none', :domain => CONFIG['server_host'] }
     config.filter_parameters += [:password]
   end
 end

@@ -45,7 +45,7 @@ class History < ActiveRecord::Base
     # committed when we save the parents.
     objects = {}
 
-    changes.each { |change|
+    changes.each do |change|
       # If we have no previous change, this was the first change to this property
       # and we have no default, so this change can't be undone.
       previous_change = change.previous
@@ -62,7 +62,7 @@ class History < ActiveRecord::Base
       node = cache_object_recurse(objects, change.table_name, change.remote_id, change.obj)
       node[:changes] ||= []
       node[:changes] << change
-    }
+    end
 
     return unless objects[:objects]
 
@@ -70,21 +70,21 @@ class History < ActiveRecord::Base
     # list, so we can always save child nodes before parent nodes.
     done = {}
     stack = []
-    objects[:objects].each { |table_name, rhs|
-      rhs.each { |id, node|
+    objects[:objects].each do |table_name, rhs|
+      rhs.each do |id, node|
         # Start adding from the node at the top of the tree.
         while node[:parent] do
           node = node[:parent]
         end
         self.stack_object_recurse(node, stack, done)
-      }
-    }
+      end
+    end
 
-    stack.reverse.each { |node|
+    stack.reverse.each do |node|
       object = node[:o]
       changes = node[:changes]
       if changes
-        changes.each { |change|
+        changes.each do |change|
           if redo_change
             redo_func = ("%s_redo" % change.field).to_sym
             if object.respond_to?(redo_func) then
@@ -105,12 +105,12 @@ class History < ActiveRecord::Base
               object.attributes = { change.field.to_sym => previous }
             end
           end
-        }
+        end
       end
 
       object.run_callbacks(:after_undo)
       object.save!
-    }
+    end
   end
 
   def self.generate_sql(options = {})

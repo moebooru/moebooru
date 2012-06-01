@@ -24,7 +24,7 @@ module AvatarHelper
       ret << %{Post.register(#{ json_escape post.to_json.html_safe })\n}
     end
     ret << %{Post.init_blacklisted()}
-    ret
+    ret.html_safe
   end
 end
 

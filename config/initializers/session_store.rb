@@ -1,6 +1,6 @@
 # Be sure to restart your server when you modify this file.
 
-Moebooru::Application.config.session_store :cookie_store, :key => '_moebooru_session'
+Moebooru::Application.config.session_store :cookie_store, :key => CONFIG["app_name"], :secret => CONFIG["session_secret_key"]
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

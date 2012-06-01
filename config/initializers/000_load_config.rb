@@ -4,8 +4,6 @@ CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
   CONFIG[key] = ServerKey[key] if ServerKey[key]
 end
 
-ActionController::Base.session = {:key => CONFIG["app_name"], :secret => CONFIG["session_secret_key"]}
-
 require 'post_save'
 require 'base64'
 require 'diff/lcs/array'

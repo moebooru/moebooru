@@ -20,6 +20,7 @@ module PostFileMethods
     m.before_validation :generate_preview, :on => :create
     m.before_validation :move_file, :on => :create
   end
+  attr_accessor :_tempfile_prefix
 
   def strip_exif
     if file_ext.downcase == 'jpg' then
@@ -86,12 +87,32 @@ module PostFileMethods
     FileUtils.rm_f(tempfile_jpeg_path)
   end
 
+  def tempfile_prefix
+    if _tempfile_prefix.blank?
+      _tempfile_prefix = Rails.root.join 'public/data'
+      if self.id
+        _tempfile_prefix.join "temp-id-#{self.id}"
+      else
+        _tempfile_prefix.join "temp--#{Random.new.rand(2**32)}"
+      end
+    end
+    return _tempfile_prefix
+  end
+
   def tempfile_path
-    "#{Rails.root}/public/data/#{Process.pid}.upload"
+    "#{tempfile_prefix}.upload"
   end
 
   def tempfile_preview_path
-    "#{Rails.root}/public/data/#{Process.pid}-preview.jpg"
+    "#{tempfile_prefix}-preview.jpg"
+  end
+
+  def tempfile_sample_path
+    "#{tempfile_prefix}-sample.jpg"
+  end
+
+  def tempfile_jpeg_path
+    "#{tempfile_prefix}-jpeg.jpg"
   end
 
   # Generate MD5 and CRC32 hashes for the file.  Do this before generating samples, so if this
@@ -374,10 +395,6 @@ module PostFileMethods
     end
   end
   
-  def tempfile_sample_path
-    "#{Rails.root}/public/data/#{Process.pid}-sample.jpg"
-  end
-
   def generate_sample(force_regen = false)
     return true unless image?
     return true unless CONFIG["image_samples"]
@@ -497,10 +514,6 @@ module PostFileMethods
   def sample_url(user = nil) get_file_sample(user)[:url] end
   def get_sample_width(user = nil) get_file_sample(user)[:width] end
   def get_sample_height(user = nil) get_file_sample(user)[:height] end
-
-  def tempfile_jpeg_path
-    "#{Rails.root}/public/data/#{Process.pid}-jpeg.jpg"
-  end
 
   # If the JPEG version needs to be generated (or regenerated), output it to tempfile_jpeg_path.  On
   # error, return false; on success or no-op, return true.

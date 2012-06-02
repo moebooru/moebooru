@@ -11,7 +11,7 @@ Moebooru::Application.routes.draw do
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }
   match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :id => /\d+/, :filename => /.*/ }
-  match '/:controller(/:action(/:id))'
+  match ':controller(/:action(/:id))', :id => /\d+/
   match ':controller/:action.:format' => '#index'
   match ':controller/:action' => '#index'
   match 'histogram' => 'post#histogram'

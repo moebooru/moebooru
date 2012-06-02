@@ -35,17 +35,18 @@ class InlineImage < ActiveRecord::Base
   before_validation :set_default_sequence, :on => :create
   after_destroy :delete_file
   before_create :validate_uniqueness
+  include Moebooru::TempfilePrefix
 
   def tempfile_image_path
-    "#{Rails.root}/public/data/#{Process.pid}.upload"
+    "#{tempfile_prefix}.upload"
   end
 
   def tempfile_sample_path
-    "#{Rails.root}/public/data/#{Process.pid}-sample.upload"
+    "#{tempfile_prefix}-sample.upload"
   end
 
   def tempfile_preview_path
-    "#{Rails.root}/public/data/#{Process.pid}-preview.upload"
+    "#{tempfile_prefix}-preview.upload"
   end
 
   attr_accessor :source

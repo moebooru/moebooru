@@ -1,4 +1,5 @@
 class PostFrames < ActiveRecord::Base
+  include Moebooru::TempfilePrefix
   belongs_to :post
 
   # Parse a frame specifier.
@@ -196,12 +197,14 @@ class PostFrames < ActiveRecord::Base
     image_size[:crop_left] = source_left.to_f
     image_size[:crop_right] = source_left + source_width
 
-    image_tempfile_path = "#{Rails.root}/public/data/#{Process.pid}.frame.jpg"
-    preview_tempfile_path = "#{Rails.root}/public/data/#{Process.pid}.frame-preview.jpg"
+    image_tempfile_path = "#{tempfile_prefix}.frame.jpg"
+    preview_tempfile_path = "#{tempfile_prefix}.frame-preview.jpg"
 
     preview_size = PostFrames.frame_preview_dimensions(self)
 
     begin
+      mkdir_p File.dirname(post.file_path)
+      mkdir_p File.dirname(post.preview_path)
       Danbooru.resize(post.file_ext, post.file_path, image_tempfile_path, image_size, 95)
 
       # Save time by creating the thumbnail directly from the image we just created, instead

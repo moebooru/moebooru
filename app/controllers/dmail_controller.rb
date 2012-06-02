@@ -7,7 +7,7 @@ class DmailController < ApplicationController
   end
 
   def auto_complete_for_dmail_to_name
-    @users = User.where(User.arel_table[:name].matches("#{params[:dmail][:to_name].to_s}*"))
+    @users = User.where(User.arel_table[:name].matches("#{params[:dmail][:to_name].to_s}*".to_escaped_for_sql_like))
     render :layout => false
   end
   

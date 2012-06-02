@@ -21,7 +21,7 @@
   <div class="content">
     <div class="body">
       <%# format_inlines(format_text(comment.body, :mode => :comment), comment.id) %>
-      <%= body %>
+      <%= body.html_safe %>
     </div>
     <% if not translated_from_languages.empty? then %>
     <div class="body untranslated-body" style="display: none;">

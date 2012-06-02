@@ -64,15 +64,15 @@ module TagHelper
   end
 
   def cloud_view(tags, divisor = 6)
-    html = ""
+    html = ''.html_safe
 
-    tags.sort {|a, b| a["name"] <=> b["name"]}.each do |tag|
-      size = Math.log(tag["post_count"].to_i) / divisor
-      size = 0.8 if size < 0.8
-      html << %{<a href="/post/index?tags=#{u(tag["name"])}" style="font-size: #{size}em;" title="#{tag["post_count"]} posts">#{h(tag["name"])}</a> }
+    tags.sort {|a, b| a['name'] <=> b['name']}.each do |tag|
+      size = Math.log(tag['post_count'].to_i) / divisor
+      size = size < 0.8 ? '0.8' : '%.1f' % size
+      html << link_to(tag['name'], { :controller => :post, :action => :index, :tags => tag['name'] }, { :style => "font-size: #{size}em", :title => "#{tag['post_count']} posts" })
     end
 
-    return html
+    return html.html_safe
   end
 
   def related_tags(tags)

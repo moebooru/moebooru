@@ -497,7 +497,7 @@ class User < ActiveRecord::Base
         return false
       end
 
-      tempfile_path = "#{Rails.root}/public/data/#{Process.pid}.avatar.jpg"
+      tempfile_path = "#{Rails.root}/public/data/#{Random.new.rand(2**32)}.avatar.jpg"
 
       def reduce_and_crop(image_width, image_height, params)
         cropped_image_width = image_width * (params[:right].to_f - params[:left].to_f)

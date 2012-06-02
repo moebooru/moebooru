@@ -1,6 +1,7 @@
 require 'digest/sha1'
 
 class User < ActiveRecord::Base
+  scope :name_starts_with, lambda { |s| where User.arel_table[:name].matches("#{s}*".to_escaped_for_sql_like) }
   class AlreadyFavoritedError < Exception; end
 
   module UserBlacklistMethods

@@ -22,9 +22,10 @@ class NilClass
 end
 
 class String
+  # Escapes string to be usable in a SQL LIKE.
+  # Adds backslash to \, %, and _ and replace * with % (SQL wildcard)
   def to_escaped_for_sql_like
-    # NOTE: gsub(/\\/, '\\\\') is a NOP, you need gsub(/\\/, '\\\\\\') if you want to turn \ into \\; or you can duplicate the matched text
-    return self.gsub(/\\/, '\0\0').gsub(/%/, '\\%').gsub(/_/, '\\_').gsub(/\*/, '%')
+    return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub('*', '%')
   end
 
   def to_escaped_js

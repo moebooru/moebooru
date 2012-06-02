@@ -1,0 +1,5 @@
+<% if @tag_subscription %>
+  $('tag-subscription-body').insert({ bottom: '<%= escape_javascript render(:partial => 'listing_row', :locals => {:tag_subscription => @tag_subscription}) %>'});
+<% else %>
+  notice('<%= "You can only create up to #{CONFIG['max_tag_subscriptions']} tag subscriptions" %>');
+<% end %>

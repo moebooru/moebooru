@@ -901,8 +901,9 @@ class PostController < ApplicationController
     headers["Access-Control-Allow-Origin"] = "*"
 
     url = params[:url]
-    tempfile_path = "/tmp/#{Process.pid}.temp"
-    tempfile = File.open(tempfile_path, "wb")
+    tempfile = Tempfile.new('histogram')
+    tempfile.binmode
+    tempfile_path = tempfile.path
 
     begin
       Timeout::timeout(30) do
@@ -912,7 +913,7 @@ class PostController < ApplicationController
           end
         end
       end
-      tempfile.close
+      tempfile.close(false)
 
       imgsize = ImageSize.new(File.open(tempfile_path, 'rb'))
       if imgsize.get_width.nil?
@@ -926,7 +927,7 @@ class PostController < ApplicationController
     rescue SocketError, Danbooru::ResizeError => e
       render :json => {:url => url, :error => e.to_s}, :status => 500
     ensure
-      FileUtils.rm_f(tempfile_path) if tempfile_path
+      tempfile.unlink
     end
   end
 end

@@ -1,3 +1,0 @@
-page["tag-subscription-row-#{@tag_subscription.id}"].remove
-page["notice"] = "Tag subscription deleted"
-page["notice"].show

@@ -12,18 +12,13 @@
       <% pooled_post_id = @post.id %>
 
     <% if @current_user.can_change?(pool_post, :active) %>
-    <span class="advanced-editing">
-    (<%= link_to_function "remove",
-     "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{@post.id}, #{pool.id})"
-     %>, <%= link_to_function "change page",
-     "Pool.change_sequence(#{@post.id}, #{pool_post.pool_id}, #{pool_post.sequence.to_json})"
-     -%>
-     <%- if not @post.parent_id.nil? %>,
-     <%= link_to_function "transfer to parent",
-     "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)} and add the parent post instead?')) Pool.transfer_post(#{@post.id}, #{@post.parent_id}, #{pool.id}, #{pool_post.sequence.to_json})"
-    -%>
-    <%- end -%>)
-    </span>
+      <span class="advanced-editing">
+        (<%= link_to_function "remove", "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{@post.id}, #{pool.id})"
+        -%>, <%= link_to_function "change page", "Pool.change_sequence(#{@post.id}, #{pool_post.pool_id}, #{pool_post.sequence.to_json})"
+        -%><%- if not @post.parent_id.nil?
+        -%>, <%= link_to_function "transfer to parent", "if(confirm('Are you sure you want to remove this post from #{escape_javascript(pool.pretty_name)} and add the parent post instead?')) Pool.transfer_post(#{@post.id}, #{@post.parent_id}, #{pool.id}, #{pool_post.sequence.to_json})"
+        -%><%- end -%>)
+      </span>
     <%- end %>
     </p>
   </div>

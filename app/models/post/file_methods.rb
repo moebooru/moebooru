@@ -20,7 +20,7 @@ module PostFileMethods
     m.before_validation :generate_preview, :on => :create
     m.before_validation :move_file, :on => :create
   end
-  attr_accessor :_tempfile_prefix
+  include Moebooru::TempfilePrefix
 
   def strip_exif
     if file_ext.downcase == 'jpg' then
@@ -85,18 +85,6 @@ module PostFileMethods
     FileUtils.rm_f(tempfile_preview_path)
     FileUtils.rm_f(tempfile_sample_path)
     FileUtils.rm_f(tempfile_jpeg_path)
-  end
-
-  def tempfile_prefix
-    if _tempfile_prefix.blank?
-      _tempfile_prefix = Rails.root.join 'public/data'
-      if self.id
-        _tempfile_prefix.join "temp-id-#{self.id}"
-      else
-        _tempfile_prefix.join "temp--#{Random.new.rand(2**32)}"
-      end
-    end
-    return _tempfile_prefix
   end
 
   def tempfile_path

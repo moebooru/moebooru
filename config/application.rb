@@ -38,5 +38,6 @@ module Moebooru
   
     config.action_mailer.smtp_settings = { :openssl_verify_mode => 'none', :domain => CONFIG['server_host'] }
     config.filter_parameters += [:password]
+    config.threadsafe!
   end
 end

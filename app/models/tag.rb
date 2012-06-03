@@ -6,6 +6,7 @@ class Tag < ActiveRecord::Base
   include TagRelatedTagMethods
   include TagParseMethods
   include TagApiMethods
+  has_and_belongs_to_many :posts
   
   def self.count_by_period(start, stop, options = {})
     options[:limit] ||= 50

@@ -11,31 +11,13 @@ module TagRelatedTagMethods
       end
     end
 
-    def calculate_related(tags)
+    def calculate_related(tags, limit = 25)
       tags = Array(tags)
       return [] if tags.empty?
-
-      from = ["posts_tags pt0"]
-      cond = ["pt0.post_id = pt1.post_id"]
-      sql = ""
-
-      # Ignore deleted posts in pt0, so the count excludes them.
-      cond << "(SELECT TRUE FROM POSTS p0 WHERE p0.id = pt0.post_id AND p0.status <> 'deleted')"
-
-      (1..tags.size).each {|i| from << "posts_tags pt#{i}"}
-      (2..tags.size).each {|i| cond << "pt1.post_id = pt#{i}.post_id"}
-      (1..tags.size).each {|i| cond << "pt#{i}.tag_id = (SELECT id FROM tags WHERE name = ?)"}
-
-      sql << "SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS tag, COUNT(pt0.*) AS tag_count"
-      sql << " FROM " << from.join(", ")
-      sql << " WHERE " << cond.join(" AND ")
-      sql << " GROUP BY pt0.tag_id"
-      sql << " ORDER BY tag_count DESC LIMIT 25"
-
-      begin
-        select_all_sql(sql, *tags).map {|x| [x["tag"], x["tag_count"]]}
-      rescue Exception
-        []
+      Rails.cache.fetch({ :category => :reltags, :tags => tags }, :expires_in => 1.hour) do
+        Tag.joins(:posts).where(:posts => { :id => Post.has_tags(tags) }).group(:name).count(:all, :order => 'count_all DESC', :limit => limit).reduce([]) do
+          |result, hash| result << [hash[0], hash[1]]
+        end
       end
     end
 

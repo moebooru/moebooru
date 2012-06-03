@@ -25,6 +25,7 @@ class Post < ActiveRecord::Base
   # Options:
   #   :only_ids: set to true to only return array of ids.
   def self.has_tags(tags, options = {})
+    tags = Array(tags)
     # Make sure we have p_ids variable.
     p_ids = nil
     # Get the list of tag_ids to be searched.

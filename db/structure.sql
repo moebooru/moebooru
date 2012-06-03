@@ -4,22 +4,16 @@
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
+SET standard_conforming_strings = off;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET escape_string_warning = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+-- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
 --
 
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+CREATE PROCEDURAL LANGUAGE plpgsql;
 
 
 SET search_path = public, pg_catalog;
@@ -385,8 +379,8 @@ CREATE TABLE advertisements (
 CREATE SEQUENCE advertisements_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -416,8 +410,8 @@ CREATE TABLE artist_urls (
 CREATE SEQUENCE artist_urls_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -449,8 +443,8 @@ CREATE TABLE artists (
 CREATE SEQUENCE artists_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -482,8 +476,8 @@ CREATE TABLE bans (
 CREATE SEQUENCE bans_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -506,7 +500,7 @@ CREATE TABLE batch_uploads (
     tags character varying(255) DEFAULT ''::character varying NOT NULL,
     active boolean DEFAULT false NOT NULL,
     status character varying(255) DEFAULT 'pending'::character varying NOT NULL,
-    created_at timestamp without time zone DEFAULT '2012-05-27 02:04:34.009977'::timestamp without time zone NOT NULL,
+    created_at timestamp without time zone DEFAULT '2012-03-04 08:04:54.999796'::timestamp without time zone NOT NULL,
     data_as_json character varying(255) DEFAULT '{}'::character varying NOT NULL
 );
 
@@ -518,8 +512,8 @@ CREATE TABLE batch_uploads (
 CREATE SEQUENCE batch_uploads_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -551,8 +545,8 @@ CREATE TABLE comment_fragments (
 CREATE SEQUENCE comment_fragments_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -587,8 +581,8 @@ CREATE TABLE comments (
 CREATE SEQUENCE comments_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -622,8 +616,8 @@ CREATE TABLE dmails (
 CREATE SEQUENCE dmails_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -655,8 +649,8 @@ CREATE TABLE tag_subscriptions (
 CREATE SEQUENCE favorite_tags_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -686,8 +680,8 @@ CREATE TABLE favorites (
 CREATE SEQUENCE favorites_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -719,8 +713,8 @@ CREATE TABLE flagged_post_details (
 CREATE SEQUENCE flagged_post_details_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -758,8 +752,8 @@ CREATE TABLE forum_posts (
 CREATE SEQUENCE forum_posts_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -791,8 +785,8 @@ CREATE TABLE histories (
 CREATE SEQUENCE histories_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -826,8 +820,8 @@ CREATE TABLE history_changes (
 CREATE SEQUENCE history_changes_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -863,8 +857,8 @@ CREATE TABLE inline_images (
 CREATE SEQUENCE inline_images_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -894,8 +888,8 @@ CREATE TABLE inlines (
 CREATE SEQUENCE inlines_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -927,8 +921,8 @@ CREATE TABLE ip_bans (
 CREATE SEQUENCE ip_bans_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -962,8 +956,8 @@ CREATE TABLE job_tasks (
 CREATE SEQUENCE job_tasks_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1004,8 +998,8 @@ CREATE TABLE note_versions (
 CREATE SEQUENCE note_versions_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1045,8 +1039,8 @@ CREATE TABLE notes (
 CREATE SEQUENCE notes_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1084,8 +1078,8 @@ CREATE TABLE pools (
 CREATE SEQUENCE pools_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1118,8 +1112,8 @@ CREATE TABLE pools_posts (
 CREATE SEQUENCE pools_posts_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1178,7 +1172,8 @@ CREATE TABLE posts (
     jpeg_crc32 bigint,
     frames text DEFAULT ''::text NOT NULL,
     frames_pending text DEFAULT ''::text NOT NULL,
-    frames_warehoused boolean DEFAULT false NOT NULL
+    frames_warehoused boolean DEFAULT false NOT NULL,
+    tags_cache integer[]
 );
 
 
@@ -1189,8 +1184,8 @@ CREATE TABLE posts (
 CREATE SEQUENCE post_change_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1226,8 +1221,8 @@ CREATE TABLE post_frames (
 CREATE SEQUENCE post_frames_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1259,8 +1254,8 @@ CREATE TABLE post_tag_histories (
 CREATE SEQUENCE post_tag_histories_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1280,7 +1275,7 @@ CREATE TABLE post_votes (
     user_id integer NOT NULL,
     post_id integer NOT NULL,
     score integer DEFAULT 0 NOT NULL,
-    updated_at timestamp without time zone DEFAULT '2012-05-27 02:04:31.853141'::timestamp without time zone NOT NULL
+    updated_at timestamp without time zone DEFAULT '2012-03-04 08:01:49.825058'::timestamp without time zone NOT NULL
 );
 
 
@@ -1291,8 +1286,8 @@ CREATE TABLE post_votes (
 CREATE SEQUENCE post_votes_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1310,8 +1305,8 @@ ALTER SEQUENCE post_votes_id_seq OWNED BY post_votes.id;
 CREATE SEQUENCE posts_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1359,8 +1354,8 @@ CREATE TABLE server_keys (
 CREATE SEQUENCE server_keys_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1402,8 +1397,8 @@ CREATE TABLE tag_aliases (
 CREATE SEQUENCE tag_aliases_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1435,8 +1430,8 @@ CREATE TABLE tag_implications (
 CREATE SEQUENCE tag_implications_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1469,8 +1464,8 @@ CREATE TABLE tags (
 CREATE SEQUENCE tags_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1499,8 +1494,8 @@ CREATE TABLE user_blacklisted_tags (
 CREATE SEQUENCE user_blacklisted_tags_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1530,8 +1525,8 @@ CREATE TABLE user_logs (
 CREATE SEQUENCE user_logs_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1563,8 +1558,8 @@ CREATE TABLE user_records (
 CREATE SEQUENCE user_records_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1620,8 +1615,8 @@ CREATE TABLE users (
 CREATE SEQUENCE users_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1658,8 +1653,8 @@ CREATE TABLE wiki_page_versions (
 CREATE SEQUENCE wiki_page_versions_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -1695,8 +1690,8 @@ CREATE TABLE wiki_pages (
 CREATE SEQUENCE wiki_pages_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -2015,11 +2010,11 @@ ALTER TABLE ONLY batch_uploads
 
 
 --
--- Name: batch_uploads_user_id_url_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: batch_uploads_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY batch_uploads
-    ADD CONSTRAINT batch_uploads_user_id_url_key UNIQUE (user_id, url);
+    ADD CONSTRAINT batch_uploads_user_id_key UNIQUE (user_id, url);
 
 
 --
@@ -2191,11 +2186,11 @@ ALTER TABLE ONLY post_votes
 
 
 --
--- Name: post_votes_user_id_post_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: post_votes_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY post_votes
-    ADD CONSTRAINT post_votes_user_id_post_id_key UNIQUE (user_id, post_id);
+    ADD CONSTRAINT post_votes_user_id_key UNIQUE (user_id, post_id);
 
 
 --
@@ -2412,6 +2407,13 @@ CREATE INDEX idx_posts__last_noted_at ON posts USING btree (last_noted_at) WHERE
 --
 
 CREATE UNIQUE INDEX idx_posts__md5 ON posts USING btree (md5);
+
+
+--
+-- Name: idx_posts__tags_cache; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX idx_posts__tags_cache ON posts USING gin (tags_cache);
 
 
 --
@@ -2758,13 +2760,6 @@ CREATE INDEX index_posts_on_width ON posts USING btree (width);
 
 
 --
--- Name: index_posts_tags_on_post_id_and_tag_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX index_posts_tags_on_post_id_and_tag_id ON posts_tags USING btree (post_id, tag_id);
-
-
---
 -- Name: index_server_keys_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2922,91 +2917,130 @@ CREATE RULE delete_histories AS ON DELETE TO notes DO (DELETE FROM history_chang
 -- Name: pools_posts_delete_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_delete_trg BEFORE DELETE ON pools_posts FOR EACH ROW EXECUTE PROCEDURE pools_posts_delete_trg();
+CREATE TRIGGER pools_posts_delete_trg
+    BEFORE DELETE ON pools_posts
+    FOR EACH ROW
+    EXECUTE PROCEDURE pools_posts_delete_trg();
 
 
 --
 -- Name: pools_posts_insert_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_insert_trg BEFORE INSERT ON pools_posts FOR EACH ROW EXECUTE PROCEDURE pools_posts_insert_trg();
+CREATE TRIGGER pools_posts_insert_trg
+    BEFORE INSERT ON pools_posts
+    FOR EACH ROW
+    EXECUTE PROCEDURE pools_posts_insert_trg();
 
 
 --
 -- Name: pools_posts_update_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_update_trg BEFORE UPDATE ON pools_posts FOR EACH ROW EXECUTE PROCEDURE pools_posts_update_trg();
+CREATE TRIGGER pools_posts_update_trg
+    BEFORE UPDATE ON pools_posts
+    FOR EACH ROW
+    EXECUTE PROCEDURE pools_posts_update_trg();
 
 
 --
 -- Name: trg_cleanup_history; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_cleanup_history AFTER DELETE ON history_changes FOR EACH ROW EXECUTE PROCEDURE trg_purge_histories();
+CREATE TRIGGER trg_cleanup_history
+    AFTER DELETE ON history_changes
+    FOR EACH ROW
+    EXECUTE PROCEDURE trg_purge_histories();
 
 
 --
 -- Name: trg_comment_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_comment_search_update BEFORE INSERT OR UPDATE ON comments FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_comment_search_update
+    BEFORE INSERT OR UPDATE ON comments
+    FOR EACH ROW
+    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: trg_forum_post_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_forum_post_search_update BEFORE INSERT OR UPDATE ON forum_posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_forum_post_search_update
+    BEFORE INSERT OR UPDATE ON forum_posts
+    FOR EACH ROW
+    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
 -- Name: trg_history_changes_value_index_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_history_changes_value_index_update BEFORE INSERT OR UPDATE ON history_changes FOR EACH ROW EXECUTE PROCEDURE history_changes_index_trigger();
+CREATE TRIGGER trg_history_changes_value_index_update
+    BEFORE INSERT OR UPDATE ON history_changes
+    FOR EACH ROW
+    EXECUTE PROCEDURE history_changes_index_trigger();
 
 
 --
 -- Name: trg_note_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_note_search_update BEFORE INSERT OR UPDATE ON notes FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_note_search_update
+    BEFORE INSERT OR UPDATE ON notes
+    FOR EACH ROW
+    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: trg_pools_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_pools_search_update BEFORE INSERT OR UPDATE ON pools FOR EACH ROW EXECUTE PROCEDURE pools_search_update_trigger();
+CREATE TRIGGER trg_pools_search_update
+    BEFORE INSERT OR UPDATE ON pools
+    FOR EACH ROW
+    EXECUTE PROCEDURE pools_search_update_trigger();
 
 
 --
 -- Name: trg_posts_tags__delete; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__delete BEFORE DELETE ON posts_tags FOR EACH ROW EXECUTE PROCEDURE trg_posts_tags__delete();
+CREATE TRIGGER trg_posts_tags__delete
+    BEFORE DELETE ON posts_tags
+    FOR EACH ROW
+    EXECUTE PROCEDURE trg_posts_tags__delete();
 
 
 --
 -- Name: trg_posts_tags__insert; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__insert BEFORE INSERT ON posts_tags FOR EACH ROW EXECUTE PROCEDURE trg_posts_tags__insert();
+CREATE TRIGGER trg_posts_tags__insert
+    BEFORE INSERT ON posts_tags
+    FOR EACH ROW
+    EXECUTE PROCEDURE trg_posts_tags__insert();
 
 
 --
 -- Name: trg_posts_tags_index_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags_index_update BEFORE INSERT OR UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('tags_index', 'public.danbooru', 'cached_tags');
+CREATE TRIGGER trg_posts_tags_index_update
+    BEFORE INSERT OR UPDATE ON posts
+    FOR EACH ROW
+    EXECUTE PROCEDURE tsvector_update_trigger('tags_index', 'public.danbooru', 'cached_tags');
 
 
 --
 -- Name: trg_wiki_page_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_wiki_page_search_update BEFORE INSERT OR UPDATE ON wiki_pages FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_wiki_page_search_update
+    BEFORE INSERT OR UPDATE ON wiki_pages
+    FOR EACH ROW
+    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
@@ -3776,5 +3810,3 @@ INSERT INTO schema_migrations (version) VALUES ('20110116202516');
 INSERT INTO schema_migrations (version) VALUES ('20110228010717');
 
 INSERT INTO schema_migrations (version) VALUES ('20120331040429');
-
-INSERT INTO schema_migrations (version) VALUES ('20120505130017');

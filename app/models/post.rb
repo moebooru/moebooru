@@ -24,12 +24,12 @@ class Post < ActiveRecord::Base
   # Finds posts which contains tags. Using operator and.
   # Options:
   #   :only_ids: set to true to only return array of ids.
-  def self.has_tags(search_tags, options = {})
-    search_tags = Array(search_tags)
+  def self.has_tags(tags, options = {})
+    tags = Array(tags)
     t = Tag.arel_table
     pt = PostsTag.arel_table
     query = nil
-    search_tags.each_with_index do |tag, i|
+    tags.each do |tag|
       tag_query = t.where(t[:name].eq(tag)).project(t[:id])
       posts_tag_query = pt.where(pt[:tag_id].in(tag_query)).project(pt[:post_id])
       if query

@@ -25,27 +25,16 @@ class Post < ActiveRecord::Base
   # Options:
   #   :only_ids: set to true to only return array of ids.
   def self.has_tags(tags, options = {})
-    tags = Array(tags)
-    t = Tag.arel_table
-    pt = PostsTag.arel_table
-    query = nil
-    tags.each do |tag|
-      tag_query = t.where(t[:name].eq(tag)).project(t[:id])
-      posts_tag_query = pt.where(pt[:tag_id].in(tag_query)).project(pt[:post_id])
-      if query
-        query = query.and(pt[:post_id].in(posts_tag_query))
-      else
-        query = pt[:post_id].in(posts_tag_query)
-      end
-    end
-    p_ids = PostsTag.where(query).map { |pt| pt.post_id }
+    tags = Array(tags).join(' & ')
+    p_ids = Post.where('tags_index @@ to_tsquery(?)', tags);
+    # Return the posts.
     if options[:only_ids]
       p_ids
     else
-      Post.where(:id => p_ids)
+      Post.find(p_ids)
     end
   end
-  
+
   include PostSqlMethods
   include PostCommentMethods
   include PostImageStoreMethods

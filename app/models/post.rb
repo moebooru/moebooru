@@ -24,26 +24,25 @@ class Post < ActiveRecord::Base
   # Finds posts which contains tags. Using operator and.
   # Options:
   #   :only_ids: set to true to only return array of ids.
-  def self.has_tags(tags, options = {})
-    tags = Array(tags)
-    # Make sure we have p_ids variable.
-    p_ids = nil
-    # Get the list of tag_ids to be searched.
-    t_ids = Tag.where(:name => tags).select(:id).map { |t| t.id }
-    # Trim down the searched per tag_id.
-    t_ids.each do |t_id|
-      # nil = first search
-      if not p_ids.nil?
-        p_ids = PostsTag.where(:post_id => p_ids, :tag_id => t_id).select(:post_id).map { |pt| pt.post_id }
+  def self.has_tags(search_tags, options = {})
+    search_tags = Array(search_tags)
+    t = Tag.arel_table
+    pt = PostsTag.arel_table
+    query = nil
+    search_tags.each_with_index do |tag, i|
+      tag_query = t.where(t[:name].eq(tag)).project(t[:id])
+      posts_tag_query = pt.where(pt[:tag_id].in(tag_query)).project(pt[:post_id])
+      if query
+        query = query.and(pt[:post_id].in(posts_tag_query))
       else
-        p_ids = Post.has_tag_id(t_id).select('posts.id').map { |p| p.id }
+        query = pt[:post_id].in(posts_tag_query)
       end
     end
-    # Return the posts.
+    p_ids = PostsTag.where(query).map { |pt| pt.post_id }
     if options[:only_ids]
       p_ids
     else
-      Post.find(p_ids)
+      Post.where(:id => p_ids)
     end
   end
   

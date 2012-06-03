@@ -22,7 +22,9 @@ class Post < ActiveRecord::Base
   scope :has_tag_id, lambda { |t_id| available.joins(:tags).where(:tags => { :id => t_id }) }
 
   # Finds posts which contains tags. Using operator and.
-  def self.has_tags(tags)
+  # Options:
+  #   :only_ids: set to true to only return array of ids.
+  def self.has_tags(tags, options = {})
     # Make sure we have p_ids variable.
     p_ids = nil
     # Get the list of tag_ids to be searched.
@@ -37,7 +39,11 @@ class Post < ActiveRecord::Base
       end
     end
     # Return the posts.
-    Post.find(p_ids)
+    if options[:only_ids]
+      p_ids
+    else
+      Post.find(p_ids)
+    end
   end
   
   include PostSqlMethods

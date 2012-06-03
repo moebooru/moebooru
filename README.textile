@@ -23,6 +23,22 @@ As this is ongoing project, there will be more changes on requirement as this pr
 * GD image library header
 * And various other requirement for the gems (check @Gemfile@ for the list)
 
+On RHEL5, it goes like this:
+
+* gcc
+* gcc-c++
+* gd-devel
+* jhead
+* libxslt-devel
+* libyaml-devel
+* mercurial
+* openssl-devel
+* pcre-devel
+* postgresql84-contrib
+* postgresql84-devel
+* postgresql84-server
+* readline-devel
+
 h2. Installation
 
 * Create a new PostgreSQL user with type of superuser

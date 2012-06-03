@@ -21,16 +21,22 @@ class Post < ActiveRecord::Base
   scope :has_tag, lambda { |t| available.joins(:tags).where(:tags => { :name => t }) }
   scope :has_tag_id, lambda { |t_id| available.joins(:tags).where(:tags => { :id => t_id }) }
 
+  # Finds posts which contains tags. Using operator and.
   def self.has_tags(tags)
+    # Make sure we have p_ids variable.
     p_ids = nil
+    # Get the list of tag_ids to be searched.
     t_ids = Tag.where(:name => tags).select(:id).map { |t| t.id }
+    # Trim down the searched per tag_id.
     t_ids.each do |t_id|
+      # nil = first search
       if not p_ids.nil?
         p_ids = PostsTag.where(:post_id => p_ids, :tag_id => t_id).select(:post_id).map { |pt| pt.post_id }
       else
         p_ids = Post.has_tag_id(t_id).select('posts.id').map { |p| p.id }
       end
     end
+    # Return the posts.
     Post.find(p_ids)
   end
   

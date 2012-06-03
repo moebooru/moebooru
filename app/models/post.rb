@@ -16,7 +16,7 @@ class Post < ActiveRecord::Base
   has_many :avatars, :class_name => "User", :foreign_key => "avatar_post_id"
   set_callback :delete, :before, :clear_avatars
   after_save :commit_flag
-  has_and_belongs_to_many :tags
+  has_and_belongs_to_many :_tags, :class_name => 'Tag'
   scope :available, where('status <> ?', 'deleted')
   scope :has_tag, lambda { |t| available.joins(:tags).where(:tags => { :name => t }) }
   scope :has_tag_id, lambda { |t_id| available.joins(:tags).where(:tags => { :id => t_id }) }

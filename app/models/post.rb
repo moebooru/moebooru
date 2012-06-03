@@ -19,7 +19,6 @@ class Post < ActiveRecord::Base
   has_and_belongs_to_many :_tags, :class_name => 'Tag'
   scope :available, where('status <> ?', 'deleted')
   scope :has_tag, lambda { |t| joins(:_tags).where(:tags => { :name => t }) }
-  scope :has_tag_id, lambda { |t_id| joins(:_tags).where(:tags => { :id => t_id }) }
 
   # Finds posts which contains tags. Using operator and.
   # Options:

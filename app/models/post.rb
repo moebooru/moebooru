@@ -18,21 +18,8 @@ class Post < ActiveRecord::Base
   after_save :commit_flag
   has_and_belongs_to_many :_tags, :class_name => 'Tag'
   scope :available, where('status <> ?', 'deleted')
-  scope :has_tag, lambda { |t| joins(:_tags).where(:tags => { :name => t }) }
-
-  # Finds posts which contains tags. Using operator and.
-  # Options:
-  #   :only_ids: set to true to only return array of ids.
-  def self.has_tags(tags, options = {})
-    tags = Array(tags).join(' & ')
-    p_ids = Post.where('tags_index @@ to_tsquery(?)', tags);
-    # Return the posts.
-    if options[:only_ids]
-      p_ids
-    else
-      Post.find(p_ids)
-    end
-  end
+  scope :has_any_tags, lambda { |t| where('tags_index @@ ?', Array(t).join(' | ')) }
+  scope :has_all_tags, lambda { |t| where('tags_index @@ ?', Array(t).join(' & ')) }
 
   include PostSqlMethods
   include PostCommentMethods

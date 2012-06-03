@@ -2760,6 +2760,13 @@ CREATE INDEX index_posts_on_width ON posts USING btree (width);
 
 
 --
+-- Name: index_posts_tags_on_post_id_and_tag_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_posts_tags_on_post_id_and_tag_id ON posts_tags USING btree (post_id, tag_id);
+
+
+--
 -- Name: index_server_keys_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3810,3 +3817,5 @@ INSERT INTO schema_migrations (version) VALUES ('20110116202516');
 INSERT INTO schema_migrations (version) VALUES ('20110228010717');
 
 INSERT INTO schema_migrations (version) VALUES ('20120331040429');
+
+INSERT INTO schema_migrations (version) VALUES ('20120505130017');

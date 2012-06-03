@@ -1,5 +1,8 @@
 module TagRelatedTagMethods
   module ClassMethods
+    # Returns tags (with type specified by input) related by input tag
+    # In array of hashes.
+    # Hash in format { 'name' => tag_name, 'post_count' => tag_post_count }
     def calculate_related_by_type(tag, type, limit = 25)
       Rails.cache.fetch({ :category => :reltags_by_type, :type => type, :tag => tag }, :expires_in => 1.hour) do
         Tag.joins(:posts).where(:posts => { :id => Post.has_tag(tag) }, :tag_type => type).group(:name).count(:all, :order => 'count_all DESC', :limit => limit).reduce([]) do

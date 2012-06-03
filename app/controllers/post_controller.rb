@@ -180,7 +180,7 @@ class PostController < ApplicationController
     user_id = @current_user.id
 
     ids = {}
-    params["post"].each { |post|
+    (params['post'] || []).each do |post|
       if post.is_a?(Array) then
         # We prefer { :id => 1, :rating => 's' }, but accept ["123", {:rating => 's'}], since that's
         # what we'll get from HTML forms.
@@ -213,7 +213,7 @@ class PostController < ApplicationController
         ids[@post.parent_id] = true if @post.parent_id
         ids[old_parent_id] = true if old_parent_id
       end
-    }
+    end
 
     # Updates to one post may affect others, so only generate the return list after we've already
     # updated everything.

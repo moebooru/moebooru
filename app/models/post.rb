@@ -19,6 +19,20 @@ class Post < ActiveRecord::Base
   has_and_belongs_to_many :tags
   scope :available, where('status <> ?', 'deleted')
   scope :has_tag, lambda { |t| available.joins(:tags).where(:tags => { :name => t }) }
+  scope :has_tag_id, lambda { |t_id| available.joins(:tags).where(:tags => { :id => t_id }) }
+
+  def self.has_tags(tags)
+    p_ids = nil
+    t_ids = Tag.where(:name => tags).select(:id).map { |t| t.id }
+    t_ids.each do |t_id|
+      if not p_ids.nil?
+        p_ids = PostsTag.where(:post_id => p_ids, :tag_id => t_id).select(:post_id).map { |pt| pt.post_id }
+      else
+        p_ids = Post.has_tag_id(t_id).select('posts.id').map { |p| p.id }
+      end
+    end
+    Post.find(p_ids)
+  end
   
   include PostSqlMethods
   include PostCommentMethods

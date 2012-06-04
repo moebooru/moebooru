@@ -46,7 +46,7 @@
      </tbody>
    </table>
   </div>
-  
+
   <div style="margin-bottom: 1em;">
   <ul id="post-list-posts">
     <% @posts.each do |p| %>
@@ -54,7 +54,7 @@
     <% end %>
   </ul>
   </div>
-  
+
   <% content_for :footer do %>
     <li><%= link_to "Edit", :action => "update", :id => @artist.id %></li>
     <li><%= link_to "Delete", :action => "destroy", :id => @artist.id %></li>
@@ -63,6 +63,6 @@
       <li><%= link_to "Create alias", :action => "add", :alias_id => @artist.id %></li>
     <% end %>
   <% end %>
-  
+
   <%= render :partial => "footer" %>
 </div>

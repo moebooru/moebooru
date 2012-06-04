@@ -46,7 +46,7 @@ module PostTagMethods
       }
     end
   end
-  
+
   def self.included(m)
     m.extend ClassMethods
     m.before_save :commit_metatags
@@ -56,7 +56,7 @@ module PostTagMethods
     m.versioned :source, :default => ""
     m.versioned :cached_tags
   end
-  
+
   def cached_tags_undo(change, redo_changes=false)
     current_tags = self.cached_tags.scan(/\S+/)
     prev = change.previous
@@ -81,7 +81,7 @@ module PostTagMethods
   def tag_title
     return title_tags.gsub(/\W+/, "-")[0, 50]
   end
-  
+
   # Return the tags we display in URLs, page titles, etc.
   def title_tags
     ret = ""
@@ -103,7 +103,7 @@ module PostTagMethods
     current_tags = cached_tags.scan(/\S+/)
     self.touch_change_seq! if new_tags != current_tags
   end
-  
+
   # Returns all versioned tags and metatags.
   def cached_tags_versioned
     ["rating:" + self.rating, cached_tags].join(" ")
@@ -153,7 +153,7 @@ module PostTagMethods
     end
 
     metatags, self.new_tags = new_tags.partition {|x| x=~ /^((?:-pool|pool|rating|parent|child):|[qse]$)/}
-    
+
     transaction do
       metatags.each do |metatag|
         if metatag =~ /^([qse])$/
@@ -173,7 +173,7 @@ module PostTagMethods
             if defined?(seq) then
               options[:sequence] = seq
             end
-            
+
             if pool.nil? and name !~ /^\d+$/
               pool = Pool.create(:name => name, :is_public => false, :user_id => updater_user_id)
             end
@@ -203,7 +203,7 @@ module PostTagMethods
           end
 
           pool.remove_post(id) if pool
-        
+
         when /^rating:([qse])/
           self.rating = $1 # so we don't have to reload for history_tag_string below
           execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
@@ -211,7 +211,7 @@ module PostTagMethods
 
         when /^parent:(\d*)/
           self.parent_id = $1
-        
+
           if CONFIG["enable_parent_posts"] && (Post.exists?(parent_id) or parent_id == 0)
             Post.set_parent(id, parent_id)
           end

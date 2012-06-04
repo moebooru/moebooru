@@ -70,7 +70,7 @@ module HistoryHelper
             :suppress_fields => [:sequence], # changing active usually changes sequence; this isn't interesting
             :primary_order => 2, # show pool post changes after other things
           },
-          :cached_tags => {  }, 
+          :cached_tags => {  },
         },
       },
 
@@ -157,7 +157,7 @@ module HistoryHelper
       end
     end
 
-    parts.sort! { |a,b| 
+    parts.sort! { |a,b|
       comp = 0
       [:primary_order, :field, :sort_key].each { |field|
         comp = a[field] <=> b[field]
@@ -411,9 +411,9 @@ module HistoryHelper
     name ||= "UNKNOWN"
     prefix = options[:prefix] || ""
     obsolete = options[:obsolete] || []
-    
+
     tag_type = Tag.type_name(name)
-    
+
     obsolete_tag = ([name] & obsolete).empty? ?  "":" obsolete"
     tag = ""
     tag << %{<span class="tag-type-#{tag_type}#{obsolete_tag}">}
@@ -424,7 +424,7 @@ module HistoryHelper
 
   def tag_list(tags, options = {})
     return [] if tags.blank?
-    
+
     html = ""
     html << %{<span class="#{ options[:class] }">}
 
@@ -434,7 +434,7 @@ module HistoryHelper
     end
 
     return [] if tags_html.empty?
-    
+
     html << tags_html.join(" ")
     html << %{</span>}
     return [html]

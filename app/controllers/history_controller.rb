@@ -4,7 +4,7 @@ class HistoryController < ApplicationController
   layout 'default'
 #  before_filter :member_only
   verify :method => :post, :only => [:undo]
- 
+
   def index
     set_title "History"
 
@@ -181,10 +181,10 @@ class HistoryController < ApplicationController
 
     render :action => :index
   end
-  
+
   def undo
     ids = params[:id].split(/,/)
-    
+
     @changes = []
     ids.each do |id|
       @changes += HistoryChange.find(:all, :conditions => ["id = ?", id])

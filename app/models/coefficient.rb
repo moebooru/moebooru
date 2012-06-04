@@ -1,3 +1,3 @@
-class Coefficient < ActiveRecord::Base  
+class Coefficient < ActiveRecord::Base
   belongs_to :post
 end

@@ -4,7 +4,7 @@ module PostSqlMethods
       tag = tag.downcase.tr(" ", "_")
       find(:all, :conditions => ["tags.name = ?", tag], :select => "posts.*", :joins => "JOIN posts_tags ON posts_tags.post_id = posts.id JOIN tags ON tags.id = posts_tags.tag_id", :limit => options[:limit], :offset => options[:offset], :order => (options[:order] || "posts.id DESC"))
     end
-    
+
     def generate_sql_range_helper(arr, field, c, p)
       case arr[0]
       when :eq
@@ -14,7 +14,7 @@ module PostSqlMethods
       when :gt
         c << "#{field} > ?"
         p << arr[1]
-    
+
       when :gte
         c << "#{field} >= ?"
         p << arr[1]
@@ -79,12 +79,12 @@ module PostSqlMethods
         conds << "p.md5 IN (?)"
         cond_params << q[:md5].split(/,/)
       end
-    
+
       if q[:ext].is_a?(String)
         conds << "p.file_ext IN (?)"
         cond_params << q[:ext].downcase.split(/,/)
       end
-    
+
       if q.has_key?(:show_deleted_only)
         if q[:show_deleted_only]
           conds << "p.status = 'deleted'"
@@ -240,7 +240,7 @@ module PostSqlMethods
       if options[:pending]
         conds << "p.status = 'pending'"
       end
-    
+
       if options[:flagged]
         conds << "p.status = 'flagged'"
       end
@@ -301,16 +301,16 @@ module PostSqlMethods
         case q[:order]
         when "id"
           sql << " ORDER BY p.id"
-        
+
         when "id_desc"
           sql << " ORDER BY p.id DESC"
-        
+
         when "score"
           sql << " ORDER BY p.score DESC"
-        
+
         when "score_asc"
           sql << " ORDER BY p.score"
-        
+
         when "mpixels"
           # Use "w*h/1000000", even though "w*h" would give the same result, so this can use
           # the posts_mpixels index.
@@ -383,7 +383,7 @@ module PostSqlMethods
       return Post.sanitize_sql_array([sql, *params])
     end
   end
-  
+
   def self.included(m)
     m.extend(ClassMethods)
   end

@@ -27,20 +27,20 @@ class WikiController < ApplicationController
 
   def index
     set_title "Wiki"
-    
+
     @params = params
     if params[:order] == "date"
       order = "updated_at DESC"
     else
       order = "lower(title)"
     end
-    
+
     limit = params[:limit] || 25
     query = params[:query] || ""
 
     search_params = {
       :order => order,
-      :per_page => limit, 
+      :per_page => limit,
       :page => params[:page]
     }
 
@@ -52,7 +52,7 @@ class WikiController < ApplicationController
         search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
       end
     end
-      
+
     @wiki_pages = WikiPage.paginate(search_params)
 
     respond_to_list("wiki_pages")
@@ -137,7 +137,7 @@ class WikiController < ApplicationController
 
   def recent_changes
     set_title "Recent Changes"
-    
+
     if params[:user_id]
       @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => params[:page], :conditions => ["user_id = ?", params[:user_id]]
     else
@@ -177,7 +177,7 @@ class WikiController < ApplicationController
     @oldpage = WikiPage.find_page(params[:title], params[:from])
     @difference = @oldpage.diff(params[:to])
   end
-  
+
   def rename
     @wiki_page = WikiPage.find_page(params[:title])
   end

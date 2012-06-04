@@ -2,16 +2,16 @@ require 'mirror'
 require "erb"
 include ERB::Util
 
-class Pool < ActiveRecord::Base  
+class Pool < ActiveRecord::Base
   belongs_to :user
   validates_presence_of :name
 
   class PostAlreadyExistsError < Exception
   end
-  
+
   class AccessDeniedError < Exception
   end
-  
+
   module PostMethods
     def self.included(m)
       m.extend(ClassMethods)
@@ -24,7 +24,7 @@ class Pool < ActiveRecord::Base
       m.set_callback :undo, :after, :update_pool_links
       m.after_save :expire_cache
     end
-    
+
     module ClassMethods
       def get_pool_posts_from_posts(posts)
         post_ids = posts.map { |post| post.id }
@@ -46,7 +46,7 @@ class Pool < ActiveRecord::Base
     def can_be_updated_by?(user)
       is_public? || user.has_permission?(self)
     end
-    
+
     def add_post(post_id, options = {})
       transaction do
         if options[:user] && !can_be_updated_by?(options[:user])
@@ -66,7 +66,7 @@ class Pool < ActiveRecord::Base
         else
           PoolPost.create(:pool_id => id, :post_id => post_id, :sequence => seq)
         end
-        
+
         unless options[:skip_update_pool_links]
           self.reload
           update_pool_links
@@ -79,7 +79,7 @@ class Pool < ActiveRecord::Base
         if options[:user] && !can_be_updated_by?(options[:user])
           raise AccessDeniedError
         end
-        
+
         pool_post = all_pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
         if pool_post then
           pool_post.active = false
@@ -104,7 +104,7 @@ class Pool < ActiveRecord::Base
       self.remove_post(post_id)
       self.add_post(parent_id, :sequence => sequence)
     end
-    
+
     def get_sample
       # By preference, pick the first post (by sequence) in the pool that isn't hidden from
       # the index.
@@ -141,7 +141,7 @@ class Pool < ActiveRecord::Base
       pool_posts.find(:all, :select => "sequence", :order => "sequence DESC").each { |pp|
         seq = [seq, pp.sequence.to_i].max
       }
-      
+
       return seq + 1
     end
 
@@ -149,7 +149,7 @@ class Pool < ActiveRecord::Base
       Rails.cache.expire
     end
   end
-  
+
   module ApiMethods
     def api_attributes
       return {
@@ -163,7 +163,7 @@ class Pool < ActiveRecord::Base
         :description => description,
       }
     end
-    
+
     def as_json(*params)
       api_attributes.as_json(*params)
     end
@@ -177,7 +177,7 @@ class Pool < ActiveRecord::Base
       end
     end
   end
-  
+
   module NameMethods
     module ClassMethods
       def find_by_name(name)
@@ -188,13 +188,13 @@ class Pool < ActiveRecord::Base
         end
       end
     end
-    
+
     def self.included(m)
       m.extend(ClassMethods)
       m.validates_uniqueness_of :name
       m.before_validation :normalize_name
     end
-    
+
     def normalize_name
       self.name = name.gsub(/\s/, "_")
     end
@@ -203,7 +203,7 @@ class Pool < ActiveRecord::Base
       name.tr("_", " ")
     end
   end
-  
+
   module ZipMethods
     def get_zip_filename(options={})
       filename = pretty_name.gsub(/\?/, "")
@@ -266,7 +266,7 @@ class Pool < ActiveRecord::Base
       end
       return true
     end
-    
+
     #nginx version
     def get_zip_data(options={})
       return "" if pool_posts.empty?

@@ -1,30 +1,30 @@
 class JobTask < ActiveRecord::Base
   TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions upload_posts_to_mirrors periodic_maintenance upload_batch_posts update_post_frames)
   STATUSES = %w(pending processing finished error)
-  
+
   validates_inclusion_of :task_type, :in => TASK_TYPES
   validates_inclusion_of :status, :in => STATUSES
-  
+
   def data
     JSON.parse(data_as_json)
   end
-  
+
   def data=(hoge)
     self.data_as_json = hoge.to_json
   end
-  
+
   def execute!
     if repeat_count > 0
       count = repeat_count - 1
     else
       count = repeat_count
     end
-    
+
     begin
       execute_sql("SET statement_timeout = 0")
       update_attributes(:status => "processing")
       __send__("execute_#{task_type}")
-      
+
       if count == 0
         update_attributes(:status => "finished")
       else
@@ -43,7 +43,7 @@ class JobTask < ActiveRecord::Base
       update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
     end
   end
-  
+
   def execute_mass_tag_edit
     start_tags = data["start_tags"]
     result_tags = data["result_tags"]
@@ -51,28 +51,28 @@ class JobTask < ActiveRecord::Base
     updater_ip_addr = data["updater_ip_addr"]
     Tag.mass_edit(start_tags, result_tags, updater_id, updater_ip_addr)
   end
-  
+
   def execute_approve_tag_alias
     ta = TagAlias.find(data["id"])
     updater_id = data["updater_id"]
     updater_ip_addr = data["updater_ip_addr"]
     ta.approve(updater_id, updater_ip_addr)
   end
-  
+
   def execute_approve_tag_implication
     ti = TagImplication.find(data["id"])
     updater_id = data["updater_id"]
     updater_ip_addr = data["updater_ip_addr"]
     ti.approve(updater_id, updater_ip_addr)
   end
-  
+
   def execute_calculate_tag_subscriptions
     return if Rails.cache.read("delay-tag-sub-calc")
     Rails.cache.write("delay-tag-sub-calc", "1", :expires_in => 360.minutes)
     TagSubscription.process_all
     update_attributes(:data => {:last_run => Time.now.strftime("%Y-%m-%d %H:%M")})
   end
-  
+
   def update_data(*args)
     hash = data.merge(args[0])
     update_attributes(:data => hash)
@@ -150,17 +150,17 @@ class JobTask < ActiveRecord::Base
       start = data["start_tags"]
       result = data["result_tags"]
       user = User.find_name(data["updater_id"])
-      
+
       "start:#{start} result:#{result} user:#{user}"
-      
+
     when "approve_tag_alias"
       ta = TagAlias.find(data["id"])
       "start:#{ta.name} result:#{ta.alias_name}"
-      
+
     when "approve_tag_implication"
       ti = TagImplication.find(data["id"])
       "start:#{ti.predicate.name} result:#{ti.consequent.name}"
-      
+
     when "calculate_tag_subscriptions"
       last_run = data["last_run"]
       "last run:#{last_run}"
@@ -196,7 +196,7 @@ class JobTask < ActiveRecord::Base
         return "idle"
       elsif status == "processing" then
         user = User.find_name(data["user_id"])
-        return "uploading #{data["url"]} for #{user}" 
+        return "uploading #{data["url"]} for #{user}"
       end
     when "update_post_frames"
       if status == "pending" then
@@ -206,14 +206,14 @@ class JobTask < ActiveRecord::Base
       end
     end
   end
-  
+
   def self.execute_once
     find(:all, :conditions => ["status = ?", "pending"], :order => "id desc").each do |task|
       task.execute!
       sleep 1
     end
   end
-  
+
   def self.execute_all
     # If we were interrupted without finishing a task, it may be left in processing; reset
     # thos tasks to pending.
@@ -225,5 +225,5 @@ class JobTask < ActiveRecord::Base
       execute_once
       sleep 1
     end
-  end  
+  end
 end

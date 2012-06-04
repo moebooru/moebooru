@@ -11,7 +11,7 @@ module ApplicationHelper
     else
       klass = nil
     end
-    
+
     if %w(tag_alias tag_implication).include?(params[:controller]) && options[:controller] == "tag"
       klass = "current-page"
     end
@@ -71,7 +71,7 @@ module ApplicationHelper
 
     text.html_safe
   end
-  
+
   def id_to_color(id)
     r = id % 255
     g = (id >> 8) % 255
@@ -84,7 +84,7 @@ module ApplicationHelper
       ('/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")).html_safe
     end
   end
-  
+
   def compact_time(time)
     if time > Time.now.beginning_of_day
       time.strftime("%H:%M")
@@ -116,7 +116,7 @@ module ApplicationHelper
     else '%.1f years' % (distance_in_minutes.to_f / 525960.0)
     end
   end
-  
+
   def content_for_prefix(name, &block)
     content_prefix = capture(&block) if block_given?
     @_content_for[name] = content_prefix + @_content_for[name] if content_prefix
@@ -124,14 +124,14 @@ module ApplicationHelper
 
   def navigation_links(post)
     html = []
-    
+
     if post.is_a?(Post)
       html << tag("link", :rel => "prev", :title => "Previous Post", :href => url_for(:controller => "post", :action => "show", :id => post.id - 1))
       html << tag("link", :rel => "next", :title => "Next Post", :href => url_for(:controller => "post", :action => "show", :id => post.id + 1))
-      
+
     elsif post.is_a?(Array)
       posts = post
-      
+
       unless posts.previous_page.nil?
         html << tag("link", :href => url_for(params.merge(:page => 1)), :rel => "first", :title => "First Page")
         html << tag("link", :href => url_for(params.merge(:page => posts.previous_page)), :rel => "prev", :title => "Previous Page")
@@ -144,8 +144,8 @@ module ApplicationHelper
     end
 
     return html.join("\n").html_safe
-  end  
-  
+  end
+
   def make_menu_item(label, url_options = {}, options = {})
     item = {
       :label => label,

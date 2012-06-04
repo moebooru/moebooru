@@ -9,27 +9,27 @@ module TagHelper
   def tag_links(tags, options = {})
     return "" if tags.blank?
     prefix = options[:prefix] || ""
-    
+
     html = ""
-    
+
     case tags[0]
     when String
       tags = Tag.find(:all, :conditions => ["name in (?)", tags], :select => "name, post_count, id").inject({}) {|all, x| all[x.name] = [x.post_count, x.id]; all}.sort {|a, b| a[0] <=> b[0]}.map { |a| [a[0], a[1][0], a[1][1]] }
 
     when Hash
       tags = tags.map {|x| [x["name"], x["post_count"], nil]}
-      
+
     when Tag
       tags = tags.map {|x| [x.name, x.post_count, x.id]}
     end
 
     tags.each do |name, count, id|
       name ||= "UNKNOWN"
-      
+
       tag_type = Tag.type_name(name)
-      
+
       html << %{<li class="tag-type-#{tag_type}">}
-      
+
       if CONFIG["enable_artists"] && tag_type == "artist"
         html << %{<a href="/artist/show?name=#{u(name)}">?</a> }
       else

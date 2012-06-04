@@ -151,12 +151,12 @@
 
 <div style="margin-bottom: 1em; float: left; clear: both;">
   <h4><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "vote:3:#{@user.name} order:vote" %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_favorite_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>    
+  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_favorite_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <div style="margin-bottom: 1em;  float: left; clear: both;">
   <h4><%= link_to "Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
-  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_uploaded_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>    
+  <%= render :partial => "post/posts", :locals => {:posts => @user.recent_uploaded_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <% content_for :footer do %>

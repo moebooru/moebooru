@@ -7,7 +7,7 @@ module TagParseMethods
     def scan_tags(tags)
       tags.to_s.gsub(/[%,]/, "").downcase.scan(/\S+/).uniq
     end
-    
+
     def parse_cast(x, type)
       if type == :integer
         x.to_i
@@ -21,7 +21,7 @@ module TagParseMethods
         end
       end
     end
-    
+
     def parse_helper(range, type = :integer)
       # "1", "0.5", "5.", ".5":
       # (-?(\d+(\.\d*)?|\d*\.\d+))

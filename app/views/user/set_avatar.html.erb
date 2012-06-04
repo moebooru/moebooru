@@ -73,9 +73,9 @@
   // example with a preview of crop results, must have minimumm dimensions
   var width = $("image").width;
   var height = $("image").height;
-  var options = 
+  var options =
   {
-    displayOnInit: true, 
+    displayOnInit: true,
     onEndCrop: onEndCrop,
     previewWrap: 'crop-preview',
     minWidth: 1,
@@ -95,7 +95,7 @@
 
       return { x: Math.round(width), y: Math.round(height) }
     }
-  } 
+  }
 
   <% if @user.has_avatar? && @post == @user.avatar_post then %>
     options.onloadCoords = { x1: <%= @user.avatar_left %> * width, y1: <%= @user.avatar_top %> * height,
@@ -108,6 +108,6 @@
       options.onloadCoords = { x1: height/4, y1: height/4, x2: height*2/4, y2: height*2/4 }
   <% end %>
 
-  new Cropper.ImgWithPreview("image", options) 
+  new Cropper.ImgWithPreview("image", options)
   </script>
 </div>

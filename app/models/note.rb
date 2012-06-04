@@ -5,7 +5,7 @@ class Note < ActiveRecord::Base
   before_save :blank_body
   acts_as_versioned :order => "updated_at DESC"
   after_save :update_post
-  
+
   versioning_group_by :class => :post
   versioned :is_active, :default => 'f', :allow_reverting_to_default => true
   versioned :x
@@ -29,14 +29,14 @@ class Note < ActiveRecord::Base
     def self.included(m)
       m.validate :post_must_not_be_note_locked
     end
-    
+
     def post_must_not_be_note_locked
       if is_locked?
         errors.add_to_base "Post is note locked"
         return false
       end
     end
-    
+
     def is_locked?
       if select_value_sql("SELECT 1 FROM posts WHERE id = ? AND is_note_locked = ?", post_id, true)
         return true
@@ -45,21 +45,21 @@ class Note < ActiveRecord::Base
       end
     end
   end
-  
+
   module ApiMethods
     def api_attributes
       return {
-        :id => id, 
-        :created_at => created_at, 
-        :updated_at => updated_at, 
-        :creator_id => user_id, 
-        :x => x, 
-        :y => y, 
-        :width => width, 
-        :height => height, 
-        :is_active => is_active, 
-        :post_id => post_id, 
-        :body => body, 
+        :id => id,
+        :created_at => created_at,
+        :updated_at => updated_at,
+        :creator_id => user_id,
+        :x => x,
+        :y => y,
+        :width => width,
+        :height => height,
+        :is_active => is_active,
+        :post_id => post_id,
+        :body => body,
         :version => version
       }
     end
@@ -72,10 +72,10 @@ class Note < ActiveRecord::Base
       return api_attributes.as_json(*args)
     end
   end
-  
+
   include LockMethods
   include ApiMethods
-  
+
   def blank_body
     self.body = "(empty)" if body.blank?
   end
@@ -87,7 +87,7 @@ class Note < ActiveRecord::Base
 
   def update_post
     active_notes = select_value_sql("SELECT 1 FROM notes WHERE is_active = ? AND post_id = ? LIMIT 1", true, post_id)
-    
+
     if active_notes
       execute_sql("UPDATE posts SET last_noted_at = ? WHERE id = ?", updated_at, post_id)
     else

@@ -11,7 +11,7 @@ class Comment < ActiveRecord::Base
   after_save :update_fragments
   after_destroy :update_last_commented_at
   attr_accessor :do_not_bump_post
-  
+
   def self.generate_sql(params)
     return Nagato::Builder.new do |builder, cond|
       cond.add_unless_blank "post_id = ?", params[:post_id]
@@ -29,7 +29,7 @@ class Comment < ActiveRecord::Base
 
   def update_last_commented_at
     # return if self.do_not_bump_post
-    
+
     comment_count = connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{post_id}").to_i
     if comment_count <= CONFIG["comment_threshold"]
       connection.execute("UPDATE posts SET last_commented_at = (SELECT created_at FROM comments WHERE post_id = #{post_id} ORDER BY created_at DESC LIMIT 1) WHERE posts.id = #{post_id}")
@@ -70,7 +70,7 @@ class Comment < ActiveRecord::Base
         # the same, so CSS rules can use it later.
         #cls = "from-lang-" + source_lang
         #cls += " to-lang-" + lang
-        #cls += (source_lang == lang)? " original-language":" translated-language" 
+        #cls += (source_lang == lang)? " original-language":" translated-language"
         #marked_text = DText.add_html_class(text, cls)
 
         data[:translated][lang] = text
@@ -158,18 +158,18 @@ class Comment < ActiveRecord::Base
   def author
     return User.find_name(self.user_id)
   end
-  
+
   def pretty_author
     author.tr("_", " ")
   end
-  
+
   def api_attributes
     return {
-      :id => id, 
-      :created_at => created_at, 
-      :post_id => post_id, 
-      :creator => author, 
-      :creator_id => user_id, 
+      :id => id,
+      :created_at => created_at,
+      :post_id => post_id,
+      :creator => author,
+      :creator_id => user_id,
       :body => body
     }
   end

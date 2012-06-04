@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-  
+
   module LoginSystem
     protected
     def access_denied
@@ -221,14 +221,14 @@ class ApplicationController < ActionController::Base
       @record = record
       render :status => 500, :layout => "bare", :inline => "<%= error_messages_for('record') %>"
     end
-    
+
   end
-  
+
   include LoginSystem
   include RespondToHelpers
   include CacheHelper
   #local_addresses.clear
-  
+
   before_filter :time_start
   before_filter :set_title
   before_filter :set_current_user
@@ -275,13 +275,13 @@ class ApplicationController < ActionController::Base
 
   def check_load_average
     current_load = Sys::CPU.load_avg[1]
-    
+
     if request.get? && request.env["HTTP_USER_AGENT"] !~ /Google/ && current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
       render :file => "#{Rails.root}/public/503.html", :status => 503
       return false
     end
-  end  
-  
+  end
+
   def set_title(title = CONFIG["app_name"])
     @page_title = CGI.escapeHTML(title)
   end
@@ -293,15 +293,15 @@ class ApplicationController < ActionController::Base
       cookies["recent_tags"] = tags.slice(0, 20).join(" ")
     end
   end
-  
+
   def set_cache_headers
     response.headers["Cache-Control"] = "max-age=300"
   end
-  
+
   def cache_action
     if request.method == :get && request.env !~ /Googlebot/ && params[:format] != "xml" && params[:format] != "json"
       key, expiry = get_cache_key(controller_name, action_name, params, :user => @current_user)
-      
+
       if key && key.size < 200
         cached = Rails.cache.read(key)
 
@@ -320,7 +320,7 @@ class ApplicationController < ActionController::Base
       yield
     end
   end
-  
+
   def init_cookies
     return if params[:format] == "xml" || params[:format] == "json"
 
@@ -373,19 +373,19 @@ class ApplicationController < ActionController::Base
       else
         cookies["block_reason"] = ""
       end
-      
+
       if @current_user.always_resize_images?
         cookies["resize_image"] = "1"
       else
         cookies["resize_image"] = "0"
       end
-      
+
       if @current_user.show_advanced_editing
         cookies["show_advanced_editing"] = "1"
       else
         cookies["show_advanced_editing"] = "0"
       end
-      cookies["my_tags"] = @current_user.my_tags      
+      cookies["my_tags"] = @current_user.my_tags
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags_array
       cookies["held_post_count"] = @current_user.held_post_count.to_s
     else

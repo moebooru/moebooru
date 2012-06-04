@@ -6,11 +6,11 @@ class PoolController < ApplicationController
   before_filter :post_member_only, :only => [:create]
   before_filter :contributor_only, :only => [:copy, :transfer_metadata]
   helper :post
-  
+
   def index
     set_title "Pools"
 
-    options = { 
+    options = {
       :per_page => 20,
       :page => params[:page]
     }
@@ -99,7 +99,7 @@ class PoolController < ApplicationController
 
     respond_to_list("pools")
   end
-  
+
   def show
     if params[:samples] == "0" then params.delete(:samples) end
 
@@ -158,11 +158,11 @@ class PoolController < ApplicationController
       respond_to_success("Pool updated", :action => "show", :id => params[:id])
     end
   end
-  
+
   def create
     if request.post?
       @pool = Pool.create(params[:pool].merge(:user_id => @current_user.id))
-      
+
       if @pool.errors.empty?
         respond_to_success("Pool created", :action => "show", :id => @pool.id)
       else
@@ -172,7 +172,7 @@ class PoolController < ApplicationController
       @pool = Pool.new(:user_id => @current_user.id)
     end
   end
-  
+
   def copy
     @old_pool = Pool.find_by_id(params[:id])
 
@@ -207,18 +207,18 @@ class PoolController < ApplicationController
       end
     end
   end
-  
+
   def add_post
     if request.post?
       @pool = Pool.find(params[:pool_id])
       session[:last_pool_id] = @pool.id
-      
+
       if params[:pool] && !params[:pool][:sequence].blank?
         sequence = params[:pool][:sequence]
       else
         sequence = nil
       end
-      
+
       begin
         @pool.add_post(params[:post_id], :sequence => sequence, :user => @current_user)
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
@@ -235,25 +235,25 @@ class PoolController < ApplicationController
       else
         @pools = Pool.find(:all, :order => "name", :conditions => ["is_active = TRUE AND (is_public = TRUE OR user_id = ?)", @current_user.id])
       end
-      
+
       @post = Post.find(params[:post_id])
     end
   end
-  
+
   def remove_post
     if request.post?
       @pool = Pool.find(params[:pool_id])
       post = Post.find(params[:post_id])
-      
+
       begin
         @pool.remove_post(params[:post_id], :user => @current_user)
       rescue Pool::AccessDeniedError
         access_denied()
         return
       end
-      
+
       api_data = Post.batch_api_data([post])
- 
+
       response.headers["X-Post-Id"] = params[:post_id]
       respond_to_success("Post removed", {:controller => "post", :action => "show", :id => params[:post_id]}, :api => api_data)
     else
@@ -261,7 +261,7 @@ class PoolController < ApplicationController
       @post = Post.find(params[:post_id])
     end
   end
-  
+
   def order
     @pool = Pool.find(params[:id])
 
@@ -275,26 +275,26 @@ class PoolController < ApplicationController
         params[:pool_post_sequence].each do |i, seq|
           PoolPost.update(i, :sequence => seq)
         end
-        
+
         @pool.reload
         @pool.update_pool_links
       end
-      
+
       flash[:notice] = "Ordering updated"
       redirect_to :action => "show", :id => params[:id]
     else
       @pool_posts = @pool.pool_posts
     end
   end
-  
+
   def import
     @pool = Pool.find(params[:id])
-    
+
     unless @pool.can_be_updated_by?(@current_user)
       access_denied()
       return
     end
-    
+
     if request.post?
       if params[:posts].is_a?(Hash)
         ordered_posts = params[:posts].sort { |a,b| a[1]<=>b[1] }.map { |a| a[0] }
@@ -310,7 +310,7 @@ class PoolController < ApplicationController
           @pool.update_pool_links
         end
       end
-      
+
       redirect_to :action => "show", :id => @pool.id
     else
       respond_to do |fmt|
@@ -322,14 +322,14 @@ class PoolController < ApplicationController
       end
     end
   end
-  
+
   def select
     if @current_user.is_anonymous?
       @pools = Pool.find(:all, :order => "name", :conditions => "is_active = TRUE AND is_public = TRUE")
     else
       @pools = Pool.find(:all, :order => "name", :conditions => ["is_active = TRUE AND (is_public = TRUE OR user_id = ?)", @current_user.id])
     end
-    
+
     render :layout => false
   end
 

@@ -23,7 +23,7 @@
       <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
     </div>
   <% end %>
-  
+
   <%= form_tag({:controller => "post", :action => "create"}, :level => :member, :multipart => true, :id => "edit-form") do %>
     <div id="posts">
       <% if params[:url] %>
@@ -86,7 +86,7 @@
             </th>
             <td>
               <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
-              <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
+              <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> |
               <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
               <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
               <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> |
@@ -123,7 +123,7 @@
       <div id="related"><em>None</em></div>
     </div>
   <% end %>
-  
+
 </div>
 
 <script type="text/javascript">

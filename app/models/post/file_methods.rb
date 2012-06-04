@@ -2,7 +2,7 @@ require "download"
 require "zlib"
 
 # These are methods dealing with getting the image and generating the thumbnail.
-# It works in conjunction with the image_store methods. Since these methods have 
+# It works in conjunction with the image_store methods. Since these methods have
 # to be called in a specific order, they've been bundled into one module.
 module PostFileMethods
   def self.included(m)
@@ -30,21 +30,21 @@ module PostFileMethods
       system('jhead', '-purejpg', tempfile_path)
     end
   end
-  
+
   def ensure_tempfile_exists
     unless File.exists?(tempfile_path)
       errors.add :file, "not found, try uploading again"
       return false
     end
   end
-  
+
   def validate_content_type
     unless %w(jpg png gif swf).include?(file_ext.downcase)
       errors.add(:file, "is an invalid content type: " + file_ext.downcase)
       return false
     end
   end
-  
+
   def pretty_file_name(options={})
     # Include the post number and tags.  Don't include too many tags for posts that have too
     # many of them.
@@ -58,7 +58,7 @@ module PostFileMethods
     # Prioritize tags:
     # - remove artist and circle tags last; these are the most important
     # - general tags can either be important ("fixme") or useless ("red hair")
-    # - remove character tags first; 
+    # - remove character tags first;
 
     tags = Tag.compact_tags(self.cached_tags, 150)
     if options[:type] == :sample then
@@ -228,7 +228,7 @@ module PostFileMethods
   def download_source
     return if source !~ /^http:\/\// || !file_ext.blank?
     return if received_file
-    
+
     begin
       Danbooru.http_get_streaming(source) do |response|
         File.open(tempfile_path, "wb") do |out|
@@ -250,7 +250,7 @@ module PostFileMethods
       return false
     end
   end
-  
+
   def determine_content_type
     if not File.exists?(tempfile_path)
       errors.add_to_base("No file received")
@@ -364,7 +364,7 @@ module PostFileMethods
       nil
     end
   end
-  
+
   def raw_preview_dimensions
     if image?
       dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 300, :height => 300})
@@ -382,7 +382,7 @@ module PostFileMethods
       return [150, 150]
     end
   end
-  
+
   def generate_sample(force_regen = false)
     return true unless image?
     return true unless CONFIG["image_samples"]

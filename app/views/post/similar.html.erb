@@ -1,4 +1,4 @@
-<div id="post-list">  
+<div id="post-list">
     <div class="sidebar">
       <%= render :partial => "search" %>
       <% if CONFIG["can_see_ads"].call(@current_user) %>
@@ -22,7 +22,7 @@
               <% end %>-->
 	      <option value="flag">Flag Post</option>
 	      <option value="apply-tag-script">Apply Tag Script</option>
-	    </select>          
+	    </select>
 	  </div>
 	</form>
       </div>
@@ -99,7 +99,7 @@
 	<%= form_tag(:action => "update") do %>
 	  <%= hidden_field_tag "id", "" %>
 	  <%= hidden_field_tag "post[old_tags]", "" %>
-	  <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
+	  <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %>
 	  <%= submit_tag "Update" %>
           <%= tag(:input, :type => 'button', :value => "Cancel", :class => "cancel") %>
 	<% end %>
@@ -129,7 +129,7 @@
             </tr>
             <tr>
               <th width="20%"><label for="post_file">File</label></th>
-              <td width="80%"><input id="file" name="file" size="50" tabindex="2" type="file"></td>              
+              <td width="80%"><input id="file" name="file" size="50" tabindex="2" type="file"></td>
             </tr>
           </tbody>
         </table>

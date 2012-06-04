@@ -1,7 +1,7 @@
 module FavoriteHelper
   def favorite_list(post)
     html = ''.html_safe
-    
+
     users = post.favorited_by
     users_link = users.map { |user| link_to user.pretty_name, { :controller => :user, :action => :show, :id => user.id } }
 

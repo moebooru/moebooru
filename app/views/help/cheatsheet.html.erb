@@ -6,111 +6,111 @@
     <dl>
       <dt>tag1 tag2</dt>
       <dd>Search for posts that have tag1 and tag2.</dd>
-      
+
       <dt>~tag1 ~tag2</dt>
       <dd>Search for posts that have tag1 or tag2.</dd>
-      
+
       <dt>-tag1</dt>
       <dd>Search for posts that don't have tag1.</dd>
-      
+
       <dt>tag1*</dt>
       <dd>Search for posts with tags that start with tag1.</dd>
-      
+
       <dt>user:bob</dt>
       <dd>Search for posts uploaded by the user Bob.</dd>
-      
+
       <dt>vote:3:bob</dt>
       <dd>Search for posts favorited by the user Bob.</dd>
-      
+
       <dt>md5:foo</dt>
       <dd>Search for posts with the MD5 hash foo.</dd>
-      
+
       <dt>rating:questionable</dt>
       <dd>Search for posts that are rated questionable.</dd>
-    
+
       <dt>-rating:questionable</dt>
       <dd>Search for posts that are not rated questionable.</dd>
-      
+
       <dt>source:http://site.com</dt>
       <dd>Search for posts with a source that starts with http://site.com.</dd>
-    
+
       <dt>id:100</dt>
       <dd>Search for posts with an ID number of 100.</dd>
-      
+
       <dt>id:100..</dt>
       <dd>Search for posts with an ID number of 100 or greater.</dd>
-      
+
       <dt>id:&gt;=100</dt>
       <dd>Same as above.</dd>
 
       <dt>id:&gt;100</dt>
       <dd>Search for posts with an ID number greater than 100.</dd>
-      
+
       <dt>id:..100</dt>
       <dd>Search for posts with an ID number of 100 or less.</dd>
-      
+
       <dt>id:&lt;=100</dt>
       <dd>Same as above.</dd>
 
       <dt>id:&lt;100</dt>
       <dd>Search for posts with an ID number less than 100.</dd>
-      
+
       <dt>id:100..200</dt>
       <dd>Search for posts with an ID number between 100 and 200.</dd>
-  
+
       <dt>width:100</dt>
       <dd>Search for posts with a width of 100 pixels (uses same syntax as id search).</dd>
-    
+
       <dt>height:100</dt>
       <dd>Search for posts with a height of 100 pixels (uses same syntax as id search)</dd>
-      
+
       <dt>score:100</dt>
       <dd>Search for posts with a score of 100 (uses same syntax as id search).</dd>
-      
+
       <dt>mpixels:2.5..</dt>
       <dd>Search for posts with 2.5 million pixels or greater (uses same syntax as id search).</dd>
 
       <dt>date:2007-01-01</dt>
       <dd>Search for posts uploaded on a certain date (uses same syntax as id search).</dd>
-      
+
       <dt>order:id</dt>
       <dd>Order search results in ascending order based on post ID.</dd>
-      
+
       <dt>order:id_desc</dt>
       <dd>Order search results in descending order based on post ID.</dd>
-      
+
       <dt>order:score</dt>
       <dd>Order search results in descending order based on post score.</dd>
-      
+
       <dt>order:score_asc</dt>
       <dd>Order search results in ascending order based on post score.</dd>
 
-      <dt>order:mpixels</dt> 
+      <dt>order:mpixels</dt>
       <dd>Order search results in descending order based on resolution.</dd>
 
-      <dt>order:mpixels_asc</dt> 
+      <dt>order:mpixels_asc</dt>
       <dd>Order search results in descending order based on resolution.</dd>
 
-      <dt>order:landscape</dt> 
+      <dt>order:landscape</dt>
       <dd>Order landscape images first.</dd>
 
-      <dt>order:portrait</dt> 
+      <dt>order:portrait</dt>
       <dd>Order portrait images first.</dd>
 
       <dt>order:vote</dt>
       <dd>Order by when the post was voted (only valid when doing a vote search)</dd>
-      
+
       <% if CONFIG["enable_parent_posts"] %>
         <dt>parent:1234</dt>
         <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
-        
+
         <dt>parent:none</dt>
         <dd>Search for posts that have no parent.</dd>
       <% end %>
-      
+
       <dt class="bad">gun* dress</dt>
       <dd>Pattern searches do not work well with other tags.</dd>
-      
+
       <dt class="bad">~gun dress</dt>
       <dd>Or searches do not work well with other tags.</dd>
 
@@ -128,22 +128,22 @@
     <dl>
       <dt>tag1 tag2</dt>
       <dd>Tags a post with tag1 and tag2.</dd>
-      
+
       <dt>maria-sama_ga_miteru</dt>
       <dd>Replace spaces in tags with underscores.</dd>
-      
+
       <dt>tanaka_rie soryu_asuka_langley</dt>
       <dd>Use LastName FirstName order for characters with Japanese last names, or characters with full Chinese or Korean names. Middle names always follow the first name.</dd>
 
       <dt>john_smith akira_ferrari tony_leung</dt>
       <dd>Use FirstName LastName order for characters with non-Asian names, or characters with Japanese first names but non-Asian last names, or characters with non-Asian first names but Chinese last names.</dd>
-      
+
       <dt>general:food</dt>
       <dd>Prefix a tag with <code>general</code> to remove any type. The prefix will be dropped when the tag is saved.</dd>
-      
+
       <dt>artist:wakatsuki_sana</dt>
       <dd>Prefix a tag with <code>artist:</code> to type it as an artist. The prefix will be dropped when the tag is saved.</dd>
-      
+
       <dt>character:gasai_yuno</dt>
       <dd>Prefix a tag with <code>character:</code> (or <code>char:</code>) to type it as a character.</dd>
 
@@ -155,7 +155,7 @@
 
       <dt>rating:questionable</dt>
       <dd>Rates a post as questionable. This tag is discarded after the rating is changed.</dd>
-      
+
       <% if CONFIG["enable_parent_posts"] %>
         <dt>parent:1234</dt>
         <dd>Sets the post's parent id to 1234. This tag is discarded after the parent id is changed. If the parent id is the same as the post id, then the parent id will be cleared.</dd>
@@ -183,18 +183,18 @@
 
       <dt>forum #1000</dt>
       <dd>Creates a link to forum post #1000.</dd>
-      
+
       <dt>pool #1000</dt>
       <dd>Creates a link to pool #1000.</dd>
-    
+
       <dt>[spoiler]spoiler text[/spoiler]</dt>
       <dd>Marks "spoiler text" as a spoiler.</dd>
-      
+
       <dt>[[link to this page]]</dt>
       <dd>Creates an internal link to the wiki page with title "link to this page".</dd>
-      
+
       <dt>[[my wiki page|click this]]</dt>
-      <dd>Creates an internal link to the wiki page with title "my wiki page", using "click this" for the link text.</dd>      
+      <dd>Creates an internal link to the wiki page with title "my wiki page", using "click this" for the link text.</dd>
     </dl>
   </div>
 
@@ -204,13 +204,13 @@
     <dl>
       <dt>[[link to this page]]</dt>
       <dd>Creates an internal link to the wiki page with title "link to this page".</dd>
-      
+
       <dt>[[my wiki page|click this]]</dt>
       <dd>Creates an internal link to the wiki page with title "my wiki page", using "click this" for the link text.</dd>
-      
+
       <dt>h2. Major Header</dt>
       <dd>Major headers should use h2.</dd>
-      
+
       <dt>h4. Minor Header</dt>
       <dd>Minor headers should use h4.</dd>
     </dl>

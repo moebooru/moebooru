@@ -23,7 +23,7 @@
         <li><%= link_to "» My Favorites", :controller => "post", :action => "index", :tags => "vote:3:#{@current_user.name} order:vote" %></li>
         <li><%= link_to "» Settings", :action => "edit" %></li>
         <li><%= link_to "» Change Password", :action => "change_password" %></li>
-      </ul>      
+      </ul>
     </div>
 
     <% if @current_user.is_janitor_or_higher? %>

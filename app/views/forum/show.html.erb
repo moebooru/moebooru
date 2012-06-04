@@ -16,7 +16,7 @@
 
 <% unless @forum_post.is_locked? %>
   <div style="clear: both;">
-    
+
     <div id="preview" class="response-list" style="display: none; margin: 1em 0;">
     </div>
 
@@ -28,7 +28,7 @@
         <%= submit_tag "Post" %>
         <%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
       <% end %>
-    </div>    
+    </div>
   </div>
 <% end %>
 

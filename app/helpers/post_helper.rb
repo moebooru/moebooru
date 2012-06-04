@@ -21,7 +21,7 @@ module PostHelper
       "href"  => url_options.is_a?(Hash) ? url_for(url_options.merge(:only_path => false)) : url_options
     )
   end
-  
+
   def print_preview(post, options = {})
     is_post = post.instance_of?(Post)
     if is_post and not CONFIG["can_see_post"].call(@current_user, post)
@@ -73,7 +73,7 @@ module PostHelper
     link_class += " no-browser-link" if not is_post
     link = %{<a class="#{link_class}" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
     div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
-    
+
     if post.use_jpeg?(@current_user) and not options[:disable_jpeg_direct_links] then
         if(post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
           dl_width = post.jpeg_width.to_i
@@ -96,7 +96,7 @@ module PostHelper
         end
     end
 
-    directlink_info = 
+    directlink_info =
     %{<span class="directlink-info">} +
         %{<img class="directlink-icon directlink-icon-large" src="/images/ddl_large.gif" alt="">}+
         %{<img class="directlink-icon directlink-icon-small" src="/images/ddl.gif" alt="">}+
@@ -125,7 +125,7 @@ module PostHelper
       directlink_res = %{<span class="directlink-res">#{dl_width} x #{dl_height}</span>}
       directlink = %{<a class="#{ddl_class}" href="#{dl_url}">#{directlink_info}#{directlink_res}</a>}
     end
-      
+
     if is_post
       # Hide regular posts by default.  They'll be unhidden by the scripts once the
       # blacklists are loaded.  Don't do this for ExternalPost, which don't support
@@ -170,9 +170,9 @@ module PostHelper
 
   def vote_widget(user, className="standard-vote-widget")
     html = ""
-    
+
     html << %{<span class="stars #{className}">}
-    
+
     if !user.is_anonymous?
       (0..3).each do |vote|
         html << %{<a href="#" class="star star-#{vote} star-off"></a>}
@@ -180,7 +180,7 @@ module PostHelper
 
       html << %{<span class="vote-up-block"><a class="star vote-up" href="#"></a></span>}
     end
-    
+
     html << %{</span>}
     return html.html_safe
   end

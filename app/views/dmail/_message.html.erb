@@ -4,12 +4,12 @@
   <% else %>
     <h5 class="sent"><%= h(message.title) %></h5>
   <% end %>
-  
+
   <div style="margin-bottom: 1em;">
     <em>Sent by <%= link_to h(message.from.name), :controller => "user", :action => "show", :id => message.from_id %> <%= time_ago_in_words(message.created_at) %> ago</em>
   </div>
 
   <div style="width: 50em;">
     <%= format_text(message.body) %>
-  </div>    
+  </div>
 </div>

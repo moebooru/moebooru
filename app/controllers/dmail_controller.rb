@@ -10,19 +10,19 @@ class DmailController < ApplicationController
     @users = defined?(params[:dmail][:to_name]) ? User.name_starts_with(params[:dmail][:to_name]) : []
     render :layout => false
   end
-  
+
   def show_previous_messages
     @dmails = Dmail.find(:all, :conditions => ["(to_id = ? or from_id = ?) and parent_id = ? and id < ?", @current_user.id, @current_user.id, params[:parent_id], params[:id]], :order => "id asc")
     render :layout => false
   end
-  
+
   def compose
     @dmail = Dmail.new
   end
-  
+
   def create
     @dmail = Dmail.create(params[:dmail].merge(:from_id => @current_user.id))
-    
+
     if @dmail.errors.empty?
       flash[:notice] = "Message sent to #{params[:dmail][:to_name]}"
       redirect_to :action => "inbox"
@@ -31,11 +31,11 @@ class DmailController < ApplicationController
       render :action => "compose"
     end
   end
-  
+
   def inbox
     @dmails = Dmail.paginate :conditions => ["to_id = ? or from_id = ?", @current_user.id, @current_user.id], :order => "created_at desc", :per_page => 25, :page => params[:page]
   end
-  
+
   def show
     @dmail = Dmail.find(params[:id])
 

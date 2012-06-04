@@ -1,8 +1,8 @@
 <div style="margin-bottom: 1em;">
   <%= form_tag({:action => "index"}, :method => :get) do %>
-    <%= text_field_tag "query", params[:query] %> 
+    <%= text_field_tag "query", params[:query] %>
     <%= submit_tag "Search Aliases" %>
-    <%= submit_tag "Search Implications" %>  
+    <%= submit_tag "Search Implications" %>
   <% end %>
 </div>
 
@@ -15,14 +15,14 @@
           <th width="19%">Alias</th>
           <th width="20%">To</th>
           <th width="60%">Reason</th>
-        </tr>        
+        </tr>
       </thead>
       <tfoot>
         <tr>
           <td colspan="4">
             <% if @current_user.is_mod_or_higher? %>
-              <%= button_to_function "Select pending", "$$('.pending').each(function(x) {x.checked = true})" %> 
-              <%= submit_tag "Approve" %> 
+              <%= button_to_function "Select pending", "$$('.pending').each(function(x) {x.checked = true})" %>
+              <%= submit_tag "Approve" %>
             <% end %>
             <%= button_to_function "Delete", "$('reason-box').show(); $('reason').focus()" %>
             <%= button_to_function "Add", "$('add-box').show().scrollTo(); $('tag_alias_name').focus()" %>
@@ -43,7 +43,7 @@
             <td><%= link_to h(a.alias_name), :controller => "post", :action => "index", :tags => a.alias_name %> (<%= Tag.find(a.alias_id).post_count rescue 0 %>)</td>
             <td><%= h a.reason %></td>
           </tr>
-        <% end %>        
+        <% end %>
       </tbody>
     </table>
   <% end %>
@@ -52,12 +52,12 @@
 <div id="add-box" style="display: none;">
   <%= form_tag(:action => "create") do %>
     <h4>Add Alias</h4>
-    <p>You can suggest a new alias, but it must be approved by an administrator before it is activated.</p>  
+    <p>You can suggest a new alias, but it must be approved by an administrator before it is activated.</p>
 
     <% unless @current_user.is_anonymous? %>
       <%= hidden_field_tag "tag_alias[creator_id]", @current_user.id %>
     <% end %>
-    
+
     <table>
       <tr>
         <th><label for="tag_alias_name">Name</label></th>

@@ -13,7 +13,7 @@
       <p>In the Danbooru API, a URL is analogous to a function name. You pass in the function parameters as a query string. Here's an extremely simple example: <a class="code" href="http://miezaru.donmai.us/post/index.xml?limit=1" target="_blank">/post/index.xml?limit=1</a>.</p>
       <p>The <code>post</code> part indicates the controller we're working with. In this case it's posts. <code>index</code> describes the action. Here we're retrieving a list of posts. Finally, the <code>xml</code> part describes what format we want the response in. You can specify <code>.xml</code> for XML responses, <code>.json</code> for JSON responses, and nothing at all for HTML responses.</p>
     </div>
-  
+
     <div class="section">
       <h4>Responses</h4>
       <p>All API calls that change state will return a single element response (for XML calls). They are formatted like this:</p>
@@ -77,7 +77,7 @@
         </tbody>
       </table>
     </div>
-  
+
     <div class="section">
       <h4>JSON Responses</h4>
       <p>While you will probably want to work with XML in the majority of cases, if you're writing something in Javascript then the JSON responses may be preferable. They are much faster to parse and there's less code to write to get your data structure:</p>
@@ -86,7 +86,7 @@
         alert(data.response)
       </div>
     </div>
-  
+
     <div class="section">
       <h4>Logging In</h4>
       <p>Some actions may require you to log in. For any action you can always specify two parameters to identify yourself:</p>
@@ -113,7 +113,7 @@
         <li><strong>tags</strong> The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>Create</h4>
       <p>The base URL is /post/create.xml. There are only two mandatory fields: you need to supply the tags, and you need to supply the file, either through a multipart form or through a source URL.</p>
@@ -178,9 +178,9 @@
       </ul>
     </div>
   </div>
-  
-  
-  
+
+
+
   <div class="section">
     <a name="tags"></a>
     <h2>Tags</h2>
@@ -261,13 +261,13 @@
       </ul>
     </div>
   </div>
-  
-  
+
+
 
   <div class="section">
     <a name="comments"></a>
     <h2>Comments</h2>
-  
+
     <div class="section">
       <h4>Show</h4>
       <p>The base URL is /comment/show.xml. This retrieves a single comment.</p>
@@ -275,7 +275,7 @@
         <li><strong>id</strong> The id number of the comment to retrieve.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>Create</h4>
       <p>The base URL is /comment/create.xml.</p>
@@ -284,7 +284,7 @@
         <li><strong>comment[post_id]</strong> The post id number to which you are responding.</li>
         <li><strong>comment[body]</strong> The body of the comment.</li>
       </ul>
-    </div>  
+    </div>
 
     <div class="section">
       <h4>Destroy</h4>
@@ -294,14 +294,14 @@
       </ul>
     </div>
   </div>
-  
-  
+
+
 
   <div class="section">
     <a name="wiki"></a>
     <h2>Wiki</h2>
     <p>All titles must be exact (but case and whitespace don't matter).</p>
-  
+
     <div class="section">
       <h4>List</h4>
       <p>The base URL is /wiki/index.xml. This retrieves a list of every wiki page.</p>
@@ -312,7 +312,7 @@
         <li><strong>query</strong> A word or phrase to search for.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>Create</h4>
       <p>The base URL is /wiki/create.xml.</p>
@@ -321,7 +321,7 @@
         <li><strong>wiki_page[body]</strong> The body of the wiki page.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>Update</h4>
       <p>The base URL is /wiki/update.xml. Potential error reasons: "Page is locked"</p>
@@ -331,7 +331,7 @@
         <li><strong>wiki_page[body]</strong> The new body of the wiki page.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>Show</h4>
       <p>The base URL is /wiki/show.xml. Potential error reasons: "artist type"</p>
@@ -340,7 +340,7 @@
         <li><strong>version</strong> The version of the page to retrieve.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>Destroy</h4>
       <p>The base URL is /wiki/destroy.xml. You must be logged in as a moderator to use this action.</p>
@@ -364,7 +364,7 @@
         <li><strong>title</strong> The title of the page to unlock.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>Revert</h4>
       <p>The base URL is /wiki/revert.xml. Potential error reasons: "Page is locked"</p>
@@ -373,7 +373,7 @@
         <li><strong>version</strong> The version to revert to.</li>
       </ul>
     </div>
-  
+
     <div class="section">
       <h4>History</h4>
       <p>The base URL is /wiki/history.xml.</p>
@@ -388,7 +388,7 @@
   <div class="section">
     <a name="notes"></a>
     <h2>Notes</h2>
-  
+
     <div class="section">
       <h4>List</h4>
       <p>The base URL is /note/index.xml.</p>
@@ -396,7 +396,7 @@
         <li><strong>post_id</strong> The post id number to retrieve notes for.</li>
       </ul>
     </div>
-    
+
     <div class="section">
       <h4>Search</h4>
       <p>The base URL is /note/search.xml.</p>
@@ -404,7 +404,7 @@
         <li><strong>query</strong> A word or phrase to search for.</li>
       </ul>
     </div>
-    
+
     <div class="section">
       <h4>History</h4>
       <p>The base URL is /note/history.xml. You can either specify <code>id</code>, <code>post_id</code>, or nothing. Specifying nothing will give you a list of every note verison.</p>
@@ -446,7 +446,7 @@
   <div class="section">
     <a name="users"></a>
     <h2>Users</h2>
-  
+
     <div class="section">
       <h4>Search</h4>
       <p>The base URL is /user/index.xml. If you don't specify any parameters you'll get a listing of all users.</p>
@@ -456,13 +456,13 @@
       </ul>
     </div>
   </div>
-  
-  
-  
+
+
+
   <div class="section">
     <a name="forum"></a>
     <h2>Forum</h2>
-    
+
     <div class="section">
       <h4>List</h4>
       <p>The base URL is /forum/index.xml. If you don't specify any parameters you'll get a list of all the parent topics.</p>
@@ -471,13 +471,13 @@
       </ul>
     </div>
   </div>
-  
-  
-  
+
+
+
   <div class="section">
     <a name="pools"></a>
     <h2>Pools</h2>
-    
+
     <div class="section">
       <h4>List Pools</h4>
       <p>The base URL is /pool/index.xml. If you don't specify any parameters you'll get a list of all pools.</p>
@@ -516,7 +516,7 @@
         <li><strong>pool[description]</strong> A description of the pool.</li>
       </ul>
     </div>
-    
+
     <div class="section">
       <h4>Destroy</h4>
       <p>The base URL is /pool/destroy.xml.</p>
@@ -524,7 +524,7 @@
         <li><strong>id</strong> The pool id number.</li>
       </ul>
     </div>
-    
+
     <div class="section">
       <h4>Add Post</h4>
       <p>The base URL is /pool/add_post.xml. Potential error reasons: "Post already exists", "access denied"</p>
@@ -533,7 +533,7 @@
         <li><strong>post_id</strong> The post to add.</li>
       </ul>
     </div>
-    
+
     <div class="section">
       <h4>Remove Post</h4>
       <p>The base URL is /pool/remove_post.xml. Potential error reasons: "access denied"</p>
@@ -543,9 +543,9 @@
       </ul>
     </div>
   </div>
-  
-  
-  
+
+
+
   <div class="section">
     <a name="changelog"></a>
     <h2>Change Log</h2>
@@ -554,7 +554,7 @@
       <ul>
         <li>Added documentation for pools</li>
       </ul>
-      
+
       <h4>1.13.0</h4>
       <ul>
         <li>Changed interface for artists to use new URL system</li>
@@ -564,7 +564,7 @@
         <li>Removed url and md5 parameters from artist search (can just pass the URL or MD5 hash to the name parameter)</li>
       </ul>
     </div>
-    
+
     <div class="section">
       <h4>1.8.1</h4>
       <ul>

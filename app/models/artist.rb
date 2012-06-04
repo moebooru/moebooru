@@ -17,13 +17,13 @@ class Artist < ActiveRecord::Base
         return artists[0, 20]
       end
     end
-    
+
     def self.included(m)
       m.extend(ClassMethods)
       m.after_save :commit_urls
       m.has_many :artist_urls, :dependent => :delete_all
     end
-    
+
     def commit_urls
       if @urls
         artist_urls.clear
@@ -33,7 +33,7 @@ class Artist < ActiveRecord::Base
         end
       end
     end
-    
+
     def urls=(urls)
       @urls = urls
     end
@@ -42,12 +42,12 @@ class Artist < ActiveRecord::Base
       artist_urls.map {|x| x.url}.join("\n")
     end
   end
-  
+
   module NoteMethods
     def self.included(m)
       m.after_save :commit_notes
     end
-    
+
     def wiki_page
       WikiPage.find_page(name)
     end
@@ -63,7 +63,7 @@ class Artist < ActiveRecord::Base
     def notes=(text)
       @notes = text
     end
-    
+
     def commit_notes
       unless @notes.blank?
         if wiki_page.nil?
@@ -76,12 +76,12 @@ class Artist < ActiveRecord::Base
       end
     end
   end
-  
+
   module AliasMethods
     def self.included(m)
       m.after_save :commit_aliases
     end
-    
+
     def commit_aliases
       transaction do
         connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{id}")
@@ -94,11 +94,11 @@ class Artist < ActiveRecord::Base
         end
       end
     end
-    
+
     def alias_names=(names)
       @alias_names = names.split(/\s*,\s*/)
     end
-    
+
     def alias_names
       aliases.map(&:name).join(", ")
     end
@@ -131,12 +131,12 @@ class Artist < ActiveRecord::Base
       end
     end
   end
-  
+
   module GroupMethods
     def self.included(m)
       m.after_save :commit_members
     end
-    
+
     def commit_members
       transaction do
         connection.execute("UPDATE artists SET group_id = NULL WHERE group_id = #{id}")
@@ -149,7 +149,7 @@ class Artist < ActiveRecord::Base
         end
       end
     end
-    
+
     def group_name
       if group_id
         return Artist.find(group_id).name
@@ -165,11 +165,11 @@ class Artist < ActiveRecord::Base
         Artist.find(:all, :conditions => "group_id = #{id}", :order => "name")
       end
     end
-    
+
     def member_names
       members.map(&:name).join(", ")
     end
-    
+
     def member_names=(names)
       @member_names = names.split(/\s*,\s*/)
     end
@@ -183,13 +183,13 @@ class Artist < ActiveRecord::Base
       end
     end
   end
-  
+
   module ApiMethods
     def api_attributes
       return {
-        :id => id, 
-        :name => name, 
-        :alias_id => alias_id, 
+        :id => id,
+        :name => name,
+        :alias_id => alias_id,
         :group_id => group_id,
         :urls => artist_urls.map {|x| x.url}
       }
@@ -205,13 +205,13 @@ class Artist < ActiveRecord::Base
       return api_attributes.as_json(*args)
     end
   end
-  
+
   include UrlMethods
   include NoteMethods
   include AliasMethods
   include GroupMethods
   include ApiMethods
-  
+
   before_validation :normalize
   validates_uniqueness_of :name
   validates_presence_of :name
@@ -221,22 +221,22 @@ class Artist < ActiveRecord::Base
   def normalize
     self.name = name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
   end
-  
+
   def to_s
     return name
   end
-  
+
   def self.generate_sql(name)
     b = Nagato::Builder.new do |builder, cond|
-      case name        
+      case name
       when /^http/
         cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}
-        
+
       else
         cond.add "name LIKE ? ESCAPE E'\\\\'", name.to_escaped_for_sql_like + "%"
       end
     end
-    
+
     return b.to_hash
   end
 end

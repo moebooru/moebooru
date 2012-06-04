@@ -27,13 +27,13 @@
                 <% else %>
                   <strong><%= link_to(h(dmail.title), {:action => "show", :id => dmail.id}, :class => "received") %></strong>
                 <% end %>
-              <% end %>            
+              <% end %>
             </td>
             <td><%= time_ago_in_words(dmail.created_at) %> ago</td>
           </tr>
         <% end %>
       </tbody>
-    </table>  
+    </table>
   </div>
 <% end %>
 

@@ -1,7 +1,7 @@
 class FlaggedPostDetail < ActiveRecord::Base
   belongs_to :post
   belongs_to :user
-  
+
   # If this is set, the user who owns this record won't be included in the API.
   attr_accessor :hide_user
 

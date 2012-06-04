@@ -25,13 +25,13 @@
   // example with a preview of crop results, must have minimumm dimensions
   var width = $("image").width;
   var height = $("image").height;
-  var options = 
+  var options =
   {
-    displayOnInit: true, 
+    displayOnInit: true,
     onEndCrop: onEndCrop,
     minWidth: 1,
     minHeight: 1
-  } 
+  }
 
   /* Default to a square selection. */
   if(width < height)
@@ -39,7 +39,7 @@
   else
     options.onloadCoords = { x1: height/4, y1: height/4, x2: height*2/4, y2: height*2/4 }
 
-  new Cropper.ImgWithPreview("image", options) 
+  new Cropper.ImgWithPreview("image", options)
 
   OnKey(13, {AlwaysAllowOpera: true}, function(e) {
     $("crop").submit();

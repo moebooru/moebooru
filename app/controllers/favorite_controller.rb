@@ -3,7 +3,7 @@ class FavoriteController < ApplicationController
   before_filter :blocked_only, :only => [:create, :destroy]
   verify :method => :post, :only => [:create, :destroy]
   helper :post
-  
+
   def list_users
     @post = Post.find(params[:id])
     respond_to do |fmt|
@@ -16,7 +16,7 @@ class FavoriteController < ApplicationController
       end
     end
   end
-  
+
 protected
   def favorited_users_for_post(post)
     post.favorited_by.map {|x| x.name}.uniq.join(",")

@@ -28,6 +28,8 @@ class String
     return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub('*', '%')
   end
 
+  # The characters \()&|! must be escaped
+  # by prepending them with \ before passed to tsquery.
   def to_escaped_for_tsquery
     return self.gsub(/[\\()&|!]/) { |x| '\\' + x }
   end

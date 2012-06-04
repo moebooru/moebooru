@@ -164,7 +164,7 @@ module TagParseMethods
         elsif token[0] == ?~ && token.size > 1
           q[:include] << token[1..-1]
         elsif token.include?("*")
-	  matches = find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count", :limit => 25, :order => "post_count DESC").map {|i| i.name}
+          matches = find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", token.to_escaped_for_sql_like], :select => "name, post_count", :limit => 25, :order => "post_count DESC").map {|i| i.name}
           matches = ["~no_matches~"] if matches.empty?
           q[:include] += matches
         else

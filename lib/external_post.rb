@@ -5,11 +5,11 @@ class ExternalPost
   class << self
     def get_service_icon(service)
       if service == CONFIG["local_image_service"] then
-	"/favicon.ico"
+        "/favicon.ico"
       elsif service == "gelbooru.com" then # hack
-	"/favicon-" + service + ".png"
+        "/favicon-" + service + ".png"
       else
-	"/favicon-" + service + ".ico"
+        "/favicon-" + service + ".ico"
       end
     end
   end

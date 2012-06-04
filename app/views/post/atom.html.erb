@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom">
-	<title><%= h CONFIG["app_name"] %></title>
-	<link href="<%= scheme %><%= h CONFIG["server_host"] %>/post/atom" rel="self"/>
+  <title><%= h CONFIG["app_name"] %></title>
+  <link href="<%= scheme %><%= h CONFIG["server_host"] %>/post/atom" rel="self"/>
   <link href="<%= scheme %><%= h CONFIG["server_host"] %>/post/index" rel="alternate"/>
   <id><%= scheme %><%= h CONFIG["server_host"] %>/post/atom?tags=<%= h params[:tags] %></id>
   <% if @posts.any? %>

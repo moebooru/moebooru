@@ -2,107 +2,107 @@
     <div class="sidebar">
       <%= render :partial => "search" %>
       <% if CONFIG["can_see_ads"].call(@current_user) %>
-	<%= CONFIG["ad_code_index_side"] %>
+        <%= CONFIG["ad_code_index_side"] %>
       <% end %>
       <div style="margin-bottom: 1em;" id="mode-box">
-	<h5>Mode</h5>
-	<form onsubmit="return false;" action="">
-	  <div>
+        <h5>Mode</h5>
+        <form onsubmit="return false;" action="">
+          <div>
             <select name="mode" id="mode" onchange="PostModeMenu.change()" onkeyup="PostModeMenu.change()" style="width: 13em;">
-	      <option value="view">View Posts</option>
-	      <option value="reparent">Reparent</option>
-	      <option value="dupe">Flag as duplicate</option>
-	      <option value="edit">Edit Posts</option>
-<!--	      <option value="rating-s">Rate Safe</option>
-	      <option value="rating-q">Rate Questionable</option>
-	      <option value="rating-e">Rate Explicit</option>
+              <option value="view">View Posts</option>
+              <option value="reparent">Reparent</option>
+              <option value="dupe">Flag as duplicate</option>
+              <option value="edit">Edit Posts</option>
+<!--              <option value="rating-s">Rate Safe</option>
+              <option value="rating-q">Rate Questionable</option>
+              <option value="rating-e">Rate Explicit</option>
               <% if @current_user.is_privileged_or_higher? %>
-		<option value="lock-rating">Lock Rating</option>
-		<option value="lock-note">Lock Notes</option>
+                <option value="lock-rating">Lock Rating</option>
+                <option value="lock-note">Lock Notes</option>
               <% end %>-->
-	      <option value="flag">Flag Post</option>
-	      <option value="apply-tag-script">Apply Tag Script</option>
-	    </select>
-	  </div>
-	</form>
+              <option value="flag">Flag Post</option>
+              <option value="apply-tag-script">Apply Tag Script</option>
+            </select>
+          </div>
+        </form>
       </div>
 
       <%= render :partial => "tag_script" %>
       <%= render :partial => 'blacklists' %>
 
       <div>
-	<h5>Services</h5>
-	<ul>
-	  <li> <%= link_to "Use all services", :controller => "post", :action => "similar", :params => params.merge({:services=>"all"}) %>
-	  <% CONFIG["image_service_list"].map do |service, server| %>
-	  <li>
-	    <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
-	      <%= image_tag(get_service_icon(service), :class=>"service-icon", :id=>"list") %>
+        <h5>Services</h5>
+        <ul>
+          <li> <%= link_to "Use all services", :controller => "post", :action => "similar", :params => params.merge({:services=>"all"}) %>
+          <% CONFIG["image_service_list"].map do |service, server| %>
+          <li>
+            <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
+              <%= image_tag(get_service_icon(service), :class=>"service-icon", :id=>"list") %>
               <%= link_to "#{service}", :controller => "post", :action => "similar", :params => params.merge({:services=>service}) %>
-	      <% if @errors[server] %>
-		(down)
+              <% if @errors[server] %>
+                (down)
                 <!-- <%= @errors[server][:message] %> -->
-	      <% end %>
-	    </span>
-	  <% end %>
-	</ul>
+              <% end %>
+            </span>
+          <% end %>
+        </ul>
       </div>
       <div>
-	<h5>Options</h5>
-	<ul>
-	  <li> <%= link_to params[:forcegray]? "Don't ignore colors":"Ignore colors", :controller => "post", :action => "similar", :params => params.merge({:forcegray=>params[:forcegray]? 0:1}) %>
-	  <% unless params[:threshold] %>
-	  <li><%= link_to "Show More", :controller => "post", :action => "similar", :params => params.merge({:threshold=>0}) %></li>
-	  <% end %>
-	  <% if params[:url] %>
-	  <li>
+        <h5>Options</h5>
+        <ul>
+          <li> <%= link_to params[:forcegray]? "Don't ignore colors":"Ignore colors", :controller => "post", :action => "similar", :params => params.merge({:forcegray=>params[:forcegray]? 0:1}) %>
+          <% unless params[:threshold] %>
+          <li><%= link_to "Show More", :controller => "post", :action => "similar", :params => params.merge({:threshold=>0}) %></li>
+          <% end %>
+          <% if params[:url] %>
+          <li>
           <%= link_to "Upload this image", :controller => "post", :action => "upload",
                   :url => (params[:full_url] or params[:url]),
                   :tags => params[:tags],
                   :rating => params[:rating],
                   :parent => params[:parent]
           %>
-	  </li>
-	  <% end %>
-	</ul>
+          </li>
+          <% end %>
+        </ul>
       </div>
     </div>
     <% if @initial %>
       <div id="duplicate">
-	Your post may be a duplicate.
-	Please read the <%= link_to "duplicate post guidelines", :controller => "wiki", :action => "show", :title => "duplicate post_guidelines" %>.
-	<ul>
-	<li>
-	  If your post is a better version of an existing one, but the old post should remain,
-	  <%= link_to_function( "reparent", "$('mode').value = 'reparent'; PostModeMenu.change();"); %>
-	  the old post.
-	<li>
-	  If your post is a better version of an existing one, and the old post should be deleted,
-	  <%= link_to_function( "mark the old post as a duplicate", "$('mode').value = 'dupe'; PostModeMenu.change();"); %>.
-	<li>
-	  <form action=<%= url_for(:action => "destroy", :name=>"destroy") %> id="destroy" method="post">
+        Your post may be a duplicate.
+        Please read the <%= link_to "duplicate post guidelines", :controller => "wiki", :action => "show", :title => "duplicate post_guidelines" %>.
+        <ul>
+        <li>
+          If your post is a better version of an existing one, but the old post should remain,
+          <%= link_to_function( "reparent", "$('mode').value = 'reparent'; PostModeMenu.change();"); %>
+          the old post.
+        <li>
+          If your post is a better version of an existing one, and the old post should be deleted,
+          <%= link_to_function( "mark the old post as a duplicate", "$('mode').value = 'dupe'; PostModeMenu.change();"); %>.
+        <li>
+          <form action=<%= url_for(:action => "destroy", :name=>"destroy") %> id="destroy" method="post">
             <%= hidden_field_tag "id", params[:id], :id=>"destroy_id" %>
-	    <%= hidden_field_tag "reason", "duplicate" %>
-	    Otherwise, please
-	    <%= link_to_function( "delete your post", nil) do |page| page.call "$('destroy').submit" end %>.
-	  </form>
-	</ul>
-	<div id="blacklisted-notice" style="display: none;">
+            <%= hidden_field_tag "reason", "duplicate" %>
+            Otherwise, please
+            <%= link_to_function( "delete your post", nil) do |page| page.call "$('destroy').submit" end %>.
+          </form>
+        </ul>
+        <div id="blacklisted-notice" style="display: none;">
           Your tag blacklist has hidden some potential duplicates.  Use <b>Hidden Posts</b> in
           the sidebar to view hidden posts.
-	</div>
+        </div>
       </div>
     <% end %>
     <div class="content">
       <div id="quick-edit" style="display: none; margin-bottom: 1em;">
-	<h4>Edit Tags</h4>
-	<%= form_tag(:action => "update") do %>
-	  <%= hidden_field_tag "id", "" %>
-	  <%= hidden_field_tag "post[old_tags]", "" %>
-	  <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %>
-	  <%= submit_tag "Update" %>
+        <h4>Edit Tags</h4>
+        <%= form_tag(:action => "update") do %>
+          <%= hidden_field_tag "id", "" %>
+          <%= hidden_field_tag "post[old_tags]", "" %>
+          <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %>
+          <%= submit_tag "Update" %>
           <%= tag(:input, :type => 'button', :value => "Cancel", :class => "cancel") %>
-	<% end %>
+        <% end %>
       </div>
 
       <% unless @initial %>

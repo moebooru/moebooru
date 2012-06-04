@@ -370,7 +370,7 @@ class Pool < ActiveRecord::Base
         next if post.status == 'deleted'
 
         # Strip Rails.root/public off the file path, so the paths are relative to document-root.
-	if jpeg && post.has_jpeg?
+        if jpeg && post.has_jpeg?
           path = post.jpeg_path
           file_ext = "jpg"
         else
@@ -379,8 +379,8 @@ class Pool < ActiveRecord::Base
         end
         path = path[Rails.root.join('public').to_s.length .. path.length]
 
-	# For padding filenames, break numbers apart on hyphens and pad each part.  For
-	# example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
+        # For padding filenames, break numbers apart on hyphens and pad each part.  For
+        # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
         filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) { |m|
           if $1 != ""
             suffix = $3
@@ -405,7 +405,7 @@ class Pool < ActiveRecord::Base
 
         buf << "#{filename}\n"
         buf << "#{path}\n"
-	if jpeg && post.has_jpeg?
+        if jpeg && post.has_jpeg?
           buf << "#{post.jpeg_size}\n"
           buf << "#{post.jpeg_crc32}\n"
         else
@@ -453,23 +453,23 @@ class Pool < ActiveRecord::Base
       end
 
       if !self.zip_is_warehoused && all_posts_in_zip_are_warehoused?(options)
-	delay = ServerKey.find(:first, :conditions => ["name = 'delay-mirrors-down'"])
-	if delay.nil?
-	  delay = ServerKey.create(:name => "delay-mirrors-down", :value => 0)
-	end
-	if delay.value.to_i < Time.now.to_i
-	  # Send the control file to all mirrors, if we have any.
-	  begin
-	    # This is being done interactively, so use a low timeout.
-	    Mirrors.copy_file_to_mirrors(control_path, :timeout => 5)
-	    self.update_attributes(:zip_is_warehoused => true)
+        delay = ServerKey.find(:first, :conditions => ["name = 'delay-mirrors-down'"])
+        if delay.nil?
+          delay = ServerKey.create(:name => "delay-mirrors-down", :value => 0)
+        end
+        if delay.value.to_i < Time.now.to_i
+          # Send the control file to all mirrors, if we have any.
+          begin
+            # This is being done interactively, so use a low timeout.
+            Mirrors.copy_file_to_mirrors(control_path, :timeout => 5)
+            self.update_attributes(:zip_is_warehoused => true)
           rescue Mirrors::MirrorError => e
-	    # If mirroring is failing, disable it for a while.  It might be timing out, and this
-	    # will make the UI unresponsive.
-	    delay.update_attributes!(:value => Time.now.to_i + 60*60)
-	    ActiveRecord::Base.logger.error("Error warehousing ZIP control file: #{e}")
-	  end
-	end
+            # If mirroring is failing, disable it for a while.  It might be timing out, and this
+            # will make the UI unresponsive.
+            delay.update_attributes!(:value => Time.now.to_i + 60*60)
+            ActiveRecord::Base.logger.error("Error warehousing ZIP control file: #{e}")
+          end
+        end
       end
 
       return control_path

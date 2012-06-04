@@ -17,7 +17,7 @@
             <span class="info vote-container"><strong>Score</strong>
               <span id="post-score-<%= post.id %>"><%= post.score %></span>
               <%= vote_widget(@current_user) %>
-	      <%= vote_tooltip_widget() %>
+              <%= vote_tooltip_widget() %>
             </span>
 
             <% if post.comments.size > 6 %>

@@ -253,10 +253,10 @@ module PostSqlMethods
         elsif q[:show_holds] == :yes
         end
       else
-	# Hide held posts by default only when not using the API.
-	if not options[:from_api] then
-	  conds << "NOT p.is_held"
-	end
+        # Hide held posts by default only when not using the API.
+        if not options[:from_api] then
+          conds << "NOT p.is_held"
+        end
       end
 
       if q.has_key?(:show_pending)
@@ -267,10 +267,10 @@ module PostSqlMethods
         elsif q[:show_pending] == :yes
         end
       else
-	# Hide pending posts by default only when not using the API.
-	if CONFIG["hide_pending_posts"] and not options[:from_api] then
+        # Hide pending posts by default only when not using the API.
+        if CONFIG["hide_pending_posts"] and not options[:from_api] then
           conds << "p.status <> 'pending'"
-	end
+        end
       end
 
       if q.has_key?(:shown_in_index)
@@ -280,7 +280,7 @@ module PostSqlMethods
           conds << "NOT p.is_shown_in_index"
         end
       elsif original_query.blank? and not options[:from_api]
-	# Hide not shown posts by default only when not using the API.
+        # Hide not shown posts by default only when not using the API.
         conds << "p.is_shown_in_index"
       end
 

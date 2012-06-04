@@ -62,7 +62,7 @@
                 :id => change.group_by_id %></td>
             <% end %>
             <td><%= change.created_at.strftime("%b %d %Y, %H:%M") %></td>
-	    <td class="author"><%= link_to_unless change.user_id == nil, change.author, {:controller => "user", :action => "show", :id => change.user_id}, {:class => "user-%i" % change.user_id.to_i + (new_user ? " new-user":"")} %></td>
+            <td class="author"><%= link_to_unless change.user_id == nil, change.author, {:controller => "user", :action => "show", :id => change.user_id}, {:class => "user-%i" % change.user_id.to_i + (new_user ? " new-user":"")} %></td>
             <td class="change"><%= format_changes(change, @options) %></td>
           </tr>
         <% end %>

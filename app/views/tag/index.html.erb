@@ -42,10 +42,10 @@
     <% @tags.each do |tag| %>
       <tr class="<%= cycle 'even', 'odd' %>">
         <td align="right"><%= tag['post_count'] %></td>
-	<td class="tag-type-<%= tag.type_name %>">
-	  <a href="/wiki/show?title=<%= u tag["name"] %>">?</a>
-	  <a href="/post/index?tags=<%= u tag["name"] %>"><%= h tag["name"] %></a>
-	</td>
+        <td class="tag-type-<%= tag.type_name %>">
+          <a href="/wiki/show?title=<%= u tag["name"] %>">?</a>
+          <a href="/post/index?tags=<%= u tag["name"] %>"><%= h tag["name"] %></a>
+        </td>
         <td>
         <%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %>
         (<%= link_to "edit", :action => "edit", :name => tag['name'] %>)

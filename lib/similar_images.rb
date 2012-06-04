@@ -26,7 +26,7 @@ module SimilarImages
     services.each { |service|
       server = CONFIG["image_service_list"][service]
       if !server
-	errors[""] = { :services=>[service], :message=>"%s is an unknown service" % service }
+        errors[""] = { :services=>[service], :message=>"%s is an unknown service" % service }
         next
       end
       services_by_server[server] = [] unless services_by_server[server]

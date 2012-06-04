@@ -27,11 +27,11 @@ class PostController < ApplicationController
     end
 
     result = super(options)
-  	
+
     if redirect_to_proc
       options[:redirect_to][:id] = redirect_to_proc
     end
-	
+
     return result
   end
 
@@ -719,15 +719,15 @@ class PostController < ApplicationController
           return { :errors => { :error => "Download timed out" } }
         end
 
-	file_path = search[:file_path]
+        file_path = search[:file_path]
 
         # Set :search_id in params for generated URLs that point back here.
-	params[:search_id] = search[:search_id]
+        params[:search_id] = search[:search_id]
 
         # The :width and :height params specify the size of the original image, for display
         # in the results.  The user can specify them; if not specified, fill it in.
-	params[:width] ||= search[:original_width]
-	params[:height] ||= search[:original_height]
+        params[:width] ||= search[:original_width]
+        params[:height] ||= search[:original_height]
       elsif params[:id] then
         options[:source] = @compared_post
         options[:type] = :post

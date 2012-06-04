@@ -49,39 +49,39 @@ class BatchController < ApplicationController
     if params[:do] == "pause" then
       conds.push("status = 'pending'")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
-	item.update_attributes(:status => "paused")
-	count += 1
+        item.update_attributes(:status => "paused")
+        count += 1
       }
       flash[:notice] = "Paused %i uploads." % count
     elsif params[:do] == "unpause" then
       conds.push("status = 'paused'")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
-	item.update_attributes(:status => "pending")
-	count += 1
+        item.update_attributes(:status => "pending")
+        count += 1
       }
       flash[:notice] = "Resumed %i uploads." % count
     elsif params[:do] == "retry" then
       conds.push("status = 'error'")
 
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
-	item.update_attributes(:status => "pending")
-	count += 1
+        item.update_attributes(:status => "pending")
+        count += 1
       }
 
       flash[:notice] = "Retrying %i uploads." % count
     elsif params[:do] == "clear_finished" then
       conds.push("(status = 'finished' or status = 'error')")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
-	item.destroy
-	count += 1
+        item.destroy
+        count += 1
       }
 
       flash[:notice] = "Cleared %i finished uploads." % count
     elsif params[:do] == "abort_all" then
       conds.push("(status = 'pending' or status = 'paused')")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
-	item.destroy
-	count += 1
+        item.destroy
+        count += 1
       }
 
       flash[:notice] = "Cancelled %i uploads." % count
@@ -107,9 +107,9 @@ class BatchController < ApplicationController
 
       text = ""
       Danbooru.http_get_streaming(@source) do |response|
-	response.read_body do |block|
-	  text += block
-	end
+        response.read_body do |block|
+          text += block
+        end
       end
 
       @urls = ExtractUrls.extract_image_urls(@source, text)
@@ -125,9 +125,9 @@ class BatchController < ApplicationController
       tags = params[:post][:tags] || ""
       tags = tags.split(/ /)
       if params[:post][:rating] then
-	# Add this to the beginning, so any rating: metatags in the tags will
-	# override it.
-	tags = ["rating:" + params[:post][:rating]] + tags
+        # Add this to the beginning, so any rating: metatags in the tags will
+        # override it.
+        tags = ["rating:" + params[:post][:rating]] + tags
       end
       tags.push("hold")
       tags = tags.uniq.join(" ")

@@ -3,7 +3,7 @@ class ActiveRecord::Base
   class << self
     public :sanitize_sql_array
   end
-  
+
   %w(execute select_value select_values select_all).each do |method_name|
     define_method("#{method_name}_sql") do |sql, *params|
       ActiveRecord::Base.connection.__send__(method_name, self.class.sanitize_sql_array([sql, *params]))
@@ -39,7 +39,7 @@ end
 
 class Hash
   alias_method :to_xml_orig, :to_xml
-  
+
   def to_xml(options = {})
     options[:indent] ||= 2
     options[:root] ||= "hash"

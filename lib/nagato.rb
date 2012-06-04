@@ -23,7 +23,7 @@ module Nagato
         return [@conditions.join(" " + @join + " "), *@condition_params]
       end
     end
-    
+
     # Creates a subquery (within the current subquery).
     #
     # === Parameters
@@ -35,7 +35,7 @@ module Nagato
       @conditions << "(#{c[0]})"
       @condition_params += c[1..-1]
     end
-    
+
     # Adds a condition to the subquery. If the condition has placeholder parameters, you can pass them in directly in :params:.
     #
     # === Parameters
@@ -45,7 +45,7 @@ module Nagato
       @conditions << sql
       @condition_params += params
     end
-    
+
     # A special case in which there's only one parameter. If the parameter is nil, then don't add the condition.
     #
     # === Parameters
@@ -58,10 +58,10 @@ module Nagato
       end
     end
   end
-  
+
   class Builder
     attr_reader :order, :limit, :offset
-    
+
     # Constructs a new Builder object. You must use it in block form.
     #
     # Example:
@@ -97,7 +97,7 @@ module Nagato
     def join(sql)
       @joins << "JOIN " + sql
     end
-    
+
     # Defines a new left join.
     #
     # Example:
@@ -117,7 +117,7 @@ module Nagato
     end
 
     # Defines the select list.
-    # 
+    #
     # === Parameters
     # * :fields<String, Array>: the fields to select
     def get(fields)
@@ -137,7 +137,7 @@ module Nagato
     def order(sql)
       @order = sql
     end
-    
+
     # Sets the limit.
     #
     # === Parameters
@@ -145,7 +145,7 @@ module Nagato
     def limit(amount)
       @limit = amount.to_i
     end
-    
+
     # Sets the offset.
     #
     # === Parameters
@@ -153,7 +153,7 @@ module Nagato
     def offset(amount)
       @offset = amount.to_i
     end
-    
+
     # Return the conditions (as an array suitable for usage with ActiveRecord)
     def conditions
       return @subquery.conditions
@@ -163,7 +163,7 @@ module Nagato
     def joins
       return @joins.join(" ")
     end
-    
+
     # Converts the SQL fragment as a hash (suitable for usage with ActiveRecord)
     def to_hash
       hash = {}
@@ -176,11 +176,11 @@ module Nagato
       return hash
     end
   end
-  
+
   def find(model, &block)
     return model.find(:all, Builder.new(&block).to_hash)
   end
-  
+
   module_function :find
 end
 

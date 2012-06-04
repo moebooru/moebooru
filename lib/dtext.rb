@@ -121,7 +121,7 @@ module DText
 
   # Split a DText-formatted block (an HTML fragment) into individual quote blocks.  This
   # changes:
-  # 
+  #
   # <div><blockquote>text</blockquote></div>
   #
   # to

@@ -75,7 +75,7 @@ module SimilarImages
 
         begin
           Timeout::timeout(10) {
-            url = URI.parse(server) 
+            url = URI.parse(server)
             Net::HTTP.start(url.host, url.port) do |http|
               http.read_timeout = 10
 
@@ -111,7 +111,7 @@ module SimilarImages
         errors[server] = { :message=>doc.root[:message] }
         next
       end
-        
+
       threshold = (options[:threshold] || doc.root[:threshold]).to_f
 
       doc.search('matches/match').each do |element|

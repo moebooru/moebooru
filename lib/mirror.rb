@@ -109,7 +109,7 @@ module Mirrors
         retry_count += 1
         raise if retry_count == 3
 
-        retry 
+        retry
       end
     }
   end
@@ -168,7 +168,7 @@ module Mirrors
     mirrors.each { |s|
       w = s[:traffic]
       if seed < w
-        server = s 
+        server = s
         break
       end
 

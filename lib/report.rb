@@ -17,7 +17,7 @@ module Report
     other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql_array(["SELECT COUNT(*) FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND "), *params])).to_i
 
     users << {"id" => nil, "change_count" => other_count}
-    
+
     users.each do |user|
       user["change_count"] = user["change_count"].to_i
       if user["id"]
@@ -27,10 +27,10 @@ module Report
         user["name"] = "Other"
       end
     end
-    
+
     return add_sum(users)
   end
-  
+
   def tag_updates(start, stop, limit, level)
     users = usage_by_user("post_tag_histories", start, stop, limit, level)
     users.each do |user|

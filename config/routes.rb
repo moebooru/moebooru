@@ -6,7 +6,7 @@ Moebooru::Application.routes.draw do
     member do
   get :redirect
   end
-  
+
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

@@ -58,14 +58,14 @@ module Danbooru
         max_size[:width], max_size[:height] = max_size[:height], max_size[:width]
       end
     end
-    
+
     if allow_enlarge
       if ret[:width] < max_size[:width]
         scale = max_size[:width].to_f / ret[:width].to_f
         ret[:width] = ret[:width] * scale
         ret[:height] = ret[:height] * scale
       end
-	    
+	
       if max_size[:height] && (ret[:height] < ratio * max_size[:height])
         scale = max_size[:height].to_f / ret[:height].to_f
         ret[:width] = ret[:width] * scale

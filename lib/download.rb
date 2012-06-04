@@ -33,22 +33,22 @@ module Danbooru
 
       Net::HTTP.start(url.host, url.port) do |http|
         http.read_timeout = 10
-    
+
         headers = {
           "User-Agent" => "#{CONFIG["app_name"]}/#{CONFIG["version"]}",
           "Referer" => source
         }
-        
+
         if source =~ /pixiv\.net/
           headers["Referer"] = "http://www.pixiv.net"
-          
+
           # Don't download the small version
           if source =~ %r!(/img/.+?/.+?)_m.+$!
             match = $1
             source.sub!(match + "_m", match)
           end
         end
-        
+
         http.request_get(url.request_uri, headers) do |res|
           case res
           when Net::HTTPSuccess then
@@ -65,7 +65,7 @@ module Danbooru
             end
             source = res["location"]
             limit -= 1
-        
+
           else
             raise SocketError, "HTTP error code: #{res.code} #{res.message}"
           end

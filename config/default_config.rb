@@ -203,7 +203,7 @@ CONFIG["tag_types"] = {
   "Artist" => 1,
   "Copyright" => 3,
   "Character" => 4,
-  
+
   "general" => 0,
   "artist" => 1,
   "copyright" => 3,
@@ -224,7 +224,7 @@ CONFIG["email_from"] = lambda do CONFIG["admin_contact"] end
 CONFIG["can_see_post"] = lambda do |user, post|
   # By default, no posts are hidden.
   true
-  
+
   # Some examples:
   #
   # Hide post if user isn't privileged and post is not safe:
@@ -238,7 +238,7 @@ end
 CONFIG["can_see_ads"] = lambda do |user|
   # By default, only show ads to non-priv users.
   user.is_member_or_lower?
-  
+
   # Show no ads at all
   # false
 end

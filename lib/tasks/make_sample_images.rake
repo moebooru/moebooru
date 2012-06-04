@@ -5,7 +5,7 @@ namespace :sample_images do
 #    	error = post.errors.full_messages.join(", ")
 #    	puts "Error generating sample: post ##{post.id}: #{error}"
 #      end
-#    
+#
 #      return false
 #    end
 
@@ -14,7 +14,7 @@ namespace :sample_images do
     	error = post.errors.full_messages.join(", ")
     	puts "Error generating JPEG: post ##{post.id}: #{error}"
       end
-    
+
       return false
     end
 

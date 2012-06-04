@@ -12,30 +12,30 @@ module Moebooru
   class Application < Rails::Application
     config.autoload_paths += [config.root.join('lib')]
     config.encoding = 'utf-8'
-  
+
     # Add additional load paths for your own custom dirs
     config.autoload_paths += ["#{Rails.root}/app/models/post", "#{Rails.root}/app/models/post/image_store"]
-  
+
     # Force all environments to use the same logger level
     # (by default production uses :info, the others :debug
     #config.log_level = :info
-  
+
     if CONFIG['enable_caching']
       config.cache_store = :dalli_store, CONFIG['memcache_servers'], { :namespace => CONFIG['app_name'] }
     else
       config.cache_store = :file_store, Rails.root.join('tmp/cache')
     end
-  
+
     # Activate observers that should always be running
     # config.active_record.observers = :cacher, :garbage_collector
-  
+
     # Make Active Record use UTC-base instead of local time
     # config.active_record.default_timezone = :utc
-  
+
     # Use Active Record's schema dumper instead of SQL when creating the test database
     # (enables use of different database adapters for development and test environments)
     config.active_record.schema_format = :sql
-  
+
     config.action_mailer.smtp_settings = { :openssl_verify_mode => 'none', :domain => CONFIG['server_host'] }
     config.filter_parameters += [:password]
     config.threadsafe!

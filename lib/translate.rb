@@ -10,7 +10,7 @@ module Translate
 
     begin
       Timeout::timeout(10) {
-        url = URI.parse(server) 
+        url = URI.parse(server)
 
         response = Net::HTTP.start(url.host, url.port) do |http|
           http.read_timeout = 10
@@ -44,9 +44,9 @@ module Translate
   # Given a string, attempt to translate into the specified languages.
   #
   #   translate("Hello world", :languages => ["es", "ja"])
-  # 
+  #
   # returns
-  # 
+  #
   #   {"es" => "hola mundo", "ja" => "こんにちは世界"}, "en"
   #
   # Not all languages may successfully translate.  If the translation API can't figure out the language,
@@ -105,7 +105,7 @@ module Translate
 #
 #    begin
 #      Timeout::timeout(10) {
-#        url = URI.parse(server) 
+#        url = URI.parse(server)
 #
 #        response = Net::HTTP.start(url.host, url.port) do |http|
 #          http.read_timeout = 10

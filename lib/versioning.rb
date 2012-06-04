@@ -43,7 +43,7 @@ module ActiveRecord
       history = Thread.current[:versioning_history]
       if history
         #p "reuse? %s != %s, %i != %i" % [history.group_by_table, self.class.get_group_by_table_name, history.group_by_id, self.get_group_by_id]
-        if history.group_by_table != self.class.get_group_by_table_name or 
+        if history.group_by_table != self.class.get_group_by_table_name or
           history.group_by_id != self.get_group_by_id then
           #p "don't reuse"
           Thread.current[:versioning_history] = nil
@@ -118,7 +118,7 @@ module ActiveRecord
       # This is also used by :allow_reverting_to_default.  This value can be set
       # to nil, which will match NULL.  Be sure at least one property has no default,
       # or initial changes will show up as a blank line in the UI.
-      # 
+      #
       # :allow_reverting_to_default => By default, initial changes.  Fields with
       # :allow_reverting_to_default => true can be undone; the default value will
       # be treated as the previous value.
@@ -177,7 +177,7 @@ module ActiveRecord
       def get_versioned_default(name)
         attr = get_versioned_attributes[name]
         return nil, false if attr.nil?
-        return nil, false if not attr.include?(:default) 
+        return nil, false if not attr.include?(:default)
         return attr[:default], true
       end
 
@@ -347,7 +347,7 @@ module ActiveRecord
             }
 
             columns = to_create.first.map { |key,value| key.to_s }
-            
+
             values = []
             to_create.each { |row|
               outrow = []
@@ -472,7 +472,7 @@ module ActiveRecord
       # Add base history values for newly-added properties.
       #
       # This is only used for importing initial histories.  When adding new versioned properties,
-      # call update_versioned_tables directly with the table and attributes to update.  
+      # call update_versioned_tables directly with the table and attributes to update.
       def update_all_versioned_tables
         Versioned.get_versioned_classes.each { |cls|
           update_versioned_tables cls, :allow_missing => true

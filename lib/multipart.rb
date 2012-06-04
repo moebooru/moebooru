@@ -7,7 +7,7 @@ class Net::HTTP::Post
     self.content_type = "multipart/form-data; boundary=#{boundary_token}"
 
     self.body = ""
-    params.each { |p| 
+    params.each { |p|
       self.body += "--#{boundary_token}\r\n"
       self.body += "Content-Disposition: form-data; name=#{p[:name]}"
       self.body += "; filename=#{p[:filename]}" if p[:filename]

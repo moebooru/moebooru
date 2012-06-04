@@ -27,11 +27,7 @@ module TagTypeMethods
     def type_name(tag_name)
       tag_name = tag_name.gsub(/\s/, "_")
       
-      if CONFIG["enable_caching"]
-        return Rails.cache.fetch(Tag.cache_type_key_enc(tag_name), :expires_in => 1.day) do
-          type_name_helper(tag_name)
-        end
-      else
+      return Rails.cache.fetch(Tag.cache_type_key_enc(tag_name), :expires_in => 1.day) do
         type_name_helper(tag_name)
       end
     end

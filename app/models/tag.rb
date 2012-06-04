@@ -2,7 +2,7 @@ Dir["#{Rails.root}/app/models/tag/**/*.rb"].each {|x| require_dependency x}
 
 class Tag < ActiveRecord::Base
   include TagTypeMethods
-  include TagCacheMethods if CONFIG["enable_caching"]
+  include TagCacheMethods
   include TagRelatedTagMethods
   include TagParseMethods
   include TagApiMethods

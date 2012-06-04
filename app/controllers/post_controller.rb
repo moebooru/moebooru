@@ -14,9 +14,7 @@ class PostController < ApplicationController
     before_filter :check_load_average, :only => [:index, :popular_by_day, :popular_by_week, :popular_by_month, :random, :atom, :piclens]
   end
   
-  if CONFIG["enable_caching"]
-    around_filter :cache_action, :only => [:index, :atom, :piclens]
-  end
+  around_filter :cache_action, :only => [:index, :atom, :piclens]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
 

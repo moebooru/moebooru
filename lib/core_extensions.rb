@@ -28,6 +28,10 @@ class String
     return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub('*', '%')
   end
 
+  def to_escaped_for_tsquery
+    return self.gsub(/[\\()&|!]/) { |x| '\\' + x }
+  end
+
   def to_escaped_js
     return self.gsub(/\\/, '\0\0').gsub(/['"]/) {|m| "\\#{m}"}.gsub(/\r\n|\r|\n/, '\\n')
   end

@@ -24,4 +24,5 @@ gem 'puma', :platforms => [:jruby, :rbx]
 
 group :development do
   gem 'rspec'
+  gem 'brakeman'
 end

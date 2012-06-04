@@ -56,7 +56,7 @@ class InlineImage < ActiveRecord::Base
     post = Post.find_by_id(id)
     file = post.file_path
 
-    FileUtils.ln_s(file.tempfile.path, tempfile_image_path)
+    FileUtils.ln_s(file, tempfile_image_path)
 
     self.received_file = true
     self.md5 = post.md5

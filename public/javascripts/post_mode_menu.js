@@ -9,7 +9,7 @@ PostModeMenu = {
 
     var color_element = $("mode-box")
     this.original_style = { border: color_element.getStyle("border") }
-    
+
     if (Cookie.get("mode") == "") {
       Cookie.put("mode", "view")
       $("mode").value = "view"
@@ -18,7 +18,7 @@ PostModeMenu = {
     }
 
     } catch (e) {}
-    
+
     this.vote_score = Cookie.get("vote")
     if (this.vote_score == "") {
       this.vote_score = 1
@@ -26,7 +26,7 @@ PostModeMenu = {
     } else {
       this.vote_score == +this.vote_score
     }
-  
+
     Post.posts.each(function(p) {
       var post_id = p[0]
       var post = p[1]
@@ -46,7 +46,7 @@ PostModeMenu = {
     document.observe("mouseup", function(e) { PostModeMenu.post_mouseup(e, null); });
     Event.observe(window, "pagehide", function(e) { PostModeMenu.post_end_drag(); });
 
-    this.change()  
+    this.change()
   },
 
   set_vote: function(score) {
@@ -267,7 +267,7 @@ PostModeMenu = {
 
     if(PostModeMenu.mode != "apply-tag-script")
       return;
-    
+
     if(!PostModeMenu.dragging_from_post)
       return;
 

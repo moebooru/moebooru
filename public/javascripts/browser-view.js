@@ -174,7 +174,7 @@ BrowserView = function(container)
     var post_id = this.displayed_post_id;
     Post.undelete(post_id);
   }.bindAsEventListener(this));
-  
+
   this.container.down(".flag-button").on("click", function(e) {
     e.stop();
     var post_id = this.displayed_post_id;
@@ -222,7 +222,7 @@ BrowserView = function(container)
 
     Pool.remove_post(pool_info.post_id, pool_info.pool_id);
   }.bind(this));
-  
+
   /* Post editing: */
   var post_edit = this.container.down(".post-edit");
   post_edit.down("FORM").on("submit", function(e) { e.stop(); this.edit_save(); }.bindAsEventListener(this));
@@ -432,7 +432,7 @@ BrowserView.prototype.preload = function(post_ids)
   }
   this.last_preload_request_active = true;
   // debug("preload(" + post_ids.join(",") + ")");
-  
+
   var new_preload_container = new PreloadContainer();
   for(var i = 0; i < post_ids.length; ++i)
   {
@@ -743,13 +743,13 @@ BrowserView.prototype.get_default_post_frame = function(post_id)
   var post = Post.posts.get(post_id);
   if(post == null)
     return null;
-  
+
   return post.frames.length > 0? 0: -1;
 }
 
 BrowserView.prototype.get_post_frame_hash = function(post, post_frame)
 {
-/* 
+/*
  * Omitting the frame in the hash selects the default frame: the first frame if any,
  * otherwise the full image.  If we're setting the hash to a post_frame which would be
  * selected by this default, omit the frame so this default is used.  For example, if
@@ -793,7 +793,7 @@ BrowserView.prototype.set_post_info = function()
       if(sequence.match(/^[0-9]/))
         sequence = "#" + sequence;
 
-      var html = 
+      var html =
         '<div class="pool-info">Post ${sequence} in <a class="pool-link" href="/post/browse#/pool:${pool_id}">${desc}</a> ' +
         '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)';
 
@@ -1134,7 +1134,7 @@ BrowserView.prototype.edit_save = function()
       this.edit_show(false);
   }.bind(this);
   var post_id = this.displayed_post_id;
-  
+
   /* If we're in the frame editor, save it.  Don't save the hidden main editor. */
   if(this.frame_editor)
   {

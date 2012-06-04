@@ -943,7 +943,7 @@ CornerDragger.prototype.set_post_id = function(post_id)
   if(img.src != url)
   {
     img.src = url;
-  
+
     if(Prototype.Browser.WebKit && url)
     {
       /* Decoding in Chrome takes long enough to be visible.  Hourglass the cursor while it runs. */

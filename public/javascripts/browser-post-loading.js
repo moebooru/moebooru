@@ -152,7 +152,7 @@ PostLoader.prototype.server_load_posts = function()
     onSuccess: function(resp) {
       if(this.current_ajax_requests.indexOf(resp.request) == -1)
         return;
-    
+
       var resp = resp.responseJSON;
       this.result.posts = resp.posts;
 

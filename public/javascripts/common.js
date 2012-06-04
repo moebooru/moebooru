@@ -125,11 +125,11 @@ var ClipRange = Class.create({
     if (x < this.min) {
       return this.min
     }
-    
+
     if (x > this.max) {
       return this.max
     }
-    
+
     return x
   }
 })
@@ -666,7 +666,7 @@ DragElement.prototype.move_timer_update = function()
 DragElement.prototype.mousemove_event = function(event)
 {
   event.stop();
-  
+
   var scrollLeft = (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft);
   var scrollTop = (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
 
@@ -738,7 +738,7 @@ DragElement.prototype.handle_move_event = function(event, x, y)
     }
 
     this.dragged = true;
-    
+
     $(document.body).addClassName(this.overriden_drag_class || "dragging");
     $(document.body).removeClassName("not-dragging");
   }
@@ -801,7 +801,7 @@ DragElement.prototype.touchstart_event = function(event)
 
   var x = touch.pageX;
   var y = touch.pageY;
-  
+
   this.start_dragging(event, true, x, y, touch.identifier);
 }
 

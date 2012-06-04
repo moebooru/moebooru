@@ -17,7 +17,7 @@ InlineImage = {
     var container = $(id);
     data.html_id = id;
     container.inline_image = data;
-    
+
     /* initted is set to true after the image has been opened and the large images
      * inside have been created by expand(). */
     data.initted = false;
@@ -155,7 +155,7 @@ InlineImage = {
     var images = data["images"];
     var image = images[idx];
     var zoom = InlineImage.get_zoom(data.zoom_level);
-    
+
     /* We need to set innerHTML rather than just setting attributes, so the changes happen
      * atomically.  Otherwise, Firefox will apply the width and height changes before source,
      * and flicker the old image at the new image's dimensions. */

@@ -28,7 +28,7 @@ Cookie = {
 
     return ""
   },
-  
+
   get: function(name) {
     return this.unescape(this.raw_get(name))
   },
@@ -41,7 +41,7 @@ Cookie = {
     else
       return 0;
   },
-  
+
   remove: function(name) {
     Cookie.put(name, "", -1)
   },
@@ -57,25 +57,25 @@ Cookie = {
       location.href = domain + "/static/terms_of_service?url=" + location.href
       return
     }
-    
+
     if (this.get("has_mail") == "1") {
       $("has-mail-notice").show()
     }
-  
+
     var mod_pending = this.get("mod_pending");
     if (mod_pending && parseInt(mod_pending) > "0") {
       if($("moderate"))
         $("moderate").addClassName("mod-pending")
     }
-  
+
     if (this.get("forum_updated") == "1") {
       $("forum-link").addClassName("forum-update")
     }
-  
+
     if (this.get("comments_updated") == "1") {
       $("comments-link").addClassName("comments-update")
     }
-  
+
     if (this.get("block_reason") != "") {
       $("block-reason").update(this.get("block_reason")).show()
     }

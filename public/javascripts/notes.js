@@ -4,7 +4,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#initialize (id=%d)", id)
     }
-    
+
     this.id = id
     this.is_new = is_new
     this.document_observers = [];
@@ -24,7 +24,7 @@ var Note = Class.create({
       width: this.elements.box.clientWidth,
       height: this.elements.box.clientHeight
     }
-    
+
     // Store the original values (in case the user clicks Cancel)
     this.old = {
       raw_body: raw_body,
@@ -38,7 +38,7 @@ var Note = Class.create({
     if (is_new) {
       this.elements.box.setOpacity(0.2)
     } else {
-      this.elements.box.setOpacity(0.5)      
+      this.elements.box.setOpacity(0.5)
     }
 
     if (is_new && raw_body == '') {
@@ -63,7 +63,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#textValue (id=%d)", this.id)
     }
-    
+
     return this.old.raw_body.strip()
   },
 
@@ -72,7 +72,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#hideEditBox (id=%d)", this.id)
     }
-      
+
     var editBox = $('edit-box')
 
     if (editBox != null) {
@@ -92,7 +92,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#showEditBox (id=%d)", this.id)
     }
-    
+
     this.hideEditBox(e)
 
     var insertionPosition = Note.getInsertionPosition()
@@ -125,7 +125,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#bodyShow (id=%d)", this.id)
     }
-    
+
     if (this.dragging) {
       return
     }
@@ -138,11 +138,11 @@ var Note = Class.create({
     if (Note.noteShowingBody == this) {
       return
     }
-    
+
     if (Note.noteShowingBody) {
       Note.noteShowingBody.bodyHide()
     }
-    
+
     Note.noteShowingBody = this
 
     if (Note.zindex >= 9) {
@@ -180,10 +180,10 @@ var Note = Class.create({
           else hi = x
         } while ((lo < hi) && (w > last))
       } else if (this.elements.body.scrollWidth <= this.elements.body.clientWidth) {
-        /* for short notes (often a single line), make the box no wider than necessary */  
+        /* for short notes (often a single line), make the box no wider than necessary */
         // scroll test necessary for Firefox
         lo = 20, hi = w
-  
+
         do {
           x = (lo+hi)/2
           this.elements.body.style.minWidth = x + "px"
@@ -193,13 +193,13 @@ var Note = Class.create({
         if (this.elements.body.offsetHeight > h)
           this.elements.body.style.minWidth = hi + "px"
       }
-      
+
       if (Prototype.Browser.IE) {
         // IE7 adds scrollbars if the box is too small, obscuring the text
         if (this.elements.body.offsetHeight < 35) {
           this.elements.body.style.minHeight = "35px"
         }
-        
+
         if (this.elements.body.offsetWidth < 47) {
           this.elements.body.style.minWidth = "47px"
         }
@@ -231,7 +231,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#bodyHide (id=%d)", this.id)
     }
-    
+
     this.elements.body.hide()
     if (Note.noteShowingBody == this) {
       Note.noteShowingBody = null
@@ -260,7 +260,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#dragStart (id=%d)", this.id)
     }
-    
+
     this.addDocumentObserver("mousemove", this.drag.bindAsEventListener(this))
     this.addDocumentObserver("mouseup", this.dragStop.bindAsEventListener(this))
     this.addDocumentObserver("selectstart", function() {return false})
@@ -280,7 +280,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#dragStop (id=%d)", this.id)
     }
-    
+
     this.clearDocumentObservers()
 
     this.cursorStartX = null
@@ -307,7 +307,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#adjustScale (id=%d)", this.id)
     }
-    
+
     var ratio = this.ratio()
     for (p in this.fullsize) {
       this.elements.box.style[p] = this.fullsize[p] * ratio + 'px'
@@ -329,13 +329,13 @@ var Note = Class.create({
 
     e.stop()
   },
-  
+
   // Start dragging the edit box
   editDragStart: function(e) {
     if (Note.debug) {
       console.debug("Note#editDragStart (id=%d)", this.id)
     }
-    
+
     var node = e.element().nodeName
     if (node != 'FORM' && node != 'DIV') {
       return
@@ -383,7 +383,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#resizeStart (id=%d)", this.id)
     }
-    
+
     this.cursorStartX = e.pointerX()
     this.cursorStartY = e.pointerY()
     this.boxStartWidth = this.elements.box.clientWidth
@@ -397,7 +397,7 @@ var Note = Class.create({
     this.clearDocumentObservers()
     this.addDocumentObserver("mousemove", this.resize.bindAsEventListener(this))
     this.addDocumentObserver("mouseup", this.resizeStop.bindAsEventListener(this))
-    
+
     e.stop()
     this.bodyHide()
   },
@@ -407,7 +407,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#resizeStop (id=%d)", this.id)
     }
-    
+
     this.clearDocumentObservers()
 
     this.boxCursorStartX = null
@@ -444,7 +444,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#save (id=%d)", this.id)
     }
-    
+
     var note = this
     for (p in this.fullsize) {
       this.old[p] = this.fullsize[p]
@@ -466,7 +466,7 @@ var Note = Class.create({
       "note[height]": this.old.height,
       "note[body]": this.old.raw_body
     }
-    
+
     if (this.is_new) {
       params["note[post_id]"] = Note.post_id
     }
@@ -475,10 +475,10 @@ var Note = Class.create({
 
     new Ajax.Request('/note/update.json', {
       parameters: params,
-      
+
       onComplete: function(resp) {
         var resp = resp.responseJSON
-        
+
         if (resp.success) {
           notice("Note saved")
           var note = Note.find(resp.old_id)
@@ -508,7 +508,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#cancel (id=%d)", this.id)
     }
-    
+
     this.hideEditBox(e)
     this.bodyHide()
 
@@ -527,7 +527,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#removeCleanup (id=%d)", this.id)
     }
-    
+
     this.elements.box.remove()
     this.elements.body.remove()
 
@@ -547,7 +547,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#remove (id=%d)", this.id)
     }
-    
+
     this.hideEditBox(e)
     this.bodyHide()
     this_note = this
@@ -566,7 +566,7 @@ var Note = Class.create({
         },
         onComplete: function(resp) {
           var resp = resp.responseJSON
-          
+
           if (resp.success) {
             notice("Note removed")
             this_note.removeCleanup()
@@ -585,7 +585,7 @@ var Note = Class.create({
     if (Note.debug) {
       console.debug("Note#history (id=%d)", this.id)
     }
-    
+
     this.hideEditBox(e)
 
     if (this.is_new) {
@@ -593,7 +593,7 @@ var Note = Class.create({
     } else {
       location.href = '/history?search=notes:' + this.id
     }
-    
+
     e.stop()
   }
 })
@@ -611,7 +611,7 @@ Object.extend(Note, {
     if (Note.debug) {
       console.debug("Note.show")
     }
-    
+
     $("note-container").show()
   },
 
@@ -629,7 +629,7 @@ Object.extend(Note, {
     if (Note.debug) {
       console.debug("Note.find")
     }
-    
+
     for (var i=0; i<Note.all.size(); ++i) {
       if (Note.all[i].id == id) {
         return Note.all[i]
@@ -644,7 +644,7 @@ Object.extend(Note, {
     if (Note.debug) {
       console.debug("Note.toggle")
     }
-    
+
     if (Note.display) {
       Note.hide()
       Note.display = false
@@ -659,7 +659,7 @@ Object.extend(Note, {
     if (Note.debug) {
       console.debug("Note.updateNoteCount")
     }
-    
+
     if (Note.all.length > 0) {
       var label = ""
 
@@ -681,7 +681,7 @@ Object.extend(Note, {
     }
 
 		Note.show()
-    
+
     var insertion_position = Note.getInsertionPosition()
     var top = insertion_position[0]
     var left = insertion_position[1]
@@ -698,13 +698,13 @@ Object.extend(Note, {
     Note.all.push(note)
     Note.counter -= 1
   },
-  
+
   // Find a suitable position to insert new notes
   getInsertionPosition: function() {
     if (Note.debug) {
       console.debug("Note.getInsertionPosition")
     }
-    
+
     // We want to show the edit box somewhere on the screen, but not outside the image.
     var scroll_x = $("image").cumulativeScrollOffset()[0]
     var scroll_y = $("image").cumulativeScrollOffset()[1]
@@ -714,23 +714,23 @@ Object.extend(Note, {
     var image_bottom = image_top + $("image").height
     var left = 0
     var top = 0
-    
+
     if (scroll_x > image_left) {
       left = scroll_x
     } else {
       left = image_left
     }
-    
+
     if (scroll_y > image_top) {
       top = scroll_y
     } else {
       top = image_top + 20
     }
-    
+
     if (top > image_bottom) {
       top = image_top + 20
     }
-    
+
     return [top, left]
   }
 })

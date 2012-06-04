@@ -1,4 +1,4 @@
-/* 
+/*
  * The tag blob looks like this:
  *
  * 1:tagme 2:fixed
@@ -105,7 +105,7 @@ TagCompletionClass.prototype.load_data = function(onComplete)
       return this.tag_data != null;
     }
   }
-  
+
   /* Request the tag data from the server.  Tell the server the data version we already
    * have. */
   var params = {};
@@ -209,7 +209,7 @@ TagCompletionClass.prototype.update_tag_types_for_list = function(tags, allow_ad
 
   /*
    * For each known tag type, mark the type in the tag cache.  We receive this info when
-   * we download the tag types, so this is just updating any changes. 
+   * we download the tag types, so this is just updating any changes.
    *
    * This is set up to iterate only over known types, and not over the entire list of
    * tags, so when we have a lot of tags we minimize the amount of work we have to do
@@ -327,7 +327,7 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
   }
 
   /* The space is included in the result, so the result tags can be matched with the
-   * same regexes, for in reorder_search_results. 
+   * same regexes, for in reorder_search_results.
    *
    * (\d)+  match the alias ID                      1`
    * [^ ]*: start at the beginning of any alias     1`foo`bar`
@@ -344,7 +344,7 @@ TagCompletionClass.prototype.create_tag_search_regex = function(tag, options)
 TagCompletionClass.prototype.retrieve_tag_search = function(re, source, options)
 {
   var results = [];
-  
+
   var max_results = 10;
   if(options.max_results != null)
     max_results = options.max_results;
@@ -765,7 +765,7 @@ TagCompletionBox.prototype.set_current_word = function(tag)
     tag_text += " ";
 
   this.input_field.value = before + tag_text + after;
-  
+
   /* Position the cursor at the end of the tag we just inserted. */
   var cursor_position = before.length + tag_text.length;
   this.input_field.selectionStart = this.input_field.selectionEnd = cursor_position;

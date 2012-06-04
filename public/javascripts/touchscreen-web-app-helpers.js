@@ -290,7 +290,7 @@ EmulateDoubleClick.prototype.touchstart_event = function(event)
    * and not the second click, since if the position matters the user's first click of
    * a double-click is probably more precise than the second. */
   var e = document.createEvent("MouseEvent");
-  e.initMouseEvent("dblclick", true, true, window, 
+  e.initMouseEvent("dblclick", true, true, window,
                      2,
                      last_click.position[0], last_click.position[1],
                      last_click.clientPosition[0], last_click.clientPosition[1],
@@ -326,7 +326,7 @@ EmulateDoubleClick.prototype.touchend_event = function(event)
   }
 }
 
-/* 
+/*
  * Mobile WebKit has serious problems with the click event: it delays them for the
  * entire double-click timeout, and if a double-click happens it doesn't deliver the
  * click at all.  This makes clicks unresponsive, and it has this behavior even
@@ -384,10 +384,10 @@ ResponsiveSingleClick.prototype.touchend_event = function(event)
     return;
 
   var e = document.createEvent("MouseEvent");
-  e.initMouseEvent("click", true, true, window, 
+  e.initMouseEvent("click", true, true, window,
                      1,
                      touch.screenX, touch.screenY,
-                     touch.clientX, touch.clientY, 
+                     touch.clientX, touch.clientY,
                      false, false,
                      false, false,
                      0, /* touch clicks are always button 0 - maybe not for multitouch */
@@ -462,7 +462,7 @@ var MaintainUrlHash = function()
  *
  * Not needed on:
  * (iPad, OS 3.2)
- * CPU OS 3_2 ... AppleWebKit/531.1.10 ... Version/4.0.4 
+ * CPU OS 3_2 ... AppleWebKit/531.1.10 ... Version/4.0.4
  * iPhone OS 4_2 ... AppleWebKit/533.17.9 ... Version/5.0.2
  *
  * This seems to be specific to Version/4.0.5.

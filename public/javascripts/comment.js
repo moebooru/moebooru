@@ -29,7 +29,7 @@ Comment = {
       }
     })
   },
-  
+
   quote: function(id) {
     new Ajax.Request("/comment/show.json", {
       method: "get",

@@ -4,7 +4,7 @@ var PostUploadForm = function(form, progress)
   var SupportsFormData = "FormData" in window;
   if(!XHRLevel2 || !SupportsFormData)
     return;
-  
+
   this.form_element = form;
   this.cancel_element = this.form_element.down(".cancel");
 

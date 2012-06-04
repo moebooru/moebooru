@@ -124,7 +124,7 @@ h1 {
 }
 
 h1#static-index-header {
-  font-size: 4em; 
+  font-size: 4em;
   margin: 1em 0 .5em 0;
   text-align: center;
 }
@@ -181,7 +181,7 @@ div#static-more h2 {
   background: transparent url("../images/logo_small.png") no-repeat scroll top left;
   margin: 0 0 .5em 0;
   padding: 37px 242px 38px 242px;
-}  
+}
 
 h3 {
   font-size: 1.6em;
@@ -344,7 +344,7 @@ table.highlightable th {
 }
 
 table td {
-  padding: 1px 4px; 
+  padding: 1px 4px;
   vertical-align: top;
 }
 
@@ -689,12 +689,12 @@ div.auto_complete ul > li {
   color: #000000;
 }
 
-div.auto_complete ul > li.selected { 
-  background-color: #ffb; 
+div.auto_complete ul > li.selected {
+  background-color: #ffb;
 }
 
-div.auto_complete ul strong.highlight { 
-  color: #800; 
+div.auto_complete ul strong.highlight {
+  color: #800;
   margin:0;
   padding:0;
 }
@@ -865,7 +865,7 @@ div.help h1,
 div.help h2,
 div.help h3,
 div.help h4 {
-  margin: 0 0 0.5em 0;  
+  margin: 0 0 0.5em 0;
 }
 
 div.help h4 {
@@ -918,7 +918,7 @@ div#notice {
 }
 
 div#notice-container td {
-  padding-top: 0px; 
+  padding-top: 0px;
 }
 
 div#static_notice {
@@ -1247,7 +1247,7 @@ div#wiki-show > div#body > div#byline {
 div#wiki-diff > div#body {
   font-family: monospace;
   font-size: 1.2em;
-  margin-top: 1em;  
+  margin-top: 1em;
 }
 
 div#wiki-diff del {
@@ -1534,7 +1534,7 @@ span.stars .star-3 { color:#ff0; }
   -webkit-user-select: none;
 }
 
-.vote-popup-container .star { 
+.vote-popup-container .star {
   display: inline-block;
   font-size: 5em;
 
@@ -1896,7 +1896,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 
 /* an extra classname is applied for Opera < 9.0 to fix it's lack of opacity support */
 .imgCrop_wrap.opera8 .imgCrop_overlay,
-.imgCrop_wrap.opera8 .imgCrop_clickArea { 
+.imgCrop_wrap.opera8 .imgCrop_clickArea {
 	background-color: transparent;
 }
 
@@ -1917,7 +1917,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 
 .imgCrop_selArea {
 	position: absolute;
-	/* @done_in_js 
+	/* @done_in_js
 	top: 20px;
 	left: 20px;
 	width: 200px;
@@ -1953,16 +1953,16 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 	z-index: 3;
 }
 
-/* 
+/*
  *  FIX MARCHING ANTS IN IE
- *	As IE <6 tries to load background images we can uncomment the follwoing hack 
+ *	As IE <6 tries to load background images we can uncomment the follwoing hack
  *  to remove that issue, not as pretty - but is anything in IE?
  *  And yes I do know that 'filter' is evil, but it will make it look semi decent in IE
  *
 * html .imgCrop_marqueeHoriz,
 * html .imgCrop_marqueeVert {
 	background: transparent;
-	filter: Invert; 
+	filter: Invert;
 }
 * html .imgCrop_marqueeNorth { border-top: 1px dashed #000; }
 * html .imgCrop_marqueeEast  { border-right: 1px dashed #000; }
@@ -2002,7 +2002,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 	cursor: n-resize;
 }
 
-.imgCrop_handleNE { 
+.imgCrop_handleNE {
 	top: -3px;
 	right: -3px;
 	cursor: ne-resize;
@@ -2048,7 +2048,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 }
 
 /**
- * Create an area to click & drag around on as the default browser behaviour is to let you drag the image 
+ * Create an area to click & drag around on as the default browser behaviour is to let you drag the image
  */
 .imgCrop_dragArea {
 	width: 100%;

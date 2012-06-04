@@ -37,7 +37,7 @@ Post = {
   {
     return new Ajax.Request(path, {
       parameters: params,
-      
+
       onFailure: function(req) {
         var resp = req.responseJSON;
 	notice("Error: " + resp.reason);
@@ -139,7 +139,7 @@ Post = {
     }
 
     /* posts is a hash of id: { post }.  Convert this to a Rails-format object array. */
-    var params_array = [];                  
+    var params_array = [];
     posts.each(function(post) {
       $H(post).each(function(pair2) {
         var s = "post[][" + pair2.key + "]=" + window.encodeURIComponent(pair2.value);
@@ -290,7 +290,7 @@ Post = {
   vote: function(post_id, score) {
     if(score > 3)
       return;
-    
+
     notice("Voting...")
     Post.make_request("/post/vote.json", { id: post_id, score: score }, function(resp) { notice("Vote saved"); });
   },
@@ -299,7 +299,7 @@ Post = {
     var reason = prompt("Why should this post be flagged for deletion?", "")
     if (!reason)
       return false;
-  
+
     var complete = function()
     {
       notice("Post was flagged for deletion");
@@ -342,8 +342,8 @@ Post = {
     })
   },
 
-  /* 
-   * Group tags by type. 
+  /*
+   * Group tags by type.
    *
    * Post.get_post_tags_by_type(post)
    * -> {general: ["tagme"], faults: ["fixme", "crease"]}
@@ -372,7 +372,7 @@ Post = {
     return results;
   },
 
-  /* 
+  /*
    * Get post tags with their types.
    *
    * Post.get_post_tags_with_type(post)
@@ -584,7 +584,7 @@ Post = {
     Post.blacklist_options = Object.extend({
       replace: false,
       exclude: null
-    }, options);  
+    }, options);
     var bl_entries;
     if(Post.current_blacklists)
       bl_entries = Post.current_blacklists;
@@ -607,7 +607,7 @@ Post = {
         })
         Post.blacklists.push(b)
     })
-  
+
     Post.countText = $("blacklist-count")
     if(Post.countText)
       Post.countText.update("");
@@ -768,14 +768,14 @@ Post = {
     img.width = img.original_width * ratio;
     img.height = img.original_height * ratio;
     img.scale_factor = ratio;
-  
+
     if (window.Note) {
       for (var i=0; i<window.Note.all.length; ++i) {
         window.Note.all[i].adjustScale()
       }
     }
   },
-  
+
   get_scroll_offset_to_center: function(element)
   {
     var window_size = document.viewport.getDimensions();
@@ -865,7 +865,7 @@ Post = {
     if(img.already_resized)
       return;
     img.already_resized = true;
-    
+
     // un-resize
     if ((img.scale_factor != null) && (img.scale_factor != 1)) {
       Post.resize_image();
@@ -884,7 +884,7 @@ Post = {
         window.Note.all.invoke("adjustScale")
       }
     }
-    
+
 
     // Clear the image before loading the new one, so it doesn't show the old image
     // at the new resolution while the new one loads.  Hide it, so we don't flicker
@@ -994,7 +994,7 @@ Post = {
     new Ajax.Request("/post/acknowledge_new_deleted_posts.json", {
       onComplete: function(resp) {
         var resp = resp.responseJSON
-        
+
         if (resp.success)
 	{
           if ($("posts-deleted-notice"))
@@ -1010,14 +1010,14 @@ Post = {
   {
     var post = null;
     if(post_id != null)
-      post = Post.posts.get(post_id);    
+      post = Post.posts.get(post_id);
     Post.hover_info_pinned_post = post;
     Post.hover_info_update();
   },
 
   hover_info_mouseover: function(post_id)
   {
-    var post = Post.posts.get(post_id);    
+    var post = Post.posts.get(post_id);
     if(Post.hover_info_hovered_post == post)
       return;
     Post.hover_info_hovered_post = post;
@@ -1126,7 +1126,7 @@ Post = {
 
     overlay.down("A").href = (User.get_use_browser()?  "/post/browse#":"/post/show/") + post.id;
     overlay.down("IMG").src = post.preview_url;
-    
+
     /* This doesn't always align properly in Firefox if full-page zooming is being
      * used. */
     var x = thumb_center_x - post.actual_preview_width/2;
@@ -1219,7 +1219,7 @@ Post = {
     var change_requests = [];
     new Ajax.Request("/post/index.json", {
       parameters: { tags: "parent:" + old_parent_id },
-      
+
       onComplete: function(resp) {
         var resp = resp.responseJSON
 	for(var i = 0; i < resp.length; ++i)
@@ -1258,7 +1258,7 @@ Post = {
   /*
    * If the user has global browser links enabled, apply them.  This changes all links
    * from /post/show/123 to /post/browse#123, and /pool/show/123 to /post/browse#/pool:123.
-   * 
+   *
    * We do this in JS, so it applies without affecting memcached pages, and applies to
    * things like preformatted, translated DText blocks.
    *
@@ -1349,7 +1349,7 @@ Post = {
   /* Handle the sample URL cache.  This allows pages that statically know sample URLs for
    * files (post/index) to communicate that to dynamic pages that normally get it from
    * XHR (post/browse). */
-  cached_sample_urls: null,            
+  cached_sample_urls: null,
 
   /* Return an object containing cached sample URLs, eg. {"12345": "http://example.com/image.jpg"}.
    * If the browser lacks support for this, return null.  If the stored data is invalid or doesn't

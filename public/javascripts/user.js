@@ -142,7 +142,7 @@ User = {
      * use keyup instead.  This isn't a problem with password fields, since there's no history
      * dropdown. */
     $("login-popup").observe("submit", function(e) {
-      e.stop(); 
+      e.stop();
       User.form_submitted();
     });
 
@@ -283,7 +283,7 @@ User = {
     User.last_username_in_form = null;
 
     $("login-tabs").select("LI").each(function(li) { li.removeClassName("selected"); });
-    $("login-tabs").down("#" + tab).addClassName("selected");    
+    $("login-tabs").down("#" + tab).addClassName("selected");
 
 
     $$(".tab-header-text").each(function(li) { li.hide(); });
@@ -393,7 +393,7 @@ User = {
      * Entering a username and password and clicking "login" should still behave properly
      * if the username doesn't exist and the check_name_timer JSON request hasn't come
      * back yet.
-     * 
+     *
      * If the state isn't "blank", the button is already enabled.
      */
     User.check_name_timer = window.setTimeout(function() {

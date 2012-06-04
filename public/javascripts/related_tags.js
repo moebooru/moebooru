@@ -44,15 +44,15 @@ RelatedTags = {
 
     html += '<div class="tag-column">'
     html += '<h6><em>' + key.replace(/_/g, " ") + '</em></h6>'
-  
+
     for (var i=0; i<tags.size(); ++i) {
       var tag = tags[i]
       html += ('<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
-    
+
       if (current.include(tag)) {
         html += ' style="background: rgb(0, 111, 250); color: white;"'
       }
-    
+
       html += '>' + tag.escapeHTML().replace(/_/g, " ") + '</a><br> '
     }
     html += '</div>'
@@ -62,20 +62,20 @@ RelatedTags = {
 
   build_all: function(tags) {
     this.recent_search = tags
-  
+
     var html = this.build_html("My Tags", this.user_tags) + this.build_html("Recent Tags", this.recent_tags)
     var keys = []
 
     for (key in tags) {
       keys.push(key)
     }
-  
+
     keys.sort()
 
     for (var i=0; i<keys.size(); ++i) {
       html += this.build_html(keys[i], tags[keys[i]])
     }
-  
+
     $("related").update(html)
   },
 
@@ -115,7 +115,7 @@ RelatedTags = {
     if (type) {
       params["type"] = type
     }
-  
+
     new Ajax.Request("/tag/related.json", {
       method: 'get',
       parameters: params,
@@ -129,7 +129,7 @@ RelatedTags = {
 
   convert_related_js_response: function(resp) {
     var converted = {}
-  
+
     for (k in resp) {
       var tags = resp[k].map(function(x) {return x[0]}).sort()
       converted[k] = tags

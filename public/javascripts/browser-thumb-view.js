@@ -618,7 +618,7 @@ ThumbnailView.prototype.populate_post = function(post_idx)
   }
 
   /* post_idx isn't on the boundary, so we're jumping posts rather than scrolling.
-   * Clear the container and start over. */ 
+   * Clear the container and start over. */
   this.remove_all_posts();
 
   var node = this.container.down(".post-browser-posts");
@@ -924,7 +924,7 @@ ThumbnailView.prototype.create_thumb = function(post_idx)
   {
     var item = this.unused_thumb_pool.pop();
   }
-    
+
   item.id = "p" + post_idx;
   item.post_idx = post_idx;
   item.down("A").href = "/post/browse#" + post.id + this.view.post_frame_hash(post, post_frame);
@@ -972,7 +972,7 @@ ThumbnailView.prototype.set_thumb_dimensions = function(li)
   height *= this.config.thumb_scale;
 
   /* This crops blocks that are too wide, but doesn't pad them if they're too
-   * narrow, since that creates odd spacing. 
+   * narrow, since that creates odd spacing.
    *
    * If the height of this block is changed, adjust .post-browser-posts-container in
    * config_changed. */

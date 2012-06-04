@@ -69,7 +69,7 @@ UrlHashHandler.prototype.set_normalize = function(norm, denorm)
 {
   this.normalize = norm;
   this.denormalize = denorm;
-  
+
   this.normalize(this.current_hash);
   this.set_all(this.current_hash.clone());
 }

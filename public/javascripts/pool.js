@@ -54,11 +54,11 @@ Pool = {
       },
       onComplete: function(resp) {
         var resp = resp.responseJSON
-      
+
         if (resp.success) {
           notice("Post added to pool")
         } else {
-          notice("Error: " + resp.reason)        
+          notice("Error: " + resp.reason)
         }
       }
     })
@@ -71,7 +71,7 @@ Pool = {
       if($("p" + post_id))
         $("p" + post_id).addClassName("deleted");
       if($("pool" + pool_id))
-        $("pool" + pool_id).remove()            
+        $("pool" + pool_id).remove()
     }
 
     Post.make_request('/pool/remove_post.json', { "post_id": post_id, "pool_id": pool_id }, complete);

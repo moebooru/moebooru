@@ -120,7 +120,7 @@ MainMenu.prototype.show_submenu = function(parent_menu_element, def)
   if(def.html_id)
     id = 'id="' + def.html_id + '" ';
   html += "<div " + id + "class='dropdown-menu'>";
-        
+
   for(var i = 0; i < def.sub.length; ++i)
   {
     var item = def.sub[i];
@@ -137,7 +137,7 @@ MainMenu.prototype.show_submenu = function(parent_menu_element, def)
     if(item.class_names)
       class_names += " " + item.class_names.join(" ");
 
-    
+
     html += "<a class='" + class_names + "' href=\"" + (item.dest || "#") + "\">";
     html += item.label.replace(" ", "&nbsp;", "g");
     html += "</a>";
@@ -258,7 +258,7 @@ MainMenu.prototype.top_menu_mousedown = function(event, def)
   // the click in mouse browsers and do other things we don't want.  Don't use stop();
   // if we call stopPropagation we'll also stop clicks.
   event.preventDefault();
-      
+
   /* Stop the previous drag event, which probably shouldn't still be active. */
   this.stop_drag();
 

@@ -68,7 +68,7 @@ class WikiController < ApplicationController
   end
 
   def create
-    page = WikiPage.create(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
+    page = WikiPage.create(params[:wiki_page].merge(:ip_addr => request.ip, :user_id => session[:user_id]))
 
     if page.errors.empty?
       respond_to_success("Page created", {:action => "show", :title => page.title}, :location => url_for(:action => "show", :title => page.title))
@@ -95,7 +95,7 @@ class WikiController < ApplicationController
     if @page.is_locked?
       respond_to_error("Page is locked", {:action => "show", :title => @page.title}, :status => 422)
     else
-      if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
+      if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.ip, :user_id => session[:user_id]))
         respond_to_success("Page updated", :action => "show", :title => @page.title)
       else
         respond_to_error(@page, {:action => "show", :title => @page.title})
@@ -124,7 +124,7 @@ class WikiController < ApplicationController
       respond_to_error("Page is locked", {:action => "show", :title => params[:title]}, :status => 422)
     else
       @page.revert_to(params[:version])
-      @page.ip_addr = request.remote_ip
+      @page.ip_addr = request.ip
       @page.user_id = @current_user.id
 
       if @page.save

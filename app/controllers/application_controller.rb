@@ -117,10 +117,10 @@ class ApplicationController < ActionController::Base
       # For convenient access in activerecord models
       Thread.current["danbooru-user"] = @current_user
       Thread.current["danbooru-user_id"] = @current_user.id
-      Thread.current["danbooru-ip_addr"] = request.remote_ip
+      Thread.current["danbooru-ip_addr"] = request.ip
 
       # Hash the user's IP to seed things like mirror selection.
-      Thread.current["danbooru-ip_addr_seed"] = Digest::MD5.hexdigest(request.remote_ip)[0..7].hex
+      Thread.current["danbooru-ip_addr_seed"] = Digest::MD5.hexdigest(request.ip)[0..7].hex
 
       ActiveRecord::Base.init_history
 
@@ -133,7 +133,7 @@ class ApplicationController < ActionController::Base
     end
 
     def set_country
-      @current_user_country = GeoIP.new(File.expand_path('db/GeoIP.dat', Rails.root)).country(request.remote_ip).country_code2
+      @current_user_country = GeoIP.new(File.expand_path('db/GeoIP.dat', Rails.root)).country(request.ip).country_code2
     end
 
     CONFIG["user_levels"].each do |name, value|
@@ -242,14 +242,14 @@ class ApplicationController < ActionController::Base
   end
   def time_end
     t = Time.now - @start
-    File.open("/tmp/temp", 'a+') {|f| f.write("%.3f %s %15s %s\n" % [t, @current_user_country, request.remote_ip, request.fullpath])}
+    File.open("/tmp/temp", 'a+') {|f| f.write("%.3f %s %15s %s\n" % [t, @current_user_country, request.ip, request.fullpath])}
   end
 
   protected :build_cache_key
   protected :get_cache_key
 
   def get_ip_ban()
-    ban = IpBans.find(:first, :conditions => ["? <<= ip_addr", request.remote_ip])
+    ban = IpBans.find(:first, :conditions => ["? <<= ip_addr", request.ip])
     if not ban then return nil end
     return ban
   end
@@ -266,7 +266,7 @@ class ApplicationController < ActionController::Base
     end
 
     if ban.expires_at && ban.expires_at < Time.now then
-      IpBans.destroy_all("ip_addr = '#{request.remote_ip}'")
+      IpBans.destroy_all("ip_addr = '#{request.ip}'")
       return
     end
 

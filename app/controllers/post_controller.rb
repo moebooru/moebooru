@@ -69,7 +69,7 @@ class PostController < ApplicationController
       status = "pending"
     end
 
-    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :status => status))
+    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.ip, :user_id => @current_user.id, :ip_addr => request.ip, :status => status))
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
@@ -98,7 +98,7 @@ class PostController < ApplicationController
     elsif @post.errors.invalid?(:md5)
       p = Post.find_by_md5(@post.md5)
 
-      update = { :tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip }
+      update = { :tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.ip }
       update[:source] = @post.source if p.source.blank? && !@post.source.blank?
       p.update_attributes(update)
 
@@ -162,7 +162,7 @@ class PostController < ApplicationController
 
     Post.filter_api_changes(params[:post])
 
-    if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+    if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
       @post.reload
@@ -201,7 +201,7 @@ class PostController < ApplicationController
 
       Post.filter_api_changes(post)
 
-      if @post.update_attributes(post.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+      if @post.update_attributes(post.merge(:updater_user_id => user_id, :updater_ip_addr => request.ip))
         # Reload the post to send the new status back; not all changes will be reflected in
         # @post due to after_save changes.
         @post.reload
@@ -534,7 +534,7 @@ class PostController < ApplicationController
   def revert_tags
     user_id = @current_user.id
     @post = Post.find(params[:id])
-    @post.update_attributes(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
+    @post.update_attributes(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.ip)
 
     respond_to_success("Tags reverted", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
   end

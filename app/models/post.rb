@@ -18,8 +18,8 @@ class Post < ActiveRecord::Base
   after_save :commit_flag
   has_and_belongs_to_many :_tags, :class_name => 'Tag'
   scope :available, where('status <> ?', 'deleted')
-  scope :has_any_tags, lambda { |tags| where('tags_index @@ ?', Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' | ')) }
-  scope :has_all_tags, lambda { |tags| where('tags_index @@ ?', Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' & ')) }
+  scope :has_any_tags, lambda { |tags| where("tags_index @@ plainto_tsquery('danbooru', ?)", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' | ')) }
+  scope :has_all_tags, lambda { |tags| where("tags_index @@ plainto_tsquery('danbooru', ?)", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' & ')) }
 
   include PostSqlMethods
   include PostCommentMethods

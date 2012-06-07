@@ -25,7 +25,7 @@
         <td><%= text_area "artist", "urls", :size => "80x6", :class => "no-block" %></td>
       </tr>
       <tr>
-        <th><label for="artist_notes"><%=t :artist_notess %></label></th>
+        <th><label for="artist_notes"><%=t :artist_notes %></label></th>
         <td><%= text_area "artist", "notes", :size => "80x6", :class => "no-block", :disabled => @artist.notes_locked? %></td>
       </tr>
       <tr>

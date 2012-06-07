@@ -73,7 +73,7 @@ class ApplicationController < ActionController::Base
   module LoginSystem
     protected
     def access_denied
-      previous_url = params[:url] || request.request_uri
+      previous_url = params[:url] || request.fullpath
 
       respond_to do |fmt|
         fmt.html {flash[:notice] = "Access denied"; redirect_to(:controller => "user", :action => "login", :url => previous_url)}

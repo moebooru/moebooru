@@ -116,3 +116,22 @@ en:
   inline_images: "Images"
   inline_created: "Created"
   inline_ago: " ago"
+  #view/layouts/login
+  layout_login: "Login"
+  layout_reset: "Rest password"
+  layout_login_text: "Please log in. To create a new account, enter the name and password you want to use."
+  layout_email_text: "If you supplied an email address when you signed up, you can have your password reset."
+  layout_name: "Name"
+  layout_email: "Email"
+  layout_password: "Password"
+  layout_confirm: "Confirm Password"
+  layout_not_exist: "This user name doesn't exist.  If you want to create a new account, just verify your password and log in."
+  layout_exists: "This user name exists.  If you want to create a new account, please choose a different name."
+  layout_email_reset: "Enter the email address you have registered in your profile.  You'll get an email containing your new password."
+  layout_no_email: "You have no email address in your profile, so you can't have your password reset."
+  layout_reset_successful: "Password reset. Check your email in a few minutes."
+  layout_unknown_user: "That account does not exist."
+  layout_wrong_email: "The email address specified is not registered with this account."
+  layout_invalid_email: "Delivery to this email address has failed."
+  #don't know how to deal with _menu
+

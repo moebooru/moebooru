@@ -401,6 +401,16 @@ class ApplicationController < ActionController::Base
   private
 
     def admin_user
-      redirect_to root_path unless @current_user.is_admin?
+      access_denied unless @current_user.is_admin?
+    end
+    def post_privileged_only
+      access_denied unless @current_user.is_privileged_or_higher?
+    end
+    def member_only
+      access_denied unless @current_user.is_member_or_higher?
+    end
+    def access_denied
+      flash[:notice] = @current_user.is_anonymous? ? 'Please sign in' : 'Access denied'
+      redirect_to :controller => :user, :action => :login, :url => request.fullpath
     end
 end

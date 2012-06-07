@@ -75,3 +75,18 @@ en:
   dmail_empty: "You have no messages"
   dmail_from: "From"
   dmail_when: "When"
+  #view/forum/add
+  forum_title: "Title"
+  #view/forum/index
+  forum_created_by: "Created by"
+  forum_updated_by: "Updated by"
+  forum_updated: "Updated"
+  forum_responses: "Responses"
+  forum_sticky: "Sticky: "
+  forum_locked: "(locked)"
+  #view/forum/search
+  forum_message: "Message"
+  forum_author: "Author"
+  forum_last_updated": "Last Updated"
+  #view/forum/show
+  forum_locked: "This topic is locked."

@@ -5,7 +5,7 @@
         <table class="form">
           <tbody>
             <tr>
-              <th> <label for="post_source">URL</label> </th>
+              <th> <label for="post_source"><%=t :batch_url %></label> </th>
               <td>
                 <input id="post_url" name="url" size="50" tabindex="2" type="text" value="<%= h(params["url"]) %>">
               </td>
@@ -28,11 +28,11 @@
         <table class="form">
           <tbody>
             <tr>
-              <th> <label for="post_files">URL</label> </th>
+              <th> <label for="post_files"><%=t :batch_url %></label> </th>
               <td> <%= h(@source) %> </td>
             </tr>
             <tr>
-              <th> <label for="post_files">Files</label> </th>
+              <th> <label for="post_files"><%=t :batch_files %></label> </th>
               <td>
                 <select id="files" name="files[]" multiple size="15">
                   <% for url in @urls do %>
@@ -43,7 +43,7 @@
             </tr>
 
             <tr>
-              <th> <label for="post_tags">Tags</label> </th>
+              <th> <label for="post_tags"><%= :batch_tags %></label> </th>
               <td>
                 <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
               </td>
@@ -51,17 +51,17 @@
 
             <tr>
               <th>
-                <label for="post_rating_questionable">Rating</label>
+                <label for="post_rating_questionable"><%=t :batch_rating %></label>
               </th>
               <td>
               <input id="post_rating_explicit" name="post[rating]" type="radio" value="e" <% if (params[:rating] or "q") == "e" %>checked="checked"<% end %> tabindex="5">
-                <label for="post_rating_explicit">Explicit</label>
+                <label for="post_rating_explicit"><%=t :batch_rating_explicit %></label>
 
               <input id="post_rating_questionable" name="post[rating]" type="radio" value="q" <% if (params[:rating] or "q") == "q" %>checked="checked"<% end %> tabindex="6">
-                <label for="post_rating_questionable">Questionable</label>
+                <label for="post_rating_questionable"><%=t :batch_rating_questionable %></label>
 
               <input id="post_rating_safe" name="post[rating]" type="radio" value="s" <% if (params[:rating] or "q") == "s" %>checked="checked"<% end %> tabindex="7">
-                <label for="post_rating_safe">Safe</label>
+                <label for="post_rating_safe"><%=t :batch_rating_safe %></label>
               </td>
             </tr>
 

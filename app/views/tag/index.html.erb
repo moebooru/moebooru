@@ -33,9 +33,10 @@
 <table width="100%" class="highlightable">
   <thead>
     <tr>
-      <th width="5%">Posts</th>
-      <th width="45%">Name</th>
-      <th width="50%">Type</th>
+      <th width="60px">Posts</th>
+      <th>Name</th>
+      <th width="200px">Type</th>
+      <th width="120px" colspan="2">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -43,13 +44,12 @@
       <tr class="<%= cycle 'even', 'odd' %>">
         <td align="right"><%= tag['post_count'] %></td>
         <td class="tag-type-<%= tag.type_name %>">
-          <a href="/wiki/show?title=<%= u tag["name"] %>">?</a>
-          <a href="/post/index?tags=<%= u tag["name"] %>"><%= h tag["name"] %></a>
+          <%= link_to '?', :controller => :wiki, :action => :show, :title => tag['name'] %>
+          <%= link_to tag['name'], :controller => :post, :action => :index, :tags => tag['name'] %>
         </td>
-        <td>
-        <%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %>
-        (<%= link_to "edit", :action => "edit", :name => tag['name'] %>)
-        </td>
+        <td><%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %></td>
+        <td width="60px"><%= link_to 'Edit', :action => 'edit', :id => tag['id'] %></td>
+        <td width="60px"><%= link_to 'History', :controller => :history, :search => "tag:#{tag['id']}" %></td>
       </tr>
     <% end %>
   </tbody>

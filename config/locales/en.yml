@@ -64,3 +64,14 @@ en:
   comment_post: "Post"
   comment_message: "Message"
   comment_time: "Time"
+  #view/dmail/_compose
+  dmail_to: "To"
+  dmail_title: "Title"
+  dmail_body: "Body"
+  #view/dmail/compose
+  dmail_compose: "Compose Message"
+  #view/dmail/inbox
+  dmail_inbox: "My Inbox"
+  dmail_empty: "You have no messages"
+  dmail_from: "From"
+  dmail_when: "When"

@@ -111,7 +111,7 @@ module DText
     # Substitute url tag in this form:
     str.gsub!(/(^|[\s\(>])#{url}/, '\1<a href="\2">\2</a>')                       # url
     str.gsub!(/&lt;&lt;\s*#{url}\s*\|\s*(.+?)\s*&gt;&gt;/, '<a href="\1">\7</a>') # <<url|label>>
-    str.gsub!(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')         # "label":url
+    str.gsub!(/(^|[\s>])&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')       # "label":url
     str.gsub!(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')              # <<url>>
     str.gsub!(/<a href="ttp/, '<a href="http')                                    # Fix ttp(s) scheme
     return str

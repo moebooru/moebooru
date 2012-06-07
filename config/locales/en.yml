@@ -98,3 +98,21 @@ en:
   history_date: "Date"
   history_user: "User"
   history_change: "Change"
+  #view/inline/crop
+  crop_avatar: "Select the region to crop all images to and press enter.  This operation can not be undone."
+  #view/inline/edit
+  inline_tag: "Inline tag: image #"
+  inline_preview: "Preview"
+  inline_add_image: "Add an image"
+  inline_file: "File"
+  inline_source: "Source"
+  inline_description: "Description:"
+  inline_add_description: "click to add a description for this set"
+  inline_add_desc: "Add description"
+  #view/inline/index
+  inline_first_image: "First image"
+  inline_description2: "Description"
+  inline_user: "User"
+  inline_images: "Images"
+  inline_created: "Created"
+  inline_ago: " ago"

@@ -25,3 +25,8 @@ en:
   #view/artist/show
   artist_show_url: "URL"
   #view/artist/update reuses artist/create
+  #view/banned
+  banned_reason: "You have been banned:"
+  banned_expire: "This will expire in "
+  banned_period: "."
+  banned_permanent: "This ban is permanent"

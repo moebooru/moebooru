@@ -400,7 +400,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-    def admin_user
+    def admin_only
       access_denied unless @current_user.is_admin?
     end
     def post_privileged_only

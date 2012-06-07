@@ -1,6 +1,6 @@
 class AdvertisementsController < ApplicationController
   layout 'default'
-  before_filter :admin_user, :except => :redirect
+  before_filter :admin_only, :except => :redirect
 
   def index
     @ads = Advertisement.paginate(:page => params[:page], :per_page => 100)

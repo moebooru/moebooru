@@ -10,16 +10,6 @@
   <%= javascript_include_tag :all, :cache => 'cached/all' %>
   <%= CONFIG["custom_html_headers"] %>
   <%= yield :html_header %>
-<script type="text/javascript">
-/* <![CDATA[ */
-    (function() {
-        var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
-        s.type = 'text/javascript';
-        s.async = true;
-        s.src = 'https://api.flattr.com/js/0.6/load.js?mode=auto';
-        t.parentNode.insertBefore(s, t);
-    })();
-/* ]]> */</script>
 </head>
 <body>
   <%= render :partial => "layouts/notice" %>

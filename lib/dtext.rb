@@ -109,10 +109,10 @@ module DText
     url = /(h?ttps?:\/\/\[?(:{0,2}[\w\-]+)((:{1,2}|\.)[\w\-]+)*\]?(:\d+)*(\/[^\s\n]*)*)/
 
     # Substitute url tag in this form:                                   <<url|label>>
+    str.gsub!(/(^|[>\s\(])#{url}/, '\1<a href="\2">\2</a>')                 #         url
     str.gsub!(/&lt;&lt;\s*#{url}\s*\|\s*(.+?)\s*&gt;&gt;/, '<a href="\1">\7</a>')
     str.gsub!(/(^|\s+)&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')  # "label":url
     str.gsub!(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')       #     <<url>>
-    str.gsub!(/(^|[\s\(])#{url}/, '\1<a href="\2">\2</a>')                 #         url
     str.gsub!(/<a href="ttp/, '<a href="http') # Fix ttp(s) scheme
     return str
   end

@@ -90,3 +90,11 @@ en:
   forum_last_updated": "Last Updated"
   #view/forum/show
   forum_locked: "This topic is locked."
+  #view/help is being skipped, should be moved to wiki in future
+  #view/history/index
+  history_for: "» History for "
+  history_type: "Type"
+  history_id: "Id"
+  history_date: "Date"
+  history_user: "User"
+  history_change: "Change"

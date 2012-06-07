@@ -134,4 +134,13 @@ en:
   layout_wrong_email: "The email address specified is not registered with this account."
   layout_invalid_email: "Delivery to this email address has failed."
   #don't know how to deal with _menu
-
+  #view/note/history
+  note_post: "Post"
+  note_note: "Note"
+  note_body: "Body"
+  note_edited: "Edited By"
+  note_date: "Date"
+  note_options: "Options"
+  #view/note/_note
+  note_click: "Click to edit"
+  note_search: "Search"

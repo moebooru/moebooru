@@ -144,3 +144,48 @@ en:
   #view/note/_note
   note_click: "Click to edit"
   note_search: "Search"
+  #view/pool/copy
+  pool_clone: "Clone Pool"
+  pool_name: "Name"
+  #view/pool/create
+  pool_create: "Create Pool"
+  pool_public: "Public?"
+  pool_description: "Description"
+  #view/pool/destory
+  pool_delete: "Delete Pool"
+  pool_confirm: "Are you sure you wish to delete "
+  pool_question_mark: "?"
+  #view/pool/import
+  pool_import: "Pool Import: "
+  pool_import_text: "You can perform a tag search and import all the matching posts into this pool."
+  pool_creator: "Creator"
+  pool_posts: "Posts"
+  pool_created: "Created"
+  pool_updated: "Updated"
+  pool_order: "Pool Ordering: "
+  pool_order_text: "Lower numbers will appear first."
+  pool_order2: "Order"
+  pool_delete_mode_text: "When delete mode is enabled, clicking on a thumbnail will remove the post from this pool."
+  pool_delete_mode: "Delete mode"
+  #view/pools/transfer_metadata
+  pool_transfer: "Transfer from pool number:"
+  pool_transfer_text: "Transferring post data from posts in pool "
+  pool_transfer_text2: "  to posts in pool "
+  pool_transfer_text3: "Tags and ratings will be transferred, and the old posts will be parented to the new posts."
+  pool_transfer_text4: "These pools don't have the same number of posts."
+  pool_transfer_text5: "Please check that tags are being transferred to the correct posts."
+  pool_transfer_text6: " the transfer "
+  pool_transfer_from: "From"
+  pool_transfer_to: "To"
+  pool_transfer_tags: "Tags"
+  pool_edit: "Edit Pool"
+  public_text: "Public pools allow anyone to add/remove posts."  pool_transfer_text6: " the transfer "
+  pool_transfer_from: "From"
+  pool_transfer_to: "To"
+  pool_transfer_tags: "Tags"
+  #view/pool/update
+  pool_edit: "Edit Pool"
+  pool_public_text: "Public pools allow anyone to add/remove posts."
+  pool_active: "Active"
+  pool_active_text: "Inactive pools will no longer be selectable when adding a post."
+

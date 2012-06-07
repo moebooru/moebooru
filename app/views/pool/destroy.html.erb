@@ -1,7 +1,7 @@
-<h3>Delete Pool</h3>
+<h3><%=t :pool_delete %></h3>
 
 <%= form_tag(:action => "destroy") do %>
-  <p>Are you sure you wish to delete "<%= h(@pool.pretty_name) %>"?</p>
+  <p><%=t :pool_confirm %>"<%= h(@pool.pretty_name) %>"<%=t :pool_question_mark %></p>
   <%= submit_tag "Yes" %> <%= button_to_function "No", "history.back()" %>
 <% end %>
 

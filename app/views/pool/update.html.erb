@@ -1,27 +1,27 @@
-<h3>Edit Pool</h3>
+<h3><%=t :pool_edit %></h3>
 
 <%= form_tag(:action => "update") do %>
   <table class="form">
     <tbody>
       <tr>
-        <th width="15%"><label for="pool_name">Name</label></th>
+        <th width="15%"><label for="pool_name"><%=t :pool_name %></label></th>
         <td width="85%"><%= text_field "pool", "name", :value => @pool.pretty_name %></td>
       </tr>
       <tr>
-        <th><label for="pool_description">Description</label></th>
+        <th><label for="pool_description"><%=t :pool_description %></label></th>
         <td><%= text_area "pool", "description", :size => "40x10" %></td>
       </tr>
       <tr>
         <th>
-          <label for="pool_is_public">Public</label>
-          <p>Public pools allow anyone to add/remove posts.</p>
+          <label for="pool_is_public"><%=t :pool_public %></label>
+          <p><%=t :pool_public_text %></p>
         </th>
         <td><%= check_box "pool", "is_public" %></td>
       </tr>
       <tr>
         <th>
-          <label for="pool_is_active">Active</label>
-          <p>Inactive pools will no longer be selectable when adding a post.</p>
+          <label for="pool_is_active"><%=t :pool_active %></label>
+          <p><%=t :pool_active_text %></p>
         </th>
         <td><%= check_box "pool", "is_active" %></td>
       </tr>

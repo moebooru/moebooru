@@ -47,3 +47,20 @@ en:
   batch_pending: "Pending"
   batch_paused: "Paused"
   batch_complete: " complete"
+  #view/comment/edit
+  edit_comment: "Edit Comment"
+  #view/comment/index
+  comment_date: "Date"
+  comment_user: "User"
+  comment_rating: "Rating"
+  comment_score: "Score"
+  comment_hidden: "Hidden"
+  comment_tags: "Tags"
+  comment_translation: "Comment translation provided by"
+  #view/comment/moderate
+  comment_author: "Author"
+  comment_body: "Body"
+  #view/comment/search
+  comment_post: "Post"
+  comment_message: "Message"
+  comment_time: "Time"

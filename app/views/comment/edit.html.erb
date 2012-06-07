@@ -1,5 +1,5 @@
 <div id="comment-edit">
-  <h4>Edit Comment</h4>
+  <h4><%=t :edit_comment %></h4>
 
   <%= form_tag(:action => "update") do %>
     <%= hidden_field_tag "id", params[:id] %>

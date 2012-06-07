@@ -6,3 +6,22 @@ en:
   will_paginate:
     previous_label: '&lt;&lt;'
     next_label: '&gt;&gt;'
+  #view/artist/create
+  artist_create: "Separate multiple aliases and group members with commas."
+  artist_name: "Name"
+  artist_alias_for: "Alias for"
+  artist_aliases: "Aliases"
+  artist_members: "Members"
+  artist_urls: "URLs"
+  artist_notes: "Notes"
+  #view/artist/destroy
+  artist_delete: "Delete Artist"
+  artist_delete_text: "Are you sure you want to delete"
+  #I have no idea how to deal with variables so I split the sentence up
+  artist_delete_text_question_mark: "?"
+  #view/artist/index
+  artist_index_updated_by: "Updated By"
+  artist_index_last_modified: "Last Modified"
+  #view/artist/show
+  artist_show_url: "URL"
+  #view/artist/update reuses artist/create

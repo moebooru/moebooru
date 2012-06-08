@@ -2,6 +2,6 @@
 <p><%=t :artist_delete_text %> <%= h @artist.name %><%=t :artist_delete_text_question_mark %></p>
 
 <%= form_tag({:action => "destroy"}, :level => :privileged) do %>
-  <%= submit_tag "Yes" %>
-  <%= submit_tag "No" %>
+  <%= submit_tag t(:artist_delete_yes) %>
+  <%= submit_tag t(:artist_delete_no) %>
 <% end %>

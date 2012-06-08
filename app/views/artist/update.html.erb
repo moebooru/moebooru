@@ -30,9 +30,9 @@
       </tr>
       <tr>
         <td colspan="2">
-          <%= submit_tag "Save" %>
-          <%= button_to_function "Cancel", "history.back()" %>
-          <%= submit_to_remote "preview", "Preview Notes", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
+          <%= submit_tag t(:artist_update_save) %>
+          <%= button_to_function t(:artist_update_cancel), "history.back()" %>
+          <%= submit_to_remote "preview", t(:artist_update_preview), :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
         </td>
       </tr>
     </table>

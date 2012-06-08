@@ -1,9 +1,9 @@
 <div id="artist-index">
   <div id="search-form" style="margin-bottom: 1em;">
     <%= form_tag({:action => "index"}, :method => :get) do %>
-      <%= text_field_tag "name", params[:name], :size => 40 %> <%= submit_tag "Search" %>
+      <%= text_field_tag "name", params[:name], :size => 40 %> <%= submit_tag t(:artist_index_search) %>
       <br />
-      <%= select_tag "order", options_for_select([["Name", "name"], ["Date", "date"]],[params[:order] || ""]) %>
+      <%= select_tag "order", options_for_select([[t(:artist_index_name), "name"], [t(:artist_index_date), "date"]],[params[:order] || ""]) %>
     <% end %>
   </div>
 

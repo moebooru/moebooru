@@ -1,7 +1,7 @@
-<h4>Mark All Read</h4>
-<p>Are you sure you want to mark all your messages as read?</p>
+<h4><%=t :dmail_mark_all_text %></h4>
+<p><%=t :dmail_mark_all_text2 %></p>
 
 <%= form_tag(:action => "mark_all_read") do %>
-  <%= submit_tag "Yes" %>
-  <%= submit_tag "No" %>
+  <%= submit_tag t(:dmail_yes) %>
+  <%= submit_tag t(:dmail_no) %>
 <% end %>

@@ -2,7 +2,7 @@
   <div id="search" style="margin-bottom: 1em;">
     <%= form_tag({:action => "search"}, :method => :get) do %>
       <%= text_field_tag "query", params[:query], :size => 40 %>
-      <%= submit_tag "Search"%>
+      <%= submit_tag t(:forum_search)%>
     <% end %>
   </div>
 
@@ -27,7 +27,7 @@
             <% end %>
 
             <% if fp.response_count > 30 %>
-              <%= link_to "last", {:action => "show", :id => fp.id, :page => (fp.response_count / 30.0).ceil}, :class => "last-page" %>
+              <%= link_to t(:forum_last), {:action => "show", :id => fp.id, :page => (fp.response_count / 30.0).ceil}, :class => "last-page" %>
             <% end %>
 
             <% if fp.is_locked? %>
@@ -36,7 +36,7 @@
           </td>
           <td><%= h fp.author %></td>
           <td><%= h fp.last_updater %></td>
-          <td><%= time_ago_in_words(fp.updated_at) %> ago</td>
+          <td><%= time_ago_in_words(fp.updated_at) %><%=t :forum_ago %></td>
           <td><%= fp.response_count %></td>
         <% end %>
       <% end %>
@@ -50,9 +50,9 @@
   <% content_for :subnavbar do %>
     <li><%= link_to "New topic", :action => "new" %></li>
     <% unless @current_user.is_anonymous? %>
-      <li><%= link_to_function "Mark all read", "Forum.mark_all_read()" %></li>
+      <li><%= link_to_function t(:forum_mark), "Forum.mark_all_read()" %></li>
     <% end %>
-    <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+    <li><%= link_to t(:forum_help), :controller => "help", :action => "forum" %></li>
   <% end %>
 
   <div id="preview" style="display: none; margin: 1em 0;">
@@ -70,7 +70,7 @@
           <td colspan="2"><%= text_area "forum_post", "body", :rows => 20, :cols => 80 %></td>
         </tr>
         <tr>
-          <td colspan="2"><%= submit_tag "Post" %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
+          <td colspan="2"><%= submit_tag t(:forum_post) %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
         </tr>
       </table>
     <% end %>

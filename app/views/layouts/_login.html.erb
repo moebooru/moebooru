@@ -7,17 +7,16 @@
     <div id="login-container-with-tabs">
       <div>
         <ul class="flat-list login-tabs" id="login-tabs">
-        <li id="tab-login"><a href="#">Login</a></li>
-        <li id="tab-reset"><a href="#">Reset password</a></li>
+        <li id="tab-login"><a href="#"><%=t :layout_login %></a></li>
+        <li id="tab-reset"><a href="#"><%=t :layout_reset %></a></li>
         </ul>
       </div>
       <div id="login" style="position: relative;">
         <p id="tab-login-text" class="tab-header-text">
-          Please log in.  To create a new account, enter the name and password you
-          want to use.
+          <%=t :layout_login_text %>
         </p>
         <p id="tab-reset-text" class="tab-header-text">
-          If you supplied an email address when you signed up, you can have your password reset.
+          <%=t :layout_email_text %>
         </p>
 
         <%= form_tag({:action => "authenticate"}, :id=>"login-popup") do %>
@@ -27,19 +26,19 @@
 
           <table class="form" style="width: 80%; max-width: 30em; margin-bottom: .5em; margin-left: auto; margin-right: auto;">
             <tr>
-              <th style="width: 8em"><label class="block" for="login-popup-username">Name</label></th>
+              <th style="width: 8em"><label class="block" for="login-popup-username"><%=t :layout_name %></label></th>
               <td style="width: 10em" align=left><input id="login-popup-username" name="username" type="text" style="width: 100%;"></td>
             </tr>
             <tr id="login-popup-email-box">
-              <th><label class="block" for="login-popup-email">Email</label></th>
+              <th><label class="block" for="login-popup-email"><%=t :layout_email %></label></th>
               <td align=left><input id="login-popup-email" name="email" type="text" style="width: 100%;"></td>
             </tr>
             <tr id="login-popup-password-box">
-              <th><label class="block" for="login-popup-password">Password</label></th>
+              <th><label class="block" for="login-popup-password"><%=t :layout_password %></label></th>
               <td align=left><input id="login-popup-password" name="password" type="password" style="width: 100%;"></td>
             </tr>
             <tr id="login-popup-password-confirm-box" style="display: none;">
-              <th><label class="block" for="login-popup-password-confirm">Confirm Password</label></th>
+              <th><label class="block" for="login-popup-password-confirm"><%=t :layout_confirm%></label></th>
               <td align=left><input id="login-popup-password-confirm" name="password-confirm" type="password" style="width: 100%;"></td>
             </tr>
             <tr>
@@ -53,32 +52,30 @@
 
         <div id="login-popup-notices" class="login-popup-notice">
           <span id="login-popup-login-confirm-password">
-            This user name doesn't exist.  If you want to create a new account, just
-            verify your password and log in.
+            <%=t :layout_not_exist %>
           </span>
           <span id="login-popup-login-user-exists">
-            This user name exists.  If you want to create a new account, please choose
-            a different name.
+            <%=t :layout_exists %>
           </span>
           <span id="login-popup-reset-user-exists">
-            Enter the email address you have registered in your profile.  You'll get an email containing your new password.
+            <%=t :layout_email_reset %>
           </span>
           <span id="login-popup-reset-user-has-no-email">
-            You have no email address in your profile, so you can't have your password reset.
+            <%=t :layout_no_email %>
           </span>
           <span id="login-popup-reset-successful">
-            Password reset. Check your email in a few minutes.
+            <%=t :layout_reset_successful %>
           </span>
           <span id="login-popup-reset-unknown-user">
-            That account does not exist.
+            <%=t :layout_unknown_user %>
           </span>
           <span id="login-popup-reset-blank">
           </span>
           <span id="login-popup-reset-user-email-incorrect">
-            The email address specified is not registered with this account.
+            <%=t :layout_wrong_email %>
           </span>
           <span id="login-popup-reset-user-email-invalid">
-            Delivery to this email address has failed.
+            <%=t :layout_invalid_email %>
           </span>
           <span id="login-popup-message">
           </span>

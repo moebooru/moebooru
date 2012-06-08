@@ -1,6 +1,6 @@
-<h4>Pool Import: <%= h(@pool.pretty_name) %></h4>
+<h4><%=t :pool_import %><%= h(@pool.pretty_name) %></h4>
 
-<p>You can perform a tag search and import all the matching posts into this pool.</p>
+<p><%=t :pool_import_text %></p>
 
 <div style="margin-bottom: 1em;">
   <%= form_remote_tag(:url => {:action => "import", :format => "js"}, :method => :get) do %>

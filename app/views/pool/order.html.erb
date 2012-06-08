@@ -1,5 +1,5 @@
-<h3>Pool Ordering: <%= link_to @pool.pretty_name, :action => :show, :id => @pool.id  %></h3>
-<p>Lower numbers will appear first.</p>
+<h3><%=t :pool_order %><%= link_to @pool.pretty_name, :action => :show, :id => @pool.id  %></h3>
+<p><%=t :pool_order_text %></p>
 
 <script type="text/javascript">
   function orderAutoFill() {
@@ -42,7 +42,7 @@
     <thead>
       <tr>
         <th></th>
-        <th>Order</th>
+        <th><%=t :pool_order2 %></th>
       </tr>
     </thead>
     <tbody>

@@ -409,4 +409,7 @@ class ApplicationController < ActionController::Base
     def member_only
       access_denied unless @current_user.is_member_or_higher?
     end
+    def no_anonymous
+      access_denied if @current_user.is_anonymous?
+    end
 end

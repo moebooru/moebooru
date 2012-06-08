@@ -1,5 +1,7 @@
 class TagSubscriptionController < ApplicationController
   layout "default"
+  before_filter :member_only, :except => :index
+  before_filter :no_anonymous
 
   def create
     if request.post?

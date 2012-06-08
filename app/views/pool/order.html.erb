@@ -4,7 +4,7 @@
 <script type="text/javascript">
   function orderAutoFill() {
     var i = 0
-    var step = parseInt(prompt("Enter an interval"))
+    var step = parseInt(prompt(<%=t :pool_interval %>))
 
     $$(".pp").each(function(x) {
       x.value = i
@@ -63,7 +63,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag "Save", :tabindex => 2 %> <%= button_to_function "Auto Order", "orderAutoFill()", :tabindex => 2 %> <%= button_to_function "Reverse", "orderReverse()", :tabindex => 2 %> <%= button_to_function "Cancel", "history.back()", :tabindex => 2 %></td>
+        <td colspan="2"><%= submit_tag t(:pool_save), :tabindex => 2 %> <%= button_to_function "Auto Order", "orderAutoFill()", :tabindex => 2 %> <%= button_to_function t(:pool_reverse), "orderReverse()", :tabindex => 2 %> <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %></td>
       </tr>
     </tfoot>
   </table>

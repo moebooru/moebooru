@@ -4,7 +4,7 @@
 
 <div style="margin-bottom: 1em;">
   <%= form_remote_tag(:url => {:action => "import", :format => "js"}, :method => :get) do %>
-    <%= text_field_tag "query", params[:query], :size => 50 %> <%= submit_tag "Search" %>
+    <%= text_field_tag "query", params[:query], :size => 50 %> <%= submit_tag t(:pool_search) %>
   <% end %>
 </div>
 
@@ -17,7 +17,7 @@
     </div>
 
     <div style="clear: both;">
-      <%= submit_tag "Import" %> <%= button_to_function "Cancel", "history.back()" %>
+      <%= submit_tag t(:pool_import2) %> <%= button_to_function t(:pool_cancel), "history.back()" %>
     </div>
   <% end %>
   </ul>

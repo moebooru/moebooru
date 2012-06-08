@@ -1,8 +1,8 @@
-<h3>Add to Pool</h3>
+<h3><%=t :pool_add %></h3>
 
 <%= link_to(image_tag(@post.preview_url), :controller => "post", :action => "show", :id => @post.id) %>
 
-<p>Select a pool to add this post to:</p>
+<p><%=t :pool_add_text %></p>
 
 <%= form_tag(:action => "add_post") do %>
   <%= hidden_field_tag("post_id", @post.id) %>
@@ -10,20 +10,20 @@
   <table>
     <tbody>
       <tr>
-        <th width="15%"><label for="pool_name">Pool</label></th>
+        <th width="15%"><label for="pool_name"><%=t :pool_pool %></label></th>
         <td width="85%">
           <select name="pool_id">
             <%= options_from_collection_for_select @pools, :id, :pretty_name %>
           </select>
       </tr>
       <tr>
-        <th><label for="pool_sequence">Order</label></th>
+        <th><label for="pool_sequence"><%=t :pool_order %></label></th>
         <td><%= text_field "pool", "sequence", :size => 5, :value => "" %></td>
       </tr>
     </tbody>
   </table>
 
-  <%= submit_tag "Add" %> <%= button_to_function "Cancel", "history.back()" %>
+  <%= submit_tag t(:pool_add) %> <%= button_to_function t(:pool_cancel), "history.back()" %>
 <% end %>
 
 <%= render :partial => "footer" %>

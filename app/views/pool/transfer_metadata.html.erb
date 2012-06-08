@@ -1,11 +1,11 @@
 <% if @from.nil? then %>
   <%= form_tag({:controller => "pool", :action => "transfer_metadata"}, :method => "get") do %>
-  <%= hidden_field_tag "to", @to.id %>
+  <%= hidden_field_tag t(:pool_transfer_to), @to.id %>
   <%=t :pool_transfer %>
-  <%= text_field_tag "from", "", :class => "fp", :size => 5, :tabindex => 1 %>
+  <%= text_field_tag t(:pool_transfer_from), "", :class => "fp", :size => 5, :tabindex => 1 %>
   <br>
-  <%= submit_tag "Transfer", :tabindex => 2 %>
-  <%= button_to_function "Cancel", "history.back()", :tabindex => 2 %>
+  <%= submit_tag t(:pool_transfer_button), :tabindex => 2 %>
+  <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %>
   <script type="text/javascript">$("from").focus()</script>
 <% end %>
 
@@ -24,7 +24,7 @@
 </div>
 <% end %>
 
-<div> <%= link_to("Reverse", {:action => "transfer_metadata", :from => @to.id, :to => @from.id}) %><%=t :pool_transfer_text6 %></div>
+<div> <%= link_to(t(:pool_reverse), {:action => "transfer_metadata", :from => @to.id, :to => @from.id}) %><%=t :pool_transfer_text6 %></div>
 
 <%= form_tag(:controller => "post", :action => "update_batch") do %>
 <%= hidden_field_tag "url", (url_for :controller => "pool", :action => "show", :id => @to.id) %>
@@ -59,7 +59,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag "Transfer", :tabindex => 2 %> <%= button_to_function "Cancel", "history.back()", :tabindex => 2 %></td>
+        <td colspan="2"><%= submit_tag t(:pool_transfer), :tabindex => 2 %> <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %></td>
       </tr>
     </tfoot>
   </table>

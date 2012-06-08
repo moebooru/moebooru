@@ -16,7 +16,7 @@
         <td><%= text_area "pool", "description", :size => "40x10" %></td>
       </tr>
       <tr>
-        <td colspan="2"><%= submit_tag "Save" %> <%= button_to_function "Cancel", "history.back()" %></td>
+        <td colspan="2"><%= submit_tag t(:pool_save) %> <%= button_to_function t(:pool_cancel), "history.back()" %></td>
       </tr>
     </tbody>
   </table>

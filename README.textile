@@ -39,6 +39,14 @@ On RHEL5, it goes like this:
 * postgresql84-server
 * readline-devel
 
+On Ubuntu 10.04.4 LTS
+
+apt-get install python-software-properties postgresql libpq-dev libxml2-dev libxslt-dev mercurial jhead build-essential libgd2-noxpm-dev
+
+Brightbox repo for ruby works with this: http://blog.brightbox.co.uk/posts/next-generation-ruby-packages-for-ubuntu
+
+add the ppa and then apt-get install ruby1.9.3
+ 
 h2. Installation
 
 * Create a new PostgreSQL user with type of superuser
@@ -48,7 +56,7 @@ h2. Installation
 ** @ruby extconf.rb@
 ** @make@
 * Create @config/database.yml@ and @config/local_config.rb@
-* Run @rake db:migrate@
+* Run @rake db:migrate@ <--this doesn't actually work, I had to import structure.sql
 * Start the server (@bundle exec unicorn_rails@)
 
 h2. Plans

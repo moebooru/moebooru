@@ -2,6 +2,12 @@
 require 'digest/md5'
 
 class ApplicationController < ActionController::Base
+  before_filter :set_locale
+ 
+  def set_locale
+    I18n.locale = params[:locale] || I18n.default_locale
+  end
+
   # This is a proxy class to make various nil checks unnecessary
   class AnonymousUser
     def id

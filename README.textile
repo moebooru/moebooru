@@ -41,7 +41,7 @@ On RHEL5, it goes like this:
 
 On Ubuntu 10.04.4 LTS
 
-* @apt-get install python-software-properties postgresql libpq-dev libxml2-dev libxslt-dev mercurial jhead build-essential libgd2-noxpm-dev@
+* @apt-get install postgresql-contrib python-software-properties postgresql libpq-dev libxml2-dev libxslt-dev mercurial jhead build-essential libgd2-noxpm-dev@
 
 * "Brightbox repo":http://blog.brightbox.co.uk/posts/next-generation-ruby-packages-for-ubuntu would work if you're too lazy to compile ruby
 

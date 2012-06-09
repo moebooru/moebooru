@@ -1,6 +1,6 @@
 <div>
   <% if posts.empty? %>
-    <p>Nobody here but us chickens!</p>
+    <p><%=t :post_empty %></p>
   <% else %>
     <ul id="post-list-posts">
     <% posts.each do |post| -%>

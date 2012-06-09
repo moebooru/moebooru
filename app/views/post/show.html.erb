@@ -1,6 +1,6 @@
 <div id="post-view">
   <% if @post.nil? %>
-    <h2>Nobody here but us chickens!</h2>
+    <h2><%=t :post_empty %></h2>
   <% else %>
     <% if @post.can_be_seen_by?(@current_user) %>
       <script type="text/javascript"> Post.register_resp(<%= json_escape Post.batch_api_data([@post]).to_json.html_safe %>); </script>

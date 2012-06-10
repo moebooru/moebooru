@@ -5,7 +5,7 @@
     <%= link_to t(:static_comments), {:controller => 'comment', :action => 'index'}, :title => t(:static_comments_text) %>
     <%= link_to t(:static_tags), {:controller => 'tag', :action => 'index'}, :title => t(:static_tags_text) %>
     <%= link_to t(:static_wiki), {:controller => 'wiki'}, :title => t(:static_wiki_text) %>
-    <%= link_to '»', {:controller => 'static', :action => 'more'}, :title => 't(:static_more) %>
+    <%= link_to '»', {:controller => 'static', :action => 'more'}, :title => '(:static_more) %>
   </div>
   <div style="margin-bottom: 2em;">
     <%= form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>

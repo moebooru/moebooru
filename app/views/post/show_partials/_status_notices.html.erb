@@ -15,7 +15,7 @@
       <%=t :notice5 %><%= h @post.flag_detail.reason %>
     <% end %>
     <% if @current_user.is_janitor_or_higher? %>
-      (<%= link_to_function t(:notice6), "if (confirm('Do you really want to approve this post?')) {Post.approve(#{@post.id})}" %></li>)
+      (<%= link_to_function t(:notice6), "if (confirm('#{t(:notice_text)}')) {Post.approve(#{@post.id})}" %></li>)
       (<%= link_to_function t(:notice7), "Post.prompt_to_delete(#{@post.id});" %></li>)
     <% end %>
   </div>

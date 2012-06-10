@@ -403,10 +403,13 @@ class ApplicationController < ActionController::Base
     def admin_only
       access_denied unless @current_user.is_admin?
     end
+    def member_only
+      access_denied unless @current_user.is_member_or_higher?
+    end
     def post_privileged_only
       access_denied unless @current_user.is_privileged_or_higher?
     end
-    def member_only
+    def post_member_only
       access_denied unless @current_user.is_member_or_higher?
     end
     def no_anonymous

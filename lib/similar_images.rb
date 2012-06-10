@@ -1,6 +1,5 @@
 require 'multipart'
 require 'external_post'
-require 'iconv'
 
 module SimilarImages
   def get_services(services)
@@ -100,16 +99,9 @@ module SimilarImages
     similarity = {}
     preview_url = ""
     next_id = 1
-    # The xml input obtained can't be trusted to contain only
-    # proper utf-8 characters. Strip invalid utf-8 using iconv.
-    ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
     server_responses.map do |server, xml|
-      # The weird iconv parameter is required thanks to iconv not stripping
-      # invalid character if it's at the end of input string.
-      # Reference: http://po-ru.com/diary/fixing-invalid-utf-8-in-ruby-revisited
-      xml = ic.iconv(xml + ' ')[0..-2]
       doc = begin
-        Nokogiri::XML xml
+        Nokogiri::XML xml.to_valid_utf8
       rescue Exception => e
         errors[server] = { :message=>"parse error" }
         next

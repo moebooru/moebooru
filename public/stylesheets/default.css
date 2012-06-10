@@ -851,6 +851,7 @@ div.help div.code {
   background: #EEE;
   overflow: hidden;
   font-family: monospace;
+  color: black;
 }
 
 div.help > div.section {

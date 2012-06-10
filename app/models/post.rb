@@ -21,6 +21,29 @@ class Post < ActiveRecord::Base
   scope :has_any_tags, lambda { |tags| where("tags_index @@ ?", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' | ')) }
   scope :has_all_tags, lambda { |tags| where("tags_index @@ ?", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' & ')) }
 
+  def self.slow_has_all_tags(tags)
+    p = Post.scoped
+    pt = PostsTag.arel_table
+    pt_arels = []
+    t_ids = Tag.where(:name => tags).select('id').map { |t| t.id }
+    t_ids.each do |t_id|
+      pt_arels << pt.where(pt[:tag_id].eq(t_id)).project(pt[:post_id])
+    end
+    pt_arels.each do |q|
+      p = p.where(:id => q)
+    end
+    p
+  end
+
+  def self.slow_has_any_tags(tags)
+    p = Post.arel_table
+    pt = PostsTag.arel_table
+    pt_arels = []
+    t_ids = Tag.where(:name => tags).select('id').map { |t| t.id }
+    pt_arel = pt.where(pt[:tag_id].in(t_ids)).project(pt[:post_id])
+    Post.where(:id => pt_arel)
+  end
+
   include PostSqlMethods
   include PostCommentMethods
   include PostImageStoreMethods

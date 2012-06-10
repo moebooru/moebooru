@@ -12,7 +12,7 @@
           <th width="15%">
             <label class="block" for="post_rating_questionable"><%=t :post_edit_rating %></label>
             <% unless @current_user.is_privileged_or_higher? %>
-              <p><%=t :post_edit_rating_text%><%= link_to t:(post_edit_help), {:controller => "help", :action => "ratings"}, :target => "_blank" %><%=t :post_edit_rating_close %></p>
+              <p><%=t :post_edit_rating_text %><%= link_to t(:post_edit_help), {:controller => "help", :action => "ratings"}, :target => "_blank" %><%=t :post_edit_rating_close %></p>
             <% end %>
           </th>
           <td width="85%">

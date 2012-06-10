@@ -21,6 +21,7 @@ gem 'nokogiri'
 gem 'verification'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
+gem 'rails-i18n'
 
 group :development do
   gem 'rspec'

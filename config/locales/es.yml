@@ -681,6 +681,6 @@ es:
   static_search: "Search"
   #try to fix ago problem
   comment_ago: ""
-  comment_ago2: "Hace"
+  comment_ago2: "Hace "
   
 

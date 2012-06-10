@@ -1,4 +1,4 @@
-<h4>Report: <%= @report_title %></h4>
+<h4><%=t :report %><%= @report_title %></h4>
 
 <div>
   <div style="margin-bottom: 1em;">
@@ -6,24 +6,24 @@
       <table width="100%">
         <tfoot>
           <tr>
-            <td colspan="2"><%= submit_tag "Search" %></td>
+            <td colspan="2"><%= submit_tag t(:report_search) %></td>
           </tr>
         </tfoot>
         <tbody>
           <tr>
-            <th width="15%"><label for="start_date">Start Date</label></th>
+            <th width="15%"><label for="start_date"><%=t :report_start %></label></th>
             <td width="85%"><%= text_field_tag "start_date", @start_date, :size => 10 %></td>
           </tr>
           <tr>
-            <th><label for="end_date">End Date</label></th>
+            <th><label for="end_date"><%=t :report_end %></label></th>
             <td><%= text_field_tag "end_date", @end_date, :size => 10 %></td>
           </tr>
           <tr>
-            <th><label for="limit">Limit</label></th>
+            <th><label for="limit"><%=t :report_limit %></label></th>
             <td><%= text_field_tag "limit", @limit, :size => 5 %></td>
           </tr>
           <tr>
-            <td><label for="level">Level</label></td>
+            <td><label for="level"><%=t :report_level %></label></td>
             <td><%= user_level_select_tag "level", :include_blank => true %></td>
           </tr>
         </tbody>
@@ -35,13 +35,13 @@
     <table width="100%" class="highlightable">
       <thead>
         <tr>
-          <th width="15%">User</th>
-          <th width="10%">Changes</th>
-          <th width="75%">Percentage</th>
+          <th width="15%"><%=t :report_user %></th>
+          <th width="10%"><%=t :report_changes %></th>
+          <th width="75%"><%=t :report_percent %></th>
         </tr>
       </thead>
       <tfoot>
-        <td>Total</td>
+        <td><%=t :report_total %></td>
         <td><%= @users[0]["sum"].to_i %></td>
         <td></td>
       </tfoot>
@@ -64,8 +64,8 @@
 </div>
 
 <% content_for :subnavbar do %>
-  <li><%= link_to "Tags", :action => "tag_updates", :start_date => @start_date, :end_date => @end_date %></li>
-  <li><%= link_to "Notes", :action => "note_updates", :start_date => @start_date, :end_date => @end_date %></li>
-  <li><%= link_to "Wiki", :action => "wiki_updates", :start_date => @start_date, :end_date => @end_date %></li>
-  <li><%= link_to "Uploads", :action => "post_uploads", :start_date => @start_date, :end_date => @end_date %></li>
+  <li><%= link_to t(:report_tags), :action => "tag_updates", :start_date => @start_date, :end_date => @end_date %></li>
+  <li><%= link_to t(:report_notes), :action => "note_updates", :start_date => @start_date, :end_date => @end_date %></li>
+  <li><%= link_to t(:report_wiki), :action => "wiki_updates", :start_date => @start_date, :end_date => @end_date %></li>
+  <li><%= link_to t(:report_uploads), :action => "post_uploads", :start_date => @start_date, :end_date => @end_date %></li>
 <% end %>

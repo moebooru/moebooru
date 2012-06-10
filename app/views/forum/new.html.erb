@@ -1,4 +1,4 @@
-<h2>New Topic</h2>
+<h2><%=t :forum_new_text %></h2>
 
 <div style="margin: 1em 0;">
   <div id="preview" class="response-list" style="display: none;">
@@ -9,7 +9,7 @@
       <%= hidden_field "forum_post", "parent_id", :value => params["parent_id"] %>
       <table>
         <tr>
-          <td><label for="forum_post_title">Title</label></td>
+          <td><label for="forum_post_title"><%=t :forum_title %></label></td>
           <td><%= text_field "forum_post", "title", :size => 60 %></td>
         </tr>
         <tr>
@@ -25,8 +25,8 @@
 </div>
 
 <% content_for :subnavbar do %>
-  <li><%= link_to "List", :action => "index" %></li>
-  <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+  <li><%= link_to t(:forum_list), :action => "index" %></li>
+  <li><%= link_to t(:forum_help), :controller => "help", :action => "forum" %></li>
 <% end %>
 
 <script type="text/javascript">

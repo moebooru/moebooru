@@ -4,22 +4,22 @@
 
   var account_menu = [];
   <% if @current_user.is_anonymous? %>
-    account_menu.push(<%= make_sub_item("Login", {:controller => :user, :action => "login"}, :level => :member, :class_names => ["login-button"]) %>);
-    account_menu.push(<%= make_sub_item("Reset Password", :controller => :user, :action => "reset_password") %>);
+    account_menu.push(<%= make_sub_item(t(:layout_login), {:controller => :user, :action => "login"}, :level => :member, :class_names => ["login-button"]) %>);
+    account_menu.push(<%= make_sub_item(t(:layout_reset), :controller => :user, :action => "reset_password") %>);
   <% else %>
-    account_menu.push(<%= make_sub_item("Logout", :controller => :user, :action => "logout", :from => request.fullpath) %>);
+    account_menu.push(<%= make_sub_item(t(:layout_logout), :controller => :user, :action => "logout", :from => request.fullpath) %>);
 
     if(Cookie.get("user_id"))
     {
-      var profile_item = <%= make_sub_item("My Profile", :controller => :user, :action => "show", :id => @current_user.id) %>;
+      var profile_item = <%= make_sub_item(t(:layout_profile), :controller => :user, :action => "show", :id => @current_user.id) %>;
       account_menu.push(profile_item);
     }
 
-    account_menu.push(<%= make_sub_item("My Mail", :controller => "dmail", :action => "inbox") %>);
+    account_menu.push(<%= make_sub_item(t(:layout_mail), :controller => "dmail", :action => "inbox") %>);
 
     if(Cookie.get("login"))
     {
-      var favorites_item = <%= make_sub_item("My Favorites", :controller => "post", :action => "index", :tags => "order:vote vote:3:") %>;
+      var favorites_item = <%= make_sub_item(t(:layout_fav), :controller => "post", :action => "index", :tags => "order:vote vote:3:") %>;
       if(User.get_use_browser())
         favorites_item.dest = "/post/browse#/order:vote vote:3:" + Cookie.get("login");
       else
@@ -27,27 +27,27 @@
       account_menu.push(favorites_item);
     }
 
-    account_menu.push(<%= make_sub_item("Settings", :controller => :user, :action => "edit") %>);
-    account_menu.push(<%= make_sub_item("Change Password", :controller => :user, :action => "change_password") %>);
+    account_menu.push(<%= make_sub_item(t(:layout_settings), :controller => :user, :action => "edit") %>);
+    account_menu.push(<%= make_sub_item(t(:layout_change_pwd), :controller => :user, :action => "change_password") %>);
   <% end %>
 
-  def.push(<%= make_main_item("My Account", {:controller => :user, :action => "home"}, {:name => "my_account", :level => :member}) %>);
+  def.push(<%= make_main_item(t(:layout_account), {:controller => :user, :action => "home"}, {:name => "my_account", :level => :member}) %>);
   def[def.length-1].sub = account_menu;
 
   var posts_menu = [];
-  posts_menu.push(<%= make_sub_item("View posts", :controller => :post, :action => "index") %>);
-  posts_menu.push(<%= make_sub_item("Search posts", :controller => :post, :action => "index") %>);
+  posts_menu.push(<%= make_sub_item(t(:layout_view_posts), :controller => :post, :action => "index") %>);
+  posts_menu.push(<%= make_sub_item(t(:layout_search_posts), :controller => :post, :action => "index") %>);
   posts_menu[posts_menu.length-1].func = ShowPostSearch;
-  posts_menu.push(<%= make_sub_item("Upload", :controller => :post, :action => "upload") %>);
-  posts_menu.push(<%= make_sub_item("Random", :controller => :post, :tags => "order:random") %>);
-  posts_menu.push(<%= make_sub_item("Popular", :controller => :post, :action => "popular_recent") %>);
-  posts_menu.push(<%= make_sub_item("Image Search", :controller => :post, :action => "similar") %>);
-  posts_menu.push(<%= make_sub_item("History", :controller => :history, :action => "index") %>);
+  posts_menu.push(<%= make_sub_item(t(:layout_upload), :controller => :post, :action => "upload") %>);
+  posts_menu.push(<%= make_sub_item(t(:layout_random), :controller => :post, :tags => "order:random") %>);
+  posts_menu.push(<%= make_sub_item(t(:layout_popular), :controller => :post, :action => "popular_recent") %>);
+  posts_menu.push(<%= make_sub_item(t(:layout_img_search), :controller => :post, :action => "similar") %>);
+  posts_menu.push(<%= make_sub_item(t(:layout_history), :controller => :history, :action => "index") %>);
   <% if @current_user.is_contributor_or_higher? %>
-    posts_menu.push(<%= make_sub_item("Batch upload", :controller => :batch) %>);
+    posts_menu.push(<%= make_sub_item(t(:layout_batch), :controller => :batch) %>);
   <% end %>
   <% if @current_user.is_janitor_or_higher? %>
-    posts_menu.push(<%= make_sub_item("Moderate", :controller => :post, :action => "moderate") %>);
+    posts_menu.push(<%= make_sub_item(t(:layout_moderate), :controller => :post, :action => "moderate") %>);
 
     var posts_flagged = Cookie.get("posts_flagged");
     if (posts_flagged && parseInt(posts_flagged) > "0") {
@@ -55,76 +55,76 @@
       posts_menu[posts_menu.length-1].class_names = ["bolded"];
     }
   <% end %>
-  def.push(<%= make_main_item("Posts", {:controller => :post, :action => "index"}, {:name => "posts"}) %>);
+  def.push(<%= make_main_item(t(:layout_posts), {:controller => :post, :action => "index"}, {:name => "posts"}) %>);
   def[def.length-1].sub = posts_menu;
 
   var comments_menu = [];
-  comments_menu.push(<%= make_sub_item("View comments", :controller => :comment, :action => "index") %>);
-  comments_menu.push(<%= make_sub_item("Search comments", :controller => :comment, :action => "search") %>);
+  comments_menu.push(<%= make_sub_item(t(:layout_view_comments), :controller => :comment, :action => "index") %>);
+  comments_menu.push(<%= make_sub_item(t(:layout_search_comments), :controller => :comment, :action => "search") %>);
   comments_menu[comments_menu.length-1].func = ShowCommentSearch;
   <% if @current_user.is_janitor_or_higher? %>
-  comments_menu.push(<%= make_sub_item("Moderate", :controller => :comment, :action => "moderate") %>);
+  comments_menu.push(<%= make_sub_item(t(:layout_moderate), :controller => :comment, :action => "moderate") %>);
   <% end %>
-  def.push(<%= make_main_item("Comments", {:controller => :comment, :action => "index"}, {:html_id => "comments-link", :name => "comments"}) %>);
+  def.push(<%= make_main_item(t(:layout_comments), {:controller => :comment, :action => "index"}, {:html_id => "comments-link", :name => "comments"}) %>);
   if (Cookie.get("comments_updated") == "1") {
     def[def.length-1].class_names = ["bolded"];
   }
   def[def.length-1].sub = comments_menu;
 
   var notes_menu = [];
-  notes_menu.push(<%= make_sub_item("View notes", :controller => :note, :action => "index") %>);
-  notes_menu.push(<%= make_sub_item("Search notes", :controller => :note, :action => "search") %>);
+  notes_menu.push(<%= make_sub_item(t(:layout_view_notes), :controller => :note, :action => "index") %>);
+  notes_menu.push(<%= make_sub_item(t(:layout_search_notes), :controller => :note, :action => "search") %>);
   notes_menu[notes_menu.length-1].func = ShowNoteSearch;
-  notes_menu.push(<%= make_sub_item("Requests", :controller => :posts, :action => "index", :tags => "translation_request") %>);
-  def.push(<%= make_main_item("Notes", {:controller => :note, :action => "index"}, {:name => "notes"}) %>);
+  notes_menu.push(<%= make_sub_item(t(:layout_requests), :controller => :posts, :action => "index", :tags => "translation_request") %>);
+  def.push(<%= make_main_item(t(:layout_notes), {:controller => :note, :action => "index"}, {:name => "notes"}) %>);
   def[def.length-1].sub = notes_menu;
 
   <% if CONFIG["enable_artists"] %>
   var artists_menu = [];
-  artists_menu.push(<%= make_sub_item("View artists", :controller => :artist, :action => "index") %>);
-  artists_menu.push(<%= make_sub_item("Search artists", :controller => :artist, :action => "index") %>);
+  artists_menu.push(<%= make_sub_item(t(:layout_view_artists), :controller => :artist, :action => "index") %>);
+  artists_menu.push(<%= make_sub_item(t(:layout_search_artists), :controller => :artist, :action => "index") %>);
   artists_menu[artists_menu.length-1].func = ShowArtistSearch;
-  artists_menu.push(<%= make_sub_item("Create", :controller => :artist, :action => "create") %>);
-  def.push(<%= make_main_item("Artists", {:controller => :artist, :action => "index"}, {:name => "artists"}) %>);
+  artists_menu.push(<%= make_sub_item(t(:layout_create), :controller => :artist, :action => "create") %>);
+  def.push(<%= make_main_item(t(:layout_artists), {:controller => :artist, :action => "index"}, {:name => "artists"}) %>);
   def[def.length-1].sub = artists_menu;
   <% end %>
 
   var tags_menu = [];
-  tags_menu.push(<%= make_sub_item("View tags", :controller => :tag, :action => "index") %>);
-  tags_menu.push(<%= make_sub_item("Search tags", :controller => :tag, :action => "index") %>);
+  tags_menu.push(<%= make_sub_item(t(:layout_view_tags), :controller => :tag, :action => "index") %>);
+  tags_menu.push(<%= make_sub_item(t(:layout_search_tags), :controller => :tag, :action => "index") %>);
   tags_menu[tags_menu.length-1].func = ShowTagSearch;
-  tags_menu.push(<%= make_sub_item("Popular", :controller => :tag, :action => "popular_by_day") %>);
-  tags_menu.push(<%= make_sub_item("Aliases", :controller => :tag_alias, :action => "index") %>);
-  tags_menu.push(<%= make_sub_item("Implications", :controller => :tag_implication, :action => "index") %>);
+  tags_menu.push(<%= make_sub_item(t(:layout_popular), :controller => :tag, :action => "popular_by_day") %>);
+  tags_menu.push(<%= make_sub_item(t(:layout_aliases), :controller => :tag_alias, :action => "index") %>);
+  tags_menu.push(<%= make_sub_item(t(:layout_imp), :controller => :tag_implication, :action => "index") %>);
   <% if @current_user.is_mod_or_higher? %>
-    tags_menu.push(<%= make_sub_item("Mass edit", :controller => :tag, :action => "mass_edit") %>);
+    tags_menu.push(<%= make_sub_item(t(:layout_mass_edit), :controller => :tag, :action => "mass_edit") %>);
   <% end %>
-  tags_menu.push(<%= make_sub_item("Edit", :controller => :tag, :action => "edit") %>);
-  def.push(<%= make_main_item("Tags", {:controller => :tag, :action => "index", :order => "date"}, {:name => "tags"}) %>);
+  tags_menu.push(<%= make_sub_item(t(:layout_edit), :controller => :tag, :action => "edit") %>);
+  def.push(<%= make_main_item(t(:layout_tags), {:controller => :tag, :action => "index", :order => "date"}, {:name => "tags"}) %>);
   def[def.length-1].sub = tags_menu;
 
   var pools_menu = [];
-  pools_menu.push(<%= make_sub_item("View pools", :controller => :pool, :action => "index") %>);
-  pools_menu.push(<%= make_sub_item("Search pools", :controller => :pool, :action => "index") %>);
+  pools_menu.push(<%= make_sub_item(t(:layout_view_pools), :controller => :pool, :action => "index") %>);
+  pools_menu.push(<%= make_sub_item(t(:layout_search_pools), :controller => :pool, :action => "index") %>);
   pools_menu[pools_menu.length-1].func = ShowPoolSearch;
-  pools_menu.push(<%= make_sub_item("Create new pool", :controller => :pool, :action => "create") %>);
-  def.push(<%= make_main_item("Pools", {:controller => :pool, :action => "index"}, {:name => "pools"}) %>);
+  pools_menu.push(<%= make_sub_item(t(:layout_create_pool), :controller => :pool, :action => "create") %>);
+  def.push(<%= make_main_item(t(:layout_pools), {:controller => :pool, :action => "index"}, {:name => "pools"}) %>);
   def[def.length-1].sub = pools_menu;
 
   var wiki_menu = [];
-  wiki_menu.push(<%= make_sub_item("View wiki index", :controller => :wiki, :action => "index") %>);
-  wiki_menu.push(<%= make_sub_item("Search wiki", :controller => :wiki, :action => "index") %>);
+  wiki_menu.push(<%= make_sub_item(t(:layout_wiki_index), :controller => :wiki, :action => "index") %>);
+  wiki_menu.push(<%= make_sub_item(t(:layout_search_wiki), :controller => :wiki, :action => "index") %>);
   wiki_menu[wiki_menu.length-1].func = ShowWikiSearch;
-  wiki_menu.push(<%= make_sub_item("Create new page", :controller => :wiki, :action => "add") %>);
-  def.push(<%= make_main_item("Wiki", {:controller => :wiki, :action => "show", :title => "help:home"}, {:name => "wiki"}) %>);
+  wiki_menu.push(<%= make_sub_item(t(:layout_create_wiki), :controller => :wiki, :action => "add") %>);
+  def.push(<%= make_main_item(t(:layout_wiki), {:controller => :wiki, :action => "show", :title => "help:home"}, {:name => "wiki"}) %>);
   def[def.length-1].sub = wiki_menu;
 
   var forum_menu = [];
-  forum_menu.push(<%= make_sub_item("View topics", :controller => :forum, :action => "index") %>);
-  forum_menu.push(<%= make_sub_item("Search forums", :controller => :forum, :action => "index") %>);
+  forum_menu.push(<%= make_sub_item(t(:layout_forum_topics), :controller => :forum, :action => "index") %>);
+  forum_menu.push(<%= make_sub_item(t(:layout_search_forum), :controller => :forum, :action => "index") %>);
   forum_menu[forum_menu.length-1].func = ShowForumSearch;
-  forum_menu.push(<%= make_sub_item("New topic", :controller => :forum, :action => "new") %>);
-  def.push(<%= make_main_item("Forum", {:controller => :forum, :action => "index"}, {:name => "forum", :html_id => "forum-link"}) %>);
+  forum_menu.push(<%= make_sub_item(t(:layout_new_topic), :controller => :forum, :action => "new") %>);
+  def.push(<%= make_main_item(t(:layout_forum), {:controller => :forum, :action => "index"}, {:name => "forum", :html_id => "forum-link"}) %>);
   if (Cookie.get("forum_updated") == "1") {
     def[def.length-1].class_names = ["bolded"];
   }
@@ -133,13 +133,13 @@
   var help_menu = [];
   <% current_controller = @current_request.parameters[:controller].to_sym %>
   <% if [:post, :comment, :note, :artist, :tag, :wiki, :pool, :forum].include?(current_controller) then %>
-    help_menu.push(<%= make_sub_item("#{current_controller.to_s.capitalize} Help", {:controller => :help, :action => get_help_action_for_controller(current_controller)}) %>);
+    help_menu.push(<%= make_sub_item("#{current_controller.to_s.capitalize} t(:layout_help)", {:controller => :help, :action => get_help_action_for_controller(current_controller)}) %>);
   <% end %>
-  help_menu.push(<%= make_sub_item("Site Help", {:controller => :help}) %>);
-  def.push(<%= make_main_item("Help", {:controller => :help}, {:name => "help"}) %>);
+  help_menu.push(<%= make_sub_item(t(:layout_site_help), {:controller => :help}) %>);
+  def.push(<%= make_main_item(t(:layout_help), {:controller => :help}, {:name => "help"}) %>);
   def[def.length-1].sub = help_menu;
 
-  def.push(<%= make_main_item("More »", {:controller => :static, :action => "more"}, {:name => "more"}) %>);
+  def.push(<%= make_main_item(t(:layout_more), {:controller => :static, :action => "more"}, {:name => "more"}) %>);
 </script>
 <% end %>
 
@@ -160,7 +160,7 @@
       <div <%= "id='#{item[:html_id]}' " if(item[:html_id]) %> class='<%= class_names.join(" ") %>'><a href="<%= item[:dest] %>" <%= onclick %>><%= item[:label] %></a></div>
   <% } %>
   <a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
-    <span>New&nbsp;mail</span>
+    <span><%=t :layout_new_mail %></span>
   </a>
   <span id='cn' style="display: none;">
   </span>

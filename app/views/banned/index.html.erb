@@ -1,10 +1,10 @@
 <div id="static-more">
   <h2><%= link_to CONFIG['app_name'], '/', :id => "site-link" %></h2>
-  <h5>You have been banned: <%= @ban.reason %></h5>
+  <h5><%=t :banned_reason %> <%= @ban.reason %></h5>
 
   <% if @ban.expires_at then %>
-    <p>This will expire in <%= time_ago_in_words(@ban.expires_at) %>.</p>
+    <p><%=t :banned_expire %><%= time_ago_in_words(@ban.expires_at) %><%=t :banned_period %></p>
   <% else %>
-    <p>This ban is permanent.</p>
+    <p><%=t :banned_permanent %></p>
   <% end %>
 </div>

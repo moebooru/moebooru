@@ -1,29 +1,29 @@
 <div id="stats" class="vote-container">
-  <h5>Statistics</h5>
+  <h5><%=t :post_stats %></h5>
   <ul>
-    <li>Id: <%= @post.id %></li>
-    <li>Posted: <%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
+    <li><%=t :post_stats_id %><%= @post.id %></li>
+    <li><%=t :post_stats_posted %><%= link_to time_ago_in_words(@post.created_at) + " ago", {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
     <% if @current_user.is_admin? && @post.approver %>
-      <li>Approver: <%= @post.approver.name %></li>
+      <li><%=t :post_stats_approver %><%= @post.approver.name %></li>
     <% end %>
     <% if @post.image? %>
-      <li>Size: <%= @post.width %>x<%= @post.height %></li>
+      <li><%=t :post_stats_size %><%= @post.width %>x<%= @post.height %></li>
     <% end %>
     <% unless @post.source.blank? %>
       <% if @post.source[/^http/] %>
-        <li>Source: <%= link_to @post.source[7, 20] + "...", @post.normalized_source, :target => "_blank" %></li>
+        <li><%=t :post_stats_source %><%= link_to @post.source[7, 20] + "...", @post.normalized_source, :target => "_blank" %></li>
       <% else %>
-        <li>Source: <%= @post.source %></li>
+        <li><%=t :post_stats_source %><%= @post.source %></li>
       <% end %>
     <% end %>
-    <li>Rating: <%= @post.pretty_rating %> <%= vote_tooltip_widget() %></li>
+    <li><%=t :post_stats_rating %><%= @post.pretty_rating %> <%= vote_tooltip_widget() %></li>
 
     <li>
-      Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>
+      <%=t :post_stats_score %><span id="post-score-<%= @post.id %>"><%= @post.score %></span>
       <%= vote_widget(@current_user) %>
     </li>
 
-    <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
+    <li><%=t :post_stats_fav %><span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
   </ul>
 </div>
 

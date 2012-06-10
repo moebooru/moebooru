@@ -55,15 +55,15 @@
           </td>
           <td>
             <%= text_field_tag "pool_post_sequence[#{pp.id}]", pp.sequence, :class => "pp", :size => 5, :tabindex => 1 %>
-            <%= link_to_function "+1", "orderShift(#{pp.id}, +1)", :class=>"text-button" %>
-            <%= link_to_function "-1", "orderShift(#{pp.id}, -1)", :class=>"text-button" %>
+            <%= link_to_function t(:pool_order_plus_one), "orderShift(#{pp.id}, +1)", :class=>"text-button" %>
+            <%= link_to_function t(:pool_order_minus_one), "orderShift(#{pp.id}, -1)", :class=>"text-button" %>
           </td>
         </tr>
       <% end %>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag t(:pool_save), :tabindex => 2 %> <%= button_to_function "Auto Order", "orderAutoFill()", :tabindex => 2 %> <%= button_to_function t(:pool_reverse), "orderReverse()", :tabindex => 2 %> <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %></td>
+        <td colspan="2"><%= submit_tag t(:pool_save), :tabindex => 2 %> <%= button_to_function t(:pool_order_auto), "orderAutoFill()", :tabindex => 2 %> <%= button_to_function t(:pool_reverse), "orderReverse()", :tabindex => 2 %> <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %></td>
       </tr>
     </tfoot>
   </table>

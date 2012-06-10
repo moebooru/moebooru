@@ -51,13 +51,13 @@
   <% end %>
 
   <!--[if lt IE 7]>
-  <div style="display: none;" id="old-browser">Your browser is very old, and this site will not display properly.
-    Please consider upgrading to a more recent web browser:
+  <div style="display: none;" id="old-browser"><%=t :old_browser %>
+    <%=t :old_browser2 %>
     <a href="http://www.mozilla.com/firefox/">Firefox</a>,
     <a href="http://www.opera.com/">Opera</a>,
     <a href="http://www.microsoft.com/windows/internet-explorer/download-ie.aspx">Internet Explorer</a>.
     <div style="text-align: right;" id="old-browser-hide">
-      <a href="#" onclick='$("old-browser").hide(); Cookie.put("hide-ie-nag", "1");'>(hide this message)</a>
+      <a href="#" onclick='$("old-browser").hide(); Cookie.put("hide-ie-nag", "1");'><%=t :old_browser3 %></a>
     </div>
   </div>
   <![endif]-->

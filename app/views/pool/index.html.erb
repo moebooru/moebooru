@@ -27,8 +27,8 @@
           <td><%= link_to h(p.pretty_name), :action => "show", :id => p.id %></td>
           <td><%= h(p.user.pretty_name) %></td>
           <td><%= p.post_count %></td>
-          <td><%= time_ago_in_words(p.created_at) %> ago</td>
-          <td><%= time_ago_in_words(p.updated_at) %> ago</td>
+          <td><%=t :pool_ago2 %><%= time_ago_in_words(p.created_at) %><%=t :pool_ago %></td>
+          <td><%=t :pool_ago2 %><%= time_ago_in_words(p.updated_at) %><%=t :pool_ago %></td>
         </tr>
       <% end %>
     </tbody>

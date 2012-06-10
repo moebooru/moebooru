@@ -24,7 +24,7 @@
           <td><%= h(p.description) %></td>
           <td><%= link_to h(p.user.pretty_name), :controller => "user", :action => "show", :id => p.user.id %></td>
           <td><%= p.inline_images.length %></td>
-          <td><%= time_ago_in_words(p.created_at) %><%=t :inline_ago %></td>
+          <td><%=t :inline_ago2 %><%= time_ago_in_words(p.created_at) %><%=t :inline_ago %></td>
         </tr>
       <% end %>
     </tbody>

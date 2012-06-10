@@ -1,5 +1,5 @@
 <div id="pool-show">
-  <h4>Pool: <%= h(@pool.pretty_name) %></h4>
+  <h4><%=t :pool_pool2 %><%= h(@pool.pretty_name) %></h4>
   <% unless @pool.description.blank? %>
     <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
   <% end %>

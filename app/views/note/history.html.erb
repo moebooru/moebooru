@@ -19,7 +19,7 @@
         <td><%= h(note.body) %> <% unless note.is_active? %>(deleted)<% end %></td>
         <td><%= link_to h(note.author), :controller => "user", :action => "show", :id => note.user_id %></td>
         <td><%= note.updated_at.strftime("%D") %></td>
-        <td><%= link_to t(:note_revert), {:controller => "note", :action => "revert", :id => note.note_id, :version => note.version}, :method => :post, :confirm => t(:note_revert_confrim) %></td>
+        <td><%= link_to t(:note_revert), {:controller => "note", :action => "revert", :id => note.note_id, :version => note.version}, :method => :post, :confirm => t(:note_revert_confirm) %></td>
       </tr>
     <% end %>
   </tbody>

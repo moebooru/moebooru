@@ -1,16 +1,16 @@
-<h4>My Inbox</h4>
+<h4><%=t :dmail_inbox %></h4>
 
 <% if @dmails.empty? %>
-  <p>You have no messages.</p>
+  <p><%=t :dmail_empty %></p>
 <% else %>
   <div class="mail">
     <table width="100%" class="highlightable">
       <thead>
         <tr>
-          <th width="15%">From</th>
-          <th width="15%">To</th>
-          <th width="55%">Title</th>
-          <th width="15%">When</th>
+          <th width="15%"><%=t :dmail_from %></th>
+          <th width="15%"><%=t :dmail_to %></th>
+          <th width="55%"><%=t :dmail_title %></th>
+          <th width="15%"><%=t :dmail_when %></th>
         </tr>
       </thead>
       <tbody>
@@ -29,7 +29,7 @@
                 <% end %>
               <% end %>
             </td>
-            <td><%= time_ago_in_words(dmail.created_at) %> ago</td>
+            <td><%= time_ago_in_words(dmail.created_at) %><%=t :dmail_ago %></td>
           </tr>
         <% end %>
       </tbody>

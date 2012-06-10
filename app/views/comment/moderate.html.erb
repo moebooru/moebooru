@@ -18,8 +18,8 @@
     <thead>
       <tr>
         <th></th>
-        <th>Author</th>
-        <th>Body</th>
+        <th><%=t :comment_author %></th>
+        <th><%=t :comment_body %></th>
       </tr>
     </thead>
     <tfoot>
@@ -27,8 +27,8 @@
         <td colspan="3">
           <%= button_to_function "Select all", "$$('.c').each(function (i) {i.checked = true; highlight_row(i)}); return false" %>
           <%= button_to_function "Invert selection", "$$('.c').each(function (i) {i.checked = !i.checked; highlight_row(i)}); return false" %>
-          <%= submit_tag "Approve" %>
-          <%= submit_tag "Delete" %>
+          <%= submit_tag t(:comment_approve) %>
+          <%= submit_tag t(:comment_delete) %>
         </td>
       </tr>
     </tfoot>

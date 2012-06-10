@@ -1,9 +1,9 @@
 <div id="comment-edit">
-  <h4>Edit Comment</h4>
+  <h4><%=t :edit_comment %></h4>
 
   <%= form_tag(:action => "update") do %>
     <%= hidden_field_tag "id", params[:id] %>
     <%= text_area("comment", "body", :rows => 10, :cols => 60) %><br>
-    <%= submit_tag "Save changes" %>
+    <%= submit_tag t(:comment_save) %>
   <% end %>
 </div>

@@ -2,11 +2,11 @@
   <table width="100%" class="highlightable">
     <thead>
       <tr>
-        <th width="40px">First image</th>
-        <th width="60%">Description</th>
-        <th width="*">User</th>
-        <th width="*">Images</th>
-        <th width="*">Created</th>
+        <th width="40px"><%=t :inline_first_image %></th>
+        <th width="60%"><%=t :inline_description2 %></th>
+        <th width="*"><%=t :inline_user %></th>
+        <th width="*"><%=t :inline_images %></th>
+        <th width="*"><%=t :inline_created %></th>
       </tr>
     </thead>
     <tbody>
@@ -24,7 +24,7 @@
           <td><%= h(p.description) %></td>
           <td><%= link_to h(p.user.pretty_name), :controller => "user", :action => "show", :id => p.user.id %></td>
           <td><%= p.inline_images.length %></td>
-          <td><%= time_ago_in_words(p.created_at) %> ago</td>
+          <td><%= time_ago_in_words(p.created_at) %><%=t :inline_ago %></td>
         </tr>
       <% end %>
     </tbody>
@@ -39,7 +39,7 @@
 <% end %>
 
 <% content_for :subnavbar do %>
-  <li><%= link_to "Create", "#", :level => :member, :onclick => "$('create-new').submit(); return false;" %></li>
+  <li><%= link_to t(:inline_create), "#", :level => :member, :onclick => "$('create-new').submit(); return false;" %></li>
 <% end %>
 
 <%= render :partial => "footer" %>

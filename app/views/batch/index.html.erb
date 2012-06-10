@@ -4,10 +4,10 @@
   <thead>
     <tr>
       <th width="5%">#</th>
-      <th width="10%">User</th>
-      <th width="10%">URL</th>
-      <th width="25%">Tags</th>
-      <th width="45%">Status</th>
+      <th width="10%"><%=t :batch_username %></th>
+      <th width="10%"><%=t :batch_url %></th>
+      <th width="25%"><%=t :batch_tags %></th>
+      <th width="45%"><%=t :batch_status %></th>
     </tr>
   </thead>
   <tbody>
@@ -21,20 +21,20 @@
         <td>
           <% if item.status == "error" then %>
             <% if item.data["post_id"] then %>
-              Post #<%= link_to h(item.data["post_id"]), :controller => "post", :action => "show", :id => item.data["post_id"] %> already exists
+              <%=t :batch_post %><%= link_to h(item.data["post_id"]), :controller => "post", :action => "show", :id => item.data["post_id"] %><%=t :batch_post_exists %>
             <% else %>
               <%= h(item.data["error"].to_s) %>
             <% end %>
           <% elsif item.status == "pending" then %>
             <% if item.active then %>
-              Uploading
+              <%=t :batch_uploading %>
             <% else %>
-              Pending
+              <%=t :batch_pending %>
             <% end %>
           <% elsif item.status == "paused" then %>
-            Paused
+            <%=t :batch_paused %>
           <% elsif item.status == "finished" then %>
-            Post #<%= link_to h(item.data["post_id"]), :controller => "post", :action => "show", :id => item.data["post_id"] %> complete
+            <%=t :batch_post %><%= link_to h(item.data["post_id"]), :controller => "post", :action => "show", :id => item.data["post_id"] %><%=t :batch_complete %>
           <% end %>
         </td>
       </tr>
@@ -44,32 +44,32 @@
 
 <div class="batch-buttons">
   <%= form_tag({:action => "create"}, :method => :get) do %>
-    <%= submit_tag("Queue uploads", :name => "queue") %>
+    <%= submit_tag(t(:batch_queue_uploads), :name => "queue") %>
   <% end %>
 
   <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "retry" %>
-    <%= submit_tag("Retry failed") %>
+    <%= submit_tag(t(:batch_retry_failed)) %>
   <% end %>
 
   <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "clear_finished" %>
-    <%= submit_tag("Clear finished uploads") %>
+    <%= submit_tag(t(:batch_clear)) %>
   <% end %>
 
   <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "abort_all" %>
-    <%= submit_tag("Cancel all uploads") %>
+    <%= submit_tag(t(:batch_cancel)) %>
   <% end %>
 
   <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "pause" %>
-    <%= submit_tag("Pause") %>
+    <%= submit_tag(t(:batch_pause)) %>
   <% end %>
 
   <%= form_tag({:action => "update"}) do %>
     <%= hidden_field_tag "do", "unpause" %>
-    <%= submit_tag("Resume") %>
+    <%= submit_tag(t(:batch_resume)) %>
   <% end %>
 </div>
 

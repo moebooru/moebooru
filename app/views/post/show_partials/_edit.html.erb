@@ -4,70 +4,70 @@
     <table class="form">
       <tfoot>
         <tr>
-          <td colspan="2"><%= submit_tag "Save changes", :tabindex => 11, :accesskey => "s" %></td>
+          <td colspan="2"><%= submit_tag t(:post_edit_save), :tabindex => 11, :accesskey => "s" %></td>
         </tr>
       </tfoot>
       <tbody>
         <tr>
           <th width="15%">
-            <label class="block" for="post_rating_questionable">Rating</label>
+            <label class="block" for="post_rating_questionable"><%=t :post_edit_rating %></label>
             <% unless @current_user.is_privileged_or_higher? %>
-              <p>Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (<%= link_to "help", {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
+              <p><%=t :post_edit_rating_text%><%= link_to t:(post_edit_help), {:controller => "help", :action => "ratings"}, :target => "_blank" %><%=t :post_edit_rating_close %></p>
             <% end %>
           </th>
           <td width="85%">
             <% if @post.is_rating_locked? %>
-              This post is rating locked.
+              <%=t :post_edit_rating_locked %>
             <% else %>
               <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %>
-              <label for="post_rating_explicit">Explicit</label>
+              <label for="post_rating_explicit"><%=t :post_edit_e %></label>
               <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>
-              <label for="post_rating_questionable">Questionable</label>
+              <label for="post_rating_questionable"><%=t :post_edit_q %></label>
               <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %>
-              <label for="post_rating_safe">Safe</label>
+              <label for="post_rating_safe"><%=t :post_edit_s %></label>
             <% end %>
           </td>
         </tr>
         <% if CONFIG["enable_parent_posts"] %>
           <tr>
-            <th><label>Parent Post</label></th>
+            <th><label><%=t :post_edit_parent %></label></th>
             <td><%= text_field "post", "parent_id", :size => 10, :tabindex => 4 %></td>
           </tr>
         <% end %>
           <tr>
-            <th><label class="block" for="post_is_shown_in_index">Shown in index</label></th>
+            <th><label class="block" for="post_is_shown_in_index"><%=t :post_edit_shown %></label></th>
             <td><%= check_box "post", "is_shown_in_index", :tabindex => 7 %></td>
           </tr>
         <% if @current_user.is_privileged_or_higher? %>
           <tr>
-            <th><label class="block" for="post_is_note_locked">Note locked</label></th>
+            <th><label class="block" for="post_is_note_locked"><%=t :post_edit_note_locked %></label></th>
             <td><%= check_box "post", "is_note_locked", :tabindex => 7 %></td>
           </tr>
           <tr>
-            <th><label class="block" for="post_is_rating_locked">Rating locked</label></th>
+            <th><label class="block" for="post_is_rating_locked"><%=t :post_edit_rating_locked %></label></th>
             <td><%= check_box "post", "is_rating_locked", :tabindex => 8 %></td>
           </tr>
         <% end %>
         <tr>
-          <th><label class="block" for="post_source">Source</label></th>
+          <th><label class="block" for="post_source"><%=t :post_edit_source %></label></th>
           <td><%= text_field "post", "source", :size => 40, :tabindex => 9 %></td>
         </tr>
           <tr>
             <th>
-              <label class="block" for="post_tags">Tags</label>
+              <label class="block" for="post_tags"><%=t :post_edit_tags %></label>
               <% unless @current_user.is_privileged_or_higher? %>
-                <p>Separate tags with spaces (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
+                <p><%=t :post_edit_tags_text %><%= link_to t(:post_edit_help), {:controller => "help", :action => "tags"}, :target => "_blank" %><%=t :post_edit_tags_close %></p>
               <% end %>
             </th>
             <td>
               <%= text_area "post", "tags", :disabled => !@post.can_be_seen_by?(@current_user), :size => "50x4", :value => @post.cached_tags, :tabindex => 10 %>
             <% if @post.can_be_seen_by?(@current_user) %>
-              <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> |
-              <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
-              <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
-              <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %>
+              <%= link_to_function t(:post_edit_related_tags), "RelatedTags.find('post_tags')" %> |
+              <%= link_to_function t(:post_edit_related_artists), "RelatedTags.find('post_tags', 'artist')" %> |
+              <%= link_to_function t(:post_edit_related_characters), "RelatedTags.find('post_tags', 'char')" %> |
+              <%= link_to_function t(:post_edit_related_copyrights), "RelatedTags.find('post_tags', 'copyright')" %>
               <% if CONFIG["enable_artists"] %>
-              | <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+              | <%= link_to_function(t(:post_edit_related_artists), "RelatedTags.find_artist($F('post_source'))") %>
               <% end %>
             <% end %>
             </td>
@@ -75,8 +75,8 @@
       </tbody>
     </table>
     <div>
-      <h5>Related Tags</h5>
-      <div style="margin-bottom: 1em;" id="related"><em>None</em></div>
+      <h5><%=t :post_edit_related_tags2 %></h5>
+      <div style="margin-bottom: 1em;" id="related"><em><%=t :post_edit_related_none %></em></div>
     </div>
   <% end %>
 </div>

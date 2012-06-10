@@ -30,12 +30,12 @@
     <% end %>
     <div class="post-footer" style="clear: left;">
       <ul class="flat-list pipe-list">
-        <li> <%= link_to_function "Quote", "Comment.quote(#{comment.id})" %>
+        <li> <%= link_to_function t(:comment_quote), "Comment.quote(#{comment.id})" %>
         <% if @current_user.has_permission?(comment) %>
-          <li> <%= link_to "Edit", :controller => "comment", :action => "edit", :id => comment.id %>
-          <li> <%= link_to_function "Delete", "Comment.destroy(#{comment.id})" %>
+          <li> <%= link_to t(:comment_edit), :controller => "comment", :action => "edit", :id => comment.id %>
+          <li> <%= link_to_function t(:comment_delete), "Comment.destroy(#{comment.id})" %>
         <% else %>
-          <li> <%= link_to_function "Flag for deletion", "Comment.flag(#{comment.id})" %>
+          <li> <%= link_to_function t(:comment_flag), "Comment.flag(#{comment.id})" %>
         <% end %>
         <% if not translated_from_languages.empty? then %>
           <li class="show-translated"> <%= link_to_function "View untranslated post", "Comment.show_translated(#{comment.id}, false)" %>

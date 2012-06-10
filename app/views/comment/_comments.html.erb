@@ -6,7 +6,7 @@
 
 <div style="clear: both;">
   <% if hide %>
-    <%= content_tag "h6", link_to_function("Reply »", "Comment.show_reply_form(#{post_id});"), :id => "respond-link-#{post_id}" %>
+    <%= content_tag "h6", link_to_function(t(:comment_reply), "Comment.show_reply_form(#{post_id});"), :id => "respond-link-#{post_id}" %>
   <% end %>
 
   <%= content_tag("div", :id => "reply-#{post_id}", :style => (hide ? "display: none;" : nil)) do %>

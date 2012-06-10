@@ -36,7 +36,7 @@
           </td>
           <td><%= h fp.author %></td>
           <td><%= h fp.last_updater %></td>
-          <td><%= time_ago_in_words(fp.updated_at) %><%=t :forum_ago %></td>
+          <td><%=t :forum_ago2 %><%= time_ago_in_words(fp.updated_at) %><%=t :forum_ago %></td>
           <td><%= fp.response_count %></td>
         <% end %>
       <% end %>
@@ -70,7 +70,7 @@
           <td colspan="2"><%= text_area "forum_post", "body", :rows => 20, :cols => 80 %></td>
         </tr>
         <tr>
-          <td colspan="2"><%= submit_tag t(:forum_post) %><%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
+          <td colspan="2"><%= submit_tag t(:forum_post) %><%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
         </tr>
       </table>
     <% end %>

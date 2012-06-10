@@ -1,7 +1,7 @@
 <div class="comment avatar-container">
   <div class="author">
     <h6 class="author"><%= link_to h(post.author), :controller => "user", :action => "show", :id => post.creator_id %></h6>
-    <span class="date"><%= link_to time_ago_in_words(post.created_at) + t(:forum_ago), :action => "show", :id => post.id %></span>
+    <span class="date"><%=t :forum_ago2 %><%= link_to time_ago_in_words(post.created_at) + t(:forum_ago), :action => "show", :id => post.id %></span>
     <% if post.creator.has_avatar? then %>
       <div class="forum-avatar-container"> <%= avatar(post.creator, post.id) %> </div>
     <% end %>

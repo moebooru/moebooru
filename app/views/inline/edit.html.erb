@@ -54,7 +54,7 @@
   <% end %>
 
   <%= form_tag(:action => "update") do %>
-    <label for="inline_description"><%=t :inline_description: %></label>
+    <label for="inline_description"><%=t :inline_description %></label>
     <br>
     <span id="inline-description">
       <a id="inline-description-edit-button" href="#" onclick="show_edit_desc(); return false;">
@@ -75,7 +75,7 @@
         <div style="height: 1.6em;">
           <span style="line-height: 1.6em;">
           <% if @current_user.has_permission?(@inline) %>
-            <%= link_to t(:inline_remove), "#", :onclick => "if(confirm(t(:inline_remove_confirm))) $('delete-image-#{image.id}').submit(); return false;" %>
+            <%= link_to t(:inline_remove), "#", :onclick => "if(confirm('#{t(:inline_remove_confirm)}')) $('delete-image-#{image.id}').submit(); return false;" %>
             | <%= link_to_function t(:inline_move_up), "orderShift(#{image.id}, -1)" %>
             | <%= link_to_function t(:inline_move_down), "orderShift(#{image.id}, +1)" %>
             |
@@ -172,8 +172,8 @@ function orderShift(id, direction) {
 
 <% content_for :subnavbar do %>
   <% if @current_user.has_permission?(@inline) %>
-    <li><%= link_to t(:inline_delete), "#", :onclick => "if(confirm(t(:inline_delete_confirm))) $('delete-group').submit(); return false;" %></li>
-    <li><%= link_to t(:inline_crop_, :action => "crop", :id => @inline.id %></li>
+    <li><%= link_to t(:inline_delete), "#", :onclick => "if(confirm('#{t(:inline_delete_confirm)}')) $('delete-group').submit(); return false;" %></li>
+    <li><%= link_to t(:inline_crop), :action => "crop", :id => @inline.id %></li>
   <% end %>
 
   <li><%= link_to t(:inline_copy), "#", :onclick => "$('copy-group').submit(); return false;", :level => :member %></li>

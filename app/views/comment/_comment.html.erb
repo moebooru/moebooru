@@ -38,8 +38,8 @@
           <li> <%= link_to_function t(:comment_flag), "Comment.flag(#{comment.id})" %>
         <% end %>
         <% if not translated_from_languages.empty? then %>
-          <li class="show-translated"> <%= link_to_function "View untranslated post", "Comment.show_translated(#{comment.id}, false)" %>
-          <li class="show-untranslated" style="display: none;"> <%= link_to_function "View translated post", "Comment.show_translated(#{comment.id}, true)" %>
+          <li class="show-translated"> <%= link_to_function t(:comment_translation_text), "Comment.show_translated(#{comment.id}, false)" %>
+          <li class="show-untranslated" style="display: none;"> <%= link_to_function t(:comment_translation_text2), "Comment.show_translated(#{comment.id}, true)" %>
         <% end %>
       </ul>
     </div>

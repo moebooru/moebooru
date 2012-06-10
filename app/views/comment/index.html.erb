@@ -1,6 +1,6 @@
 <div id="comment-list">
   <% if @posts.empty? %>
-    <h4>No comments.</h4>
+    <h4><%=t :comments_none %></h4>
   <% end %>
 
   <% @posts.each do |post| %>

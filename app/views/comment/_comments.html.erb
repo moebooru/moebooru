@@ -13,10 +13,10 @@
     <%= form_tag({:controller => "comment", :action => "create"}, {:level => :member}) do %>
       <%= hidden_field_tag "comment[post_id]", post_id, :id => "comment_post_id_#{post_id}" %>
       <%= text_area "comment", "body", :rows => "7", :id => "reply-text-#{post_id}", :style=>"width: 98%; margin-bottom: 2px;" %>
-      <%= submit_tag "Post" %>
-      <!-- <%= submit_tag "Post without bumping" %> -->
+      <%= submit_tag t(:comments_post) %>
+      <!-- <%= submit_tag t(:comments_bump) %> -->
     <% end %>
-<!--    <p style="margin-top: 1em; font-style: italic;">[spoiler]Hide spoiler text like this[/spoiler] (<%= link_to "more", :controller => "help", :action => "comments" %>)</p> -->
+<!--    <p style="margin-top: 1em; font-style: italic;">[spoiler]Hide spoiler text like this[/spoiler] (<%= link_to t(:comments_more), :controller => "help", :action => "comments" %>)</p> -->
   <% end %>
 </div>
 

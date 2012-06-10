@@ -677,3 +677,12 @@ en:
   #try to fix ago problem
   comment_ago: " ago"
   comment_ago2: ""
+  artist_title: "This artist is an alias"
+  artist_title2: "This artist is a group"
+  comment_translation_text: "View untranslated post"
+  comment_translation_text2: "View translated post"
+  comments_post: "Post"
+  comments_more: "more"
+  comments_bump: "Post without bumping"
+  comments_none: "No comments."
+  dmail_preview_js_text: "Loading preview..."

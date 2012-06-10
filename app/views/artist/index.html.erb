@@ -28,10 +28,10 @@
             <td>
               <%= link_to h(artist.name), {:action => "show", :id => artist.id} %>
               <% if artist.alias_id %>
-                &rarr; <%= link_to h(artist.alias_name), {:action => "show", :id => artist.alias_id}, :title => "This artist is an alias" %>
+                &rarr; <%= link_to h(artist.alias_name), {:action => "show", :id => artist.alias_id}, :title => t(:artist_title) %>
               <% end %>
               <% if artist.group_id %>
-                [<%= link_to h(artist.group_name), {:action => "show", :id => artist.group_id}, :title => "This artist is a group" %>]
+                [<%= link_to h(artist.group_name), {:action => "show", :id => artist.group_id}, :title => t(:artist_title2) %>]
               <% end %>
             </td>
             <% if artist.updater_id %>

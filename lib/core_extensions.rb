@@ -15,12 +15,6 @@ class ActiveRecord::Base
   end
 end
 
-class NilClass
-  def id
-    raise NoMethodError
-  end
-end
-
 class String
   # Escapes string to be usable in a SQL LIKE.
   # Adds backslash to \, %, and _ and replace * with % (SQL wildcard)

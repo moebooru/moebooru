@@ -674,4 +674,6 @@ en:
   #credits for translation
   static_translation: "Translation by "
   static_search: "Search"
-  #static menu
+  #try to fix ago problem
+  comment_ago: " ago"
+  comment_ago2: ""

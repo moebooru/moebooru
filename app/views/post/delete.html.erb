@@ -6,7 +6,7 @@
 
 <%= form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>
-  <label><%=t :post_delete_reason %></label> <%= text_field_tag "reason" %>
+  <label><%=t :post_deleted_reason %></label> <%= text_field_tag "reason" %>
   <% if @post.is_deleted? %>
   <%= hidden_field_tag "destroy", "1" %>
   <% end %>

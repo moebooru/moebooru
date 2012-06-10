@@ -381,10 +381,6 @@ en:
   pool_transfer_to: "To"
   pool_transfer_tags: "Tags"
   pool_edit: "Edit Pool"
-  public_text: "Public pools allow anyone to add/remove posts."
-  pool_transfer_from: "From"
-  pool_transfer_to: "To"
-  pool_transfer_tags: "Tags"
   #view/pool/update
   pool_edit: "Edit Pool"
   pool_public_text: "Public pools allow anyone to add/remove posts."
@@ -440,7 +436,6 @@ en:
   post_deleted_reason: "Reason"
   post_deleted_by: "Deleted by"
   post_delete: "Delete Post"
-  post_delete_reason: "Reason"
   post_delete_perma: "Destroy Permanently"
   post_delete_delete: "Delete"
   post_delete_cancel: "Cancel"

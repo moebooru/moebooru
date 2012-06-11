@@ -13,4 +13,5 @@
 \.(s?o)$
 (extconf\.h|Makefile|mkmf\.log)$
 ^public/sitemap(\d+|_index)\.xml\.gz$
+^public/robots.txt$
 (^|/)\.rbx/

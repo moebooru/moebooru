@@ -178,7 +178,11 @@ class UserController < ApplicationController
     if @current_user.update_attributes(params[:user])
       respond_to_success("Account settings saved", :action => "edit")
     else
-      respond_to_error(@current_user, :action => "edit")
+      if params[:render] and params[:render][:view]
+        render params[:render][:view]
+      else
+        respond_to_error(@current_user, :action => "edit")
+      end
     end
   end
 

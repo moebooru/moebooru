@@ -95,28 +95,6 @@ module ApplicationHelper
     end
   end
 
-  def time_ago_in_words(from_time)
-    to_time = Time.now
-    distance_in_minutes = (((to_time - from_time).abs)/60).round
-
-    case distance_in_minutes
-    when 0..1 then '1 minute'
-    when 2...45 then "#{distance_in_minutes} minutes"
-    when 45...90 then '1 hour'
-    # 90 minutes to 24 hours
-    when 90...1440 then "#{(distance_in_minutes.to_f / 60.0).round} hours"
-    # 24 hours to 42 hours
-    when 1440...2520 then '1 day'
-    # 42 hours to 30 days
-    when 2520...43200 then "#{(distance_in_minutes / 1440).round} days"
-    # 30 days to 52 days
-    when 43200...74880 then '1 month'
-    # 52 days to 12 month, rounded down
-    when 74880...525960 then "#{(distance_in_minutes / 43200).round} months"
-    else '%.1f years' % (distance_in_minutes.to_f / 525960.0)
-    end
-  end
-
   def content_for_prefix(name, &block)
     content_prefix = capture(&block) if block_given?
     @_content_for[name] = content_prefix + @_content_for[name] if content_prefix

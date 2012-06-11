@@ -582,7 +582,7 @@ en:
   post_options_undelete: "Undelete"
   post_options_flag: "Flag for deletion"
   post_options_tl: "Add translation"
-  post_option_add_fav: "Add to favorites"
+  post_options_add_fav: "Add to favorites"
   post_options_del_fav: "Remove from favorites"
   post_options_approve: "Approve"
   post_options_add_pool: "Add to pool"

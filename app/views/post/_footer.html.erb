@@ -2,7 +2,7 @@
   <li><%= link_to t(:post_list), :controller => "post", :action => "index" %></li>
   <li><%= link_to t(:post_browse), {:controller => "post", :action => "browse", :anchor => '/'} %></li>
   <li><%= link_to t(:post_upload), :controller => "post", :action => "upload" %></li>
-  <!-- <li id="my-subscriptions-container"><%= link_to t(:post_subscriptions), "/", :id => "my-subscriptions" %></li> -->
+  <!-- <li id="my-subscriptions-container"><%= link_to t(:post_subs), "/", :id => "my-subscriptions" %></li> -->
   <li><%= link_to t(:post_random), :controller => "post", :tags => "order:random" %></li>
   <li><%= link_to t(:post_popular), :controller => "post", :action => "popular_recent" %></li>
   <li><%= link_to t(:post_image), :controller => "post", :action => "similar" %></li>

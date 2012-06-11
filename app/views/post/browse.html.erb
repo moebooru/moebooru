@@ -37,7 +37,7 @@
     <div class="post-browser-scroller">
       <ul class="post-browser-posts"></ul>
     </div>
-    <div class="post-browser-no-results" style="position: absolute; bottom: 0; width: 100%; display: none; text-align: center; font-size: 200%;">No search results.</div>
+    <div class="post-browser-no-results" style="position: absolute; bottom: 0; width: 100%; display: none; text-align: center; font-size: 200%;"><%=t :post_browse_no_results %></div>
   </div>
 
   <div class="browser-bottom-bar">
@@ -54,13 +54,13 @@
   <div style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: hidden;" class="image-container">
     <div class="blacklisted-message disable-selection" style="display: none; text-align: center; margin-top: 5em;">
       <div style="font-size: 250%;">
-        Image hidden
+        <%=t :post_browse_text %>
       </div>
       <div style="margin-top: 1em; font-size: 150%;">
-        This post is not displayed due to your account settings.
+        <%=t :post_browse_text2 %>
       </div>
       <div style="margin-top: 1em; font-size: 150%;">
-        <a href="#" class="show-blacklisted" style="border: 1px solid #FFF; padding: 0.25em;">Double-click here to display the image</a>
+        <a href="#" class="show-blacklisted" style="border: 1px solid #FFF; padding: 0.25em;"><%=t :post_browse_text3 %></a>
       </div>
     </div>
     <div class="image-box"></div>
@@ -104,53 +104,53 @@
 
     <div style="padding: 0.5em;">
       <div>
-        Post #<a href="#" class="post-id-link"><span class="post-id"></span></a>
+        <%=t :post_browse_text4 %><a href="#" class="post-id-link"><span class="post-id"></span></a>
         <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-dimensions"></span>
         <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-rating"></span>
-        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-hidden">Hidden</span>
+        <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-hidden"><%=t :post_browse_text5 %></span>
       </div>
     <div class="pool-info"></div>
-    <div>Posted <span class="posted-at"></span><span class="posted-by"> ago by <a href="#"></a></span></div>
-    <div id="vote-container" class="vote-container">Score: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
+    <div><%=t :post_browse_text6 %><span class="posted-at"></span><span class="posted-by"><%=t :post_browse_text7 %><a href="#"></a></span></div>
+    <div id="vote-container" class="vote-container"><%=t :post_browse_text8 %><span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
     <div class="post-frames">
-      Frames: <div class="post-frame-list"></div>
+      <%=t :post_browse_text9 %><div class="post-frame-list"></div>
     </div>
 
-    <div class="post-source">Source: <a href="#"></a><span></span></div>
+    <div class="post-source"><%=t :post_browse_text10 %><a href="#"></a><span></span></div>
 
     <div class="status-deleted">
-      This post was deleted.
-      <span class="by-container">By: <a href="#" class="by"></a></span>
-      Reason: <span class="reason"></span>.
-      <a href="#" class="post-undelete moderator-only" style="border: 1px solid #FFF; padding: 0px 2px;">undelete</a>
+      <%=t :post_browse_text11 %>
+      <span class="by-container"><%=t :post_browse_text12 %><a href="#" class="by"></a></span>
+      <%=t :post_browse_text13 %><span class="reason"></span>.
+      <a href="#" class="post-undelete moderator-only" style="border: 1px solid #FFF; padding: 0px 2px;"><%=t :post_browse_text14 %></a>
     </div>
-    <div class="download-links">Download:
+    <div class="download-links"><%=t :post_browse_text15 %>
       <a href="#" class="download-image"><span class="download-image-desc"></span></a>
       <a href="#" class="download-jpeg"><span class="download-jpeg-desc"></span></a>
       <a href="#" class="download-png"><span class="download-png-desc"></span></a>
     </div>
     <div class="parent-post">
-      This post has a <a href="#">parent post</a><span class="reparent-post advanced-editing"><a href="#"> (make this post the parent)</a></span>.
+      <%=t :post_browse_text16 %><a href="#"><%=t :post_browse_text17 %></a><span class="reparent-post advanced-editing"><a href="#"><%=t :post_browse_text18 %></a></span>.
     </div>
-    <div class="child-posts">This post has <a href="#">child posts</a>.</div>
+    <div class="child-posts"><%=t :post_browse_text19 %><a href="#"><%=t :post_browse_text20 %></a>.</div>
     <div class="flagged-info">
-      <span class="flagged-by-box">Flagged by <a href="#" class="by"></a>.</span>
-      Reason: <span class="reason"></span>.
+      <span class="flagged-by-box"><%=t :post_browse_text21 %><a href="#" class="by"></a>.</span>
+      <%=t :post_browse_text22 %><span class="reason"></span>.
       <a href="#" style="border: 1px solid #FFF; padding: 0px 2px;" class="post-unflag">✔</a>
     </div>
-    <div class="status-pending">This post is pending moderator approval.
-      <span class="pending-reason-box">Reason: <span class="pending-reason"></span></span>
+    <div class="status-pending"><%=t :post_browse_text23 %>
+      <span class="pending-reason-box"><%=t :post_browse_text22 %><span class="pending-reason"></span></span>
       <a href="#" class="post-approve" style="border: 1px solid #FFF; padding: 0px 2px;">✔</a>
     </div>
     <div class="status-held">
-      This post is held from the index by the poster.
+      <%=t :post_browse_text24 %>
       <span class="activate-post">
-        <a href="#">(activate it)</a>
+        <a href="#"><%=t :post_browse_text25 %></a>
       </span>
     </div>
 
     <div class="post-tags-box" style="background-color: #003;"><span class="post-tags color-tag-types"></span>
-      <span class="member-only" style="float: right"><a href="#" style="font-style: italic; margin: 0 0.5em;" class="show-tag-edit">edit</a></span>
+      <span class="member-only" style="float: right"><a href="#" style="font-style: italic; margin: 0 0.5em;" class="show-tag-edit"><%=t :post_browse_text26 %></a></span>
     </div>
 
     <div class="post-edit" style="margin-top: 0.5em;">
@@ -161,35 +161,35 @@
 
         <table style="margin: 0">
           <tr>
-            <td><label for="edit-questionable">Rating</label></td>
+            <td><label for="edit-questionable"><%=t :post_browse_rating %></label></td>
             <td>
               <span style="white-space: nowrap;">
                 <input id="edit-explicit" class="edit-explicit edit-item" name="rating" tabindex="1" type="radio" value="Explicit" checked="checked">
-                <label for="edit-explicit">Explicit</label>
+                <label for="edit-explicit"><%=t :post_browse_explicit %></label>
               </span>
               <span style="white-space: nowrap;">
                 <input id="edit-questionable" class="edit-questionable edit-item" name="rating" tabindex="2" type="radio" value="Questionable">
-                <label for="edit-questionable">Questionable</label>
+                <label for="edit-questionable"><%=t :post_browse_questionable %></label>
               </span>
               <span style="white-space: nowrap;">
                 <input id="edit-safe" class="edit-safe edit-item" name="rating" tabindex="3" type="radio" value="Safe">
-                <label for="edit-safe">Safe</label>
+                <label for="edit-safe"><%=t :post_browse_safe %></label>
               </span>
             </td>
           </tr>
 
           <tr>
-            <td><label for="edit-shown-in-index">Shown in index</label></td>
+            <td><label for="edit-shown-in-index"><%=t :post_browse_show_in_index %></label></td>
             <td><input id="edit-shown-in-index" class="edit-shown-in-index edit-item" name="is_shown_in_index" type="checkbox"></td>
           </tr>
 
           <tr>
-            <td><label for="edit-parent">Parent Post</label></td>
+            <td><label for="edit-parent"><%=t :post_browse_parent %></label></td>
             <td><input id="edit-parent" class="edit-parent edit-item" style="" name="parent_id" size="10" tabindex="4" type="text"></td>
           </tr>
 
           <tr>
-            <td><label for="edit-source">Source</label></td>
+            <td><label for="edit-source"><%=t :post_browse_source %></label></td>
             <td><input id="edit-source" class="edit-source edit-item" style="width: 100%;" name="source" tabindex="9" type="text" value=""></td>
           </tr>
         </table>
@@ -197,16 +197,16 @@
 
       <div class="frame-editor" style="display: none">
         <table class="frame-list" style="margin: 0.5em 0;" cellspacing=0 cellpadding=0><tbody></tbody></table>
-        <a href="#" class="frame-editor-add">Add a frame</a>
+        <a href="#" class="frame-editor-add"><%=t :post_browse_frame %></a>
       </div>
 
       <div style="background-color: #003; font-size: 125%;">
         <div style="float: right;">
-          <a href="#" class="edit-cancel">Cancel</a>
-          <a href="#" class="edit-save">Save</a>
+          <a href="#" class="edit-cancel"><%=t :post_browse_cancel %></a>
+          <a href="#" class="edit-save"><%=t :post_browse_save %></a>
         </div>
         <div class="advanced-editing">
-          <a href="#" class="edit-frames-button">Frames</a>
+          <a href="#" class="edit-frames-button"><%=t :post_browse_frames %></a>
         </div>
       </div>
     </div>

@@ -3,24 +3,24 @@
 
   <% if @deleted_posts > 0 %>
     <div id="posts-deleted-notice" class="has-deleted-posts" style="margin-bottom: 1em;">
-      <%= @deleted_posts == 1? "One":"Some" %> of your posts <%= @deleted_posts == 1? "was":"were" %>
-      <a href="<%= url_for :action => "deleted_index", :user_id => @current_user.id %>">recently deleted</a>.
-      (<%= link_to_function "dismiss this message", 'Post.acknowledge_new_deleted_posts();' %>)
+      <%= @deleted_posts == 1? t(:post_upload_text):t(:post_upload_text2) %><%=t :post_upload_text3 %><%= @deleted_posts == 1? t(:post_upload_text4):t(:post_upload_text5) %>
+      <a href="<%= url_for :action => "deleted_index", :user_id => @current_user.id %>"><%=t :post_upload_text6 %></a>.
+      (<%= link_to_function t(:post_upload_text7), 'Post.acknowledge_new_deleted_posts();' %>)
     </div>
   <% end %>
 
   <% unless @current_user.is_privileged_or_higher? %>
     <div style="margin-bottom: 2em;">
-      <h4>Upload Guidelines</h4>
-      <p>Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.</p>
+      <h4><%=t :post_upload_text8 %></h4>
+      <p><%=t :post_upload_text9 %></p>
       <ul>
-        <li>Do not upload <%= link_to "furry", :controller => "wiki", :action => "show", :title => "furry" %>, <%= link_to "yaoi", :controller => "wiki", :action => "show", :title => "yaoi" %>, <%= link_to "guro", :controller => "wiki", :action => "show", :title => "guro" %>, <%= link_to "toon", :controller => "wiki", :action => "show", :title => "toon" %>, or <%= link_to "poorly drawn", :controller => "wiki", :action => "show", :title => "poorly_drawn" %> art</li>
-        <li>Do not upload things with <%= link_to "compression artifacts", :controller => "wiki", :action => "show", :title => "compression_artifacts" %></li>
-        <li>Do not upload things with <%= link_to "obnoxious watermarks", :controller => "wiki", :action => "show", :title => "watermark" %></li>
-        <li><%= link_to "Group doujinshi, manga pages, and similar game CGs together", :controller => "help", :action => "post_relationships" %></li>
-        <li>Read the <%= link_to "tagging guidelines", :controller => "help", :action => "tags" %></li>
+        <li><%=t :post_upload_text10 %><%= link_to "furry", :controller => "wiki", :action => "show", :title => "furry" %>, <%= link_to "yaoi", :controller => "wiki", :action => "show", :title => "yaoi" %>, <%= link_to "guro", :controller => "wiki", :action => "show", :title => "guro" %>, <%= link_to "toon", :controller => "wiki", :action => "show", :title => "toon" %>,<%=t :post_upload_text11 %><%= link_to "poorly drawn", :controller => "wiki", :action => "show", :title => "poorly_drawn" %><%=t :post_upload_text12 %></li>
+        <li><%=t :post_upload_text13 %><%= link_to "compression artifacts", :controller => "wiki", :action => "show", :title => "compression_artifacts" %></li>
+        <li><%=t :post_upload_text13 %><%= link_to "obnoxious watermarks", :controller => "wiki", :action => "show", :title => "watermark" %></li>
+        <li><%= link_to t(:post_upload_text14), :controller => "help", :action => "post_relationships" %></li>
+        <li><%=t :post_upload_text15 %><%= link_to "tagging guidelines", :controller => "help", :action => "tags" %></li>
       </ul>
-      <p>You can only upload <%= pluralize CONFIG["member_post_limit"] - Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %> today.</p>
+      <p><%=t :post_upload_text16 %><%= pluralize CONFIG["member_post_limit"] - Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post" %><%=t :post_upload_text17 %></p>
     </div>
   <% end %>
 
@@ -48,79 +48,79 @@
           <tr>
             <td></td>
             <td>
-              <%= submit_tag "Upload", :tabindex => 8, :accesskey => "s", :class => "submit", :style => "margin: 0;" %>
-              <%= submit_tag "Cancel", :tabindex => 8, :accesskey => "s", :class => "cancel", :style => "display: none; vertical-align: bottom; margin: 0;" %>
+              <%= submit_tag t(:post_upload), :tabindex => 8, :accesskey => "s", :class => "submit", :style => "margin: 0;" %>
+              <%= submit_tag t(:post_cancel), :tabindex => 8, :accesskey => "s", :class => "cancel", :style => "display: none; vertical-align: bottom; margin: 0;" %>
               <div id="progress" class="upload-progress-bar" style="display: none;">
                 <div class="upload-progress-bar-fill"></div>
               </div>
-              <span style="display: none;" id="post-exists">This post already exists: <a href="#" id="post-exists-link"></a></span>
+              <span style="display: none;" id="post-exists"><%=t :post_upload_text18 %><a href="#" id="post-exists-link"></a></span>
               <span style="display: none;" id="post-upload-error"></span>
             </td>
           </tr>
         </tfoot>
         <tbody>
           <tr>
-            <th width="15%"><label for="post_file">File</label></th>
+            <th width="15%"><label for="post_file"><%=t :post_upload_file %></label></th>
             <td width="85%"><%= file_field "post", "file", :size => 50, :tabindex => 1 %><span class="similar-results" style="display: none;"></span></td>
           </tr>
           <tr>
             <th>
-              <label for="post_source">Source</label>
+              <label for="post_source"><%=t :post_upload_source %></label>
               <% unless @current_user.is_privileged_or_higher? %>
-                <p>You can enter a URL here to download from a website.</p>
+                <p><%=t :post_upload_source_text %></p>
               <% end %>
             </th>
             <td>
               <%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 2 %>
               <% if CONFIG["enable_artists"] %>
-                <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
+                <%= link_to_function(t(:post_upload_artist), "RelatedTags.find_artist($F('post_source'))") %>
               <% end %>
             </td>
           </tr>
           <tr>
             <th>
-              <label for="post_tags">Tags</label>
+              <label for="post_tags"><%=t :post_upload_tags %></label>
               <% unless @current_user.is_privileged_or_higher? %>
-                <p>Separate tags with spaces. (<%= link_to "help", {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
+                <p><%=t :post_upload_tags_text %>(<%= link_to t(:post_upload_tags_help), {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
               <% end %>
             </th>
             <td>
               <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
-              <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> |
-              <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
-              <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
-              <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> |
-              <%= link_to_function "Related circles", "RelatedTags.find('post_tags', 'circle')" %>
+              <%= link_to_function t(:post_edit_related_tags), "RelatedTags.find('post_tags')" %> |
+              <%= link_to_function t(:post_edit_related_artists), "RelatedTags.find('post_tags', 'artist')" %> |
+              <%= link_to_function t(:post_edit_related_characters), "RelatedTags.find('post_tags', 'char')" %> |
+              <%= link_to_function t(:post_edit_related_copyrights), "RelatedTags.find('post_tags', 'copyright')" %> |
+              <%= link_to_function t(:post_upload_related_circles), "RelatedTags.find('post_tags', 'circle')" %>
             </td>
           </tr>
           <% if CONFIG["enable_parent_posts"] %>
             <tr>
-              <th><label for="post_parent_id">Parent</label></th>
+              <th><label for="post_parent_id"><%=t :post_upload_parent %></label></th>
               <td><%= text_field "post", "parent_id", :value => params["parent"], :size => 5, :tabindex => 4 %></td>
             </tr>
           <% end %>
           <tr>
             <th>
-              <label for="post_rating_questionable">Rating</label>
+              <label for="post_rating_questionable"><%=t :post_upload_rating %></label>
               <% unless @current_user.is_privileged_or_higher? %>
-                <p>Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (<%= link_to "help", {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
+                <p><%=t :post_upload_rating_text %>(<%= link_to t(:post_upload_tags_help), {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
               <% end %>
             </th>
             <td>
               <input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" <% if (params[:rating] or "q") == "e" %>checked="checked"<% end %> tabindex="5">
-              <label for="post_rating_explicit">Explicit</label>
+              <label for="post_rating_explicit"><%=t :post_upload_e %></label>
 
               <input id="post_rating_questionable" name="post[rating]" type="radio" value="Questionable" <% if (params[:rating] or "q") == "q" %>checked="checked"<% end %> tabindex="6">
-              <label for="post_rating_questionable">Questionable</label>
+              <label for="post_rating_questionable"><%=t :post_upload_q %></label>
 
               <input id="post_rating_safe" name="post[rating]" type="radio" value="Safe" <% if (params[:rating] or "q") == "s" %>checked="checked"<% end %> tabindex="7">
-              <label for="post_rating_safe">Safe</label>
+              <label for="post_rating_safe"><%=t :post_upload_s %></label>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <div id="related"><em>None</em></div>
+      <div id="related"><em><%=t :post_upload_related %></em></div>
     </div>
   <% end %>
 

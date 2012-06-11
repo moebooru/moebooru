@@ -3,13 +3,13 @@
 <% end %>
 
 <div>
-  Inline tag: image #<%= @inline.id %>
+  <%=t :inline_tag %><%= @inline.id %>
   <% if @current_user.has_permission?(@inline) %>
 
-    | <a href="#" onclick='InlineImage.expand("<%= inline_html_id %>"); return false;'>Preview</a>
+    | <a href="#" onclick='InlineImage.expand("<%= inline_html_id %>"); return false;'><%=t :inline_preview %></a>
 
     <% if @inline.inline_images.length < 9 %>
-      <span id="post-add-button">| <a href="#" onclick="show_post_add(); return false;">Add an image</a></span>
+      <span id="post-add-button">| <a href="#" onclick="show_post_add(); return false;"><%=t :inline_add_image %></a></span>
     <% end %>
   <% end %>
   <p>
@@ -22,16 +22,16 @@
         <table class="form">
           <tbody>
             <tr>
-              <th width="15%"><label for="image_file">File</label></th>
+              <th width="15%"><label for="image_file"><%=t :inline_file %></label></th>
               <td width="85%"><%= file_field "image", "file", :size => 50, :tabindex => 1 %></td>
             </tr>
             <tr>
               <th>
-                <label for="image_source">Source</label>
+                <label for="image_source"><%=t :inline_source %></label>
               </th>
               <td>
                 <%= text_field "image", "source", :size => 50, :tabindex => 2 %>
-                <%= submit_tag "Add image" %>
+                <%= submit_tag t(:inline_add) %>
               </td>
             </tr>
           </tbody>
@@ -54,13 +54,13 @@
   <% end %>
 
   <%= form_tag(:action => "update") do %>
-    <label for="inline_description">Description:</label>
+    <label for="inline_description"><%=t :inline_description %></label>
     <br>
     <span id="inline-description">
       <a id="inline-description-edit-button" href="#" onclick="show_edit_desc(); return false;">
         <%= format_text(@inline.description) %>
 
-        <% if @inline.description.length == 0 %>click to add a description for this set<% end %>
+        <% if @inline.description.length == 0 %><%=t :inline_add_description %><% end %>
       </a>
       <br>
     </span>
@@ -75,13 +75,13 @@
         <div style="height: 1.6em;">
           <span style="line-height: 1.6em;">
           <% if @current_user.has_permission?(@inline) %>
-            <%= link_to "Remove image", "#", :onclick => "if(confirm('Remove this image?')) $('delete-image-#{image.id}').submit(); return false;" %>
-            | <%= link_to_function "Move up", "orderShift(#{image.id}, -1)" %>
-            | <%= link_to_function "Move down", "orderShift(#{image.id}, +1)" %>
+            <%= link_to t(:inline_remove), "#", :onclick => "if(confirm('#{t(:inline_remove_confirm)}')) $('delete-image-#{image.id}').submit(); return false;" %>
+            | <%= link_to_function t(:inline_move_up), "orderShift(#{image.id}, -1)" %>
+            | <%= link_to_function t(:inline_move_down), "orderShift(#{image.id}, +1)" %>
             |
             <a href="#" id="image-description-<%= image.id %>" onclick="show_edit_inline_desc(<%= image.id %>); return false;">
               <% if image.description.length == 0 %>
-                Add description
+                <%=t :inline_add_desc %>
               <% else %>
               <%= h(image.description) %>
               <% end %>
@@ -105,7 +105,7 @@
     <% end %>
 
     <%= hidden_field_tag "id", @inline.id %>
-    <%= submit_tag "Save changes", :disabled => (not @current_user.has_permission?(@inline)) %>
+    <%= submit_tag t(:inline_save), :disabled => (not @current_user.has_permission?(@inline)) %>
   <% end %>
 </div>
 
@@ -172,11 +172,11 @@ function orderShift(id, direction) {
 
 <% content_for :subnavbar do %>
   <% if @current_user.has_permission?(@inline) %>
-    <li><%= link_to "Delete", "#", :onclick => "if(confirm('Delete this group of images?')) $('delete-group').submit(); return false;" %></li>
-    <li><%= link_to "Crop", :action => "crop", :id => @inline.id %></li>
+    <li><%= link_to t(:inline_delete), "#", :onclick => "if(confirm('#{t(:inline_delete_confirm)}')) $('delete-group').submit(); return false;" %></li>
+    <li><%= link_to t(:inline_crop), :action => "crop", :id => @inline.id %></li>
   <% end %>
 
-  <li><%= link_to "Copy", "#", :onclick => "$('copy-group').submit(); return false;", :level => :member %></li>
+  <li><%= link_to t(:inline_copy), "#", :onclick => "$('copy-group').submit(); return false;", :level => :member %></li>
 <% end %>
 
 <%= render :partial => "footer" %>

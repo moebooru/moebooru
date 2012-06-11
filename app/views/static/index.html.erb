@@ -1,17 +1,17 @@
 <div id="static-index">
   <h1 id="static-index-header"><%= link_to(CONFIG['app_name'], "/") %></h1>
   <div style="margin-bottom: 1em;" id="links">
-    <%= link_to 'Posts', {:controller => 'post', :action => 'index'}, :title => 'A paginated list of every post' %>
-    <%= link_to 'Comments', {:controller => 'comment', :action => 'index'}, :title => 'A paginated list of every comment' %>
-    <%= link_to 'Tags', {:controller => 'tag', :action => 'index'}, :title => 'A paginated list of every tag' %>
-    <%= link_to 'Wiki', {:controller => 'wiki'}, :title => 'Wiki' %>
-    <%= link_to '»', {:controller => 'static', :action => 'more'}, :title => 'A site map' %>
+    <%= link_to t(:static_posts), {:controller => 'post', :action => 'index'}, :title => t(:static_posts_text) %>
+    <%= link_to t(:static_comments), {:controller => 'comment', :action => 'index'}, :title => t(:static_comments_text) %>
+    <%= link_to t(:static_tags), {:controller => 'tag', :action => 'index'}, :title => t(:static_tags_text) %>
+    <%= link_to t(:static_wiki), {:controller => 'wiki'}, :title => t(:static_wiki_text) %>
+    <%= link_to '»', {:controller => 'static', :action => 'more'}, :title => (:static_more) %>
   </div>
   <div style="margin-bottom: 2em;">
     <%= form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>
       <div>
         <%= text_field_tag "tags", "", :size => 30 %><br>
-        <%= submit_tag "Search", :name => 'searchDefault' %>
+        <%= submit_tag t(:static_search), :name => 'searchDefault' %>
       </div>
     <% end %>
   </div>
@@ -20,9 +20,11 @@
       <% if @current_user %>
         <%= mail_to CONFIG["admin_contact"], "Contact", :encode => "javascript" %> &ndash;
       <% end %>
-      Serving <%= number_with_delimiter Post.fast_count %> posts &ndash; Running Moebooru <%= CONFIG["version"] %>
+      <%=t :static_serve %><%= number_with_delimiter Post.fast_count %><%=t :static_posts2 %>&ndash; <%=t :static_running %><%= CONFIG["version"] %>
       <br />
-      Domain donated by <a href = "https://twitter.com/#!/akiba_rika">Akiba_Rika</a>
+      <%=t :static_domain %><a href = "https://twitter.com/#!/akiba_rika">Akiba_Rika</a>
+      <br />
+      <%=t :static_translation %>
     </p>
   </div>
 </div>

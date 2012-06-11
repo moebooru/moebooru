@@ -1,6 +1,6 @@
 <form method="get" action="/post/moderate">
   <%= text_field_tag "query", "", :size => 40 %>
-  <%= submit_tag "Search" %>
+  <%= submit_tag t(:post_mod_search) %>
 </form>
 
 <script type="text/javascript">
@@ -19,7 +19,7 @@
 </script>
 
 <div style="margin-bottom: 2em;">
-  <h2>Pending</h2>
+  <h2><%=t :post_mod_pending %></h2>
   <form method="post" action="/post/moderate">
     <%= hidden_field_tag "reason", "" %>
 
@@ -27,10 +27,10 @@
       <tfoot>
         <tr>
           <td colspan="3">
-            <%= button_to_function "Select all", "$$('.p').each(function (i) {i.checked = true; highlight_row(i)})" %>
-            <%= button_to_function "Invert selection", "$$('.p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %>
-            <%= submit_tag "Approve" %>
-            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
+            <%= button_to_function t(:post_mod_select), "$$('.p').each(function (i) {i.checked = true; highlight_row(i)})" %>
+            <%= button_to_function t(:post_mod_invert), "$$('.p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %>
+            <%= submit_tag t(:post_mod_approve) %>
+            <%= submit_tag t(:post_mod_delete), :onclick => "var reason = prompt('#{t(:post_mod_enter_reason)}'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
           </td>
         </tr>
       </tfoot>
@@ -41,19 +41,19 @@
             <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), :controller => "post", :action => "show", :id => p.id %></td>
             <td class="checkbox-cell">
               <ul>
-                <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
-                <li>Rating: <%= p.pretty_rating %></li>
+                <li><%=t :post_mod_uploaded %><%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %><%=t :post_mod_ago2 %><%= time_ago_in_words(p.created_at) %><%=t :post_mod_ago %>(<%= link_to t(:mod_mod), :action => "moderate", :query => "user:#{p.author}" %>)</li>
+                <li><%=t :post_mod_rating %><%= p.pretty_rating %></li>
                 <% if p.parent_id %>
-                  <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
+                  <li><%=t :post_mod_parent %><%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
                 <% end %>
-                <li>Tags: <%= h p.cached_tags %></li>
-                <li>Score: <span id="post-score-<%= p.id %>"><%= p.score %></span></li>
+                <li><%=t :post_mod_tags %><%= h p.cached_tags %></li>
+                <li><%=t :post_mod_score %><span id="post-score-<%= p.id %>"><%= p.score %></span></li>
                 <% if p.flag_detail %>
                 <li>
-                  Reason: <%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
+                  <%=t :post_mod_reason %><%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
                 </li>
                 <% end %>
-                <li>Size: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
+                <li><%=t :post_mod_size %><%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
               </ul>
             </td>
           </tr>
@@ -64,7 +64,7 @@
 </div>
 
 <div>
-  <h2>Flagged</h2>
+  <h2><%=t :post_mod_flagged %></h2>
   <form method="post" action="/post/moderate">
     <%= hidden_field_tag "reason2", "" %>
 
@@ -72,10 +72,10 @@
       <tfoot>
         <tr>
           <td colspan="3">
-            <%= button_to_function "Select all", "$$('.f').each(function (i) {i.checked = true; highlight_row(i)})" %>
-            <%= button_to_function "Invert selection", "$$('.f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %>
-            <%= submit_tag "Approve" %>
-            <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason2').value = reason; return true} else {return false}" %>
+            <%= button_to_function t(:post_mod_select), "$$('.f').each(function (i) {i.checked = true; highlight_row(i)})" %>
+            <%= button_to_function t(:post_mod_invert), "$$('.f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %>
+            <%= submit_tag t(:post_mod_approve) %>
+            <%= submit_tag t(:post_mod_delete), :onclick => "var reason = prompt('#{t(:post_mod_enter_reason)}'); if (reason != null) {$('reason2').value = reason; return true} else {return false}" %>
           </td>
         </tr>
       </tfoot>
@@ -86,19 +86,19 @@
             <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), :controller => "post", :action => "show", :id => p.id %></td>
             <td class="checkbox-cell">
               <ul>
-                <li>Uploaded by <%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %> <%= time_ago_in_words(p.created_at) %> ago (<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
-                <li>Rating: <%= p.pretty_rating %></li>
+                <li><%=t :post_mod_uploaded %><%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %><%=t :post_mod_ago2 %><%= time_ago_in_words(p.created_at) %><%=t :post_mod_ago %>(<%= link_to "mod", :action => "moderate", :query => "user:#{p.author}" %>)</li>
+                <li><%=t :post_mod_rating %><%= p.pretty_rating %></li>
                 <% if p.parent_id %>
-                  <li>Parent: <%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
+                  <li><%=t :post_mod_parent %><%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>
                 <% end %>
-                <li>Tags: <%= h p.cached_tags %></li>
-                <li>Score: <%= p.score %> (vote <%= link_to_function "down", "Post.vote(-1, #{p.id}, {})" %>)</li>
+                <li><%=t :post_mod_tags %><%= h p.cached_tags %></li>
+                <li><%=t :post_mod_score %><%= p.score %> (vote <%= link_to_function t(:post_mod_down), "Post.vote(-1, #{p.id}, {})" %>)</li>
                 <% if p.flag_detail %>
                 <li>
-                  Reason: <%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
+                  <%=t :post_mod_reason %)<%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
                 </li>
                 <% end %>
-                <li>Size: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
+                <li><%=t :post_mod_size %><%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
               </ul>
             </td>
           </tr>

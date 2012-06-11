@@ -1,6 +1,6 @@
 <div id="comment-list">
   <% if @posts.empty? %>
-    <h4>No comments.</h4>
+    <h4><%=t :comments_none %></h4>
   <% end %>
 
   <% @posts.each do |post| %>
@@ -11,21 +11,21 @@
       <div class="col2" id="comments-for-p<%= post.id %>">
         <div class="header">
           <div>
-            <span class="info"><strong>Date</strong> <%= compact_time(post.created_at) %></span>
-            <span class="info"><strong>User</strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
-            <span class="info"><strong>Rating</strong> <%= post.pretty_rating %></span>
-            <span class="info vote-container"><strong>Score</strong>
+            <span class="info"><strong><%=t :comment_date %></strong> <%= compact_time(post.created_at) %></span>
+            <span class="info"><strong><%=t :comment_user %></strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
+            <span class="info"><strong><%=t :comment_rating %></strong> <%= post.pretty_rating %></span>
+            <span class="info vote-container"><strong><%=t :comment_score %></strong>
               <span id="post-score-<%= post.id %>"><%= post.score %></span>
               <%= vote_widget(@current_user) %>
               <%= vote_tooltip_widget() %>
             </span>
 
             <% if post.comments.size > 6 %>
-              <span class="info"><strong>Hidden</strong> <%= link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
+              <span class="info"><strong><%=t :comment_hidden %></strong> <%= link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
             <% end %>
           </div>
           <div class="tags">
-            <strong>Tags</strong>
+            <strong><%=t :comment_tags %></strong>
             <% post.cached_tags.split(/ /).each do |name| %>
               <span class="tag-type-<%= Tag.type_name(name) %>">
                 <a href="/post/index?tags=<%= u name %>"><%= h name.tr("_", " ") %></a>
@@ -44,7 +44,7 @@
 
   <% if @page_uses_translations then %>
     <% content_for :above_footer do %>
-      Comment translation provided by <a href="http://translate.google.com">Google</a>.
+      <%=t :comment_translation %> <a href="http://translate.google.com">Google</a>.
       <br>
     <% end %>
   <% end %>

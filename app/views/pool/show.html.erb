@@ -1,5 +1,5 @@
 <div id="pool-show">
-  <h4>Pool: <%= h(@pool.pretty_name) %></h4>
+  <h4><%=t :pool_pool2 %><%= h(@pool.pretty_name) %></h4>
   <% unless @pool.description.blank? %>
     <div style="margin-bottom: 2em;"><%= format_text @pool.description %></div>
   <% end %>
@@ -29,7 +29,7 @@
 <div id="paginator">
   <%= will_paginate(@posts, :class => "no-browser-link") %>
 
-  <div style="display: none;" id="info">When delete mode is enabled, clicking on a thumbnail will remove the post from this pool.</div>
+  <div style="display: none;" id="info"><%=t :pool_delete_mode_text %></div>
 </div>
 
 <% content_for :footer do %>
@@ -37,36 +37,36 @@
     <% zip_params = {} %>
     <% has_jpeg = CONFIG["jpeg_enable"] && @pool.has_jpeg_zip?(zip_params) %>
     <% if has_jpeg %>
-      <li><%= link_to_pool_zip "Download JPGs", @pool, zip_params.merge({:jpeg => true}) %></li>
+      <li><%= link_to_pool_zip t(:pool_jpeg), @pool, zip_params.merge({:jpeg => true}) %></li>
     <% end %>
     <% li_class = has_jpeg ? "advanced-editing":"" %>
-    <li class="<%= li_class %>"><%= link_to_pool_zip "Download", @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
+    <li class="<%= li_class %>"><%= link_to_pool_zip t(:pool_png), @pool, zip_params, {:has_jpeg => has_jpeg} %></li>
   <% end %>
-  <li><%= link_to "Index view", :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
+  <li><%= link_to t(:pool_index), :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
   <% if not @current_user.is_anonymous? %>
-  <li><%= link_to_function "Toggle view", "User.set_pool_browse_mode(#{ j(1-@browse_mode)});" %></li>
+  <li><%= link_to_function t(:pool_toggle), "User.set_pool_browse_mode(#{ j(1-@browse_mode)});" %></li>
   <% end %>
   <% if @current_user.has_permission?(@pool) %>
-    <li><%= link_to "Edit", :action => "update", :id => params[:id] %></li>
-    <li><%= link_to "Delete", :action => "destroy", :id => params[:id] %></li>
+    <li><%= link_to t(:pool_edit), :action => "update", :id => params[:id] %></li>
+    <li><%= link_to t(:pool_delete), :action => "destroy", :id => params[:id] %></li>
   <% end %>
 <% end %>
 
 <% content_for :footer_final do %>
   <br>
   <% if @current_user.can_change?(@pool, :posts) %>
-    <li><%= link_to "Order", :action => "order", :id => params[:id] %></li>
-    <li><%= link_to "Import", :action => "import", :id => params[:id] %></li>
+    <li><%= link_to t(:pool_show_order), :action => "order", :id => params[:id] %></li>
+    <li><%= link_to t(:pool_show_import), :action => "import", :id => params[:id] %></li>
     <% if @current_user.is_contributor_or_higher? %>
-      <li><%= link_to "Copy", :action => "copy", :id => params[:id] %></li>
-      <li><%= link_to "Transfer post data", :action => "transfer_metadata", :to => params[:id] %></li>
+      <li><%= link_to t(:pool_show_copy), :action => "copy", :id => params[:id] %></li>
+      <li><%= link_to t(:pool_show_transfer), :action => "transfer_metadata", :to => params[:id] %></li>
     <% end %>
   <% end %>
-  <li><%= link_to "History", :controller => "history", :action => "index", :search => "pool:#{params[:id]}" %></li>
+  <li><%= link_to t(:pool_show_history), :controller => "history", :action => "index", :search => "pool:#{params[:id]}" %></li>
   <% if @current_user.can_change?(@pool, :posts) %>
   <li class="advanced-editing del-mode">
     <input type="checkbox" id="del-mode" onclick="Element.toggle('info')">
-    <label for="del-mode">Delete mode</label>
+    <label for="del-mode"><%=t :pool_delete_mode %></label>
   </li>
   <% end %>
 <% end %>

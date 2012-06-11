@@ -1,9 +1,9 @@
 <thead>
   <tr>
     <th></th>
-    <th width="15%">Name</th>
-    <th width="70%">Tags</th>
-    <th width="10%">Visible</th>
+    <th width="15%"><%=t :sub_name %></th>
+    <th width="70%"><%=t :sub_tags %></th>
+    <th width="10%"><%=t :sub_vis %></th>
   </tr>
 </thead>
 
@@ -11,8 +11,8 @@
   <tr>
     <td></td>
     <td colspan="3">
-      <%= submit_tag "Save" %>
-      <%= button_to_remote "Add", :url => {:controller => "tag_subscription", :action => "create"} %>
+      <%= submit_tag t(:sub_save) %>
+      <%= button_to_remote t(:sub_add), :url => {:controller => "tag_subscription", :action => "create"} %>
     </td>
   </tr>
 </tfoot>

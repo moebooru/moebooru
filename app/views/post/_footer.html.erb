@@ -1,18 +1,18 @@
 <% content_for :subnavbar do %>
-  <li><%= link_to "List", :controller => "post", :action => "index" %></li>
-  <li><%= link_to "Browse", :controller => "post", :action => "browse" %></li>
-  <li><%= link_to "Upload", :controller => "post", :action => "upload" %></li>
-  <!-- <li id="my-subscriptions-container"><%= link_to "Subscriptions", "/", :id => "my-subscriptions" %></li> -->
-  <li><%= link_to "Random", :controller => "post", :tags => "order:random" %></li>
-  <li><%= link_to "Popular", :controller => "post", :action => "popular_recent" %></li>
-  <li><%= link_to "Image Search", :controller => "post", :action => "similar" %></li>
-  <li><%= link_to "History", :controller => "history", :action => "index" %></li>
+  <li><%= link_to t(:post_list), :controller => "post", :action => "index" %></li>
+  <li><%= link_to t(:post_browse), {:controller => "post", :action => "browse", :anchor => '/'} %></li>
+  <li><%= link_to t(:post_upload), :controller => "post", :action => "upload" %></li>
+  <!-- <li id="my-subscriptions-container"><%= link_to t(:post_subs), "/", :id => "my-subscriptions" %></li> -->
+  <li><%= link_to t(:post_random), :controller => "post", :tags => "order:random" %></li>
+  <li><%= link_to t(:post_popular), :controller => "post", :action => "popular_recent" %></li>
+  <li><%= link_to t(:post_image), :controller => "post", :action => "similar" %></li>
+  <li><%= link_to t(:post_history), :controller => "history", :action => "index" %></li>
   <% if @current_user.is_contributor_or_higher? %>
-    <li><%= link_to "Batch", :controller => "batch" %></li>
+    <li><%= link_to t(:post_batch), :controller => "batch" %></li>
   <% end %>
   <% if @current_user.is_janitor_or_higher? %>
-    <li><%= link_to "Moderate", {:controller => "post", :action => "moderate"}, :id => "moderate" %></li>
+    <li><%= link_to t(:post_mod), {:controller => "post", :action => "moderate"}, :id => "moderate" %></li>
   <% end %>
   <%= yield :footer %>
-  <li><%= link_to "Help", :controller => "help", :action => "posts" %></li>
+  <li><%= link_to t(:post_help), :controller => "help", :action => "posts" %></li>
 <% end %>

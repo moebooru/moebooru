@@ -1,5 +1,5 @@
 <% content_for :subnavbar do %>
-  <li><%= link_to "List", :action => "index" %></li>
+  <li><%= link_to t(:inline_list), :action => "index" %></li>
   <%= yield :footer %>
-  <!-- <li><%= link_to "Help", :controller => "help", :action => "inlines" %></li> -->
+  <!-- <li><%= link_to t(:inline_help), :controller => "help", :action => "inlines" %></li> -->
 <% end %>

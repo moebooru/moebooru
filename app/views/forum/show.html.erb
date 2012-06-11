@@ -1,6 +1,6 @@
 <% if @forum_post.is_locked? %>
   <div class="status-notice">
-    <p>This topic is locked.</p>
+    <p><%=t :forum_locked %></p>
   </div>
 <% end %>
 
@@ -25,8 +25,8 @@
         <%= hidden_field "forum_post", "title", :value => "" %>
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
         <%= text_area "forum_post", "body", :rows => 20, :cols => 80, :value => "" %>
-        <%= submit_tag "Post" %>
-        <%= submit_to_remote "preview", "Preview", :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
+        <%= submit_tag t(:forum_post) %>
+        <%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
       <% end %>
     </div>
   </div>
@@ -43,12 +43,12 @@
 
 <% content_for :subnavbar do %>
   <% unless @forum_post.is_locked? %>
-    <li><%= link_to_function "Reply", "Element.toggle('reply')" %></li>
+    <li><%= link_to_function t(:forum_reply), "Element.toggle('reply')" %></li>
   <% end %>
-  <li><%= link_to "List", :action => "index" %></li>
-  <li><%= link_to "New topic", :action => "new" %></li>
+  <li><%= link_to t(:forum_list), :action => "index" %></li>
+  <li><%= link_to t(:forum_new), :action => "new" %></li>
   <% unless @forum_post.is_parent? %>
-    <li><%= link_to "Parent", :action => "show", :id => @forum_post.parent_id %></li>
+    <li><%= link_to t(:forum_parent), :action => "show", :id => @forum_post.parent_id %></li>
   <% end %>
-  <li><%= link_to "Help", :controller => "help", :action => "forum" %></li>
+  <li><%= link_to t(:forum_help), :controller => "help", :action => "forum" %></li>
 <% end %>

@@ -4,15 +4,15 @@
       <tfoot>
         <tr>
           <td colspan="2">
-            <%= submit_tag "Save" %> <%= submit_tag "Cancel" %>
+            <%= submit_tag t(:user_save) %> <%= submit_tag t(:user_cancel) %>
           </td>
         </tr>
       </tfoot>
       <tbody>
         <tr>
           <th width="15%">
-            <label class="block" for="user_blacklisted_tags">Tag Blacklist</label>
-            <p>Any post containing all blacklisted tags on a line will be hidden. Separate tags with spaces.</p>
+            <label class="block" for="user_blacklisted_tags"><%=t :user1 %></label>
+            <p><%=t :user2 %></p>
           </th>
           <td width="85%">
             <%= text_area "user", "blacklisted_tags", :size => "80x6" %>
@@ -20,11 +20,11 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_email">Email</label>
+            <label class="block" for="user_email"><%=t :user3 %></label>
             <% if CONFIG["enable_account_email_activation"] %>
-              <p>An email address is required to activate your account.</p>
+              <p><%=t :user4 %></p>
             <% else %>
-              <p>This field is optional. It is useful if you ever forget your password and want to reset it.</p>
+              <p><%=t :use5 %></p>
             <% end %>
           </th>
           <td>
@@ -33,7 +33,7 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_tag_subscriptions_text">Tag Subscriptions</label>
+            <label class="block" for="user_tag_subscriptions_text"><%=t :user6 %></label>
           </th>
           <td class="large-text">
             <%= render :partial => "tag_subscription/user_listing", :locals => {:user => @user} %>
@@ -41,8 +41,8 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_my_tags">Edit Tags</label>
-            <p>These will be accessible when you <a href="/post/upload">upload</a> or edit a post.</p>
+            <label class="block" for="user_my_tags"><%=t :user7 %></label>
+            <p><%=t :user8 %><a href="/post/upload"><%=t :user9 %></a><%=t :user10 %></p>
           </th>
           <td>
             <%= text_area "user", "my_tags", :size => "40x5" %>
@@ -50,8 +50,8 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_always_resize_images">Resize Images</label>
-            <p>If enabled, large images will always be resized to fit the screen.</p>
+            <label class="block" for="user_always_resize_images"><%=t :user11 %></label>
+            <p><%=t :user12 %></p>
           </th>
           <td>
             <%= check_box "user", "always_resize_images" %>
@@ -59,8 +59,8 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_receive_dmails">Receive Mails</label>
-            <p>Receive emails when someone sends you a message.</p>
+            <label class="block" for="user_receive_dmails"><%=t :user13 %></label>
+            <p><%=t :user14 %></p>
           </th>
           <td>
             <%= check_box "user", "receive_dmails" %>
@@ -69,8 +69,8 @@
         <% if CONFIG["image_samples"] && !CONFIG["force_image_samples"] %>
         <tr>
           <th>
-            <label class="block" for="user_show_samples">Show Image Samples</label>
-            <p>Show reduced large-resolution images.</p>
+            <label class="block" for="user_show_samples"><%=t :user15 %></label>
+            <p><%=t :user16 %></p>
           </th>
           <td>
             <%= check_box "user", "show_samples" %>
@@ -79,8 +79,8 @@
         <% end %>
         <tr>
           <th>
-            <label class="block" for="user_use_browser">Use post browser</label>
-            <p>Use the post browser when viewing posts and pools.</p>
+            <label class="block" for="user_use_browser"><%=t :user17 %></label>
+            <p><%=t :user18 %></p>
           </th>
           <td>
             <%= check_box "user", "use_browser" %>
@@ -88,8 +88,8 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_show_advanced_editing">Advanced Editing</label>
-            <p>Show advanced editing controls.</p>
+            <label class="block" for="user_show_advanced_editing"><%=t :user19 %></label>
+            <p><%=t :user20 %></p>
           </th>
           <td>
             <%= check_box "user", "show_advanced_editing" %>
@@ -98,12 +98,12 @@
         <% if CONFIG["translate_languages"] %>
         <tr>
           <th>
-            <label class="block" for="user_language">Language</label>
-            <p>Language to show comments in.</p>
+            <label class="block" for="user_language"><%=t :user21 %></label>
+            <p><%=t :user22 %></p>
           </th>
           <td>
             <select id="user_language" name="user[language]">
-              <option value="" <%= @current_user.language.nil? ? 'selected="selected"':"" %>>Original (no translation)</option>
+              <option value="" <%= @current_user.language.nil? ? 'selected="selected"':"" %>><%=t :user23 %></option>
               <% for lang in CONFIG["translate_languages"] do %>
                 <option value="<%= h(lang) %>" <%= @current_user.language == lang ? 'selected="selected"':"" %>><%= h(CONFIG["language_names"][lang]) %></option>
               <% end %>
@@ -112,8 +112,8 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_secondary_languages">Secondary languages</label>
-            <p>Languages to not translate from.</p>
+            <label class="block" for="user_secondary_languages"><%=t :user24 %></label>
+            <p><%=t :user25 %></p>
           </th>
           <td>
             <select id="user_secondary_languages" name="user[secondary_language_array][]" multiple size="10">

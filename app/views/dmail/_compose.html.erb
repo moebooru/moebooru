@@ -5,7 +5,7 @@
     <tfoot>
       <tr>
         <td></td>
-        <td><%= submit_tag "Send" -%> <%= submit_tag 'Preview', :id => 'dmail-preview', :name => 'preview', :type => 'button' -%></td>
+        <td><%= submit_tag t(:dmail_send) -%> <%= submit_tag t(:dmail_preview), :id => 'dmail-preview', :name => 'preview', :type => 'button' -%></td>
       </tr>
       <tr>
         <td></td>
@@ -14,15 +14,15 @@
     </tfoot>
     <tbody>
       <tr>
-        <th><label for="dmail_to_name">To</label></th>
+        <th><label for="dmail_to_name"><%=t :dmail_to %></label></th>
         <td><%= text_field_with_auto_complete "dmail", "to_name", {:value => params[:to]}, :skip_style => true, :min_chars => 3, :skip_style => true %></td>
       </tr>
       <tr>
-        <th><label for="dmail_title">Title</label></th>
+        <th><label for="dmail_title"><%=t :dmail_title %></label></th>
         <td><%= text_field "dmail", "title" %></td>
       </tr>
       <tr>
-        <th><label for="dmail_body">Body</label></th>
+        <th><label for="dmail_body"><%=t :dmail_body %></label></th>
         <td><%= text_area "dmail", "body", :size => "50x25", :class => "default" %></td>
       </tr>
     </tbody>
@@ -30,7 +30,7 @@
 <% end %>
 <script type="text/javascript">
   $('dmail-preview').observe('click', function(event) {
-    $('dmail-preview-area').innerHTML = '<em>Loading preview...</em>';
+    $('dmail-preview-area').innerHTML = '<em><%=t :dmail_preview_js_text %></em>';
     new Ajax.Updater('dmail-preview-area', '<%= escape_javascript url_for(:controller => :dmail, :action => :preview) %>', { parameters: { body: $F('dmail_body') } });
     event.stop(); //Stop the browser from actually going to href.
   });

@@ -1,4 +1,4 @@
-<h4>Delete Post</h4>
+<h4><%=t :post_delete %></h4>
 
 <% if CONFIG["can_see_post"].call(@current_user, @post) %>
   <%= image_tag @post.preview_url %>
@@ -6,12 +6,12 @@
 
 <%= form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>
-  <label>Reason</label> <%= text_field_tag "reason" %>
+  <label><%=t :post_deleted_reason %></label> <%= text_field_tag "reason" %>
   <% if @post.is_deleted? %>
   <%= hidden_field_tag "destroy", "1" %>
   <% end %>
 
-  <%= submit_tag @post.is_deleted? ? "Destroy permanently":"Delete" %> <%= submit_tag "Cancel" %>
+  <%= submit_tag @post.is_deleted? ? t(:post_delete_perma):t(:post_delete_delete)" %> <%= submit_tag t(:post_delete_cancel) %>
 <% end %>
 
 <div class="deleting-post">
@@ -19,19 +19,18 @@
     <br>
     <p>
     <% if @post_parent %>
-      Votes will be transferred to the following parent post.
-      If this is incorrect, reparent this post before deleting it.<p>
+      <%=t :post_delete_parent_text %><p>
     <% if CONFIG["can_see_post"].call(@current_user, @post_parent) %>
       <ul id="post-list-posts"> <%= print_preview(@post_parent, :hide_directlink=>true) %> </ul>
     <% else %>
-      (parent post hidden due to access restrictions)
+      <%=t :post_delete_access %>
     <% end %>
 
     <% else %>
-      This post has no parent.  If this post has been replaced, reparent this post before deleting, and votes will be transferred.<p>
+      <%=t :post_delete_no_parent_text %><p>
     <% end %>
 <% else %>
-  This post is already deleted.  Destroying it will remove it permanently.
+  <%=t :post_delete_perma_text %>
 <% end %>
 </div>
 

@@ -1,40 +1,39 @@
 <% if @from.nil? then %>
   <%= form_tag({:controller => "pool", :action => "transfer_metadata"}, :method => "get") do %>
-  <%= hidden_field_tag "to", @to.id %>
-  Transfer from pool number:
-  <%= text_field_tag "from", "", :class => "fp", :size => 5, :tabindex => 1 %>
+  <%= hidden_field_tag t(:pool_transfer_to), @to.id %>
+  <%=t :pool_transfer %>
+  <%= text_field_tag t(:pool_transfer_from), "", :class => "fp", :size => 5, :tabindex => 1 %>
   <br>
-  <%= submit_tag "Transfer", :tabindex => 2 %>
-  <%= button_to_function "Cancel", "history.back()", :tabindex => 2 %>
+  <%= submit_tag t(:pool_transfer_button), :tabindex => 2 %>
+  <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %>
   <script type="text/javascript">$("from").focus()</script>
 <% end %>
 
 <% else %>
 <h3>
-  Transferring post data from posts in pool <%= link_to @from.pretty_name, :action => :show, :id => @from.id  %>
-  to posts in pool <%= link_to @to.pretty_name, :action => :show, :id => @to.id  %>
+  <%=t :pool_transfer_text %><%= link_to @from.pretty_name, :action => :show, :id => @from.id  %>
+  <%=t :pool_transfer_text2 %><%= link_to @to.pretty_name, :action => :show, :id => @to.id  %>
 </h3>
 
 <div>
-  Tags and ratings will be transferred, and the old posts will be parented to the new posts.
+  <%=t :pool_transfer_text3 %>
 </div>
 <% if @truncated then %>
 <div>
-  These pools don't have the same number of posts.  <b>Please check that tags are being transferred
-  to the correct posts.</b>
+ <%=t :pool_transfer_text4 %><b><%=t :pool_transfer_text5 %></b>
 </div>
 <% end %>
 
-<div> <%= link_to("Reverse", {:action => "transfer_metadata", :from => @to.id, :to => @from.id}) %> the transfer </div>
+<div> <%= link_to(t(:pool_reverse), {:action => "transfer_metadata", :from => @to.id, :to => @from.id}) %><%=t :pool_transfer_text6 %></div>
 
 <%= form_tag(:controller => "post", :action => "update_batch") do %>
 <%= hidden_field_tag "url", (url_for :controller => "pool", :action => "show", :id => @to.id) %>
   <table>
     <thead>
       <tr>
-        <th>From</th>
-        <th>To</th>
-        <th>Tags</th>
+        <th><%=t :pool_transfer_from %></th>
+        <th><%=t :pool_transfer_to %></th>
+        <th><%=t :pool_transfer_tags %></th>
       </tr>
     </thead>
     <tbody>
@@ -60,7 +59,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag "Transfer", :tabindex => 2 %> <%= button_to_function "Cancel", "history.back()", :tabindex => 2 %></td>
+        <td colspan="2"><%= submit_tag t(:pool_transfer), :tabindex => 2 %> <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %></td>
       </tr>
     </tfoot>
   </table>

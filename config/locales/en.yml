@@ -3,9 +3,6 @@
 
 en:
   hello: "Hello world"
-  will_paginate:
-    previous_label: '&lt;&lt;'
-    next_label: '&gt;&gt;'
   #view/artist/create
   artist_create: "Separate multiple aliases and group members with commas."
   artist_name: "Name"

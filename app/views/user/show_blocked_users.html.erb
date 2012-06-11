@@ -1,18 +1,18 @@
 <div class="section">
-  <h6>Blocked Users</h6>
+  <h6><%=t :user_blocked %></h6>
   <%= form_tag(:action => "unblock") do %>
     <table width="100%" class="highlightable">
       <thead>
         <tr>
           <th width="1%"></th>
-          <th width="19%">User</th>
-          <th width="10%">Expires</th>
-          <th width="70%">Reason</th>
+          <th width="19%"><%=t :user_user %></th>
+          <th width="10%"><%=t :user_expires %></th>
+          <th width="70%"><%=t :user_reason %></th>
         </tr>
       </thead>
       <tfoot>
         <tr>
-          <td colspan="4"><%= submit_tag "Unblock" %></td>
+          <td colspan="4"><%= submit_tag t(:user_unblock) %></td>
         </tr>
       </tfoot>
       <tbody>
@@ -28,21 +28,21 @@
     </table>
   <% end %>
 
-  <h6>Blocked IPs</h6>
+  <h6><%=t :user_blocked_ips %></h6>
   <%= form_tag(:controller => "blocks", :action => "unblock_ip") do %>
     <table width="100%" class="highlightable">
       <thead>
         <tr>
           <th width="1%"></th>
-          <th width="19%">IP</th>
-          <th width="10%">Expires</th>
-          <th width="10%">Banned by</th>
-          <th width="60%">Reason</th>
+          <th width="19%"><%=t :user_ip %></th>
+          <th width="10%"><%=t :user_expires %></th>
+          <th width="10%"><%=t :user_banned_by %></th>
+          <th width="60%"><%=t :user_reason %></th>
         </tr>
       </thead>
       <tfoot>
         <tr>
-          <td colspan="4"><%= submit_tag "Unblock" %></td>
+          <td colspan="4"><%= submit_tag t(:user_unblock) %></td>
         </tr>
       </tfoot>
       <tbody>
@@ -63,22 +63,22 @@
       <tfoot>
         <tr>
           <td></td>
-          <td><%= submit_tag "Submit" %></td>
+          <td><%= submit_tag t(:user_resend_submit) %></td>
         </tr>
       </tfoot>
       <tbody>
         <tr>
-          <th><label for="ip_addr">Address</label>
-            <p>IP masks may be used, such as 127.0.0.1/24</p></th>
+          <th><label for="ip_addr"><%=t :user_address %></label>
+            <p><%=t :user_address_text %></p></th>
           <td><%= text_field "ban", "ip_addr", :size => "40" %></td>
         </tr>
         <tr>
-          <th><label for="ban_reason">Reason</label></th>
+          <th><label for="ban_reason"><%=t :user_reason %></label></th>
           <td><%= text_area "ban", "reason", :size => "40x5" %></td>
         </tr>
         <tr>
           <th>
-            <label for="ban_duration">Duration (days)</label>
+            <label for="ban_duration"><%=t :user_duration %></label>
           </th>
           <td><%= text_field "ban", "duration", :size => 10 %></td>
         </tr>

@@ -1,23 +1,23 @@
-<h2>Users</h2>
+<h2><%=t :users %></h2>
 
 <%= form_tag({:action => "index"}, :method => :get) do %>
   <table>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag "Search" %></td>
+        <td colspan="2"><%= submit_tag t(:users_search) %></td>
       </tr>
     </tfoot>
     <tbody>
       <tr>
-        <th>Name</th>
+        <th><%=t :users_name %></th>
         <td><%= text_field_tag "name", params[:name] %></td>
       </tr>
       <tr>
-        <th>Level</th>
+        <th><%=t :users_level %></th>
         <td><%= select_tag "level", options_for_select([["Any", "any"], *CONFIG["user_levels"].to_a], params[:level]) %></td>
       </tr>
       <tr>
-        <th>Order</th>
+        <th><%=t :users_order</th>
         <td><%= select_tag "order", options_for_select([["Name", "name"], ["Posts", "posts"], ["Notes", "notes"], ["Date", "date"]], params[:order]) %></td>
       </tr>
     </tbody>
@@ -27,14 +27,14 @@
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Posts</th>
-      <th>Deleted</th>
-      <th>% Pos</th>
-      <th>% Neg</th>
-      <th>Notes</th>
-      <th>Level</th>
-      <th>Joined</th>
+      <th><%=t :users_name %></th>
+      <th><%=t :users_posts %></th>
+      <th><%=t :users_deleted %></th>
+      <th><%=t :users_pos %></th>
+      <th><%=t :users_neg %></th>
+      <th><%=t :users_notes %></th>
+      <th><%=t :users_level %></th>
+      <th><%=t :users_joined %></th>
     </tr>
   </thead>
   <tbody>

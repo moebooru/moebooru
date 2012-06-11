@@ -5,7 +5,7 @@
     </div>
     <div style="position: absolute; bottom: 0; margin-bottom: 15px; left: <%= @user.avatar_width+5 %>px; ">
       <% if @current_user.has_permission?(@user) then %>
-        &nbsp;<%= link_to "(edit)", :controller => "user", :action => "set_avatar", :id => @user.avatar_post.id.to_s, :user_id => @user.id %>
+        &nbsp;<%= link_to t(:user_edit), :controller => "user", :action => "set_avatar", :id => @user.avatar_post.id.to_s, :user_id => @user.id %>
       <% end %>
       <h2><%= h(@user.pretty_name) %></h2>
     </div>
@@ -17,38 +17,38 @@
 <div style="float: left; width: 25em; clear: left;">
   <table width="100%">
     <tr>
-      <td width="40%"><strong>Join Date</strong></td>
+      <td width="40%"><strong><%=t :user_join %></strong></td>
       <td width="60%"><%= @user.created_at.strftime("%Y-%m-%d") %>
       </td>
 
     </tr>
     <% if @user.level < 20 or @user.level > 33 or @current_user.is_mod_or_higher? then %>
     <tr>
-      <td><strong>Level</strong></td>
+      <td><strong><%=t :user_level %></strong></td>
       <td>
         <%= @user.pretty_level %>
         <% if @user.is_blocked? && @user.ban %>
-          (reason: <%= h @user.ban.reason %>; expires: <%= @user.ban.expires_at.strftime("%Y-%m-%d") %>)
+          <%=t :user_reason2 %><%= h @user.ban.reason %><%=t :user_expire2 %><%= @user.ban.expires_at.strftime("%Y-%m-%d") %><%=t :user_reason3 %>
         <% end %>
       </td>
     </tr>
     <% end %>
     <tr>
-      <td><strong>Tag Subscriptions</strong></td>
+      <td><strong><%=t :user_subs %></strong></td>
       <td class="large-text">
         <%= render :partial => "tag_subscription/user_listing", :locals => {:user => @user} %>
       </td>
     </tr>
     <tr>
-      <td><strong>Posts</strong></td>
+      <td><strong><%=t :user_posts %></strong></td>
       <td><%= link_to Post.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></td>
     </tr>
     <tr>
-      <td><strong>Deleted Posts</strong></td>
+      <td><strong><%=t :user_deleted_posts %></strong></td>
       <td><%= link_to Post.count(:all, :conditions => { :status => 'deleted', :user_id => @user.id.to_i }), :controller => "post", :action => "deleted_index", :user_id => @user.id %></td>
     </tr>
     <tr>
-      <th>Votes</th>
+      <th><%=t :user_votes %></th>
       <td>
         <span class="stars">
           <% (1..3).each do |i| %>
@@ -61,55 +61,55 @@
       </td>
     </tr>
     <tr>
-      <td><strong>Comments</strong></td>
+      <td><strong><%=t :user_comments %></strong></td>
       <td><%= link_to Comment.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
-      <td><strong>Edits</strong></td>
+      <td><strong><%=t :user_edits %></strong></td>
       <td><%= link_to History.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "history", :action => "index", :search => "user:#{@user.name}" %></td>
     </tr>
     <tr>
-      <td><strong>Tag Edits</strong></td>
+      <td><strong><%=t :user_tag_edits %></strong></td>
       <td><%= link_to History.count(:all, :conditions => { :user_id => @user.id.to_i, :group_by_table => 'posts' }), :controller => "history", :action => "index", :search => "type:post user:#{@user.name}" %></td>
     </tr>
     <tr>
-      <td><strong>Note Edits</strong></td>
+      <td><strong><%=t :user_note_edits %></strong></td>
       <td><%= link_to NoteVersion.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "note", :action => "history", :user_id => @user.id %></td>
     </tr>
     <tr>
-      <td><strong>Wiki Edits</strong></td>
+      <td><strong><%=t :user_wiki_edits %></strong></td>
       <td><%= link_to WikiPageVersion.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "wiki", :action => "recent_changes", :user_id => @user.id %></td>
     </tr>
     <tr>
-      <td><strong>Forum Posts</strong></td>
+      <td><strong><%=t :user_forum_posts %></strong></td>
       <td><%= ForumPost.count(:all, :conditions => { :creator_id => @user.id.to_i }) %></td>
     </tr>
     <% if @user.invited_by %>
       <tr>
-        <td><strong>Invited By</strong></td>
+        <td><strong><%=t :user_invited_by %></strong></td>
         <td><%= link_to h(User.find(@user.invited_by).name), :action => "show", :id => @user.invited_by %></td>
       </tr>
     <% end %>
     <% if CONFIG["starting_level"] < 30 %>
     <tr>
-      <td><strong>Recent Invites</strong></td>
+      <td><strong><%=t :user_rec_invites %></strong></td>
       <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
     </tr>
     <% end %>
     <tr>
-      <td><strong>Record</strong></td>
+      <td><strong><%=t :user_record %></strong></td>
       <td>
         <% if !UserRecord.exists?(["user_id = ?", @user.id]) %>
-          None
+          <%=t :user_record_none %>
         <% else %>
           <%= UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = true", @user.id]) - UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = false", @user.id]) %>
         <% end %>
-        (<%= link_to "add", :controller => "user_record", :action => "index", :user_id => @user.id %>)
+        (<%= link_to t(:user_record_add), :controller => "user_record", :action => "index", :user_id => @user.id %>)
       </td>
     </tr>
     <% if @current_user.is_mod_or_higher? %>
       <tr>
-        <td><strong>IPs</strong></td>
+        <td><strong><%=t :user_ip %></strong></td>
         <td>
           <% @user_ips[0,5].each do |ip| %>
           <%= ip %>
@@ -125,17 +125,17 @@
   <table width="100%">
     <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General" && k != "Faults"}.each do |name, value| %>
       <tr>
-        <th>Favorite <%= name.pluralize %></th>
+        <th><%=t :user_fav2 %><%= name.pluralize %></th>
         <td><%= @user.voted_tags(:type => value).map {|tag| link_to tag["tag"].tr("_", " "), :controller => "post", :action => "index", :tags => "vote:3:#{@user.name} #{tag['tag']} order:vote"}.join(", ").html_safe %></td>
       </tr>
     <% end %>
     <tr>
-      <th>Uploaded Tags</th>
+      <th><%=t :user_uploaded_tags %></th>
       <td><%= @user.uploaded_tags.map {|tag| link_to tag["tag"].tr("_", " "), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ").html_safe %></td>
     </tr>
     <% CONFIG["tag_types"].select {|k, v| k =~ /^[A-Z]/ && k != "General" && k != "Faults"}.each do |name, value| %>
       <tr>
-        <th>Uploaded <%= name.pluralize %></th>
+        <th><%=t :user_uploaded %><%= name.pluralize %></th>
         <td><%= @user.uploaded_tags(:type => value).map {|tag| link_to tag["tag"].tr("_", " "), :controller => "post", :action => "index", :tags => "user:#{@user.name} #{tag['tag']}"}.join(", ").html_safe %></td>
       </tr>
     <% end %>
@@ -144,30 +144,30 @@
 
 <% @user.tag_subscriptions.visible.each do |tag_subscription| %>
   <div style="margin-bottom: 1em; float: left; clear: both;">
-    <h4>Tag Subscription: <%= tag_subscription.name %> <%= link_to "»", :controller => "post", :action => "index", :tags => "sub:#{@user.name}:#{tag_subscription.name}" %></h4>
+    <h4><%=t :user_sub2 %><%= tag_subscription.name %> <%= link_to "»", :controller => "post", :action => "index", :tags => "sub:#{@user.name}:#{tag_subscription.name}" %></h4>
     <%= render :partial => "post/posts", :locals => {:posts => @user.tag_subscription_posts(5, tag_subscription.name).select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
   </div>
 <% end %>
 
 <div style="margin-bottom: 1em; float: left; clear: both;">
-  <h4><%= link_to "Favorites", :controller => "post", :action => "index", :tags => "vote:3:#{@user.name} order:vote" %></h4>
+  <h4><%= link_to t(:user_fav3), :controller => "post", :action => "index", :tags => "vote:3:#{@user.name} order:vote" %></h4>
   <%= render :partial => "post/posts", :locals => {:posts => @user.recent_favorite_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <div style="margin-bottom: 1em;  float: left; clear: both;">
-  <h4><%= link_to "Uploads", :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
+  <h4><%= link_to t(:user_uploads), :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></h4>
   <%= render :partial => "post/posts", :locals => {:posts => @user.recent_uploaded_posts.select {|x| CONFIG["can_see_post"].call(@current_user, x)}} %>
 </div>
 
 <% content_for :footer do %>
-  <li><%= link_to "List", :controller => "user", :action => "index" %></li>
+  <li><%= link_to t(:user_list), :controller => "user", :action => "index" %></li>
   <% if @current_user.is_mod_or_higher? %>
-    <li><%= link_to "Ban", :controller => "user", :action => "block", :id => @user.id %></li>
+    <li><%= link_to t(:user_ban), :controller => "user", :action => "block", :id => @user.id %></li>
   <% end %>
   <% if @current_user.is_janitor_or_higher? && @user.is_member_or_lower? %>
-    <li><%= link_to "Invite", :controller => "user", :action => "invites", :name => @user.name %></li>
+    <li><%= link_to t(:user_invite_link), :controller => "user", :action => "invites", :name => @user.name %></li>
   <% end %>
-  <li><%= link_to "Send message", :controller => "dmail", :action => "compose", :to => @user.name %></li>
+  <li><%= link_to t(:user_send_msg), :controller => "dmail", :action => "compose", :to => @user.name %></li>
 <% end %>
 
 <%= render :partial => "footer" %>

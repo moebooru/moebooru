@@ -1,25 +1,25 @@
 <div style="width: 40em;">
-<h4>Signup</h4>
+<h4><%=t :user_signup_text %></h4>
 
 <% if !CONFIG["enable_signups"] %>
-  <p>Signups are currently disabled.</p>
+  <p><%=t :user_signup_text2 %></p>
 <% else %>
-  <p>By creating an account, you are agreeing to the <a href="/static/terms_of_service">terms of service</a>. <strong>Remember that this site is open to web crawlers, so people will be able to easily search your name.</strong></p>
+  <p><%=t :user_signup_text3 %><a href="/static/terms_of_service"><%=t :user_signup_text4 %></a><%=t :user_signup_text5 %><strong><%=t :user_signup_text6 %></strong></p>
 
   <%= form_tag(:controller => "user", :action => "create") do %>
     <table class="form">
       <tfoot>
         <tr>
           <td colspan="2">
-            <input type="submit" value="Signup">
+            <input type="submit" value=<%=t :user_signup %>>
           </td>
         </tr>
       </tfoot>
       <tbody>
         <tr>
           <th width="15%">
-            <label class="block" for="user_name">Name</label>
-            <p>Please remember your name will be easy to Google on this site.</p>
+            <label class="block" for="user_name"><%=t :user_signup_name %></label>
+            <p><%=t :user_signup_text %></p>
           </th>
           <td width="85%">
             <%= text_field "user", "name", :size => 30 %>
@@ -27,8 +27,8 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_email">Email</label>
-            <p>Optional, for email notifications and password resets.</p>
+            <label class="block" for="user_email"><%=t :user_signup_email %></label>
+            <p><%=t :user_singup_email_text %></p>
           </th>
           <td>
             <%= text_field "user", "email", :size => 30 %>
@@ -36,8 +36,8 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_password">Password</label>
-            <p>Minimum of five characters.</p>
+            <label class="block" for="user_password"><%=t :user_password %></label>
+            <p><%=t :user_password_text %></p>
           </th>
           <td>
             <%= password_field "user", "password", :size => 30 %>
@@ -45,7 +45,7 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_password_confirmation">Confirm password</label>
+            <label class="block" for="user_password_confirmation"><%=t :user_password_confirm %></label>
           </th>
           <td>
             <%= password_field "user", "password_confirmation", :size => 30 %>

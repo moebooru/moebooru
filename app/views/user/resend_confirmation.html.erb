@@ -1,11 +1,11 @@
 <div class="page">
-  <p>If you haven't received your confirmation email, make sure it wasn't caught by your spam filter.</p>
+  <p><%=t :user_resend %></p>
   <%= form_tag(:action => "resend_confirmation") do %>
     <table class="form">
       <tbody>
         <tr>
           <th>
-            <label class="block" for="email">Email</label>
+            <label class="block" for="email"><%=t :user_resend_email %></label>
           </th>
           <td>
             <%= text_field_tag "email" %>
@@ -15,7 +15,7 @@
       <tfoot>
         <tr>
           <td colspan="2">
-            <%= submit_tag "Submit" %>
+            <%= submit_tag t(:user_resend_submit) %>
           </td>
         </tr>
       </tfoot>

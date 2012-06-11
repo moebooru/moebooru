@@ -1,22 +1,22 @@
-<h4>Invites</h4>
-<p>You can vouch for existing members and invite them to contributor status.</p>
+<h4><%=t :user_invites %></h4>
+<p><%=t :user_invites_text %></p>
 
 <div style="margin-bottom: 2em">
-  <h6>Invite User</h6>
-  <%= form_tag({:action => "invites"}, :onsubmit => "return confirm('Are you sure you want to invite ' + $F('user_name') + '?')") do %>
+  <h6><%=t :user_invites2 %></h6>
+  <%= form_tag({:action => "invites"}, :onsubmit => "return confirm('#{t(:user_invites_text2 )}' + $F('user_name') + '?')") do %>
     <table width="100%">
       <tfoot>
         <tr>
-          <td colspan="2"><%= submit_tag "Submit" %></td>
+          <td colspan="2"><%= submit_tag t(:user_submit) %></td>
         </tr>
       </tfoot>
       <tbody>
         <tr>
-          <td><label for="member_name">Name</label></td>
+          <td><label for="member_name"><%=t :user_name %></label></td>
           <td><%= text_field_with_auto_complete "member", "name", {:value => params[:name]}, :skip_style => true, :min_chars => 3, :skip_style => true, :url => {:controller => "user", :action => "auto_complete_for_member_name"} %></td>
         </tr>
         <tr>
-          <td><label for="member_level">Level</label></td>
+          <td><label for="member_level"><%=t :user_level %></label></td>
           <td><%= select "member", "level", [["Contributor", CONFIG["user_levels"]["Contributor"]], ["Privileged", CONFIG["user_levels"]["Privileged"]]] %></td>
         </tr>
       </tbody>
@@ -25,15 +25,15 @@
 </div>
 
 <div>
-  <h6>Current Invites</h6>
-  <p>These are the users you have invited so far.</p>
+  <h6><%=t :user_current_invites %></h6>
+  <p><%=t :user_current_invites_text %></p>
 
   <table>
     <thead>
       <tr>
-        <th>User</th>
-        <th>Posts</th>
-        <th>Favorites</th>
+        <th><%=t :user_user %></th>
+        <th><%=t :users_posts %></th>
+        <th><%=t :user_fav %></th>
       </tr>
     </thead>
     <tbody>

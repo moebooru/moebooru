@@ -1,7 +1,7 @@
 <div class="memo">
-    <h3>Logoff</h3>
-    <p>You are now logged out of the system...</p>
-    <%= link_to "&#171; login", "/user/login" %>
+    <h3><%=t :user_logout_text %></h3>
+    <p><%=t :user_logout_text2 %></p>
+    <%= link_to t(:user_logout_link), "/user/login" %>
 </div>
 
 <%= render :partial => "footer" %>

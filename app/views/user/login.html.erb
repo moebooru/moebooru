@@ -1,18 +1,18 @@
 <div id="user-login" class="page">
-  <h4>Login</h4>
+  <h4><%=t :user_login_text1 %></h4>
   <% if @current_user.is_unactivated? %>
-    <p>You have not yet activated your account. Click <%= link_to "here", :action => "resend_confirmation" %> to resend your confirmation email to <%= h @current_user.email %>.</p>
+    <p><%=t :user_login_text2 %><%= link_to t(:user_login_text3), :action => "resend_confirmation" %><%=t :user_login_text4 %><%= h @current_user.email %>.</p>
   <% else %>
     <p>
-      You need an account to access some parts of <%= h CONFIG["app_name"] %>.
+      <%=t :user_login_text5 %><%= h CONFIG["app_name"] %>.
       <% unless @current_user.is_anonymous? %>
-        Click <%= link_to "here", :action => "reset_password" %> to reset your password.
+        <%=t :user_login_text6 %><%= link_to t(:user_login_text7), :action => "reset_password" %><%=t :user_login_text8 %>
       <% end %>
       <% if @current_user.is_anonymous? %>
         <% if CONFIG["enable_signups"] %>
-          You can register for an account <%= link_to "here", :action => "signup" %>.
+          <%=t :user_login_text9 %><%= link_to t(:user_login_text10), :action => "signup" %>.
         <% else %>
-          Registration is currently disabled.
+          <%=t :user_login_text11 %>
         <% end %>
       <% end %>
     </p>
@@ -22,15 +22,15 @@
     <%= hidden_field_tag "url", params[:url] %>
     <table class="form">
       <tr>
-        <th width="15%"><label class="block" for="user_name">Name</label></th>
+        <th width="15%"><label class="block" for="user_name"><%=t :layout_name %></label></th>
         <td width="85%"><%= text_field "user", "name", :tabindex => 1 %></td>
       </tr>
       <tr>
-        <th><label class="block" for="user_password">Password</label></th>
+        <th><label class="block" for="user_password"><%=t :layout_password %></label></th>
         <td><%= password_field "user", "password", :tabindex => 1 %></td>
       </tr>
       <tr>
-        <td colspan="2"><%= submit_tag "Login", :tabindex => 1 %></td>
+        <td colspan="2"><%= submit_tag t(:layout_login), :tabindex => 1 %></td>
       </tr>
     </table>
   <% end %>

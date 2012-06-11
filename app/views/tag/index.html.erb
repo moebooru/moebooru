@@ -4,25 +4,25 @@
       <tbody>
         <tr>
           <th width="15%">
-            <label for="name">Name</label>
-            <p>Use * as a wildcard.</p>
+            <label for="name"><%=t :tag_name %></label>
+            <p><%=t :tag_wild %></p>
           </th>
           <td width="85%"><%= text_field_tag "name", params[:name], :size => 40 %></td>
         </tr>
         <tr>
-          <th><label for="type">Type</label></th>
+          <th><label for="type"><%=t :tag_type %></label></th>
           <td><%= select_tag "type", options_for_select([["Any", ""], *CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject([]) {|all, x| all << [x, CONFIG["tag_types"][x]]}],
                                                           [(params[:type].blank?) && "" || params[:type].to_i()]) %></td>
         </tr>
         <tr>
-          <th><label for="order">Order</label></th>
-          <td><%= select_tag "order", options_for_select([["Name", "name"], ["Count", "count"], ["Date", "date"]],
+          <th><label for="order"><%=t :tag_order %></label></th>
+          <td><%= select_tag "order", options_for_select([[t(:tag_name), "name"], [t(:tag_count), "count"], [t(:tag_date), "date"]],
                                                          [params[:order] || ""]) %></td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
-          <td><%= submit_tag "Search" %></td>
+          <td><%= submit_tag t(:tag_search) %></td>
           <td></td>
         </tr>
       </tfoot>
@@ -33,10 +33,10 @@
 <table width="100%" class="highlightable">
   <thead>
     <tr>
-      <th width="60px">Posts</th>
-      <th>Name</th>
-      <th width="200px">Type</th>
-      <th width="120px" colspan="2">Action</th>
+      <th width="60px"><%=t :tag_posts %></th>
+      <th><%=t :tag_name %></th>
+      <th width="200px"><%=t :tag_type %></th>
+      <th width="120px" colspan="2"><%=t :tag_action %></th>
     </tr>
   </thead>
   <tbody>
@@ -48,8 +48,8 @@
           <%= link_to tag['name'], :controller => :post, :action => :index, :tags => tag['name'] %>
         </td>
         <td><%= tag.type_name + (tag['is_ambiguous'] ? ", ambiguous" : "") %></td>
-        <td width="60px"><%= link_to 'Edit', :action => 'edit', :id => tag['id'] %></td>
-        <td width="60px"><%= link_to 'History', :controller => :history, :search => "tag:#{tag['id']}" %></td>
+        <td width="60px"><%= link_to t(:tag_edit), :action => 'edit', :id => tag['id'] %></td>
+        <td width="60px"><%= link_to t(:tag_history), :controller => :history, :search => "tag:#{tag['id']}" %></td>
       </tr>
     <% end %>
   </tbody>

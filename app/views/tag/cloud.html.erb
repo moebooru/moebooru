@@ -1,6 +1,6 @@
 <div id="tag-list" style="margin-bottom: 1em;">
   <% if @tags.empty? %>
-    <h4>There are no tags.</h4>
+    <h4><%=t :tag_cloud %></h4>
   <% end %>
 
   <%= cloud_view(@tags) %>

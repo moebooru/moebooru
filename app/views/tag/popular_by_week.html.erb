@@ -5,7 +5,7 @@
 </div>
 
 <% content_for :footer do %>
-  <p><%= link_to "Popular by Day", :action => "popular_by_day" %> | <%= link_to "Popular by Week", :action => "popular_by_week" %> | <%= link_to "Popular by Month", :action => "popular_by_month" %></p>
+  <p><%= link_to t(:tag_popular_day), :action => "popular_by_day" %> | <%= link_to t(:tag_popular_week), :action => "popular_by_week" %> | <%= link_to t(:tag_popular_month), :action => "popular_by_month" %></p>
 <% end %>
 
 <%= render :partial => "footer" %>

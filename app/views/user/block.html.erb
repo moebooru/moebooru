@@ -4,17 +4,17 @@
     <tfoot>
       <tr>
         <td></td>
-        <td><%= submit_tag "Submit" %></td>
+        <td><%= submit_tag t(:user_submit) %></td>
       </tr>
     </tfoot>
     <tbody>
       <tr>
-        <th><label for="ban_reason">Reason</label></th>
+        <th><label for="ban_reason"><%=t :user_reason %></label></th>
         <td><%= text_area "ban", "reason", :size => "40x5" %></td>
       </tr>
       <tr>
         <th>
-          <label for="ban_duration">Duration (days)</label>
+          <label for="ban_duration"><%=t :user_duration %></label>
         </th>
         <td><%= text_field "ban", "duration", :size => 10 %></td>
       </tr>

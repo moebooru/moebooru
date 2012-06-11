@@ -3,6 +3,9 @@
 
 en:
   hello: "Hello world"
+  # Generic translation
+  save_button: Save
+  cancel_button: Cancel
   #view/artist/create
   artist_create: "Separate multiple aliases and group members with commas."
   artist_name: "Name"

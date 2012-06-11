@@ -80,9 +80,9 @@ class User < ActiveRecord::Base
       # updating password (which requires this validation).
       if self.password_hash and password
         if current_password.blank?
-          errors.add(:base, "Please enter your current password")
+          errors.add(:current_password, "Please enter your current password")
         elsif User.authenticate(self.name, current_password).nil?
-          errors.add(:base, "Invalid current password")
+          errors.add(:current_password, "Invalid current password")
         end
       end
     end

@@ -64,14 +64,28 @@ class User < ActiveRecord::Base
   end
 
   module UserPasswordMethods
-    attr_accessor :password
+    attr_accessor :password, :current_password
 
     def self.included(m)
       m.before_save :encrypt_password
       m.validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
       m.validates_confirmation_of :password
+      # Changing password requires current password.
+      m.validate :validate_current_password
     end
 
+    def validate_current_password
+      # First test to see if it's creating new user (no password_hash)
+      # or updating user. The second is to see if the action involves
+      # updating password (which requires this validation).
+      if self.password_hash and password
+        if current_password.blank?
+          errors.add(:base, "Please enter your current password")
+        elsif User.authenticate(self.name, current_password).nil?
+          errors.add(:base, "Invalid current password")
+        end
+      end
+    end
     def encrypt_password
       self.password_hash = User.sha1(password) if password
     end

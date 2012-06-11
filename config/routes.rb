@@ -1,12 +1,11 @@
 Moebooru::Application.routes.draw do
   resources :advertisements do
     collection do
-  post :update_multiple
-  end
+      post :update_multiple
+    end
     member do
-  get :redirect
-  end
-
+      get :redirect
+    end
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

@@ -1,0 +1,10 @@
+# There's already translation of these in rails-i18n on other languages.
+# There's also in English but region specific. Copied from en-US.
+#
+# Source: rails-i18n-0.6.4/rails/locale/en-US.yml
+#
+# DO NOT translate.
+en:
+  errors:
+    template:
+      body: 'There were problems with the following fields:'

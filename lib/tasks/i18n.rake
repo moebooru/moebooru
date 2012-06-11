@@ -40,7 +40,7 @@ namespace :i18n do
       if added.any? or removed.any?
         if added.any?
           puts "Missing translations for #{target}:"
-          added.each { |key| puts "  - #{key}" }
+          added.each { |key| puts "  + #{key}" }
           puts
         end
         if removed.any?

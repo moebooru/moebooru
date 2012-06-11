@@ -237,6 +237,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_ip_ban
   after_filter :init_cookies
   after_filter :time_end
+  protect_from_forgery
   def time_start
     @start = Time.now
   end

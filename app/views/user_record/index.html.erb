@@ -1,15 +1,15 @@
 <div id="user-record">
-  <h4>Record</h4>
+  <h4><%=t :record_record %></h4>
 
   <table width="100%" class="highlightable" id="history">
     <thead>
       <tr>
         <th></th>
-        <th>User</th>
-        <th>Reporter</th>
-        <th>When</th>
-        <th>Body</th>
-        <th>Action</th>
+        <th><%=t :record_user %></th>
+        <th><%=t :record_reporter %></th>
+        <th><%=t :record_when %></th>
+        <th><%=t :record_body %></th>
+        <th><%=t :urecord_action %></th>
       </tr>
     </thead>
     <tbody>
@@ -23,11 +23,11 @@
             <% end %>
           </td>
           <td><%= h(rec.reporter.pretty_name) %></td>
-          <td><%= time_ago_in_words(rec.created_at) %> ago</td>
+          <td><%=t :record_ago2 %><%= time_ago_in_words(rec.created_at) %><%=t :record_ago %></td>
           <td class="change"><%= format_text(rec.body) %></td>
           <td>
             <% if @current_user.is_mod_or_higher? || @current_user.id == rec.reported_by %>
-              <%= link_to_function "Delete", "UserRecord.destroy(#{rec.id})" %>
+              <%= link_to_function t(:record_delete), "UserRecord.destroy(#{rec.id})" %>
             <% end %>
           </td>
         </tr>

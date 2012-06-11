@@ -9,6 +9,18 @@ en:
     cancel: Cancel
     yes: Yes
     no: No
+  #view: /user
+  user:
+    change_password:
+      new_password: New password
+  #models
+  activerecord:
+    attributes:
+      #user.attributes
+      user:
+        password: Password
+        current_password: Current password
+        password_confirmation: Password confirmation
   #view/artist/create
   artist_create: "Separate multiple aliases and group members with commas."
   artist_name: "Name"

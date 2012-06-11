@@ -2,7 +2,7 @@ require 'digest/sha2'
 
 class UserController < ApplicationController
   layout "default"
-  verify :method => :post, :only => [:authenticate, :update, :create, :unban, :modify_blacklist]
+  verify :method => [:post, :put], :only => [:authenticate, :update, :create, :unban, :modify_blacklist]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
@@ -19,6 +19,10 @@ class UserController < ApplicationController
   end
 
   public
+  def change_password
+    @title = 'Change Password'
+  end
+
   def auto_complete_for_member_name
     @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ILIKE ? ESCAPE E'\\\\'", CONFIG["user_levels"]["Member"], params[:member][:name] + "%"])
     render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"

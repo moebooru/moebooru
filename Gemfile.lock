@@ -74,8 +74,6 @@ GEM
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    meta-tags (1.2.6)
-      actionpack
     mime-types (1.18)
     newrelic_rpm (3.3.5)
     nokogiri (1.5.3)
@@ -161,7 +159,6 @@ DEPENDENCIES
   hpricot
   html5
   json
-  meta-tags
   mime-types
   newrelic_rpm
   nokogiri

@@ -24,7 +24,6 @@ gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
 gem 'cloudflare'
-gem 'meta-tags', :require => 'meta_tags'
 
 group :development do
   gem 'rspec'

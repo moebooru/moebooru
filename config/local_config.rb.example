@@ -11,3 +11,6 @@ CONFIG["url_base"] = "http://" + CONFIG["server_host"]	# set this to "" to get r
 CONFIG["admin_contact"] = "webmaster@" + CONFIG["server_host"]
 CONFIG["local_image_service"] = CONFIG["app_name"]
 # CONFIG["image_service_list"][CONFIG["local_image_service"]] = "http://127.0.0.1/iqdb/iqdb-xml.php"
+
+# Specify site's twitter id if you want twitter meta tags.
+# CONFIG['twitter_id'] = 'site_twitter_id'

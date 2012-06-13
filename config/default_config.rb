@@ -300,6 +300,3 @@ CONFIG["min_mpixels"] = nil
 CONFIG["hide_pending_posts"] = false
 
 CONFIG['available_locales'] = %w(de en es ja ru)
-
-#http://developers.facebook.com/docs/opengraphprotocol/
-CONFIG["enable_og_support"] = true

@@ -1,0 +1,19 @@
+<%- post_url = url_for(:controller => :post, :action => :show, :id => @post.id, :host => CONFIG['server_host'], :protocol => scheme(false)) -%>
+<%-# Facebook Open Graph
+   # Reference: https://developers.facebook.com/docs/opengraphprotocol/ -%>
+<%= tag :meta, :property => 'og:title', :content => @page_title %>
+<%= tag :meta, :property => 'og:type', :content => 'article' %>
+<%= tag :meta, :property => 'og:url', :content => post_url %>
+<%= tag :meta, :property => 'og:image', :content => @post.sample_url %>
+<%= tag :meta, :property => 'og:site_name', :content => CONFIG['app_name'] %>
+<%= tag :meta, :property => 'og:description', :content => @post.tags %>
+<%-# Reddit Thumbnail -%>
+<%= tag :link, :rel => 'image_src', :href => @post.sample_url %>
+<%-# Twitter Meta -%>
+<%- unless CONFIG['twitter_id'].blank? -%>
+  <%= tag :meta, :name => 'twitter:card', :value => 'photo' %>
+  <%= tag :meta, :name => 'twitter:site', :value => "@#{CONFIG['twitter_id']}" %>
+  <%= tag :meta, :name => 'twitter:url', :value => post_url %>
+  <%= tag :meta, :name => 'twitter:title', :value => @post.tags %>
+  <%= tag :meta, :name => 'twitter:image', :value => @post.sample_url %>
+<%- end -%>

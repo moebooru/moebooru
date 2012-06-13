@@ -1,3 +1,6 @@
+<%- content_for :html_header do -%>
+  <%= render 'social_meta' -%>
+<%- end -%>
 <div id="post-view">
   <% if @post.nil? %>
     <h2><%=t :post_empty %></h2>

@@ -1,7 +1,11 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 3.0.0'
-gem 'pg'
+
+gem 'pg', :platforms => :ruby
+gem 'activerecord-jdbcpostgresql-adapter', '~> 1.1.0', :platforms => :jruby
+gem 'jruby-openssl', :platforms => :jruby
+
 gem 'html5'
 gem 'diff-lcs'
 gem 'gchartrb'

@@ -3,6 +3,7 @@ require 'digest/md5'
 
 class ApplicationController < ActionController::Base
   before_filter :set_locale
+  before_filter :sanitize_params
  
   def set_locale
     if params[:locale] and CONFIG['available_locales'].include?(params[:locale])
@@ -10,6 +11,15 @@ class ApplicationController < ActionController::Base
       I18n.locale = params[:locale].to_sym
     elsif cookies['locale'] and CONFIG['available_locales'].include?(cookies['locale'])
       I18n.locale = cookies['locale'].to_sym
+    end
+  end
+
+  def sanitize_params
+    if params and params[:page]
+      p = params[:page].to_i
+      p = 1 if p < 1
+      params[:page] = p
+      return
     end
   end
 

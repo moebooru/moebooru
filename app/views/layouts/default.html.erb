@@ -6,6 +6,12 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
 
+  <% if !CONFIG["enable_og_support"] %>
+    <% else %>
+      <% if @controller.controller_name == 'post' && @controller.action_name == 'show'%>
+        <%= display_meta_tags :open_graph => { :title => CONFIG["app_name"], :description => @page_title, :url => @post.sample_url } %>
+      <% end %>
+  <% end %>
   <%# The javascript-hide class is used to hide elements (eg. blacklisted posts) from JavaScript. %>
   <script type="text/javascript">
     var css = ".javascript-hide { display: none !important; }";

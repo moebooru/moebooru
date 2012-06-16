@@ -2313,7 +2313,7 @@ table td.full {
 }
 div#news-ticker {
   padding: 5px;
-  background: #EEE;
+  background: #222;
   border-bottom: 2px solid #666;
   overflow: hidden;
 }

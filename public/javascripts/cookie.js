@@ -79,6 +79,7 @@ Cookie = {
     if (this.get("block_reason") != "") {
       $("block-reason").update(this.get("block_reason")).show()
     }
+
     if (this.get("hide-news-ticker") == "1") {
       $("news-ticker").hide();
     } else {

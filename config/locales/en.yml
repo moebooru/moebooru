@@ -1066,3 +1066,5 @@ en:
   record_ago: " ago"
   record_ago2: ""
   record_delete: "Delete"
+  news_ticker: "Tags should be in English/Romaji kthx"
+  news_ticker_close: "Close"

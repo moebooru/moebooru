@@ -79,6 +79,15 @@ Cookie = {
     if (this.get("block_reason") != "") {
       $("block-reason").update(this.get("block_reason")).show()
     }
+    if (this.get("hide-news-ticker") == "1") {
+      $("news-ticker").hide();
+    } else {
+      $("close-news-ticker-link").observe("click", function(e) {
+        $("news-ticker").hide();
+        Cookie.put("hide-news-ticker", "1", 7);
+        return false;
+      });
+    }
 
 		if (this.get("hide-upgrade-account") == "1") {
       if ($("upgrade-account")) {

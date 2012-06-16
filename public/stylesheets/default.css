@@ -2311,3 +2311,26 @@ table td.wrap {
 table td.full {
   width: 100%;
 }
+div#news-ticker {
+  padding: 5px;
+  background: #EEE;
+  border-bottom: 2px solid #666;
+  overflow: hidden;
+}
+
+div#news-ticker ul {
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+div#news-ticker li {
+  list-style-type: none;
+  float: left;
+  margin: 0 2em 0 0;
+  padding: 0;
+}
+
+div#news-ticker a#close-news-ticker-link {
+  float: right;
+}

@@ -36,6 +36,7 @@
   <![endif]-->
 </head>
 <body>
+  <%= render "static/news" %> 
   <div id="header">
     <h2 id="site-title"><%= link_to(CONFIG["app_name"], "/", :id=>"ruu") %><span><%= tag_header(params[:tags]) %></span></h2>
     <%= render :partial => "layouts/menu" %>

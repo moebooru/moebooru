@@ -1,12 +1,8 @@
-# This module extends cache class with some additional methods.
 module ActiveSupport
   module Cache
     module StoreExt
       def expire(options = {})
-          tags = options[:tags]
-          cache_version = read("$cache_version").to_i
-
-          write("$cache_version", cache_version + 1)
+        write('$cache_version', Time.now.to_i)
       end
 
       def expire_tag_version

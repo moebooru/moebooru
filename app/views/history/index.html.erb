@@ -57,7 +57,7 @@
               <% classes << ["deleted"] if change.group_by_obj.class == Post && change.group_by_obj.status == "deleted" %>
               <% classes << ["held"] if change.group_by_obj.class == Post && change.group_by_obj.is_held %>
               <td class="<%= classes.join(" ") %>"><%= link_to (@options[:show_name] ? change.group_by_obj.pretty_name : change.group_by_id),
-                :controller => change.get_group_by_controller,
+                :controller => change.get_group_by_controller.downcase,
                 :action => change.get_group_by_action,
                 :id => change.group_by_id %></td>
             <% end %>

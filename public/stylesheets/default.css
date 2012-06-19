@@ -52,7 +52,7 @@ a:link {
   text-decoration: none;
 }
 
-a.star { background: transparent url("") no-repeat; }
+a.star { background: transparent url('../images/blank.gif') no-repeat; }
 
 .blacklisted-tags-disabled {
   color: #AAA !important;

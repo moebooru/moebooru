@@ -168,10 +168,10 @@ h2#site-title span {
   margin: 0;
 }
 
-div#static-more h2 {
-  margin: -1em 0 0 -3em;
+div#static-more div#title {
+  float: none;
+  margin-top: -1em;
 }
-
 
 #site-link {
   display: block;

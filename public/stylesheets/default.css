@@ -152,15 +152,11 @@ h2#site-title {
   display: block;
   text-align: left;
   margin: 0 0 .5em -3em;
-  padding: 0px 0px 0px 484px;
   height: 75px;
-  background: transparent url("../images/logo_small.png") no-repeat scroll top left;
 }
 
 h2#site-title a#ruu {
-  display: none;
-  margin: 0;
-  padding: 0;
+  float: left;
 }
 
 h2#site-title span {

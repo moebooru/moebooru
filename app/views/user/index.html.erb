@@ -17,7 +17,7 @@
         <td><%= select_tag "level", options_for_select([["Any", "any"], *CONFIG["user_levels"].to_a], params[:level]) %></td>
       </tr>
       <tr>
-        <th><%=t :users_order</th>
+        <th><%=t :users_order %></th>
         <td><%= select_tag "order", options_for_select([["Name", "name"], ["Posts", "posts"], ["Notes", "notes"], ["Date", "date"]], params[:order]) %></td>
       </tr>
     </tbody>

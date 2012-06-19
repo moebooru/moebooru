@@ -38,7 +38,7 @@
 <body>
   <%= render "static/news" %> 
   <div id="header">
-    <h2 id="site-title"><%= image_tag('logo_small.png', :alt => CONFIG['app_name'], :size=> '484x75', :id => 'logo') %><span><%= tag_header(params[:tags]) %></span></h2>
+    <div id="title"><h2 id="site-title"><%= image_tag('logo_small.png', :alt => CONFIG['app_name'], :size=> '484x75', :id => 'logo') %><span><%= tag_header(params[:tags]) %></span></h2></div>
     <%= render :partial => "layouts/menu" %>
   </div>
   <%= render :partial => "layouts/login" %>

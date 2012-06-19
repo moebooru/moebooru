@@ -151,10 +151,12 @@ h2.wiki-title {
 h2#site-title {
   display: block;
   text-align: left;
+}
+
+div#title {
   margin: 0 0 .5em -3em;
   height: 75px;
 }
-
 h2#site-title img#logo {
   float: left;
 }

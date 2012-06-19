@@ -26,6 +26,10 @@ Moebooru::Application.routes.draw do
     match 'artist/create(.:format)' => 'artist#create', :via => :post
     match 'artist/update(.:format)' => 'artist#update', :via => [:post, :put]
     match 'artist/destroy(.:format)' => 'artist#destroy', :via => [:post, :delete]
+    # Comments
+    match 'comment/show(.:format)' => 'comment#show'
+    match 'comment/create(.:format)' => 'comment#create', :via => :post
+    match 'comment/destroy(.:format)' => 'comment#destroy', :via => [:post, :delete]
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

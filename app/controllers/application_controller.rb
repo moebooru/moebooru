@@ -15,11 +15,16 @@ class ApplicationController < ActionController::Base
   end
 
   def sanitize_params
-    if params and params[:page]
-      p = params[:page].to_i
-      p = 1 if p < 1
-      params[:page] = p
-      return
+    if params.is_a? Hash
+      if params[:page]
+        p = params[:page].to_i
+        p = 1 if p < 1
+        params[:page] = p
+      else
+        params[:page] = 1
+      end
+    else
+      params = {}
     end
   end
 

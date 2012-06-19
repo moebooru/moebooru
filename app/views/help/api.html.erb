@@ -1,8 +1,8 @@
 <div class="help">
-  <h1>Help: API v1.13.0</h1>
+  <h1>Help: API 1.13.0+update.2</h1>
 
   <div class="section">
-    <p>Danbooru offers a simple API to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
+    <p>Moebooru offers API which is mostly compatible with Danbooru API (version 1.13.0) to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
     <p style="text-align: center;"><a href="#changelog">Change Log</a> | <a href="#posts">Posts</a> | <a href="#tags">Tags</a> | <a href="#artists">Artists</a> | <a href="#comments">Comments</a> | <a href="#wiki">Wiki</a> | <a href="#notes">Notes</a> | <a href="#users">Users</a> | <a href="#forum">Forum</a> | <a href="#pools">Pools</a></p>
   </div>
 
@@ -542,6 +542,22 @@
         <li><strong>post_id</strong> The post to remove.</li>
       </ul>
     </div>
+
+  </div>
+
+
+
+  <div class="section">
+    <a name="favorites"></a>
+    <h2>Favorites</h2>
+
+    <div class="section">
+      <h4>List Users</h4>
+      <p>The base URL is /favorite/list_users.json. There is no XML API for this action.</p>
+      <ul>
+        <li><strong>id</strong> The post id.</li>
+      </ul>
+    </div>
   </div>
 
 
@@ -550,7 +566,11 @@
     <a name="changelog"></a>
     <h2>Change Log</h2>
     <div class="section">
-      <h4>1.15.0</h4>
+      <h4>1.13.0+update.2</h4>
+      <ul>
+        <li>Readd favorite/list_users API</li>
+      </ul>
+      <h4>1.13.0+update.1</h4>
       <ul>
         <li>Added documentation for pools</li>
       </ul>

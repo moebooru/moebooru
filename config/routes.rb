@@ -13,6 +13,10 @@ Moebooru::Application.routes.draw do
     # Posts
     match 'post/index(.:format)' => 'post#index'
     match 'post/create(.:format)' => 'post#create', :via => :post
+    match 'post/update(.:format)' => 'post#update', :via => [:post, :put]
+    match 'post/revert_tags(.:format)' => 'post#revert_tags', :via => [:post, :put]
+    match 'post/vote(.:format)' => 'post#vote', :via => [:post, :put]
+    match 'post/destroy(.:format)' => 'post#destroy', :via => [:post, :delete]
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

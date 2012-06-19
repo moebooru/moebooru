@@ -299,4 +299,4 @@ CONFIG["min_mpixels"] = nil
 # approved.
 CONFIG["hide_pending_posts"] = false
 
-CONFIG['available_locales'] = %w(de en es ja ru)
+CONFIG['available_locales'] = %w(de en es ja ru cn)

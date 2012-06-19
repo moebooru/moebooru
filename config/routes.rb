@@ -12,6 +12,7 @@ Moebooru::Application.routes.draw do
   with_options :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/ } do |api|
     # Posts
     api.match 'post/index(.:format)' => 'post#index'
+    api.match 'post/create(.:format)' => 'post#create', :via => :post
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

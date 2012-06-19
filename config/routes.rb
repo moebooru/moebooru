@@ -30,6 +30,16 @@ Moebooru::Application.routes.draw do
     match 'comment/show(.:format)' => 'comment#show'
     match 'comment/create(.:format)' => 'comment#create', :via => :post
     match 'comment/destroy(.:format)' => 'comment#destroy', :via => [:post, :delete]
+    # Wiki
+    match 'wiki/index(.:format)' => 'wiki#index'
+    match 'wiki/show(.:format)' => 'wiki#show'
+    match 'wiki/history(.:format)' => 'wiki#history'
+    match 'wiki/create(.:format)' => 'wiki#create', :via => :post
+    match 'wiki/update(.:format)' => 'wiki#update', :via => [:post, :put]
+    match 'wiki/lock(.:format)' => 'wiki#lock', :via => [:post, :put]
+    match 'wiki/unlock(.:format)' => 'wiki#unlock', :via => [:post, :put]
+    match 'wiki/revert(.:format)' => 'wiki#revert', :via => [:post, :put]
+    match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

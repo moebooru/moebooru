@@ -8,6 +8,11 @@ Moebooru::Application.routes.draw do
     end
   end
 
+  # API 1.13.0
+  api_format = /(json|xml|html)/
+  ## Posts
+  match 'post/index.:format' => 'post#index', :constraints => { :format => api_format }
+
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }
   match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :id => /\d+/, :filename => /.*/ }
   match ':controller(/:action(/:id))', :id => /\d+/

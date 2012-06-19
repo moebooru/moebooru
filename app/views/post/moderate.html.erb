@@ -9,7 +9,7 @@
     if (row.original_class == null) {
       row.original_class = row.className
     }
-    
+
     if (checkbox.checked) {
       row.className = "highlight"
     } else {
@@ -27,9 +27,9 @@
       <tfoot>
         <tr>
           <td colspan="3">
-            <%= button_to_function "Select all", "$$('.p').each(function (i) {i.checked = true; highlight_row(i)})" %> 
-            <%= button_to_function "Invert selection", "$$('.p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
-            <%= submit_tag "Approve" %> 
+            <%= button_to_function "Select all", "$$('.p').each(function (i) {i.checked = true; highlight_row(i)})" %>
+            <%= button_to_function "Invert selection", "$$('.p').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %>
+            <%= submit_tag "Approve" %>
             <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason').value = reason; return true} else {return false}" %>
           </td>
         </tr>
@@ -72,9 +72,9 @@
       <tfoot>
         <tr>
           <td colspan="3">
-            <%= button_to_function "Select all", "$$('.f').each(function (i) {i.checked = true; highlight_row(i)})" %> 
-            <%= button_to_function "Invert selection", "$$('.f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %> 
-            <%= submit_tag "Approve" %> 
+            <%= button_to_function "Select all", "$$('.f').each(function (i) {i.checked = true; highlight_row(i)})" %>
+            <%= button_to_function "Invert selection", "$$('.f').each(function (i) {i.checked = !i.checked; highlight_row(i)})" %>
+            <%= submit_tag "Approve" %>
             <%= submit_tag "Delete", :onclick => "var reason = prompt('Enter a reason'); if (reason != null) {$('reason2').value = reason; return true} else {return false}" %>
           </td>
         </tr>
@@ -106,7 +106,7 @@
       </tbody>
     </table>
   </form>
-  
+
   <script type="text/javascript">
     var cells = $$(".checkbox-cell")
     $$(".checkbox-cell").invoke("observe", "click", function(e) {this.up().firstDescendant().down("input").click()})

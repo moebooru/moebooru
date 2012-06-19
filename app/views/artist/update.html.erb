@@ -1,12 +1,12 @@
 <div id="artist-update">
   <p>Separate multiple aliases and group members with commas.</p>
-  
+
   <div id="preview" style="display: none; margin: 1em 0;">
   </div>
 
   <% form_tag({:action => "update"}, :level => :member) do %>
     <%= hidden_field_tag "id", @artist.id %>
-    
+
     <table class="form">
       <tr>
         <th><label for="artist_name">Name</label></th>

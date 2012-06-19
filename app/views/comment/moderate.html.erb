@@ -4,7 +4,7 @@
     if (row.original_class == null) {
       row.original_class = row.className
     }
-    
+
     if (checkbox.checked) {
       row.className = "highlight"
     } else {
@@ -20,17 +20,17 @@
         <th></th>
         <th>Author</th>
         <th>Body</th>
-      </tr>      
+      </tr>
     </thead>
     <tfoot>
       <tr>
         <td colspan="3">
-          <%= button_to_function "Select all", "$$('.c').each(function (i) {i.checked = true; highlight_row(i)}); return false" %> 
-          <%= button_to_function "Invert selection", "$$('.c').each(function (i) {i.checked = !i.checked; highlight_row(i)}); return false" %> 
-          <%= submit_tag "Approve" %> 
+          <%= button_to_function "Select all", "$$('.c').each(function (i) {i.checked = true; highlight_row(i)}); return false" %>
+          <%= button_to_function "Invert selection", "$$('.c').each(function (i) {i.checked = !i.checked; highlight_row(i)}); return false" %>
+          <%= submit_tag "Approve" %>
           <%= submit_tag "Delete" %>
         </td>
-      </tr>      
+      </tr>
     </tfoot>
     <tbody>
       <% @comments.each do |c| %>
@@ -39,7 +39,7 @@
           <td><%= link_to h(c.author), :controller => "post", :action => "show", :id => c.post_id %></td>
           <td><%= h(c.body) %></td>
         </tr>
-      <% end %>      
+      <% end %>
     </tbody>
   </table>
 </form>

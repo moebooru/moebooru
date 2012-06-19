@@ -13,7 +13,7 @@ class TagController < ApplicationController
   def summary
     if params[:version] then
       # HTTP caching is unreliable for XHR.  If a version is supplied, and the version
-      # hasn't changed since then, return an empty response.  
+      # hasn't changed since then, return an empty response.
       version = Tag.get_summary_version
       if params[:version].to_i == version then
         render :json => {:version => version, :unchanged => true}
@@ -40,10 +40,10 @@ class TagController < ApplicationController
     case params[:order]
     when "name"
       order = "name"
-      
+
     when "count"
       order = "post_count desc"
-      
+
     when "date"
       order = "id desc"
 
@@ -56,10 +56,10 @@ class TagController < ApplicationController
 
     unless params[:name].blank?
       conds << "name LIKE ? ESCAPE E'\\\\'"
-      
+
       if params[:name].include?("*")
         cond_params << params[:name].to_escaped_for_sql_like
-      else      
+      else
         cond_params << "%" + params[:name].to_escaped_for_sql_like + "%"
       end
     end
@@ -78,7 +78,7 @@ class TagController < ApplicationController
       conds << "id = ?"
       cond_params << params[:id]
     end
-    
+
     respond_to do |fmt|
       fmt.html do
         @tags = Tag.paginate :order => order, :per_page => 50, :conditions => [conds.join(" AND "), *cond_params], :page => params[:page]
@@ -175,7 +175,7 @@ class TagController < ApplicationController
             end
           end
         end
-        
+
         render :xml => xml
       end
       fmt.json {render :json => @tags.to_json}

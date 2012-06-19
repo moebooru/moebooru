@@ -19,18 +19,18 @@ class PostTagHistory < ActiveRecord::Base
     Nagato::Builder.new do |builder, cond|
       cond.add_unless_blank "post_tag_histories.post_id = ?", options[:post_id]
       cond.add_unless_blank "post_tag_histories.user_id = ?", options[:user_id]
-    
+
       if options[:user_name]
         builder.join "users ON users.id = post_tag_histories.user_id"
         cond.add "users.name = ?", options[:user_name]
       end
     end.to_hash
   end
-  
+
   def self.undo_changes_by_user(user_id)
-    transaction do  
+    transaction do
       posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.*", :conditions => ["pth.user_id = ?", user_id])
-            
+
       PostTagHistory.destroy_all(["user_id = ?", user_id])
       posts.each do |post|
         first = post.tag_history.first

@@ -4,7 +4,7 @@
     <p>You have not yet activated your account. Click <%= link_to "here", :action => "resend_confirmation" %> to resend your confirmation email to <%= h @current_user.email %>.</p>
   <% else %>
     <p>
-      You need an account to access some parts of <%= h CONFIG["app_name"] %>. 
+      You need an account to access some parts of <%= h CONFIG["app_name"] %>.
       <% unless @current_user.is_anonymous? %>
         Click <%= link_to "here", :action => "reset_password" %> to reset your password.
       <% end %>
@@ -17,7 +17,7 @@
       <% end %>
     </p>
   <% end %>
-  
+
   <% form_tag({:action => "authenticate"}) do %>
     <%= hidden_field_tag "url", params[:url] %>
     <table class="form">
@@ -33,7 +33,7 @@
         <td colspan="2"><%= submit_tag "Login", :tabindex => 1 %></td>
       </tr>
     </table>
-  <% end %>    
+  <% end %>
 </div>
 
 <%= render :partial => "footer" %>

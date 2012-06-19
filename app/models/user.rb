@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
       m.after_create :set_default_blacklisted_tags
       m.has_many :user_blacklisted_tags, :dependent => :delete_all, :order => :id
     end
-    
+
     def blacklisted_tags=(blacklists)
       @blacklisted_tags = blacklists
     end
@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
         end
       end
     end
-    
+
     def set_default_blacklisted_tags
       CONFIG["default_blacklists"].each do |b|
         UserBlacklistedTag.create(:user_id => self.id, :tags => b)
@@ -56,25 +56,25 @@ class User < ActiveRecord::Base
         Digest::SHA1.hexdigest("#{salt}--#{pass}--")
       end
     end
-    
+
     def self.included(m)
       m.extend(ClassMethods)
     end
   end
-  
+
   module UserPasswordMethods
     attr_accessor :password
-    
+
     def self.included(m)
       m.before_save :encrypt_password
       m.validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
       m.validates_confirmation_of :password
     end
-    
+
     def encrypt_password
       self.password_hash = User.sha1(password) if password
     end
-    
+
     def reset_password
       consonants = "bcdfghjklmnpqrstvqxyz"
       vowels = "aeiou"
@@ -98,13 +98,13 @@ class User < ActiveRecord::Base
         return select_value_sql("SELECT row_count FROM table_data WHERE name = 'users'").to_i
       end
     end
-    
+
     def self.included(m)
       m.extend(ClassMethods)
       m.after_create :increment_count
       m.after_destroy :decrement_count
     end
-    
+
     def increment_count
       connection.execute("update table_data set row_count = row_count + 1 where name = 'users'")
     end
@@ -113,7 +113,7 @@ class User < ActiveRecord::Base
       connection.execute("update table_data set row_count = row_count - 1 where name = 'users'")
     end
   end
-  
+
   module UserNameMethods
     module ClassMethods
       def find_name_helper(user_id)
@@ -139,12 +139,12 @@ class User < ActiveRecord::Base
           find_name_helper(user_id)
         end
       end
-      
+
       def find_by_name(name)
         find(:first, :conditions => ["lower(name) = lower(?)", name])
       end
     end
-    
+
     def self.included(m)
       m.extend(ClassMethods)
       m.validates_length_of :name, :within => 2..20, :on => :create
@@ -153,7 +153,7 @@ class User < ActiveRecord::Base
       m.validates_uniqueness_of :name, :case_sensitive => false, :on => :create
       m.after_save :update_cached_name if CONFIG["enable_caching"]
     end
-    
+
     def pretty_name
       name.tr("_", " ")
     end
@@ -162,7 +162,7 @@ class User < ActiveRecord::Base
       Rails.cache.write("user_name:#{id}", name)
     end
   end
-  
+
   module UserApiMethods
     def to_xml(options = {})
       options[:indent] ||= 2
@@ -292,7 +292,7 @@ class User < ActiveRecord::Base
       return favorite_tags
     end
   end
-  
+
   module UserPostMethods
     def recent_uploaded_posts
       Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} AND p.status <> 'deleted' ORDER BY p.id DESC LIMIT 6")
@@ -305,7 +305,7 @@ class User < ActiveRecord::Base
     def favorite_post_count(options = {})
       PostVotes.count_by_sql("SELECT COUNT(*) FROM post_votes v WHERE v.user_id = #{id} AND v.score = 3")
     end
-    
+
     def post_count
       @post_count ||= Post.count(:conditions => ["user_id = ? AND status = 'active'", id])
     end
@@ -319,14 +319,14 @@ class User < ActiveRecord::Base
       }.to_i
     end
   end
-  
+
   module UserLevelMethods
     def self.included(m)
       m.extend(ClassMethods)
       m.attr_protected :level
       m.before_create :set_role
     end
-    
+
     def pretty_level
       return CONFIG["user_levels"].invert[self.level]
     end
@@ -342,7 +342,7 @@ class User < ActiveRecord::Base
 
       self.last_logged_in_at = Time.now
     end
-    
+
     def has_permission?(record, foreign_key = :user_id)
       if is_mod_or_higher?
         true
@@ -410,30 +410,30 @@ class User < ActiveRecord::Base
       end
     end
   end
-  
+
   module UserInviteMethods
     class NoInvites < Exception ; end
     class HasNegativeRecord < Exception ; end
-    
+
     def invite!(name, level)
       if invite_count <= 0
         raise NoInvites
       end
-      
+
       if level.to_i >= CONFIG["user_levels"]["Contributor"]
         level = CONFIG["user_levels"]["Contributor"]
       end
-      
+
       invitee = User.find_by_name(name)
-      
+
       if invitee.nil?
         raise ActiveRecord::RecordNotFound
       end
-      
+
       if UserRecord.exists?(["user_id = ? AND is_positive = false AND reported_by IN (SELECT id FROM users WHERE level >= ?)", invitee.id, CONFIG["user_levels"]["Mod"]]) && !is_admin?
         raise HasNegativeRecord
       end
-      
+
       transaction do
         if level == CONFIG["user_levels"]["Contributor"]
           Post.find(:all, :conditions => ["user_id = ? AND status = 'pending'", id]).each do |post|
@@ -446,12 +446,12 @@ class User < ActiveRecord::Base
         decrement! :invite_count
       end
     end
-    
+
     def self.included(m)
       m.attr_protected :invite_count
     end
   end
-  
+
   module UserAvatarMethods
     module ClassMethods
       # post_id is being destroyed.  Clear avatar_post_ids for this post, so we won't use
@@ -554,12 +554,12 @@ class User < ActiveRecord::Base
     end
   end
 
- 
+
   module UserTagSubscriptionMethods
     def self.included(m)
       m.has_many :tag_subscriptions, :dependent => :delete_all, :order => "name"
     end
-    
+
     def tag_subscriptions_text=(text)
       User.transaction do
         tag_subscriptions.clear
@@ -569,16 +569,16 @@ class User < ActiveRecord::Base
         end
       end
     end
-    
+
     def tag_subscriptions_text
       tag_subscriptions_text.map(&:tag_query).sort.join(" ")
     end
-    
+
     def tag_subscription_posts(limit, name)
       TagSubscription.find_posts(id, name, limit)
     end
   end
-  
+
   module UserLanguageMethods
     def self.included(m)
       m.validates_format_of :language, :with => /^([a-z\-]+)|$/
@@ -605,12 +605,12 @@ class User < ActiveRecord::Base
       end
     end
   end
- 
+
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
   validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]
   has_one :ban
-  
+
   include UserBlacklistMethods
   include UserAuthenticationMethods
   include UserPasswordMethods
@@ -626,25 +626,25 @@ class User < ActiveRecord::Base
   include UserLanguageMethods
 
   @salt = CONFIG["user_password_salt"]
-  
+
   class << self
     attr_accessor :salt
   end
-  
+
   # For compatibility with AnonymousUser class
   def is_anonymous?
     false
   end
-  
+
   def invited_by_name
     self.class.find_name(invited_by)
   end
-  
+
   def similar_users
     # This uses a naive cosine distance formula that is very expensive to calculate.
     # TODO: look into alternatives, like SVD.
     sql = <<-EOS
-      SELECT 
+      SELECT
         f0.user_id as user_id,
         COUNT(*) / (SELECT sqrt((SELECT COUNT(*) FROM post_votes WHERE user_id = f0.user_id) * (SELECT COUNT(*) FROM post_votes WHERE user_id = #{id}))) AS similarity
       FROM
@@ -660,10 +660,10 @@ class User < ActiveRecord::Base
       ORDER BY similarity DESC
       LIMIT 6
     EOS
-    
+
     return select_all_sql(sql)
   end
-  
+
   def set_show_samples
     self.show_samples = true
   end
@@ -679,7 +679,7 @@ class User < ActiveRecord::Base
       end
 
       cond.add_unless_blank "id = ?", params[:id]
-        
+
       case params[:order]
       when "name"
         builder.order "lower(name)"

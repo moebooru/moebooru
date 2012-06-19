@@ -1,6 +1,6 @@
 class TagSubscriptionController < ApplicationController
   layout "default"
-  
+
   def create
     if request.post?
       if @current_user.tag_subscriptions.size >= CONFIG["max_tag_subscriptions"]
@@ -10,7 +10,7 @@ class TagSubscriptionController < ApplicationController
       end
     end
   end
-  
+
   def update
     if request.post?
       if params[:tag_subscription]
@@ -21,16 +21,16 @@ class TagSubscriptionController < ApplicationController
           end
         end
       end
-      
+
       flash[:notice] = "Tag subscriptions updated"
       redirect_to :controller => "user", :action => "edit"
     end
   end
-  
+
   def index
     @tag_subscriptions = @current_user.tag_subscriptions
   end
-  
+
   def destroy
     if request.post?
       @tag_subscription = TagSubscription.find(params[:id])

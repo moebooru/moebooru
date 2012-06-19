@@ -3,7 +3,7 @@
 <% else %>
   <%= tag_subscription_listing(user) %>
 <% end %>
-  
+
 <% if @current_user.id == user.id %>
   (<%= link_to "edit", :controller => "tag_subscription", :action => "index" %>)
 <% end %>

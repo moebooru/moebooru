@@ -118,7 +118,7 @@ module PostStatusMethods
       touch_index_timestamp
     end
   end
-  
+
   def undelete!
     self.status = 'active'
     self.save!

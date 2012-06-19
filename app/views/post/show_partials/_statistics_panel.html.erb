@@ -22,7 +22,7 @@
       Score: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>
       <%= vote_widget(@current_user) %>
     </li>
-    
+
     <li>Favorited by: <span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
   </ul>
 </div>

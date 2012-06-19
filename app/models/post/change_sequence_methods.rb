@@ -1,11 +1,11 @@
 module PostChangeSequenceMethods
   attr_accessor :increment_change_seq
-  
+
   def self.included(m)
     m.before_create :touch_change_seq!
     m.after_save :update_change_seq
   end
-  
+
   def touch_change_seq!
     self.increment_change_seq = true
   end

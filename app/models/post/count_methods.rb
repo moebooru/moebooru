@@ -36,7 +36,7 @@ module PostCountMethods
   def self.included(m)
     m.extend(ClassMethods)
     m.after_create :increment_count
-    m.after_delete :decrement_count      
+    m.after_delete :decrement_count
     m.after_undelete :increment_count
   end
 

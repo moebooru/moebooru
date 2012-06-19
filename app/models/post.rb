@@ -2,7 +2,7 @@ Dir["#{Rails.root}/app/models/post/**/*.rb"].each {|x| require_dependency x}
 
 class Post < ActiveRecord::Base
   STATUSES = %w(active pending flagged deleted)
-  
+
   define_callbacks :after_delete
   define_callbacks :after_undelete
   has_many :notes, :order => "id desc"
@@ -16,7 +16,7 @@ class Post < ActiveRecord::Base
   has_many :avatars, :class_name => "User", :foreign_key => "avatar_post_id"
   after_delete :clear_avatars
   after_save :commit_flag
-  
+
   include PostSqlMethods
   include PostCommentMethods
   include PostImageStoreMethods
@@ -58,7 +58,7 @@ class Post < ActiveRecord::Base
     self.update_attributes(:status => "active")
     self.run_callbacks(:after_undelete)
   end
-  
+
   def can_user_delete?(user)
     if not user.has_permission?(self)
       return false
@@ -97,7 +97,7 @@ class Post < ActiveRecord::Base
       set_flag_detail(reason, creator_id)
     end
   end
-  
+
   # If the flag_post metatag was used and the current user has access, flag the post.
   def commit_flag
     return if self.metatag_flagged.nil?
@@ -113,7 +113,7 @@ class Post < ActiveRecord::Base
     if flag_detail
       flag_detail.update_attributes(:is_resolved => true)
     end
-    
+
     update_attributes(:status => "active", :approver_id => approver_id)
 
     # Don't bump posts if the status wasn't "pending"; it might be "flagged".
@@ -122,7 +122,7 @@ class Post < ActiveRecord::Base
       self.save!
     end
   end
-  
+
   def voted_by
     # Cache results
     if @voted_by.nil?
@@ -142,29 +142,29 @@ class Post < ActiveRecord::Base
   def author
     return User.find_name(user_id)
   end
-  
+
   def delete_from_database
     delete_file
     execute_sql("DELETE FROM posts WHERE id = ?", id)
   end
-  
+
   def active_notes
     notes.select {|x| x.is_active?}
   end
-  
+
   STATUSES.each do |x|
     define_method("is_#{x}?") do
       return status == x
     end
   end
-  
+
   def can_be_seen_by?(user, options={})
     if not options[:show_deleted] and self.status == 'deleted'
       return false
     end
     CONFIG["can_see_post"].call(user, self)
   end
-  
+
   def self.new_deleted?(user)
     conds = []
     conds += ["creator_id <> %d" % [user.id]] unless user.is_anonymous?

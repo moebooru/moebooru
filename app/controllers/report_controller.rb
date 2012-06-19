@@ -30,7 +30,7 @@ class ReportController < ApplicationController
     @change_params = lambda {|user_id| {:controller => "post", :action => "index", :tags => "user:#{User.find_name(user_id)}"}}
     render :action => "common"
   end
-  
+
   def votes
     @users = Report.usage_by_user("post_votes", @start_date, @end_date, 29, 0, ["score > 0"], [], "updated_at")
 

@@ -13,7 +13,7 @@
 		      link_to("View larger version", file_jpeg[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
                       :id => "highres-show", :onclick => "Post.highres(); return false",
-                      :link_height => file_jpeg[:height], :link_width => file_jpeg[:width]) 
+                      :link_height => file_jpeg[:height], :link_width => file_jpeg[:width])
               end %>
       </li>
       <% end %>
@@ -26,16 +26,16 @@
               else
 		      link_to("#{@post.has_sample? ? "Download larger version":"Image"} (#{number_to_human_size(file_jpeg[:size])} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
-                      :id => "highres") 
+                      :id => "highres")
 	      end %>
       </li>
       <% if @post.has_jpeg? then %>
 	<% file_image = @post.get_file_image %>
 	<%# If we have a JPEG, the above link was the JPEG.  Link to the PNG here. %>
-        <li><%= 
+        <li><%=
                         link_to("Download #{ file_image[:ext].upcase } (#{number_to_human_size(file_image[:size])})", file_image[:url],
                         :class => "original-file-unchanged",
-                        :id => "png") 
+                        :id => "png")
                 %>
 	</li>
       <% end %>

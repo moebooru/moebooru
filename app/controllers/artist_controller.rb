@@ -13,7 +13,7 @@ class ArtistController < ApplicationController
 
   def destroy
     @artist = Artist.find(params[:id])
-    
+
     if request.post?
       if params[:commit] == "Yes"
         @artist.destroy

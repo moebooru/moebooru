@@ -10,7 +10,7 @@ class CommentController < ApplicationController
   def edit
     @comment = Comment.find(params[:id])
   end
-  
+
   def update
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
@@ -44,7 +44,7 @@ class CommentController < ApplicationController
     if params[:commit] == "Post without bumping"
       comment.do_not_bump_post = true
     end
-        
+
     if comment.save
       respond_to_success("Comment created", :action => "index")
     else
@@ -58,10 +58,10 @@ class CommentController < ApplicationController
 
     respond_to_list("comment")
   end
-  
+
   def index
     set_title "Comments"
-    
+
     if params[:format] == "json" || params[:format] == "xml"
       @comments = Comment.paginate(Comment.generate_sql(params).merge(:per_page => 25, :page => params[:page], :order => "id DESC"))
       respond_to_list("comments")
@@ -70,7 +70,7 @@ class CommentController < ApplicationController
 
       comments = []
       @posts.each { |post| comments.push(*post.recent_comments) }
-      
+
       newest_comment = comments.max {|a,b| a.created_at <=> b.created_at }
       if !@current_user.is_anonymous? && newest_comment && @current_user.last_comment_read_at < newest_comment.created_at
         @current_user.update_attribute(:last_comment_read_at, newest_comment.created_at)

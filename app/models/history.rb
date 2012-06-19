@@ -52,7 +52,7 @@ class History < ActiveRecord::Base
       if !previous_change && !change.options[:allow_reverting_to_default]
         next
       end
-       
+
       if not user.can_change?(change.obj, change.field.to_sym) then
         errors[change] = :denied
         next
@@ -98,7 +98,7 @@ class History < ActiveRecord::Base
               object.send(undo_func, change)
             else
               if change.previous
-                previous = change.previous.value 
+                previous = change.previous.value
               else
                 previous = change.options[:default] # when :allow_reverting_to_default
               end

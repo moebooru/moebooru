@@ -1,4 +1,4 @@
-<div id="post-list"> 
+<div id="post-list">
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">
       Maybe you meant: <%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence({ :two_words_connector => ' or ', :last_word_connector => ', or ' }) %>
@@ -31,7 +31,7 @@
             <% if @searching_pool then %>
               <option value="remove-from-pool">Remove from pool</option>
             <% end %>
-          </select>          
+          </select>
         </div>
       </form>
     </div>
@@ -62,7 +62,7 @@
     <%= render :partial => "vertical" %>
     <% end %>
   </div>
-  <div class="content">    
+  <div class="content">
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
         The following tags are ambiguous: <%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)}.join(', ') %>
@@ -71,10 +71,10 @@
      <% if CONFIG["can_see_ads"].call(@current_user) %>
       <%= CONFIG["ad_code_index_bottom"] %>
     <% end %>
-   
+
     <div id="quick-edit" style="display: none;" class="top-corner-float">
       <% form_tag(:action => "update") do %>
-        <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %> 
+        <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %>
         <%= submit_tag "Update" %>
         <%= tag(:input, :type => 'button', :value => "Cancel", :class => "cancel") %>
       <h4 style="float: right;">Edit Tags</h4>

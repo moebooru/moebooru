@@ -10,12 +10,12 @@ class NoteController < ApplicationController
       @notes = Note.paginate :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
 
       respond_to_list("notes")
-    end    
+    end
   end
-  
+
   def index
     set_title "Notes"
-    
+
     if params[:post_id]
       @posts = Post.paginate :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100, :page => params[:page]
     else
@@ -41,7 +41,7 @@ class NoteController < ApplicationController
     else
       @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC")
     end
-    
+
     respond_to_list("notes")
   end
 

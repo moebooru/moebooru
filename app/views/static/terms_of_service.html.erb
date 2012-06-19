@@ -1,7 +1,7 @@
 <div style="width: 40em; margin: 5em auto;">
   <div class="section">
     <h4>Terms of Service</h4>
-    <p>By accessing the "<%= CONFIG["app_name"] %>" website ("Site") you agree to the following terms of service. If you do not agree to these terms, then please do not access the Site.</p>  
+    <p>By accessing the "<%= CONFIG["app_name"] %>" website ("Site") you agree to the following terms of service. If you do not agree to these terms, then please do not access the Site.</p>
 
     <ul>
       <li>The Site reserves the right to change these terms at any time.</li>
@@ -11,7 +11,7 @@
       <li>You will make a best faith effort to upload only high quality anime-related images.</li>
       <li>You have read the <%= link_to "tagging guidelines", :controller => "help", :action => "tags" %>.</li>
     </ul>
-    
+
     <div class="section">
       <h6>Prohibited Content</h6>
       <p>In addition, you may not use the Site to upload any of the following:</p>
@@ -44,11 +44,11 @@
     <p>The Site will not disclose the IP address or email address of any user except to the staff.</p>
     <p>The Site is allowed to make public everything else, including but not limited to: uploaded posts, favorited posts, comments, forum posts, wiki edits, and note edits.</p>
   </div>
-  
+
   <div>
     <h4>Agreement</h4>
     <p>By clicking on the "I Agree" link, you have read all the terms and have agreed to them.</p>
     <p><%= link_to("I Agree", params[:url] || "/", :onclick => "Cookie.put('tos', '1')") %> | <%= link_to("Cancel", "/") %></p>
-  </div> 
+  </div>
 </div>
 

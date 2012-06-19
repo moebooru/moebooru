@@ -3,12 +3,12 @@ module TagRelatedTagMethods
     def calculate_related_by_type(tag, type, limit = 25)
       if CONFIG["enable_caching"] && tag.size < 230
         results = Rails.cache.read("reltagsbytype/#{type}/#{Tag.cache_key_enc(tag)}")
-        
+
         if results
           return JSON.parse(results)
         end
       end
-      
+
       sql = <<-EOS
         SELECT (SELECT name FROM tags WHERE id = pt0.tag_id) AS name,
         COUNT(pt0.tag_id) AS post_count
@@ -27,15 +27,15 @@ module TagRelatedTagMethods
       rescue Exception
         results = []
       end
-      
+
       if CONFIG["enable_caching"] && tag.size < 230
         post_count = (Tag.find_by_name(tag).post_count rescue 0) / 3
         post_count = 12 if post_count < 12
         post_count = 200 if post_count > 200
-        
+
         Rails.cache.write("reltagsbytype/#{type}/#{Tag.cache_key_enc(tag)}", results.map {|x| {"name" => x["name"], "post_count" => x["post_count"]}}.to_json, :expires_in => post_count.hours)
       end
-      
+
       return results
     end
 

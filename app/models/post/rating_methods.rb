@@ -6,7 +6,7 @@ module PostRatingMethods
     m.versioned :is_rating_locked, :default => false
     m.versioned :is_note_locked, :default => false
   end
-  
+
   def rating=(r)
     if r == nil && !new_record?
       return
@@ -29,7 +29,7 @@ module PostRatingMethods
     write_attribute(:rating, new_rating)
     touch_change_seq!
   end
-  
+
   def pretty_rating
     case rating
     when "q"

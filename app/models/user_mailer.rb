@@ -23,7 +23,7 @@ class UserMailer < ActionMailer::Base
     body :user => user, :password => password
     content_type "text/html"
   end
-  
+
   def dmail(recipient, sender, msg_title, msg_body)
     recipients UserMailer.normalize_address(recipient.email)
     subject "#{CONFIG["app_name"]} - Message received from #{sender.name}"
@@ -31,7 +31,7 @@ class UserMailer < ActionMailer::Base
     body :recipient => recipient, :sender => sender, :title => msg_title, :body => msg_body
     content_type "text/html"
   end
-  
+
   def self.normalize_address(address)
     if defined?(IDN)
       address =~ /\A([^@]+)@(.+)\Z/

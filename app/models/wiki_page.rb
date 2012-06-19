@@ -13,24 +13,24 @@ class WikiPage < ActiveRecord::Base
       joins = []
       conds = []
       params = []
-      
+
       if options[:title]
         conds << "wiki_pages.title = ?"
         params << options[:title]
       end
-      
+
       if options[:user_id]
         conds << "wiki_pages.user_id = ?"
         params << options[:user_id]
       end
-      
+
       joins = joins.join(" ")
       conds = [conds.join(" AND "), *params]
-      
+
       return joins, conds
     end
   end
-  
+
   def normalize_title
     self.title = title.tr(" ", "_").downcase
   end
@@ -50,7 +50,7 @@ class WikiPage < ActiveRecord::Base
   def pretty_title
     title.tr("_", " ")
   end
-  
+
   def diff(version)
     otherpage = WikiPage.find_page(title, version)
     Danbooru.diff(self.body, otherpage.body)
@@ -64,17 +64,17 @@ class WikiPage < ActiveRecord::Base
 
     return page
   end
-  
+
   def self.find_by_title(title)
     find(:first, :conditions => ["lower(title) = lower(?)", title.tr(" ", "_")])
   end
-  
+
   # FIXME: history shouldn't be changed on lock/unlock.
   #        We should instead check last post status when editing
   #        instead of doing mass update.
   def lock!
     self.is_locked = true
-    
+
     transaction do
       execute_sql("UPDATE wiki_pages SET is_locked = TRUE WHERE id = ?", id)
       execute_sql("UPDATE wiki_page_versions SET is_locked = TRUE WHERE wiki_page_id = ?", id)
@@ -83,7 +83,7 @@ class WikiPage < ActiveRecord::Base
 
   def unlock!
     self.is_locked = false
-    
+
     transaction do
       execute_sql("UPDATE wiki_pages SET is_locked = FALSE WHERE id = ?", id)
       execute_sql("UPDATE wiki_page_versions SET is_locked = FALSE WHERE wiki_page_id = ?", id)

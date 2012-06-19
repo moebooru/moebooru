@@ -19,11 +19,11 @@
             <% if @post.is_rating_locked? %>
               This post is rating locked.
             <% else %>
-              <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %> 
-              <label for="post_rating_explicit">Explicit</label> 
-              <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>  
+              <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %>
+              <label for="post_rating_explicit">Explicit</label>
+              <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>
               <label for="post_rating_questionable">Questionable</label>
-              <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %> 
+              <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %>
               <label for="post_rating_safe">Safe</label>
             <% end %>
           </td>
@@ -62,10 +62,10 @@
             <td>
               <%= text_area "post", "tags", :disabled => !@post.can_be_seen_by?(@current_user), :size => "50x4", :value => @post.cached_tags, :tabindex => 10 %>
             <% if @post.can_be_seen_by?(@current_user) %>
-              <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> | 
+              <%= link_to_function "Related tags", "RelatedTags.find('post_tags')" %> |
               <%= link_to_function "Related artists", "RelatedTags.find('post_tags', 'artist')" %> |
               <%= link_to_function "Related characters", "RelatedTags.find('post_tags', 'char')" %> |
-              <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %> 
+              <%= link_to_function "Related copyrights", "RelatedTags.find('post_tags', 'copyright')" %>
               <% if CONFIG["enable_artists"] %>
               | <%= link_to_function("Find artist", "RelatedTags.find_artist($F('post_source'))") %>
               <% end %>

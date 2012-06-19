@@ -13,7 +13,7 @@ class PostController < ApplicationController
   if CONFIG["load_average_threshold"]
     before_filter :check_load_average, :only => [:index, :popular_by_day, :popular_by_week, :popular_by_month, :random, :atom, :piclens]
   end
-  
+
   if CONFIG["enable_caching"]
     around_filter :cache_action, :only => [:index, :atom, :piclens]
   end
@@ -22,21 +22,21 @@ class PostController < ApplicationController
 
   def verify_action(options)
     redirect_to_proc = false
-    
+
     if options[:redirect_to] && options[:redirect_to][:id].is_a?(Proc)
       redirect_to_proc = options[:redirect_to][:id]
       options[:redirect_to][:id] = options[:redirect_to][:id].call(self)
     end
-    
+
     result = super(options)
-  	
+
     if redirect_to_proc
       options[:redirect_to][:id] = redirect_to_proc
     end
-	  
+
     return result
   end
-  
+
   def activate
     ids = params[:post_ids].map { |id| id.to_i }
     changed = Post.batch_activate(@current_user.is_mod_or_higher? ? nil: @current_user.id, ids)
@@ -53,7 +53,7 @@ class PostController < ApplicationController
 #    if params[:url]
 #      @post = Post.find(:first, :conditions => ["source = ?", params[:url]])
 #    end
-    
+
     if @post.nil?
       @post = Post.new
     end
@@ -83,7 +83,7 @@ class PostController < ApplicationController
           if params[:format] == "xml" || params[:format] == "json"
             options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
 
-            res = SimilarImages.similar_images(options) 
+            res = SimilarImages.similar_images(options)
             if not res[:posts].empty?
               @post.tags = @post.tags + " possible_duplicate"
               @post.save!
@@ -227,18 +227,18 @@ class PostController < ApplicationController
 
   def delete
     @post = Post.find(params[:id])
-    
+
     if @post && @post.parent_id
       @post_parent = Post.find(@post.parent_id)
     end
   end
-  
+
   def destroy
     if params[:commit] == "Cancel"
       redirect_to :action => "show", :id => params[:id]
       return
     end
-  
+
     @post = Post.find(params[:id])
 
     if @post.can_user_delete?(@current_user)
@@ -257,7 +257,7 @@ class PostController < ApplicationController
       access_denied()
     end
   end
-  
+
   def deleted_index
     if !@current_user.is_anonymous? && params[:user_id] && params[:user_id].to_i == @current_user.id
       @current_user.update_attribute(:last_deleted_post_seen_at, Time.now)
@@ -280,7 +280,7 @@ class PostController < ApplicationController
     tags = params[:tags].to_s
     split_tags = QueryParser.parse(tags)
     page = params[:page].to_i > 0 ? params[:page].to_i : 1
-    
+
 #    if @current_user.is_member_or_lower? && split_tags.size > 2
 #      respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
 #      return
@@ -289,7 +289,7 @@ class PostController < ApplicationController
       respond_to_error("You can only search up to six tags at once", :action => "error")
       return
     end
-    
+
     q = Tag.parse_query(tags)
 
     limit = params[:limit].to_i
@@ -311,12 +311,12 @@ class PostController < ApplicationController
     if count < 16 && split_tags.size == 1
       @tag_suggestions = Tag.find_suggestions(tags)
     end
-    
+
     @ambiguous_tags = Tag.select_ambiguous(split_tags)
     if q.has_key?(:pool) and q[:pool].is_a?(Integer) then
       @searching_pool = Pool.find_by_id(q[:pool])
     end
-    
+
     from_api = (params[:format] == "json" || params[:format] == "xml")
 
     @posts = WillPaginate::Collection.new(page, limit, count)
@@ -366,7 +366,7 @@ class PostController < ApplicationController
     @posts.replace(results)
 
     respond_to do |fmt|
-      fmt.html do        
+      fmt.html do
         if split_tags.any?
           @tags = Tag.parse_query(tags)
         else
@@ -419,7 +419,7 @@ class PostController < ApplicationController
     @posts = WillPaginate::Collection.create(page, 16, Post.fast_count(params[:tags])) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
-    
+
     headers["Content-Type"] = "application/rss+xml"
     render :layout => false
   end
@@ -434,7 +434,7 @@ class PostController < ApplicationController
       else
         @post = Post.find(params[:id])
       end
-      
+
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")
       if params.has_key?(:pool_id) then
         @following_pool_post = PoolPost.find(:first, :conditions => ["active AND pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil
@@ -551,7 +551,7 @@ class PostController < ApplicationController
 
     p = Post.find(params[:id])
     score = params[:score].to_i
-    
+
     if !@current_user.is_mod_or_higher? && score < 0 || score > 3
       respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
       return
@@ -574,7 +574,7 @@ class PostController < ApplicationController
     if params[:unflag] == "1" then
       # Allow the user who flagged a post to unflag it.
       #
-      # posts 
+      # posts
       # "approve" is used both to mean "unflag post" and "approve pending post".
       if post.status != "flagged" then
         respond_to_error("Can only unflag flagged posts", :action => "show", :id => params[:id])
@@ -604,10 +604,10 @@ class PostController < ApplicationController
     api_data = Post.batch_api_data([post]) if params[:format] == "json" || params[:format] == "xml"
     respond_to_success(message, {:action => "show", :id => params[:id]}, :api => api_data)
   end
-  
+
   def random
     max_id = Post.maximum(:id)
-    
+
     10.times do
       post = Post.find(:first, :conditions => ["id = ? AND status <> 'deleted'", rand(max_id) + 1])
 
@@ -616,7 +616,7 @@ class PostController < ApplicationController
         return
       end
     end
-    
+
     flash[:notice] = "Couldn't find a post in 10 tries. Try again."
     redirect_to :action => "index"
   end
@@ -748,7 +748,7 @@ class PostController < ApplicationController
         SimilarImages.cull_old_searches
       end
 
-      return SimilarImages.similar_images(options) 
+      return SimilarImages.similar_images(options)
     end
 
     unless params[:url].nil? and params[:id].nil? and params[:file].nil? and params[:search_id].nil? then
@@ -860,7 +860,7 @@ class PostController < ApplicationController
       end
     end
   end
-  
+
   def undelete
     post = Post.find(params[:id])
     post.undelete!
@@ -870,10 +870,10 @@ class PostController < ApplicationController
     api_data = Post.batch_api_data(affected_posts) if params[:format] == "json" || params[:format] == "xml"
     respond_to_success("Post was undeleted", {:action => "show", :id => params[:id]}, :api => api_data)
   end
-  
+
   def error
   end
-  
+
   def exception
     raise "error"
   end

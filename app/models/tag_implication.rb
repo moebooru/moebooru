@@ -12,13 +12,13 @@ class TagImplication < ActiveRecord::Base
   def destroy_and_notify(current_user, reason)
     if creator_id && creator_id != current_user.id
       msg = "A tag implication you submitted (#{predicate.name} &rarr; #{consequent.name}) was deleted for the following reason: #{reason}."
-      
+
       Dmail.create(:from_id => current_user.id, :to_id => creator_id, :title => "One of your tag implications was deleted", :body => msg)
     end
-    
+
     destroy
   end
-  
+
   def predicate
     return Tag.find(self.predicate_id)
   end
@@ -39,13 +39,13 @@ class TagImplication < ActiveRecord::Base
 
   def approve(user_id, ip_addr)
     connection.execute("UPDATE tag_implications SET is_pending = FALSE WHERE id = #{self.id}")
-    
+
     t = Tag.find(self.predicate_id)
     implied_tags = self.class.with_implied(t.name).join(" ")
     Post.find(:all, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", t.id]).each do |post|
       post.reload
       post.update_attributes(:tags => post.cached_tags + " " + implied_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
-    end    
+    end
   end
 
   def self.with_implied(tags)
@@ -60,10 +60,10 @@ class TagImplication < ActiveRecord::Base
 
       10.times do
         results = connection.select_values(sanitize_sql_array([<<-SQL, results]))
-          SELECT t1.name 
-          FROM tags t1, tags t2, tag_implications ti 
-          WHERE ti.predicate_id = t2.id 
-          AND ti.consequent_id = t1.id 
+          SELECT t1.name
+          FROM tags t1, tags t2, tag_implications ti
+          WHERE ti.predicate_id = t2.id
+          AND ti.consequent_id = t1.id
           AND t2.name IN (?)
           AND ti.is_pending = FALSE
         SQL

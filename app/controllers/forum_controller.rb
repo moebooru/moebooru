@@ -28,10 +28,10 @@ class ForumController < ApplicationController
       render :text => ""
     end
   end
-  
+
   def new
     @forum_post = ForumPost.new
-    
+
     if params[:type] == "alias"
       @forum_post.title = "Tag Alias: "
       @forum_post.body = "Aliasing ___ to ___.\n\nReason: "
@@ -111,13 +111,13 @@ class ForumController < ApplicationController
     if !@current_user.is_anonymous? && @current_user.last_forum_topic_read_at < @forum_post.updated_at && @forum_post.updated_at < 3.seconds.ago
       @current_user.update_attribute(:last_forum_topic_read_at, @forum_post.updated_at)
     end
-    
+
     respond_to_list("forum_post")
   end
 
   def index
     set_title CONFIG["app_name"] + " Forum"
-  
+
     if params[:parent_id]
       @forum_posts = ForumPost.paginate :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]], :page => params[:page]
     else
@@ -126,7 +126,7 @@ class ForumController < ApplicationController
 
     respond_to_list("forum_posts")
   end
-  
+
   def search
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
@@ -134,22 +134,22 @@ class ForumController < ApplicationController
     else
       @forum_posts = ForumPost.paginate :order => "id desc", :per_page => 30, :page => params[:page]
     end
-    
+
     respond_to_list("forum_posts")
   end
 
   def lock
     ForumPost.lock!(params[:id])
     flash[:notice] = "Topic locked"
-    redirect_to :action => "show", :id => params[:id]    
+    redirect_to :action => "show", :id => params[:id]
   end
 
   def unlock
     ForumPost.unlock!(params[:id])
     flash[:notice] = "Topic unlocked"
-    redirect_to :action => "show", :id => params[:id]    
+    redirect_to :action => "show", :id => params[:id]
   end
-  
+
   def mark_all_read
     @current_user.update_attribute(:last_forum_topic_read_at, Time.now)
     render :nothing => true

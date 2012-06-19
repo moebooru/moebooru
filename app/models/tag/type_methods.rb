@@ -26,7 +26,7 @@ module TagTypeMethods
     # * :tag_name<String>:: The tag name to search for
     def type_name(tag_name)
       tag_name = tag_name.gsub(/\s/, "_")
-      
+
       if CONFIG["enable_caching"]
         return Rails.cache.fetch(Tag.cache_type_key_enc(tag_name), :expires_in => 1.day) do
           type_name_helper(tag_name)
@@ -117,7 +117,7 @@ module TagTypeMethods
     m.versioning_group_by :action => "edit"
 
     # This maps ids to names
-    m.type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}    
+    m.type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}
   end
 
   def type_name

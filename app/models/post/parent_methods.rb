@@ -4,7 +4,7 @@ module PostParentMethods
       has_children = Post.exists?(["parent_id = ? AND status <> 'deleted'", post_id])
       execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", has_children, post_id)
     end
-    
+
     def recalculate_has_children
       transaction do
         execute_sql("UPDATE posts SET has_children = false WHERE has_children = true")
@@ -16,7 +16,7 @@ module PostParentMethods
       if old_parent_id.nil?
         old_parent_id = select_value_sql("SELECT parent_id FROM posts WHERE id = ?", post_id)
       end
-      
+
       if parent_id.to_i == post_id.to_i || parent_id.to_i == 0
         parent_id = nil
       end
@@ -27,7 +27,7 @@ module PostParentMethods
       update_has_children(parent_id)
     end
   end
-  
+
   def self.included(m)
     m.extend(ClassMethods)
     m.after_save :update_parent
@@ -37,7 +37,7 @@ module PostParentMethods
     m.has_many :children, :class_name => "Post", :order => "id",
       :foreign_key => :parent_id, :conditions => "status <> 'deleted'"
   end
-  
+
   def validate_parent
     errors.add("parent_id") unless parent_id.nil? or Post.exists?(parent_id)
   end

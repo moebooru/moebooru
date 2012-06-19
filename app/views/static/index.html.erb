@@ -11,14 +11,14 @@
     <% form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>
       <div>
         <%= text_field_tag "tags", "", :size => 30 %><br>
-        <%= submit_tag "Search", :name => 'searchDefault' %>        
+        <%= submit_tag "Search", :name => 'searchDefault' %>
       </div>
     <% end %>
   </div>
   <div style="font-size: 80%; margin-bottom: 2em;">
     <p>
       <% if @current_user %>
-        <%= mail_to CONFIG["admin_contact"], "Contact", :encode => "javascript" %> &ndash; 
+        <%= mail_to CONFIG["admin_contact"], "Contact", :encode => "javascript" %> &ndash;
       <% end %>
       Serving <%= number_with_delimiter Post.fast_count %> posts &ndash; Running Moebooru <%= CONFIG["version"] %>
       <br />

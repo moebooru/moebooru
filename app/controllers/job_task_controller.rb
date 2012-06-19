@@ -2,19 +2,19 @@ class JobTaskController < ApplicationController
   layout "default"
 
   before_filter :admin_user, :only => [ :destroy, :restart ]
-  
+
   def index
     @job_tasks = JobTask.paginate(:per_page => 25, :order => "id DESC", :page => params[:page])
   end
-  
+
   def show
     @job_task = JobTask.find(params[:id])
-    
+
     if @job_task.task_type == "upload_post" && @job_task.status == "finished"
       redirect_to :controller => "post", :action => "show", :id => @job_task.status_message
     end
   end
-  
+
   def destroy
     @job_task = JobTask.find(params[:id])
 

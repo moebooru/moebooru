@@ -151,7 +151,7 @@ h2.wiki-title {
 h2#site-title {
   display: block;
   text-align: left;
-  margin: -1em 0 .5em -3em;
+  margin: 0 0 .5em -3em;
   padding: 0px 0px 0px 484px;
   height: 75px;
   background: transparent url("../images/logo_small.png") no-repeat scroll top left;
@@ -2316,6 +2316,7 @@ div#news-ticker {
   background: #222;
   border-bottom: 2px solid #666;
   overflow: hidden;
+  margin: -1em -3em 0;
 }
 
 div#news-ticker ul {

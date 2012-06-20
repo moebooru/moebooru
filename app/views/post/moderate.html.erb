@@ -95,7 +95,7 @@
                 <li><%=t :post_mod_score %><%= p.score %> (vote <%= link_to_function t(:post_mod_down), "Post.vote(-1, #{p.id}, {})" %>)</li>
                 <% if p.flag_detail %>
                 <li>
-                  <%=t :post_mod_reason %)<%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
+                  <%=t :post_mod_reason %>)<%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
                 </li>
                 <% end %>
                 <li><%=t :post_mod_size %><%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>

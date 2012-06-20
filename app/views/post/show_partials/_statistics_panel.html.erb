@@ -2,7 +2,7 @@
   <h5><%=t :post_stats %></h5>
   <ul>
     <li><%=t :post_stats_id %><%= @post.id %></li>
-    <li><%=t :post_stats_posted %><%=t :post_stats_ago2 %><%= link_to time_ago_in_words(@post.created_at) + t(:post_stats_ago), {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> by <%= link_to_unless @post.user_id.nil?, h(@post.author), :controller => "user", :action => "show", :id => @post.user_id %></li>
+    <li><%=t :post_stats_posted %><%= link_to t('time.x_ago', :t => time_ago_in_words(@post.created_at)), {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> <%= t('.uploaded_by_user_html', :u => link_to_unless(@post.user_id.nil?, @post.author, :controller => "user", :action => "show", :id => @post.user_id)) %></li>
     <% if @current_user.is_admin? && @post.approver %>
       <li><%=t :post_stats_approver %><%= @post.approver.name %></li>
     <% end %>

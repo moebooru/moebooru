@@ -12,10 +12,70 @@ en:
     cancel: Cancel
     yes: Yes
     no: No
+  #view: /admin
+  admin:
+    index:
+      edit_user: Edit User
+      reset_password: Reset Password
+      cache_statistics: Cache Statistics
   #view: /user
   user:
     change_password:
       new_password: New password
+    home:
+      not_logged_in: You are not logged in.
+      login: Login
+      signup: Register
+      no_signup: Registration is disabled
+      reset_password: Reset Password
+      greet_user: 'Hello %{u}!'
+      action_info: From here you can access account-specific options and features.
+      logout: Logout
+      my_profile: My Profile
+      my_mail: My Mail
+      my_favorites: My Favorites
+      settings: Settings
+      change_password: Change Password
+      moderator_tools: Moderator Tools
+      invites: Invites
+      blocked_users: Blocked Users
+  #view: /help
+  help:
+    index:
+      about: About Moebooru
+      faq: Frequently Asked Questions
+      starting: Getting Started
+      accounts: Accounts
+      api: API
+      artists: Artists
+      bookmarklet: Bookmarklet
+      bugs: Bugs
+      cheat_sheet: Cheat Sheet
+      comments: Comments
+      dtext: DText
+      firefox_ext: Firefox Extension
+      image_sampling: Image Sampling
+      irc: IRC
+      notes: Notes
+      pools: Pools
+      posts: Posts
+      post_relationships: Post Relationships
+      ratings: Ratings
+      source: Source Code
+      tag_scripts: Tag Scripts
+      tags: Tags
+      tag_aliases: Tag Aliases
+      tag_implications: Tag Implications
+      mass_tag_edit: Mass Tag Edit
+      suggestions: Suggestions
+      voting: Voting
+      wiki: Wiki
+      help: Help
+  #view: /post
+  post:
+    show_partials:
+      statistics_panel:
+        uploaded_by_user_html: 'by %{u}'
   #models
   activerecord:
     attributes:

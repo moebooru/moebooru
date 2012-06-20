@@ -41,7 +41,7 @@
             <td><%= link_to image_tag(p.preview_url, :width => p.preview_dimensions[0], :height => p.preview_dimensions[1]), :controller => "post", :action => "show", :id => p.id %></td>
             <td class="checkbox-cell">
               <ul>
-                <li><%=t :post_mod_uploaded %><%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %><%=t :post_mod_ago2 %><%= time_ago_in_words(p.created_at) %><%=t :post_mod_ago %>(<%= link_to t(:post_mod), :action => "moderate", :query => "user:#{p.author}" %>)</li>
+                <li><%=t :post_mod_uploaded %><%= link_to h(p.author), :controller => "user", :action => "show", :id => p.user_id %><%= t('time.x_ago', :t => time_ago_in_words(p.created_at)) %> (<%= link_to t(:post_mod), :action => "moderate", :query => "user:#{p.author}" %>)</li>
                 <li><%=t :post_mod_rating %><%= p.pretty_rating %></li>
                 <% if p.parent_id %>
                   <li><%=t :post_mod_parent %><%= link_to p.parent_id, :action => "moderate", :query => "parent:#{p.parent_id}" %></li>

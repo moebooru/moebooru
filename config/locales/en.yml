@@ -33,6 +33,37 @@ en:
       moderator_tools: Moderator Tools
       invites: Invites
       blocked_users: Blocked Users
+  #view: /help
+  help:
+    index:
+      about: About Moebooru
+      faq: Frequently Asked Questions
+      starting: Getting Started
+      accounts: Accounts
+      api: API
+      artists: Artists
+      bookmarklet: Bookmarklet
+      bugs: Bugs
+      cheat_sheet: Cheat Sheet
+      comments: Comments
+      dtext: DText
+      firefox_ext: Firefox Extension
+      image_sampling: Image Sampling
+      irc: IRC
+      notes: Notes
+      pools: Pools
+      posts: Posts
+      post_relationships: Post Relationships
+      ratings: Ratings
+      source: Source Code
+      tag_scripts: Tag Scripts
+      tags: Tags
+      tag_aliases: Tag Aliases
+      tag_implications: Tag Implications
+      mass_tag_edit: Mass Tag Edit
+      suggestions: Suggestions
+      voting: Voting
+      wiki: Wiki
   #view: /post
   post:
     show_partials:

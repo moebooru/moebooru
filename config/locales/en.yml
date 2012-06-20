@@ -16,6 +16,10 @@ en:
   user:
     change_password:
       new_password: New password
+  post:
+    show_partials:
+      statistics_panel:
+        uploaded_by_user_html: 'by %{u}'
   #models
   activerecord:
     attributes:

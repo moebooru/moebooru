@@ -1,6 +1,6 @@
 <div id="user-index">
   <% if @current_user.is_anonymous? %>
-    <h2><%=t :user_home %></h2>
+    <h2><%= t('.not_logged_in') %></h2>
 
     <ul class="link-page">
       <li><%= link_to t(:user_home2), :action => "login" %></li>

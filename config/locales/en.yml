@@ -16,6 +16,13 @@ en:
   user:
     change_password:
       new_password: New password
+    home:
+      logout: Logout
+      my_profile: My Profile
+      my_mail: My Mail
+      my_favorites: My Favorites
+      settings: Settings
+      change_password: Change Password
   #view: /post
   post:
     show_partials:

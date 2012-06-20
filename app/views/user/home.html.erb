@@ -17,12 +17,12 @@
 
     <div class="section">
       <ul class="link-page">
-        <li><%= link_to t(:user_home8), :action => "logout" %></li>
-        <li><%= link_to t(:user_home9), :action => "show", :id => @current_user.id %></li>
-        <li><%= link_to t(:user_home10), :controller => "dmail", :action => "inbox" %></li>
-        <li><%= link_to t(:user_home11), :controller => "post", :action => "index", :tags => "vote:3:#{@current_user.name} order:vote" %></li>
-        <li><%= link_to t(:user_home12), :action => "edit" %></li>
-        <li><%= link_to t(:user_home13), :action => "change_password" %></li>
+        <li><%= link_to t('.logout'), :action => "logout" %></li>
+        <li><%= link_to t('.my_profile'), :action => "show", :id => @current_user.id %></li>
+        <li><%= link_to t('.my_mail'), :controller => "dmail", :action => "inbox" %></li>
+        <li><%= link_to t('.my_favorites'), :controller => "post", :action => "index", :tags => "vote:3:#{@current_user.name} order:vote" %></li>
+        <li><%= link_to t('.settings'), :action => "edit" %></li>
+        <li><%= link_to t('.change_password'), :action => "change_password" %></li>
       </ul>
     </div>
 

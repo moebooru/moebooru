@@ -18,6 +18,10 @@ en:
       new_password: New password
     home:
       not_logged_in: You are not logged in.
+      login: Login
+      signup: Register
+      no_signup: Registration is disabled
+      reset_password: Reset Password
       logout: Logout
       my_profile: My Profile
       my_mail: My Mail

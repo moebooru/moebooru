@@ -3,13 +3,13 @@
     <h2><%= t('.not_logged_in') %></h2>
 
     <ul class="link-page">
-      <li><%= link_to t(:user_home2), :action => "login" %></li>
+      <li><%= link_to t('.login'), :action => :login %></li>
       <% if CONFIG["enable_signups"] %>
-        <li><%= link_to t(:user_home3), :action => "signup" %></li>
+        <li><%= link_to t('.signup'), :action => :signup %></li>
       <% else %>
-        <li><%=t :user_home4 %></li>
+        <li><%= t('.no_signup') %></li>
       <% end %>
-      <li><%= link_to t(:user_home5), :action => "reset_password" %></li>
+      <li><%= link_to t('.reset_password'), :action => :reset_password %></li>
     </ul>
   <% else %>
     <h2><%=t :user_home6 %><%= h(@current_user.name) %>!</h2>

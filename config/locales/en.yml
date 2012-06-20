@@ -12,6 +12,12 @@ en:
     cancel: Cancel
     yes: Yes
     no: No
+  #view: /admin
+  admin:
+    index:
+      edit_user: Edit User
+      reset_password: Reset Password
+      cache_statistics: Cache Statistics
   #view: /user
   user:
     change_password:

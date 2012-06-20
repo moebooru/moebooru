@@ -508,6 +508,10 @@ ul.link-page {
   font-weight: bold;
 }
 
+ul.link-page a:before {
+  content: '» ';
+}
+
 ul.link-page > li {
   margin: 0;
   padding: 0;

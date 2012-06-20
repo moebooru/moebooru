@@ -22,12 +22,17 @@ en:
       signup: Register
       no_signup: Registration is disabled
       reset_password: Reset Password
+      greet_user: 'Hello %{u}!'
+      action_info: From here you can access account-specific options and features.
       logout: Logout
       my_profile: My Profile
       my_mail: My Mail
       my_favorites: My Favorites
       settings: Settings
       change_password: Change Password
+      moderator_tools: Moderator Tools
+      invites: Invites
+      blocked_users: Blocked Users
   #view: /post
   post:
     show_partials:

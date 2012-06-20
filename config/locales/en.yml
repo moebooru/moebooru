@@ -70,6 +70,7 @@ en:
       suggestions: Suggestions
       voting: Voting
       wiki: Wiki
+      help: Help
   #view: /post
   post:
     show_partials:

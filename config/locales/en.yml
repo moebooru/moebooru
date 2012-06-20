@@ -16,6 +16,7 @@ en:
   user:
     change_password:
       new_password: New password
+  #view: /post
   post:
     show_partials:
       statistics_panel:

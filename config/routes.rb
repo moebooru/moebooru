@@ -50,6 +50,14 @@ Moebooru::Application.routes.draw do
     match 'user/index(.:format)' => 'user#index'
     # Forum
     match 'forum/index(.:format)' => 'forum#index'
+    # Pools
+    match 'pool/index(.:format)' => 'pool#index'
+    match 'pool/show(.:format)' => 'pool#show'
+    match 'pool/create(.:format)' => 'pool#create', :via => :post
+    match 'pool/update(.:format)' => 'pool#update', :via => [:post, :put]
+    match 'pool/add_post(.:format)' => 'pool#add_post', :via => [:post, :put]
+    match 'pool/remove_post(.:format)' => 'pool#remove_post', :via => [:post, :put]
+    match 'pool/destroy(.:format)' => 'pool#destroy', :via => [:post, :delete]
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

@@ -10,11 +10,10 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Moebooru
   class Application < Rails::Application
-    config.autoload_paths += [config.root.join('lib')]
     config.encoding = 'utf-8'
 
     # Add additional load paths for your own custom dirs
-    config.autoload_paths += ["#{Rails.root}/app/models/post", "#{Rails.root}/app/models/post/image_store"]
+    config.autoload_paths += [config.root.join('lib')]
 
     # Force all environments to use the same logger level
     # (by default production uses :info, the others :debug

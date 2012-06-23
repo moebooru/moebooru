@@ -48,6 +48,8 @@ Moebooru::Application.routes.draw do
     match 'note/update(.:format)' => 'note#update', :via => [:post, :put]
     # Users
     match 'user/index(.:format)' => 'user#index'
+    # Forum
+    match 'forum/index(.:format)' => 'forum#index'
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

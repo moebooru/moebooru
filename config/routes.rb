@@ -58,6 +58,8 @@ Moebooru::Application.routes.draw do
     match 'pool/add_post(.:format)' => 'pool#add_post', :via => [:post, :put]
     match 'pool/remove_post(.:format)' => 'pool#remove_post', :via => [:post, :put]
     match 'pool/destroy(.:format)' => 'pool#destroy', :via => [:post, :delete]
+    # Favorites
+    match 'favorite/list_users(.:format)' => 'favorite#list_users', :constraints => { :format => 'json' }
   end
 
   match 'post/show/:id/:tag_title' => 'post#show', :constraints => { :id => /\d+/ }

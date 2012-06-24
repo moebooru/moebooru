@@ -34,7 +34,13 @@ class AdminController < ApplicationController
         flash[:notice] = "Password reset to #{new_password}"
 
         unless @user.email.blank?
-          UserMailer.deliver_new_password(@user, new_password)
+          begin
+            UserMailer.deliver_new_password(@user, new_password)
+          rescue Net::SMTPSyntaxError, Net::SMTPFatalError
+            respond_to_success("Specified user's email address was invalid",
+              {:action => :reset_password }, :api => {:result => "invalid-email"})
+            return
+          end
         end
       else
         flash[:notice] = "That account does not exist"

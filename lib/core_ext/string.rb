@@ -1,3 +1,4 @@
+# encoding: utf-8
 class String
   # Strip out invalid utf8
   def to_valid_utf8
@@ -29,10 +30,10 @@ class String
     return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub('*', '%')
   end
 
-  # The characters \()&|!:' must be escaped
+  # The characters \()&|!:' and any spaces (\p{Space}) must be escaped
   # by prepending them with \ before passed to tsquery.
   def to_escaped_for_tsquery
-    return self.gsub(/[\\()&|!:']/) { |x| '\\' + x }
+    return self.gsub(/[\p{Space}\\()&|!:']/) { |x| '\\' + x }
   end
 
   def to_escaped_js

@@ -103,7 +103,13 @@ class PoolController < ApplicationController
   def show
     if params[:samples] == "0" then params.delete(:samples) end
 
-    @pool = Pool.find(params[:id], :include => [:pool_posts => :post])
+    begin
+      @pool = Pool.find(params[:id].to_i, :include => [:pool_posts => :post])
+    rescue
+      flash[:notice] = t('c.pool.not_found', :id => params[:id].to_i)
+      redirect_to :action => :index
+      return
+    end
 
     @browse_mode = @current_user.pool_browse_mode
 

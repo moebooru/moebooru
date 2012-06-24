@@ -12,6 +12,10 @@ en:
     cancel: Cancel
     yes: Yes
     no: No
+  #controllers
+  c:
+    pool:
+      not_found: "Can't find pool with id %{id}"
   #view: /admin
   admin:
     index:

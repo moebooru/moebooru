@@ -11,7 +11,7 @@
   <%= hidden_field_tag "destroy", "1" %>
   <% end %>
 
-  <%= submit_tag @post.is_deleted? ? t(:post_delete_perma):t(:post_delete_delete)" %> <%= submit_tag t(:post_delete_cancel) %>
+  <%= submit_tag @post.is_deleted? ? t(:post_delete_perma):t(:post_delete_delete) %> <%= submit_tag t(:post_delete_cancel) %>
 <% end %>
 
 <div class="deleting-post">

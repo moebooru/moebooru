@@ -25,10 +25,10 @@ class String
     return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub('*', '%')
   end
 
-  # The characters \()&|!: must be escaped
+  # The characters \()&|!:' must be escaped
   # by prepending them with \ before passed to tsquery.
   def to_escaped_for_tsquery
-    return self.gsub(/[\\()&|!:]/) { |x| '\\' + x }
+    return self.gsub(/[\\()&|!:']/) { |x| '\\' + x }
   end
 
   def to_escaped_js

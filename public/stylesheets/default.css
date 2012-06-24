@@ -994,6 +994,8 @@ div#paginator a.arrow:hover {
 
 div.pagination .current {
   font-style: normal;
+  margin: 0 3px;
+  padding: 2px 6px;
 }
 
 div#paginator a:hover {

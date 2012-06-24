@@ -316,7 +316,7 @@ class ApplicationController < ActionController::Base
   def save_tags_to_cookie
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).downcase.scan(/\S+/))
-      tags += cookies["recent_tags"].to_s.scan(/\S+/)
+      tags += cookies["recent_tags"].to_s.to_valid_utf8.scan(/\S+/)
       cookies["recent_tags"] = tags.slice(0, 20).join(" ")
     end
   end

@@ -11,11 +11,15 @@ class String
       # - http://po-ru.com/diary/fixing-invalid-utf-8-in-ruby-revisited
       return ic.iconv(self + ' ')[0..-2]
     else
-      # On later ruby version (1.9), translate the string first to
-      # another utf plane (in this case, utf-16).
-      # The rails input for some reason is not utf-8 but binary
-      # while it really is utf-8. Therefore it must first be marked as utf-8.
-      return self.force_encoding('UTF-8').encode('UTF-16', :invalid => :replace, :replace => '').encode('UTF-8')
+      # This one faster than the one previously used (converting three times).
+      # Idea from here https://github.com/rails/rails/pull/3789/files
+      str = self
+      str.force_encoding(Encoding::UTF_8)
+      if str.valid_encoding?
+        str
+      else
+        str.chars.map{ |c| c.valid_encoding? ? c : '?' }.join
+      end
     end
   end
 

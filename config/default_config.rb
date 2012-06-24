@@ -253,7 +253,7 @@ CONFIG["default_blacklists"] = [
 CONFIG["enable_artists"] = true
 
 # This is required for Rails 2.0.
-CONFIG["session_secret_key"] = "This should be at least 30 characters long"
+CONFIG["secret_token"] = "This should be at least 30 characters long"
 
 # Users cannot search for more than X regular tags at a time.
 CONFIG["tag_query_limit"] = 6

@@ -5,7 +5,7 @@
 CONFIG["app_name"] = "DAN_SITENAME"
 CONFIG["server_host"] = "DAN_HOSTNAME"
 CONFIG["admin_contact"] = "webmaster@" + CONFIG["server_host"]
-# CONFIG["session_secret_key"] = "This should be at least 30 characters long"
+# CONFIG["secret_token"] = "This should be at least 30 characters long"
 
 CONFIG["url_base"] = "http://" + CONFIG["server_host"]	# set this to "" to get relative image urls
 CONFIG["admin_contact"] = "webmaster@" + CONFIG["server_host"]

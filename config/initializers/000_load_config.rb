@@ -1,6 +1,6 @@
 CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
 
-%w(session_secret_key user_password_salt).each do |key|
+%w(user_password_salt).each do |key|
   CONFIG[key] = ServerKey[key] if ServerKey[key]
 end
 

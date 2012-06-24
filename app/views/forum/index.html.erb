@@ -31,7 +31,7 @@
             <% end %>
 
             <% if fp.is_locked? %>
-              <span class="locked-topic"><%=t :forum_locked %></span>
+              <span class="locked-topic"><%= t('.is_locked') %></span>
             <% end %>
           </td>
           <td><%= h fp.author %></td>

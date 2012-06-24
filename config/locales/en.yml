@@ -22,6 +22,10 @@ en:
       edit_user: Edit User
       reset_password: Reset Password
       cache_statistics: Cache Statistics
+  # view: /forum
+  forum:
+    index:
+      is_locked: (locked)
   #view: /user
   user:
     change_password:
@@ -228,7 +232,6 @@ en:
   forum_updated: "Updated"
   forum_responses: "Responses"
   forum_sticky: "Sticky: "
-  forum_locked: "(locked)"
   forum_mark: "Mark all read"
   forum_help: "Help"
   forum_edit: "Edit"

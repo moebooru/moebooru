@@ -1115,6 +1115,7 @@ en:
   user_password: "Password"
   user_password_text: "Minimum of five characters."
   user_password_confirm: "Confirm password"
+  user_when: "When"
   #user record
   record_add: "Add Record for "
   record_pos: "Positive"

@@ -7,7 +7,8 @@
           <th width="1%"></th>
           <th width="19%"><%=t :user_user %></th>
           <th width="10%"><%=t :user_expires %></th>
-          <th width="70%"><%=t :user_reason %></th>
+          <th width="15%"><%=t :user_when %></th>
+          <th width="60%"><%=t :user_reason %></th>
         </tr>
       </thead>
       <tfoot>
@@ -21,6 +22,7 @@
             <td><%= check_box_tag "user[#{user.id}]" %></td>
             <td><%= link_to h(user.pretty_name), :controller => "user", :action => "show", :id => user.id %></td>
             <td><%= time_ago_in_words(user.ban.expires_at) %></td>
+            <td><%= user.ban.expires_at %></td>
             <td><%= h user.ban.reason %></td>
           </tr>
         <% end %>

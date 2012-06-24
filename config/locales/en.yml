@@ -688,7 +688,7 @@ en:
   post_stats: "Statistics"
   post_stats_id: "Id: "
   post_stats_posted: "Posted: "
-  post_stats_approve: "Approver: "
+  post_stats_approver: "Approver: "
   post_stats_size: "Size: "
   post_stats_source: "Source: "
   post_stats_rating: "Rating: "

@@ -401,9 +401,7 @@ class PostController < ApplicationController
     # We get a lot of bogus "/post/atom.feed" requests that spam our error logs.  Make sure
     # we only try to format atom.xml.
     if not params[:format].nil? then
-      # If we don't change the format, it tries to render "404.feed".
       params[:format] = "html"
-      raise ActiveRecord::RecordNotFound
     end
 
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))

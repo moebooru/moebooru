@@ -63,13 +63,13 @@ Moebooru::Application.routes.draw do
   end
 
   # Post controller, POST verb filter
-  scope :via => :post do
-    match 'post/update' => 'post#update'
-    match 'post/destroy' => 'post#destroy'
+  scope :via => :post, :constraints => { :id => /\d+/ } do
     match 'post/create' => 'post#create'
-    match 'post/revert_tags' => 'post#revert_tags'
-    match 'post/vote' => 'post#vote'
-    match 'post/flag' => 'post#flag'
+    match 'post/update(/:id)' => 'post#update'
+    match 'post/destroy(/:id)' => 'post#destroy'
+    match 'post/revert_tags(/:id)' => 'post#revert_tags'
+    match 'post/vote(/:id)' => 'post#vote'
+    match 'post/flag(/:id)' => 'post#flag'
   end
 
   match 'post/show/:id/*tag_title' => 'post#show', :constraints => { :id => /\d+/ }, :format => false

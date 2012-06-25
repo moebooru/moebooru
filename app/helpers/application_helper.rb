@@ -100,7 +100,11 @@ module ApplicationHelper
 
   def content_for_prefix(name, &block)
     content_prefix = capture(&block) if block_given?
-    @_content_for[name] = content_prefix + @_content_for[name] if content_prefix
+    content_current = content_for(name)
+    if content_prefix
+      @view_flow.set(name, content_prefix)
+      content_for(name, content_current)
+    end
   end
 
   def navigation_links(post)

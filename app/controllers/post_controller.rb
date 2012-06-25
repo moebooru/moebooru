@@ -158,6 +158,10 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
+    if @post.is_deleted? and not @current_user.is_mod_or_higher?
+      respond_to_error('Post Locked', { :action => :show, :id => params[:id] }, { :status => 422 })
+      return
+    end
     user_id = @current_user.id
 
     Post.filter_api_changes(params[:post])

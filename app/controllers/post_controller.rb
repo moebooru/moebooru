@@ -446,6 +446,9 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
       set_title @post.title_tags.tr("_", " ")
+      respond_to do |format|
+        format.html
+      end
     rescue ActiveRecord::RecordNotFound
       render :action => "show_empty", :status => 404
     end

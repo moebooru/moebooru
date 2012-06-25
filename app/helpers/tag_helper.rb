@@ -6,8 +6,9 @@ module TagHelper
 
     tag_type = Tag.type_name(name)
     obsolete_tag = ([name] & obsolete).empty? ? '' : ' obsolete'
-    content_tag :span, :class => "tag-type-#{tag_type}#{obsolete_tag}" do
-      h(prefix) + link_to(name, :controller => :post, :action => :index, :tags => name)
+    html = h(prefix)
+    html += content_tag(:span, :class => "tag-type-#{tag_type}#{obsolete_tag}") do
+      link_to(name, :controller => :post, :action => :index, :tags => name)
     end
   end
 

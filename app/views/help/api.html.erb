@@ -10,7 +10,7 @@
     <div class="section">
       <h2>Basics</h2>
       <p>HTTP defines two request methods: GET and POST. You'll be using these two methods to interact with the Danbooru API. Most API calls that change the state of the database (like creating, updating, or deleting something) require an HTTP POST call. API calls that only retrieve data can typically be done with an HTTP GET call.</p>
-      <p>In the Danbooru API, a URL is analogous to a function name. You pass in the function parameters as a query string. Here's an extremely simple example: <a class="code" href="http://miezaru.donmai.us/post/index.xml?limit=1" target="_blank">/post/index.xml?limit=1</a>.</p>
+      <p>In the Danbooru API, a URL is analogous to a function name. You pass in the function parameters as a query string. Here's an extremely simple example: <a class="code" href="/post/index.xml?limit=1" target="_blank">/post/index.xml?limit=1</a>.</p>
       <p>The <code>post</code> part indicates the controller we're working with. In this case it's posts. <code>index</code> describes the action. Here we're retrieving a list of posts. Finally, the <code>xml</code> part describes what format we want the response in. You can specify <code>.xml</code> for XML responses, <code>.json</code> for JSON responses, and nothing at all for HTML responses.</p>
     </div>
 

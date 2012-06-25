@@ -6,9 +6,7 @@
   <a href="#" id="close-news-ticker-link"><%=t :news_ticker_close %></a>
 </div>
 <script type="text/javascript">
-  if (Cookie.get('hide-new-ticker') == '1') {
-    $('news-ticker').hide();
-  } else {
+  if (Cookie.get('hide-news-ticker') != '1') {
     $('news-ticker').show();
     $('close-news-ticker-link').observe('click', function(e) {
       $('news-ticker').hide();

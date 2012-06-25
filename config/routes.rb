@@ -62,6 +62,16 @@ Moebooru::Application.routes.draw do
     match 'favorite/list_users(.:format)' => 'favorite#list_users', :constraints => { :format => 'json' }
   end
 
+  # Post controler, POST verb filter
+  scope :via => :post do
+    match 'post/update' => 'post#update'
+    match 'post/destroy' => 'post#destroy'
+    match 'post/create' => 'post#create'
+    match 'post/revert_tags' => 'post#revert_tags'
+    match 'post/vote' => 'post#vote'
+    match 'post/flag' => 'post#flag'
+  end
+
   match 'post/show/:id/*tag_title' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
   match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :id => /\d+/, :filename => /.*/ }
   match ':controller(/:action(/:id))', :id => /\d+/

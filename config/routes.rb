@@ -62,7 +62,7 @@ Moebooru::Application.routes.draw do
     match 'favorite/list_users(.:format)' => 'favorite#list_users', :constraints => { :format => 'json' }
   end
 
-  # Post controler, POST verb filter
+  # Post controller, POST verb filter
   scope :via => :post do
     match 'post/update' => 'post#update'
     match 'post/destroy' => 'post#destroy'

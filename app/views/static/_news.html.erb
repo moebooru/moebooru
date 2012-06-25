@@ -1,7 +1,19 @@
-<div id="news-ticker">
+<div id="news-ticker" style="display: none">
   <ul>
     <li>We're testing new Moebooru. Please report errors <%= link_to 'here', 'https://bitbucket.org/edogawaconan/moebooru/issues?status=new&status=open' %>.</li>
   </ul>
   
   <a href="#" id="close-news-ticker-link"><%=t :news_ticker_close %></a>
 </div>
+<script type="text/javascript">
+  if (Cookie.get('hide-new-ticker') == '1') {
+    $('news-ticker').hide();
+  } else {
+    $('news-ticker').show();
+    $('close-news-ticker-link').observe('click', function(e) {
+      $('news-ticker').hide();
+      Cookie.put('hide-news-ticker', '1', 7);
+      return false;
+    })
+  }
+</script>

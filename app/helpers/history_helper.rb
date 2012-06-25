@@ -407,21 +407,6 @@ module HistoryHelper
     }
   end
 
-  def tag_link(name, options = {})
-    name ||= "UNKNOWN"
-    prefix = options[:prefix] || ""
-    obsolete = options[:obsolete] || []
-
-    tag_type = Tag.type_name(name)
-
-    obsolete_tag = ([name] & obsolete).empty? ?  "":" obsolete"
-    tag = ""
-    tag << %{<span class="tag-type-#{tag_type}#{obsolete_tag}">}
-    tag << %{#{prefix}<a href="/post/index?tags=#{u(name)}">#{h(name)}</a>}
-    tag << '</span>'
-    tag
-  end
-
   def tag_list(tags, options = {})
     return [] if tags.blank?
 

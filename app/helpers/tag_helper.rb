@@ -1,9 +1,14 @@
 module TagHelper
-  def tag_link(tag)
-    tag_type = Tag.type_name(tag)
-    html = %{<span class="tag-type-#{tag_type}">}
-    html << link_to(h(tag), :action => "index", :tags => tag)
-    html << %{</span>}
+  def tag_link(name, options = {})
+    name ||= 'UNKNOWN'
+    prefix = options[:prefix] || ''
+    obsolete = options[:obsolete] || []
+
+    tag_type = Tag.type_name(name)
+    obsolete_tag = ([name] & obsolete).empty? ? '' : ' obsolete'
+    content_tag :span, :class => "tag-type-#{tag_type}#{obsolete_tag}" do
+      h(prefix) + link_to(name, :controller => :post, :action => :index, :tags => name)
+    end
   end
 
   def tag_links(tags, options = {})

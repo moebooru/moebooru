@@ -281,6 +281,7 @@ module HistoryHelper
           list << tag_list(changes[:unchanged_tags], :prefix => "", :class => "unchanged")
         end
         html << list.join(" ")
+        html.strip!
       end
     when "pools"
       primary_order = 0

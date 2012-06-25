@@ -1,6 +1,8 @@
 # This one handles sanitizing params.
 # Taken from https://github.com/rails/rails/pull/3789/files
 require 'core_ext/action_dispatch_encoder'
+require 'action_dispatch/http/parameters'
+
 module ActionDispatch
   module Http
     module Parameters

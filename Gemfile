@@ -1,9 +1,19 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.0.0'
+gem 'rails', '~> 3.2.0'
+gem 'jquery-rails'
+
+group :assets do
+  gem 'sass-rails', '~> 3.2.3'
+  gem 'coffee-rails', '~> 3.2.1'
+
+  gem 'therubyracer', :platforms => :ruby
+
+  gem 'uglifier', '>= 1.0.3'
+end
 
 gem 'pg', :platforms => :ruby
-gem 'activerecord-jdbcpostgresql-adapter', '~> 1.1.0', :platforms => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', :platforms => :jruby
 gem 'jruby-openssl', :platforms => :jruby
 
 gem 'html5'
@@ -23,7 +33,6 @@ gem 'sitemap_generator'
 gem 'daemons'
 gem 'newrelic_rpm'
 gem 'nokogiri'
-gem 'verification'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'

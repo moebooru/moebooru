@@ -450,7 +450,9 @@ class PostController < ApplicationController
         format.html
       end
     rescue ActiveRecord::RecordNotFound
-      render :action => "show_empty", :status => 404
+      respond_to do |format|
+        format.html render :action => "show_empty", :status => 404
+      end
     end
   end
 

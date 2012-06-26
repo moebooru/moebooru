@@ -67,7 +67,7 @@ Moebooru::Application.routes.draw do
   match 'post/atom.feed' => 'post#atom'
   match 'atom' => 'post#atom'
 
-  match 'post/show/:id/*tag_title' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
+  match 'post/show/:id(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
   match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :id => /\d+/, :filename => /.*/ }
   match ':controller(/:action(/:id))', :id => /\d+/
   match ':controller/:action.:format' => '#index'

@@ -281,7 +281,7 @@ class PostController < ApplicationController
   def index
     tags = params[:tags].to_s
     split_tags = QueryParser.parse(tags)
-    page = params[:page].to_i > 0 ? params[:page].to_i : 1
+    page = params[:page]
 
 #    if @current_user.is_member_or_lower? && split_tags.size > 2
 #      respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")

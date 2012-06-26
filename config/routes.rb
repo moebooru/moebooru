@@ -9,7 +9,7 @@ Moebooru::Application.routes.draw do
   end
 
   # API 1.13.0
-  scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/ } do
+  scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/, :id => /\d+/ } do
     # Posts
     match 'post/index(.:format)' => 'post#index'
     match 'post/create(.:format)' => 'post#create', :via => :post
@@ -52,12 +52,12 @@ Moebooru::Application.routes.draw do
     match 'forum/index(.:format)' => 'forum#index'
     # Pools
     match 'pool/index(.:format)' => 'pool#index'
-    match 'pool/show(.:format)' => 'pool#show'
     match 'pool/create(.:format)' => 'pool#create', :via => :post
-    match 'pool/update(.:format)' => 'pool#update', :via => [:post, :put]
+    match 'pool/show(.:format)(/:id)' => 'pool#show'
+    match 'pool/update(.:format)(/:id)' => 'pool#update', :via => [:post, :put]
+    match 'pool/destroy(.:format)(/:id)' => 'pool#destroy', :via => [:post, :delete]
     match 'pool/add_post(.:format)' => 'pool#add_post', :via => [:post, :put]
     match 'pool/remove_post(.:format)' => 'pool#remove_post', :via => [:post, :put]
-    match 'pool/destroy(.:format)' => 'pool#destroy', :via => [:post, :delete]
     # Favorites
     match 'favorite/list_users(.:format)' => 'favorite#list_users', :constraints => { :format => 'json' }
   end

@@ -11,18 +11,18 @@ Moebooru::Application.routes.draw do
   # API 1.13.0
   scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/, :id => /\d+/ } do
     # Posts
-    match 'post/index(.:format)' => 'post#index'
+    match 'post(/index)(.:format)' => 'post#index'
     match 'post/create(.:format)' => 'post#create', :via => :post
     match 'post/update(.:format)' => 'post#update', :via => [:post, :put]
     match 'post/revert_tags(.:format)' => 'post#revert_tags', :via => [:post, :put]
     match 'post/vote(.:format)' => 'post#vote', :via => [:post, :put]
     match 'post/destroy(.:format)' => 'post#destroy', :via => [:post, :delete]
     # Tags
-    match 'tag/index(.:format)' => 'tag#index'
+    match 'tag(/index)(.:format)' => 'tag#index'
     match 'tag/related(.:format)' => 'tag#related'
     match 'tag/update(.:format)' => 'tag#update', :via => [:post, :put]
     # Artists
-    match 'artist/index(.:format)' => 'artist#index'
+    match 'artist(/index)(.:format)' => 'artist#index'
     match 'artist/create(.:format)' => 'artist#create', :via => :post
     match 'artist/update(.:format)' => 'artist#update', :via => [:post, :put]
     match 'artist/destroy(.:format)' => 'artist#destroy', :via => [:post, :delete]
@@ -31,7 +31,7 @@ Moebooru::Application.routes.draw do
     match 'comment/create(.:format)' => 'comment#create', :via => :post
     match 'comment/destroy(.:format)' => 'comment#destroy', :via => [:post, :delete]
     # Wiki
-    match 'wiki/index(.:format)' => 'wiki#index'
+    match 'wiki(/index)(.:format)' => 'wiki#index'
     match 'wiki/show(.:format)' => 'wiki#show'
     match 'wiki/history(.:format)' => 'wiki#history'
     match 'wiki/create(.:format)' => 'wiki#create', :via => :post
@@ -41,17 +41,17 @@ Moebooru::Application.routes.draw do
     match 'wiki/revert(.:format)' => 'wiki#revert', :via => [:post, :put]
     match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
     # Notes
-    match 'note/index(.:format)' => 'note#index'
+    match 'note(/index)(.:format)' => 'note#index'
     match 'note/search(.:format)' => 'note#search'
     match 'note/history(.:format)' => 'note#history'
     match 'note/revert(.:format)' => 'note#revert', :via => [:post, :put]
     match 'note/update(.:format)' => 'note#update', :via => [:post, :put]
     # Users
-    match 'user/index(.:format)' => 'user#index'
+    match 'user(/index)(.:format)' => 'user#index'
     # Forum
-    match 'forum/index(.:format)' => 'forum#index'
+    match 'forum(/index)(.:format)' => 'forum#index'
     # Pools
-    match 'pool/index(.:format)' => 'pool#index'
+    match 'pool(/index)(.:format)' => 'pool#index'
     match 'pool/create(.:format)' => 'pool#create', :via => :post
     match 'pool/show(.:format)(/:id)' => 'pool#show'
     match 'pool/update(.:format)(/:id)' => 'pool#update', :via => [:post, :put]

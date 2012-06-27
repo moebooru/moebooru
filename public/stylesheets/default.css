@@ -992,7 +992,7 @@ div#paginator a.arrow:hover {
   color: #33CFFF;
 }
 
-div.pagination .current {
+div#paginator .current {
   font-style: normal;
   margin: 0 3px;
   padding: 2px 6px;

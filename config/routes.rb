@@ -8,6 +8,9 @@ Moebooru::Application.routes.draw do
     end
   end
 
+  # User
+  match 'user/change_email'
+
   # API 1.13.0
   scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/, :id => /\d+/ } do
     # Posts

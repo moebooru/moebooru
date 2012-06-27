@@ -30,6 +30,14 @@ en:
   user:
     change_password:
       new_password: New password
+    change_email:
+      current_password: Current password
+      current_email: Current Email
+      new_email: New Email
+    edit:
+      email: Email
+      no_email: none
+      update_email: Change
     home:
       not_logged_in: You are not logged in.
       login: Login

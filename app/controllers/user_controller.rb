@@ -7,7 +7,7 @@ class UserController < ApplicationController
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
   before_filter :post_member_only, :only => [:set_avatar]
-  before_filter :no_anonymous, :only => [:change_password]
+  before_filter :no_anonymous, :only => [:change_password, :change_email]
   helper :post, :tag_subscription
   helper :avatar
   auto_complete_for :user, :name
@@ -22,6 +22,11 @@ class UserController < ApplicationController
   public
   def change_password
     @title = 'Change Password'
+  end
+
+  def change_email
+    @title = 'Change Email'
+    @current_user.current_email = @current_user.email
   end
 
   def auto_complete_for_member_name

@@ -2,6 +2,7 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
   scope :name_starts_with, lambda { |s| where User.arel_table[:name].matches("#{s}*".to_escaped_for_sql_like) }
+  attr_accessor :current_email
   class AlreadyFavoritedError < Exception; end
 
   module UserBlacklistMethods
@@ -78,7 +79,7 @@ class User < ActiveRecord::Base
       # First test to see if it's creating new user (no password_hash)
       # or updating user. The second is to see if the action involves
       # updating password (which requires this validation).
-      if self.password_hash and password
+      if self.password_hash and (password or (self.email_changed? or current_email))
         if current_password.blank?
           errors.add :current_password, :blank
         elsif User.authenticate(self.name, current_password).nil?

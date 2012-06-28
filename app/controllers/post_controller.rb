@@ -10,9 +10,6 @@ class PostController < ApplicationController
   before_filter :post_member_only, :only => [:update, :upload, :flag]
   before_filter :janitor_only, :only => [:moderate, :undelete]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
-  if CONFIG["load_average_threshold"]
-    before_filter :check_load_average, :only => [:index, :popular_by_day, :popular_by_week, :popular_by_month, :random, :atom, :piclens]
-  end
 
   around_filter :cache_action, :only => [:index, :atom, :piclens]
 

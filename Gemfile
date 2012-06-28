@@ -8,7 +8,6 @@ gem 'jruby-openssl', :platforms => :jruby
 
 gem 'html5'
 gem 'diff-lcs'
-gem 'gchartrb'
 gem 'json'
 gem 'hpricot'
 gem 'dalli'

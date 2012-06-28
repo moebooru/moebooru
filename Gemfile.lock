@@ -60,7 +60,6 @@ GEM
     exception_notification (2.6.1)
       actionmailer (>= 3.0.4)
     fastercsv (1.5.5)
-    gchartrb (0.8)
     geoip (1.1.2)
     haml (3.1.6)
     highline (1.6.13)
@@ -169,7 +168,6 @@ DEPENDENCIES
   dalli
   diff-lcs
   exception_notification
-  gchartrb
   geoip
   hpricot
   html5

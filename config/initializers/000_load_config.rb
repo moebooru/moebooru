@@ -1,9 +1,5 @@
 CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
 
-%w(user_password_salt).each do |key|
-  CONFIG[key] = ServerKey[key] if ServerKey[key]
-end
-
 require 'base64'
 require 'diff/lcs/array'
 require 'ipaddr'

@@ -449,7 +449,7 @@ en:
   pool_add2: "Add"
   #view/pool/show
   pool_jpeg: "Download JPGs"
-  pool_png: "Donwload"
+  pool_png: "Download"
   pool_index: "Index View"
   pool_toggle: "Toggle View"
   pool_edit: "Edit"

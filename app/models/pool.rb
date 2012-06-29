@@ -220,15 +220,6 @@ class Pool < ActiveRecord::Base
       return false
     end
 
-    def get_zip_url(control_path, options={})
-      url = Mirrors.select_image_server(self.zip_is_warehoused, self.zip_created_at.to_i, :zipfile => true)
-      url += "/data/zips/#{File.basename(control_path)}"
-
-      # Adds the pretty filename to the end.  This is ignored by lighttpd.
-      url += "/#{url_encode(get_zip_filename(options))}"
-      return url
-    end
-
     # Estimate the size of the ZIP.
     def get_zip_size(options={})
       sum = 0
@@ -239,32 +230,6 @@ class Pool < ActiveRecord::Base
       end
 
       return sum
-    end
-
-    def get_zip_control_file_path_for_time(time, options={})
-      jpeg = options[:jpeg] || false
-
-      # If this pool has a JPEG version, name the normal version "png".  Otherwise, name it
-      # "normal".  This only affects the URL used to access the file, so the frontend can
-      # match it for QOS purposes; it doesn't affect the downloaded pool's filename.
-      if jpeg
-        type = "jpeg"
-      elsif has_jpeg_zip?(options) then
-        type = "png"
-      else
-        type = "normal"
-      end
-
-      "#{Rails.root}/public/data/zips/%s-pool-%08i-%i" % [type, self.id, time.to_i]
-    end
-
-    def all_posts_in_zip_are_warehoused?(options={})
-      pool_posts.each do |pool_post|
-        post = pool_post.post
-        next if post.status == 'deleted'
-        return false if not post.is_warehoused?
-      end
-      return true
     end
 
     #nginx version
@@ -417,63 +382,6 @@ class Pool < ActiveRecord::Base
       return buf
     end
 
-    def get_zip_control_file_path(options = {})
-      control_file = self.get_zip_control_file(options)
-
-      # The latest pool ZIP we generated is stored in pool.zip_created_at.  If that ZIP
-      # control file still exists, compare it against the control file we just generated,
-      # and reuse it if it hasn't changed.
-      control_path_time = Time.now
-      control_path = self.get_zip_control_file_path_for_time(control_path_time, options)
-      reuse_old_control_file = false
-      if self.zip_created_at then
-        old_path = self.get_zip_control_file_path_for_time(self.zip_created_at, options)
-        begin
-          old_control_file = File.open(old_path).read
-
-          if control_file == old_control_file
-            reuse_old_control_file = true
-            control_path = old_path
-            control_path_time = self.zip_created_at
-          end
-        rescue SystemCallError => e
-        end
-      end
-
-      if not reuse_old_control_file then
-        control_path_temp = control_path + ".temp"
-        File.open(control_path_temp, 'w+') do |fp|
-          fp.write(control_file)
-        end
-
-        FileUtils.mv(control_path_temp, control_path)
-
-        # Only after we've attempted to mirror the control file, update self.zip_created_at.
-        self.update_attributes(:zip_created_at => control_path_time, :zip_is_warehoused => false)
-      end
-
-      if !self.zip_is_warehoused && all_posts_in_zip_are_warehoused?(options)
-        delay = ServerKey.find(:first, :conditions => ["name = 'delay-mirrors-down'"])
-        if delay.nil?
-          delay = ServerKey.create(:name => "delay-mirrors-down", :value => 0)
-        end
-        if delay.value.to_i < Time.now.to_i
-          # Send the control file to all mirrors, if we have any.
-          begin
-            # This is being done interactively, so use a low timeout.
-            Mirrors.copy_file_to_mirrors(control_path, :timeout => 5)
-            self.update_attributes(:zip_is_warehoused => true)
-          rescue Mirrors::MirrorError => e
-            # If mirroring is failing, disable it for a while.  It might be timing out, and this
-            # will make the UI unresponsive.
-            delay.update_attributes!(:value => Time.now.to_i + 60*60)
-            ActiveRecord::Base.logger.error("Error warehousing ZIP control file: #{e}")
-          end
-        end
-      end
-
-      return control_path
-    end
   end
 
   include PostMethods

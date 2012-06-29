@@ -25,8 +25,8 @@ module PoolHelper
   def generate_zip_list
     unless @pool_zip.blank?
       @pool_zip.map do |data|
-        '%s %s %s %s' % [data[:crc32], data[:file_size], data[:path], data[:filename]]
-      end.join("\n")
+        "%s %s %s %s\n" % [data[:crc32], data[:file_size], data[:path], data[:filename]]
+      end.join
     end
   end
 end

@@ -21,4 +21,12 @@ module PoolHelper
     options[:jpeg] = 1 if zip_params[:jpeg]
     link_to text, options, :level => :member
   end
+
+  def generate_zip_list
+    unless @pool_zip.blank?
+      @pool_zip.map do |data|
+        '%s %s %s %s' % [data[:crc32], data[:file_size], data[:path], data[:filename]]
+      end.join("\n")
+    end
+  end
 end

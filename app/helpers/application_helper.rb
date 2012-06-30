@@ -49,15 +49,18 @@ module ApplicationHelper
       </div>
     }
     inline_id = "inline-%s-%i" % [id, num]
-    script = 'InlineImage.register("%s", %s);' % [inline_id, json_escape(inline.to_json.html_safe)]
+    # FIXME: for some reason rails invoked the old, useless json_escape when
+    #        used here.
+    script = 'InlineImage.register("%s", %s);' % [inline_id, inline.to_json.gsub('/', '\/')]
     return block.html_safe, script.html_safe, inline_id
   end
 
   def format_inlines(text, id)
     num = 0
     list = []
-    text.gsub!(/image #(\d+)/i) { |t|
-      i = Inline.find($1) rescue nil
+    text.gsub!(/image #\d+/i) { |t|
+      # FIXME: for some reason, the capture variable, $1 returned null here.
+      i = Inline.find(t[7..-1]) rescue nil
       if i then
         block, script = format_inline(i, num, id)
         list << script

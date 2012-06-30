@@ -185,7 +185,7 @@ class UserController < ApplicationController
       respond_to_success("Account settings saved", :action => "edit")
     else
       if params[:render] and params[:render][:view]
-        render params[:render][:view]
+        render get_view_name_for_edit(params[:render][:view])
       else
         respond_to_error(@current_user, :action => "edit")
       end
@@ -370,5 +370,17 @@ class UserController < ApplicationController
     end
 
     render :json => {:success => true}
+  end
+
+  private
+  def get_view_name_for_edit(param)
+    case param
+    when 'change_email'
+      :change_email
+    when 'change_password'
+      :change_password
+    else
+      :edit
+    end
   end
 end

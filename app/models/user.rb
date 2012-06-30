@@ -629,7 +629,7 @@ class User < ActiveRecord::Base
   include UserTagSubscriptionMethods
   include UserLanguageMethods
 
-  @salt = CONFIG["user_password_salt"]
+  @salt = CONFIG['password_salt']
 
   class << self
     attr_accessor :salt

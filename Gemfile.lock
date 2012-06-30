@@ -84,7 +84,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.19)
-    newrelic_rpm (3.4.0)
+    newrelic_rpm (3.4.0.1)
     nokogiri (1.5.5)
     nokogiri (1.5.5-java)
     pg (0.14.0)
@@ -131,7 +131,7 @@ GEM
       sexp_processor (~> 3.0)
     ruby_parser (2.3.1)
       sexp_processor (~> 3.0)
-    sass (3.1.19)
+    sass (3.1.20)
     schema_plus (0.4.1)
       rails
       valuable

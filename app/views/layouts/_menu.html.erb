@@ -75,7 +75,7 @@
   notes_menu.push(<%= make_sub_item(t(:layout_view_notes), :controller => :note, :action => "index") %>);
   notes_menu.push(<%= make_sub_item(t(:layout_search_notes), :controller => :note, :action => "search") %>);
   notes_menu[notes_menu.length-1].func = ShowNoteSearch;
-  notes_menu.push(<%= make_sub_item(t(:layout_requests), :controller => :posts, :action => "index", :tags => "translation_request") %>);
+  notes_menu.push(<%= make_sub_item(t(:layout_requests), :controller => :post, :action => "index", :tags => "translation_request") %>);
   def.push(<%= make_main_item(t(:layout_notes), {:controller => :note, :action => "index"}, {:name => "notes"}) %>);
   def[def.length-1].sub = notes_menu;
 

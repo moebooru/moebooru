@@ -101,11 +101,11 @@ Moebooru::Application.routes.draw do
   match 'job_task/show(/:id)' => 'job_task#show'
 
   # Note
-  match 'note/search'
-  match 'note/index'
-  match 'note/history'
-  match 'note/revert'
-  match 'note/update'
+  match 'note(/index)(.:format)' => 'note#index'
+  match 'note/search(.:format)' => 'note#search'
+  match 'note/history(.:format)' => 'note#history'
+  match 'note/revert(.:format)' => 'note#revert', :via => [:post, :put]
+  match 'note/update(.:format)' => 'note#update', :via => [:post, :put]
 
   # Pool
   match 'pool/index'
@@ -275,12 +275,6 @@ Moebooru::Application.routes.draw do
     match 'wiki/unlock(.:format)' => 'wiki#unlock', :via => [:post, :put]
     match 'wiki/revert(.:format)' => 'wiki#revert', :via => [:post, :put]
     match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
-    # Notes
-    match 'note(/index)(.:format)' => 'note#index'
-    match 'note/search(.:format)' => 'note#search'
-    match 'note/history(.:format)' => 'note#history'
-    match 'note/revert(.:format)' => 'note#revert', :via => [:post, :put]
-    match 'note/update(.:format)' => 'note#update', :via => [:post, :put]
     # Users
     match 'user(/index)(.:format)' => 'user#index'
     # Pools

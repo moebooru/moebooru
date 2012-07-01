@@ -42,7 +42,7 @@ Moebooru::Application.routes.draw do
   match 'comment/search'
   match 'comment/show(.:format)(/:id)' => 'comment#show'
   match 'comment/destroy(.:format)(/:id)' => 'comment#destroy', :via => [:post, :delete]
-  match 'comment/update(/:id)' => 'comment/update', :via => [:post, :put]
+  match 'comment/update(/:id)' => 'comment#update', :via => [:post, :put]
   post 'comment/create(.:format)'
   post 'comment/mark_as_spam(/:id)' => 'comment#mark_as_spam'
 

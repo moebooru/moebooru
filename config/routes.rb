@@ -244,7 +244,7 @@ Moebooru::Application.routes.draw do
   match 'wiki/add'
   match 'wiki/diff'
   match 'wiki/edit'
-  match 'wiki/history(.:format)' => 'wiki#history'
+  match 'wiki/history(.:format)(/:id)' => 'wiki#history'
   match 'wiki/preview'
   match 'wiki/recent_changes'
   match 'wiki/rename'

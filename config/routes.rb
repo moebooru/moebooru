@@ -102,8 +102,8 @@ Moebooru::Application.routes.draw do
 
   # Note
   match 'note(/index)(.:format)' => 'note#index'
-  match 'note/search(.:format)' => 'note#search'
   match 'note/history(.:format)(/:id)' => 'note#history'
+  match 'note/search(.:format)' => 'note#search'
   match 'note/revert(.:format)(/:id)' => 'note#revert', :via => [:post, :put]
   match 'note/update(.:format)(/:id)' => 'note#update', :via => [:post, :put]
 

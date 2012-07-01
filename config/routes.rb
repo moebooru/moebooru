@@ -189,7 +189,7 @@ Moebooru::Application.routes.draw do
   match 'tag/mass_edit'
   match 'tag/edit_preview'
   match 'tag/edit'
-  match 'tag/update(.:format)' => 'tag#update', :via => [:post, :put]
+  match 'tag/update(.:format)' => 'tag#update'
   match 'tag/related(.:format)' => 'tag#related'
   match 'tag/popular_by_day'
   match 'tag/popular_by_week'

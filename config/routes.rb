@@ -179,8 +179,8 @@ Moebooru::Application.routes.draw do
 
   # TagAlias
   match 'tag_alias(/index)' => 'tag_alias#index'
-  match 'tag_alias/create'
-  match 'tag_alias/update'
+  match 'tag_alias/update', :via => [:post, :put]
+  post 'tag_alias/create'
 
   # Tag
   match 'tag/cloud'

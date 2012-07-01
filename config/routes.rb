@@ -208,6 +208,7 @@ Moebooru::Application.routes.draw do
   match 'tag_subscription/destroy'
 
   # User
+  match 'user(/index)(.:format)' => 'user#index'
   match 'user/save_cookies(user)'
   match 'user/change_password'
   match 'user/change_email'
@@ -215,7 +216,6 @@ Moebooru::Application.routes.draw do
   match 'user/show'
   match 'user/invites'
   match 'user/home'
-  match 'user/index'
   match 'user/authenticate'
   match 'user/check'
   match 'user/login'
@@ -270,8 +270,6 @@ Moebooru::Application.routes.draw do
     match 'wiki/unlock(.:format)' => 'wiki#unlock', :via => [:post, :put]
     match 'wiki/revert(.:format)' => 'wiki#revert', :via => [:post, :put]
     match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
-    # Users
-    match 'user(/index)(.:format)' => 'user#index'
   end
 
   root :to => 'static#index'

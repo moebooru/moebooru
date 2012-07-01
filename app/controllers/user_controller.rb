@@ -2,7 +2,6 @@ require 'digest/sha2'
 
 class UserController < ApplicationController
   layout "default"
-  verify :method => [:post, :put], :only => [:authenticate, :update, :create, :unban, :modify_blacklist]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]

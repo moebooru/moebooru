@@ -210,13 +210,11 @@ Moebooru::Application.routes.draw do
   # User
   match 'user(/index)(.:format)' => 'user#index'
   match 'user/activate_user'
-  match 'user/authenticate'
   match 'user/auto_complete_for_member_name'
   match 'user/block'
   match 'user/change_email'
   match 'user/change_password'
   match 'user/check'
-  match 'user/create'
   match 'user/edit'
   match 'user/error'
   match 'user/get_view_name_for_edit(param)'
@@ -224,7 +222,6 @@ Moebooru::Application.routes.draw do
   match 'user/invites'
   match 'user/login'
   match 'user/logout'
-  match 'user/modify_blacklist'
   match 'user/remove_from_blacklist'
   match 'user/resend_confirmation'
   match 'user/reset_password'
@@ -234,7 +231,10 @@ Moebooru::Application.routes.draw do
   match 'user/show_blocked_users'
   match 'user/signup'
   match 'user/unblock'
-  match 'user/update'
+  match 'user/authenticate', :via => [:post, :put]
+  match 'user/modify_blacklist', :via => [:post, :put]
+  match 'user/update', :via => [:post, :put]
+  post 'user/create'
 
   # UserRecord
   match 'user_record/index'

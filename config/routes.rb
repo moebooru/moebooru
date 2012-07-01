@@ -85,14 +85,14 @@ Moebooru::Application.routes.draw do
 
   # Inline
   match 'inline(/index)' => 'inline#index'
-  match 'inline/add_image'
+  match 'inline/add_image(/:id)' => 'inline#add_image'
   match 'inline/create'
-  match 'inline/crop'
-  match 'inline/edit'
-  match 'inline/copy', :via => [:post, :put]
-  match 'inline/update', :via => [:post, :put]
-  match 'inline/delete', :via => [:post, :delete]
-  match 'inline/delete_image', :via => [:post, :delete]
+  match 'inline/crop(/:id)' => 'inline#crop'
+  match 'inline/edit(/:id)' => 'inline#edit'
+  match 'inline/copy(/:id)' => 'inline#copy', :via => [:post, :put]
+  match 'inline/update(/:id)' => 'inline#update', :via => [:post, :put]
+  match 'inline/delete(/:id)' => 'inline#delete', :via => [:post, :delete]
+  match 'inline/delete_image(/:id)' => 'inline#delete_image', :via => [:post, :delete]
 
   # JobTask
   match 'job_task/index'

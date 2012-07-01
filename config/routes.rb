@@ -183,18 +183,18 @@ Moebooru::Application.routes.draw do
   post 'tag_alias/create'
 
   # Tag
-  match 'tag/cloud'
-  match 'tag/summary'
   match 'tag(/index)(.:format)' => 'tag#index'
-  match 'tag/mass_edit'
-  match 'tag/edit_preview'
+  match 'tag/cloud'
   match 'tag/edit'
-  match 'tag/update(.:format)' => 'tag#update'
-  match 'tag/related(.:format)' => 'tag#related'
+  match 'tag/edit_preview'
+  match 'tag/mass_edit'
   match 'tag/popular_by_day'
-  match 'tag/popular_by_week'
   match 'tag/popular_by_month'
+  match 'tag/popular_by_week'
+  match 'tag/related(.:format)' => 'tag#related'
   match 'tag/show'
+  match 'tag/summary'
+  match 'tag/update(.:format)' => 'tag#update'
 
   # TagImplication
   match 'tag_implication/create'

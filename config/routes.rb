@@ -201,9 +201,9 @@ Moebooru::Application.routes.draw do
   post 'tag_implication/create'
 
   # TagSubscription
+  match 'tag_subscription(/index)' => 'tag_subscription#index'
   match 'tag_subscription/create'
   match 'tag_subscription/update'
-  match 'tag_subscription/index'
   match 'tag_subscription/destroy'
 
   # User

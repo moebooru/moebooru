@@ -2,7 +2,6 @@ class CommentController < ApplicationController
   layout "default"
   helper :avatar
 
-  verify :method => :post, :only => [:create, :destroy, :update, :mark_as_spam]
   before_filter :member_only, :only => [:create, :destroy, :update]
   before_filter :janitor_only, :only => [:moderate]
   helper :post

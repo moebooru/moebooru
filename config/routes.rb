@@ -36,15 +36,15 @@ Moebooru::Application.routes.draw do
   post 'blocks/unblock_ip'
 
   # Comment
-  match 'comment/edit'
-  match 'comment/update'
-  match 'comment/destroy'
-  match 'comment/create'
-  match 'comment/show'
-  match 'comment/index'
-  match 'comment/search'
+  match 'comment(/index)' => 'comment#index'
+  match 'comment/edit(/:id)' => 'comment#edit'
   match 'comment/moderate'
-  match 'comment/mark_as_spam'
+  match 'comment/search'
+  match 'comment/show(.:format)(/:id)' => 'comment#show'
+  match 'comment/destroy(.:format)(/:id)' => 'comment#destroy', :via => [:post, :delete]
+  match 'comment/update(/:id)' => 'comment/update', :via => [:post, :put]
+  post 'comment/create(.:format)' => 'comment#create'
+  post 'comment/mark_as_spam(/:id)' => 'comment#mark_as_spam'
 
   # Dmail
   match 'dmail/preview'
@@ -265,10 +265,6 @@ Moebooru::Application.routes.draw do
     match 'tag(/index)(.:format)' => 'tag#index'
     match 'tag/related(.:format)' => 'tag#related'
     match 'tag/update(.:format)' => 'tag#update', :via => [:post, :put]
-    # Comments
-    match 'comment/show(.:format)' => 'comment#show'
-    match 'comment/create(.:format)' => 'comment#create', :via => :post
-    match 'comment/destroy(.:format)' => 'comment#destroy', :via => [:post, :delete]
     # Wiki
     match 'wiki(/index)(.:format)' => 'wiki#index'
     match 'wiki/show(.:format)' => 'wiki#show'

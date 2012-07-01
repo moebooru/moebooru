@@ -108,18 +108,18 @@ Moebooru::Application.routes.draw do
   match 'note/update(.:format)(/:id)' => 'note#update', :via => [:post, :put]
 
   # Pool
-  match 'pool/index'
-  match 'pool/show'
-  match 'pool/update'
-  match 'pool/create'
+  match 'pool(/index)(.:format)' => 'pool#index'
+  match 'pool/show(.:format)(/:id)' => 'pool#show'
+  match 'pool/update(.:format)(/:id)' => 'pool#update', :via => [:post, :put]
+  match 'pool/create(.:format)' => 'pool#create', :via => :post
   match 'pool/copy'
-  match 'pool/destroy'
-  match 'pool/add_post'
-  match 'pool/remove_post'
+  match 'pool/destroy(.:format)(/:id)' => 'pool#destroy', :via => [:post, :delete]
+  match 'pool/add_post(.:format)' => 'pool#add_post', :via => [:post, :put]
+  match 'pool/remove_post(.:format)' => 'pool#remove_post', :via => [:post, :put]
   match 'pool/order'
   match 'pool/import'
   match 'pool/select'
-  match 'pool/zip'
+  match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :filename => /.*/ }
   match 'pool/transfer_metadata'
 
   # Post
@@ -277,14 +277,6 @@ Moebooru::Application.routes.draw do
     match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
     # Users
     match 'user(/index)(.:format)' => 'user#index'
-    # Pools
-    match 'pool(/index)(.:format)' => 'pool#index'
-    match 'pool/create(.:format)' => 'pool#create', :via => :post
-    match 'pool/show(.:format)(/:id)' => 'pool#show'
-    match 'pool/update(.:format)(/:id)' => 'pool#update', :via => [:post, :put]
-    match 'pool/destroy(.:format)(/:id)' => 'pool#destroy', :via => [:post, :delete]
-    match 'pool/add_post(.:format)' => 'pool#add_post', :via => [:post, :put]
-    match 'pool/remove_post(.:format)' => 'pool#remove_post', :via => [:post, :put]
   end
 
   # Atom
@@ -293,7 +285,6 @@ Moebooru::Application.routes.draw do
   match 'atom' => 'post#atom'
 
   match 'post/show/:id(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
-  match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :id => /\d+/, :filename => /.*/ }
   match 'histogram' => 'post#histogram'
   match 'download' => 'post#download'
   root :to => 'static#index'

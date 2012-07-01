@@ -26,10 +26,10 @@ Moebooru::Application.routes.draw do
   match 'banned(/index)' => 'banned#index'
 
   # Batch
-  match 'batch/index'
-  match 'batch/update'
+  match 'batch(/index)' => 'batch#index'
   match 'batch/create'
-  match 'batch/enqueue'
+  post 'batch/enqueue'
+  post 'batch/update'
 
   # Blocks
   match 'blocks/block_ip'

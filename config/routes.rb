@@ -15,12 +15,12 @@ Moebooru::Application.routes.draw do
   end
 
   # Artist
+  match 'artist(/index)(.:format)' => 'artist#index'
+  match 'artist/create(.:format)' => 'artist#create'
+  match 'artist/destroy(.:format)(/:id)' => 'artist#destroy'
   match 'artist/preview'
-  match 'artist/destroy'
-  match 'artist/update'
-  match 'artist/create'
-  match 'artist/index'
-  match 'artist/show'
+  match 'artist/show(/:id)'
+  match 'artist/update(.:format)(/:id)' => 'artist#update'
 
   # Banned
   match 'banned/index'
@@ -265,11 +265,6 @@ Moebooru::Application.routes.draw do
     match 'tag(/index)(.:format)' => 'tag#index'
     match 'tag/related(.:format)' => 'tag#related'
     match 'tag/update(.:format)' => 'tag#update', :via => [:post, :put]
-    # Artists
-    match 'artist(/index)(.:format)' => 'artist#index'
-    match 'artist/create(.:format)' => 'artist#create', :via => :post
-    match 'artist/update(.:format)' => 'artist#update', :via => [:post, :put]
-    match 'artist/destroy(.:format)' => 'artist#destroy', :via => [:post, :delete]
     # Comments
     match 'comment/show(.:format)' => 'comment#show'
     match 'comment/create(.:format)' => 'comment#create', :via => :post

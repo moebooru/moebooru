@@ -204,7 +204,7 @@ Moebooru::Application.routes.draw do
   match 'tag_subscription(/index)' => 'tag_subscription#index'
   match 'tag_subscription/create'
   match 'tag_subscription/update'
-  match 'tag_subscription/destroy'
+  match 'tag_subscription/destroy(/:id)' => 'tag_subscription#destroy'
 
   # User
   match 'user(/index)(.:format)' => 'user#index'

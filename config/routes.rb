@@ -235,7 +235,7 @@ Moebooru::Application.routes.draw do
   post 'user/create'
 
   # UserRecord
-  match 'user_record/index'
+  match 'user_record(/index)' => 'user_record#index'
   match 'user_record/create'
   match 'user_record/destroy'
 

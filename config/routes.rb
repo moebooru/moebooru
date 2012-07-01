@@ -85,10 +85,10 @@ Moebooru::Application.routes.draw do
 
   # Inline
   match 'inline(/index)' => 'inline#index'
-  match 'inline/create'
   match 'inline/add_image'
-  match 'inline/edit'
+  match 'inline/create'
   match 'inline/crop'
+  match 'inline/edit'
   match 'inline/copy', :via => [:post, :put]
   match 'inline/update', :via => [:post, :put]
   match 'inline/delete', :via => [:post, :delete]

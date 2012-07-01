@@ -19,7 +19,7 @@ Moebooru::Application.routes.draw do
   match 'artist/create(.:format)' => 'artist#create'
   match 'artist/destroy(.:format)(/:id)' => 'artist#destroy'
   match 'artist/preview'
-  match 'artist/show(/:id)'
+  match 'artist/show(/:id)' => 'artist#show'
   match 'artist/update(.:format)(/:id)' => 'artist#update'
 
   # Banned

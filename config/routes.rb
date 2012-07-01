@@ -172,7 +172,10 @@ Moebooru::Application.routes.draw do
   match 'report/set_dates'
 
   # Static
+  match 'static/500'
   match 'static/index'
+  match 'static/more'
+  match 'static/terms_of_service'
 
   # TagAlias
   match 'tag_alias/create'

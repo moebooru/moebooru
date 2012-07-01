@@ -64,16 +64,16 @@ Moebooru::Application.routes.draw do
   match 'forum/preview'
   match 'forum/new'
   match 'forum/add'
-  match 'forum/edit'
-  match 'forum/show'
+  match 'forum/edit(/:id)' => 'forum#edit'
+  match 'forum/show(/:id)' => 'forum#show'
   match 'forum/search'
   match 'forum/mark_all_read'
   match 'forum/lock', :via => [:post, :put]
-  match 'forum/stick', :via => [:post, :put]
-  match 'forum/unlock', :via => [:post, :put]
-  match 'forum/unstick', :via => [:post, :put]
-  match 'forum/update', :via => [:post, :put]
-  match 'forum/destroy', :via => [:post, :delete]
+  match 'forum/stick(/:id)' => 'forum#stick', :via => [:post, :put]
+  match 'forum/unlock(/:id)' => 'forum#unlock', :via => [:post, :put]
+  match 'forum/unstick(/:id)' => 'forum#unstick', :via => [:post, :put]
+  match 'forum/update(/:id)' => 'forum#update', :via => [:post, :put]
+  match 'forum/destroy(/:id)' => 'forum#destroy', :via => [:post, :delete]
   post 'forum/create'
 
   # Help

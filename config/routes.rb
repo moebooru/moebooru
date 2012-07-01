@@ -84,8 +84,8 @@ Moebooru::Application.routes.draw do
   post 'history/undo'
 
   # Inline
+  match 'inline(/index)' => 'inline#index'
   match 'inline/create'
-  match 'inline/index'
   match 'inline/add_image'
   match 'inline/edit'
   match 'inline/crop'

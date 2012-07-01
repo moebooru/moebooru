@@ -51,9 +51,9 @@ Moebooru::Application.routes.draw do
   match 'dmail/auto_complete_for_dmail_to_name'
   match 'dmail/show_previous_messages'
   match 'dmail/compose'
-  match 'dmail/create'
   match 'dmail/inbox'
   match 'dmail/show'
+  post 'dmail/create'
   post 'dmail/mark_all_read'
 
   # Favorite

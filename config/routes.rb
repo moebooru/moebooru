@@ -147,7 +147,6 @@ Moebooru::Application.routes.draw do
   match 'post/update_batch'
   match 'post/upload'
   match 'post/upload_problem'
-  match 'post/verify_action(options)'
   match 'post/view(/:id)' => 'post#view'
   match 'post/flag(/:id)' => 'post#flag', :via => [:post, :put]
   match 'post/revert_tags(.:format)(/:id)' => 'post#revert_tags', :via => [:post, :put]

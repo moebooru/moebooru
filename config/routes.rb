@@ -161,7 +161,7 @@ Moebooru::Application.routes.draw do
   match 'histogram' => 'post#histogram'
 
   # PostTagHistory
-  match 'post_tag_history/index'
+  match 'post_tag_history(/index)' => 'post_tag_history#index'
 
   # Report
   match 'report/tag_updates'

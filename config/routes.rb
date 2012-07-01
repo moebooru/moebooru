@@ -16,7 +16,7 @@ Moebooru::Application.routes.draw do
 
   # Artist
   match 'artist(/index)(.:format)' => 'artist#index'
-  match 'artist/create(.:format)' => 'artist#create'
+  match 'artist/create(.:format)'
   match 'artist/destroy(.:format)(/:id)' => 'artist#destroy'
   match 'artist/preview'
   match 'artist/show(/:id)' => 'artist#show'
@@ -43,7 +43,7 @@ Moebooru::Application.routes.draw do
   match 'comment/show(.:format)(/:id)' => 'comment#show'
   match 'comment/destroy(.:format)(/:id)' => 'comment#destroy', :via => [:post, :delete]
   match 'comment/update(/:id)' => 'comment/update', :via => [:post, :put]
-  post 'comment/create(.:format)' => 'comment#create'
+  post 'comment/create(.:format)'
   post 'comment/mark_as_spam(/:id)' => 'comment#mark_as_spam'
 
   # Dmail

@@ -393,11 +393,7 @@ class PostController < ApplicationController
   end
 
   def atom
-    # We get a lot of bogus "/post/atom.feed" requests that spam our error logs.  Make sure
-    # we only try to format atom.xml.
-    if not params[:format].nil? then
-      params[:format] = "html"
-    end
+    params[:format] = "html"
 
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
     headers["Content-Type"] = "application/atom+xml"

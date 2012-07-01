@@ -13,23 +13,6 @@ class PostController < ApplicationController
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
 
-  def verify_action(options)
-    redirect_to_proc = false
-
-    if options[:redirect_to] && options[:redirect_to][:id].is_a?(Proc)
-      redirect_to_proc = options[:redirect_to][:id]
-      options[:redirect_to][:id] = options[:redirect_to][:id].call(self)
-    end
-
-    result = super(options)
-
-    if redirect_to_proc
-      options[:redirect_to][:id] = redirect_to_proc
-    end
-
-    return result
-  end
-
   def activate
     ids = params[:post_ids].map { |id| id.to_i }
     changed = Post.batch_activate(@current_user.is_mod_or_higher? ? nil: @current_user.id, ids)

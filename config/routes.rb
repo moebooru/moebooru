@@ -123,40 +123,40 @@ Moebooru::Application.routes.draw do
   match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :filename => /.*/ }
 
   # Post
-  match 'post/verify_action(options)'
-  match 'post/activate'
-  match 'post/upload_problem'
-  match 'post/upload'
-  match 'post/create(.:format)' => 'post#create', :via => :post
-  match 'post/moderate'
-  match 'post/update(.:format)' => 'post#update', :via => [:post, :put]
-  match 'post/update_batch'
-  match 'post/delete'
-  match 'post/destroy(.:format)' => 'post#destroy', :via => [:post, :delete]
-  match 'post/deleted_index'
-  match 'post/acknowledge_new_deleted_posts'
   match 'post(/index)(.:format)' => 'post#index'
+  match 'post/acknowledge_new_deleted_posts'
+  match 'post/activate'
   match 'post/atom(.xml)' => 'post#atom'
   match 'post/atom.feed' => 'post#atom'
-  match 'post/piclens'
-  match 'post/show/:id(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
   match 'post/browse'
-  match 'post/view'
-  match 'post/popular_recent'
-  match 'post/popular_by_day'
-  match 'post/popular_by_week'
-  match 'post/popular_by_month'
-  match 'post/revert_tags(.:format)' => 'post#revert_tags', :via => [:post, :put]
-  match 'post/vote(.:format)' => 'post#vote', :via => [:post, :put]
-  match 'post/flag'
-  match 'post/random'
-  match 'post/similar'
-  match 'post/search(params)'
-  match 'post/undelete'
+  match 'post/delete'
+  match 'post/deleted_index'
+  match 'post/download'
   match 'post/error'
   match 'post/exception'
-  match 'post/download'
   match 'post/histogram'
+  match 'post/moderate'
+  match 'post/piclens'
+  match 'post/popular_by_day'
+  match 'post/popular_by_month'
+  match 'post/popular_by_week'
+  match 'post/popular_recent'
+  match 'post/random'
+  match 'post/search(params)'
+  match 'post/show/:id(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
+  match 'post/similar'
+  match 'post/undelete'
+  match 'post/update_batch'
+  match 'post/upload'
+  match 'post/upload_problem'
+  match 'post/verify_action(options)'
+  match 'post/view'
+  match 'post/flag', :via => [:post, :put]
+  match 'post/revert_tags(.:format)' => 'post#revert_tags', :via => [:post, :put]
+  match 'post/update(.:format)' => 'post#update', :via => [:post, :put]
+  match 'post/vote(.:format)' => 'post#vote', :via => [:post, :put]
+  match 'post/destroy(.:format)' => 'post#destroy', :via => [:post, :delete]
+  post 'post/create(.:format)' => 'post#create'
 
   match 'atom' => 'post#atom'
   match 'download' => 'post#download'

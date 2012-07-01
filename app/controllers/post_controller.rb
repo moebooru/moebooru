@@ -4,8 +4,6 @@ class PostController < ApplicationController
   layout 'default'
   helper :avatar
 
-  verify :method => :post, :only => [:update, :destroy, :create, :revert_tags, :vote, :flag], :redirect_to => {:action => :show, :id => lambda {|c| c.params[:id]}}
-
   before_filter :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
   before_filter :post_member_only, :only => [:update, :upload, :flag]
   before_filter :janitor_only, :only => [:moderate, :undelete]

@@ -185,12 +185,12 @@ Moebooru::Application.routes.draw do
   # Tag
   match 'tag/cloud'
   match 'tag/summary'
-  match 'tag/index'
+  match 'tag(/index)(.:format)' => 'tag#index'
   match 'tag/mass_edit'
   match 'tag/edit_preview'
   match 'tag/edit'
-  match 'tag/update'
-  match 'tag/related'
+  match 'tag/update(.:format)' => 'tag#update', :via => [:post, :put]
+  match 'tag/related(.:format)' => 'tag#related'
   match 'tag/popular_by_day'
   match 'tag/popular_by_week'
   match 'tag/popular_by_month'
@@ -260,10 +260,6 @@ Moebooru::Application.routes.draw do
 
   # API 1.13.0
   scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/, :id => /\d+/ } do
-    # Tags
-    match 'tag(/index)(.:format)' => 'tag#index'
-    match 'tag/related(.:format)' => 'tag#related'
-    match 'tag/update(.:format)' => 'tag#update', :via => [:post, :put]
     # Wiki
     match 'wiki(/index)(.:format)' => 'wiki#index'
     match 'wiki/show(.:format)' => 'wiki#show'

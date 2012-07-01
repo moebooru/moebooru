@@ -32,8 +32,8 @@ Moebooru::Application.routes.draw do
   post 'batch/update'
 
   # Blocks
-  match 'blocks/block_ip'
-  match 'blocks/unblock_ip'
+  post 'blocks/block_ip'
+  post 'blocks/unblock_ip'
 
   # Comment
   match 'comment/edit'

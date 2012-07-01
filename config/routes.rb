@@ -128,7 +128,7 @@ Moebooru::Application.routes.draw do
   match 'post/activate'
   match 'post/atom(.:format)' => 'post#atom'
   match 'post/browse'
-  match 'post/delete'
+  match 'post/delete(/:id)' => 'post#delete'
   match 'post/deleted_index'
   match 'post/download'
   match 'post/error'
@@ -140,21 +140,20 @@ Moebooru::Application.routes.draw do
   match 'post/popular_by_month'
   match 'post/popular_by_week'
   match 'post/popular_recent'
-  match 'post/random'
-  match 'post/search(params)'
-  match 'post/show/:id(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
-  match 'post/similar'
-  match 'post/undelete'
+  match 'post/random(/:id)' => 'post#random'
+  match 'post/show(/:id)(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
+  match 'post/similar(/:id)' => 'post#similar'
+  match 'post/undelete(/:id)' => 'post#undelete'
   match 'post/update_batch'
   match 'post/upload'
   match 'post/upload_problem'
   match 'post/verify_action(options)'
-  match 'post/view'
-  match 'post/flag', :via => [:post, :put]
-  match 'post/revert_tags(.:format)' => 'post#revert_tags', :via => [:post, :put]
-  match 'post/update(.:format)' => 'post#update', :via => [:post, :put]
-  match 'post/vote(.:format)' => 'post#vote', :via => [:post, :put]
-  match 'post/destroy(.:format)' => 'post#destroy', :via => [:post, :delete]
+  match 'post/view(/:id)' => 'post#view'
+  match 'post/flag(/:id)' => 'post#flag', :via => [:post, :put]
+  match 'post/revert_tags(.:format)(/:id)' => 'post#revert_tags', :via => [:post, :put]
+  match 'post/update(.:format)(/:id)' => 'post#update', :via => [:post, :put]
+  match 'post/vote(.:format)(/:id)' => 'post#vote', :via => [:post, :put]
+  match 'post/destroy(.:format)(/:id)' => 'post#destroy', :via => [:post, :delete]
   post 'post/create(.:format)' => 'post#create'
 
   match 'atom' => 'post#atom'

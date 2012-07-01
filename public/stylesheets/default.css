@@ -992,7 +992,7 @@ div#paginator a.arrow:hover {
   color: #33CFFF;
 }
 
-div.pagination .current {
+div#paginator .current {
   font-style: normal;
   margin: 0 3px;
   padding: 2px 6px;
@@ -1324,7 +1324,7 @@ ul#post-list-posts .inner {
 
 ul#post-list-posts li {
   list-style-type: none;
-
+  float: left;
   margin: 0 0 10px 0;
   display: inline-block;
   vertical-align: bottom;

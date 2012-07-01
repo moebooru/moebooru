@@ -3,7 +3,6 @@ require 'extract_urls'
 class BatchController < ApplicationController
   layout 'default'
   before_filter :contributor_only, :only => [:index, :create, :enqueue, :update]
-  verify :method => :post, :only => [:update, :enqueue]
 
   def index
     set_title "Batch queue"

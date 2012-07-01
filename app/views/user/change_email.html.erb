@@ -1,0 +1,29 @@
+<div id="user-edit">
+  <%= form_for @current_user, :url => { :action => :update } do |f| %>
+    <%= hidden_field :render, :view, :value => :change_email %>
+    <%-# Just so the current email carries over on error -%>
+    <%= f.hidden_field :current_email %>
+    <%= render 'shared/error_messages', :object => f.object %>
+    <table>
+      <tbody>
+        <tr>
+          <th><%= t('.current_email') %></th>
+          <td><%= @current_user.current_email %></td>
+        </tr>
+        <tr>
+          <th><%= f.label :email, t('.new_email') %></th>
+          <td><%= f.text_field :email %></td>
+        </tr>
+        <tr>
+          <th><%= f.label t('.current_password') %></th>
+          <td><%= f.password_field :current_password %></td>
+        </tr>
+        <tr>
+          <td><%= f.submit t('buttons.save') %> <%= f.submit t('buttons.cancel') %></td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<%= render :partial => "footer" %>

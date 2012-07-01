@@ -107,6 +107,11 @@ module SimilarImages
         next
       end
 
+      if not doc.root
+        errors[server] = { :message => 'invalid response' }
+        next
+      end
+
       if doc.root.name=="error"
         errors[server] = { :message=>doc.root[:message] }
         next

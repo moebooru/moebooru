@@ -75,7 +75,7 @@
   notes_menu.push(<%= make_sub_item(t(:layout_view_notes), :controller => :note, :action => "index") %>);
   notes_menu.push(<%= make_sub_item(t(:layout_search_notes), :controller => :note, :action => "search") %>);
   notes_menu[notes_menu.length-1].func = ShowNoteSearch;
-  notes_menu.push(<%= make_sub_item(t(:layout_requests), :controller => :posts, :action => "index", :tags => "translation_request") %>);
+  notes_menu.push(<%= make_sub_item(t(:layout_requests), :controller => :post, :action => "index", :tags => "translation_request") %>);
   def.push(<%= make_main_item(t(:layout_notes), {:controller => :note, :action => "index"}, {:name => "notes"}) %>);
   def[def.length-1].sub = notes_menu;
 
@@ -133,7 +133,7 @@
   var help_menu = [];
   <% current_controller = @current_request.parameters[:controller].to_sym %>
   <% if [:post, :comment, :note, :artist, :tag, :wiki, :pool, :forum].include?(current_controller) then %>
-    help_menu.push(<%= make_sub_item("#{current_controller.to_s.capitalize} t(:layout_help)", {:controller => :help, :action => get_help_action_for_controller(current_controller)}) %>);
+    help_menu.push(<%= make_sub_item("#{current_controller.to_s.capitalize} " + t(:layout_help), {:controller => :help, :action => get_help_action_for_controller(current_controller)}) %>);
   <% end %>
   help_menu.push(<%= make_sub_item(t(:layout_site_help), {:controller => :help}) %>);
   def.push(<%= make_main_item(t(:layout_help), {:controller => :help}, {:name => "help"}) %>);

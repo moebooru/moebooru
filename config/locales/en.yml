@@ -30,6 +30,14 @@ en:
   user:
     change_password:
       new_password: New password
+    change_email:
+      current_password: Current password
+      current_email: Current Email
+      new_email: New Email
+    edit:
+      email: Email
+      no_email: none
+      update_email: Change
     home:
       not_logged_in: You are not logged in.
       login: Login
@@ -441,7 +449,7 @@ en:
   pool_add2: "Add"
   #view/pool/show
   pool_jpeg: "Download JPGs"
-  pool_png: "Donwload"
+  pool_png: "Download"
   pool_index: "Index View"
   pool_toggle: "Toggle View"
   pool_edit: "Edit"

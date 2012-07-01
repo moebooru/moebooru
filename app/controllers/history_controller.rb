@@ -3,7 +3,6 @@ require 'versioning'
 class HistoryController < ApplicationController
   layout 'default'
 #  before_filter :member_only
-  verify :method => :post, :only => [:undo]
 
   def index
     set_title "History"

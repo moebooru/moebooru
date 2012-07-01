@@ -255,22 +255,13 @@ class ApplicationController < ActionController::Base
   include CacheHelper
   #local_addresses.clear
 
-  before_filter :time_start
   before_filter :set_title
   before_filter :set_current_user
   before_filter :set_current_request
   before_filter :set_country
   before_filter :check_ip_ban
   after_filter :init_cookies
-  after_filter :time_end
   protect_from_forgery
-  def time_start
-    @start = Time.now
-  end
-  def time_end
-    t = Time.now - @start
-    File.open("/tmp/temp", 'a+') {|f| f.write("%.3f %s %15s %s\n" % [t, @current_user_country, request.ip, request.fullpath])}
-  end
 
   protected :build_cache_key
   protected :get_cache_key
@@ -298,15 +289,6 @@ class ApplicationController < ActionController::Base
     end
 
     redirect_to :controller => "banned", :action => "index"
-  end
-
-  def check_load_average
-    current_load = Sys::CPU.load_avg[1]
-
-    if request.get? && request.env["HTTP_USER_AGENT"] !~ /Google/ && current_load > CONFIG["load_average_threshold"] && @current_user.is_member_or_lower?
-      render :file => "#{Rails.root}/public/503.html", :status => 503
-      return false
-    end
   end
 
   def set_title(title = CONFIG["app_name"])

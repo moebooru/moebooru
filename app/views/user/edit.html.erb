@@ -20,7 +20,7 @@
         </tr>
         <tr>
           <th>
-            <label class="block" for="user_email"><%=t :user3 %></label>
+            <%= t('.email') %>
             <% if CONFIG["enable_account_email_activation"] %>
               <p><%=t :user4 %></p>
             <% else %>
@@ -28,7 +28,7 @@
             <% end %>
           </th>
           <td>
-            <%= text_field "user", "email", :size => 40 %>
+            <%= @user.email.blank? ? t('.no_email') : @user.email %> (<%= link_to t('.update_email'), :action => :change_email %>)
           </td>
         </tr>
         <tr>

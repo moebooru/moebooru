@@ -4,7 +4,6 @@ class WikiController < ApplicationController
   layout 'default'
   before_filter :post_member_only, :only => [:update, :create, :edit, :revert]
   before_filter :mod_only, :only => [:lock, :unlock, :destroy, :rename]
-  verify :method => :post, :only => [:lock, :unlock, :destroy, :update, :create, :revert]
   helper :post
 
   def destroy

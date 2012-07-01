@@ -2,12 +2,11 @@ require 'digest/sha2'
 
 class UserController < ApplicationController
   layout "default"
-  verify :method => [:post, :put], :only => [:authenticate, :update, :create, :unban, :modify_blacklist]
   before_filter :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
   before_filter :post_member_only, :only => [:set_avatar]
-  before_filter :no_anonymous, :only => [:change_password]
+  before_filter :no_anonymous, :only => [:change_password, :change_email]
   helper :post, :tag_subscription
   helper :avatar
   auto_complete_for :user, :name
@@ -22,6 +21,11 @@ class UserController < ApplicationController
   public
   def change_password
     @title = 'Change Password'
+  end
+
+  def change_email
+    @title = 'Change Email'
+    @current_user.current_email = @current_user.email
   end
 
   def auto_complete_for_member_name
@@ -180,7 +184,7 @@ class UserController < ApplicationController
       respond_to_success("Account settings saved", :action => "edit")
     else
       if params[:render] and params[:render][:view]
-        render params[:render][:view]
+        render get_view_name_for_edit(params[:render][:view])
       else
         respond_to_error(@current_user, :action => "edit")
       end
@@ -365,5 +369,17 @@ class UserController < ApplicationController
     end
 
     render :json => {:success => true}
+  end
+
+  private
+  def get_view_name_for_edit(param)
+    case param
+    when 'change_email'
+      :change_email
+    when 'change_password'
+      :change_password
+    else
+      :edit
+    end
   end
 end

@@ -8,30 +8,10 @@ class PostController < ApplicationController
   before_filter :post_member_only, :only => [:update, :upload, :flag]
   before_filter :janitor_only, :only => [:moderate, :undelete]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
-  if CONFIG["load_average_threshold"]
-    before_filter :check_load_average, :only => [:index, :popular_by_day, :popular_by_week, :popular_by_month, :random, :atom, :piclens]
-  end
 
   around_filter :cache_action, :only => [:index, :atom, :piclens]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
-
-  def verify_action(options)
-    redirect_to_proc = false
-
-    if options[:redirect_to] && options[:redirect_to][:id].is_a?(Proc)
-      redirect_to_proc = options[:redirect_to][:id]
-      options[:redirect_to][:id] = options[:redirect_to][:id].call(self)
-    end
-
-    result = super(options)
-
-    if redirect_to_proc
-      options[:redirect_to][:id] = redirect_to_proc
-    end
-
-    return result
-  end
 
   def activate
     ids = params[:post_ids].map { |id| id.to_i }
@@ -279,7 +259,7 @@ class PostController < ApplicationController
   def index
     tags = params[:tags].to_s
     split_tags = QueryParser.parse(tags)
-    page = params[:page].to_i > 0 ? params[:page].to_i : 1
+    page = params[:page]
 
 #    if @current_user.is_member_or_lower? && split_tags.size > 2
 #      respond_to_error("You can only search up to two tags at once with a basic account", :action => "error")
@@ -396,13 +376,7 @@ class PostController < ApplicationController
   end
 
   def atom
-    # We get a lot of bogus "/post/atom.feed" requests that spam our error logs.  Make sure
-    # we only try to format atom.xml.
-    if not params[:format].nil? then
-      # If we don't change the format, it tries to render "404.feed".
-      params[:format] = "html"
-      raise ActiveRecord::RecordNotFound
-    end
+    params[:format] = "html"
 
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
     headers["Content-Type"] = "application/atom+xml"
@@ -444,8 +418,13 @@ class PostController < ApplicationController
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
       set_title @post.title_tags.tr("_", " ")
+      respond_to do |format|
+        format.html
+      end
     rescue ActiveRecord::RecordNotFound
-      render :action => "show_empty", :status => 404
+      respond_to do |format|
+        format.html { render :action => "show_empty", :status => 404 }
+      end
     end
   end
 

@@ -1,7 +1,6 @@
 class TagAliasController < ApplicationController
   layout "default"
   before_filter :member_only, :only => [:create]
-  verify :method => :post, :only => [:create, :update]
 
   def create
     ta = TagAlias.new(params[:tag_alias].merge(:is_pending => true))

@@ -65,7 +65,7 @@
   <div class="content">
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
-        <%=t :post_amb %><%= @ambiguous_tags.map {|x| link_to(h(x), :controller => "wiki", :action => "show", :title => x)}.join(', ') %>
+        <%=t :post_amb %><%= @ambiguous_tags.map {|x| link_to(x, :controller => :wiki, :action => :show, :title => x)}.join(', ').html_safe %>
       </div>
     <% end %>
      <% if CONFIG["can_see_ads"].call(@current_user) %>

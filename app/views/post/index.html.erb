@@ -94,7 +94,7 @@
 <script type="text/javascript">
   post_quick_edit = new PostQuickEdit($("quick-edit"));
 
-  PostModeMenu.init(<%= j(@searching_pool && @searching_pool.id) %>)
+  PostModeMenu.init(<%= j(@searching_pool && @searching_pool.id.to_s) %>)
   <% @preload.each do |post| %>
   Preload.preload('<%= escape_javascript(post.preview_url) %>');
   <% end %>

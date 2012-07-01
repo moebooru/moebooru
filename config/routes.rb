@@ -23,7 +23,7 @@ Moebooru::Application.routes.draw do
   match 'artist/update(.:format)(/:id)' => 'artist#update'
 
   # Banned
-  match 'banned/index'
+  match 'banned(/index)' => 'banned#index'
 
   # Batch
   match 'batch/index'

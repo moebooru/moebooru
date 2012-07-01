@@ -80,7 +80,7 @@ Moebooru::Application.routes.draw do
   match 'help/:action' => 'help#:action'
 
   # History
-  match 'history/index'
+  match 'history(/index)' => 'history#index'
   post 'history/undo'
 
   # Inline

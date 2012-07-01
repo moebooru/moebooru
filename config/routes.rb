@@ -112,12 +112,12 @@ Moebooru::Application.routes.draw do
   match 'pool/show(.:format)(/:id)' => 'pool#show'
   match 'pool/update(.:format)(/:id)' => 'pool#update', :via => [:post, :put]
   match 'pool/create(.:format)' => 'pool#create', :via => :post
-  match 'pool/copy'
+  match 'pool/copy(/:id)' => 'pool#copy'
   match 'pool/destroy(.:format)(/:id)' => 'pool#destroy', :via => [:post, :delete]
   match 'pool/add_post(.:format)' => 'pool#add_post', :via => [:post, :put]
   match 'pool/remove_post(.:format)' => 'pool#remove_post', :via => [:post, :put]
-  match 'pool/order'
-  match 'pool/import'
+  match 'pool/order(/:id)' => 'pool#order'
+  match 'pool/import(/:id)' => 'pool#import'
   match 'pool/select'
   match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :filename => /.*/ }
   match 'pool/transfer_metadata'

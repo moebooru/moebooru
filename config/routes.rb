@@ -256,9 +256,5 @@ Moebooru::Application.routes.draw do
   match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
   post 'wiki/create(.:format)' => 'wiki#create'
 
-  # API 1.13.0
-  scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/, :id => /\d+/ } do
-  end
-
   root :to => 'static#index'
 end

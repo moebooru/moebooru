@@ -149,9 +149,6 @@ GEM
       rack
       raindrops (~> 0.7)
     valuable (0.9.5)
-    verification (1.0.1)
-      actionpack (~> 3.0.0)
-      activesupport (~> 3.0.0)
     will-paginate-i18n (0.1.7)
     will_paginate (3.0.3)
 
@@ -184,6 +181,5 @@ DEPENDENCIES
   schema_plus
   sitemap_generator
   unicorn
-  verification
   will-paginate-i18n
   will_paginate

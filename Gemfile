@@ -22,7 +22,6 @@ gem 'sitemap_generator'
 gem 'daemons'
 gem 'newrelic_rpm'
 gem 'nokogiri'
-gem 'verification'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'

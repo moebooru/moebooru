@@ -127,26 +127,27 @@ Moebooru::Application.routes.draw do
   match 'post/activate'
   match 'post/upload_problem'
   match 'post/upload'
-  match 'post/create'
+  match 'post/create(.:format)' => 'post#create', :via => :post
   match 'post/moderate'
-  match 'post/update'
+  match 'post/update(.:format)' => 'post#update', :via => [:post, :put]
   match 'post/update_batch'
   match 'post/delete'
-  match 'post/destroy'
+  match 'post/destroy(.:format)' => 'post#destroy', :via => [:post, :delete]
   match 'post/deleted_index'
   match 'post/acknowledge_new_deleted_posts'
-  match 'post/index'
-  match 'post/atom'
+  match 'post(/index)(.:format)' => 'post#index'
+  match 'post/atom(.xml)' => 'post#atom'
+  match 'post/atom.feed' => 'post#atom'
   match 'post/piclens'
-  match 'post/show'
+  match 'post/show/:id(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
   match 'post/browse'
   match 'post/view'
   match 'post/popular_recent'
   match 'post/popular_by_day'
   match 'post/popular_by_week'
   match 'post/popular_by_month'
-  match 'post/revert_tags'
-  match 'post/vote'
+  match 'post/revert_tags(.:format)' => 'post#revert_tags', :via => [:post, :put]
+  match 'post/vote(.:format)' => 'post#vote', :via => [:post, :put]
   match 'post/flag'
   match 'post/random'
   match 'post/similar'
@@ -156,6 +157,10 @@ Moebooru::Application.routes.draw do
   match 'post/exception'
   match 'post/download'
   match 'post/histogram'
+
+  match 'atom' => 'post#atom'
+  match 'download' => 'post#download'
+  match 'histogram' => 'post#histogram'
 
   # PostTagHistory
   match 'post_tag_history/index'
@@ -254,13 +259,6 @@ Moebooru::Application.routes.draw do
 
   # API 1.13.0
   scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/, :id => /\d+/ } do
-    # Posts
-    match 'post(/index)(.:format)' => 'post#index'
-    match 'post/create(.:format)' => 'post#create', :via => :post
-    match 'post/update(.:format)' => 'post#update', :via => [:post, :put]
-    match 'post/revert_tags(.:format)' => 'post#revert_tags', :via => [:post, :put]
-    match 'post/vote(.:format)' => 'post#vote', :via => [:post, :put]
-    match 'post/destroy(.:format)' => 'post#destroy', :via => [:post, :delete]
     # Tags
     match 'tag(/index)(.:format)' => 'tag#index'
     match 'tag/related(.:format)' => 'tag#related'
@@ -279,13 +277,5 @@ Moebooru::Application.routes.draw do
     match 'user(/index)(.:format)' => 'user#index'
   end
 
-  # Atom
-  match 'post/atom(.xml)' => 'post#atom'
-  match 'post/atom.feed' => 'post#atom'
-  match 'atom' => 'post#atom'
-
-  match 'post/show/:id(/*tag_title)' => 'post#show', :constraints => { :id => /\d+/ }, :format => false
-  match 'histogram' => 'post#histogram'
-  match 'download' => 'post#download'
   root :to => 'static#index'
 end

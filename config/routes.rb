@@ -86,13 +86,13 @@ Moebooru::Application.routes.draw do
   # Inline
   match 'inline/create'
   match 'inline/index'
-  match 'inline/delete'
   match 'inline/add_image'
-  match 'inline/delete_image'
-  match 'inline/update'
-  match 'inline/copy'
   match 'inline/edit'
   match 'inline/crop'
+  match 'inline/copy', :via => [:post, :put]
+  match 'inline/update', :via => [:post, :put]
+  match 'inline/delete', :via => [:post, :delete]
+  match 'inline/delete_image', :via => [:post, :delete]
 
   # JobTask
   match 'job_task/index'

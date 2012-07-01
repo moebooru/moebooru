@@ -196,9 +196,9 @@ Moebooru::Application.routes.draw do
   match 'tag/update(.:format)' => 'tag#update'
 
   # TagImplication
-  match 'tag_implication/create'
-  match 'tag_implication/update'
-  match 'tag_implication/index'
+  match 'tag_implication(/index)' => 'tag_implication#index'
+  match 'tag_implication/update', :via => [:post, :put]
+  post 'tag_implication/create'
 
   # TagSubscription
   match 'tag_subscription/create'

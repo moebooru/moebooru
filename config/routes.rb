@@ -185,14 +185,14 @@ Moebooru::Application.routes.draw do
   # Tag
   match 'tag(/index)(.:format)' => 'tag#index'
   match 'tag/cloud'
-  match 'tag/edit'
+  match 'tag/edit(/:id)' => 'tag#edit'
   match 'tag/edit_preview'
   match 'tag/mass_edit'
   match 'tag/popular_by_day'
   match 'tag/popular_by_month'
   match 'tag/popular_by_week'
   match 'tag/related(.:format)' => 'tag#related'
-  match 'tag/show'
+  match 'tag/show(/:id)' => 'tag#show'
   match 'tag/summary'
   match 'tag/update(.:format)' => 'tag#update'
 

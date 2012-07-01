@@ -95,7 +95,7 @@ Moebooru::Application.routes.draw do
   match 'inline/delete_image(/:id)' => 'inline#delete_image', :via => [:post, :delete]
 
   # JobTask
-  match 'job_task/index'
+  match 'job_task(/index)' => 'job_task#index'
   match 'job_task/show'
   match 'job_task/destroy'
   match 'job_task/restart'

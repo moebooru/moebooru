@@ -57,8 +57,7 @@ Moebooru::Application.routes.draw do
   post 'dmail/mark_all_read'
 
   # Favorite
-  match 'favorite/list_users'
-  match 'favorite/favorited_users_for_post(post)'
+  match 'favorite/list_users(.:format)'
 
   # Forum
   match 'forum/stick'
@@ -293,8 +292,6 @@ Moebooru::Application.routes.draw do
     match 'pool/destroy(.:format)(/:id)' => 'pool#destroy', :via => [:post, :delete]
     match 'pool/add_post(.:format)' => 'pool#add_post', :via => [:post, :put]
     match 'pool/remove_post(.:format)' => 'pool#remove_post', :via => [:post, :put]
-    # Favorites
-    match 'favorite/list_users(.:format)' => 'favorite#list_users', :constraints => { :format => 'json' }
   end
 
   # Atom

@@ -107,7 +107,7 @@ module SimilarImages
         next
       end
 
-      if not doc
+      if not doc.root
         errors[server] = { :message => 'invalid response' }
         next
       end

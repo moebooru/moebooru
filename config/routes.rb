@@ -61,20 +61,20 @@ Moebooru::Application.routes.draw do
 
   # Forum
   match 'forum(/index)(.:format)' => 'forum#index'
-  match 'forum/stick'
-  match 'forum/unstick'
   match 'forum/preview'
   match 'forum/new'
-  match 'forum/create'
   match 'forum/add'
-  match 'forum/destroy'
   match 'forum/edit'
-  match 'forum/update'
   match 'forum/show'
   match 'forum/search'
-  match 'forum/lock'
-  match 'forum/unlock'
   match 'forum/mark_all_read'
+  match 'forum/lock', :via => [:post, :put]
+  match 'forum/stick', :via => [:post, :put]
+  match 'forum/unlock', :via => [:post, :put]
+  match 'forum/unstick', :via => [:post, :put]
+  match 'forum/update', :via => [:post, :put]
+  match 'forum/destroy', :via => [:post, :delete]
+  post 'forum/create'
 
   # Help
 

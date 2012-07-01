@@ -1,7 +1,6 @@
 class ForumController < ApplicationController
   layout "default"
   helper :avatar
-  verify :method => :post, :only => [:create, :destroy, :update, :stick, :unstick, :lock, :unlock]
   before_filter :mod_only, :only => [:stick, :unstick, :lock, :unlock]
   before_filter :member_only, :only => [:destroy, :update, :edit, :add, :mark_all_read, :preview]
   before_filter :post_member_only, :only => [:create]

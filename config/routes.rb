@@ -178,8 +178,8 @@ Moebooru::Application.routes.draw do
   match 'static/terms_of_service'
 
   # TagAlias
+  match 'tag_alias(/index)' => 'tag_alias#index'
   match 'tag_alias/create'
-  match 'tag_alias/index'
   match 'tag_alias/update'
 
   # Tag

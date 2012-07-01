@@ -60,6 +60,7 @@ Moebooru::Application.routes.draw do
   match 'favorite/list_users(.:format)'
 
   # Forum
+  match 'forum(/index)(.:format)' => 'forum#index'
   match 'forum/stick'
   match 'forum/unstick'
   match 'forum/preview'
@@ -70,7 +71,6 @@ Moebooru::Application.routes.draw do
   match 'forum/edit'
   match 'forum/update'
   match 'forum/show'
-  match 'forum/index'
   match 'forum/search'
   match 'forum/lock'
   match 'forum/unlock'
@@ -282,8 +282,6 @@ Moebooru::Application.routes.draw do
     match 'note/update(.:format)' => 'note#update', :via => [:post, :put]
     # Users
     match 'user(/index)(.:format)' => 'user#index'
-    # Forum
-    match 'forum(/index)(.:format)' => 'forum#index'
     # Pools
     match 'pool(/index)(.:format)' => 'pool#index'
     match 'pool/create(.:format)' => 'pool#create', :via => :post

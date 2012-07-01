@@ -19,10 +19,10 @@ module Moebooru
     # (by default production uses :info, the others :debug
     #config.log_level = :info
 
-    if CONFIG['enable_caching']
+    if Rails.env == 'production' and CONFIG['enable_caching']
       config.cache_store = :dalli_store, CONFIG['memcache_servers'], { :namespace => CONFIG['app_name'] }
     else
-      config.cache_store = :file_store, Rails.root.join('tmp/cache')
+      config.cache_store = :null_store
     end
 
     # Activate observers that should always be running

@@ -44,7 +44,7 @@
   <% end %>
   <li><%= link_to t(:pool_index), :controller => "post", :action => "index", :tags => "pool:#{@pool.id}" %> </li>
   <% if not @current_user.is_anonymous? %>
-  <li><%= link_to_function t(:pool_toggle), "User.set_pool_browse_mode(#{ j(1-@browse_mode)});" %></li>
+  <li><%= link_to_function t(:pool_toggle), "User.set_pool_browse_mode(#{ j((1-@browse_mode).to_s)});" %></li>
   <% end %>
   <% if @current_user.has_permission?(@pool) %>
     <li><%= link_to t(:pool_edit), :action => "update", :id => params[:id] %></li>

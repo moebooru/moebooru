@@ -54,7 +54,7 @@ Moebooru::Application.routes.draw do
   match 'dmail/create'
   match 'dmail/inbox'
   match 'dmail/show'
-  match 'dmail/mark_all_read'
+  post 'dmail/mark_all_read'
 
   # Favorite
   match 'favorite/list_users'

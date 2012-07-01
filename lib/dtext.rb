@@ -67,6 +67,8 @@ module DText
     str.gsub! /\n+(<\/div>)/, '\1'
     # So are after headers, lists, and blockquotes.
     str.gsub! /(<\/(ul|h\d+|blockquote)>)\n+/, '\1'
+    # And after opening blockquote.
+    str.gsub! /(<blockquote><div>)\n+/, '\1'
     str.gsub! /\n/, '<br>'
     str
   end

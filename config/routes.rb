@@ -47,12 +47,12 @@ Moebooru::Application.routes.draw do
   post 'comment/mark_as_spam(/:id)' => 'comment#mark_as_spam'
 
   # Dmail
-  match 'dmail/preview'
+  match 'dmail(/inbox)' => 'dmail#inbox'
   match 'dmail/auto_complete_for_dmail_to_name'
-  match 'dmail/show_previous_messages'
   match 'dmail/compose'
-  match 'dmail/inbox'
-  match 'dmail/show'
+  match 'dmail/preview'
+  match 'dmail/show(/:id)' => 'dmail#show'
+  match 'dmail/show_previous_messages'
   post 'dmail/create'
   post 'dmail/mark_all_read'
 

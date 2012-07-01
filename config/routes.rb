@@ -109,18 +109,18 @@ Moebooru::Application.routes.draw do
 
   # Pool
   match 'pool(/index)(.:format)' => 'pool#index'
-  match 'pool/show(.:format)(/:id)' => 'pool#show'
-  match 'pool/update(.:format)(/:id)' => 'pool#update'
-  match 'pool/create(.:format)' => 'pool#create'
-  match 'pool/copy(/:id)' => 'pool#copy'
-  match 'pool/destroy(.:format)(/:id)' => 'pool#destroy'
   match 'pool/add_post(.:format)' => 'pool#add_post'
-  match 'pool/remove_post(.:format)' => 'pool#remove_post'
-  match 'pool/order(/:id)' => 'pool#order'
+  match 'pool/copy(/:id)' => 'pool#copy'
+  match 'pool/create(.:format)' => 'pool#create'
+  match 'pool/destroy(.:format)(/:id)' => 'pool#destroy'
   match 'pool/import(/:id)' => 'pool#import'
+  match 'pool/order(/:id)' => 'pool#order'
+  match 'pool/remove_post(.:format)' => 'pool#remove_post'
   match 'pool/select'
-  match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :filename => /.*/ }
+  match 'pool/show(.:format)(/:id)' => 'pool#show'
   match 'pool/transfer_metadata'
+  match 'pool/update(.:format)(/:id)' => 'pool#update'
+  match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :filename => /.*/ }
 
   # Post
   match 'post/verify_action(options)'

@@ -96,9 +96,9 @@ Moebooru::Application.routes.draw do
 
   # JobTask
   match 'job_task(/index)' => 'job_task#index'
-  match 'job_task/show'
   match 'job_task/destroy'
   match 'job_task/restart'
+  match 'job_task/show'
 
   # Note
   match 'note/search'

@@ -240,21 +240,21 @@ Moebooru::Application.routes.draw do
   match 'user_record/destroy(/:id)' => 'user_record#destroy'
 
   # Wiki
-  match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
-  match 'wiki/lock(.:format)' => 'wiki#lock', :via => [:post, :put]
-  match 'wiki/unlock(.:format)' => 'wiki#unlock', :via => [:post, :put]
   match 'wiki(/index)(.:format)' => 'wiki#index'
-  match 'wiki/preview'
   match 'wiki/add'
   match 'wiki/create(.:format)' => 'wiki#create', :via => :post
-  match 'wiki/edit'
-  match 'wiki/update(.:format)' => 'wiki#update', :via => [:post, :put]
-  match 'wiki/show(.:format)' => 'wiki#show'
-  match 'wiki/revert(.:format)' => 'wiki#revert', :via => [:post, :put]
-  match 'wiki/recent_changes'
-  match 'wiki/history(.:format)' => 'wiki#history'
+  match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
   match 'wiki/diff'
+  match 'wiki/edit'
+  match 'wiki/history(.:format)' => 'wiki#history'
+  match 'wiki/lock(.:format)' => 'wiki#lock', :via => [:post, :put]
+  match 'wiki/preview'
+  match 'wiki/recent_changes'
   match 'wiki/rename'
+  match 'wiki/revert(.:format)' => 'wiki#revert', :via => [:post, :put]
+  match 'wiki/show(.:format)' => 'wiki#show'
+  match 'wiki/unlock(.:format)' => 'wiki#unlock', :via => [:post, :put]
+  match 'wiki/update(.:format)' => 'wiki#update', :via => [:post, :put]
 
   # API 1.13.0
   scope :defaults => { :format => 'html' }, :constraints => { :format => /(json|xml|html)/, :id => /\d+/ } do

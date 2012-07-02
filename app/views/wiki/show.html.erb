@@ -117,7 +117,7 @@
         <li><%= link_to "Alias Artist", :controller => "artist", :action => "create", :alias_id => @artist.id %></li>
       <% end %>
     <% elsif @tag && @tag.type_name == "artist" %>
-      <li><%= link_to "Create", :controller => "artist", :action => "add", :name => @title %></li>
+      <li><%= link_to 'Create', :controller => :artist, :action => :create, :name => @title %></li>
     <% end %>
   <% end %>
 

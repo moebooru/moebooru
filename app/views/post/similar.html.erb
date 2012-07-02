@@ -33,12 +33,12 @@
       <div>
         <h5><%=t :post_sim_services %></h5>
         <ul>
-          <li> <%= link_to t(:post_sim_services_text), :controller => "post", :action => "similar", :params => params.merge({:services=>"all"}) %>
+          <li> <%= link_to t(:post_sim_services_text), params.merge({ :controller => :post, :action => :similar, :services => 'all' }) %>
           <% CONFIG["image_service_list"].map do |service, server| %>
           <li>
             <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
               <%= image_tag(get_service_icon(service), :class=>"service-icon", :id=>"list") %>
-              <%= link_to "#{service}", :controller => "post", :action => "similar", :params => params.merge({:services=>service}) %>
+              <%= link_to "#{service}", params.merge({ :controller => :post, :action => :similar, :services => service }) %>
               <% if @errors[server] %>
                 <%=t :post_sim_down %>
                 <!-- <%= @errors[server][:message] %> -->

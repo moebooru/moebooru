@@ -22,6 +22,10 @@ en:
       edit_user: Edit User
       reset_password: Reset Password
       cache_statistics: Cache Statistics
+  # view: /dmail
+  dmail:
+    message:
+      sent_by_html: Sent by %{user} %{x_ago}
   # view: /forum
   forum:
     index:

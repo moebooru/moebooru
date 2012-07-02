@@ -6,7 +6,7 @@
   <% end %>
 
   <div style="margin-bottom: 1em;">
-    <em><%=t :dmail_message_sent %><%= link_to h(message.from.name), :controller => "user", :action => "show", :id => message.from_id %><%=t :dmail_message_ago2 %><%= time_ago_in_words(message.created_at) %><%=t :dmail_message_ago %></em>
+    <em><%= t('.sent_by_html', :user => link_to(message.from.name, :controller => "user", :action => "show", :id => message.from_id), :x_ago => t('time.x_ago', :t => time_ago_in_words(message.created_at))) %></em>
   </div>
 
   <div style="width: 50em;">

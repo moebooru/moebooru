@@ -77,6 +77,7 @@ Moebooru::Application.routes.draw do
   post 'forum/create'
 
   # Help
+  match 'help(/index)' => 'help#index'
   match 'help/:action' => 'help#:action'
 
   # History

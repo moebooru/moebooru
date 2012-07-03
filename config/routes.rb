@@ -211,6 +211,7 @@ Moebooru::Application.routes.draw do
   match 'user(/index)(.:format)' => 'user#index'
   match 'user/activate_user'
   match 'user/auto_complete_for_member_name'
+  match 'user/auto_complete_for_user_name'
   match 'user/block(/:id)' => 'user#block'
   match 'user/change_email'
   match 'user/change_password'

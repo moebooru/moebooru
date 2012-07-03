@@ -19,7 +19,7 @@
 
   <%= yield :html_header %>
   <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
-  <%= stylesheet_link_tag "default" %>
+  <%= stylesheet_link_tag :application %>
 
   <%= javascript_include_tag :application %>
   <!--[if lt IE 8]>

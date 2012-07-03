@@ -216,10 +216,6 @@ CONFIG["tag_types"] = {
 # Tag type IDs to not list in recent tag summaries, such as on the side of post/index:
 CONFIG["exclude_from_tag_sidebar"] = [0]
 
-# If set, email_from is the address the site sends emails as.  If left alone, emails
-# are sent from CONFIG["admin_contact"].
-CONFIG["email_from"] = lambda do CONFIG["admin_contact"] end
-
 # Determine who can see a post. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_post"] = lambda do |user, post|
   # By default, no posts are hidden.

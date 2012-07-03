@@ -691,7 +691,7 @@ en:
   post_pool_text2: "in the "
   post_pool_text3: " pool"
   post_pool_remove: "remove"
-  post_pool_chage: "change page"
+  post_pool_change: "change page"
   post_pool_xfer: "transfer to parent"
   post_related: "Related Posts"
   post_related_previous: "Previous"

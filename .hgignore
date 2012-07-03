@@ -1,10 +1,10 @@
+^(?!app/assets/).*(\.(swp|orig|rbc|s?o)|~)$
 (^|/)\.(bundle|DS_Store)$
 ^\.redcar$
 ^db/.*\.sqlite3$
 ^(log|tmp)/
 ^config/(newrelic\.yml|database\.yml|unicorn\.rb|local_config\.rb)$
 ^public/system/photos/
-^(?!app/assets/).*(\.(swp|orig|rbc|s?o)|~)$
 ^[^/]+\.war
 ^bin/
 ^public/data(/|$)

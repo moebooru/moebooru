@@ -93,7 +93,7 @@
     <% if CONFIG["starting_level"] < 30 %>
     <tr>
       <td><strong><%=t :user_rec_invites %></strong></td>
-      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ") %></td>
+      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ").html_safe %></td>
     </tr>
     <% end %>
     <tr>

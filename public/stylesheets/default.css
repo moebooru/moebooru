@@ -794,8 +794,9 @@ ul.pipe-list {
 }
 
 ul.pipe-list li + li:before {
-  content: "| ";
+  content: "|";
   color: #CCC;
+  margin-left: -10px;
 }
 
 ul.pipe-list li {

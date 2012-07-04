@@ -60,7 +60,9 @@
     <% unless @post.is_deleted? %>
       <li id="add-to-pool" class="advanced-editing"><%= link_to t(:post_options_add_pool), {:controller => "pool", :action => "select", :post_id => @post.id}, :remote => true %></li>
     <% end %>
-    <li id="set-avatar"><%= link_to t(:post_options_avatar), :controller => "user", :action => "set_avatar", :id => @post.id %></li>
+    <% unless @post.is_deleted? %>
+      <li id="set-avatar"><%= link_to t(:post_options_avatar), :controller => "user", :action => "set_avatar", :id => @post.id %></li>
+    <% end %>
     <li><%= link_to t(:post_options_history), :controller => "history", :action => "index", :search => "post:#{@post.id}" %></li>
   </ul>
 </div>

@@ -5,7 +5,7 @@ module PostHelper
     elsif source[/^http/]
       text = source
       text = text[7, 20] + "..." if abbreviate
-      link_to h(text), source
+      link_to text, source, :rel => 'nofollow'
     else
       h(source)
     end

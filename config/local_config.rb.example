@@ -14,3 +14,6 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 
 # Use this config to enable Google Analytics. Fill in the GA Tracking ID.
 # CONFIG['ga-tracking-id'] = 'UA-XXXXX-X'
+
+# Default language. Defaults to en.
+# CONFIG['default_locale'] = 'en'

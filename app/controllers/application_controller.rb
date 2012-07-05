@@ -11,6 +11,8 @@ class ApplicationController < ActionController::Base
       I18n.locale = params[:locale].to_sym
     elsif cookies['locale'] and CONFIG['available_locales'].include?(cookies['locale'])
       I18n.locale = cookies['locale'].to_sym
+    else
+      I18n.locale = CONFIG['default_locale']
     end
   end
 

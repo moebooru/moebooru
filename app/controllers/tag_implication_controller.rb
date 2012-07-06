@@ -32,9 +32,9 @@ class TagImplicationController < ApplicationController
       if @current_user.is_mod_or_higher?
         ids.each do |x|
           if CONFIG["enable_asynchronous_tasks"]
-            JobTask.create(:task_type => "approve_tag_implication", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.ip})
+            JobTask.create(:task_type => "approve_tag_implication", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip})
           else
-            TagImplication.find(x).approve(@current_user.id, request.ip)
+            TagImplication.find(x).approve(@current_user.id, request.remote_ip)
           end
         end
 

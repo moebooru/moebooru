@@ -8,7 +8,7 @@ class BlocksController < ApplicationController
     begin
       IpBans.transaction do
         ban = IpBans.create(params[:ban].merge(:banned_by => @current_user.id))
-        if IpBans.find(:first, :conditions => ["id = ? and inet ? <<= ip_addr", ban.id, request.ip]) then
+        if IpBans.find(:first, :conditions => ["id = ? and inet ? <<= ip_addr", ban.id, request.remote_ip]) then
           raise CanNotBanSelf
         end
       end

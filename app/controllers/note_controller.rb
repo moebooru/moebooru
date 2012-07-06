@@ -53,7 +53,7 @@ class NoteController < ApplicationController
     end
 
     note.revert_to(params[:version])
-    note.ip_addr = request.ip
+    note.ip_addr = request.remote_ip
     note.user_id = @current_user.id
 
     if note.save

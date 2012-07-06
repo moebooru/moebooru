@@ -133,7 +133,7 @@ class BatchController < ApplicationController
 
       b = BatchUpload.find_or_initialize_by_url_and_user_id(:user_id => @current_user.id, :url => url)
       b.tags = tags
-      b.ip = request.ip
+      b.ip = request.remote_ip
       b.save!
     end
 

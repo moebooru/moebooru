@@ -1,6 +1,4 @@
 module ApplicationHelper
-  # Scale percentage table widths to 100% to make variable column tables
-  # easier.
   def navbar_link_to(text, options, html_options = nil)
     if options[:controller] == params[:controller]
       klass = "current-page"

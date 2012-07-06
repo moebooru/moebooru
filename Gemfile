@@ -23,7 +23,7 @@ gem 'json'
 gem 'hpricot'
 gem 'dalli'
 gem 'mime-types'
-gem 'schema_plus'
+gem 'schema_plus', :platforms => :ruby
 gem 'acts_as_versioned'
 gem 'geoip'
 gem 'exception_notification'

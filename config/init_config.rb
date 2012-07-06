@@ -269,11 +269,6 @@ CONFIG["tag_subscription_post_limit"] = 200
 # Max number of fav tags per user
 CONFIG["max_tag_subscriptions"] = 5
 
-# Languages that we support translating to.  We'll translate each comment into all of these
-# languages.  Set this to nil to disable translation.
-#CONFIG["translate_languages"] = ["en", "ja", "zh-CN", "zh-TW", "es"]
-CONFIG["translate_languages"] = nil
-
 # Languages that we're aware of.  This is what we show in "Secondary languages", to let users
 # select which languages they understand and that shouldn't be translated.
 CONFIG["known_languages"] = CONFIG["language_names"].map { |key, lang| key }.sort

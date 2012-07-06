@@ -95,36 +95,6 @@
             <%= check_box "user", "show_advanced_editing" %>
           </td>
         </tr>
-        <% if CONFIG["translate_languages"] %>
-        <tr>
-          <th>
-            <label class="block" for="user_language"><%=t :user21 %></label>
-            <p><%=t :user22 %></p>
-          </th>
-          <td>
-            <select id="user_language" name="user[language]">
-              <option value="" <%= @current_user.language.nil? ? 'selected="selected"':"" %>><%=t :user23 %></option>
-              <% for lang in CONFIG["translate_languages"] do %>
-                <option value="<%= h(lang) %>" <%= @current_user.language == lang ? 'selected="selected"':"" %>><%= h(CONFIG["language_names"][lang]) %></option>
-              <% end %>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>
-            <label class="block" for="user_secondary_languages"><%=t :user24 %></label>
-            <p><%=t :user25 %></p>
-          </th>
-          <td>
-            <select id="user_secondary_languages" name="user[secondary_language_array][]" multiple size="10">
-              <option value="none" <%= @current_user.secondary_language_array.empty? ? 'selected="selected"':"" %>>(none)</option>
-              <% for lang in CONFIG["known_languages"] do %>
-                <option value="<%= h(lang) %>" <%= @current_user.secondary_language_array.include?(lang) ? 'selected="selected"':"" %>><%= h(CONFIG["language_names"][lang]) %></option>
-              <% end %>
-            </select>
-          </td>
-        </tr>
-        <% end %>
       </tbody>
     </table>
   <% end %>

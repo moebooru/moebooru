@@ -75,5 +75,7 @@ module Moebooru
     else
       config.cache_store = :null_store
     end
+
+    config.action_mailer.smtp_settings = { :openssl_verify_mode => 'none', :domain => CONFIG['server_host'] }
   end
 end

@@ -20,7 +20,6 @@ gem 'jruby-openssl', :platforms => :jruby
 gem 'diff-lcs'
 gem 'json'
 gem 'dalli'
-gem 'schema_plus', :platforms => :ruby
 gem 'acts_as_versioned'
 gem 'geoip'
 gem 'exception_notification'

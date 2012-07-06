@@ -162,7 +162,7 @@ class ApplicationController < ActionController::Base
 
     def set_country
       @current_user_country = Rails.cache.fetch({ :type => :geoip, :ip => request.remote_ip }, :expires_in => 1.month) do
-        GeoIP.new(File.expand_path('db/GeoIP.dat', Rails.root)).country(request.remote_ip).country_code2
+        GeoIP.new(Rails.root.join('db', 'GeoIP.dat').to_s).country(request.remote_ip).country_code2
       end
     end
 

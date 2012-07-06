@@ -1,4 +1,4 @@
-<%- post_url = url_for(:controller => :post, :action => :show, :id => @post.id, :host => CONFIG['server_host'], :protocol => scheme(false)) -%>
+<%- post_url = url_for(:controller => :post, :action => :show, :id => @post.id, :host => CONFIG['server_host'], :protocol => request.protocol) -%>
 <%-# Facebook Open Graph
    # Reference: https://developers.facebook.com/docs/opengraphprotocol/ -%>
 <%= tag :meta, :property => 'og:title', :content => @page_title %>

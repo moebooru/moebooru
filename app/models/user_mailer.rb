@@ -4,7 +4,6 @@ rescue LoadError
 end
 
 class UserMailer < ActionMailer::Base
-  include ActionController::UrlWriter
   helper :application
   default_url_options["host"] = CONFIG["server_host"]
 

@@ -1,13 +1,6 @@
 module ApplicationHelper
   # Scale percentage table widths to 100% to make variable column tables
   # easier.
-  def scheme(with_separator = true)
-    scheme = 'http'
-    scheme += 's' if request.ssl?
-    scheme += '://' if with_separator
-    return scheme
-  end
-
   def navbar_link_to(text, options, html_options = nil)
     if options[:controller] == params[:controller]
       klass = "current-page"

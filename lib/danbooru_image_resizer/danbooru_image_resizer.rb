@@ -1,4 +1,4 @@
-require 'danbooru_image_resizer/danbooru_image_resizer.so'
+require 'danbooru_image_resizer/danbooru_image_resizer.so' unless RUBY_PLATFORM == 'java'
 
 module Danbooru
   class ResizeError < Exception; end

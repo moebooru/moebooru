@@ -46,8 +46,6 @@ GEM
       terminal-table (~> 1.4)
     builder (3.0.0)
     chardet (0.9.0)
-    cloudflare (1.0.0)
-      json
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -110,7 +108,7 @@ GEM
       activesupport (= 3.2.6)
       bundler (~> 1.0)
       railties (= 3.2.6)
-    rails-i18n (0.6.4)
+    rails-i18n (0.6.5)
       i18n (~> 0.5)
     railties (3.2.6)
       actionpack (= 3.2.6)
@@ -168,7 +166,7 @@ GEM
       rack
       raindrops (~> 0.7)
     valuable (0.9.5)
-    will-paginate-i18n (0.1.7)
+    will-paginate-i18n (0.1.8)
     will_paginate (3.0.3)
 
 PLATFORMS
@@ -178,7 +176,6 @@ DEPENDENCIES
   activerecord-jdbcpostgresql-adapter
   acts_as_versioned
   brakeman
-  cloudflare
   coffee-rails (~> 3.2.1)
   daemons
   dalli

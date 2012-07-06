@@ -2,9 +2,15 @@
 
 ja:
   hello: "ハロワールド"
-  will_paginate:
-    previous_label: '前へ'
-    next_label: '次へ'
+  # Generic translation
+  time:
+    # t: "16 days", "1 hour", etc (localized)
+    x_ago: '%{t}前'
+  buttons:
+    save: セーブ
+    cancel: キャンセル
+    yes: はい
+    no: いいえ
   #view/artist/create
   artist_create: "コンマで複数のエイリアスやグループのメンバーを区切ります。"
   artist_name: "名前"

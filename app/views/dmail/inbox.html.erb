@@ -29,7 +29,7 @@
                 <% end %>
               <% end %>
             </td>
-            <td><%=t :dmail_ago2 %><%= time_ago_in_words(dmail.created_at) %><%=t :dmail_ago %></td>
+            <td><%= t('time.x_ago', :t => time_ago_in_words(dmail.created_at)) %></td>
           </tr>
         <% end %>
       </tbody>

@@ -9,7 +9,7 @@
       <h6><%= comment.pretty_author %></h6>
     <% end %>
     <span class="date" title="Posted at <%= comment.created_at.strftime('%c') %>">
-      <%=t :comment_ago2 %><%= link_to time_ago_in_words(comment.created_at) + t(:comment_ago), :controller => "post", :action => "show", :id => comment.post_id, :anchor => ("c#{comment.id}") %>
+      <%= link_to t('time.x_ago', :t => time_ago_in_words(comment.created_at)), :controller => "post", :action => "show", :id => comment.post_id, :anchor => ("c#{comment.id}") %>
     </span>
     <% if not translated_from_languages.empty? then %>
       <span class="translated-notice">translated</span>

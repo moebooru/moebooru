@@ -30,6 +30,8 @@ en:
   forum:
     index:
       is_locked: (locked)
+    search:
+      last_updated_by: '%{t_ago} by %{u}'
   #view: /user
   user:
     change_password:
@@ -96,6 +98,9 @@ en:
     show_partials:
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
+    moderate:
+      uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
+      mod: mod
   #models
   activerecord:
     attributes:

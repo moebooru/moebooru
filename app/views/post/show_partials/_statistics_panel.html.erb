@@ -11,7 +11,7 @@
     <% end %>
     <% unless @post.source.blank? %>
       <% if @post.source[/^http/] %>
-        <li><%=t :post_stats_source %><%= link_to @post.source[7, 20] + "...", @post.normalized_source, :target => "_blank" %></li>
+        <li><%=t :post_stats_source %><%= link_to @post.source[7, 20] + "...", @post.normalized_source, :rel => 'nofollow', :target => "_blank" %></li>
       <% else %>
         <li><%=t :post_stats_source %><%= @post.source %></li>
       <% end %>

@@ -35,7 +35,6 @@ gem 'nokogiri'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
-gem 'cloudflare'
 
 group :development do
   gem 'rspec'

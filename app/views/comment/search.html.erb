@@ -28,7 +28,7 @@
             <% end %>
           </td>
 
-          <td><%=t :comment_ago2 %><%= time_ago_in_words(comment.created_at) %><%=t :comment_ago %></td>
+          <td><%= t('time.x_ago', :t => time_ago_in_words(comment.created_at)) %></td>
         <% end %>
       <% end %>
     </tbody>

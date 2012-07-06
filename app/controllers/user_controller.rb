@@ -50,9 +50,7 @@ class UserController < ApplicationController
       end
     end
     if @current_user.is_mod_or_higher?
-      @user_ips = UserLog.find_by_sql("SELECT ul.ip_addr, ul.created_at FROM user_logs ul WHERE ul.user_id = #{@user.id} ORDER BY ul.created_at DESC")
-      @user_ips.map! { |ul| ul.ip_addr }
-      @user_ips.uniq!
+      @user_ips = @user.user_logs.order('created_at DESC').pluck('ip_addr').uniq
     end
   end
 

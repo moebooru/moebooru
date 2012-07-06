@@ -1,6 +1,4 @@
 module ApplicationHelper
-  # Scale percentage table widths to 100% to make variable column tables
-  # easier.
   def scheme(with_separator = true)
     scheme = 'http'
     scheme += 's' if request.ssl?

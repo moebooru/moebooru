@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
 
       ActiveRecord::Base.init_history
 
-      @current_user.log(request.ip)
+      @current_user.log(request.ip) unless @current_user.is_anonymous?
     end
 
     def set_current_request

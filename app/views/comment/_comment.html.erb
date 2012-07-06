@@ -1,6 +1,3 @@
-<% body, translated_from_languages = comment.get_translated_formatted_body(@current_user.language, @current_user.secondary_language_array) %>
-<% if not translated_from_languages.empty? then @page_uses_translations = true end %>
-
 <div class="comment avatar-container" id="c<%= comment.id %>">
   <div class="author">
     <% if comment.user_id %>
@@ -11,23 +8,14 @@
     <span class="date" title="Posted at <%= comment.created_at.strftime('%c') %>">
       <%= link_to t('time.x_ago', :t => time_ago_in_words(comment.created_at)), :controller => "post", :action => "show", :id => comment.post_id, :anchor => ("c#{comment.id}") %>
     </span>
-    <% if not translated_from_languages.empty? then %>
-      <span class="translated-notice">translated</span>
-    <% end %>
     <% if comment.user and comment.user.has_avatar? then %>
       <div class="comment-avatar-container"> <%= avatar(comment.user, comment.id) %> </div>
     <% end %>
   </div>
   <div class="content">
     <div class="body">
-      <%# format_inlines(format_text(comment.body, :mode => :comment), comment.id) %>
-      <%= body.html_safe %>
+      <%= format_inlines(format_text(comment.body, :mode => :comment), comment.id) %>
     </div>
-    <% if not translated_from_languages.empty? then %>
-    <div class="body untranslated-body" style="display: none;">
-      <%= comment.get_formatted_body %>
-    </div>
-    <% end %>
     <div class="post-footer" style="clear: left;">
       <ul class="flat-list pipe-list">
         <li> <%= link_to_function t(:comment_quote), "Comment.quote(#{comment.id})" %>
@@ -36,10 +24,6 @@
           <li> <%= link_to_function t(:comment_delete), "Comment.destroy(#{comment.id})" %>
         <% else %>
           <li> <%= link_to_function t(:comment_flag), "Comment.flag(#{comment.id})" %>
-        <% end %>
-        <% if not translated_from_languages.empty? then %>
-          <li class="show-translated"> <%= link_to_function t(:comment_translation_text), "Comment.show_translated(#{comment.id}, false)" %>
-          <li class="show-untranslated" style="display: none;"> <%= link_to_function t(:comment_translation_text2), "Comment.show_translated(#{comment.id}, true)" %>
         <% end %>
       </ul>
     </div>

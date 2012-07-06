@@ -1,2 +1,0 @@
-page.hide("artist-#{@artist.id}")
-page.call(:notice, "Artist deleted")

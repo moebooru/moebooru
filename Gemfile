@@ -17,11 +17,9 @@ gem 'pg', :platforms => :ruby
 gem 'activerecord-jdbcpostgresql-adapter', :platforms => :jruby
 gem 'jruby-openssl', :platforms => :jruby
 
-gem 'html5'
 gem 'diff-lcs'
 gem 'json'
 gem 'dalli'
-gem 'mime-types'
 gem 'schema_plus', :platforms => :ruby
 gem 'acts_as_versioned'
 gem 'geoip'

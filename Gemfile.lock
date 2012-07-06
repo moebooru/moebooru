@@ -50,7 +50,6 @@ GEM
       sass (~> 3.0)
       terminal-table (~> 1.4)
     builder (3.0.0)
-    chardet (0.9.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -71,11 +70,6 @@ GEM
     haml (3.1.6)
     highline (1.6.13)
     hike (1.2.1)
-    hoe (3.0.6)
-      rake (~> 0.8)
-    html5 (0.10.0)
-      chardet (>= 0.9.0)
-      hoe (>= 1.2.0)
     i18n (0.6.0)
     jdbc-postgres (9.1.901)
     journey (1.0.4)
@@ -195,11 +189,9 @@ DEPENDENCIES
   diff-lcs
   exception_notification
   geoip
-  html5
   jquery-rails
   jruby-openssl
   json
-  mime-types
   newrelic_rpm
   nokogiri
   pg

@@ -20,7 +20,6 @@ gem 'jruby-openssl', :platforms => :jruby
 gem 'html5'
 gem 'diff-lcs'
 gem 'json'
-gem 'hpricot'
 gem 'dalli'
 gem 'mime-types'
 gem 'schema_plus', :platforms => :ruby

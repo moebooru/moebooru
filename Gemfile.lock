@@ -73,8 +73,6 @@ GEM
     hike (1.2.1)
     hoe (3.0.6)
       rake (~> 0.8)
-    hpricot (0.8.6)
-    hpricot (0.8.6-java)
     html5 (0.10.0)
       chardet (>= 0.9.0)
       hoe (>= 1.2.0)
@@ -197,7 +195,6 @@ DEPENDENCIES
   diff-lcs
   exception_notification
   geoip
-  hpricot
   html5
   jquery-rails
   jruby-openssl

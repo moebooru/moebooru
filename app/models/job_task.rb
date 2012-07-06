@@ -223,7 +223,7 @@ class JobTask < ActiveRecord::Base
 
     while true
       execute_once
-      sleep 1
+      sleep 10
     end
   end
 end

@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
 
       ActiveRecord::Base.init_history
 
-      UserLog.access(@current_user, request)
+      @current_user.log(request.ip)
     end
 
     def set_current_request

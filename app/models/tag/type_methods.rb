@@ -25,10 +25,8 @@ module TagTypeMethods
     # === Parameters
     # * :tag_name<String>:: The tag name to search for
     def type_name(tag_name)
-      tag_name = tag_name.gsub(/\s/, "_")
-
       return Rails.cache.fetch({ :tag_type => tag_name }, :expires_in => 1.day) do
-        type_name_helper(tag_name)
+        type_name_helper(tag_name.gsub(/\s/, '_'))
       end
     end
 

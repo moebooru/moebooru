@@ -11,6 +11,7 @@ atom_feed :root_url => url_for(:controller => :post, :action => :index, :only_pa
       entry.content render(:partial => 'post_atom.html.erb', :locals => { :post => post, :post_url => post_url }), :type => 'html'
       entry.author do |author|
         author.name post.author
+        author.url url_for(:controller => :user, :action => :show, :only_path => false)
       end
     end
   end

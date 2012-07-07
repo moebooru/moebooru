@@ -110,20 +110,4 @@ class Tag < ActiveRecord::Base
 
     Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\' AND name <> ?", search_for, query], :order => "post_count DESC", :limit => 6, :select => "name").map(&:name).sort
   end
-
-  def self.cache_type_key_enc(name)
-    return "tag_type:#{Tag.cache_key_enc(name)}"
-  end
-
-  def self.cache_type_key_dec(key)
-    return Tag.cache_key_dec(key[9..-1])
-  end
-
-  def self.cache_key_enc(name)
-    return Base64.urlsafe_encode64(name.to_s)
-  end
-
-  def self.cache_key_dec(key)
-    return Base64.urlsafe_decode64(key.to_s)
-  end
 end

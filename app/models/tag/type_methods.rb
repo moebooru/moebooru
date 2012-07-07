@@ -53,10 +53,11 @@ module TagTypeMethods
       rescue
         nil
       end
+      tag_types = {}
       if cached_tag_types
-        tag_types = Hash[cached_tag_types.map { |key, value| [key[:tag_type], value] }]
-      else
-        tag_types = {}
+        cached_tag_types.each_with_index do |hash, i|
+          tag_types[tags_to_query[i][:tag_type]] = hash[1]
+        end
       end
       tag_types.each { |key, value| results[key] = value }
 

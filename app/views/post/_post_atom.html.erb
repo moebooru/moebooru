@@ -3,6 +3,6 @@
 <ul>
   <li>Dimension: <%= "#{post.width}x#{post.height}" %>
   <% unless post.source.blank? %>
-    <li>Source: <%= post.source %>
+    <li>Source: <%= link_to post.source, post.source, :rel => 'nofollow' %>
   <% end %>
 </ul>

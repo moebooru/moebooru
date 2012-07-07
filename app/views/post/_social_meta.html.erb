@@ -1,9 +1,8 @@
-<%- post_url = url_for(:controller => :post, :action => :show, :id => @post.id, :host => CONFIG['server_host'], :protocol => request.protocol) -%>
 <%-# Facebook Open Graph
    # Reference: https://developers.facebook.com/docs/opengraphprotocol/ -%>
 <%= tag :meta, :property => 'og:title', :content => @page_title %>
 <%= tag :meta, :property => 'og:type', :content => 'article' %>
-<%= tag :meta, :property => 'og:url', :content => post_url %>
+<%= tag :meta, :property => 'og:url', :content => url_for(:controller => :post, :action => :show, :id => @post.id, :only_path => false) %>
 <%= tag :meta, :property => 'og:image', :content => @post.sample_url %>
 <%= tag :meta, :property => 'og:site_name', :content => CONFIG['app_name'] %>
 <%= tag :meta, :property => 'og:description', :content => @post.tags %>

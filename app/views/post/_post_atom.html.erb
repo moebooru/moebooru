@@ -1,0 +1,8 @@
+<%= link_to image_tag(URI.join(root_url(:only_path => false), post.preview_url)), post_url %>
+<p>Image data:</p>
+<ul>
+  <li>Dimension: <%= "#{post.width}x#{post.height}" %>
+  <% unless post.source.blank? %>
+    <li>Source: <%= post.source %>
+  <% end %>
+</ul>

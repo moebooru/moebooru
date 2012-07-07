@@ -372,15 +372,15 @@ class PostController < ApplicationController
 
         render :json => api_data.to_json
       }
+      fmt.atom
     end
   end
 
   def atom
-    params[:format] = "html"
-
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
-    headers["Content-Type"] = "application/atom+xml"
-    render :layout => false
+    respond_to do |format|
+      format.atom { render 'index' }
+    end
   end
 
   def piclens

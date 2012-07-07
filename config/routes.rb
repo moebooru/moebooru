@@ -127,7 +127,7 @@ Moebooru::Application.routes.draw do
   match 'post(/index)(.:format)' => 'post#index'
   match 'post/acknowledge_new_deleted_posts'
   match 'post/activate'
-  match 'post/atom(.:format)' => 'post#atom'
+  match 'post/atom(.:format)' => 'post#atom', :format => :atom
   match 'post/browse'
   match 'post/delete(/:id)' => 'post#delete'
   match 'post/deleted_index'
@@ -156,7 +156,7 @@ Moebooru::Application.routes.draw do
   match 'post/destroy(.:format)(/:id)' => 'post#destroy', :via => [:post, :delete]
   post 'post/create(.:format)' => 'post#create'
 
-  match 'atom' => 'post#atom'
+  match 'atom' => 'post#atom', :format => :atom
   match 'download' => 'post#download'
   match 'histogram' => 'post#histogram'
 

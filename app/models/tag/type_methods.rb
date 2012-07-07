@@ -49,7 +49,7 @@ module TagTypeMethods
       got_keys = Set.new
       tags_to_query = post_tags.to_a.map { |n| { :type => :tag_type, :name => n } }
       cached_tag_types = begin
-        Rails.cache.read_multi(*tags_to_query)
+        Rails.cache.read_multi(tags_to_query)
       rescue
         nil
       end

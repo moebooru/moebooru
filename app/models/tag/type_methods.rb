@@ -27,7 +27,7 @@ module TagTypeMethods
     def type_name(tag_name)
       tag_name = tag_name.gsub(/\s/, "_")
 
-      return Rails.cache.fetch({ :type => :tag_type, :name => tag_name }, :expires_in => 1.day) do
+      return Rails.cache.fetch({ :tag_type => tag_name }, :expires_in => 1.day) do
         type_name_helper(tag_name)
       end
     end
@@ -47,14 +47,14 @@ module TagTypeMethods
 
       results = {}
       got_keys = Set.new
-      tags_to_query = post_tags.to_a.map { |n| { :type => :tag_type, :name => n } }
+      tags_to_query = post_tags.to_a.map { |n| { :tag_type => n } }
       cached_tag_types = begin
-        Rails.cache.read_multi(tags_to_query)
+        Rails.cache.read_multi(*tags_to_query)
       rescue
         nil
       end
       if cached_tag_types
-        tag_types = Hash[cached_tag_types.map { |key, value| [key[:name], value] }]
+        tag_types = Hash[cached_tag_types.map { |key, value| [key[:tag_type], value] }]
       else
         tag_types = {}
       end

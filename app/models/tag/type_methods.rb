@@ -53,6 +53,7 @@ module TagTypeMethods
       end
       tag_types = {}
       if cached_tag_types
+        # read_multi replaces keys which have too long name to nil.
         cached_tag_types.each_with_index do |hash, i|
           tag_types[tags_to_query[i][:tag_type]] = hash[1]
         end

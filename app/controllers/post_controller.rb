@@ -223,9 +223,13 @@ class PostController < ApplicationController
 
     if @post.can_user_delete?(@current_user)
       if @post.status == "deleted"
-        if params[:destroy] and @current_user.is_mod_or_higher?
-          @post.delete_from_database
-          respond_to_success("Post deleted permanently", :action => "show", :id => params[:id])
+        if params[:destroy]
+          if @current_user.is_mod_or_higher?
+            @post.delete_from_database
+            respond_to_success("Post deleted permanently", :action => "show", :id => params[:id])
+          else
+            access_denied
+          end
         else
           respond_to_success("Post already deleted", :action => "delete", :id => params[:id])
         end

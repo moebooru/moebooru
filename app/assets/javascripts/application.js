@@ -4,5 +4,6 @@
 //= require effects
 //= require dragdrop
 //= require controls
+//= require builder
 //= require rails
 //= require_tree .

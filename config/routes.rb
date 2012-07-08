@@ -235,6 +235,7 @@ Moebooru::Application.routes.draw do
   match 'user/modify_blacklist', :via => [:post, :put]
   match 'user/update', :via => [:post, :put]
   post 'user/create'
+  post 'user/remove_avatar/:id' => 'user#remove_avatar'
 
   # UserRecord
   match 'user_record(/index)' => 'user_record#index'

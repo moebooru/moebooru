@@ -2,9 +2,8 @@ h1. Moebooru
 
 This project is based on original Moebooru which is being used in "yande.re Image Board":http://yande.re. Changes compared to original Moebooru:
 
-* Requires Ruby 1.9
-* Uses Rails 3.0 (woohoo)
-* Uses Bundler
+* Compatible with Ruby 1.9
+* Uses Rails 3.0
 * Updated gems
 * Pool ZIP support for nginx (with @mod_zip@)
 
@@ -50,14 +49,15 @@ On Ubuntu 10.04.4 LTS
 h2. Installation
 
 * Create a new PostgreSQL user with type of superuser
+* Create database for Moebooru and initialize it by loading @db/structure.sql@
 * Run @bundle install@
 * Build image resizer:
 ** @cd lib/danbooru_image_resizer@
 ** @ruby extconf.rb@
 ** @make@
 * Create @config/database.yml@ and @config/local_config.rb@
-* Run @rake db:migrate@ <--this doesn't actually work, I had to import structure.sql
-* Start the server (@bundle exec unicorn_rails@)
+* Run @bundle exec rake db:migrate@
+* Start the server (@bundle exec unicorn@)
 
 h2. Plans
 

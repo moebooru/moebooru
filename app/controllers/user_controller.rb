@@ -19,6 +19,25 @@ class UserController < ApplicationController
   end
 
   public
+  # FIXME: this method is crap and only function as temporary workaround
+  #        until I convert the controllers to resourceful version which is
+  #        planned for 3.2 branch (at least 3.2.1).
+  def remove_avatar
+    # When removing other user's avatar, ensure current user is mod or higher.
+    if @current_user.id != params[:id] and not @current_user.is_mod_or_higher?
+      access_denied
+      return
+    end
+    @user = User.find(params[:id])
+    @user.avatar_post_id = nil
+    if @user.save
+      flash[:notice] = 'Avatar removed'
+    else
+      flash[:notice] = 'Failed removing avatar'
+    end
+    redirect_to :action => :show, :id => params[:id]
+  end
+
   def change_password
     @title = 'Change Password'
   end

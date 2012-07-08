@@ -61,6 +61,11 @@ en:
       moderator_tools: Moderator Tools
       invites: Invites
       blocked_users: Blocked Users
+    show:
+      avatar:
+        remove:
+          link: (remove)
+          confirm: Remove avatar?
   #view: /help
   help:
     index:

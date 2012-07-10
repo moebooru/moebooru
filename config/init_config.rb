@@ -1,6 +1,6 @@
 require File.expand_path '../../lib/languages', __FILE__
 # The version of this Moebooru.
-CONFIG["version"] = "3.0.0-beta.4"
+CONFIG["version"] = "3.0.0-rc.1"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"

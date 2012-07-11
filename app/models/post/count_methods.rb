@@ -4,9 +4,7 @@ module PostCountMethods
       # A small sanitation
       tags = tags.to_s.strip.gsub(/ +/, ' ')
       cache_version = Rails.cache.read("$cache_version").to_i
-      # Use base64 encoding of tags query for memcache key
-      tags_base64 = Base64.urlsafe_encode64(tags)
-      key = "post-count/v=#{cache_version}/#{tags_base64}"
+      key = { :post_count => tags, :v => cache_version }
 
       count = Rails.cache.fetch(key) {
         Post.count_by_sql(Post.generate_sql(tags, :count => true))

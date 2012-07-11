@@ -107,15 +107,8 @@ class WikiPage < ActiveRecord::Base
 
   protected
     def ensure_changed
-      changed = false
-      latest = self.versions.latest
-      if self.body != latest.body
-        changed = true
-      elsif self.title != latest.title
-        changed = true
-      elsif self.is_locked != latest.is_locked
-        changed = true
+      unless (changed & ['title', 'body']).any?
+        errors.add :base, :no_change
       end
-      return changed
     end
 end

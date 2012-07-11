@@ -106,7 +106,7 @@ en:
     moderate:
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
       mod: mod
-  #models
+  # ActiveRecord (models)
   activerecord:
     attributes:
       #user.attributes
@@ -114,6 +114,10 @@ en:
         password: Password
         current_password: Current password
         password_confirmation: Password confirmation
+    errors:
+      models:
+        wiki_page:
+          no_change: No change in page content/title
   #view/artist/create
   artist_create: "Separate multiple aliases and group members with commas."
   artist_name: "Name"

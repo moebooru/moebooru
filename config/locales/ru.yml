@@ -30,11 +30,29 @@ ru:
     index:
       edit_user: Редактировать Пользователя
       reset_password: Сброс Пароля
-      cache_statistics: Статистика Кэша
+      cache_statistics: Статисктика Кэша
+  # view: /dmail
+  dmail:
+    message:
+      sent_by_html: Отправлено %{user} %{x_ago}
+  # view: /forum
+  forum:
+    index:
+      is_locked: (закрыто)
+    search:
+      last_updated_by: '%{t_ago}, %{u}'
   #view: /user
   user:
     change_password:
       new_password: Новый пароль
+    change_email:
+      current_password: Текущий пароль
+      current_email: Текущий Email
+      new_email: Новый Email
+    edit:
+      email: Email
+      no_email: нет
+      update_email: Изменить
     home:
       not_logged_in: Вы не залогинены.
       login: Войти
@@ -52,6 +70,11 @@ ru:
       moderator_tools: Инструменты Модератора
       invites: Приглашения
       blocked_users: Заблокированные Пользователи
+    show:
+      avatar:
+        remove:
+          link: (удалить)
+          confirm: Удалить аватарку?
   #view: /help
   help:
     index:
@@ -89,7 +112,10 @@ ru:
     show_partials:
       statistics_panel:
         uploaded_by_user_html: ' %{u}'
-  #models
+    moderate:
+      uploaded_by_when_html: Создано %{u} %{t_ago} (%{mod})
+      mod: mod
+  # ActiveRecord (models)
   activerecord:
     attributes:
       #user.attributes
@@ -97,6 +123,10 @@ ru:
         password: Пароль
         current_password: Текущий пароль
         password_confirmation: Подтверждение пароля
+    errors:
+      models:
+        wiki_page:
+          no_change: Нет изменений в содержании/заголовке страницы
   #view/artist/create
   artist_create: "Используйте запятую в качестве разделителя псевдонимов и членов группы"
       # ^ "Separate multiple aliases and group members with commas."
@@ -233,7 +263,7 @@ ru:
   forum_search: "Поиск"
   forum_last: "последнее"
   forum_ago: " назад"
-  forum_created_by: "Срздано"
+  forum_created_by: "Создано"
   forum_updated_by: "Изменено"
   forum_updated: "Обновлено"
   forum_responses: "Ответы"
@@ -272,7 +302,7 @@ ru:
   history_redo: "Вернуть" # "Повторить"?
   history_all: "Все"
   history_posts: "Посты"
-  history_pools: "Пулы"
+  history_pools: "Коллекции"
   history_tags: "Метки"
   history_for: "» История для "
   history_type: "Тип"
@@ -389,7 +419,7 @@ ru:
   layout_forum_topics: "Просмотр Тем"
   layout_search_forum: "Поиск по Форуму"
   layout_new_topic: "Новая Тема"
-  layout_forum: "Форму"
+  layout_forum: "Форум"
   layout_help: "Справка"
   layout_site_help: "Справка по сайту"
   layout_more: "Ещё »" # "Дополнительно"
@@ -709,7 +739,7 @@ ru:
   post_options_undelete: "Восстановить"
   post_options_flag: "Пожаловаться"
   post_options_tl: "Добавить перевод"
-  post_option_add_fav: "Добавить в избранные"
+  post_options_add_fav: "Добавить в избранные"
   post_options_del_fav: "Удалить из избранных"
   post_options_approve: "Одобрить"
   post_options_add_pool: "Добавить в коллекцию"
@@ -721,7 +751,7 @@ ru:
   post_pool_text2: " "
   post_pool_text3: " коллекции"
   post_pool_remove: "удалить"
-  post_pool_chage: "страница изменений" # TODO context
+  post_pool_change: "страница изменений" # TODO context
   post_pool_xfer: "перенести родителю"
   post_related: "Связанные посты"
   post_related_previous: "Назад"
@@ -733,14 +763,14 @@ ru:
   post_stats: "Статистика"
   post_stats_id: "Id: "
   post_stats_posted: "Добавлено: "
-  post_stats_approve: "Одобрил: "
+  post_stats_approver: "Одобрил: "
   post_stats_size: "Размер: "
   post_stats_source: "Источник: "
   post_stats_rating: "Рейтинг: "
   post_stats_score: "Оценка: "
   post_stats_fav: "В избранном: "
   #views/post/show_partials/_status_notices
-  notice: "На этот пост пожаловался"
+  notice: "На этот пост пожаловался "
     # "This post was flagged for deletion by "
   notice2: "отменить"
   notice3: "удалить"
@@ -1160,6 +1190,7 @@ ru:
   user_password: "Пароль"
   user_password_text: "Не менее пяти символов."
   user_password_confirm: "Подтвердите пароль"
+  user_when: "Когда"
   #user record
   record_add: "Добавить Запись для "
   record_pos: "Положительная"

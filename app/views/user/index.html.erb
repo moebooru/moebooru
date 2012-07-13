@@ -57,7 +57,7 @@
         <% end %>
         <td><%= link_to NoteVersion.count(:conditions => "user_id = #{user.id}"), :controller => "note", :action => "history", :user_id => user.id %></td>
         <td><%= user.pretty_level %></td>
-        <td><span title="<%= user.created_at %>"><%= time_ago_in_words user.created_at %> ago</span></td>
+        <td><span title="<%= user.created_at %>"><%= t('time.x_ago', :t => time_ago_in_words(user.created_at)) %></span></td>
       </tr>
     <% end %>
   </tbody>

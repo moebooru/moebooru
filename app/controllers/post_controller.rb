@@ -73,7 +73,7 @@ class PostController < ApplicationController
           respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => api_data)
         end
       end
-    elsif @post.errors.invalid?(:md5)
+    elsif @post.errors[:md5].any?
       p = Post.find_by_md5(@post.md5)
 
       update = { :tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip }

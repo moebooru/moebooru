@@ -36,7 +36,7 @@ class BatchUpload < ActiveRecord::Base
       end
 
       self.data = { :success => true, :post_id => @post.id }
-    elsif @post.errors.invalid?(:md5)
+    elsif @post.errors[:md5].any?
       p @post.errors
       p = Post.find_by_md5(@post.md5)
       self.data = { :success => false, :error => "Post already exists", :post_id => p.id }

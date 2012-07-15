@@ -89,7 +89,7 @@ class ForumPost < ActiveRecord::Base
       if is_parent?
         return id
       else
-        return parent.id
+        return parent_id
       end
     end
   end

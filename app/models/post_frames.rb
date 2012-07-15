@@ -203,8 +203,8 @@ class PostFrames < ActiveRecord::Base
     preview_size = PostFrames.frame_preview_dimensions(self)
 
     begin
-      mkdir_p File.dirname(post.file_path)
-      mkdir_p File.dirname(post.preview_path)
+      FileUtils.mkdir_p File.dirname(post.file_path)
+      FileUtils.mkdir_p File.dirname(post.preview_path)
       Danbooru.resize(post.file_ext, post.file_path, image_tempfile_path, image_size, 95)
 
       # Save time by creating the thumbnail directly from the image we just created, instead

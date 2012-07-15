@@ -81,7 +81,7 @@ class ForumPost < ActiveRecord::Base
       if is_parent?
         return self
       else
-        return ForumPost.find(parent_id)
+        return parent
       end
     end
 
@@ -89,7 +89,7 @@ class ForumPost < ActiveRecord::Base
       if is_parent?
         return id
       else
-        return parent_id
+        return parent.id
       end
     end
   end

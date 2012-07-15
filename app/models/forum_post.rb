@@ -1,5 +1,6 @@
 class ForumPost < ActiveRecord::Base
-  belongs_to :creator, :class_name => "User", :foreign_key => :creator_id
+  belongs_to :creator, :class_name => 'User', :foreign_key => :creator_id
+  belongs_to :updater, :class_name => 'User', :foreign_key => :last_updated_by
   after_create :initialize_last_updated_by
   before_validation :validate_title
   validates_length_of :body, :minimum => 1, :message => "You need to enter a body"
@@ -151,10 +152,12 @@ class ForumPost < ActiveRecord::Base
   end
 
   def last_updater
-    User.find_name(last_updated_by)
+    updater.name
+    rescue
+      CONFIG['default_guest_name']
   end
 
   def author
-    User.find_name(creator_id)
+    creator.name
   end
 end

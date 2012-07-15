@@ -118,9 +118,9 @@ class ForumController < ApplicationController
     set_title CONFIG["app_name"] + " Forum"
 
     if params[:parent_id]
-      @forum_posts = ForumPost.paginate :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]], :page => params[:page]
+      @forum_posts = ForumPost.includes(:updater, :creator).paginate :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]], :page => params[:page]
     else
-      @forum_posts = ForumPost.paginate :order => "is_sticky desc, updated_at DESC", :per_page => 30, :conditions => "parent_id IS NULL", :page => params[:page]
+      @forum_posts = ForumPost.includes(:updater, :creator).paginate :order => "is_sticky desc, updated_at DESC", :per_page => 30, :conditions => "parent_id IS NULL", :page => params[:page]
     end
 
     respond_to_list("forum_posts")

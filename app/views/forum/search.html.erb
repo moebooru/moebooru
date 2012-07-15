@@ -17,7 +17,7 @@
     </thead>
     <tbody>
       <% @forum_posts.each do |fp| %>
-        <% content_tag :tr, :class => cycle('even', 'odd') do %>
+        <%= content_tag :tr, :class => cycle('even', 'odd') do %>
           <td><%= link_to(h(fp.root.title), :action => "show", :id => fp.root_id) %></td>
           <td><%= link_to(h(fp.body[0, 70]) + "...", :action => "show", :id => fp.id) %></td>
           <td><%= h fp.author %></td>

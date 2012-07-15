@@ -24,7 +24,7 @@
                       :id => "highres")
 
               else
-                      link_to("#{@post.has_sample? ? t(:post_options_download_larger):t(:post_options_image)} (#{number_to_human_size(file_jpeg[:size])} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
+                      link_to("#{@post.has_sample? ? t(:post_options_download_larger):t(:post_options_image)} (#{number_to_human_size(file_jpeg[:size].to_i)} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
                       :id => "highres")
               end %>

@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
     Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
       Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_id => 1.day) do
         UserLog.where('created_at < ?', 3.days.ago).delete_all
+        user_logs.reload
       end
       log_entry = self.user_logs.find_or_initialize_by_ip_addr(:ip_addr => ip)
       log_entry.created_at = Time.now

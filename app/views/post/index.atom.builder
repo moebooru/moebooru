@@ -7,7 +7,7 @@ atom_feed :root_url => url_for(:controller => :post, :action => :index, :only_pa
     feed.entry post, :url => post_url, :updated => post.created_at do |entry|
       entry.link(:href => post.source, :rel => 'related') unless post.source.blank?
       entry.link :href => post_preview_url, :rel => 'enclosure'
-      entry.title post.cached_tags
+      entry.title '%s [%s]' % [post.cached_tags, "#{post.width}x#{post.height}"]
       entry.summary post.cached_tags
       entry.content render(:partial => 'post_atom.html.erb', :locals => { :post => post, :post_url => post_url }), :type => 'html'
       entry.author do |author|

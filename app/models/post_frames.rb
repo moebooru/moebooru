@@ -211,7 +211,7 @@ class PostFrames < ActiveRecord::Base
       # of from the original, so we don't have to re-decode whole PNGs.
       Danbooru.resize("jpg", image_tempfile_path, preview_tempfile_path, preview_size, 85)
     rescue Exception => e
-      FileUtils.rm_f(tempfile_path)
+      FileUtils.rm_f(image_tempfile_path)
       FileUtils.rm_f(preview_tempfile_path)
       raise e
     end

@@ -155,11 +155,6 @@ class ApplicationController < ActionController::Base
       @current_user.log(request.remote_ip) unless @current_user.is_anonymous?
     end
 
-    def set_current_request
-      # This is used by the menu in the default layout, to bold the current page.
-      @current_request = request
-    end
-
     def set_country
       @current_user_country = Rails.cache.fetch({ :type => :geoip, :ip => request.remote_ip }, :expires_in => 1.month) do
         GeoIP.new(Rails.root.join('db', 'GeoIP.dat').to_s).country(request.remote_ip).country_code2
@@ -261,7 +256,6 @@ class ApplicationController < ActionController::Base
 
   before_filter :set_title
   before_filter :set_current_user
-  before_filter :set_current_request
   before_filter :set_country
   before_filter :check_ip_ban
   after_filter :init_cookies

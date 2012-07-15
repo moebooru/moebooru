@@ -131,7 +131,7 @@
   def[def.length-1].sub = forum_menu;
 
   var help_menu = [];
-  <% current_controller = @current_request.parameters[:controller].to_sym %>
+  <% current_controller = controller.controller_name.to_sym %>
   <% if [:post, :comment, :note, :artist, :tag, :wiki, :pool, :forum].include?(current_controller) then %>
     help_menu.push(<%= make_sub_item("#{current_controller.to_s.capitalize} " + t(:layout_help), {:controller => :help, :action => get_help_action_for_controller(current_controller)}) %>);
   <% end %>

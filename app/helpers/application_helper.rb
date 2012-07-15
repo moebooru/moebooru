@@ -138,7 +138,7 @@ module ApplicationHelper
       item[:login] = true
     end
 
-    if url_options[:controller].to_s == @current_request.parameters[:controller].to_s
+    if url_options[:controller].to_s == controller.controller_name.to_s
       item[:class_names] << "current-menu"
     end
 

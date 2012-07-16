@@ -2,7 +2,7 @@
 # are sent from CONFIG["admin_contact"].
 CONFIG['email_from'] ||= CONFIG['admin_contact']
 
-# Set default local
+# Set default locale.
 CONFIG['default_locale'] ||= 'en'
 
 # Set default url_base if not set in local config.

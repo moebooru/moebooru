@@ -3,7 +3,7 @@
 # with invalid chars in the URL; it should properly return a 400 error
 # Have to monkey-patch the fix in, since it's not scheduled for release until
 # Rails 4.0.
-# Adapted Andrew White (pixeltrix)'s fix at 
+# Adapted Andrew White (pixeltrix)'s fix at
 # https://github.com/rails/rails/commit/3fc561a1f71edf1c2bae695cafa03909d24a5ca3,
 # but edited to work in 3.0.x.
 # 3.1.x, 3.2.x compatibility unknown
@@ -16,7 +16,7 @@ if RUBY_VERSION >= '1.9'
         class Dispatcher
           def call_with_invalid_char_handling(env)
             params = env[PARAMETERS_KEY]
-  
+
             # If any of the path parameters has a invalid encoding then
             # raise since it's likely to trigger errors further on.
             params.each do |key, value|
@@ -26,7 +26,7 @@ if RUBY_VERSION >= '1.9'
             end
             call_without_invalid_char_handling(env)
           end
-  
+
           alias_method_chain :call, :invalid_char_handling
         end
       end

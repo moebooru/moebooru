@@ -6,6 +6,7 @@ end
 class UserMailer < ActionMailer::Base
   helper :application
   default_url_options["host"] = CONFIG["server_host"]
+  default :from => CONFIG['email_from']
 
   # def confirmation_email(user)
   #   recipients UserMailer.normalize_address(user.email)
@@ -24,11 +25,12 @@ class UserMailer < ActionMailer::Base
   end
 
   def dmail(recipient, sender, msg_title, msg_body)
-    recipients UserMailer.normalize_address(recipient.email)
-    subject "#{CONFIG["app_name"]} - Message received from #{sender.name}"
-    from CONFIG["email_from"]
-    body :recipient => recipient, :sender => sender, :title => msg_title, :body => msg_body
-    content_type "text/html"
+    recipients = UserMailer.normalize_address(recipient.email)
+    subject = "#{CONFIG["app_name"]} - Message received from #{sender.name}"
+    @body = msg_body
+    @sender = sender
+    @subject = msg_title
+    mail :to => recipients, :subject => subject
   end
 
   def self.normalize_address(address)

@@ -12,7 +12,7 @@ class Dmail < ActiveRecord::Base
 
   def send_dmail
     if to.receive_dmails? && to.email.include?("@")
-      UserMailer.deliver_dmail(to, from, title, body)
+      UserMailer.dmail(to, from, title, body).deliver
     end
   end
 

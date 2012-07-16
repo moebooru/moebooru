@@ -68,7 +68,6 @@ Moebooru::Application.configure do
   config.middleware.use ExceptionNotifier,
     :email_prefix => ('[%s] ' % CONFIG['app_name']),
     :sender_address => ('%s <%s>' % ['notifier', CONFIG['email_from']]),
-    :exception_recipients => CONFIG['admin_contact'],
-    :ignore_exceptions => ['ActionView::MissingTemplate'] + ExceptionNotifier.default_ignore_exceptions
+    :exception_recipients => CONFIG['admin_contact']
 
 end

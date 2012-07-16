@@ -774,7 +774,7 @@ en:
   static_comments_text: "A paginated list of every comment"
   static_tags: "Tags"
   static_tags_text: "A paginated list of every tag"
-  static_wiki: "wiki"
+  static_wiki: "Wiki"
   static_wiki_text: "Wiki"
   static_more: "A site map"
   static_serve: "Serving "

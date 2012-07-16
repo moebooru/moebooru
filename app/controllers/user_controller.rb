@@ -261,7 +261,7 @@ class UserController < ApplicationController
         User.transaction do
           # If the email is invalid, abort the password reset
           new_password = @user.reset_password
-          UserMailer.deliver_new_password(@user, new_password)
+          UserMailer.new_password(@user, new_password).deliver
           respond_to_success("Password reset. Check your email in a few minutes.",
                            {:action => "login"}, :api => {:result => "success"})
           return

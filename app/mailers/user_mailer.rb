@@ -17,11 +17,11 @@ class UserMailer < ActionMailer::Base
   # end
 
   def new_password(user, password)
-    recipients UserMailer.normalize_address(user.email)
-    subject "#{CONFIG["app_name"]} - Password Reset"
-    from CONFIG["email_from"]
-    body :user => user, :password => password
-    content_type "text/html"
+    recipients = UserMailer.normalize_address(user.email)
+    subject = "#{CONFIG["app_name"]} - Password Reset"
+    @user = user
+    @password = password
+    mail :to => recipients, :subject => subject
   end
 
   def dmail(recipient, sender, msg_title, msg_body)

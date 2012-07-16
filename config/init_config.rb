@@ -1,3 +1,4 @@
+CONFIG = {}
 require File.expand_path '../../lib/languages', __FILE__
 # The version of this Moebooru.
 CONFIG["version"] = "3.2.0-beta.1"

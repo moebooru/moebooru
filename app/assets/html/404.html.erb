@@ -4,13 +4,14 @@
 <head>
   <title>Page not found</title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
-  <link rel="stylesheet" type="text/css" media="screen" href="/assets/application.css" title="default" />
+  <%= favicon_link_tag %>
+  <%= stylesheet_link_tag :application %>
 </head>
 <body>
   <div style="text-align: center;">
-    <img src="/assets/404.jpg" alt="Page not found" style="margin: auto;" />
+    <%= image_tag '404.jpg', :alt => 'Page not found', :style => 'margin: auto;' %>
     <h1>That page does not exist.</h1>
-    <p><a href="/">Return to index</a></p>
+    <p><%= content_tag :a, 'Return to index', :href => Moebooru::RelativeUrlRoot.path %></p>
   </div>
 </body>
 </html>

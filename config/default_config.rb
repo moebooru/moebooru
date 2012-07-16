@@ -4,3 +4,6 @@ CONFIG['email_from'] ||= CONFIG['admin_contact']
 
 # Set default local
 CONFIG['default_locale'] ||= 'en'
+
+# Set default url_base if not set in local config.
+CONFIG['url_base'] ||= 'http://' + CONFIG['server_host']

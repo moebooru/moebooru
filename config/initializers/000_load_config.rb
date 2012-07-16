@@ -1,5 +1,3 @@
-CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
-
 require 'base64'
 require 'diff/lcs/array'
 require 'ipaddr'

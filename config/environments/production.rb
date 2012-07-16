@@ -66,8 +66,8 @@ Moebooru::Application.configure do
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   config.middleware.use ExceptionNotifier,
-    :email_prefix => "[#{CONFIG['app_name']}] ",
-    :sender_address => %{"notifier" <#{CONFIG['email_from']}>},
+    :email_prefix => ('[%s] ' % CONFIG['app_name']),
+    :sender_address => ('%s <%s>' % ['notifier', CONFIG['email_from']]),
     :exception_recipients => CONFIG['admin_contact'],
     :ignore_exceptions => ['ActionView::MissingTemplate'] + ExceptionNotifier.default_ignore_exceptions
 

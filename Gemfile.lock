@@ -71,6 +71,7 @@ GEM
     highline (1.6.13)
     hike (1.2.1)
     i18n (0.6.0)
+    image_voodoo (0.8.2)
     jdbc-postgres (9.1.901)
     journey (1.0.4)
     jquery-rails (2.0.2)
@@ -185,6 +186,7 @@ DEPENDENCIES
   diff-lcs
   exception_notification
   geoip
+  image_voodoo
   jquery-rails
   jruby-openssl
   json

@@ -32,6 +32,7 @@ gem 'nokogiri'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
+gem 'image_voodoo', :platforms => :jruby
 
 group :development do
   gem 'rspec'

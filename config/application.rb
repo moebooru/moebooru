@@ -76,5 +76,8 @@ module Moebooru
     end
 
     config.action_mailer.smtp_settings = { :openssl_verify_mode => 'none', :domain => CONFIG['server_host'] }
+
+    # This one is never reliable because there's no standard controlling this.
+    config.action_dispatch.ip_spoofing_check = false
   end
 end

@@ -19,7 +19,7 @@
       <% end %>
       <li><%= if(@post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
                       file_sample = @post.get_file_sample(@current_user)
-                      link_to("#{@post.has_sample? ? t(:post_options_download_larger):t(:post_options_image)} (#{number_to_human_size(file_sample[:size])} #{file_sample[:ext].upcase})", file_sample[:url],
+                      link_to("#{@post.has_sample? ? t(:post_options_download_larger):t(:post_options_image)} (#{number_to_human_size(file_sample[:size].to_i)} #{file_sample[:ext].upcase})", file_sample[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
                       :id => "highres")
 

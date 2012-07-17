@@ -16,7 +16,7 @@ h2. Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application requires:
 
-* Ruby 1.9 (1.8 should also works, too)
+* Ruby 1.9 (1.8 should also works, too) or JRuby 1.7.0
 * PostgreSQL (tested with 8.4 and 9.1)
 * Bundler gem
 * GD image library header

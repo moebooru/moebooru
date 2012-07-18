@@ -2,7 +2,7 @@ h1. Moebooru
 
 This project is based on original Moebooru which is being used in "yande.re Image Board":http://yande.re. Changes compared to original Moebooru:
 
-* Compatible with Ruby 1.9
+* Compatible with Ruby 1.9 and JRuby 1.7.0
 * Uses Rails 3.2
 * Updated gems
 * Pool ZIP support for nginx (with @mod_zip@)
@@ -16,7 +16,7 @@ h2. Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application requires:
 
-* Ruby 1.9 (1.8 should also works, too) or JRuby 1.7.0
+* Ruby 1.9 (1.8 should also works, too)
 * PostgreSQL (tested with 8.4 and 9.1)
 * Bundler gem
 * GD image library header
@@ -48,21 +48,47 @@ On Ubuntu 10.04.4 LTS
  
 h2. Installation
 
-* Create a new PostgreSQL user with type of superuser
-* Create database for Moebooru and initialize it by loading @db/structure.sql@
+h3. Database Setup
+
+After initializing PostgreSQL database, create user for moebooru with @createdb@ privilege:
+
+<pre>
+postgres# create user moebooru_user with password 'the_password' createdb;
+</pre>
+
+And then install the required PostgreSQL extensions:
+
+* language plpgsql
+* test_parser
+
+<pre>
+--- postgresql 9.1+
+postgres# \c template1
+postgres# create extension test_parser;
+
+--- postgresql 8.3, 8.4
+postgres# \c template1
+postgres# create language plpgsql;
+postgres# \q
+--- postgresql 8.3, 8.4, 9.0 - from shell
+# sudo -u postgres psql -d template1 -f "`pg_config --sharedir`/contrib/test_parser.sql"
+</pre>
+
+h3. Rails Setup
+
 * Run @bundle install@
-* Build image resizer:
+* Build image resizer (skip if using JRuby):
 ** @cd lib/danbooru_image_resizer@
 ** @ruby extconf.rb@
 ** @make@
 * Create @config/database.yml@ and @config/local_config.rb@
+* Initialize database with @bundle exec rake db:reset@ (there will be some errors reported which is expected)
 * Run @bundle exec rake db:migrate@
-* Start the server (@bundle exec unicorn@)
+* Start the server (@bundle exec unicorn@ or @bundle exec puma@ if using JRuby/Rubinius)
 
 h2. Plans
 
 * Bug fixes
 * Documentation
-* Switch to ImageScience/ImageVoodo
-* JRuby and Rubinius support
+* Switch to ImageScience
 * And more!

@@ -27,7 +27,7 @@
   <%= form_tag({:controller => "post", :action => "create"}, :level => :member, :multipart => true, :id => "edit-form") do %>
     <div id="posts">
       <% if params[:url] %>
-        <%= image_tag(params["url"], :title => "Preview", :id => "image") %>
+        <%= tag :img, :src => params['url'], :alt => params['url'], :title => 'Preview', :id => 'image' %>
         <p id="scale"></p>
         <script type="text/javascript">
         document.observe("dom:loaded", function() {

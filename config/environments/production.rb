@@ -51,8 +51,9 @@ Moebooru::Application.configure do
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
 
-  # Enable threaded mode
-  config.threadsafe!
+  # Enable threaded mode except for rake tasks as it doesn't work quite well
+  # Reference: http://groups.google.com/group/rubyonrails-core/browse_thread/thread/b13dbe0b8f12b7dc
+  config.threadsafe! unless $rails_rake_task
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)

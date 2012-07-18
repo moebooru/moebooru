@@ -75,6 +75,9 @@ class NoteController < ApplicationController
       return
     end
 
+    # The received parameters are float. Force casting to integer.
+    params[:note][:x] = params[:note][:x].to_i
+    params[:note][:y] = params[:note][:y].to_i
     note.attributes = params[:note]
     note.user_id = @current_user.id
     note.ip_addr = request.remote_ip

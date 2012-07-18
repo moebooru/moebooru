@@ -4,16 +4,36 @@
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
-SET standard_conforming_strings = off;
+SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET escape_string_warning = off;
 
 --
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
-CREATE PROCEDURAL LANGUAGE plpgsql;
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: test_parser; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS test_parser WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION test_parser; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION test_parser IS 'example of a custom parser for full-text search';
 
 
 SET search_path = public, pg_catalog;
@@ -226,42 +246,6 @@ CREATE FUNCTION replace_underscores(s character varying) RETURNS character varyi
 
 
 --
--- Name: testprs_end(internal); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION testprs_end(internal) RETURNS void
-    LANGUAGE c STRICT
-    AS '$libdir/test_parser', 'testprs_end';
-
-
---
--- Name: testprs_getlexeme(internal, internal, internal); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION testprs_getlexeme(internal, internal, internal) RETURNS internal
-    LANGUAGE c STRICT
-    AS '$libdir/test_parser', 'testprs_getlexeme';
-
-
---
--- Name: testprs_lextype(internal); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION testprs_lextype(internal) RETURNS internal
-    LANGUAGE c STRICT
-    AS '$libdir/test_parser', 'testprs_lextype';
-
-
---
--- Name: testprs_start(internal, integer); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION testprs_start(internal, integer) RETURNS internal
-    LANGUAGE c STRICT
-    AS '$libdir/test_parser', 'testprs_start';
-
-
---
 -- Name: trg_posts_tags__delete(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -330,18 +314,6 @@ CREATE FUNCTION user_logs_touch(new_user_id integer, new_ip inet) RETURNS void
 
 
 --
--- Name: testparser; Type: TEXT SEARCH PARSER; Schema: public; Owner: -
---
-
-CREATE TEXT SEARCH PARSER testparser (
-    START = testprs_start,
-    GETTOKEN = testprs_getlexeme,
-    END = testprs_end,
-    HEADLINE = prsd_headline,
-    LEXTYPES = testprs_lextype );
-
-
---
 -- Name: danbooru; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
 --
 
@@ -379,8 +351,8 @@ CREATE TABLE advertisements (
 CREATE SEQUENCE advertisements_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -410,8 +382,8 @@ CREATE TABLE artist_urls (
 CREATE SEQUENCE artist_urls_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -443,8 +415,8 @@ CREATE TABLE artists (
 CREATE SEQUENCE artists_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -476,8 +448,8 @@ CREATE TABLE bans (
 CREATE SEQUENCE bans_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -512,8 +484,8 @@ CREATE TABLE batch_uploads (
 CREATE SEQUENCE batch_uploads_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -545,8 +517,8 @@ CREATE TABLE comment_fragments (
 CREATE SEQUENCE comment_fragments_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -581,8 +553,8 @@ CREATE TABLE comments (
 CREATE SEQUENCE comments_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -616,8 +588,8 @@ CREATE TABLE dmails (
 CREATE SEQUENCE dmails_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -649,8 +621,8 @@ CREATE TABLE tag_subscriptions (
 CREATE SEQUENCE favorite_tags_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -680,8 +652,8 @@ CREATE TABLE favorites (
 CREATE SEQUENCE favorites_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -713,8 +685,8 @@ CREATE TABLE flagged_post_details (
 CREATE SEQUENCE flagged_post_details_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -752,8 +724,8 @@ CREATE TABLE forum_posts (
 CREATE SEQUENCE forum_posts_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -785,8 +757,8 @@ CREATE TABLE histories (
 CREATE SEQUENCE histories_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -820,8 +792,8 @@ CREATE TABLE history_changes (
 CREATE SEQUENCE history_changes_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -857,8 +829,8 @@ CREATE TABLE inline_images (
 CREATE SEQUENCE inline_images_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -888,8 +860,8 @@ CREATE TABLE inlines (
 CREATE SEQUENCE inlines_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -921,8 +893,8 @@ CREATE TABLE ip_bans (
 CREATE SEQUENCE ip_bans_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -956,8 +928,8 @@ CREATE TABLE job_tasks (
 CREATE SEQUENCE job_tasks_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -998,8 +970,8 @@ CREATE TABLE note_versions (
 CREATE SEQUENCE note_versions_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1039,8 +1011,8 @@ CREATE TABLE notes (
 CREATE SEQUENCE notes_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1078,8 +1050,8 @@ CREATE TABLE pools (
 CREATE SEQUENCE pools_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1112,8 +1084,8 @@ CREATE TABLE pools_posts (
 CREATE SEQUENCE pools_posts_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1184,8 +1156,8 @@ CREATE TABLE posts (
 CREATE SEQUENCE post_change_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1221,8 +1193,8 @@ CREATE TABLE post_frames (
 CREATE SEQUENCE post_frames_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1254,8 +1226,8 @@ CREATE TABLE post_tag_histories (
 CREATE SEQUENCE post_tag_histories_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1286,8 +1258,8 @@ CREATE TABLE post_votes (
 CREATE SEQUENCE post_votes_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1305,8 +1277,8 @@ ALTER SEQUENCE post_votes_id_seq OWNED BY post_votes.id;
 CREATE SEQUENCE posts_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1354,8 +1326,8 @@ CREATE TABLE server_keys (
 CREATE SEQUENCE server_keys_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1397,8 +1369,8 @@ CREATE TABLE tag_aliases (
 CREATE SEQUENCE tag_aliases_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1430,8 +1402,8 @@ CREATE TABLE tag_implications (
 CREATE SEQUENCE tag_implications_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1464,8 +1436,8 @@ CREATE TABLE tags (
 CREATE SEQUENCE tags_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1494,8 +1466,8 @@ CREATE TABLE user_blacklisted_tags (
 CREATE SEQUENCE user_blacklisted_tags_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1525,8 +1497,8 @@ CREATE TABLE user_logs (
 CREATE SEQUENCE user_logs_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1558,8 +1530,8 @@ CREATE TABLE user_records (
 CREATE SEQUENCE user_records_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1615,8 +1587,8 @@ CREATE TABLE users (
 CREATE SEQUENCE users_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1653,8 +1625,8 @@ CREATE TABLE wiki_page_versions (
 CREATE SEQUENCE wiki_page_versions_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -1690,8 +1662,8 @@ CREATE TABLE wiki_pages (
 CREATE SEQUENCE wiki_pages_id_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -2697,6 +2669,13 @@ CREATE INDEX index_post_votes_on_post_id ON post_votes USING btree (post_id);
 
 
 --
+-- Name: index_post_votes_on_updated_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_post_votes_on_updated_at ON post_votes USING btree (updated_at);
+
+
+--
 -- Name: index_post_votes_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2924,130 +2903,91 @@ CREATE RULE delete_histories AS ON DELETE TO notes DO (DELETE FROM history_chang
 -- Name: pools_posts_delete_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_delete_trg
-    BEFORE DELETE ON pools_posts
-    FOR EACH ROW
-    EXECUTE PROCEDURE pools_posts_delete_trg();
+CREATE TRIGGER pools_posts_delete_trg BEFORE DELETE ON pools_posts FOR EACH ROW EXECUTE PROCEDURE pools_posts_delete_trg();
 
 
 --
 -- Name: pools_posts_insert_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_insert_trg
-    BEFORE INSERT ON pools_posts
-    FOR EACH ROW
-    EXECUTE PROCEDURE pools_posts_insert_trg();
+CREATE TRIGGER pools_posts_insert_trg BEFORE INSERT ON pools_posts FOR EACH ROW EXECUTE PROCEDURE pools_posts_insert_trg();
 
 
 --
 -- Name: pools_posts_update_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_update_trg
-    BEFORE UPDATE ON pools_posts
-    FOR EACH ROW
-    EXECUTE PROCEDURE pools_posts_update_trg();
+CREATE TRIGGER pools_posts_update_trg BEFORE UPDATE ON pools_posts FOR EACH ROW EXECUTE PROCEDURE pools_posts_update_trg();
 
 
 --
 -- Name: trg_cleanup_history; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_cleanup_history
-    AFTER DELETE ON history_changes
-    FOR EACH ROW
-    EXECUTE PROCEDURE trg_purge_histories();
+CREATE TRIGGER trg_cleanup_history AFTER DELETE ON history_changes FOR EACH ROW EXECUTE PROCEDURE trg_purge_histories();
 
 
 --
 -- Name: trg_comment_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_comment_search_update
-    BEFORE INSERT OR UPDATE ON comments
-    FOR EACH ROW
-    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_comment_search_update BEFORE INSERT OR UPDATE ON comments FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: trg_forum_post_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_forum_post_search_update
-    BEFORE INSERT OR UPDATE ON forum_posts
-    FOR EACH ROW
-    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_forum_post_search_update BEFORE INSERT OR UPDATE ON forum_posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
 -- Name: trg_history_changes_value_index_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_history_changes_value_index_update
-    BEFORE INSERT OR UPDATE ON history_changes
-    FOR EACH ROW
-    EXECUTE PROCEDURE history_changes_index_trigger();
+CREATE TRIGGER trg_history_changes_value_index_update BEFORE INSERT OR UPDATE ON history_changes FOR EACH ROW EXECUTE PROCEDURE history_changes_index_trigger();
 
 
 --
 -- Name: trg_note_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_note_search_update
-    BEFORE INSERT OR UPDATE ON notes
-    FOR EACH ROW
-    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_note_search_update BEFORE INSERT OR UPDATE ON notes FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: trg_pools_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_pools_search_update
-    BEFORE INSERT OR UPDATE ON pools
-    FOR EACH ROW
-    EXECUTE PROCEDURE pools_search_update_trigger();
+CREATE TRIGGER trg_pools_search_update BEFORE INSERT OR UPDATE ON pools FOR EACH ROW EXECUTE PROCEDURE pools_search_update_trigger();
 
 
 --
 -- Name: trg_posts_tags__delete; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__delete
-    BEFORE DELETE ON posts_tags
-    FOR EACH ROW
-    EXECUTE PROCEDURE trg_posts_tags__delete();
+CREATE TRIGGER trg_posts_tags__delete BEFORE DELETE ON posts_tags FOR EACH ROW EXECUTE PROCEDURE trg_posts_tags__delete();
 
 
 --
 -- Name: trg_posts_tags__insert; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__insert
-    BEFORE INSERT ON posts_tags
-    FOR EACH ROW
-    EXECUTE PROCEDURE trg_posts_tags__insert();
+CREATE TRIGGER trg_posts_tags__insert BEFORE INSERT ON posts_tags FOR EACH ROW EXECUTE PROCEDURE trg_posts_tags__insert();
 
 
 --
 -- Name: trg_posts_tags_index_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags_index_update
-    BEFORE INSERT OR UPDATE ON posts
-    FOR EACH ROW
-    EXECUTE PROCEDURE tsvector_update_trigger('tags_index', 'public.danbooru', 'cached_tags');
+CREATE TRIGGER trg_posts_tags_index_update BEFORE INSERT OR UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('tags_index', 'public.danbooru', 'cached_tags');
 
 
 --
 -- Name: trg_wiki_page_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_wiki_page_search_update
-    BEFORE INSERT OR UPDATE ON wiki_pages
-    FOR EACH ROW
-    EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_wiki_page_search_update BEFORE INSERT OR UPDATE ON wiki_pages FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
@@ -3528,22 +3468,6 @@ ALTER TABLE ONLY users
 
 INSERT INTO schema_migrations (version) VALUES ('1');
 
-INSERT INTO schema_migrations (version) VALUES ('2');
-
-INSERT INTO schema_migrations (version) VALUES ('3');
-
-INSERT INTO schema_migrations (version) VALUES ('4');
-
-INSERT INTO schema_migrations (version) VALUES ('5');
-
-INSERT INTO schema_migrations (version) VALUES ('6');
-
-INSERT INTO schema_migrations (version) VALUES ('7');
-
-INSERT INTO schema_migrations (version) VALUES ('8');
-
-INSERT INTO schema_migrations (version) VALUES ('9');
-
 INSERT INTO schema_migrations (version) VALUES ('10');
 
 INSERT INTO schema_migrations (version) VALUES ('11');
@@ -3564,159 +3488,9 @@ INSERT INTO schema_migrations (version) VALUES ('18');
 
 INSERT INTO schema_migrations (version) VALUES ('19');
 
+INSERT INTO schema_migrations (version) VALUES ('2');
+
 INSERT INTO schema_migrations (version) VALUES ('20');
-
-INSERT INTO schema_migrations (version) VALUES ('21');
-
-INSERT INTO schema_migrations (version) VALUES ('22');
-
-INSERT INTO schema_migrations (version) VALUES ('23');
-
-INSERT INTO schema_migrations (version) VALUES ('24');
-
-INSERT INTO schema_migrations (version) VALUES ('25');
-
-INSERT INTO schema_migrations (version) VALUES ('26');
-
-INSERT INTO schema_migrations (version) VALUES ('27');
-
-INSERT INTO schema_migrations (version) VALUES ('28');
-
-INSERT INTO schema_migrations (version) VALUES ('29');
-
-INSERT INTO schema_migrations (version) VALUES ('30');
-
-INSERT INTO schema_migrations (version) VALUES ('31');
-
-INSERT INTO schema_migrations (version) VALUES ('32');
-
-INSERT INTO schema_migrations (version) VALUES ('33');
-
-INSERT INTO schema_migrations (version) VALUES ('34');
-
-INSERT INTO schema_migrations (version) VALUES ('35');
-
-INSERT INTO schema_migrations (version) VALUES ('36');
-
-INSERT INTO schema_migrations (version) VALUES ('37');
-
-INSERT INTO schema_migrations (version) VALUES ('38');
-
-INSERT INTO schema_migrations (version) VALUES ('39');
-
-INSERT INTO schema_migrations (version) VALUES ('40');
-
-INSERT INTO schema_migrations (version) VALUES ('41');
-
-INSERT INTO schema_migrations (version) VALUES ('42');
-
-INSERT INTO schema_migrations (version) VALUES ('43');
-
-INSERT INTO schema_migrations (version) VALUES ('44');
-
-INSERT INTO schema_migrations (version) VALUES ('45');
-
-INSERT INTO schema_migrations (version) VALUES ('46');
-
-INSERT INTO schema_migrations (version) VALUES ('47');
-
-INSERT INTO schema_migrations (version) VALUES ('48');
-
-INSERT INTO schema_migrations (version) VALUES ('49');
-
-INSERT INTO schema_migrations (version) VALUES ('51');
-
-INSERT INTO schema_migrations (version) VALUES ('52');
-
-INSERT INTO schema_migrations (version) VALUES ('53');
-
-INSERT INTO schema_migrations (version) VALUES ('54');
-
-INSERT INTO schema_migrations (version) VALUES ('55');
-
-INSERT INTO schema_migrations (version) VALUES ('56');
-
-INSERT INTO schema_migrations (version) VALUES ('57');
-
-INSERT INTO schema_migrations (version) VALUES ('58');
-
-INSERT INTO schema_migrations (version) VALUES ('59');
-
-INSERT INTO schema_migrations (version) VALUES ('60');
-
-INSERT INTO schema_migrations (version) VALUES ('61');
-
-INSERT INTO schema_migrations (version) VALUES ('62');
-
-INSERT INTO schema_migrations (version) VALUES ('63');
-
-INSERT INTO schema_migrations (version) VALUES ('64');
-
-INSERT INTO schema_migrations (version) VALUES ('65');
-
-INSERT INTO schema_migrations (version) VALUES ('66');
-
-INSERT INTO schema_migrations (version) VALUES ('67');
-
-INSERT INTO schema_migrations (version) VALUES ('68');
-
-INSERT INTO schema_migrations (version) VALUES ('69');
-
-INSERT INTO schema_migrations (version) VALUES ('70');
-
-INSERT INTO schema_migrations (version) VALUES ('71');
-
-INSERT INTO schema_migrations (version) VALUES ('72');
-
-INSERT INTO schema_migrations (version) VALUES ('73');
-
-INSERT INTO schema_migrations (version) VALUES ('74');
-
-INSERT INTO schema_migrations (version) VALUES ('75');
-
-INSERT INTO schema_migrations (version) VALUES ('76');
-
-INSERT INTO schema_migrations (version) VALUES ('77');
-
-INSERT INTO schema_migrations (version) VALUES ('78');
-
-INSERT INTO schema_migrations (version) VALUES ('79');
-
-INSERT INTO schema_migrations (version) VALUES ('80');
-
-INSERT INTO schema_migrations (version) VALUES ('81');
-
-INSERT INTO schema_migrations (version) VALUES ('82');
-
-INSERT INTO schema_migrations (version) VALUES ('83');
-
-INSERT INTO schema_migrations (version) VALUES ('84');
-
-INSERT INTO schema_migrations (version) VALUES ('85');
-
-INSERT INTO schema_migrations (version) VALUES ('86');
-
-INSERT INTO schema_migrations (version) VALUES ('87');
-
-INSERT INTO schema_migrations (version) VALUES ('88');
-
-INSERT INTO schema_migrations (version) VALUES ('89');
-
-INSERT INTO schema_migrations (version) VALUES ('90');
-
-INSERT INTO schema_migrations (version) VALUES ('91');
-
-INSERT INTO schema_migrations (version) VALUES ('92');
-
-INSERT INTO schema_migrations (version) VALUES ('93');
-
-INSERT INTO schema_migrations (version) VALUES ('94');
-
-INSERT INTO schema_migrations (version) VALUES ('95');
-
-INSERT INTO schema_migrations (version) VALUES ('96');
-
-INSERT INTO schema_migrations (version) VALUES ('9142010220946');
 
 INSERT INTO schema_migrations (version) VALUES ('20080901000000');
 
@@ -3819,3 +3593,171 @@ INSERT INTO schema_migrations (version) VALUES ('20110228010717');
 INSERT INTO schema_migrations (version) VALUES ('20120331040429');
 
 INSERT INTO schema_migrations (version) VALUES ('20120505130017');
+
+INSERT INTO schema_migrations (version) VALUES ('20120624121058');
+
+INSERT INTO schema_migrations (version) VALUES ('21');
+
+INSERT INTO schema_migrations (version) VALUES ('22');
+
+INSERT INTO schema_migrations (version) VALUES ('23');
+
+INSERT INTO schema_migrations (version) VALUES ('24');
+
+INSERT INTO schema_migrations (version) VALUES ('25');
+
+INSERT INTO schema_migrations (version) VALUES ('26');
+
+INSERT INTO schema_migrations (version) VALUES ('27');
+
+INSERT INTO schema_migrations (version) VALUES ('28');
+
+INSERT INTO schema_migrations (version) VALUES ('29');
+
+INSERT INTO schema_migrations (version) VALUES ('3');
+
+INSERT INTO schema_migrations (version) VALUES ('30');
+
+INSERT INTO schema_migrations (version) VALUES ('31');
+
+INSERT INTO schema_migrations (version) VALUES ('32');
+
+INSERT INTO schema_migrations (version) VALUES ('33');
+
+INSERT INTO schema_migrations (version) VALUES ('34');
+
+INSERT INTO schema_migrations (version) VALUES ('35');
+
+INSERT INTO schema_migrations (version) VALUES ('36');
+
+INSERT INTO schema_migrations (version) VALUES ('37');
+
+INSERT INTO schema_migrations (version) VALUES ('38');
+
+INSERT INTO schema_migrations (version) VALUES ('39');
+
+INSERT INTO schema_migrations (version) VALUES ('4');
+
+INSERT INTO schema_migrations (version) VALUES ('40');
+
+INSERT INTO schema_migrations (version) VALUES ('41');
+
+INSERT INTO schema_migrations (version) VALUES ('42');
+
+INSERT INTO schema_migrations (version) VALUES ('43');
+
+INSERT INTO schema_migrations (version) VALUES ('44');
+
+INSERT INTO schema_migrations (version) VALUES ('45');
+
+INSERT INTO schema_migrations (version) VALUES ('46');
+
+INSERT INTO schema_migrations (version) VALUES ('47');
+
+INSERT INTO schema_migrations (version) VALUES ('48');
+
+INSERT INTO schema_migrations (version) VALUES ('49');
+
+INSERT INTO schema_migrations (version) VALUES ('5');
+
+INSERT INTO schema_migrations (version) VALUES ('51');
+
+INSERT INTO schema_migrations (version) VALUES ('52');
+
+INSERT INTO schema_migrations (version) VALUES ('53');
+
+INSERT INTO schema_migrations (version) VALUES ('54');
+
+INSERT INTO schema_migrations (version) VALUES ('55');
+
+INSERT INTO schema_migrations (version) VALUES ('56');
+
+INSERT INTO schema_migrations (version) VALUES ('57');
+
+INSERT INTO schema_migrations (version) VALUES ('58');
+
+INSERT INTO schema_migrations (version) VALUES ('59');
+
+INSERT INTO schema_migrations (version) VALUES ('6');
+
+INSERT INTO schema_migrations (version) VALUES ('60');
+
+INSERT INTO schema_migrations (version) VALUES ('61');
+
+INSERT INTO schema_migrations (version) VALUES ('62');
+
+INSERT INTO schema_migrations (version) VALUES ('63');
+
+INSERT INTO schema_migrations (version) VALUES ('64');
+
+INSERT INTO schema_migrations (version) VALUES ('65');
+
+INSERT INTO schema_migrations (version) VALUES ('66');
+
+INSERT INTO schema_migrations (version) VALUES ('67');
+
+INSERT INTO schema_migrations (version) VALUES ('68');
+
+INSERT INTO schema_migrations (version) VALUES ('69');
+
+INSERT INTO schema_migrations (version) VALUES ('7');
+
+INSERT INTO schema_migrations (version) VALUES ('70');
+
+INSERT INTO schema_migrations (version) VALUES ('71');
+
+INSERT INTO schema_migrations (version) VALUES ('72');
+
+INSERT INTO schema_migrations (version) VALUES ('73');
+
+INSERT INTO schema_migrations (version) VALUES ('74');
+
+INSERT INTO schema_migrations (version) VALUES ('75');
+
+INSERT INTO schema_migrations (version) VALUES ('76');
+
+INSERT INTO schema_migrations (version) VALUES ('77');
+
+INSERT INTO schema_migrations (version) VALUES ('78');
+
+INSERT INTO schema_migrations (version) VALUES ('79');
+
+INSERT INTO schema_migrations (version) VALUES ('8');
+
+INSERT INTO schema_migrations (version) VALUES ('80');
+
+INSERT INTO schema_migrations (version) VALUES ('81');
+
+INSERT INTO schema_migrations (version) VALUES ('82');
+
+INSERT INTO schema_migrations (version) VALUES ('83');
+
+INSERT INTO schema_migrations (version) VALUES ('84');
+
+INSERT INTO schema_migrations (version) VALUES ('85');
+
+INSERT INTO schema_migrations (version) VALUES ('86');
+
+INSERT INTO schema_migrations (version) VALUES ('87');
+
+INSERT INTO schema_migrations (version) VALUES ('88');
+
+INSERT INTO schema_migrations (version) VALUES ('89');
+
+INSERT INTO schema_migrations (version) VALUES ('9');
+
+INSERT INTO schema_migrations (version) VALUES ('90');
+
+INSERT INTO schema_migrations (version) VALUES ('91');
+
+INSERT INTO schema_migrations (version) VALUES ('9142010220946');
+
+INSERT INTO schema_migrations (version) VALUES ('92');
+
+INSERT INTO schema_migrations (version) VALUES ('93');
+
+INSERT INTO schema_migrations (version) VALUES ('94');
+
+INSERT INTO schema_migrations (version) VALUES ('95');
+
+INSERT INTO schema_migrations (version) VALUES ('96');

@@ -7,14 +7,21 @@ class User < ActiveRecord::Base
   class AlreadyFavoritedError < Exception; end
 
   def log(ip)
-    Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
-      Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_id => 1.day) do
-        UserLog.where('created_at < ?', 3.days.ago).delete_all
+    begin
+      Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
+        Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_id => 1.day) do
+          UserLog.where('created_at < ?', 3.days.ago).delete_all
+        end
+        self.user_logs.reload
+        log_entry = self.user_logs.find_or_initialize_by_ip_addr(:ip_addr => ip)
+        log_entry.created_at = Time.now
+        log_entry.save
       end
-      self.user_logs.reload
-      log_entry = self.user_logs.find_or_initialize_by_ip_addr(:ip_addr => ip)
-      log_entry.created_at = Time.now
-      log_entry.save
+    # Once in a blue moon there will be race condition on find_or_initialize
+    # resulting unique key constraint violation.
+    # It doesn't really affect anything so just ignore that error.
+    rescue
+      nil
     end
   end
 

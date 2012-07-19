@@ -112,10 +112,10 @@ class InlineImage < ActiveRecord::Base
       return false
     end
 
-    imgsize = ImageSize.new(File.open(tempfile_image_path, "rb"))
+    imgsize = ImageSize.path(tempfile_image_path)
 
-    unless imgsize.get_width.nil?
-      self.file_ext = imgsize.get_type.gsub(/JPEG/, "JPG").downcase
+    unless imgsize.format.nil?
+      self.file_ext = imgsize.format.gsub(/jpeg/i, "jpg").downcase
     end
 
     unless %w(jpg png gif).include?(file_ext.downcase)
@@ -128,9 +128,9 @@ class InlineImage < ActiveRecord::Base
 
   def set_image_dimensions
     return true if self.width and self.height
-    imgsize = ImageSize.new(File.open(tempfile_image_path, "rb"))
-    self.width = imgsize.get_width
-    self.height = imgsize.get_height
+    imgsize = ImageSize.path(tempfile_image_path)
+    self.width = imgsize.width
+    self.height = imgsize.height
 
     return true
   end

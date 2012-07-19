@@ -257,10 +257,10 @@ module PostFileMethods
       return false
     end
 
-    imgsize = ImageSize.new(File.open(tempfile_path, "rb"))
+    imgsize = ImageSize.path(tempfile_path)
 
-    unless imgsize.get_width.nil?
-      self.file_ext = imgsize.get_type.gsub(/JPEG/, "JPG").downcase
+    unless imgsize.format.nil?
+      self.file_ext = imgsize.format.gsub(/jpeg/i, "jpg").downcase
     end
   end
 
@@ -282,9 +282,9 @@ module PostFileMethods
 
   def set_image_dimensions
     if image? or flash?
-      imgsize = ImageSize.new(File.open(tempfile_path, "rb"))
-      self.width = imgsize.get_width
-      self.height = imgsize.get_height
+      imgsize = ImageSize.path(tempfile_path)
+      self.width = imgsize.width
+      self.height = imgsize.height
     end
     self.file_size = File.size(tempfile_path) rescue 0
   end

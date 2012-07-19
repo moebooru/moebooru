@@ -32,9 +32,8 @@ GEM
     activesupport (3.2.6)
       i18n (~> 0.6)
       multi_json (~> 1.0)
-    acts_as_versioned (0.2.3)
-      activerecord (>= 1.10.1)
-      activesupport (>= 1.1.1)
+    acts_as_versioned_rails3 (0.6.2)
+      activerecord (>= 3.0.9)
     arel (3.0.2)
     bouncy-castle-java (1.5.0146.1)
     brakeman (1.6.2)
@@ -177,7 +176,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-jdbcpostgresql-adapter
-  acts_as_versioned
+  acts_as_versioned_rails3
   brakeman
   coffee-rails (~> 3.2.1)
   daemons

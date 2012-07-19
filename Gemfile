@@ -20,7 +20,7 @@ gem 'jruby-openssl', :platforms => :jruby
 gem 'diff-lcs'
 gem 'json'
 gem 'dalli'
-gem 'acts_as_versioned'
+gem 'acts_as_versioned_rails3'
 gem 'geoip'
 gem 'exception_notification'
 gem 'will_paginate'

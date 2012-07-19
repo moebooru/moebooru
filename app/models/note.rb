@@ -3,7 +3,7 @@ class Note < ActiveRecord::Base
 
   belongs_to :post
   before_save :blank_body
-  acts_as_versioned :table_name => 'note_versions', :foreign_key => 'note_id', :order => "updated_at DESC"
+  acts_as_versioned_rails3 :table_name => 'note_versions', :foreign_key => 'note_id', :order => "updated_at DESC"
   after_save :update_post
 
   versioning_group_by :class => :post

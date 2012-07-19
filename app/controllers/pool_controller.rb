@@ -1,5 +1,3 @@
-require 'tokenize'
-
 class PoolController < ApplicationController
   layout "default"
   before_filter :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]
@@ -23,7 +21,7 @@ class PoolController < ApplicationController
     search_tokens = []
     if params[:query]
       set_title(params[:query] + " - Pools")
-      query = Tokenize.tokenize_with_quotes(params[:query] || "")
+      query = params[:query].shellsplit
 
       query.each { |token|
         if token =~ /^(order|limit|posts):(.+)$/

@@ -1,7 +1,7 @@
 require 'diff'
 
 class WikiPage < ActiveRecord::Base
-  acts_as_versioned :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
+  acts_as_versioned_rails3 :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
   before_save :normalize_title
   belongs_to :user
   validates_uniqueness_of :title, :case_sensitive => false

@@ -25,7 +25,7 @@ namespace :sample_images do
 
   desc 'Create missing sample images'
   task :create_missing => :environment do
-    Post.find_by_sql("SELECT p.* FROM posts p ORDER BY p.id DESC").each do |post|
+    Post.order('id DESC').all.each do |post|
       regen(post)
     end
   end

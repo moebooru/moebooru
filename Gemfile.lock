@@ -71,7 +71,6 @@ GEM
     hike (1.2.1)
     i18n (0.6.0)
     image_size (1.1.1)
-    image_voodoo (0.8.2)
     jdbc-postgres (9.1.901)
     journey (1.0.4)
     jquery-rails (2.0.2)
@@ -89,6 +88,8 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.19)
+    mini_magick (3.4)
+      subexec (~> 0.2.1)
     multi_json (1.3.6)
     newrelic_rpm (3.4.0.1)
     nokogiri (1.5.5)
@@ -152,6 +153,7 @@ GEM
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    subexec (0.2.2)
     terminal-table (1.4.5)
     therubyracer (0.10.1)
       libv8 (~> 3.3.10)
@@ -187,10 +189,10 @@ DEPENDENCIES
   exception_notification
   geoip
   image_size
-  image_voodoo
   jquery-rails
   jruby-openssl
   json
+  mini_magick
   newrelic_rpm
   nokogiri
   pg

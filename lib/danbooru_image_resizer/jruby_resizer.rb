@@ -2,19 +2,22 @@ module Danbooru
   class ResizeError < Exception; end
 
   def resize(file_ext, read_path, write_path, output_size, output_quality)
-    ImageScience.with_image(read_path) do |img|
-      output_size[:width] ||= img.width
-      output_size[:height] ||= img.height
-      output_size[:crop_top] ||= 0
-      output_size[:crop_bottom] ||= img.height
-      output_size[:crop_left] ||= 0
-      output_size[:crop_right] ||= img.width
-      img.with_crop(output_size[:crop_left], output_size[:crop_top], output_size[:crop_right], output_size[:crop_bottom]) do |img_cropped|
-        img_cropped.resize(output_size[:width], output_size[:height]) do |img_final|
-          img_final.save write_path
-        end
-      end
-    end
+    image = MiniMagick::Image.open(read_path)
+    output_size[:width] ||= image[:width]
+    output_size[:height] ||= image[:height]
+    output_size[:crop_top] ||= 0
+    output_size[:crop_bottom] ||= image[:height]
+    output_size[:crop_left] ||= 0
+    output_size[:crop_right] ||= image[:width]
+    output_size[:crop_width] ||= output_size[:crop_right] - output_size[:crop_left]
+    output_size[:crop_height] ||= output_size[:crop_bottom] - output_size[:crop_top]
+    resize = "#{output_size[:width]}x#{output_size[:height]}"
+    crop = "#{output_size[:crop_width]}x#{output_size[:crop_height]}+#{output_size[:crop_left]}+#{output_size[:crop_top]}"
+    image.format file_ext
+    image.quality output_quality.to_s
+    image.crop crop
+    image.resize resize
+    image.write write_path
     rescue IOError
       raise
     rescue Exception => e

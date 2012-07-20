@@ -32,7 +32,7 @@ gem 'nokogiri'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
-gem 'image_voodoo', :platforms => :jruby, :require => 'image_science'
+gem 'mini_magick', :platforms => :jruby
 gem 'image_size'
 
 group :development do

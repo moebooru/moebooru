@@ -11,10 +11,17 @@ module CacheHelper
       user_level = "?"
     end
 
-    version = Rails.cache.read("$cache_version").to_i
-    tags = Base64.urlsafe_encode64(tags.join(" "))
+    version = Rails.cache.read("$cache_version")
+    tags = tags.join(' ')
 
-    ["#{base}/v=#{version}&t=#{tags}&p=#{page}&ul=#{user_level}&l=#{limit}", 0]
+    key = {}
+    key[:base] = base
+    key[:version] = version
+    key[:tags] = tags
+    key[:page] = page
+    key[:user_level] = user_level
+    key[:limit] = limit
+    [key, 0]
   end
 
   def get_cache_key(controller_name, action_name, params, options = {})

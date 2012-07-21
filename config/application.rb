@@ -69,7 +69,7 @@ module Moebooru
     #        haven't been updated to use asset-path.
     config.assets.paths += [config.root.join('public', 'images')]
 
-    if Rails.env == 'production' and CONFIG['enable_caching']
+    if (Rails.env == 'production' or ENV['MOE_CACHE']) and CONFIG['enable_caching']
       config.cache_store = :dalli_store, CONFIG['memcache_servers'], { :namespace => CONFIG['app_name'] }
     else
       config.cache_store = :null_store

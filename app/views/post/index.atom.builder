@@ -9,7 +9,7 @@ atom_feed :root_url => url_for(:controller => :post, :action => :index, :only_pa
       entry.link :href => post_preview_url, :rel => 'enclosure'
       entry.title '%s [%s]' % [post.cached_tags, "#{post.width}x#{post.height}"]
       entry.summary post.cached_tags
-      entry.content render(:partial => 'post_atom.html.erb', :locals => { :post => post, :post_url => post_url }), :type => 'html'
+      entry.content render(:partial => 'post_atom', :formats => :html, :locals => { :post => post, :post_url => post_url }), :type => 'html'
       entry.author do |author|
         author.name post.author
         author.url url_for(:controller => :user, :action => :show, :id => post.user_id, :only_path => false)

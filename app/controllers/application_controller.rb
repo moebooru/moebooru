@@ -4,31 +4,6 @@ require 'digest/md5'
 class ApplicationController < ActionController::Base
   before_filter :set_locale
   before_filter :sanitize_params
- 
-  def set_locale
-    if params[:locale] and CONFIG['available_locales'].include?(params[:locale])
-      cookies['locale'] = { :value => params[:locale], :expires => 1.year.from_now }
-      I18n.locale = params[:locale].to_sym
-    elsif cookies['locale'] and CONFIG['available_locales'].include?(cookies['locale'])
-      I18n.locale = cookies['locale'].to_sym
-    else
-      I18n.locale = CONFIG['default_locale']
-    end
-  end
-
-  def sanitize_params
-    if params.is_a? Hash
-      if params[:page]
-        p = params[:page].to_i
-        p = 1 if p < 1
-        params[:page] = p
-      else
-        params[:page] = 1
-      end
-    else
-      params = {}
-    end
-  end
 
   # This is a proxy class to make various nil checks unnecessary
   class AnonymousUser
@@ -410,6 +385,30 @@ class ApplicationController < ActionController::Base
   end
 
   private
+    def set_locale
+      if params[:locale] and CONFIG['available_locales'].include?(params[:locale])
+        cookies['locale'] = { :value => params[:locale], :expires => 1.year.from_now }
+        I18n.locale = params[:locale].to_sym
+      elsif cookies['locale'] and CONFIG['available_locales'].include?(cookies['locale'])
+        I18n.locale = cookies['locale'].to_sym
+      else
+        I18n.locale = CONFIG['default_locale']
+      end
+    end
+
+    def sanitize_params
+      if params.is_a? Hash
+        if params[:page]
+          p = params[:page].to_i
+          p = 1 if p < 1
+          params[:page] = p
+        else
+          params[:page] = 1
+        end
+      else
+        params = {}
+      end
+    end
 
     def admin_only
       access_denied unless @current_user.is_admin?

@@ -1,3 +1,0 @@
-#!/bin/bash
-
-perl /usr/share/doc/awstats/examples/awstats_buildstaticpages.pl -config=danbooru -update -dir=/var/www/danbooru/public/stats -awstatsprog=/usr/lib/cgi-bin/awstats.pl -diricons=icon

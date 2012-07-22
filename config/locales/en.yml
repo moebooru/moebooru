@@ -32,6 +32,10 @@ en:
       is_locked: (locked)
     search:
       last_updated_by: '%{t_ago} by %{u}'
+  # view: /static
+  static:
+    index:
+      search: Search
   #view: /user
   user:
     change_password:

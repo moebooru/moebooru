@@ -1,10 +1,11 @@
 # encoding: utf-8
+require 'iconv' if RUBY_VERSION < '1.9'
+
 class String
   # Strip out invalid utf8
   def to_valid_utf8
     if RUBY_VERSION < '1.9'
       # Use iconv on ruby 1.8.x
-      require 'iconv'
       ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
       # The weird iconv parameter is required thanks to iconv not stripping
       # invalid character if it's at the end of input string.

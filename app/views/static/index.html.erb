@@ -11,7 +11,7 @@
     <%= form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>
       <div>
         <%= text_field_tag "tags", "", :size => 30 %><br>
-        <%= submit_tag t('.search') %>
+        <%= submit_tag t('.search'), :name => nil %>
       </div>
     <% end %>
   </div>

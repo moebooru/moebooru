@@ -902,7 +902,7 @@ class PostController < ApplicationController
       if imgsize.format.nil?
         raise Danbooru::ResizeError, "Unrecognized image format"
       end
-      ext = imgsize.format.gsub(/jpeg/i, "jpg").downcase
+      ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
 
       histogram = Danbooru.histogram(ext, tempfile_path)
 

@@ -115,7 +115,7 @@ class InlineImage < ActiveRecord::Base
     imgsize = ImageSize.path(tempfile_image_path)
 
     unless imgsize.format.nil?
-      self.file_ext = imgsize.format.gsub(/jpeg/i, "jpg").downcase
+      self.file_ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
     end
 
     unless %w(jpg png gif).include?(file_ext.downcase)

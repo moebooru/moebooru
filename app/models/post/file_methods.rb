@@ -260,7 +260,7 @@ module PostFileMethods
     imgsize = ImageSize.path(tempfile_path)
 
     unless imgsize.format.nil?
-      self.file_ext = imgsize.format.gsub(/jpeg/i, "jpg").downcase
+      self.file_ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
     end
   end
 

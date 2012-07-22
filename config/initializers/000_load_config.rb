@@ -11,11 +11,7 @@ require 'fileutils'
 
 # lib requires
 require 'core_extensions'
-if RUBY_PLATFORM == 'java'
-  require 'danbooru_image_resizer/jruby_resizer'
-else
-  require 'danbooru_image_resizer/danbooru_image_resizer'
-end
+require 'danbooru_image_resizer/jruby_resizer'
 require 'diff'
 require 'download'
 require 'dtext'

@@ -7,9 +7,9 @@
 # https://github.com/rails/rails/commit/3fc561a1f71edf1c2bae695cafa03909d24a5ca3,
 # but edited to work in 3.0.x.
 # 3.1.x, 3.2.x compatibility unknown
-require 'action_dispatch/routing/route_set'
-
 if RUBY_VERSION >= '1.9'
+  require 'action_dispatch/routing/route_set'
+
   module ActionDispatch
     module Routing
       class RouteSet

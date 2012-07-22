@@ -83,7 +83,7 @@ CONFIG["jpeg_height"] = 3500
 # Resample the image only if the image is larger than jpeg_ratio * jpeg_dimensions.  If
 # not, PNGs can still have a JPEG generated, but no resampling will be done.
 CONFIG["jpeg_ratio"] = 1.25
-CONFIG["jpeg_quality"] = { :min => 94, :max => 97, :filesize => 1024*1024*4 }
+CONFIG["jpeg_quality"] = 94
 
 # If enabled, URLs will be of the form:
 # http://host/image/00112233445566778899aabbccddeeff/12345 tag tag2 tag3.jpg

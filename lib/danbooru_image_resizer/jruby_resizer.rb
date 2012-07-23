@@ -11,12 +11,22 @@ module Danbooru
     output_size[:crop_right] ||= image[:width]
     output_size[:crop_width] ||= output_size[:crop_right] - output_size[:crop_left]
     output_size[:crop_height] ||= output_size[:crop_bottom] - output_size[:crop_top]
-    resize = "#{output_size[:width]}x#{output_size[:height]}"
-    crop = "#{output_size[:crop_width]}x#{output_size[:crop_height]}+#{output_size[:crop_left]}+#{output_size[:crop_top]}"
-    image.format file_ext
-    image.quality output_quality.to_s
-    image.crop crop
-    image.resize resize
+    write_size = "#{output_size[:width]}x#{output_size[:height]}"
+    write_crop = "#{output_size[:crop_width]}x#{output_size[:crop_height]}+#{output_size[:crop_left]}+#{output_size[:crop_top]}"
+    write_format = write_path.split('.')[-1]
+    if write_format =~ /\A(jpe?g|gif|png)\z/i
+      write_format = write_format.downcase
+    else
+      format = file_ext
+    end
+    image.format write_format do |f|
+      f.crop write_crop
+      f.resize write_size
+      if write_format =~ /\Ajpe?g\z/
+        f.sampling_factor '2x2,1x1,1x1'
+      end
+      f.quality output_quality.to_s
+    end
     image.write write_path
     rescue IOError
       raise

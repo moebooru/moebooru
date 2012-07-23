@@ -85,7 +85,7 @@ CREATE FUNCTION history_changes_index_trigger() RETURNS trigger
       changed_tags_array varchar[];
       indexed_value varchar;
     BEGIN
-      IF (new.table_name, new.field) IN (('posts', 'cached_tags')) THEN
+      IF (new.table_name, new.column_name) IN (('posts', 'cached_tags')) THEN
         old_tags := prev.value FROM history_changes prev WHERE (prev.id = new.previous_id) LIMIT 1;
         old_tags_array := regexp_split_to_array(COALESCE(old_tags, ''), ' ');
         new_tags_array := regexp_split_to_array(COALESCE(new.value, ''), ' ');
@@ -93,9 +93,9 @@ CREATE FUNCTION history_changes_index_trigger() RETURNS trigger
         changed_tags_array := get_new_tags(old_tags_array, new_tags_array);
         changed_tags_array := array_cat(changed_tags_array, get_new_tags(new_tags_array, old_tags_array));
         indexed_value := join_string(changed_tags_array, ' ');
-      ELSEIF (new.table_name, new.field) IN (('pools', 'name')) THEN
+      ELSEIF (new.table_name, new.column_name) IN (('pools', 'name')) THEN
         indexed_value := translate(new.value, '_', ' ');
-      ELSEIF (new.table_name, new.field) IN (('posts', 'cached_tags'), ('posts', 'source'), ('pools', 'description'), ('notes', 'body')) THEN
+      ELSEIF (new.table_name, new.column_name) IN (('posts', 'cached_tags'), ('posts', 'source'), ('pools', 'description'), ('notes', 'body')) THEN
         indexed_value := new.value;
       ELSE
         RETURN new;
@@ -3597,6 +3597,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120505130017');
 INSERT INTO schema_migrations (version) VALUES ('20120624121058');
 
 INSERT INTO schema_migrations (version) VALUES ('20120723155345');
+
+INSERT INTO schema_migrations (version) VALUES ('20120723161914');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

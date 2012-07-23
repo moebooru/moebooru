@@ -90,7 +90,7 @@ module ActiveRecord
           history = get_current_history
           h = HistoryChange.new(:table_name => self.class.table_name,
                           :remote_id => self.id,
-                          :field => att.to_s,
+                          :column_name => att.to_s,
                           :value => new,
                           :history_id => history.id)
           h.save!
@@ -277,7 +277,7 @@ module ActiveRecord
 
         attrs.each { |att, opts|
           # If any histories already exist for this attribute, assume that it's already been updated.
-          next if HistoryChange.find(:first, :conditions => ["table_name = ? AND field = ?", table_name, att.to_s])
+          next if HistoryChange.find(:first, :conditions => ["table_name = ? AND column_name = ?", table_name, att.to_s])
           attributes_to_update << att
         }
         return if attributes_to_update.empty?
@@ -325,7 +325,7 @@ module ActiveRecord
             attributes_to_update.each { |att|
               value = item.__send__(att.to_s)
               options = {
-                :field => att.to_s,
+                :column_name => att.to_s,
                 :value => value,
                 :table_name => table_name,
                 :remote_id => item.id,
@@ -411,7 +411,7 @@ module ActiveRecord
           if tags != prev_tags then
             c = h.history_changes.new(:table_name => "posts",
                                      :remote_id => tag_history.post_id,
-                                     :field => "cached_tags",
+                                     :column_name => "cached_tags",
                                      :value => tags)
             c.save!
           end
@@ -419,7 +419,7 @@ module ActiveRecord
           if rating != prev_rating then
             c = h.history_changes.new(:table_name => "posts",
                                      :remote_id => tag_history.post_id,
-                                     :field => "rating",
+                                     :column_name => "rating",
                                      :value => rating)
             c.save!
           end
@@ -461,7 +461,7 @@ module ActiveRecord
             fields.each { |f|
               c = h.history_changes.new(:table_name => "notes",
                                        :remote_id => ver.note_id,
-                                       :field => f[0],
+                                       :column_name => f[0],
                                        :value => f[1])
               c.save!
             }

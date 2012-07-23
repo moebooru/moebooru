@@ -107,8 +107,8 @@ module HistoryHelper
     change_groups = {}
     changes.each do |c|
       change_groups[c.table_name] ||= {}
-      change_groups[c.table_name][c.field.to_sym] ||= []
-      change_groups[c.table_name][c.field.to_sym] << c
+      change_groups[c.table_name][c.column_name.to_sym] ||= []
+      change_groups[c.table_name][c.column_name.to_sym] << c
     end
 
     att_options = get_attribute_options
@@ -199,7 +199,7 @@ module HistoryHelper
     html = ""
 
     classes = []
-    if !table_options[:never_obsolete][change.field.to_sym] && change.is_obsolete? then
+    if !table_options[:never_obsolete][change.column_name.to_sym] && change.is_obsolete? then
       classes << ["obsolete"]
     end
 
@@ -210,7 +210,7 @@ module HistoryHelper
     primary_order = 1
     case change.table_name
     when"posts"
-      case change.field
+      case change.column_name
       when "rating"
         html << %{<span class="changed-post-rating">rating:}
         html << change.value
@@ -286,7 +286,7 @@ module HistoryHelper
     when "pools"
       primary_order = 0
 
-      case change.field
+      case change.column_name
       when "name"
         if change.previous
           html << "name changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [h(change.previous.value), h(change.value)]
@@ -344,7 +344,7 @@ module HistoryHelper
     when "pools_posts"
       # Sort the output by the post id.
       sort_key = change.obj.post.id
-      case change.field
+      case change.column_name
       when "active"
         html << (change.value == 't' ? added : removed)
 
@@ -358,7 +358,7 @@ module HistoryHelper
         html << link_to("%s" % seq, :controller => "post", :action => "show", :id => change.obj.post_id)
       end
     when "tags"
-      case change.field
+      case change.column_name
       when "tag_type"
         html << "type:"
         tag_type = Tag.type_name_from_value(change.value.to_i)
@@ -372,7 +372,7 @@ module HistoryHelper
         html << "ambiguous"
       end
     when "notes"
-      case change.field
+      case change.column_name
       when "body"
         if change.previous
           html << "body changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [h(change.previous.value), h(change.value)]
@@ -403,7 +403,7 @@ module HistoryHelper
 
     return {
       :html => span,
-      :field => change.field,
+      :field => change.column_name,
       :sort_key => sort_key,
     }
   end

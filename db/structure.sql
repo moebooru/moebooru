@@ -775,7 +775,7 @@ ALTER SEQUENCE histories_id_seq OWNED BY histories.id;
 
 CREATE TABLE history_changes (
     id integer NOT NULL,
-    field text NOT NULL,
+    column_name text NOT NULL,
     remote_id integer NOT NULL,
     table_name text NOT NULL,
     value text,
@@ -3595,6 +3595,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120331040429');
 INSERT INTO schema_migrations (version) VALUES ('20120505130017');
 
 INSERT INTO schema_migrations (version) VALUES ('20120624121058');
+
+INSERT INTO schema_migrations (version) VALUES ('20120723155345');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

@@ -9,13 +9,13 @@ class HistoryChange < ActiveRecord::Base
     # this workaround were found somewhere I couldn't remember.
     # - edogawaconan
     if RUBY_VERSION >= '1.9'
-      opts = master_class.get_versioned_attribute_options(field) || {}
+      opts = master_class.get_versioned_attribute_options(column_name) || {}
       if opts.is_a? Array then
         opts = opts.reduce({}) {|h,pairs| pairs.each {|k,v| h[k] = v}; h}
       end
       return opts
     end
-    return master_class.get_versioned_attribute_options(field) || {}
+    return master_class.get_versioned_attribute_options(column_name) || {}
   end
 
   def master_class
@@ -35,7 +35,7 @@ class HistoryChange < ActiveRecord::Base
 
     # Cast our value to the actual type; if this is a boolean value, this
     # casts "f" to false.
-    column = master_class.columns_hash[field]
+    column = master_class.columns_hash[column_name]
     typecasted_value = column.type_cast(value)
 
     return typecasted_value == get_default
@@ -60,7 +60,7 @@ class HistoryChange < ActiveRecord::Base
 
     History.new :table_name => self.table_name,
                     :remote_id => self.remote_id,
-                    :field => self.field,
+                    :column_name => self.column_name,
                     :value => get_default
   end
 
@@ -72,17 +72,17 @@ class HistoryChange < ActiveRecord::Base
 
   def latest
     HistoryChange.find(:first, :order => "id DESC",
-                 :conditions => ["table_name = ? AND remote_id = ? AND field = ?", table_name, remote_id, field])
+                 :conditions => ["table_name = ? AND remote_id = ? AND column_name = ?", table_name, remote_id, column_name])
   end
 
   def next
     HistoryChange.find(:first, :order => "h.id ASC",
-                 :conditions => ["table_name = ? AND remote_id = ? AND id > ? AND field = ?", table_name, remote_id, id, field])
+                 :conditions => ["table_name = ? AND remote_id = ? AND id > ? AND column_name = ?", table_name, remote_id, id, column_name])
   end
 
   def set_previous
     self.previous = HistoryChange.find(:first, :order => "id DESC",
-                 :conditions => ["table_name = ? AND remote_id = ? AND id < ? AND field = ?", table_name, remote_id, id, field])
+                 :conditions => ["table_name = ? AND remote_id = ? AND id < ? AND column_name = ?", table_name, remote_id, id, column_name])
     self.save!
   end
 end

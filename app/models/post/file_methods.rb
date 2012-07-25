@@ -253,7 +253,7 @@ module PostFileMethods
 
   def determine_content_type
     if not File.exists?(tempfile_path)
-      errors.add_to_base("No file received")
+      errors.add(:base, "No file received")
       return false
     end
 
@@ -321,7 +321,7 @@ module PostFileMethods
     pending_posts = Post.count(:conditions => ["user_id = ? AND status = 'pending'", self.user_id])
     return if pending_posts < CONFIG["max_pending_images"]
 
-    errors.add_to_base("You have too many posts pending moderation")
+    errors.add(:base, "You have too many posts pending moderation")
     return false
   end
 

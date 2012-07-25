@@ -37,17 +37,17 @@ class TagAlias < ActiveRecord::Base
   # Makes sure the alias does not conflict with any other aliases.
   def validate_uniqueness
     if self.class.exists?(["name = ?", name])
-      errors.add_to_base("#{name} is already aliased to something")
+      errors.add(:base, "#{name} is already aliased to something")
       return false
     end
 
     if self.class.exists?(["alias_id = (select id from tags where name = ?)", name])
-      errors.add_to_base("#{name} is already aliased to something")
+      errors.add(:base, "#{name} is already aliased to something")
       return false
     end
 
     if self.class.exists?(["name = ?", alias_name])
-      errors.add_to_base("#{alias_name} is already aliased to something")
+      errors.add(:base, "#{alias_name} is already aliased to something")
       return false
     end
   end

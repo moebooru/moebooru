@@ -32,7 +32,7 @@ class Note < ActiveRecord::Base
 
     def post_must_not_be_note_locked
       if is_locked?
-        errors.add_to_base "Post is note locked"
+        errors.add :base, "Post is note locked"
         return false
       end
     end

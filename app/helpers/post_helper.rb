@@ -137,6 +137,7 @@ module PostHelper
     li_class += " has-children" if post.has_children?
     li_class += " has-parent" if post.parent_id
     li_class += " pending" if post.is_pending?
+    li_class += " mode-browse" if options[:display] == :large
     # We need to specify a width on the <li>, since IE7 won't figure it out on its own.
     item = %{<li style="width: #{block_size[0]+10}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>}
     return item.html_safe

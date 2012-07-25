@@ -3,7 +3,7 @@ class TagImplication < ActiveRecord::Base
 
   def validate_uniqueness
     if self.class.find(:first, :conditions => ["(predicate_id = ? AND consequent_id = ?) OR (predicate_id = ? AND consequent_id = ?)", predicate_id, consequent_id, consequent_id, predicate_id])
-      self.errors.add_to_base("Tag implication already exists")
+      self.errors.add(:base, "Tag implication already exists")
       return false
     end
   end

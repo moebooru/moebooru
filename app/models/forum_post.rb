@@ -25,7 +25,7 @@ class ForumPost < ActiveRecord::Base
 
     def validate_lock
       if root.is_locked?
-        errors.add_to_base("Thread is locked")
+        errors.add(:base, "Thread is locked")
         return false
       end
 

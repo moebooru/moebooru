@@ -108,7 +108,7 @@ class InlineImage < ActiveRecord::Base
     return true if self.file_ext
 
     if not File.exists?(tempfile_image_path)
-      errors.add_to_base("No file received")
+      errors.add(:base, "No file received")
       return false
     end
 
@@ -300,7 +300,7 @@ class InlineImage < ActiveRecord::Base
     for s in siblings do
       next if s.id == self
       if s.md5 == self.md5
-        errors.add_to_base("##{s.sequence} already exists.")
+        errors.add(:base, "##{s.sequence} already exists.")
         return false
       end
     end

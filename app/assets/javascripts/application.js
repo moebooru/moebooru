@@ -40,6 +40,6 @@
 //= require prototype-legacy/user_record
 //= require prototype-legacy/vote-widget
 //= require jquery
-//=# require jquery_ujs
+//= require jquery_ujs
 //= require jquery.cookie
 //= require_tree .

@@ -13,7 +13,10 @@
       <tbody>
         <tr>
           <td><label for="member_name"><%=t :user_name %></label></td>
-          <td><%= text_field_with_auto_complete "member", "name", {:value => params[:name]}, :skip_style => true, :min_chars => 3, :skip_style => true, :url => {:controller => "user", :action => "auto_complete_for_member_name"} %></td>
+          <td>
+            <%= text_field "member", "name" %>
+            <%= javascript_tag render(:partial => 'user/autocomplete_name', :formats => :js, :locals => { :field_id => 'member_name' }) %>
+          </td>
         </tr>
         <tr>
           <td><label for="member_level"><%=t :user_level %></label></td>

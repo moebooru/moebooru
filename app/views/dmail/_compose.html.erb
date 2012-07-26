@@ -15,7 +15,10 @@
     <tbody>
       <tr>
         <th><label for="dmail_to_name"><%=t :dmail_to %></label></th>
-        <td><%= text_field_with_auto_complete "dmail", "to_name", {:value => params[:to]}, :skip_style => true, :min_chars => 3, :skip_style => true %></td>
+        <td>
+          <%= text_field "dmail", "to_name" %>
+          <%= javascript_tag render(:partial => 'user/autocomplete_name', :formats => :js, :locals => { :field_id => 'dmail_to_name' }) %>
+        </td>
       </tr>
       <tr>
         <th><label for="dmail_title"><%=t :dmail_title %></label></th>

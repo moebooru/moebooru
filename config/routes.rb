@@ -210,6 +210,7 @@ Moebooru::Application.routes.draw do
   match 'tag_subscription/destroy(/:id)' => 'tag_subscription#destroy'
 
   # User
+  get 'user/autocomplete_name', :as => :ac_user_name
   match 'user(/index)(.:format)' => 'user#index'
   match 'user/activate_user'
   match 'user/auto_complete_for_member_name'

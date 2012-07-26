@@ -19,6 +19,14 @@ class UserController < ApplicationController
   end
 
   public
+  def autocomplete_name
+    keyword = params[:term].to_s
+    @users = User.where(['name LIKE ?', "*#{keyword}*".to_escaped_for_sql_like]).pluck(:name) if keyword.length >= 2
+    respond_to do |format|
+      format.json { render :json => (@users || []) }
+    end
+  end
+
   # FIXME: this method is crap and only function as temporary workaround
   #        until I convert the controllers to resourceful version which is
   #        planned for 3.2 branch (at least 3.2.1).

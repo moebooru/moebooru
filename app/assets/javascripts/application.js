@@ -1,12 +1,12 @@
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
 //
-//= require prototype
-//= require effects
-//= require dragdrop
-//= require controls
-//= require builder
-//= require rails
+//= require prototype-legacy/prototype
+//= require prototype-legacy/effects
+//= require prototype-legacy/dragdrop
+//= require prototype-legacy/controls
+//= require prototype-legacy/builder
+//= require prototype-legacy/rails
 //= require prototype-legacy/browser-img-pool
 //= require prototype-legacy/browser-post-loading
 //= require prototype-legacy/browser-thumb-view

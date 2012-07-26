@@ -76,6 +76,9 @@ GEM
     jquery-rails (2.0.2)
       railties (>= 3.2.0, < 5.0)
       thor (~> 0.14)
+    jquery-ui-rails (1.1.0)
+      jquery-rails
+      railties (>= 3.1.0)
     jruby-openssl (0.7.7)
       bouncy-castle-java (>= 1.5.0146.1)
     json (1.7.3)
@@ -190,6 +193,7 @@ DEPENDENCIES
   geoip
   image_size
   jquery-rails
+  jquery-ui-rails
   jruby-openssl
   json
   mini_magick

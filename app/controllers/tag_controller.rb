@@ -10,6 +10,15 @@ class TagController < ApplicationController
     @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}
   end
 
+  # Generates list of tag names matching parameter term.
+  # Used by jquery.ui.autocomplete.
+  def autocomplete_name
+    @tags = Tag.where(['name LIKE ?', "*#{params[:term]}*".to_escaped_for_sql_like]).pluck(:name)
+    respond_to do |format|
+      format.json { render :json => @tags }
+    end
+  end
+
   def summary
     if params[:version] then
       # HTTP caching is unreliable for XHR.  If a version is supplied, and the version

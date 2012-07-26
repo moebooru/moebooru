@@ -185,6 +185,7 @@ Moebooru::Application.routes.draw do
   # Tag
   match 'tag(/index)(.:format)' => 'tag#index'
   match 'tag/auto_complete_for_tag_name'
+  get 'tag/autocomplete_name', :as => :ac_tag_name
   match 'tag/cloud'
   match 'tag/edit(/:id)' => 'tag#edit'
   match 'tag/edit_preview'

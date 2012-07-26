@@ -11,6 +11,7 @@ group :assets do
   gem 'therubyrhino', :platforms => :jruby
 
   gem 'uglifier', '>= 1.0.3'
+  gem 'jquery-ui-rails'
 end
 
 gem 'pg', :platforms => :ruby

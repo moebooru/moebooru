@@ -13,7 +13,7 @@ class TagController < ApplicationController
   # Generates list of tag names matching parameter term.
   # Used by jquery.ui.autocomplete.
   def autocomplete_name
-    @tags = Tag.where(['name LIKE ?', "*#{params[:term]}*".to_escaped_for_sql_like]).pluck(:name)
+    @tags = Tag.where(['name ILIKE ?', "*#{params[:term]}*".to_escaped_for_sql_like]).pluck(:name)
     respond_to do |format|
       format.json { render :json => @tags }
     end

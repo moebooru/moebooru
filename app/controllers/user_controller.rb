@@ -9,7 +9,6 @@ class UserController < ApplicationController
   before_filter :no_anonymous, :only => [:change_password, :change_email]
   helper :post, :tag_subscription
   helper :avatar
-  auto_complete_for :user, :name
 
   protected
   def save_cookies(user)
@@ -53,11 +52,6 @@ class UserController < ApplicationController
   def change_email
     @title = 'Change Email'
     @current_user.current_email = @current_user.email
-  end
-
-  def auto_complete_for_member_name
-    @users = User.find(:all, :order => "lower(name)", :conditions => ["level = ? AND name ILIKE ? ESCAPE E'\\\\'", CONFIG["user_levels"]["Member"], params[:member][:name] + "%"])
-    render :layout => false, :text => "<ul>" + @users.map {|x| "<li>" + x.name + "</li>"}.join("") + "</ul>"
   end
 
   def show

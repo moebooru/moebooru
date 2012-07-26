@@ -48,7 +48,6 @@ Moebooru::Application.routes.draw do
 
   # Dmail
   match 'dmail(/inbox)' => 'dmail#inbox'
-  match 'dmail/auto_complete_for_dmail_to_name'
   match 'dmail/compose'
   match 'dmail/preview'
   match 'dmail/show(/:id)' => 'dmail#show'
@@ -184,7 +183,6 @@ Moebooru::Application.routes.draw do
 
   # Tag
   match 'tag(/index)(.:format)' => 'tag#index'
-  match 'tag/auto_complete_for_tag_name'
   get 'tag/autocomplete_name', :as => :ac_tag_name
   match 'tag/cloud'
   match 'tag/edit(/:id)' => 'tag#edit'
@@ -213,8 +211,6 @@ Moebooru::Application.routes.draw do
   get 'user/autocomplete_name', :as => :ac_user_name
   match 'user(/index)(.:format)' => 'user#index'
   match 'user/activate_user'
-  match 'user/auto_complete_for_member_name'
-  match 'user/auto_complete_for_user_name'
   match 'user/block(/:id)' => 'user#block'
   match 'user/change_email'
   match 'user/change_password'

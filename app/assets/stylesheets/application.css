@@ -677,35 +677,6 @@ div#artist-index > table td {
   white-space: nowrap;
 }
 
-div.auto_complete {
-  width: 350px;
-  background: #fff;
-}
-
-div.auto_complete ul {
-  border:1px solid #888;
-  margin:0;
-  padding:0;
-  width:100%;
-  list-style-type:none;
-}
-
-div.auto_complete ul > li {
-  margin:0;
-  padding:3px;
-  color: #000000;
-}
-
-div.auto_complete ul > li.selected {
-  background-color: #ffb;
-}
-
-div.auto_complete ul strong.highlight {
-  color: #800;
-  margin:0;
-  padding:0;
-}
-
 div.blocked {
   border: 2px solid #F00;
   background: #FCC;

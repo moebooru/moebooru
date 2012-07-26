@@ -6,11 +6,6 @@ class DmailController < ApplicationController
     render :layout => false
   end
 
-  def auto_complete_for_dmail_to_name
-    @users = defined?(params[:dmail][:to_name]) ? User.name_starts_with(params[:dmail][:to_name]) : []
-    render :layout => false
-  end
-
   def show_previous_messages
     @dmails = Dmail.find(:all, :conditions => ["(to_id = ? or from_id = ?) and parent_id = ? and id < ?", @current_user.id, @current_user.id, params[:parent_id], params[:id]], :order => "id asc")
     render :layout => false

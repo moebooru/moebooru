@@ -5,6 +5,4 @@
 
   <a href="#" id="close-news-ticker-link"><%=t :news_ticker_close %></a>
 </div>
-<script type="text/javascript">
-  <%= render :partial => 'layouts/news_ticker_display', :formats => :js %>
-</script>
+<%= javascript_tag render(:partial => 'layouts/news_ticker_display', :formats => :js) %>

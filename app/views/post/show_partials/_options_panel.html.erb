@@ -12,8 +12,7 @@
               else
                       link_to(t(:post_options_view_larger), file_jpeg[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
-                      :id => "highres-show", :onclick => "Post.highres(); return false",
-                      :link_height => file_jpeg[:height], :link_width => file_jpeg[:width])
+                      :id => "highres-show", :link_height => file_jpeg[:height], :link_width => file_jpeg[:width])
               end %>
       </li>
       <% end %>

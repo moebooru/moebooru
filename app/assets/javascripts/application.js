@@ -43,4 +43,5 @@
 //= require jquery_ujs
 //= require jquery.cookie
 //= require jquery.ui.autocomplete
+//= require moebooru/post
 //= require_tree .

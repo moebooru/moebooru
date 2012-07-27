@@ -2,7 +2,6 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
   has_many :user_logs
-  scope :name_starts_with, lambda { |s| where User.arel_table[:name].matches("#{s}*".to_escaped_for_sql_like) }
   attr_accessor :current_email
   class AlreadyFavoritedError < Exception; end
 

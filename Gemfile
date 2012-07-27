@@ -38,5 +38,4 @@ gem 'image_size'
 
 group :development do
   gem 'rspec'
-  gem 'brakeman'
 end

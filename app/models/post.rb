@@ -31,7 +31,8 @@ class Post < ActiveRecord::Base
   end
 
   def self.slow_has_any_tags(tags)
-    Post.where(:id => PostsTag.where(:tag_id => Tag.where(:name => tags).select(:id)).select(:post_id))
+    t_ids = Tag.where(:name => tags).pluck(:id)
+    Post.where(:id => PostsTag.where(:tag_id => t_ids).select(:post_id))
   end
 
   include PostSqlMethods

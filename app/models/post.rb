@@ -23,14 +23,9 @@ class Post < ActiveRecord::Base
 
   def self.slow_has_all_tags(tags)
     p = Post.scoped
-    pt = PostsTag.arel_table
-    pt_arels = []
     t_ids = Tag.where(:name => tags).pluck(:id)
     t_ids.each do |t_id|
-      pt_arels << pt.where(pt[:tag_id].eq(t_id)).project(pt[:post_id])
-    end
-    pt_arels.each do |q|
-      p = p.where(:id => q)
+      p = p.where(:id => PostsTag.where(:tag_id => t_id).select(:post_id))
     end
     p
   end

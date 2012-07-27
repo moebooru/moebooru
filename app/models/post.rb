@@ -36,7 +36,6 @@ class Post < ActiveRecord::Base
   end
 
   def self.slow_has_any_tags(tags)
-    p = Post.arel_table
     pt = PostsTag.arel_table
     pt_arels = []
     t_ids = Tag.where(:name => tags).pluck(:id)

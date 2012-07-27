@@ -1,24 +1,29 @@
 # Start Post transition from prototypejs.
+#
 
-Post.highres = ($) ->
-    if Post.inLargerVersion
+class Post
+    constructor: ->
+        @inLargerVersion = false
+        @image = jQuery('#image')
+        @width = @image.attr('large_width')
+        @height = @image.attr('large_height')
+        @largeSource = jQuery('#highres-show').attr('href')
+
+    highres: () ->
+        return false if @inLargerVersion
+        @image.detach()
+        @image.attr('src', '')
+        @image.attr('width', @width)
+        @image.attr('height', @height)
+        @image.attr('src', @largeSource)
+        @image.insertAfter('#note-container')
+        @inLargerVersion = true
         return false
-    Post.inLargerVersion = true
-    img = $("#image")
-    large_image = $("#highres-show").attr("href")
-    w = img.attr("large_width")
-    h = img.attr("large_height")
-    img = img.detach()
-    img.attr("src", "")
-    img.attr("width", w)
-    img.attr("height", h)
-    img.attr("src", large_image)
-    img.insertAfter('#note-container')
-    return false
+
 
 # Post.highres patch for #image
-# Still have to pass $ around manually.
 # XXX: Centralized .ready (?)
 jQuery ($) ->
-    $("#highres-show").on "click", () ->
-        Post.highres($)
+    post = new Post()
+    $('#highres-show').on 'click', ->
+        post.highres()

@@ -36,11 +36,7 @@ class Post < ActiveRecord::Base
   end
 
   def self.slow_has_any_tags(tags)
-    pt = PostsTag.arel_table
-    pt_arels = []
-    t_ids = Tag.where(:name => tags).pluck(:id)
-    pt_arel = pt.where(pt[:tag_id].in(t_ids)).project(pt[:post_id])
-    Post.where(:id => pt_arel)
+    Post.where(:id => PostsTag.where(:tag_id => Tag.where(:name => tags).select(:id)).select(:post_id))
   end
 
   include PostSqlMethods

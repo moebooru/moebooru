@@ -25,7 +25,7 @@ class Post < ActiveRecord::Base
     p = Post.scoped
     pt = PostsTag.arel_table
     pt_arels = []
-    t_ids = Tag.where(:name => tags).select('id').map { |t| t.id }
+    t_ids = Tag.where(:name => tags).pluck(:id)
     t_ids.each do |t_id|
       pt_arels << pt.where(pt[:tag_id].eq(t_id)).project(pt[:post_id])
     end
@@ -39,7 +39,7 @@ class Post < ActiveRecord::Base
     p = Post.arel_table
     pt = PostsTag.arel_table
     pt_arels = []
-    t_ids = Tag.where(:name => tags).select('id').map { |t| t.id }
+    t_ids = Tag.where(:name => tags).pluck(:id)
     pt_arel = pt.where(pt[:tag_id].in(t_ids)).project(pt[:post_id])
     Post.where(:id => pt_arel)
   end

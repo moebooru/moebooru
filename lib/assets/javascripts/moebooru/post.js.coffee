@@ -1,10 +1,5 @@
 # Start Post transition from prototypejs.
 
-# This line actually useless since Coffeescript force 
-# scoped closure for each javascript translation.
-# Can't access global Post here.
-Post = {} unless typeof Post == "object"
-
 Post.highres = ($) ->
     if Post.inLargerVersion
         return false

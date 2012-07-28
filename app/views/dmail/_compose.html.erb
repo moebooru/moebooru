@@ -16,8 +16,7 @@
       <tr>
         <th><label for="dmail_to_name"><%=t :dmail_to %></label></th>
         <td>
-          <%= text_field "dmail", "to_name" %>
-          <%= javascript_tag render(:partial => 'user/autocomplete_name', :formats => :js, :locals => { :field_id => 'dmail_to_name' }) %>
+          <%= text_field "dmail", "to_name", :class => 'ac-user-name' %>
         </td>
       </tr>
       <tr>

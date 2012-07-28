@@ -14,8 +14,7 @@
         <tr>
           <td><label for="member_name"><%=t :user_name %></label></td>
           <td>
-            <%= text_field "member", "name" %>
-            <%= javascript_tag render(:partial => 'user/autocomplete_name', :formats => :js, :locals => { :field_id => 'member_name' }) %>
+            <%= text_field "member", "name", :class => 'ac-user-name' %>
           </td>
         </tr>
         <tr>

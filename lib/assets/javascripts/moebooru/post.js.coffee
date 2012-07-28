@@ -27,4 +27,6 @@ jQuery ($) ->
     post = new Post()
     $('#highres-show').on 'click', ->
         post.highres()
-
+        if window.Note
+            window.Note.all.invoke 'adjustScale'
+        false

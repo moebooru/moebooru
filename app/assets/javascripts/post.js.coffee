@@ -4,19 +4,17 @@
 class Post
     constructor: ->
         @inLargerVersion = false
-        @image = jQuery '#image'
-        @width = @image.attr 'large_width'
-        @height = @image.attr 'large_height'
-        @largeSource = jQuery('#highres-show').attr 'href'
 
-    highres: ->
+    highres: (largeSource, img) ->
         return false if @inLargerVersion
-        @image.detach()
-        @image.attr 'src', ''
-        @image.attr 'width', @width
-        @image.attr 'height', @height
-        @image.attr 'src', @largeSource
-        @image.insertAfter '#note-container'
+        width = img.attr 'large_width'
+        height = img.attr 'large_height'
+        img.hide()
+        img.attr 'src', ''
+        img.attr 'width', width
+        img.attr 'height', height
+        img.attr 'src', largeSource
+        img.show()
         @inLargerVersion = true
         return false
 
@@ -25,8 +23,9 @@ class Post
 # XXX: Centralized .ready (?)
 jQuery ($) ->
     post = new Post()
-    $('#highres-show').on 'click', ->
-        post.highres()
+    $('.highres-show').on 'click', ->
+        post.highres @href, $('#image')
+        $('#resized_notice').hide()
         if window.Note
             window.Note.all.invoke 'adjustScale'
         false

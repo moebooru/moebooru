@@ -11,8 +11,8 @@
       <li><%= if(@post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
               else
                       link_to(t(:post_options_view_larger), file_jpeg[:url],
-                      :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
-                      :id => "highres-show", :link_height => file_jpeg[:height], :link_width => file_jpeg[:width])
+                      :class => (@post.has_sample? ? "original-file-changed":"original-file-unchanged") + " highres-show",
+                      :id => "highres-show")
               end %>
       </li>
       <% end %>

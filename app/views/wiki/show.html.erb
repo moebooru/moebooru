@@ -96,9 +96,9 @@
       | <%= link_to "Unlock", {:controller => "wiki", :action => "unlock", :title => @page.title}, :method => "post" %>
       <% end %>
     <% else %>
-      | <%= link_to "Revert", {:controller => "wiki", :action => "revert", :title => @page.title, :version => @page.version}, :level => :member, :confirm => "Are you sure you want to revert to this page?", :method => :post %>
+      | <%= link_to "Revert", {:controller => "wiki", :action => "revert", :title => @page.title, :version => @page.version}, :level => :member, :data => { :confirm => "Are you sure you want to revert to this page?" }, :method => :post %>
       <% if can_access?(:mod) %>
-      | <%= link_to "Delete", {:controller => "wiki", :action => "destroy", :title => @page.title}, :confirm => "Are you sure you want to delete this page (and all versions)?", :method => :post %>
+      | <%= link_to "Delete", {:controller => "wiki", :action => "destroy", :title => @page.title}, :data => { :confirm => "Are you sure you want to delete this page (and all versions)?" }, :method => :post %>
       | <%= link_to "Lock", {:controller => "wiki", :action => "lock", :title => @page.title}, :method => :post %>
       | <%= link_to "Rename", :action => "rename", :title => @page.title %>
       <% end %>

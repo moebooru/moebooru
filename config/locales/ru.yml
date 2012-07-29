@@ -41,6 +41,10 @@ ru:
       is_locked: (закрыто)
     search:
       last_updated_by: '%{t_ago}, %{u}'
+  # view: /static
+  static:
+    index:
+      search: Поиск
   #view: /user
   user:
     change_password:

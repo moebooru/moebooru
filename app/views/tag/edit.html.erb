@@ -3,8 +3,7 @@
     <tr>
       <th width="15%"><label for="tag_name"><%=t :tag_name %></label></th>
       <td width="85%">
-        <%= text_field "tag", "name" %>
-        <%= javascript_tag render(:partial => 'autocomplete_name', :formats => :js) %>
+        <%= text_field "tag", "name", :class => 'ac-tag-name' %>
       </td>
     </tr>
     <tr>

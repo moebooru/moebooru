@@ -19,14 +19,14 @@ As this is ongoing project, there will be more changes on requirement as this pr
 * Ruby 1.9 (1.8 should also works, too)
 * PostgreSQL (tested with 8.4 and 9.1)
 * Bundler gem
-* GD image library header
+* ImageMagick
 * And various other requirement for the gems (check @Gemfile@ for the list)
 
 On RHEL5, it goes like this:
 
 * gcc
 * gcc-c++
-* gd-devel
+* ImageMagick
 * jhead
 * libxslt-devel
 * libyaml-devel
@@ -77,10 +77,6 @@ postgres# \q
 h3. Rails Setup
 
 * Run @bundle install@
-* Build image resizer (skip if using JRuby):
-** @cd lib/danbooru_image_resizer@
-** @ruby extconf.rb@
-** @make@
 * Create @config/database.yml@ and @config/local_config.rb@
 * Initialize database with @bundle exec rake db:reset@ (there will be some errors reported which is expected)
 * Run @bundle exec rake db:migrate@
@@ -90,5 +86,4 @@ h2. Plans
 
 * Bug fixes
 * Documentation
-* Switch to ImageScience
 * And more!

@@ -189,9 +189,9 @@ module SimilarImages
         post.url = ""
       end
 
-      imgsize = ImageSize.new(source_file)
-      source_width = imgsize.get_width
-      source_height = imgsize.get_height
+      imgsize = ImageSize.path(source_file)
+      source_width = imgsize.width
+      source_height = imgsize.height
 
       # Since we lose access to the original image when we redirect to a saved search,
       # the original dimensions can be passed as parameters so we can still display
@@ -218,16 +218,16 @@ module SimilarImages
       File.open(tempfile_path, 'wb') { |f| yield f }
 
       # Use the resizer to validate the file and convert it to a thumbnail-size JPEG.
-      imgsize = ImageSize.new(File.open(tempfile_path, 'rb'))
-      if imgsize.get_width.nil?
+      imgsize = ImageSize.path(File.open(tempfile_path, 'rb'))
+      if imgsize.format.nil?
         raise Danbooru::ResizeError, "Unrecognized image format"
       end
 
       ret = {}
-      ret[:original_width] = imgsize.get_width
-      ret[:original_height] = imgsize.get_height
+      ret[:original_width] = imgsize.width
+      ret[:original_height] = imgsize.height
       size = Danbooru.reduce_to({:width => ret[:original_width], :height => ret[:original_height]}, {:width => 150, :height => 150})
-      ext = imgsize.get_type.gsub(/JPEG/, "JPG").downcase
+      ext = imgsize.format.gsub(/jpeg/i, "jpg").downcase
 
       tempfile_path_resize = "#{tempfile_path}.2"
       Danbooru.resize(ext, tempfile_path, tempfile_path_resize, size, 95)

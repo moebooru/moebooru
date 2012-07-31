@@ -129,9 +129,9 @@ class ForumController < ApplicationController
   def search
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
-      @forum_posts = ForumPost.includes(:creator, :updater, :parent).paginate :order => "id desc", :per_page => 30, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
+      @forum_posts = ForumPost.includes(:creator, :updater, :parent).paginate :order => "forum_posts.id DESC", :per_page => 30, :conditions => ["forum_posts.text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
     else
-      @forum_posts = ForumPost.includes(:creator, :updater, :parent).paginate :order => "id desc", :per_page => 30, :page => params[:page]
+      @forum_posts = ForumPost.includes(:creator, :updater, :parent).paginate :order => "forum_posts.id DESC", :per_page => 30, :page => params[:page]
     end
 
     respond_to_list("forum_posts")

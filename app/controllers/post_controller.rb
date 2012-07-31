@@ -479,7 +479,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@day.year}/#{@day.month}/#{@day.day}"
 
-    @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at <= ? ", @day, @day.tomorrow], :order => "score DESC", :limit => 20)
+    @posts = Post.available.where('created_at BETWEEN ? AND ?', @day, @day.tomorrow).order('score DESC').limit(20)
 
     respond_to_list("posts")
   end
@@ -495,7 +495,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@start.year}/#{@start.month}/#{@start.day} - #{@end.year}/#{@end.month}/#{@end.day}"
 
-    @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20)
+    @posts = Post.available.where('created_at BETWEEN ? AND ?', @start, @end).order('score DESC').limit(20)
 
     respond_to_list("posts")
   end
@@ -511,7 +511,7 @@ class PostController < ApplicationController
 
     set_title "Exploring #{@start.year}/#{@start.month}"
 
-    @posts = Post.find(:all, :conditions => ["posts.created_at >= ? AND posts.created_at < ? ", @start, @end], :order => "score DESC", :limit => 20)
+    @posts = Post.available.where('created_at BETWEEN ? AND ?', @start, @end).order('score DESC').limit(20)
 
     respond_to_list("posts")
   end

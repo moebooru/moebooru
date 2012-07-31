@@ -4,6 +4,8 @@ module PostCommentMethods
   end
 
   def recent_comments
-    Comment.find(:all, :conditions => ["post_id = ?", id], :order => "id desc", :limit => 6).reverse
+    # reverse_order to fetch last 6 comments
+    # reversed in the last to return from lowest id
+    comments.reverse_order.limit(6).reverse
   end
 end

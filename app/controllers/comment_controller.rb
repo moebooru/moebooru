@@ -62,10 +62,10 @@ class CommentController < ApplicationController
     set_title "Comments"
 
     if params[:format] == "json" || params[:format] == "xml"
-      @comments = Comment.paginate(Comment.generate_sql(params).merge(:per_page => 25, :page => params[:page], :order => "id DESC"))
+      @comments = Comment.paginate(Comment.generate_sql(params).merge(:per_page => 25, :page => page_number, :order => "id DESC"))
       respond_to_list("comments")
     else
-      @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL", :per_page => 10, :page => params[:page]
+      @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL", :per_page => 10, :page => page_number
 
       comments = []
       @posts.each { |post| comments.push(*post.recent_comments) }
@@ -80,7 +80,7 @@ class CommentController < ApplicationController
   end
 
   def search
-    options = { :order => "id desc", :per_page => 30, :page => params[:page] }
+    options = { :order => "id desc", :per_page => 30, :page => page_number }
     conds = []
     cond_params = []
     if params[:query]

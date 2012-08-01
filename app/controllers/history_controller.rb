@@ -167,7 +167,7 @@ class HistoryController < ApplicationController
     end
 
     @changes = History.paginate(History.generate_sql(params).merge(
-      :order => "histories.id DESC", :per_page => 20, :select => "*", :page => params[:page],
+      :order => "histories.id DESC", :per_page => 20, :select => "*", :page => page_number,
       :conditions => [conds.join(" AND "), *cond_params],
       :include => [:history_changes]
     ))

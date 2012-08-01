@@ -4,7 +4,7 @@ class JobTaskController < ApplicationController
   before_filter :admin_only, :only => [ :destroy, :restart ]
 
   def index
-    @job_tasks = JobTask.paginate(:per_page => 25, :order => "id DESC", :page => params[:page])
+    @job_tasks = JobTask.paginate(:per_page => 25, :order => "id DESC", :page => page_number)
   end
 
   def show

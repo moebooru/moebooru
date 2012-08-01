@@ -18,7 +18,7 @@ class InlineController < ApplicationController
 
     options = {
       :per_page => 20,
-      :page => params[:page],
+      :page => page_number,
       # Mods can view all inlines; sort the user's own inlines first.
       :order => order.join(", ")
     }

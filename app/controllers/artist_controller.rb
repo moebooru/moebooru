@@ -17,9 +17,9 @@ class ArtistController < ApplicationController
     if request.post?
       if params[:commit] == "Yes"
         @artist.destroy
-        respond_to_success("Artist deleted", :action => "index", :page => params[:page])
+        respond_to_success("Artist deleted", :action => "index", :page => page_number)
       else
-        redirect_to :action => "index", :page => params[:page]
+        redirect_to :action => "index", :page => page_number
       end
     end
   end
@@ -79,11 +79,11 @@ class ArtistController < ApplicationController
     end
 
     if params[:name]
-      @artists = Artist.paginate Artist.generate_sql(params[:name]).merge(:per_page => 50, :page => params[:page], :order => order)
+      @artists = Artist.paginate Artist.generate_sql(params[:name]).merge(:per_page => 50, :page => page_number, :order => order)
     elsif params[:url]
-      @artists = Artist.paginate Artist.generate_sql(params[:url]).merge(:per_page => 50, :page => params[:page], :order => order)
+      @artists = Artist.paginate Artist.generate_sql(params[:url]).merge(:per_page => 50, :page => page_number, :order => order)
     else
-      @artists = Artist.paginate :order => order, :per_page => 25, :page => params[:page]
+      @artists = Artist.paginate :order => order, :per_page => 25, :page => page_number
     end
 
     respond_to_list("artists")

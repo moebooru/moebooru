@@ -10,7 +10,7 @@ class PoolController < ApplicationController
 
     options = {
       :per_page => 20,
-      :page => params[:page]
+      :page => page_number
     }
 
     order = params[:order]
@@ -123,7 +123,7 @@ class PoolController < ApplicationController
 
     count = Post.count_by_sql(Post.generate_sql(q, :from_api => true, :count => true))
 
-    page = params[:page].to_i > 0 ? params[:page].to_i : 1
+    page = page_number.to_i > 0 ? page_number.to_i : 1
     @posts = WillPaginate::Collection.new(page, q[:limit], count)
 
     sql = Post.generate_sql(q, :from_api => true, :offset => @posts.offset, :limit => @posts.per_page)

@@ -3,10 +3,9 @@
 
 class Post
     constructor: ->
-        @inLargerVersion = false
+        @posts = {}
 
     highres: (largeSource, img) ->
-        return false if @inLargerVersion
         width = img.attr 'large_width'
         height = img.attr 'large_height'
         img.hide()
@@ -15,17 +14,33 @@ class Post
         img.attr 'height', height
         img.attr 'src', largeSource
         img.show()
-        @inLargerVersion = true
-        return false
+        false
+
+    register_posts: (posts) ->
+        posts.forEach (p, idx, arr) ->
+            p.tags = p.tags.match(/\S+/g) || []
+            p.metatags = p.tags.clone()
+            p.metatags.push "rating:" + p.rating[0]
+            p.metatags.push "status:" + p.status
+            @posts[p.id] = p
+        false
+
+    get: (post_id) ->
+        @posts[post_id]
 
 
-# Post.highres patch for #image
-# XXX: Centralized .ready (?)
 jQuery ($) ->
     post = new Post()
+    inLargerVersion = false
+
+    Moe.on 'post:add', (e) ->
+        post.register_posts(e.data)
+
+    # XXX: isn't this supposed to be called _only_ at '/post/show' ?
     $('.highres-show').on 'click', ->
-        post.highres @href, $('#image')
+        return false if inLargerVersion
+        inLargerVersion = true
         $('#resized_notice').hide()
         if window.Note
             window.Note.all.invoke 'adjustScale'
-        false
+        post.highres @href, $('#image')

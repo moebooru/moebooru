@@ -135,7 +135,7 @@ Moebooru::Application.routes.draw do
   match 'post/exception'
   match 'post/histogram'
   match 'post/moderate'
-  match 'post/piclens'
+  match 'post/piclens', :format => :rss
   match 'post/popular_by_day'
   match 'post/popular_by_month'
   match 'post/popular_by_week'

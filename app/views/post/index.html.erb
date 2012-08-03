@@ -120,7 +120,7 @@
 <% end %>
 
 <% content_for :html_header do %>
-  <%= auto_discovery_link_tag_with_id :rss, {:controller => "post", :action => "piclens", :tags => params[:tags], :page => page_number}, {:id => 'pl'} %>
+  <%= auto_discovery_link_tag :rss, { :controller => '/post', :action => :piclens, :format => :rss, :tags => params[:tags], :page => page_number } %>
   <%= navigation_links(@posts) %>
 <% end %>
 

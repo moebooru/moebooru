@@ -247,7 +247,7 @@ class PostController < ApplicationController
       @current_user.update_attribute(:last_deleted_post_seen_at, Time.now)
     end
 
-    page = page_number.to_i > 0 ? page_number.to_i : 1
+    page = page_number
     if params[:user_id]
       @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ? ", params[:user_id]], :page => page)
     else
@@ -388,18 +388,13 @@ class PostController < ApplicationController
   end
 
   def piclens
-    if not params[:format].nil? then
-      redirect_to "/404"
-      return
-    end
-
-    page = page_number.to_i > 0 ? page_number.to_i : 1
-    @posts = WillPaginate::Collection.create(page, 16, Post.fast_count(params[:tags])) do |pager|
+    @posts = WillPaginate::Collection.create(page_number, 16, Post.fast_count(params[:tags])) do |pager|
       pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
     end
 
-    headers["Content-Type"] = "application/rss+xml"
-    render :layout => false
+    respond_to do |format|
+      format.rss
+    end
   end
 
   def show

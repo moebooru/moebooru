@@ -12,11 +12,11 @@ en:
     cancel: Cancel
     yes: Yes
     no: No
-  #controllers
+  # controllers
   c:
     pool:
       not_found: "Can't find pool with id %{id}"
-  #view: /admin
+  # view: /admin
   admin:
     index:
       edit_user: Edit User
@@ -36,7 +36,7 @@ en:
   static:
     index:
       search: Search
-  #view: /user
+  # view: /user
   user:
     change_password:
       new_password: New password
@@ -70,7 +70,7 @@ en:
         remove:
           link: (remove)
           confirm: Remove avatar?
-  #view: /help
+  # view: /help
   help:
     index:
       about: About Moebooru
@@ -102,7 +102,7 @@ en:
       voting: Voting
       wiki: Wiki
       help: Help
-  #view: /post
+  # view: /post
   post:
     show_partials:
       statistics_panel:
@@ -113,7 +113,7 @@ en:
   # ActiveRecord (models)
   activerecord:
     attributes:
-      #user.attributes
+      # user.attributes
       user:
         password: Password
         current_password: Current password
@@ -122,7 +122,7 @@ en:
       models:
         wiki_page:
           no_change: No change in page content/title
-  #view/artist/create
+  # view/artist/create
   artist_create: "Separate multiple aliases and group members with commas."
   artist_name: "Name"
   artist_alias_for: "Alias for"
@@ -132,40 +132,40 @@ en:
   artist_notes: "Notes"
   artist_save: "Save"
   artist_cancel: "Cancel"
-  #view/artist/destroy
+  # view/artist/destroy
   artist_delete: "Delete Artist"
   artist_delete_text: "Are you sure you want to delete"
   artist_delete_yes: "Yes"
   artist_delete_no: "No"
-  #I have no idea how to deal with variables so I split the sentence up
+  # I have no idea how to deal with variables so I split the sentence up
   artist_delete_text_question_mark: "?"
-  #view/artist/_footer
+  # view/artist/_footer
   artist_footer_list: "List"
   artist_footer_add: "Add"
   artist_footer_help: "Help"
-  #view/artist/index
+  # view/artist/index
   artist_index_search: "Search"
   artist_index_name: "Name"
   artist_index_date: "Date"
   artist_index_updated_by: "Updated By"
   artist_index_last_modified: "Last Modified"
-  #view/artist/show
+  # view/artist/show
   artist_show_mass_edit: "mass edit"
   artist_show_url: "URL"
   artist_show_edit: "Edit"
   artist_show_delete: "Delete"
   artist_show_view_posts: "View posts"
   artist_show_create_alias: "Create alias"
-  #view/artist/update
+  # view/artist/update
   artist_update_save: "Save"
   artist_update_cancel: "Cancel"
   artist_update_preview: "Preview Notes"
-  #view/banned
+  # view/banned
   banned_reason: "You have been banned:"
   banned_expire: "This will expire in "
   banned_period: "."
   banned_permanent: "This ban is permanent"
-  #view/batch/create
+  # view/batch/create
   batch_url: "URL"
   batch_load_file_index: "Load file index"
   batch_files: "Files"
@@ -175,7 +175,7 @@ en:
   batch_rating_questionable: "Questionable"
   batch_rating_safe: "Safe"
   batch_start_update: "Start upload"
-  #view/batch/index
+  # view/batch/index
   batch_username: "User"
   batch_status: "Status"
   batch_post: "Post #"
@@ -190,22 +190,22 @@ en:
   batch_cancel: "Cancel all uploads"
   batch_pause: "Pause"
   batch_resume: "Resume"
-  #view/comment/_comment
+  # view/comment/_comment
   comment_quote: "Quote"
   comment_edit: "Edit"
   comment_delete: "Delete"
   comment_flag: "Flag for deletion"
-  #view/comment_comments
+  # view/comment_comments
   comment_reply: "Reply »"
-  #view/comment/edit
+  # view/comment/edit
   edit_comment: "Edit Comment"
   comment_save: "Save changes"
-  #view/comment/footer
+  # view/comment/footer
   comment_list: "List"
   comment_search: "Search"
   comment_moderate: "Moderate"
   comment_help: "Help"
-  #view/comment/index
+  # view/comment/index
   comment_date: "Date"
   comment_user: "User"
   comment_rating: "Rating"
@@ -213,47 +213,47 @@ en:
   comment_hidden: "Hidden"
   comment_tags: "Tags"
   comment_translation: "Comment translation provided by"
-  #view/comment/moderate
+  # view/comment/moderate
   comment_author: "Author"
   comment_body: "Body"
   comment_approve: "Approve"
-  #view/comment/search
+  # view/comment/search
   comment_post: "Post"
   comment_message: "Message"
   comment_time: "Time"
-  #view/comment/show
+  # view/comment/show
   comment_return: "Return to post"
-  #view/dmail/_compose
+  # view/dmail/_compose
   dmail_send: "Send"
   dmail_preview: "Preview"
   dmail_to: "To"
   dmail_title: "Title"
   dmail_body: "Body"
-  #view/dmail/compose
+  # view/dmail/compose
   dmail_compose: "Compose Message"
-  #view/dmail/footer
+  # view/dmail/footer
   dmail_footer_inbox: "Inbox"
   dmail_footer_compose: "Compose"
   dmail_mark: "Mark all read"
-  #view/dmail/inbox
+  # view/dmail/inbox
   dmail_inbox: "My Inbox"
   dmail_empty: "You have no messages"
   dmail_from: "From"
   dmail_when: "When"
   dmail_ago: " ago"
-  #view/dmail/mark_all
+  # view/dmail/mark_all
   dmail_mark_all_text: "Mark All Read"
   dmail_mark_all_text2: "Are you sure you want to mark all your messages as read?"
   dmail_yes: "Yes"
   dmail_no: "No"
-  #view/dmail/message
+  # view/dmail/message
   dmail_message_sent: "Sent by "
   dmail_message_ago: " ago"
-  #view/forum/add
+  # view/forum/add
   forum_title: "Title"
   forum_post: "Post"
   forum_preview: "Preview"
-  #view/forum/index
+  # view/forum/index
   forum_search: "Search"
   forum_last: "last"
   forum_ago: " ago"
@@ -272,22 +272,22 @@ en:
   forum_unlock: "Unlock"
   forum_lock: "Lock"
   forum_quote: "Quote"
-  #view/forum/new
+  # view/forum/new
   forum_new_text: "New Topic"
-  #view/forum/search
+  # view/forum/search
   forum_search: "Search"
   forum_message: "Message"
   forum_author: "Author"
   forum_last_updated: "Last Updated"
-  #view/forum/show
+  # view/forum/show
   forum_locked: "This topic is locked."
   forum_list: "List"
   forum_reply: "Reply"
   forum_new: "New topic"
   forum_parent: "Parent"
   forum_help: "Help"
-  #view/help is being skipped, should be moved to wiki in future
-  #view/history/index
+  # view/help is being skipped, should be moved to wiki in future
+  # view/history/index
   history_showall: "Showing all tags"
   history_showall2: "Showing only changed tags"
   history_search: "Search"
@@ -303,9 +303,9 @@ en:
   history_date: "Date"
   history_user: "User"
   history_change: "Change"
-  #view/inline/crop
+  # view/inline/crop
   crop_avatar: "Select the region to crop all images to and press enter.  This operation can not be undone."
-  #view/inline/edit
+  # view/inline/edit
   inline_tag: "Inline tag: image #"
   inline_preview: "Preview"
   inline_add_image: "Add an image"
@@ -324,10 +324,10 @@ en:
   inline_delete_confirm: "Delete this group of images?"
   inline_crop: "Crop"
   inline_copy: "Copy"
-  #view/inline/footer
+  # view/inline/footer
   inline_list: "List"
   inline_help: "Help"
-  #view/inline/index
+  # view/inline/index
   inline_first_image: "First image"
   inline_description2: "Description"
   inline_user: "User"
@@ -335,7 +335,7 @@ en:
   inline_created: "Created"
   inline_ago: " ago"
   inline_create: "Create"
-  #view/layouts/login
+  # view/layouts/login
   layout_login: "Login"
   layout_reset: "Reset password"
   layout_login_text: "Please log in. To create a new account, enter the name and password you want to use."
@@ -353,7 +353,7 @@ en:
   layout_unknown_user: "That account does not exist."
   layout_wrong_email: "The email address specified is not registered with this account."
   layout_invalid_email: "Delivery to this email address has failed."
-  #view/layout/_menu
+  # view/layout/_menu
   layout_logout: "Logout"
   layout_reset: "Reset Password"
   layout_profile: "My Profle"
@@ -407,13 +407,13 @@ en:
   layout_site_help: "Site Help"
   layout_more: "More »"
   layout_new_mail: "New Mail"
-  #view/note/footer
+  # view/note/footer
   note_list: "List"
   note_search: "Search"
   note_history: "History"
   note_requests: "Requests"
   note_help: "Help"
-  #view/note/history
+  # view/note/history
   note_revert: "Revert"
   note_revert_confirm: "Do you really wish to revert to this note?"
   note_post: "Post"
@@ -422,36 +422,36 @@ en:
   note_edited: "Edited By"
   note_date: "Date"
   note_options: "Options"
-  #view/note/_note
+  # view/note/_note
   note_click: "Click to edit"
   note_search: "Search"
-  #view/pool/add_post
+  # view/pool/add_post
   pool_add: "Add to Pool"
   pool_add_text: "Select a pool to add this post to:"
   pool_pool: "Pool"
   pool_order: "Order"
   pool_add: "Add"
   pool_cancel: "Cancel"
-  #view/pool/copy
+  # view/pool/copy
   pool_clone: "Clone Pool"
   pool_name: "Name"
   pool_copy: "Copy Pool"
-  #view/pool/create
+  # view/pool/create
   pool_create: "Create Pool"
   pool_public: "Public?"
   pool_description: "Description"
   pool_save: "Save"
-  #view/pool/destory
+  # view/pool/destory
   pool_delete: "Delete Pool"
   pool_confirm: "Are you sure you wish to delete "
   pool_question_mark: "?"
   pool_yes: "Yes"
   pool_no: "No"
-  #view/pool/footer
+  # view/pool/footer
   pool_list: "List"
   pool_new: "New"
   pool_help: "Help"
-  #view/pool/import
+  # view/pool/import
   pool_import: "Pool Import: "
   pool_import_text: "You can perform a tag search and import all the matching posts into this pool."
   pool_import2: "Import"
@@ -467,9 +467,9 @@ en:
   pool_delete_mode: "Delete mode"
   pool_search: "Search"
   pool_reverse: "Reverse"
-  #view/pool/select_form
+  # view/pool/select_form
   pool_add2: "Add"
-  #view/pool/show
+  # view/pool/show
   pool_jpeg: "Download JPGs"
   pool_png: "Download"
   pool_index: "Index View"
@@ -481,7 +481,7 @@ en:
   pool_show_copy: "Copy"
   pool_show_transfer: "Transfer Post Data"
   pool_show_history: "History"
-  #view/pools/transfer_metadata
+  # view/pools/transfer_metadata
   pool_transfer_to: "to"
   pool_transfer_from: "from"
   pool_transfer_button: "Transfer"
@@ -496,16 +496,16 @@ en:
   pool_transfer_to: "To"
   pool_transfer_tags: "Tags"
   pool_edit: "Edit Pool"
-  #view/pool/update
+  # view/pool/update
   pool_edit: "Edit Pool"
   pool_public_text: "Public pools allow anyone to add/remove posts."
   pool_active: "Active"
   pool_active_text: "Inactive pools will no longer be selectable when adding a post."
-  #view/post/blacklists
+  # view/post/blacklists
   post_hidden_posts: "Hidden Posts"
   post_blacklist_add: "Add"
   post_blacklist_text: "Posts containing all tags will be hidden. Seperate tags with spaces."
-  #view/post/browse
+  # view/post/browse
   post_browse_no_results: "No search results."
   post_browse_text: "Image Hidden"
   post_browse_text2: "This post is not displayed due to your account settings."
@@ -727,7 +727,7 @@ en:
   post_stats_rating: "Rating: "
   post_stats_score: "Score: "
   post_stats_fav: "Favorited by: "
-  #views/post/show_partials/_status_notices
+  # views/post/show_partials/_status_notices
   notice: "This post was flagged for deletion by "
   notice2: "unflag this post"
   notice3: "delete"
@@ -752,7 +752,7 @@ en:
   notice22: "This post has "
   notice23: "a child post"
   notice24: "child posts"
-  #views/report
+  # views/report
   report: "Report "
   report_search: "Search"
   report_start: "Start Date"
@@ -770,8 +770,8 @@ en:
   report_votes: "Report: User Votes"
   report_votes_text: "The following report shows user votes over the past three days."
   report_votes2: "Votes"
-  #moderator_report is admin stuff anyways
-  #static
+  # moderator_report is admin stuff anyways
+  # static
   static_posts: "Posts"
   static_posts_text: "A paginated list of every post"
   static_comments: "Comments"
@@ -785,10 +785,10 @@ en:
   static_posts2: " posts "
   static_running: "Running Moebooru "
   static_domain: "Domain donated by "
-  #credits for translation put in your nickname
+  # credits for translation put in your nickname
   static_translation: ""
   static_search: "Search"
-  #try to fix ago problem
+  # try to fix ago problem
   comment_ago: " ago"
   comment_ago2: ""
   artist_title: "This artist is an alias"
@@ -858,7 +858,7 @@ en:
   post_stats_ago: " ago"
   post_stats_ago2: ""
   notice_text: "Do you really want to approve this post?"
-  #static/more
+  # static/more
   static1: "Help"
   static2: "Atom Feed"
   static3: "Listing"
@@ -935,7 +935,7 @@ en:
   static_t11: "Miscellaneous"
   static_t12: "Users"
   static_t13: "Admin"
-  #terms of service should be moved to wiki?
+  # terms of service should be moved to wiki?
   tag_cloud: "There are no tags."
   tag_name: "Name"
   tag_type: "Type"
@@ -964,7 +964,7 @@ en:
   tag_popular_day: "Popular by Day"
   tag_popular_week: "Popular by Week"
   tag_popular_month: "Popular by Month"
-  #tag alias
+  # tag alias
   alias_search: "Search Aliases"
   imp_search: "Search Implications"
   alias_alias: "Alias"
@@ -980,13 +980,13 @@ en:
   alias_name: "Name"
   alias_alias_to: "Alias to"
   alias_submit: "Submit"
-  #tag imp
+  # tag imp
   imp_pre: "Predicate"
   imp_con: "Consequent"
   imp_text: "Add Implication"
   imp_text2: "You can suggest a new implication, but it must be approved by a moderator before it is activated."
   imp_text3: "The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle."
-  #tag sub
+  # tag sub
   sub_edit: "Edit Tag Subscriptions"
   sub_text: "You can only create up to "
   sub_text2: " tag subscriptions."
@@ -997,7 +997,7 @@ en:
   sub_add: "Add"
   sub_none: "None"
   sub_edit: "edit"
-  #user
+  # user
   user_submit: "Submit"
   user_reason: "Reason"
   user_duration: "Duration (days)"
@@ -1146,7 +1146,7 @@ en:
   user_password_text: "Minimum of five characters."
   user_password_confirm: "Confirm password"
   user_when: "When"
-  #user record
+  # user record
   record_add: "Add Record for "
   record_pos: "Positive"
   record_reason: "Reason"

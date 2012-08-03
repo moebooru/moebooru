@@ -41,6 +41,11 @@ en:
     edit:
       back: Back
       title: 'Edit Advertisement #%{id}'
+    index:
+      add: Add
+      delete: Delete
+      reset_hit_count: Reset hit count
+      title: Advertisements
   # view: /dmail
   dmail:
     message:
@@ -135,6 +140,7 @@ en:
       advertisement:
         ad_type: Advertisement type
         height: Height
+        hit_count: Hit Count
         image_url: Image URL
         referral_url: Referral URL
         reset_hit_count: Reset hit count

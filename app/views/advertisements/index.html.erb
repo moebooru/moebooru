@@ -1,4 +1,4 @@
-<h4>Advertisement Statistics</h4>
+<h4><%= t('.title') %></h4>
 
 <%= form_tag update_multiple_advertisements_path do |f| %>
   <% ads = [] %>
@@ -7,13 +7,13 @@
       <tr>
         <th class="center"><%= check_box_tag('check_all', 'check_all', false, :onClick => "checkbox_toggle(this, 'advertisement_ids[]');") %></th>
         <th>#</th>
-        <th>Image URL</th>
-        <th>Referral URL</th>
-        <th>Width</th>
-        <th>Height</th>
-        <th>Ad Type</th>
-        <th>Status</th>
-        <th>Hit Count</th>
+        <th><%= Advertisement.human_attribute_name :image_url %></th>
+        <th><%= Advertisement.human_attribute_name :referral_url %></th>
+        <th><%= Advertisement.human_attribute_name :width %></th>
+        <th><%= Advertisement.human_attribute_name :height %></th>
+        <th><%= Advertisement.human_attribute_name :ad_type %></th>
+        <th><%= Advertisement.human_attribute_name :status %></th>
+        <th><%= Advertisement.human_attribute_name :hit_count %></th>
         <th></th>
         <th></th>
       </tr>
@@ -30,18 +30,18 @@
           <td><%= ad.ad_type %></td>
           <td><%= ad.status %></td>
           <td><%= ad.hit_count %></td>
-          <td><%= link_to('Edit', edit_advertisement_path(ad)) %></td>
-          <td><%= link_to('Delete', ad, :confirm => 'Are you sure?', :method => :delete) %></td>
+          <td><%= link_to t('.edit'), edit_advertisement_path(ad) %></td>
+          <td><%= link_to t('.delete'), ad, :data => { :confirm => 'Are you sure?' }, :method => :delete %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
 
-  <%= submit_tag 'Reset Hit Count', :name => 'do_reset_hit_count' %>
-  <%= submit_tag 'Delete', :name => 'do_delete' %>
+  <%= submit_tag t('.reset_hit_count'), :name => 'do_reset_hit_count' %>
+  <%= submit_tag t('.delete'), :name => 'do_delete' %>
 <% end %>
 
-<%= link_to('Add', new_advertisement_path) %>
+<%= link_to t('.add'), new_advertisement_path %>
 <%= will_paginate(@ads) %>
 
 <script type="text/javascript">

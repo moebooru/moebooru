@@ -121,7 +121,6 @@ en:
   # ActiveRecord (models)
   activerecord:
     attributes:
-      # user.attributes
       user:
         password: Password
         current_password: Current password

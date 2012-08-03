@@ -18,6 +18,10 @@ en:
       not_found: "Can't find pool with id %{id}"
   # view: /admin
   admin:
+    edit_user:
+      level: Level
+      save: Save
+      user: User
     index:
       edit_user: Edit User
       reset_password: Reset Password

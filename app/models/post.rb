@@ -35,6 +35,14 @@ class Post < ActiveRecord::Base
     Post.where(:id => PostsTag.where(:tag_id => t_ids).select(:post_id))
   end
 
+  def next_id
+    Post.available.where('posts.id > ?', id).minimum(:id)
+  end
+
+  def previous_id
+    Post.available.where('posts.id < ?', id).maximum(:id)
+  end
+
   include PostSqlMethods
   include PostCommentMethods
   include PostImageStoreMethods

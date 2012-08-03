@@ -26,6 +26,10 @@ en:
       edit_user: Edit User
       reset_password: Reset Password
       cache_statistics: Cache Statistics
+    reset_password:
+      name: Name
+      reset: Reset
+      title: Reset Password
   # view: /dmail
   dmail:
     message:

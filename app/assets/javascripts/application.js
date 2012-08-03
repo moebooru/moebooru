@@ -6,7 +6,6 @@
 //= require prototype-legacy/dragdrop
 //= require prototype-legacy/controls
 //= require prototype-legacy/builder
-//= require prototype-legacy/rails
 //= require prototype-legacy/browser-img-pool
 //= require prototype-legacy/browser-post-loading
 //= require prototype-legacy/browser-thumb-view

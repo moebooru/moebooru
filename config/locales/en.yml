@@ -54,9 +54,6 @@ en:
       back: Back
       title: New Advertisement
     show:
-      back: Back
-      delete: Delete
-      edit: Edit
       title: 'Advertisement #%{id}'
   # view: /dmail
   dmail:

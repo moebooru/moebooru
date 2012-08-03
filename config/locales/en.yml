@@ -39,8 +39,8 @@ en:
   # view: /advertisements
   advertisements:
     edit:
-      title: 'Edit Advertisement #%{id}'
       back: Back
+      title: 'Edit Advertisement #%{id}'
   # view: /dmail
   dmail:
     message:

@@ -1,8 +1,20 @@
 <div>
   <h5><%=t :post_related %></h5>
   <ul>
-    <li><%= link_to t(:post_related_previous), :controller => "post", :action => "show", :id => @post.id - 1 %></li>
-    <li><%= link_to t(:post_related_next), :controller => "post", :action => "show", :id => @post.id + 1 %></li>
+    <li>
+      <%=
+        link_to_if @post.previous_id, t(:post_related_previous), :controller => "post", :action => "show", :id => @post.previous_id do |name|
+          name
+        end
+      %>
+    </li>
+    <li>
+      <%=
+        link_to_if @post.next_id, t(:post_related_next), :controller => "post", :action => "show", :id => @post.next_id do |name|
+          name
+        end
+      %>
+    </li>
     <% if @post.parent_id %>
       <li><%= link_to t(:post_related_parent), :controller => "post", :action => "show", :id => @post.parent_id %></li>
     <% end %>

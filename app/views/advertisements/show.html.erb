@@ -1,38 +1,38 @@
 <h4>Advertisement #<%= @ad.id %></h4>
 
 <div>
-  <label>Id</label>
+  <label><%= Advertisement.human_attribute_name :id %></label>
   <%= @ad.id %>
 </div>
 <div>
-  <label>Image URL</label>
+  <label><%= Advertisement.human_attribute_name :image_url %></label>
   <%= @ad.image_url %>
 </div>
 <div>
-  <label>Referral URL</label>
+  <label><%= Advertisement.human_attribute_name :referral_url %></label>
   <%= @ad.referral_url %>
 </div>
 <div>
-  <label>Width</label>
+  <label><%= Advertisement.human_attribute_name :width %></label>
   <%= @ad.width %>
 </div>
 <div>
-  <label>Height</label>
+  <label><%= Advertisement.human_attribute_name :height %></label>
   <%= @ad.height %>
 </div>
 <div>
-  <label>Ad Type</label>
+  <label><%= Advertisement.human_attribute_name :ad_type %></label>
   <%= @ad.ad_type %>
 </div>
 <div>
-  <label>Status</label>
+  <label><%= Advertisement.human_attribute_name :status %></label>
   <%= @ad.status %>
 </div>
 <div>
-  <label>Hit Count</label>
+  <label><%= Advertisement.human_attribute_name :hit_count %></label>
   <%= @ad.hit_count %>
 </div>
 
-<%= link_to 'Edit', edit_advertisement_path(@ad) %>
-<%= link_to 'Delete', @ad, :confirm => 'Are you sure?', :method => :delete %>
-<%= link_to 'Back', advertisements_path %>
+<%= link_to t('buttons.edit'), edit_advertisement_path(@ad) %>
+<%= link_to t('buttons.delete'), @ad, :data => { :confirm => t('confirmations.is_sure') }, :method => :delete %>
+<%= link_to t('buttons.back'), advertisements_path %>

@@ -45,13 +45,11 @@ en:
   # view: /advertisements
   advertisements:
     edit:
-      back: Back
       title: 'Edit Advertisement #%{id}'
     index:
       reset_hit_count: Reset hit count
       title: Advertisements
     new:
-      back: Back
       title: New Advertisement
     show:
       title: 'Advertisement #%{id}'

@@ -176,10 +176,10 @@ en:
     destroy:
       title: Delete Artist
       confirm: Are you sure you want to delete %{name}?
-  # view/artist/_footer
-  artist_footer_list: "List"
-  artist_footer_add: "Add"
-  artist_footer_help: "Help"
+    footer:
+      add: Add
+      help: Help
+      list: List
   # view/artist/index
   artist_index_search: "Search"
   artist_index_name: "Name"

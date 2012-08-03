@@ -18,6 +18,28 @@ en:
     yes: Yes
   confirmations:
     is_sure: Are you sure?
+  # ActiveRecord (models)
+  activerecord:
+    attributes:
+      advertisement:
+        ad_type: Advertisement type
+        height: Height
+        hit_count: Hit Count
+        image_url: Image URL
+        referral_url: Referral URL
+        reset_hit_count: Reset hit count
+        status: Status
+        width: Width
+      user:
+        password: Password
+        current_password: Current password
+        password_confirmation: Password confirmation
+    errors:
+      models:
+        wiki_page:
+          no_change: No change in page content/title
+    models:
+      advertisement: Advertisement
   # controllers
   c:
     pool:
@@ -141,28 +163,6 @@ en:
     moderate:
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
       mod: mod
-  # ActiveRecord (models)
-  activerecord:
-    attributes:
-      advertisement:
-        ad_type: Advertisement type
-        height: Height
-        hit_count: Hit Count
-        image_url: Image URL
-        referral_url: Referral URL
-        reset_hit_count: Reset hit count
-        status: Status
-        width: Width
-      user:
-        password: Password
-        current_password: Current password
-        password_confirmation: Password confirmation
-    errors:
-      models:
-        wiki_page:
-          no_change: No change in page content/title
-    models:
-      advertisement: Advertisement
   # view/artist/create
   artist_create: "Separate multiple aliases and group members with commas."
   artist_name: "Name"

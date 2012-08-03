@@ -16,6 +16,12 @@ en:
   c:
     pool:
       not_found: "Can't find pool with id %{id}"
+  # Helpers
+  helpers:
+    submit:
+      advertisement:
+        create: Create
+        update: Save
   # view: /admin
   admin:
     edit_user:
@@ -121,6 +127,14 @@ en:
   # ActiveRecord (models)
   activerecord:
     attributes:
+      advertisement:
+        ad_type: Advertisement type
+        height: Height
+        image_url: Image URL
+        referral_url: Referral URL
+        reset_hit_count: Reset hit count
+        status: Status
+        width: Width
       user:
         password: Password
         current_password: Current password
@@ -129,6 +143,8 @@ en:
       models:
         wiki_page:
           no_change: No change in page content/title
+    models:
+      advertisement: Advertisement
   # view/artist/create
   artist_create: "Separate multiple aliases and group members with commas."
   artist_name: "Name"

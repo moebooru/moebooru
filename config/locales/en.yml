@@ -8,6 +8,7 @@ en:
     # t: "16 days", "1 hour", etc (localized)
     x_ago: '%{t} ago'
   buttons:
+    add: Add
     back: Back
     delete: Delete
     edit: Edit
@@ -47,8 +48,6 @@ en:
       back: Back
       title: 'Edit Advertisement #%{id}'
     index:
-      add: Add
-      delete: Delete
       reset_hit_count: Reset hit count
       title: Advertisements
     new:

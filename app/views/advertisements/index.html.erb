@@ -30,18 +30,18 @@
           <td><%= ad.ad_type %></td>
           <td><%= ad.status %></td>
           <td><%= ad.hit_count %></td>
-          <td><%= link_to t('.edit'), edit_advertisement_path(ad) %></td>
-          <td><%= link_to t('.delete'), ad, :data => { :confirm => 'Are you sure?' }, :method => :delete %></td>
+          <td><%= link_to t('buttons.edit'), edit_advertisement_path(ad) %></td>
+          <td><%= link_to t('buttons.delete'), ad, :data => { :confirm => t('.confirmations.is_user') }, :method => :delete %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
 
   <%= submit_tag t('.reset_hit_count'), :name => 'do_reset_hit_count' %>
-  <%= submit_tag t('.delete'), :name => 'do_delete' %>
+  <%= submit_tag t('buttons.delete'), :name => 'do_delete' %>
 <% end %>
 
-<%= link_to t('.add'), new_advertisement_path %>
+<%= link_to t('buttons.add'), new_advertisement_path %>
 <%= will_paginate(@ads) %>
 
 <script type="text/javascript">

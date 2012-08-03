@@ -1,7 +1,7 @@
-<h4><%=t :artist_delete %></h4>
-<p><%=t :artist_delete_text %> <%= h @artist.name %><%=t :artist_delete_text_question_mark %></p>
+<h4><%= t('.title') %></h4>
+<p><%= t('.confirm', :name => @artist.name) %></p>
 
 <%= form_tag({:action => "destroy"}, :level => :privileged) do %>
-  <%= submit_tag t(:artist_delete_yes) %>
-  <%= submit_tag t(:artist_delete_no) %>
+  <%= submit_tag t('buttons.c_yes') %>
+  <%= submit_tag t('buttons.c_no') %>
 <% end %>

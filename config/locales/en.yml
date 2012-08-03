@@ -10,12 +10,12 @@ en:
   buttons:
     add: Add
     back: Back
+    c_no: 'No'
+    c_yes: 'Yes'
+    cancel: Cancel
     delete: Delete
     edit: Edit
-    cancel: Cancel
-    no: No
     save: Save
-    yes: Yes
   confirmations:
     is_sure: Are you sure?
   # ActiveRecord (models)
@@ -173,13 +173,9 @@ en:
       members: Members
       urls: URLs
       notes: Notes
-  # view/artist/destroy
-  artist_delete: "Delete Artist"
-  artist_delete_text: "Are you sure you want to delete"
-  artist_delete_yes: "Yes"
-  artist_delete_no: "No"
-  # I have no idea how to deal with variables so I split the sentence up
-  artist_delete_text_question_mark: "?"
+    destroy:
+      title: Delete Artist
+      confirm: Are you sure you want to delete %{name}?
   # view/artist/_footer
   artist_footer_list: "List"
   artist_footer_add: "Add"

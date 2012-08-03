@@ -31,7 +31,7 @@
           <td><%= ad.status %></td>
           <td><%= ad.hit_count %></td>
           <td><%= link_to t('buttons.edit'), edit_advertisement_path(ad) %></td>
-          <td><%= link_to t('buttons.delete'), ad, :data => { :confirm => t('.confirmations.is_user') }, :method => :delete %></td>
+          <td><%= link_to t('buttons.delete'), ad, :data => { :confirm => t('confirmations.is_sure') }, :method => :delete %></td>
         </tr>
       <% end %>
     </tbody>

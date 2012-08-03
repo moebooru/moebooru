@@ -1,10 +1,10 @@
 <div id="admin-edit-user">
-  <%= form_tag(:controller => "admin", :action => "edit_user") do %>
+  <%= form_tag(:controller => 'admin', :action => 'edit_user') do %>
     <table class="form">
       <tr>
         <th width="15%"><label class="block" for="user_name">User</label></th>
         <td width="85%">
-          <%= text_field "user", "name", :class => 'ac-user-name' %>
+          <%= text_field 'user', 'name', :class => 'ac-user-name' %>
         </td>
       </tr>
       <tr>
@@ -12,11 +12,11 @@
           <label class="block" for="user_level">Level</label>
         </th>
         <td>
-          <%= select "user", "level", CONFIG["user_levels"].to_a.select {|x| x[1] > CONFIG["user_levels"]["Blocked"]} %>
+          <%= select 'user', 'level', CONFIG['user_levels'].to_a.select {|x| x[1] > CONFIG['user_levels']['Blocked']} %>
         </td>
       </tr>
       <tr>
-        <td colspan="2"><%= submit_tag "Save" %></td>
+        <td colspan="2"><%= submit_tag 'Save' %></td>
       </tr>
     </table>
   <% end %>

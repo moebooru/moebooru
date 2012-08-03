@@ -8,6 +8,7 @@
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
   <%= stylesheet_link_tag :application %>
   <%= javascript_include_tag :application %>
+  <%= tag :link, :rel => 'search', :type => Mime::OPENSEARCH, :href => opensearch_path(:xml), :title => CONFIG['app_name'] %>
   <%= CONFIG["custom_html_headers"] %>
   <%= yield :html_header %>
 </head>

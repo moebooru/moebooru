@@ -176,6 +176,7 @@ Moebooru::Application.routes.draw do
   match 'static/index'
   match 'static/more'
   match 'static/terms_of_service'
+  match '/opensearch' => 'static#opensearch'
 
   # TagAlias
   match 'tag_alias(/index)' => 'tag_alias#index'

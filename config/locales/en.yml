@@ -163,16 +163,16 @@ en:
     moderate:
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
       mod: mod
-  # view/artist/create
-  artist_create: "Separate multiple aliases and group members with commas."
-  artist_name: "Name"
-  artist_alias_for: "Alias for"
-  artist_aliases: "Aliases"
-  artist_members: "Members"
-  artist_urls: "URLs"
-  artist_notes: "Notes"
-  artist_save: "Save"
-  artist_cancel: "Cancel"
+  # view: /artist
+  artist:
+    create:
+      info: Separate multiple aliases and group members with commas.
+      name: Name
+      alias_for: Alias for
+      aliases: Aliases
+      members: Members
+      urls: URLs
+      notes: Notes
   # view/artist/destroy
   artist_delete: "Delete Artist"
   artist_delete_text: "Are you sure you want to delete"

@@ -46,6 +46,9 @@ en:
       delete: Delete
       reset_hit_count: Reset hit count
       title: Advertisements
+    new:
+      back: Back
+      title: New Advertisement
   # view: /dmail
   dmail:
     message:

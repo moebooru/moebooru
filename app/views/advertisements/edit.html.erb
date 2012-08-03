@@ -1,5 +1,5 @@
-<h4>Edit Advertisement #<%= @ad.id %></h4>
+<h4><%= t('.title', :id => @ad.id) %></h4>
 
 <%= render 'form' %>
 
-<%= link_to 'Back', @ad %>
+<%= link_to t('.back'), @ad %>

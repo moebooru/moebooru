@@ -36,6 +36,11 @@ en:
       name: Name
       reset: Reset
       title: Reset Password
+  # view: /advertisements
+  advertisements:
+    edit:
+      title: 'Edit Advertisement #%{id}'
+      back: Back
   # view: /dmail
   dmail:
     message:

@@ -50,8 +50,7 @@ class Vote
                 star.addClass 'star-set-after'
             i++
         jQuery('#post-score-'+@current_post.id).html score
-        if @votes
-            jQuery('#favorited-by').html Favorite.link_to_users @votes["3"]
+        jQuery('#favorited-by').html Favorite.link_to_users @votes["3"]
         false
 
 
@@ -80,6 +79,12 @@ jQuery ($) ->
 
     Moe.on 'vote:update_widget', ->
         vote.updateWidget()
+
+    $(".vote-up").on 'click', ->
+        current_score = vote.getVote()
+        return false if current_score == 3
+        vote.set current_score + 1
+        false
     
     $(".star-off").on 'click', ->
         score = get_score @className

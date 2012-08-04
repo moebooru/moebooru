@@ -76,6 +76,8 @@ en:
       add: Add
       help: Help
       list: List
+    index:
+      title: Artists
   # view/artist/index
   artist_index_date: "Date"
   artist_index_last_modified: "Last Modified"

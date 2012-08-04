@@ -234,7 +234,6 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   #local_addresses.clear
 
-  before_filter :set_title
   before_filter :set_current_user
   before_filter :set_country
   before_filter :check_ip_ban
@@ -267,10 +266,6 @@ class ApplicationController < ActionController::Base
     end
 
     redirect_to :controller => "banned", :action => "index"
-  end
-
-  def set_title(title = CONFIG["app_name"])
-    @page_title = CGI.escapeHTML(title)
   end
 
   def save_tags_to_cookie

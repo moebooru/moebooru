@@ -1309,36 +1309,6 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: server_keys; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE server_keys (
-    id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    value text
-);
-
-
---
--- Name: server_keys_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE server_keys_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: server_keys_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE server_keys_id_seq OWNED BY server_keys.id;
-
-
---
 -- Name: table_data; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1860,13 +1830,6 @@ ALTER TABLE ONLY posts ALTER COLUMN change_seq SET DEFAULT nextval('post_change_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY server_keys ALTER COLUMN id SET DEFAULT nextval('server_keys_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY tag_aliases ALTER COLUMN id SET DEFAULT nextval('tag_aliases_id_seq'::regclass);
 
 
@@ -2171,14 +2134,6 @@ ALTER TABLE ONLY post_votes
 
 ALTER TABLE ONLY posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
-
-
---
--- Name: server_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY server_keys
-    ADD CONSTRAINT server_keys_pkey PRIMARY KEY (id);
 
 
 --
@@ -2743,13 +2698,6 @@ CREATE INDEX index_posts_on_width ON posts USING btree (width);
 --
 
 CREATE UNIQUE INDEX index_posts_tags_on_post_id_and_tag_id ON posts_tags USING btree (post_id, tag_id);
-
-
---
--- Name: index_server_keys_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX index_server_keys_on_name ON server_keys USING btree (name);
 
 
 --
@@ -3599,6 +3547,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120624121058');
 INSERT INTO schema_migrations (version) VALUES ('20120723155345');
 
 INSERT INTO schema_migrations (version) VALUES ('20120723161914');
+
+INSERT INTO schema_migrations (version) VALUES ('20120804130515');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

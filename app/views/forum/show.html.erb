@@ -26,7 +26,7 @@
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
         <%= text_area "forum_post", "body", :rows => 20, :cols => 80, :value => "" %>
         <%= submit_tag t(:forum_post) %>
-        <%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
+        <%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
       <% end %>
     </div>
   </div>

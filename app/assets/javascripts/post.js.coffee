@@ -16,7 +16,7 @@ class Post
         img.show()
         false
 
-    register_posts: (posts) ->
+    registerPosts: (posts) ->
         @current = posts[0] if posts.length == 1
         posts.forEach (p, idx, arr) =>
             p.tags = p.tags.match(/\S+/g) || []
@@ -36,7 +36,7 @@ jQuery ($) ->
     inLargerVersion = false
 
     Moe.on 'post:add', (e, data) ->
-        post.register_posts data
+        post.registerPosts data
 
     # XXX: isn't this supposed to be called _only_ at '/post/show' ?
     $('.highres-show').on 'click', ->

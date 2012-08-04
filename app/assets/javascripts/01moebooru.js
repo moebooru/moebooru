@@ -30,9 +30,10 @@ Moebooru.get = function (key) {
 Moebooru.request = function (url, params) {
   jQuery.ajax({
     url: url,
+    type: 'POST',
     dataType: 'json',
     data: params
   }).done(function (data) {
-    Moe.trigger(url+":ready", data);
+    Moe.trigger(url+":ready", [data]);
   });
 };

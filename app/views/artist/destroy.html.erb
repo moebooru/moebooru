@@ -2,6 +2,6 @@
 <p><%= t('.confirm', :name => @artist.name) %></p>
 
 <%= form_tag({:action => "destroy"}, :level => :privileged) do %>
-  <%= submit_tag t('buttons.c_yes') %>
-  <%= submit_tag t('buttons.c_no') %>
+  <%= submit_tag t('buttons._yes') %>
+  <%= submit_tag t('buttons._no') %>
 <% end %>

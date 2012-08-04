@@ -131,10 +131,10 @@ en:
   batch_url: "URL"
   batch_username: "User"
   buttons:
+    _no: 'No'
+    _yes: 'Yes'
     add: Add
     back: Back
-    c_no: 'No'
-    c_yes: 'Yes'
     cancel: Cancel
     delete: Delete
     edit: Edit

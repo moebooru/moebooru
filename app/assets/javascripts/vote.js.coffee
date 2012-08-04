@@ -60,7 +60,7 @@ jQuery ($) ->
         score = get_score this.className
         vote.set score
 
-    Moe.on vote.api.vote_url + ':ready', (e, [data]) ->
+    Moe.on vote.api.vote_url + ':ready', (e, data) ->
         Moebooru.addData data
         vote.updateWidget()
 

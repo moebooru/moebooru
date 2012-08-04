@@ -15,6 +15,7 @@ class Vote
             "Great",
             "Favorite"
         ]
+        @votes = {}
 
     registerVotes: (votes) ->
         @posts = votes
@@ -50,7 +51,7 @@ class Vote
                 star.addClass 'star-set-after'
             i++
         jQuery('#post-score-'+@current_post.id).html score
-        jQuery('#favorited-by').html Favorite.link_to_users @votes["3"]
+        jQuery('#favorited-by').html Favorite.link_to_users @votes[@v.fav]
         false
 
 
@@ -82,7 +83,7 @@ jQuery ($) ->
 
     $(".vote-up").on 'click', ->
         current_score = vote.getVote()
-        return false if current_score == 3
+        return false if current_score == vote.v.fav
         vote.set current_score + 1
         false
     

@@ -1,4 +1,15 @@
 module ApplicationHelper
+  def title
+    base_title = CONFIG['app_name']
+    if content_for? :title
+      "#{content_for :title} | #{base_title}"
+    elsif @page_title and @page_title != CONFIG['app_name']
+      "#{@page_title} | #{base_title}"
+    else
+      base_title
+    end
+  end
+
   def navbar_link_to(text, options, html_options = nil)
     if options[:controller] == params[:controller]
       klass = "current-page"

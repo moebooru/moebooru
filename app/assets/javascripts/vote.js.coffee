@@ -17,7 +17,10 @@ class Vote
         ]
 
     registerVotes: (votes) ->
-            @posts = votes
+        @posts = votes
+
+    registerUserVotes: (votes) ->
+        @votes = votes
 
     getScore: ->
         @current_post = Moebooru.get('post').current
@@ -47,6 +50,8 @@ class Vote
                 star.addClass 'star-set-after'
             i++
         jQuery('#post-score-'+@current_post.id).html score
+        if @votes
+            jQuery('#favorited-by').html Favorite.link_to_users @votes["3"]
         false
 
 
@@ -65,6 +70,9 @@ jQuery ($) ->
 
     Moe.on 'vote:add', (e, data) ->
         vote.registerVotes data
+
+    Moe.on 'vote:add_user_list', (e, data) ->
+        vote.registerUserVotes data
 
     Moe.on vote.api.vote_url + ':ready', (e, data) ->
         Moebooru.addData data

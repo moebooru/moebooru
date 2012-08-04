@@ -10,6 +10,8 @@ Moebooru.addData = function (data) {
     Moe.trigger("tag:add", [data.tags]);
   if (data.votes)
     Moe.trigger("vote:add", [data.votes]);
+  if (data.voted_by)
+    Moe.trigger("vote:add_user_list", [data.voted_by]);
   if (data.pools)
     Moe.trigger("pool:add", [data.pools]);
   if(data.pool_posts)

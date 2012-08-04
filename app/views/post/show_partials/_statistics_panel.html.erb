@@ -29,9 +29,9 @@
 
 <% content_for :post_cookie_javascripts do %>
 <script type="text/javascript">
-  var widget = new VoteWidget($("stats"));
-  widget.set_post_id(<%= @post.id %>);
-  widget.init_hotkeys();
+  //var widget = new VoteWidget($("stats"));
+  //widget.set_post_id(<%= @post.id %>);
+  //widget.init_hotkeys();
 
   Post.init_add_to_favs(<%= @post.id %>, $("add-to-favs"), $("remove-from-favs"));
 </script>

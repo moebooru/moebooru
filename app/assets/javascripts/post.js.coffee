@@ -5,19 +5,20 @@ class Post
     constructor: ->
         @posts = {}
 
-    highres: (largeSource, img) ->
+    highres: (large_src, img) ->
         width = img.attr 'large_width'
         height = img.attr 'large_height'
         img.hide()
         img.attr 'src', ''
         img.attr 'width', width
         img.attr 'height', height
-        img.attr 'src', largeSource
+        img.attr 'src', large_src
         img.show()
         false
 
     register_posts: (posts) ->
-        posts.forEach (p, idx, arr) ->
+        @current = posts[0] if posts.length == 1
+        posts.forEach (p, idx, arr) =>
             p.tags = p.tags.match(/\S+/g) || []
             p.metatags = p.tags.clone()
             p.metatags.push "rating:" + p.rating[0]
@@ -31,10 +32,11 @@ class Post
 
 jQuery ($) ->
     post = new Post()
+    Moebooru.attach('post', post)
     inLargerVersion = false
 
-    Moe.on 'post:add', (e) ->
-        post.register_posts(e.data)
+    Moe.on 'post:add', (e, data) ->
+        post.register_posts data
 
     # XXX: isn't this supposed to be called _only_ at '/post/show' ?
     $('.highres-show').on 'click', ->
@@ -44,3 +46,7 @@ jQuery ($) ->
         if window.Note
             window.Note.all.invoke 'adjustScale'
         post.highres @href, $('#image')
+
+    $('#post_tags').on 'keydown', (e) ->
+        if e.which == 13
+            $('#edit-form').submit()

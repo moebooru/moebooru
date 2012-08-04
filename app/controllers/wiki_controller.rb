@@ -25,8 +25,6 @@ class WikiController < ApplicationController
   end
 
   def index
-    set_title "Wiki"
-
     @params = params
     if params[:order] == "date"
       order = "updated_at DESC"
@@ -113,7 +111,6 @@ class WikiController < ApplicationController
     @posts = Post.find_by_tag_join(params[:title], :limit => 8).select {|x| x.can_be_seen_by?(@current_user)}
     @artist = Artist.find_by_name(params[:title])
     @tag = Tag.find_by_name(params[:title])
-    set_title params[:title].tr("_", " ")
   end
 
   def revert
@@ -135,8 +132,6 @@ class WikiController < ApplicationController
   end
 
   def recent_changes
-    set_title "Recent Changes"
-
     if params[:user_id]
       @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => page_number, :conditions => ["user_id = ?", params[:user_id]]
     else
@@ -146,8 +141,6 @@ class WikiController < ApplicationController
   end
 
   def history
-    set_title "Wiki History"
-
     if params[:title]
       wiki = WikiPage.find_by_title(params[:title])
       wiki_id = wiki.id if wiki
@@ -160,8 +153,6 @@ class WikiController < ApplicationController
   end
 
   def diff
-    set_title "Wiki Diff"
-
     if params[:redirect]
       redirect_to :action => "diff", :title => params[:title], :from => params[:from], :to => params[:to]
       return

@@ -60,6 +60,7 @@ en:
       edit_user: Edit User
       reset_password: Reset Password
       cache_statistics: Cache Statistics
+      title: Admin
     reset_password:
       name: Name
       reset: Reset
@@ -83,46 +84,13 @@ en:
   forum:
     index:
       is_locked: (locked)
+      title: Forum
     search:
       last_updated_by: '%{t_ago} by %{u}'
   # view: /static
   static:
     index:
       search: Search
-  # view: /user
-  user:
-    change_password:
-      new_password: New password
-    change_email:
-      current_password: Current password
-      current_email: Current Email
-      new_email: New Email
-    edit:
-      email: Email
-      no_email: none
-      update_email: Change
-    home:
-      not_logged_in: You are not logged in.
-      login: Login
-      signup: Register
-      no_signup: Registration is disabled
-      reset_password: Reset Password
-      greet_user: 'Hello %{u}!'
-      action_info: From here you can access account-specific options and features.
-      logout: Logout
-      my_profile: My Profile
-      my_mail: My Mail
-      my_favorites: My Favorites
-      settings: Settings
-      change_password: Change Password
-      moderator_tools: Moderator Tools
-      invites: Invites
-      blocked_users: Blocked Users
-    show:
-      avatar:
-        remove:
-          link: (remove)
-          confirm: Remove avatar?
   # view: /help
   help:
     index:
@@ -157,12 +125,23 @@ en:
       help: Help
   # view: /post
   post:
+    popular_by_day:
+      title: Exploring %{year}/%{month}/%{day}
+    popular_by_month:
+      title: Exploring %{year}/%{month}
+    popular_by_week:
+      title: Exploring %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}
+    popular_recent:
+      title: Exploring %{period}
     show_partials:
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
+    upload:
+      title: Upload
     moderate:
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
       mod: mod
+      title: Moderation Queue
   # view: /artist
   artist:
     create:
@@ -203,6 +182,11 @@ en:
   banned_period: "."
   banned_permanent: "This ban is permanent"
   # view/batch/create
+  batch:
+    create:
+      title: Queue Uploads
+    index:
+      title: Batch Queue
   batch_url: "URL"
   batch_load_file_index: "Load file index"
   batch_files: "Files"
@@ -227,6 +211,13 @@ en:
   batch_cancel: "Cancel all uploads"
   batch_pause: "Pause"
   batch_resume: "Resume"
+  comment:
+    index:
+      title: Comments
+    moderate:
+      title: Moderate Comments
+    show:
+      title: Comment
   # view/comment/_comment
   comment_quote: "Quote"
   comment_edit: "Edit"
@@ -325,6 +316,9 @@ en:
   forum_help: "Help"
   # view/help is being skipped, should be moved to wiki in future
   # view/history/index
+  history:
+    index:
+      title: History
   history_showall: "Showing all tags"
   history_showall2: "Showing only changed tags"
   history_search: "Search"
@@ -444,6 +438,11 @@ en:
   layout_site_help: "Site Help"
   layout_more: "More »"
   layout_new_mail: "New Mail"
+  note:
+    history:
+      title: Note History
+    index:
+      title: Notes
   # view/note/footer
   note_list: "List"
   note_search: "Search"
@@ -462,6 +461,10 @@ en:
   # view/note/_note
   note_click: "Click to edit"
   note_search: "Search"
+  pool:
+    index:
+      title: '%{q} - Pools'
+      title_main: Pools
   # view/pool/add_post
   pool_add: "Add to Pool"
   pool_add_text: "Select a pool to add this post to:"
@@ -973,6 +976,13 @@ en:
   static_t12: "Users"
   static_t13: "Admin"
   # terms of service should be moved to wiki?
+  tag:
+    cloud:
+      title: Tags
+    index:
+      title: Tags
+    mass_edit:
+      title: Mass Edit Tags
   tag_cloud: "There are no tags."
   tag_name: "Name"
   tag_type: "Type"
@@ -1002,6 +1012,9 @@ en:
   tag_popular_week: "Popular by Week"
   tag_popular_month: "Popular by Month"
   # tag alias
+  tag_alias:
+    index:
+      title: Tag Aliases
   alias_search: "Search Aliases"
   imp_search: "Search Implications"
   alias_alias: "Alias"
@@ -1017,6 +1030,9 @@ en:
   alias_name: "Name"
   alias_alias_to: "Alias to"
   alias_submit: "Submit"
+  tag_implication:
+    index:
+      title: Tag Implications
   # tag imp
   imp_pre: "Predicate"
   imp_con: "Consequent"
@@ -1034,6 +1050,56 @@ en:
   sub_add: "Add"
   sub_none: "None"
   sub_edit: "edit"
+  # view: /user
+  user:
+    change_password:
+      new_password: New password
+    change_email:
+      current_password: Current password
+      current_email: Current Email
+      new_email: New Email
+    edit:
+      email: Email
+      no_email: none
+      title: Edit Account
+      update_email: Change
+    home:
+      not_logged_in: You are not logged in.
+      login: Login
+      signup: Register
+      no_signup: Registration is disabled
+      reset_password: Reset Password
+      greet_user: 'Hello %{u}!'
+      action_info: From here you can access account-specific options and features.
+      logout: Logout
+      my_profile: My Profile
+      my_mail: My Mail
+      my_favorites: My Favorites
+      settings: Settings
+      change_password: Change Password
+      moderator_tools: Moderator Tools
+      invites: Invites
+      blocked_users: Blocked Users
+      title: My Account
+    index:
+      title: Users
+    login:
+      title: Login
+    logout:
+      title: Logout
+    reset_password:
+      title: Reset Password
+    show:
+      avatar:
+        remove:
+          link: (remove)
+          confirm: Remove avatar?
+      own_title: My Profile
+      title: "%{name}'s Profile"
+    show_blocked_users:
+      title: Blocked Users
+    signup:
+      title: Signup
   # user
   user_submit: "Submit"
   user_reason: "Reason"
@@ -1203,3 +1269,12 @@ en:
   record_delete: "Delete"
   news_ticker: "Tags should be in English/Romaji kthx"
   news_ticker_close: "Close"
+  wiki:
+    diff:
+      title: Wiki Diff
+    history:
+      title: Wiki History
+    index:
+      title: Wiki
+    recent_changes:
+      title: Recent Changes

@@ -1,3 +1,4 @@
+<% provide :title, (@user == @current_user ? t('.own_title') : t('.title', :name => @user.name)) %>
 <% if @user.has_avatar? then %>
   <div style="width: 25em; height: <%= [@user.avatar_height, 80].max %>px; position: relative;">
     <div style="position: absolute; bottom: 0;">

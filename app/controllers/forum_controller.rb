@@ -104,7 +104,6 @@ class ForumController < ApplicationController
 
   def show
     @forum_post = ForumPost.find(params[:id])
-    set_title @forum_post.title
     @children = ForumPost.paginate :order => "id", :per_page => 30, :conditions => ["parent_id = ?", params[:id]], :page => page_number
 
     if !@current_user.is_anonymous? && @current_user.last_forum_topic_read_at < @forum_post.updated_at && @forum_post.updated_at < 3.seconds.ago
@@ -115,8 +114,6 @@ class ForumController < ApplicationController
   end
 
   def index
-    set_title CONFIG["app_name"] + " Forum"
-
     if params[:parent_id]
       @forum_posts = ForumPost.includes(:updater, :creator).paginate :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]], :page => page_number
     else

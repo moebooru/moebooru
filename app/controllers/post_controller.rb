@@ -23,8 +23,6 @@ class PostController < ApplicationController
   end
 
   def upload
-    set_title "Upload"
-
     @deleted_posts = FlaggedPostDetail.new_deleted_posts(@current_user)
 #    if params[:url]
 #      @post = Post.find(:first, :conditions => ["source = ?", params[:url]])
@@ -91,8 +89,6 @@ class PostController < ApplicationController
   end
 
   def moderate
-    set_title "Moderation queue"
-
     if request.post?
       posts = []
 
@@ -290,8 +286,6 @@ class PostController < ApplicationController
       return
     end
 
-    set_title "/" + tags.tr("_", " ")
-
     if count < 16 && split_tags.size == 1
       @tag_suggestions = Tag.find_suggestions(tags)
     end
@@ -416,7 +410,6 @@ class PostController < ApplicationController
       end
       @tags = {:include => @post.cached_tags.split(/ /)}
       @include_tag_reverse_aliases = true
-      set_title @post.title_tags.tr("_", " ")
       respond_to do |format|
         format.html
       end
@@ -458,8 +451,6 @@ class PostController < ApplicationController
     @start = @end - period
     @previous = @start - period
 
-    set_title "Exploring %s" % @period_name
-
     @posts = Post.find(:all, :conditions => ["status <> 'deleted' AND posts.index_timestamp >= ? AND posts.index_timestamp <= ? ", @start, @end], :order => "score DESC", :limit => 20)
 
     respond_to_list("posts")
@@ -471,8 +462,6 @@ class PostController < ApplicationController
     else
       @day = Time.new.getgm.at_beginning_of_day
     end
-
-    set_title "Exploring #{@day.year}/#{@day.month}/#{@day.day}"
 
     @posts = Post.available.where('created_at BETWEEN ? AND ?', @day, @day.tomorrow).order('score DESC').limit(20)
 
@@ -488,8 +477,6 @@ class PostController < ApplicationController
 
     @end = @start.next_week
 
-    set_title "Exploring #{@start.year}/#{@start.month}/#{@start.day} - #{@end.year}/#{@end.month}/#{@end.day}"
-
     @posts = Post.available.where('created_at BETWEEN ? AND ?', @start, @end).order('score DESC').limit(20)
 
     respond_to_list("posts")
@@ -503,8 +490,6 @@ class PostController < ApplicationController
     end
 
     @end = @start.next_month
-
-    set_title "Exploring #{@start.year}/#{@start.month}"
 
     @posts = Post.available.where('created_at BETWEEN ? AND ?', @start, @end).order('score DESC').limit(20)
 

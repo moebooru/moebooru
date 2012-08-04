@@ -6,8 +6,6 @@ class PoolController < ApplicationController
   helper :post
 
   def index
-    set_title "Pools"
-
     options = {
       :per_page => 20,
       :page => page_number
@@ -20,7 +18,6 @@ class PoolController < ApplicationController
 
     search_tokens = []
     if params[:query]
-      set_title(params[:query] + " - Pools")
       query = params[:query].shellsplit
 
       query.each { |token|
@@ -129,7 +126,6 @@ class PoolController < ApplicationController
     sql = Post.generate_sql(q, :from_api => true, :offset => @posts.offset, :limit => @posts.per_page)
     @posts.replace(Post.find_by_sql(sql))
 
-    set_title @pool.pretty_name
     respond_to do |fmt|
       fmt.html
       fmt.xml do

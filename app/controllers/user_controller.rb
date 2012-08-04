@@ -63,12 +63,6 @@ class UserController < ApplicationController
 
     if @user.nil?
       redirect_to "/404"
-    else
-      if @user == @current_user then
-        set_title "My Profile"
-      else
-        set_title @user.name + "'s Profile"
-      end
     end
     if @current_user.is_mod_or_higher?
       @user_ips = @user.user_logs.order('created_at DESC').pluck('ip_addr').uniq
@@ -100,12 +94,9 @@ class UserController < ApplicationController
   end
 
   def home
-    set_title "My Account"
   end
 
   def index
-    set_title "Users"
-
     @users = User.paginate(User.generate_sql(params).merge(:per_page => 20, :page => page_number))
     respond_to_list("users")
   end
@@ -155,7 +146,6 @@ class UserController < ApplicationController
   end
 
   def login
-    set_title "Login"
   end
 
   def create
@@ -178,12 +168,10 @@ class UserController < ApplicationController
   end
 
   def signup
-    set_title "Signup"
     @user = User.new
   end
 
   def logout
-    set_title "Logout"
     session[:user_id] = nil
     cookies[:login] = nil
     cookies[:pass_hash] = nil
@@ -232,13 +220,10 @@ class UserController < ApplicationController
   end
 
   def edit
-    set_title "Edit Account"
     @user = @current_user
   end
 
   def reset_password
-    set_title "Reset Password"
-
     if request.post?
       @user = User.find_by_name(params[:user][:name])
 
@@ -305,8 +290,6 @@ class UserController < ApplicationController
   end
 
   def show_blocked_users
-    set_title "Blocked users"
-
     #@users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
     @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :order => "expires_at ASC")
     @ip_bans = IpBans.find(:all)

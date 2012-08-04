@@ -1,3 +1,4 @@
+<% provide :title, t('.title') %>
 <%= form_tag({:action => "mass_edit"}, :onsubmit => "return confirm('#{t(:tag_js)}')") do %>
   <%= text_field_tag "start", params[:source], :size => 60 %>
   <%= text_field_tag "result", params[:name], :size => 60 %>

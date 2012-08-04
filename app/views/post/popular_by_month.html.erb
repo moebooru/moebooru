@@ -1,3 +1,4 @@
+<% provide :title, t('.title', :year => @start.year, :month => @start.month) %>
 <div id="post-popular">
   <h3>
     <%= link_to '«', :controller => "post", :action => "popular_by_month", :year => 1.month.ago(@start).year, :month => 1.month.ago(@start).month %>

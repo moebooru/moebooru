@@ -47,8 +47,6 @@ class TagImplicationController < ApplicationController
   end
 
   def index
-    set_title "Tag Implications"
-
     if params[:commit] == "Search Aliases"
       redirect_to :controller => "tag_alias", :action => "index", :query => params[:query]
       return

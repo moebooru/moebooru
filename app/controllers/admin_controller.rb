@@ -3,7 +3,6 @@ class AdminController < ApplicationController
   before_filter :admin_only
 
   def index
-    set_title "Admin"
   end
 
   def edit_user

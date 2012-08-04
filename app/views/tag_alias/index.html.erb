@@ -1,3 +1,4 @@
+<% provide :title, t('.title') %>
 <div style="margin-bottom: 1em;">
   <%= form_tag({:action => "index"}, :method => :get) do %>
     <%= text_field_tag "query", params[:query] %>

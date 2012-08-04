@@ -1,3 +1,4 @@
+<% provide :title, t('.title') %>
 <% if not @urls %>
   <div id="batch-post-source">
     <%= form_tag({:action => "create"}, :level => :contributor, :method => "get", :id => "edit-form") do %>

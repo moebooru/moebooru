@@ -1,3 +1,4 @@
+<% provide :title, @forum_post.title %>
 <% if @forum_post.is_locked? %>
   <div class="status-notice">
     <p><%=t :forum_locked %></p>

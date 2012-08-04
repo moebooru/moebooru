@@ -52,15 +52,12 @@ class CommentController < ApplicationController
   end
 
   def show
-    set_title "Comment"
     @comment = Comment.find(params[:id])
 
     respond_to_list("comment")
   end
 
   def index
-    set_title "Comments"
-
     if params[:format] == "json" || params[:format] == "xml"
       @comments = Comment.paginate(Comment.generate_sql(params).merge(:per_page => 25, :page => page_number, :order => "id DESC"))
       respond_to_list("comments")
@@ -115,8 +112,6 @@ class CommentController < ApplicationController
   end
 
   def moderate
-    set_title "Moderate Comments"
-
     if request.post?
       ids = params["c"].keys
       coms = Comment.find(:all, :conditions => ["id IN (?)", ids])

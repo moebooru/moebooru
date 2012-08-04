@@ -1,3 +1,4 @@
+<% provide :title, @pool.pretty_name %>
 <div id="pool-show">
   <h4><%=t :pool_pool2 %><%= h(@pool.pretty_name) %></h4>
   <% unless @pool.description.blank? %>

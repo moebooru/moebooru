@@ -1,3 +1,4 @@
+<% provide :title, t('.title') %>
 <form method="get" action="/post/moderate">
   <%= text_field_tag "query", "", :size => 40 %>
   <%= submit_tag t(:post_mod_search) %>

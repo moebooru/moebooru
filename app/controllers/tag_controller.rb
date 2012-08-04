@@ -4,8 +4,6 @@ class TagController < ApplicationController
   before_filter :member_only, :only => [:update, :edit]
 
   def cloud
-    set_title "Tags"
-
     @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}
   end
 
@@ -35,8 +33,6 @@ class TagController < ApplicationController
 
   def index
     # TODO: convert to nagato
-    set_title "Tags"
-
     if params[:limit] == "0"
       limit = nil
     elsif params[:limit] == nil
@@ -111,8 +107,6 @@ class TagController < ApplicationController
   end
 
   def mass_edit
-    set_title "Mass Edit Tags"
-
     if request.post?
       if params[:start].blank?
         respond_to_error("Start tag missing", {:action => "mass_edit"}, :status => 424)

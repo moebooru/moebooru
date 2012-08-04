@@ -13,8 +13,6 @@ class NoteController < ApplicationController
   end
 
   def index
-    set_title "Notes"
-
     if params[:post_id]
       @posts = Post.paginate :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100, :page => page_number
     else
@@ -29,8 +27,6 @@ class NoteController < ApplicationController
   end
 
   def history
-    set_title "Note History"
-
     if params[:id]
       @notes = NoteVersion.paginate(:page => page_number, :per_page => 25, :order => "id DESC", :conditions => ["note_id = ?", params[:id].to_i])
     elsif params[:post_id]

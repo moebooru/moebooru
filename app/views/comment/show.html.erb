@@ -1,3 +1,4 @@
+<% provide :title, t('.title') %>
 <%= render :partial => "comment/comments", :locals => {:comments => [@comment], :post_id => @comment.post_id, :hide => false} %>
 
 <div style="clear: both;">

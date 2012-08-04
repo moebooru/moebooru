@@ -1,3 +1,4 @@
+<% provide :title, params[:query] ? t('.title', :q => params[:query]) : t('.title_main') %>
 <div id="pool-index">
   <div style="margin-bottom: 2em;">
     <%= form_tag({:action => "index"}, :method => :get) do %>

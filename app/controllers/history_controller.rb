@@ -5,8 +5,6 @@ class HistoryController < ApplicationController
 #  before_filter :member_only
 
   def index
-    set_title "History"
-
     search = params[:search] || ""
 
     q = Hash.new {|h, k| h[k] = []}

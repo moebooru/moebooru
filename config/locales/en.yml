@@ -1030,7 +1030,21 @@ en:
   tag_action: "Action"
   tag_alias:
     index:
+      add: Add
+      add_new:
+        alias_to: Alias to
+        info: You can suggest a new alias, but it must be approved by an administrator before it is activated.
+        name: Name
+        submit: Submit
+        title: Add Alias
+      alias: Alias
+      approve: Approve
+      delete: Delete
+      pending: Select Pending
+      reason: Reason
+      search: Search Aliases
       title: Tag Aliases
+      to: To
   tag_aliases: "Aliases"
   tag_amb: "Ambiguous"
   tag_cancel: "Cancel"
@@ -1043,6 +1057,7 @@ en:
   tag_imp: "Implications"
   tag_implication:
     index:
+      search: Search Implications
       title: Tag Implications
   # tag imp
   tag_js: "Are you sure you wish to perform this tag edit?"

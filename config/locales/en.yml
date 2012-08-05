@@ -77,7 +77,17 @@ en:
       help: Help
       list: List
     index:
+      date: Date
+      delete: Delete artist
+      edit: Edit artist
+      find: Find posts for this artist
+      is_alias: This artist is an alias
+      is_group: This artist is a group
+      last_modified: Last Modified
+      name: Name
+      search: Search
       title: Artists
+      updated_by: Updated By
   # view/artist/index
   artist_index_date: "Date"
   artist_index_last_modified: "Last Modified"

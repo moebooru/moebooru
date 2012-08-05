@@ -1,11 +1,11 @@
 var I18n = function () {
   this.locale = jQuery.cookie('locale') || 'en';
-  this.fetch(this.locale);
   this.template = {
     voting: "Voting",
     vote_saved: "Voting saved",
     '__default__': "no translations"
- };
+  };
+  this.fetch(this.locale);
 };
 
 I18n.prototype.fetch = function (locale) {

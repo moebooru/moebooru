@@ -36,6 +36,7 @@ class Vote
         return false if vote > @v.fav
         notice t('voting') + '...'
         Moebooru.request @api.vote_url, {id: @current_post.id, score: vote}
+        false
 
     updateWidget: ->
         $ = jQuery
@@ -93,22 +94,18 @@ jQuery ($) ->
 
     $('#add-to-favs').on 'click', ->
         vote.set vote.v.fav
-        false
 
     $('#remove-from-favs').on 'click', ->
         vote.set vote.v.great
-        false
 
     $(".vote-up").on 'click', ->
         current_score = vote.getVote()
         return false if current_score == vote.v.fav
         vote.set current_score + 1
-        false
     
     $(".star-off").on 'click', ->
         score = get_score @className
         vote.set score
-        false
 
     $('.star-off').on 'mouseover', ->
         score = get_score @className

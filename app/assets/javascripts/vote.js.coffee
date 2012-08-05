@@ -15,7 +15,7 @@ class Vote
             "Great",
             "Favorite"
         ]
-        @votes = {}
+        @votes = {'0':[], '1':[], '2':[], '3':[]}
 
     registerVotes: (votes) ->
         @posts = votes
@@ -39,11 +39,12 @@ class Vote
         Moebooru.request @api.vote_url, {id: @current_post.id, score: vote}
 
     updateWidget: ->
+        $ = jQuery
         score = @getScore()
         vote = @getVote()
         i = 1
         while i <= @v.fav
-            star = jQuery '.star-'+i
+            star = $ '.star-'+i
             if i <= vote
                 star.removeClass 'star-set-after'
                 star.addClass 'star-set-upto'
@@ -51,8 +52,14 @@ class Vote
                 star.removeClass 'star-set-upto'
                 star.addClass 'star-set-after'
             i++
-        jQuery('#post-score-'+@current_post.id).html score
-        jQuery('#favorited-by').html Favorite.link_to_users @votes[@v.fav]
+        if vote == @v.fav
+            $('#add-to-favs').css 'display', 'none'
+            $('#remove-from-favs').css 'display', 'list-item'
+        else
+            $('#add-to-favs').css 'display', 'list-item'
+            $('#remove-from-favs').css 'display', 'none'
+        $('#post-score-'+@current_post.id).html score
+        $('#favorited-by').html Favorite.link_to_users @votes[@v.fav]
         false
 
 
@@ -82,6 +89,14 @@ jQuery ($) ->
 
     Moe.on 'vote:update_widget', ->
         vote.updateWidget()
+
+    $('#add-to-favs').on 'click', ->
+        vote.set vote.v.fav
+        false
+
+    $('#remove-from-favs').on 'click', ->
+        vote.set vote.v.great
+        false
 
     $(".vote-up").on 'click', ->
         current_score = vote.getVote()

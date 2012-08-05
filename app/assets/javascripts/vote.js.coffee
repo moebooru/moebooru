@@ -10,10 +10,10 @@ class Vote
             remove: 0
         }
         @label = [
-            "Remove Vote",
-            "Good",
-            "Great",
-            "Favorite"
+            t('vote.remove'),
+            t('vote.good'),
+            t('vote.great'),
+            t('vote.fav')
         ]
 
     registerVotes: (votes) ->

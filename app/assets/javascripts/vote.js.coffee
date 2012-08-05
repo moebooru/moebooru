@@ -35,6 +35,7 @@ class Vote
 
     set: (vote) ->
         return false if vote > @v.fav
+        notice(t 'voting' + '...')
         Moebooru.request @api.vote_url, {id: @current_post.id, score: vote}
 
     updateWidget: ->
@@ -75,6 +76,7 @@ jQuery ($) ->
         vote.registerUserVotes data
 
     Moe.on vote.api.vote_url + ':ready', (e, data) ->
+        notice t 'vote_saved'
         Moebooru.addData data
         vote.updateWidget()
 

@@ -1,8 +1,13 @@
 var I18n = function () {
   this.locale = jQuery.cookie('locale') || 'en';
   this.template = {
+    error: "Error",
     voting: "Voting",
     vote_saved: "Voting saved",
+    'vote.remove': "Remove vote",
+    'vote.good': "Good",
+    'vote.great': "Great",
+    'vote.fav': "Favorite",
     '__default__': "no translations"
   };
   this.fetch(this.locale);

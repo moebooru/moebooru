@@ -15,7 +15,6 @@ class Vote
             "Great",
             "Favorite"
         ]
-        @votes = {'0':[], '1':[], '2':[], '3':[]}
 
     registerVotes: (votes) ->
         @posts = votes
@@ -59,7 +58,9 @@ class Vote
             $('#add-to-favs').css 'display', 'list-item'
             $('#remove-from-favs').css 'display', 'none'
         $('#post-score-'+@current_post.id).html score
-        $('#favorited-by').html Favorite.link_to_users @votes[@v.fav]
+        try
+            $('#favorited-by').html Favorite.link_to_users @votes[@v.fav]
+        catch err
         false
 
 

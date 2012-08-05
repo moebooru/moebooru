@@ -22,7 +22,7 @@ As this is ongoing project, there will be more changes on requirement as this pr
 * ImageMagick
 * And various other requirement for the gems (check @Gemfile@ for the list)
 
-On RHEL5, it goes like this:
+On RHEL5 (and 6), it goes like this:
 
 * gcc
 * gcc-c++
@@ -37,6 +37,8 @@ On RHEL5, it goes like this:
 * postgresql84-devel
 * postgresql84-server
 * readline-devel
+
+Base and EPEL repositories contain all the requirements.
 
 On Ubuntu 10.04.4 LTS
 

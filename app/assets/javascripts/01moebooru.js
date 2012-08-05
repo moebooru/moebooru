@@ -37,5 +37,7 @@ Moebooru.request = function (url, params) {
     data: params
   }).done(function (data) {
     Moe.trigger(url+":ready", [data]);
+  }).fail(function () {
+    notice(t('error'));
   });
 };

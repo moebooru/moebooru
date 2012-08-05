@@ -51,8 +51,8 @@
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
       <li><%= link_to_function t(:post_options_tl), "Note.create(#{@post.id})", :level => :member %></li>
     <% end %>
-    <li id="add-to-favs"><%= link_to_function t(:post_options_add_fav), "Post.vote(#{@post.id}, 3)" %></li>
-    <li id="remove-from-favs"><%= link_to_function t(:post_options_del_fav), "Post.vote(#{@post.id}, 2)" %></li>
+    <li id="add-to-favs"><%= link_to t(:post_options_add_fav), "#" %></li>
+    <li id="remove-from-favs"><%= link_to t(:post_options_del_fav), "#" %></li>
     <% if @post.is_pending? && @current_user.is_janitor_or_higher? %>
       <li><%= link_to_function t(:post_options_approve), "if (confirm('#{t(:post_options_approve_confirm)}')) {Post.approve(#{@post.id})}" %></li>
     <% end %>

@@ -30,7 +30,7 @@ class Vote
             return null
 
     getVote: ->
-        @posts[@current_post.id]
+        @posts[@current_post.id] || 0
 
     set: (vote) ->
         return false if vote > @v.fav

@@ -122,7 +122,12 @@ en:
   banned_reason: "You have been banned:"
   batch:
     create:
+      files: Files
+      load_file_index: Load file index
+      submit: Start Upload
+      tags: Tags
       title: Queue Uploads
+      url: URL
     index:
       title: Batch Queue
   batch_cancel: "Cancel all uploads"
@@ -894,6 +899,11 @@ en:
   post_upload_text9: "Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban."
   post_view: "View posts"
   post_viewing: "Viewing pool "
+  ratings:
+    _: Rating
+    e: Explicit
+    q: Questionable
+    s: Safe
   record_action: "Action"
   record_add: "Add Record for "
   record_add2: "Add"

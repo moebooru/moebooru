@@ -6,14 +6,14 @@
         <table class="form">
           <tbody>
             <tr>
-              <th> <label for="post_source"><%=t :batch_url %></label> </th>
+              <th> <label for="post_source"><%= t('.url') %></label> </th>
               <td>
                 <input id="post_url" name="url" size="50" tabindex="2" type="text" value="<%= h(params["url"]) %>">
               </td>
             </tr>
             <tr>
               <td></td>
-              <td> <%= submit_tag t(:batch_load_file_index), :tabindex => 8 %> </td>
+              <td> <%= submit_tag t('.load_file_index'), :tabindex => 8 %> </td>
             </tr>
           </tbody>
         </table>
@@ -29,11 +29,11 @@
         <table class="form">
           <tbody>
             <tr>
-              <th> <label for="post_files"><%=t :batch_url %></label> </th>
+              <th> <label for="post_files"><%= t('.url') %></label> </th>
               <td> <%= h(@source) %> </td>
             </tr>
             <tr>
-              <th> <label for="post_files"><%=t :batch_files %></label> </th>
+              <th> <label for="post_files"><%= t('.files') %></label> </th>
               <td>
                 <select id="files" name="files[]" multiple size="15">
                   <% for url in @urls do %>
@@ -44,7 +44,7 @@
             </tr>
 
             <tr>
-              <th> <label for="post_tags"><%= :batch_tags %></label> </th>
+              <th> <label for="post_tags"><%= t('.tags') %></label> </th>
               <td>
                 <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
               </td>
@@ -52,24 +52,24 @@
 
             <tr>
               <th>
-                <label for="post_rating_questionable"><%=t :batch_rating %></label>
+                <label for="post_rating_questionable"><%= t('ratings._') %></label>
               </th>
               <td>
               <input id="post_rating_explicit" name="post[rating]" type="radio" value="e" <% if (params[:rating] or "q") == "e" %>checked="checked"<% end %> tabindex="5">
-                <label for="post_rating_explicit"><%=t :batch_rating_explicit %></label>
+                <label for="post_rating_explicit"><%= t('ratings.e') %></label>
 
               <input id="post_rating_questionable" name="post[rating]" type="radio" value="q" <% if (params[:rating] or "q") == "q" %>checked="checked"<% end %> tabindex="6">
-                <label for="post_rating_questionable"><%=t :batch_rating_questionable %></label>
+                <label for="post_rating_questionable"><%= t('ratings.q') %></label>
 
               <input id="post_rating_safe" name="post[rating]" type="radio" value="s" <% if (params[:rating] or "q") == "s" %>checked="checked"<% end %> tabindex="7">
-                <label for="post_rating_safe"><%=t :batch_rating_safe %></label>
+                <label for="post_rating_safe"><%= t('ratings.s') %></label>
               </td>
             </tr>
 
             <tr>
               <td></td>
               <td>
-                <%= submit_tag t(:batch_start_upload), :tabindex => 8, :accesskey => "s" %>
+                <%= submit_tag t('.submit'), :tabindex => 8, :accesskey => "s" %>
               </td>
             </tr>
           </tbody>

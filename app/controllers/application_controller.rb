@@ -410,4 +410,8 @@ class ApplicationController < ActionController::Base
     def no_anonymous
       access_denied if @current_user.is_anonymous?
     end
+
+    def sanitize_id
+      params[:id] = params[:id].to_i
+    end
 end

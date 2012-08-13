@@ -150,14 +150,13 @@
       class_names << "menu"
       class_names << "top-item-#{item[:name]}"
       class_names += item[:class_names]
-      onclick = ""
-      if item[:login] then
-        onclick="onclick='if(!User.run_login_onclick(event)) return false;'"
-      end
+      onclick = 'if(!User.run_login_onclick(event)) return false;' if item[:login]
       %>
       <%# This div must not contain any whitespace nodes.  If it does, FF will return offsetLeft
          incorrectly, causing problems if the menu wraps. #%>
-      <div <%= "id='#{item[:html_id]}' " if(item[:html_id]) %> class='<%= class_names.join(" ") %>'><a href="<%= item[:dest] %>" <%= onclick %>><%= item[:label] %></a></div>
+      <%= content_tag :div, :id => item[:html_id], :class => class_names do %>
+        <%= link_to item[:label], item[:dest], :onclick => onclick %>
+      <% end %>
   <% } %>
   <a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
     <span><%=t :layout_new_mail %></span>

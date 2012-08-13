@@ -108,8 +108,13 @@ en:
   artist_title2: "This artist is a group"
   artist_update_cancel: "Cancel"
   artist_update_preview: "Preview Notes"
-  # view/banned
   artist_update_save: "Save"
+  # view: /banned
+  banned:
+    index:
+      expires_in: This will expire in %{t}.
+      permanent: This ban is permanent.
+      reason: You have been banned
   banned_expire: "This will expire in "
   banned_period: "."
   banned_permanent: "This ban is permanent"

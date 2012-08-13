@@ -214,6 +214,12 @@ en:
       select_all: Select All
       select_invert: Invert Selection
       title: Moderate Comments
+    search:
+      author: Author
+      message: Message
+      post: Post
+      submit: Search
+      time: Time
     show:
       title: Comment
   # view/comment/_comment

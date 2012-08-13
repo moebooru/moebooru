@@ -2,17 +2,17 @@
   <div style="margin-bottom: 1em;">
     <%= form_tag({:action => "search"}, :method => :get) do %>
       <%= text_field_tag "query", params[:query], :size => 40 %>
-      <%= submit_tag t(:comment_search)%>
+      <%= submit_tag t('.submit')%>
     <% end %>
   </div>
 
   <table class="highlightable" style="width: 50em">
     <thead>
       <tr>
-        <th width="10%"><%=t :comment_post %></th>
-        <th width="60%"><%=t :comment_message %></th>
-        <th width="15%"><%=t :comment_author %></th>
-        <th width="15%"><%=t :comment_time %></th>
+        <th width="10%"><%= t('.post') %></th>
+        <th width="60%"><%= t('.message') %></th>
+        <th width="15%"><%= t('.author') %></th>
+        <th width="15%"><%= t('.time') %></th>
       </tr>
     </thead>
     <tbody>

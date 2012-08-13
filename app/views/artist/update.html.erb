@@ -1,5 +1,5 @@
 <div id="artist-update">
-  <p><%=t :artist_create %></p>
+  <p><%= t('artist.create.info')%></p>
 
   <div id="preview" style="display: none; margin: 1em 0;">
   </div>
@@ -9,30 +9,30 @@
 
     <table class="form">
       <tr>
-        <th><label for="artist_name"><%=t :artist_name %></label></th>
+        <th><label for="artist_name"><%= t('artist.create.name') %></label></th>
         <td><%= text_field "artist", "name", :size => 80 %></td>
       </tr>
       <tr>
-        <th><label for="artist_aliases"><%=t :artist_aliases %></label></th>
+        <th><label for="artist_aliases"><%= t('artist.create.aliases') %></label></th>
         <td><%= text_field "artist", "alias_names", :size => 80 %></td>
       </tr>
       <tr>
-        <th><label for="artist_members"><%=t :artist_members %></label></th>
+        <th><label for="artist_members"><%= t('artist.create.members') %></label></th>
         <td><%= text_field "artist", "member_names", :size => 80 %></td>
       </tr>
       <tr>
-        <th><label for="artist_urls"><%=t :artist_urls %></label></th>
+        <th><label for="artist_urls"><%= t('artist.create.urls') %></label></th>
         <td><%= text_area "artist", "urls", :size => "80x6", :class => "no-block" %></td>
       </tr>
       <tr>
-        <th><label for="artist_notes"><%=t :artist_notes %></label></th>
+        <th><label for="artist_notes"><%= t('artist.crete.notes') %></label></th>
         <td><%= text_area "artist", "notes", :size => "80x6", :class => "no-block", :disabled => @artist.notes_locked? %></td>
       </tr>
       <tr>
         <td colspan="2">
-          <%= submit_tag t(:artist_update_save) %>
-          <%= button_to_function t(:artist_update_cancel), "history.back()" %>
-          <%= submit_to_remote "preview", t(:artist_update_preview), :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
+          <%= submit_tag t('buttons.save') %>
+          <%= button_to_function t('buttons.cancel'), "history.back()" %>
+          <%= submit_to_remote "preview", t('.preview'), :url => {:action => "preview"}, :method => :get, :update => "preview", :success => "$('preview').show()" %>
         </td>
       </tr>
     </table>

@@ -88,6 +88,8 @@ en:
       search: Search
       title: Artists
       updated_by: Updated By
+    update:
+      preview_button: Preview Notes
   # view/artist/index
   artist_index_date: "Date"
   artist_index_last_modified: "Last Modified"

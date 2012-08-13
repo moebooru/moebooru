@@ -179,6 +179,11 @@ en:
       not_found: "Can't find pool with id %{id}"
   # Helpers
   comment:
+    comment:
+      delete: Delete
+      edit: Edit
+      flag: Flag for deletion
+      quote: Quote
     index:
       title: Comments
     moderate:

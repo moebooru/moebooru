@@ -18,12 +18,12 @@
     </div>
     <div class="post-footer" style="clear: left;">
       <ul class="flat-list pipe-list">
-        <li> <%= link_to_function t(:comment_quote), "Comment.quote(#{comment.id})" %>
+        <li> <%= link_to_function t('.quote'), "Comment.quote(#{comment.id})" %>
         <% if @current_user.has_permission?(comment) %>
-          <li> <%= link_to t(:comment_edit), :controller => "comment", :action => "edit", :id => comment.id %>
-          <li> <%= link_to_function t(:comment_delete), "Comment.destroy(#{comment.id})" %>
+          <li> <%= link_to t('.edit'), :controller => "comment", :action => "edit", :id => comment.id %>
+          <li> <%= link_to_function t('.delete'), "Comment.destroy(#{comment.id})" %>
         <% else %>
-          <li> <%= link_to_function t(:comment_flag), "Comment.flag(#{comment.id})" %>
+          <li> <%= link_to_function t('.flag'), "Comment.flag(#{comment.id})" %>
         <% end %>
       </ul>
     </div>

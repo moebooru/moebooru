@@ -1,7 +1,7 @@
 <% provide :title, t('.title') %>
 <div id="comment-list">
   <% if @posts.empty? %>
-    <h4><%=t :comments_none %></h4>
+    <h4><%= t('.empty') %></h4>
   <% end %>
 
   <% @posts.each do |post| %>
@@ -12,24 +12,24 @@
       <div class="col2" id="comments-for-p<%= post.id %>">
         <div class="header">
           <div>
-            <span class="info"><strong><%=t :comment_date %></strong> <%= compact_time(post.created_at) %></span>
-            <span class="info"><strong><%=t :comment_user %></strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
-            <span class="info"><strong><%=t :comment_rating %></strong> <%= post.pretty_rating %></span>
-            <span class="info vote-container"><strong><%=t :comment_score %></strong>
+            <span class="info"><strong><%= t('.date') %></strong> <%= compact_time(post.created_at) %></span>
+            <span class="info"><strong><%= t('.user') %></strong> <%= link_to h(post.author), :controller => "user", :action => "show", :id => post.user_id %></span>
+            <span class="info"><strong><%= t('ratings._') %></strong> <%= post.pretty_rating %></span>
+            <span class="info vote-container"><strong><%= t('.score') %></strong>
               <span id="post-score-<%= post.id %>"><%= post.score %></span>
               <%= vote_widget(@current_user) %>
               <%= vote_tooltip_widget() %>
             </span>
 
             <% if post.comments.size > 6 %>
-              <span class="info"><strong><%=t :comment_hidden %></strong> <%= link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
+              <span class="info"><strong><%= t('.hidden') %></strong> <%= link_to post.comments.size - 6, :controller => "post", :action => "show", :id => post.id %></span>
             <% end %>
           </div>
           <div class="tags">
-            <strong><%=t :comment_tags %></strong>
+            <strong><%= t('.tags') %></strong>
             <% post.cached_tags.split(/ /).each do |name| %>
               <span class="tag-type-<%= Tag.type_name(name) %>">
-                <a href="/post/index?tags=<%= u name %>"><%= h name.tr("_", " ") %></a>
+                <%= link_to name.tr('_', ' '), :controller => '/post', :action => :index, :tags => name %>
               </span>
             <% end %>
           </div>
@@ -45,7 +45,7 @@
 
   <% if @page_uses_translations then %>
     <% content_for :above_footer do %>
-      <%=t :comment_translation %> <a href="http://translate.google.com">Google</a>.
+      <%= t('.translation_html', :p => link_to('Google', 'http://translate.google.com')) %>
       <br>
     <% end %>
   <% end %>

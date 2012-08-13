@@ -198,7 +198,14 @@ en:
       search: Search
       moderate: Moderate
     index:
+      date: Date
+      empty: No comments.
+      hidden: Hidden
+      score: Score
+      tags: Tags
       title: Comments
+      translation_html: Comment translation provided by %{p}
+      user: User
     moderate:
       title: Moderate Comments
     show:

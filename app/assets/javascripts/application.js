@@ -42,4 +42,5 @@
 //= require jquery_ujs
 //= require jquery.cookie
 //= require jquery.ui.autocomplete
+//= require compat.jquery
 //= require_tree .

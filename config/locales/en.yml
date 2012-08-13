@@ -189,6 +189,11 @@ en:
       more: more
       post: Post
       reply: Reply »
+    footer:
+      help: Help
+      list: List
+      search: Search
+      moderate: Moderate
     index:
       title: Comments
     moderate:

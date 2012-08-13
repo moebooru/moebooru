@@ -1135,7 +1135,19 @@ en:
   tag_imp: "Implications"
   tag_implication:
     index:
+      add: Add
+      add_new:
+        title: Add Implication
+        info: The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.
+        info_moderation: You can suggest a new implication, but it must be approved by a moderator before it is activated.
+        submit: Submit
+      approve: Approve
+      consequent: Consequent
+      delete: Delete
+      predicate: Predicate
+      reason: Reason
       search: Search Implications
+      select_pending: Select Pending
       title: Tag Implications
   # tag imp
   tag_js: "Are you sure you wish to perform this tag edit?"

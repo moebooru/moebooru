@@ -468,7 +468,7 @@ CREATE TABLE batch_uploads (
     id integer NOT NULL,
     user_id integer NOT NULL,
     ip inet,
-    url character varying(255) NOT NULL,
+    url text NOT NULL,
     tags character varying(255) DEFAULT ''::character varying NOT NULL,
     active boolean DEFAULT false NOT NULL,
     status character varying(255) DEFAULT 'pending'::character varying NOT NULL,
@@ -3549,6 +3549,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120723155345');
 INSERT INTO schema_migrations (version) VALUES ('20120723161914');
 
 INSERT INTO schema_migrations (version) VALUES ('20120804130515');
+
+INSERT INTO schema_migrations (version) VALUES ('20120813155642');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

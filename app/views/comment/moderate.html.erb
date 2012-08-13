@@ -19,17 +19,17 @@
     <thead>
       <tr>
         <th></th>
-        <th><%=t :comment_author %></th>
-        <th><%=t :comment_body %></th>
+        <th><%= t('.author') %></th>
+        <th><%= t('.body') %></th>
       </tr>
     </thead>
     <tfoot>
       <tr>
         <td colspan="3">
-          <%= button_to_function t(:post_mod_select), "$$('.c').each(function (i) {i.checked = true; highlight_row(i)}); return false" %>
-          <%= button_to_function t(:post_mod_invert), "$$('.c').each(function (i) {i.checked = !i.checked; highlight_row(i)}); return false" %>
-          <%= submit_tag t(:comment_approve) %>
-          <%= submit_tag t(:comment_delete) %>
+          <%= button_to_function t('.select_all'), "$$('.c').each(function (i) {i.checked = true; highlight_row(i)}); return false" %>
+          <%= button_to_function t('.select_invert'), "$$('.c').each(function (i) {i.checked = !i.checked; highlight_row(i)}); return false" %>
+          <%= submit_tag t('.approve') %>
+          <%= submit_tag t('.delete') %>
         </td>
       </tr>
     </tfoot>

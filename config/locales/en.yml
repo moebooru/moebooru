@@ -207,6 +207,12 @@ en:
       translation_html: Comment translation provided by %{p}
       user: User
     moderate:
+      approve: Approve
+      author: Author
+      body: Body
+      delete: Delete
+      select_all: Select All
+      select_invert: Invert Selection
       title: Moderate Comments
     show:
       title: Comment

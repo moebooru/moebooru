@@ -29,9 +29,6 @@ I18n.prototype.translate = function (label) {
   if (arguments.length > 1) {
     return this.subst(arguments);
   }
-  if (arguments.length == 0) {
-    return this.template['__default__'];
-  }
   return this.template[label] || this.template['__default__'];
 };
 

@@ -129,7 +129,18 @@ en:
       title: Queue Uploads
       url: URL
     index:
+      cancel: Cancel all uploads
+      clear: Clear finished uploads
+      completed_html: Post %{id} complete
+      exists_html: Post %{id} already exists
+      pause: Puase
+      paused: Paused
+      pending: Pending
+      queue_uploads: Queue Uploads
+      resume: Resume
+      retry_failed: Retry failed
       title: Batch Queue
+      uploading: Uploading
   batch_cancel: "Cancel all uploads"
   batch_clear: "Clear finished uploads"
   batch_complete: " complete"

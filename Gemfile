@@ -12,7 +12,6 @@ end
 
 gem 'pg', :platforms => :ruby
 gem 'activerecord-jdbcpostgresql-adapter', :platforms => :jruby
-gem 'jruby-openssl', :platforms => :jruby
 
 gem 'diff-lcs'
 gem 'json'

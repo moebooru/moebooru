@@ -184,6 +184,11 @@ en:
       edit: Edit
       flag: Flag for deletion
       quote: Quote
+    comments:
+      bump: Post without bumping
+      more: more
+      post: Post
+      reply: Reply »
     index:
       title: Comments
     moderate:

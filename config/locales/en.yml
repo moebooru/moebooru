@@ -221,6 +221,7 @@ en:
       submit: Search
       time: Time
     show:
+      return: Return to post
       title: Comment
   # view/comment/_comment
   comment_ago: " ago"

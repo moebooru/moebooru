@@ -2,5 +2,5 @@
 <%= render :partial => "comment/comments", :locals => {:comments => [@comment], :post_id => @comment.post_id, :hide => false} %>
 
 <div style="clear: both;">
-  <p><%= link_to t(:comment_return), :controller => "post", :action => "show", :id => @comment.post_id %></p>
+  <p><%= link_to t('.return'), :controller => "post", :action => "show", :id => @comment.post_id %></p>
 </div>

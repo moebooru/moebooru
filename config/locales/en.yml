@@ -189,6 +189,9 @@ en:
       more: more
       post: Post
       reply: Reply »
+    edit:
+      save: Save changes
+      title: Edit Comment
     footer:
       help: Help
       list: List

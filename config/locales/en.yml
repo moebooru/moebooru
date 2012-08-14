@@ -1373,6 +1373,10 @@ en:
   wiki:
     diff:
       title: Wiki Diff
+    footer:
+      list: List
+      new: New
+      help: Help
     history:
       title: Wiki History
     index:

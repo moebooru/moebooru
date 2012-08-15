@@ -218,7 +218,7 @@ module SimilarImages
       File.open(tempfile_path, 'wb') { |f| yield f }
 
       # Use the resizer to validate the file and convert it to a thumbnail-size JPEG.
-      imgsize = ImageSize.path(File.open(tempfile_path, 'rb'))
+      imgsize = ImageSize.path(tempfile_path)
       if imgsize.format.nil?
         raise Danbooru::ResizeError, "Unrecognized image format"
       end

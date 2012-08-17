@@ -67,7 +67,7 @@
               <%= link_to_function t(:post_edit_related_characters), "RelatedTags.find('post_tags', 'char')" %> |
               <%= link_to_function t(:post_edit_related_copyrights), "RelatedTags.find('post_tags', 'copyright')" %>
               <% if CONFIG["enable_artists"] %>
-              | <%= link_to_function(t(:post_edit_related_artists), "RelatedTags.find_artist($F('post_source'))") %>
+              | <%= link_to_function(t(:post_edit_find_artists), "RelatedTags.find_artist($F('post_source'))") %>
               <% end %>
             <% end %>
             </td>

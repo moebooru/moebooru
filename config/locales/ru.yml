@@ -2,14 +2,14 @@ ru:
   activerecord:
     attributes:
       advertisement:
-        ad_type: "Advertisement type"
-        height: "Height"
-        hit_count: "Hit Count"
-        image_url: "Image URL"
+        ad_type: "Тип баннера"
+        height: "Высота"
+        hit_count: "Счётчик хитов"
+        image_url: "URL картинки"
         referral_url: "Referral URL"
-        reset_hit_count: "Reset hit count"
-        status: "Status"
-        width: "Width"
+        reset_hit_count: "Сбросить счётчик хитов"
+        status: "Статус"
+        width: "Ширина"
       user:
         current_password: "Текущий пароль"
         password: "Пароль"
@@ -19,32 +19,32 @@ ru:
         wiki_page:
           no_change: "Нет изменений в содержании/заголовке страницы"
     models:
-      advertisement: "Advertisement"
+      advertisement: "Реклама"
   admin:
     edit_user:
-      level: "Level"
-      save: "Save"
-      user: "User"
+      level: "Уровень"
+      save: "Сохранить"
+      user: "Пользователь"
     index:
       cache_statistics: "Статистика Кэша"
       edit_user: "Редактировать Пользователя"
       reset_password: "Сброс Пароля"
-      title: "Admin"
+      title: "Админка"
     reset_password:
-      name: "Name"
-      reset: "Reset"
-      title: "Reset Password"
+      name: "Имя"
+      reset: "Сброс"
+      title: "Сбросить пароль"
   # view: /advertisements
   advertisements:
     edit:
-      title: "Edit Advertisement #%{id}"
+      title: "Редактировать баннер #%{id}"
     index:
-      reset_hit_count: "Reset hit count"
-      title: "Advertisements"
+      reset_hit_count: "Сбросить счётчик хитов"
+      title: "Баннеры"
     new:
-      title: "New Advertisement"
+      title: "Новый Баннер"
     show:
-      title: "Advertisement #%{id}"
+      title: "Баннер #%{id}"
   # view: /dmail
   alias_add: "Добавить"
   alias_alias: "Синоним"
@@ -62,34 +62,34 @@ ru:
   alias_to: "Для"
   artist:
     create:
-      alias_for: "Alias for"
-      aliases: "Aliases"
-      info: "Separate multiple aliases and group members with commas."
-      members: "Members"
-      name: "Name"
-      notes: "Notes"
-      urls: "URLs"
+      alias_for: "Асевдоним для"
+      aliases: "Псевдонимы"
+      info: "Разделяйте множественные псевдонимы и участников запятыми."
+      members: "Участники"
+      name: "Имя"
+      notes: "Заметры"
+      urls: "URL'ы"
     destroy:
-      confirm: "Are you sure you want to delete %{name}?"
-      title: "Delete Artist"
+      confirm: "Вы действительно хотите удалить %{name}?"
+      title: "Удалить Художника"
     footer:
-      add: "Add"
-      help: "Help"
-      list: "List"
+      add: "Добавить"
+      help: "Справка"
+      list: "Список"
     index:
-      date: "Date"
-      delete: "Delete artist"
-      edit: "Edit artist"
-      find: "Find posts for this artist"
-      is_alias: "This artist is an alias"
-      is_group: "This artist is a group"
-      last_modified: "Last Modified"
-      name: "Name"
-      search: "Search"
-      title: "Artists"
-      updated_by: "Updated By"
+      date: "Дата"
+      delete: "Удалить художника"
+      edit: "Редактировать"
+      find: "Найти посты этого художника"
+      is_alias: "Это псевдоним"
+      is_group: "Это группа"
+      last_modified: "Последнее Изменение"
+      name: "Имя"
+      search: "Поиск"
+      title: "Художники"
+      updated_by: "Обновлено"
     update:
-      preview_button: "Preview Notes"
+      preview_button: "Предпросмотр Заметок"
   # view/artist/index
   artist_index_date: "Дата"
   artist_index_last_modified: "Обновлено"
@@ -112,9 +112,9 @@ ru:
   # view: /banned
   banned:
     index:
-      expires_in: "This will expire in %{t}."
-      permanent: "This ban is permanent."
-      reason: "You have been banned"
+      expires_in: "Истекает в течение %{t}."
+      permanent: "Этот бан навсегда."
+      reason: "Вы забанены"
   banned_expire: "Истекает "
   banned_period: "."
   banned_permanent: "Навсегда"
@@ -122,25 +122,25 @@ ru:
   banned_reason: "Вас забанили:"
   batch:
     create:
-      files: "Files"
-      load_file_index: "Load file index"
-      submit: "Start Upload"
-      tags: "Tags"
-      title: "Queue Uploads"
+      files: "Файлы"
+      load_file_index: "Загрузить индекс"
+      submit: "Начать Закачку"
+      tags: "Метки"
+      title: "Очередь"
       url: "URL"
     index:
-      cancel: "Cancel all uploads"
-      clear: "Clear finished uploads"
-      completed_html: "Post %{id} complete"
-      exists_html: "Post %{id} already exists"
-      pause: "Puase"
-      paused: "Paused"
-      pending: "Pending"
-      queue_uploads: "Queue Uploads"
-      resume: "Resume"
-      retry_failed: "Retry failed"
-      title: "Batch Queue"
-      uploading: "Uploading"
+      cancel: "Отменить все закачки"
+      clear: "Очистить завершённые"
+      completed_html: "Пост %{id} завершён"
+      exists_html: "Пост %{id} уже существует"
+      pause: "Пауза"
+      paused: "Пауза"
+      pending: "Ожидает"
+      queue_uploads: "Очередь"
+      resume: "Возобновить"
+      retry_failed: "Повторить сбойные"
+      title: "Очередь Батчей"
+      uploading: "Загрузка"
   batch_cancel: "Отменить все закачки"
   batch_clear: "Очистить завершенные"
   batch_complete: " - выполнено"
@@ -166,13 +166,13 @@ ru:
   batch_url: "URL"
   batch_username: "Пользователь"
   buttons:
-    _no: "No"
-    _yes: "Yes"
-    add: "Add"
-    back: "Back"
+    _no: "Нет"
+    _yes: "Да"
+    add: "Добавить"
+    back: "Назад"
     cancel: "Отмена"
-    delete: "Delete"
-    edit: "Edit"
+    delete: "Удалить"
+    edit: "Правка"
     save: "Сохранить"
   c:
     pool:
@@ -180,49 +180,49 @@ ru:
   # Helpers
   comment:
     comment:
-      delete: "Delete"
-      edit: "Edit"
-      flag: "Flag for deletion"
-      quote: "Quote"
+      delete: "Удалить"
+      edit: "Правка"
+      flag: "Пожаловаться"
+      quote: "Цитировать"
     comments:
-      bump: "Post without bumping"
-      more: "more"
-      post: "Post"
-      reply: "Reply »"
+      bump: "Отправить скрытно"
+      more: "ещё"
+      post: "Пост"
+      reply: "Ответить »"
     edit:
-      save: "Save changes"
-      title: "Edit Comment"
+      save: "Сохранить изменения"
+      title: "Редактировать Комментарий"
     footer:
-      help: "Help"
-      list: "List"
-      search: "Search"
-      moderate: "Moderate"
+      help: "Справка"
+      list: "Список"
+      search: "Поиск"
+      moderate: "Модерировать"
     index:
-      date: "Date"
-      empty: "No comments."
-      hidden: "Hidden"
-      score: "Score"
-      tags: "Tags"
-      title: "Comments"
-      translation_html: "Comment translation provided by %{p}"
-      user: "User"
+      date: "Дата"
+      empty: "Нет комментариев."
+      hidden: "Скрыт"
+      score: "Оценка"
+      tags: "Метки"
+      title: "Комментарии"
+      translation_html: "Перевод комментария предоставлен %{p}"
+      user: "Пользователь"
     moderate:
-      approve: "Approve"
-      author: "Author"
-      body: "Body"
-      delete: "Delete"
-      select_all: "Select All"
-      select_invert: "Invert Selection"
-      title: "Moderate Comments"
+      approve: "Подтвердить"
+      author: "Автор"
+      body: "Сообщение"
+      delete: "Удалить"
+      select_all: "Выбрать Все"
+      select_invert: "Инвертировать Выбор"
+      title: "Модерировать Комментарии"
     search:
-      author: "Author"
-      message: "Message"
-      post: "Post"
-      submit: "Search"
-      time: "Time"
+      author: "Автор"
+      message: "Сообщение"
+      post: "Пост"
+      submit: "Найти"
+      time: "Время"
     show:
-      return: "Return to post"
-      title: "Comment"
+      return: "Вернуться к посту"
+      title: "Комментарий"
   # view/comment/_comment
   comment_ago: " назад"
   comment_ago2: ""
@@ -265,7 +265,7 @@ ru:
   comments_none: "Нет комментариев."
   comments_post: "Отправить"
   confirmations:
-    is_sure: "Are you sure?"
+    is_sure: "Вы уверены?"
   # ActiveRecord (models)
   crop_avatar: "Выберите область для обрезки всех картинок и нажмие Enter. Эта операция не может быть отменена."
   # view/inline/edit
@@ -306,7 +306,7 @@ ru:
   forum:
     index:
       is_locked: "(закрыто)"
-      title: "Forum"
+      title: "Форум"
     search:
       last_updated_by: "%{t_ago}, %{u}"
   # view: /static
@@ -367,7 +367,7 @@ ru:
       firefox_ext: "Расширение для Firefox"
       help: "Справка"
   # view: /post
-      image_sampling: "Image Sampling"
+      image_sampling: "Образцы Изображений"
       irc: "IRC"
       mass_tag_edit: "Массовая Правка Меток"
       notes: "Заметки"
@@ -387,12 +387,12 @@ ru:
   helpers:
     submit:
       advertisement:
-        create: "Create"
-        update: "Save"
+        create: "Создать"
+        update: "Сохранить"
   # view: /admin
   history:
     index:
-      title: "History"
+      title: "История"
   history_all: "Все"
   history_change: "Правка"
   # view/inline/crop
@@ -522,9 +522,9 @@ ru:
   news_ticker_close: "Закрыть"
   note:
     history:
-      title: "Note History"
+      title: "История Заметок"
     index:
-      title: "Notes"
+      title: "Заметки"
   # view/note/footer
   note_body: "Содержание"
   note_click: "Щёлкните для правки"
@@ -575,8 +575,8 @@ ru:
   old_browser3: "(скрыть это сообщение)"
   pool:
     index:
-      title: "%{q} - Pools"
-      title_main: "Pools"
+      title: "%{q} - Коллекции"
+      title_main: "Коллекции"
   # view/pool/add_post
   pool_active: "Активный"
   pool_active_text: "Неактивные коллекции не будут показаны в списке для добавления."
@@ -663,22 +663,22 @@ ru:
   post:
     moderate:
       mod: "mod"
-      title: "Moderation Queue"
+      title: "Очередь Модерирования"
   # view: /artist
       uploaded_by_when_html: "Создано %{u} %{t_ago} (%{mod})"
     popular_by_day:
-      title: "Exploring %{year}/%{month}/%{day}"
+      title: "Просмотр %{year}/%{month}/%{day}"
     popular_by_month:
-      title: "Exploring %{year}/%{month}"
+      title: "Просмотр %{year}/%{month}"
     popular_by_week:
-      title: "Exploring %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}"
+      title: "Просмотр %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}"
     popular_recent:
-      title: "Exploring %{period}"
+      title: "Просмотр %{period}"
     show_partials:
       statistics_panel:
         uploaded_by_user_html: " %{u}"
     upload:
-      title: "Upload"
+      title: "Добавить"
   post_404: "Нет такого поста."
   post_activate: "Активировать все удержанные посты"
   post_amb: "Данные метки неоднозначны: "
@@ -949,10 +949,10 @@ ru:
   post_view: "Просмотр"
   post_viewing: "Просмотр коллекции "
   ratings:
-    _: "Rating"
-    e: "Explicit"
-    q: "Questionable"
-    s: "Safe"
+    _: "Рейтинг"
+    e: "Откровенный"
+    q: "Спорный"
+    s: "Безопасный"
   record_action: "Действие"
   record_add: "Добавить Запись для "
   record_add2: "Добавить"
@@ -1100,29 +1100,29 @@ ru:
   sub_vis: "Показывать"
   tag:
     cloud:
-      title: "Tags"
+      title: "Метки"
     index:
-      title: "Tags"
+      title: "Метки"
     mass_edit:
-      title: "Mass Edit Tags"
+      title: "Массовая Правка Меток"
   tag_action: "Действие"
   tag_alias:
     index:
-      add: "Add"
+      add: "Добавить"
       add_new:
-        alias_to: "Alias to"
-        info: "You can suggest a new alias, but it must be approved by an administrator before it is activated."
-        name: "Name"
-        submit: "Submit"
-        title: "Add Alias"
-      alias: "Alias"
-      approve: "Approve"
-      delete: "Delete"
-      pending: "Select Pending"
-      reason: "Reason"
-      search: "Search Aliases"
-      title: "Tag Aliases"
-      to: "To"
+        alias_to: "Синоним к"
+        info: "Вы можете предложить новый синоним, но он должен быть подтверждён администратором."
+        name: "Имя"
+        submit: "Отправить"
+        title: "Добавить Синоним"
+      alias: "Синоним"
+      approve: "Подтвердить"
+      delete: "Удалить"
+      pending: "Выбрать Ожидающие"
+      reason: "Причина"
+      search: "Поиск Синонимов"
+      title: "Метки-Синонимы"
+      to: "Для"
   tag_aliases: "Синонимы"
   tag_amb: "Неоднозначный"
   tag_cancel: "Отмена"
@@ -1135,20 +1135,20 @@ ru:
   tag_imp: "Дополнительные Значения"
   tag_implication:
     index:
-      add: "Add"
+      add: "Добавить"
       add_new:
-        title: "Add Implication"
-        info: "The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle."
-        info_moderation: "You can suggest a new implication, but it must be approved by a moderator before it is activated."
-        submit: "Submit"
-      approve: "Approve"
-      consequent: "Consequent"
-      delete: "Delete"
-      predicate: "Predicate"
-      reason: "Reason"
-      search: "Search Implications"
-      select_pending: "Select Pending"
-      title: "Tag Implications"
+        title: "Добавить Дополнительное Значение"
+        info: "Предикат - метка, для которой добавляется метка дополнение. Например, дополнительное значение с предикатом=квадрат и дополнением=прямоугольник означает, что для каждого поста, помеченного как квадрат, будет также добавлена метка прямоугольник."
+        info_moderation: "Вы можете предложить новое дополнительное значение для метки, но оно должно быть подтверждено модератором."
+        submit: "Отправить"
+      approve: "Подтвердить"
+      consequent: "Дополнение"
+      delete: "Удалить"
+      predicate: "Предикат"
+      reason: "Причина"
+      search: "Поиск Дополнительных Значений"
+      select_pending: "Выбрать Ожидающие"
+      title: "Метки-Дополнения"
   # tag imp
   tag_js: "Вы действительно хотите выполнить данное редактирование меток?"
   tag_js_preview: "Предпросмотр"
@@ -1181,7 +1181,7 @@ ru:
     edit:
       email: "Email"
       no_email: "нет"
-      title: "Edit Account"
+      title: "Редактровать Учётную Запись"
       update_email: "Изменить"
     home:
       action_info: "Здесь расположены опции и функции, связанные с вашей учётной записью."
@@ -1200,26 +1200,26 @@ ru:
       reset_password: "Сбросить Пароль"
       settings: "Настройки"
       signup: "Зарегистрироваться"
-      title: "My Account"
+      title: "Моя Страница"
     index:
-      title: "Users"
+      title: "Пользователи"
     login:
-      title: "Login"
+      title: "Вход"
     logout:
-      title: "Logout"
+      title: "Выйти"
     reset_password:
-      title: "Reset Password"
+      title: "Сбросить Пароль"
     show:
       avatar:
         remove:
           confirm: "Удалить аватарку?"
           link: "(удалить)"
-      own_title: "My Profile"
-      title: "%{name}'s Profile"
+      own_title: "Мой Профиль"
+      title: "Профиль %{name}"
     show_blocked_users:
-      title: "Blocked Users"
+      title: "Заблокированные Пользователи"
     signup:
-      title: "Signup"
+      title: "Зарегистрироваться"
   # user
   user1: "Чёрный Список Меток"
   user10: " или редактировании постов."
@@ -1372,14 +1372,14 @@ ru:
   users_search: "Поиск"
   wiki:
     diff:
-      title: "Wiki Diff"
+      title: "Wiki Разница"
     footer:
-      list: "List"
-      new: "New"
-      help: "Help"
+      list: "Список"
+      new: "Создать"
+      help: "Справка"
     history:
-      title: "Wiki History"
+      title: "История Wiki"
     index:
       title: "Wiki"
     recent_changes:
-      title: "Recent Changes"
+      title: "Последние Изменения"

@@ -746,6 +746,7 @@ en:
   post_download_text: "You must download this file manually."
   post_edit: "Edit posts"
   post_edit_e: "Explicit"
+  post_edit_find_artists: "Find artists"
   post_edit_help: "help"
   post_edit_note_locked: "Note locked"
   post_edit_parent: "Parent Post"

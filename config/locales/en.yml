@@ -280,6 +280,14 @@ en:
       compose: Compose
       inbox: Inbox
       mark_all_read: Mark all read
+    inbox:
+      empty: You have no messages.
+      table:
+        from: From
+        title: Title
+        to: To
+        when: When
+      title: My Inbox
     message:
       sent_by_html: Sent by %{user} %{x_ago}
   # view: /forum

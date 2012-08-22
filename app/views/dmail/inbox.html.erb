@@ -1,16 +1,17 @@
-<h4><%=t :dmail_inbox %></h4>
+<% provide :title, t('.title') %>
+<h4><%= t('.title') %></h4>
 
 <% if @dmails.empty? %>
-  <p><%=t :dmail_empty %></p>
+  <p><%= t('.empty') %></p>
 <% else %>
   <div class="mail">
     <table width="100%" class="highlightable">
       <thead>
         <tr>
-          <th width="15%"><%=t :dmail_from %></th>
-          <th width="15%"><%=t :dmail_to %></th>
-          <th width="55%"><%=t :dmail_title %></th>
-          <th width="15%"><%=t :dmail_when %></th>
+          <th width="15%"><%= t('.table.from') %></th>
+          <th width="15%"><%= t('.table.to') %></th>
+          <th width="55%"><%= t('.table.title') %></th>
+          <th width="15%"><%= t('.table.when') %></th>
         </tr>
       </thead>
       <tbody>

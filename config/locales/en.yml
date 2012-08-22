@@ -265,9 +265,7 @@ en:
   comments_post: "Post"
   confirmations:
     is_sure: Are you sure?
-  # ActiveRecord (models)
   crop_avatar: "Select the region to crop all images to and press enter.  This operation can not be undone."
-  # view/inline/edit
   dmail:
     message:
       sent_by_html: Sent by %{user} %{x_ago}

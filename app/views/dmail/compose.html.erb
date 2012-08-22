@@ -1,4 +1,5 @@
-<h4><%=t :dmail_compose %></h4>
+<% provide :title, t('.title') %>
+<h4><%= t('.title') %></h4>
 
 <%= render :partial => "compose", :locals => {:from_id => @current_user.id} %>
 

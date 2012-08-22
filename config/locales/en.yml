@@ -268,12 +268,14 @@ en:
   crop_avatar: "Select the region to crop all images to and press enter.  This operation can not be undone."
   dmail:
     compose:
-      body: Body
+      form:
+        body: Body
+        title: Title
+        to: To
       preview: Preview
       preview_loading: Loading preview...
       send: Send
-      title: Title
-      to: To
+      title: Compose Message
     footer:
       compose: Compose
       inbox: Inbox

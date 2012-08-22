@@ -44,29 +44,9 @@ module TagTypeMethods
       post_tags = Set.new(post_tags)
 
       results = {}
-      got_keys = Set.new
-      tags_to_query = post_tags.map { |n| { :tag_type => n } }
-      cached_tag_types = begin
-        Rails.cache.read_multi(tags_to_query)
-      rescue
-        nil
+      post_tags.each do |tag|
+        results[tag] = Rails.cache.fetch({ :tag_type => tag }) { type_name(tag) }
       end
-      tag_types = {}
-      if cached_tag_types
-        # read_multi replaces keys which have too long name to nil.
-        cached_tag_types.each_with_index do |hash, i|
-          tag_types[tags_to_query[i][:tag_type]] = hash[1]
-        end
-      end
-      tag_types.each { |key, value| results[key] = value }
-
-      # Find which keys we didn't get from cache and fill them in.  This will also
-      # populate the cache.
-      needed_tags = post_tags - tag_types.keys
-      needed_tags.each { |tag|
-        results[tag] = type_name(tag)
-      }
-
       return results
     end
 

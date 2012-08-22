@@ -1,6 +1,6 @@
 <% content_for :subnavbar do %>
   <%= yield :footer %>
-  <li><%= link_to t(:dmail_footer_inbox), :action => "inbox" %></li>
-  <li><%= link_to t(:dmail_footer_compose), :action => "compose" %></li>
-  <li><%= link_to t(:dmail_mark), { :action => "mark_all_read" }, :method => :post %></li>
+  <li><%= link_to t('.inbox'), :action => "inbox" %></li>
+  <li><%= link_to t('.compose'), :action => "compose" %></li>
+  <li><%= link_to t('.mark_all_read'), { :action => "mark_all_read" }, :method => :post %></li>
 <% end %>

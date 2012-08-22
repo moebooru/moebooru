@@ -44,6 +44,8 @@ module TagTypeMethods
       post_tags = Set.new(post_tags)
 
       results = {}
+      # Don't be tempted into using read_multi here - it's rather buggy
+      # (2012-08-22).
       post_tags.each do |tag|
         results[tag] = Rails.cache.fetch({ :tag_type => tag }) { type_name(tag) }
       end

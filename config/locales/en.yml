@@ -267,6 +267,13 @@ en:
     is_sure: Are you sure?
   crop_avatar: "Select the region to crop all images to and press enter.  This operation can not be undone."
   dmail:
+    compose:
+      body: Body
+      preview: Preview
+      preview_loading: Loading preview...
+      send: Send
+      title: Title
+      to: To
     message:
       sent_by_html: Sent by %{user} %{x_ago}
   # view: /forum

@@ -45,7 +45,6 @@ en:
       title: New Advertisement
     show:
       title: 'Advertisement #%{id}'
-  # view: /dmail
   alias_add: "Add"
   alias_alias: "Alias"
   alias_alias_to: "Alias to"

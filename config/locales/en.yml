@@ -276,6 +276,9 @@ en:
       preview_loading: Loading preview...
       send: Send
       title: Compose Message
+    confirm_mark_all_read:
+      title: Mark All Read
+      info: Are you sure you want to mark all your messages as read?
     footer:
       compose: Compose
       inbox: Inbox

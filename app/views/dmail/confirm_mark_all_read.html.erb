@@ -1,0 +1,7 @@
+<h4><%= t('.title') %></h4>
+<p><%= t('.info') %></p>
+
+<%= form_tag(:action => "mark_all_read") do %>
+  <%= submit_tag t('buttons._yes') %>
+  <%= submit_tag t('buttons._no') %>
+<% end %>

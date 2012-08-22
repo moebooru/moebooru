@@ -50,6 +50,9 @@ class DmailController < ApplicationController
     end
   end
 
+  def confirm_mark_all_read
+  end
+
   def mark_all_read
     if params[:commit] == "Yes"
       Dmail.find(:all, :conditions => ["to_id = ? and has_seen = false", @current_user.id]).each do |dmail|

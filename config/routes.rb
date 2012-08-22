@@ -53,6 +53,7 @@ Moebooru::Application.routes.draw do
   match 'dmail/show(/:id)' => 'dmail#show'
   match 'dmail/show_previous_messages'
   post 'dmail/create'
+  get 'dmail/mark_all_read' => 'dmail#confirm_mark_all_read'
   post 'dmail/mark_all_read'
 
   # Favorite

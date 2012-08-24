@@ -1,4 +1,5 @@
 require "base64"
+require 'net/https'
 
 # This simulates an http.request_get response, for data: URLs.
 class LocalData
@@ -31,7 +32,12 @@ module Danbooru
         raise SocketError, "URL must be HTTP"
       end
 
-      Net::HTTP.start(url.host, url.port) do |http|
+      http = Net::HTTP.new url.host, url.port
+      if url.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+      http.start do
         http.read_timeout = 10
 
         headers = {

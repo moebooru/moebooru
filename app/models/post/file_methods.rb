@@ -226,7 +226,7 @@ module PostFileMethods
   # Automatically download from the source if it's a URL.
   attr_accessor :received_file
   def download_source
-    return if source !~ /^http:\/\// || !file_ext.blank?
+    return if source !~ /^https?:\/\// || !file_ext.blank?
     return if received_file
 
     begin

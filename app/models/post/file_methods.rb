@@ -197,7 +197,7 @@ module PostFileMethods
   def generate_preview
     return true unless image? && width && height
 
-    size = Danbooru.reduce_to({:width=>width, :height=>height}, {:width=>300, :height=>300})
+    size = Moebooru::Resizer.reduce_to({:width=>width, :height=>height}, {:width=>300, :height=>300})
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
     if File.exists?(tempfile_sample_path)
@@ -214,7 +214,7 @@ module PostFileMethods
     end
 
     begin
-      Danbooru.resize(ext, path, tempfile_preview_path, size, 85)
+      Moebooru::Resizer.resize(ext, path, tempfile_preview_path, size, 85)
     rescue Exception => x
       errors.add "preview", "couldn't be generated (#{x})"
       return false
@@ -367,7 +367,7 @@ module PostFileMethods
 
   def raw_preview_dimensions
     if image?
-      dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 300, :height => 300})
+      dim = Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => 300, :height => 300})
       return [dim[:width], dim[:height]]
     else
       return [300, 300]
@@ -376,7 +376,7 @@ module PostFileMethods
 
   def preview_dimensions
     if image?
-      dim = Danbooru.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
+      dim = Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
       return [dim[:width], dim[:height]]
     else
       return [150, 150]
@@ -398,9 +398,9 @@ module PostFileMethods
 
     size = {:width => width, :height => height}
     if not CONFIG["sample_width"].nil?
-      size = Danbooru.reduce_to(size, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]}, ratio)
+      size = Moebooru::Resizer.reduce_to(size, {:width => CONFIG["sample_width"], :height => CONFIG["sample_height"]}, ratio)
     end
-    size = Danbooru.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, ratio, false, true)
+    size = Moebooru::Resizer.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, ratio, false, true)
 
     # We can generate the sample image during upload or offline.  Use tempfile_path
     # if it exists, otherwise use file_path.
@@ -427,7 +427,7 @@ module PostFileMethods
     end
 
     begin
-      Danbooru.resize(file_ext, path, tempfile_sample_path, size, CONFIG["sample_quality"])
+      Moebooru::Resizer.resize(file_ext, path, tempfile_sample_path, size, CONFIG["sample_quality"])
     rescue Exception => x
       errors.add "sample", "couldn't be created: #{x}"
       return false
@@ -527,9 +527,9 @@ module PostFileMethods
       return true
     end
 
-    size = Danbooru.reduce_to({:width => width, :height => height}, {:width => CONFIG["jpeg_width"], :height => CONFIG["jpeg_height"]}, CONFIG["jpeg_ratio"])
+    size = Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => CONFIG["jpeg_width"], :height => CONFIG["jpeg_height"]}, CONFIG["jpeg_ratio"])
     begin
-      Danbooru.resize(file_ext, path, tempfile_jpeg_path, size, CONFIG["jpeg_quality"])
+      Moebooru::Resizer.resize(file_ext, path, tempfile_jpeg_path, size, CONFIG["jpeg_quality"])
     rescue Exception => x
       errors.add "jpeg", "couldn't be created: #{x}"
       return false

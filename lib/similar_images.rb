@@ -220,17 +220,17 @@ module SimilarImages
       # Use the resizer to validate the file and convert it to a thumbnail-size JPEG.
       imgsize = ImageSize.path(tempfile_path)
       if imgsize.format.nil?
-        raise Danbooru::ResizeError, "Unrecognized image format"
+        raise Moebooru::Resizer::ResizeError, "Unrecognized image format"
       end
 
       ret = {}
       ret[:original_width] = imgsize.width
       ret[:original_height] = imgsize.height
-      size = Danbooru.reduce_to({:width => ret[:original_width], :height => ret[:original_height]}, {:width => 150, :height => 150})
+      size = Moebooru::Resizer.reduce_to({:width => ret[:original_width], :height => ret[:original_height]}, {:width => 150, :height => 150})
       ext = imgsize.format.gsub(/jpeg/i, "jpg").downcase
 
       tempfile_path_resize = "#{tempfile_path}.2"
-      Danbooru.resize(ext, tempfile_path, tempfile_path_resize, size, 95)
+      Moebooru::Resizer.resize(ext, tempfile_path, tempfile_path_resize, size, 95)
       FileUtils.mv(tempfile_path_resize, tempfile_path)
 
       md5 = File.open(tempfile_path, 'rb') {|fp| Digest::MD5.hexdigest(fp.read)}

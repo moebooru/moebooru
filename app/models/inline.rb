@@ -52,7 +52,7 @@ class Inline < ActiveRecord::Base
 
       begin
         # Create one crop for the image, and InlineImage will create the sample and preview from that.
-        Danbooru.resize(image.file_ext, image.file_path, new_image.tempfile_image_path, size, 95)
+        Moebooru::Resizer.resize(image.file_ext, image.file_path, new_image.tempfile_image_path, size, 95)
         FileUtils.chmod(0775, new_image.tempfile_image_path)
       rescue Exception => x
         FileUtils.rm_f(new_image.tempfile_image_path)

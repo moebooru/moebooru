@@ -11,7 +11,6 @@ require 'fileutils'
 
 # lib requires
 require 'core_extensions'
-require 'danbooru_image_resizer/jruby_resizer'
 require 'diff'
 require 'download'
 require 'dtext'

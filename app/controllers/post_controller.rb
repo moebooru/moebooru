@@ -678,7 +678,7 @@ class PostController < ApplicationController
               end
             end
           end
-        rescue SocketError, URI::Error, SystemCallError, Danbooru::ResizeError => e
+        rescue SocketError, URI::Error, SystemCallError, Moebooru::Resizer::ResizeError => e
           return { :errors => { :error => "#{e}" } }
         rescue Timeout::Error => e
           return { :errors => { :error => "Download timed out" } }

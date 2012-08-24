@@ -136,11 +136,11 @@ class InlineImage < ActiveRecord::Base
   end
 
   def preview_dimensions
-    return Danbooru.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
+    return Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
   end
 
   def thumb_size
-    size = Danbooru.reduce_to({:width => width, :height => height}, {:width => 400, :height => 400})
+    size = Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => 400, :height => 400})
   end
 
   def generate_sample
@@ -158,7 +158,7 @@ class InlineImage < ActiveRecord::Base
     # If we're not reducing the resolution for the sample image, only reencode if the
     # source image is above the reencode threshold.  Anything smaller won't be reduced
     # enough by the reencode to bother, so don't reencode it and save disk space.
-    sample_size = Danbooru.reduce_to({:width => width, :height => height}, {:width => CONFIG["inline_sample_width"], :height => CONFIG["inline_sample_height"]})
+    sample_size = Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => CONFIG["inline_sample_width"], :height => CONFIG["inline_sample_height"]})
     if sample_size[:width] == width && sample_size[:height] == height && File.size?(path) < CONFIG["sample_always_generate_size"]
       return true
     end
@@ -170,7 +170,7 @@ class InlineImage < ActiveRecord::Base
     end
 
     begin
-      Danbooru.resize(file_ext, path, tempfile_sample_path, sample_size, 95)
+      Moebooru::Resizer.resize(file_ext, path, tempfile_sample_path, sample_size, 95)
     rescue Exception => x
       errors.add "sample", "couldn't be created: #{x}"
       return false
@@ -197,7 +197,7 @@ class InlineImage < ActiveRecord::Base
     end
 
     begin
-      Danbooru.resize(ext, path, tempfile_preview_path, preview_dimensions, 95)
+      Moebooru::Resizer.resize(ext, path, tempfile_preview_path, preview_dimensions, 95)
     rescue Exception => x
       errors.add "preview", "couldn't be generated (#{x})"
       return false

@@ -45,15 +45,15 @@ class PostFrames < ActiveRecord::Base
     size = {:width=>frame[:source_width], :height=>frame[:source_height]}
 
     if not CONFIG["sample_width"].nil?
-      size = Danbooru.reduce_to(size, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]}, CONFIG["sample_ratio"])
+      size = Moebooru::Resizer.reduce_to(size, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]}, CONFIG["sample_ratio"])
     end
-    size = Danbooru.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, 1, false, true)
+    size = Moebooru::Resizer.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, 1, false, true)
 
     return size
   end
 
   def self.frame_preview_dimensions(frame)
-    return Danbooru.reduce_to({:width=>frame[:source_width], :height=>frame[:source_height]},
+    return Moebooru::Resizer.reduce_to({:width=>frame[:source_width], :height=>frame[:source_height]},
                               {:width=>300, :height=>300})
   end
 
@@ -205,11 +205,11 @@ class PostFrames < ActiveRecord::Base
     begin
       FileUtils.mkdir_p File.dirname(post.file_path)
       FileUtils.mkdir_p File.dirname(post.preview_path)
-      Danbooru.resize(post.file_ext, post.file_path, image_tempfile_path, image_size, 95)
+      Moebooru::Resizer.resize(post.file_ext, post.file_path, image_tempfile_path, image_size, 95)
 
       # Save time by creating the thumbnail directly from the image we just created, instead
       # of from the original, so we don't have to re-decode whole PNGs.
-      Danbooru.resize("jpg", image_tempfile_path, preview_tempfile_path, preview_size, 85)
+      Moebooru::Resizer.resize("jpg", image_tempfile_path, preview_tempfile_path, preview_size, 85)
     rescue Exception => e
       FileUtils.rm_f(image_tempfile_path)
       FileUtils.rm_f(preview_tempfile_path)

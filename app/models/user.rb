@@ -524,7 +524,7 @@ class User < ActiveRecord::Base
         cropped_image_width = image_width * (params[:right].to_f - params[:left].to_f)
         cropped_image_height = image_height * (params[:bottom].to_f - params[:top].to_f)
 
-        size = Danbooru.reduce_to({:width=>cropped_image_width, :height=>cropped_image_height}, {:width=>CONFIG["avatar_max_width"], :height=>CONFIG["avatar_max_height"]}, 1, true)
+        size = Moebooru::Resizer.reduce_to({:width=>cropped_image_width, :height=>cropped_image_height}, {:width=>CONFIG["avatar_max_width"], :height=>CONFIG["avatar_max_height"]}, 1, true)
         size[:crop_top] = image_height * params[:top].to_f
         size[:crop_bottom] = image_height * params[:bottom].to_f
         size[:crop_left] = image_width * params[:left].to_f
@@ -553,7 +553,7 @@ class User < ActiveRecord::Base
       end
 
       begin
-        Danbooru.resize(image_ext, image_path, tempfile_path, size, 95)
+        Moebooru::Resizer.resize(image_ext, image_path, tempfile_path, size, 95)
       rescue Exception => x
         FileUtils.rm_f(tempfile_path)
 

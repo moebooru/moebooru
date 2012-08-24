@@ -29,6 +29,7 @@ module PostFileMethods
       #        and may cause confusion for some bored ones.
       system('jhead', '-purejpg', tempfile_path)
     end
+    return true
   end
 
   def ensure_tempfile_exists

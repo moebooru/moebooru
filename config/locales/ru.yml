@@ -45,7 +45,6 @@ ru:
       title: "Новый Баннер"
     show:
       title: "Баннер #%{id}"
-  # view: /dmail
   alias_add: "Добавить"
   alias_alias: "Синоним"
   alias_alias_to: "Синоним для"
@@ -266,10 +265,32 @@ ru:
   comments_post: "Отправить"
   confirmations:
     is_sure: "Вы уверены?"
-  # ActiveRecord (models)
   crop_avatar: "Выберите область для обрезки всех картинок и нажмие Enter. Эта операция не может быть отменена."
-  # view/inline/edit
   dmail:
+    compose:
+      form:
+        body: Сообщение
+        title: Заголовок
+        to: Кому
+      preview: Предпросмотр
+      preview_loading: Подождите...
+      send: Отправить
+      title: Написать Сообщение
+    confirm_mark_all_read:
+      title: Пометить Всё Прочитанным
+      info: Вы действительно хотите пометить все Ваши сообщения как прочитанные?
+    footer:
+      compose: Написать
+      inbox: Входящие
+      mark_all_read: Пометить всё прочитанным
+    inbox:
+      empty: Нет сообщений.
+      table:
+        from: От
+        title: Заголовок
+        to: Кому
+        when: Когда
+      title: Мои Входящие
     message:
       sent_by_html: "Отправлено %{user} %{x_ago}"
   # view: /forum
@@ -746,6 +767,7 @@ ru:
   post_download_text: "Вы должны скачать этот файлы вручную."
   post_edit: "Редактирование"
   post_edit_e: "Откровенный"
+  post_edit_find_artists: "Поиск художников"
   post_edit_help: "справка"
   post_edit_note_locked: "Заметки заблокированы"
   post_edit_parent: "Родительский Пост"

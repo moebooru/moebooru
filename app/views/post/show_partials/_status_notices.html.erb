@@ -43,7 +43,7 @@
 
 <% if !@post.is_deleted? && @post.use_sample?(@current_user) && @post.can_be_seen_by?(@current_user) && !@post.tags.include?("dakimakura")%>
   <div class="status-notice" style="display: none;" id="resized_notice">
-    <%=t :notice13 %><%= link_to_function t(:notice14), "Post.highres()" %><%=t :notice15 %>
+    <%=t :notice13 %><%= link_to t(:notice14), @post.get_file_jpeg[:url], :class => "highres-show" %><%=t :notice15 %>
     <!--
     <% unless @current_user.is_anonymous? || CONFIG["force_image_samples"] %>
       <%= link_to_function t(:notice16), :onclick => "User.disable_samples()" %>.

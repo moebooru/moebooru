@@ -38,7 +38,12 @@
 
     <% content_for :post_cookie_javascripts do %>
       <script type="text/javascript">
-        Post.observe_text_area("post_tags")
+        <% if @post.can_be_seen_by?(@current_user) %>
+          jQuery(function($) {
+              Moebooru.addData(<%= json_escape Post.batch_api_data([@post]).to_json.html_safe %>);
+              Moe.trigger('vote:update_widget');
+          });
+        <% end %>
 
         RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
 

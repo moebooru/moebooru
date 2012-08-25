@@ -9,12 +9,7 @@ module Danbooru
 
   # Produce a formatted page that shows the difference between two versions of a page.
   def diff(old, new)
-    # dark age utf8 regexp of 1.8
-    if RUBY_VERSION < '1.9' then
-      pattern = Regexp.new('(?:<.+?>)|(?:[0-9_A-Za-z\x80-\xff]+[\x09\x20]?)|(?:[ \t]+)|(?:\r?\n)|(?:.+?)')
-    else
-      pattern = Regexp.new('(?:<.+?>)|(?:\p{Word}+)|(?:[ \t]+)|(?:\r?\n)|(?:.+?)')
-    end
+    pattern = Regexp.new('(?:<.+?>)|(?:\p{Word}+)|(?:[ \t]+)|(?:\r?\n)|(?:.+?)')
 
     thisarr = old.scan(pattern)
     otharr = new.scan(pattern)

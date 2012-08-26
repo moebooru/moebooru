@@ -22,7 +22,7 @@ gem 'exception_notification'
 gem 'will_paginate'
 gem 'will-paginate-i18n'
 gem 'sitemap_generator'
-gem 'daemons'
+gem 'daemons', :require => false
 gem 'newrelic_rpm'
 gem 'nokogiri'
 gem 'unicorn', :platforms => :mri

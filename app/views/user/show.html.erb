@@ -55,7 +55,7 @@
         <span class="stars">
           <% (1..3).each do |i| %>
             <a class="star star-<%= i %>" href="<%= url_for :controller => "post", :action => "index", :tags => "vote:>=#{i}:#{@user.name} order:vote" %>">
-              <%= PostVotes.count(:all, :conditions => { :user_id => @user.id.to_i, :score => i }) %>
+              <%= @user.post_votes.where(:score => i).count %>
               <span class="score-on score-voted score-visible">★</span>
             </a>
           <% end %>

@@ -2,6 +2,7 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
   has_many :user_logs
+  has_many :post_votes
   attr_accessor :current_email
   class AlreadyFavoritedError < Exception; end
 

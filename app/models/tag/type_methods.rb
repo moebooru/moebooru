@@ -33,9 +33,9 @@ module TagTypeMethods
     # Get all tag types for the given list of posts.
     def batch_get_tag_types_for_posts(posts)
       post_tags = Set.new
-      posts.each { |post|
-        post_tags.merge(post.cached_tags.split.map { |p| p} )
-      }
+      posts.each do |post|
+        post_tags += post.cached_tags.split
+      end
       return batch_get_tag_types(post_tags)
     end
 
@@ -43,10 +43,15 @@ module TagTypeMethods
     def batch_get_tag_types(post_tags)
       post_tags = Set.new(post_tags)
 
+      post_tags_key = post_tags.reduce([]) { |h, i| h += [{ :tag_type => i }]; h }
+
       results = {}
-      # Don't be tempted into using read_multi here - it's rather buggy
-      # (2012-08-22).
-      post_tags.each do |tag|
+      Rails.cache.read_multi(post_tags_key).each do |cache_key, value|
+        # The if cache_key is required since there's small chance read_multi
+        # returning nil key on certain key names.
+        results[cache_key[:tag_type]] = value if cache_key
+      end
+      (post_tags - results.keys).each do |tag|
         results[tag] = type_name(tag)
       end
       return results

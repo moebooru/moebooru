@@ -322,7 +322,7 @@ class User < ActiveRecord::Base
     end
 
     def recent_favorite_posts
-      Post.find_by_sql("SELECT p.* FROM posts p, post_votes v WHERE p.id = v.post_id AND v.user_id = #{id} AND v.score = 3 AND p.status <> 'deleted' ORDER BY v.id DESC LIMIT 6")
+      Post.available.joins(:post_votes).where(:post_votes => { :user_id => id, :score => 3 }).order('post_votes.id').limit(6)
     end
 
     def favorite_post_count(options = {})

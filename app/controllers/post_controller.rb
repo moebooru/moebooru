@@ -506,7 +506,7 @@ class PostController < ApplicationController
 
   def vote
     if not params.has_key?(:score) then
-      vote =  PostVotes.find_by_user_id_and_post_id(@current_user.id, params[:id])
+      vote =  PostVote.find_by_user_id_and_post_id(@current_user.id, params[:id])
       score = vote ? vote.score: 0
       respond_to_success("", {}, :api => {:vote => score})
       return

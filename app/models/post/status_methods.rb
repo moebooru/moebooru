@@ -63,7 +63,7 @@ module PostStatusMethods
         execute_sql(sql, *cond_params)
       end
 
-      Rails.cache.expire if count > 0
+      Moebooru::CacheHelper.expire if count > 0
 
       return count
     end

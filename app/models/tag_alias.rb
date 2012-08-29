@@ -79,11 +79,11 @@ class TagAlias < ActiveRecord::Base
       post.update_attributes(:tags => post.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
     end
 
-    Rails.cache.expire_tag_version
+    Moebooru::CacheHelper.expire_tag_version
   end
 
   def expire_tag_cache_after_deletion
-    Rails.cache.expire_tag_version
+    Moebooru::CacheHelper.expire_tag_version
   end
 
   def api_attributes

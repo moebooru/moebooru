@@ -251,7 +251,7 @@ module PostTagMethods
         end
 
         if any_new_tags then
-          Rails.cache.expire_tag_version
+          Moebooru::CacheHelper.expire_tag_version
         end
       end
 

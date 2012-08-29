@@ -146,7 +146,7 @@ class Pool < ActiveRecord::Base
     end
 
     def expire_cache
-      Rails.cache.expire
+      Moebooru::CacheHelper.expire
     end
   end
 

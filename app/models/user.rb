@@ -326,7 +326,7 @@ class User < ActiveRecord::Base
     end
 
     def favorite_post_count(options = {})
-      PostVotes.count_by_sql("SELECT COUNT(*) FROM post_votes v WHERE v.user_id = #{id} AND v.score = 3")
+      post_votes.where(:score => 3).count
     end
 
     def post_count

@@ -52,7 +52,7 @@ module PostParentMethods
     parent = Post.find(parent_id)
 
     transaction do
-      for vote in PostVote.find(:all, :conditions => ["post_id = ?", self.id], :include => :user)
+      post_votes.includes(:user).each do |vote|
         parent.vote!(vote.score, vote.user)
         self.vote!(0, vote.user)
       end

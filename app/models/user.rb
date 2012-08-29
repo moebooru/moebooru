@@ -155,7 +155,7 @@ class User < ActiveRecord::Base
           return CONFIG["default_guest_name"]
         end
 
-        user = find(:first, :conditions => ["id = ?", user_id], :select => "name")
+        user = where(:id => user_id).select(:name).first
 
         if user
           return user.name

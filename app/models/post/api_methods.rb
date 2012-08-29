@@ -111,7 +111,7 @@ module PostApiMethods
       if not options[:exclude_votes] then
         vote_map = {}
         if not posts.empty? then
-          votes = PostVotes.where(:user_id => user.id, :post_id => posts)
+          votes = PostVote.where(:user_id => user.id, :post_id => posts)
           votes.each { |v|
             vote_map[v.post_id] = v.score
           }

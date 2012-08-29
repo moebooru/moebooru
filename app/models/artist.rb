@@ -6,7 +6,7 @@ class Artist < ActiveRecord::Base
         artists = []
 
         while artists.empty? && url.size > 10
-          u = url.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
+          u = "#{url.to_escaped_for_sql_like}%"
           artists += Artist.joins(:artist_urls).where(:alias_id => nil).where('artist_urls.normalized_url LIKE ?', u).order(:name)
 
           # Remove duplicates based on name

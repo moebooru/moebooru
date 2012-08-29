@@ -1,3 +1,5 @@
+# FIXME: This model has the name wrong. I'm keeping this one until I'm sure
+#        it's safe to rename/remove.
 class PostVotes < ActiveRecord::Base
   belongs_to :post, :class_name => "Post", :foreign_key => :post_id
   belongs_to :user, :class_name => "User", :foreign_key => :user_id

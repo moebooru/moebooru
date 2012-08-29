@@ -13,6 +13,7 @@ class Post < ActiveRecord::Base
   belongs_to :approver, :class_name => "User"
   attr_accessor :updater_ip_addr, :updater_user_id
   attr_accessor :metatag_flagged
+  has_many :post_votes
   has_many :avatars, :class_name => "User", :foreign_key => "avatar_post_id"
   set_callback :delete, :before, :clear_avatars
   after_save :commit_flag

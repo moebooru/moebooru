@@ -33,9 +33,9 @@ module TagTypeMethods
     # Get all tag types for the given list of posts.
     def batch_get_tag_types_for_posts(posts)
       post_tags = Set.new
-      posts.each { |post|
+      posts.each do |post|
         post_tags += post.cached_tags.split
-      }
+      end
       return batch_get_tag_types(post_tags)
     end
 

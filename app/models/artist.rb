@@ -6,8 +6,8 @@ class Artist < ActiveRecord::Base
         artists = []
 
         while artists.empty? && url.size > 10
-          u = url.to_escaped_for_sql_like.gsub(/\*/, '%') + '%'
-          artists += Artist.find(:all, :joins => "JOIN artist_urls ON artist_urls.artist_id = artists.id", :conditions => ["artists.alias_id IS NULL AND artist_urls.normalized_url LIKE ? ESCAPE E'\\\\'", u], :order => "artists.name")
+          u = "#{url.to_escaped_for_sql_like}%"
+          artists += Artist.joins(:artist_urls).where(:alias_id => nil).where('artist_urls.normalized_url LIKE ?', u).order(:name)
 
           # Remove duplicates based on name
           artists = artists.inject({}) {|all, artist| all[artist.name] = artist ; all}.values

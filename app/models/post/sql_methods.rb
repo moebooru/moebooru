@@ -348,7 +348,7 @@ module PostSqlMethods
           end
 
         when "random"
-          sql << " ORDER BY random"
+          sql << " ORDER BY random()"
 
         else
           use_default_order = true

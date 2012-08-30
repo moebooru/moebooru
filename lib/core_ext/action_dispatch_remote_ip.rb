@@ -9,6 +9,7 @@ module ActionDispatch
     # the comma-delimited list in the X-Forwarded-For header. See also:
     # http://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces
     # http://en.wikipedia.org/wiki/Private_network#Private_IPv6_addresses.
+    remove_const :TRUSTED_PROXIES
     TRUSTED_PROXIES = %r{
       ^127\.0\.0\.1$                | # localhost
       ^::1$                         |

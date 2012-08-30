@@ -1,3 +1,4 @@
+# Issue: https://github.com/rails/rails/pull/3789
 require 'rack/utils'
 
 module Rack

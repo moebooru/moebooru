@@ -7,6 +7,6 @@ module Rack
       normalize_params_without_sanitation(params, name, v)
     end
     alias_method_chain :normalize_params, :sanitation
-    module_function :normalize_params, :normalize_params_with_sanitation, :normalize_params_without_sanitation
+    module_function :normalize_params, :normalize_params_without_sanitation
   end
 end

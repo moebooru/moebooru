@@ -32,7 +32,7 @@ module PostHelper
     image_id = options[:image_id]
     image_id = %{id="#{h(image_id)}"} if image_id
     if is_post then
-      image_title = h("Rating: #{post.pretty_rating} Score: #{post.score} Tags: #{h(post.cached_tags)} User: #{post.author}")
+      image_title = h("Rating: #{post.pretty_rating} Score: #{post.score} Tags: #{post.cached_tags} User: #{post.author}")
     else
       image_title = ""
     end

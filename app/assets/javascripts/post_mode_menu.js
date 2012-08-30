@@ -315,7 +315,7 @@ TagScript = {
 
     /* This mostly keeps the tag script field in sync between windows, but it
      * doesn't work in Opera, which sends focus events before blur events. */
-    document.observe("blur", function(e) { TagScript.save() })
+    Event.on(window, 'unload', function() { TagScript.save() });
     document.observe("focus", function(e) { TagScript.load() })
   },
 

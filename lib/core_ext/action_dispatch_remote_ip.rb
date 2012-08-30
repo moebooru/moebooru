@@ -1,6 +1,7 @@
 # This monkeypatch is stolen from Rails 4.0 because the one in 3.2 is too
 # crappy that it sometimes returns invalid ip address (mainly from
 # X-Forwarded-For).
+# Reference: https://bitbucket.org/edogawaconan/moebooru/issue/113
 module ActionDispatch
   class RemoteIp
     class IpSpoofAttackError < StandardError ; end

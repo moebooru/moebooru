@@ -1,6 +1,5 @@
 # Yet another fix for utf8
 # https://github.com/rails/rails/pull/3789/files
-require 'core_ext/action_dispatch_encoder'
 require 'action_dispatch/http/upload'
 
 module ActionDispatch

@@ -1,4 +1,3 @@
-# - removes commit=Search from query url
 # - append 'need-login' class for buttons
 # - add javascript event for links and buttons
 # example: :level => :member
@@ -15,16 +14,6 @@ module ActionView
     end
 
     module TagHelper
-      # submit_tag "Search" generates a submit tag that adds "commit=Search" to the URL,
-      # which is ugly and unnecessary.  Override TagHelper#tag and remove this globally.
-      alias_method :orig_tag, :tag
-      def tag(name, options = nil, open = false, escape = true)
-        if name == :input && options['type'] == 'submit' && options['name'] == 'commit' && options['value'] == 'Search'
-          options.delete 'name'
-        end
-        orig_tag name, options, open, escape
-      end
-
       alias_method :orig_tag_options, :tag_options
       def tag_options(options, escape = true)
         level = options['level']

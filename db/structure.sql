@@ -1145,7 +1145,8 @@ CREATE TABLE posts (
     frames text DEFAULT ''::text NOT NULL,
     frames_pending text DEFAULT ''::text NOT NULL,
     frames_warehoused boolean DEFAULT false NOT NULL,
-    tags_cache integer[]
+    tags_cache integer[],
+    updated_at timestamp without time zone
 );
 
 
@@ -3551,6 +3552,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120723161914');
 INSERT INTO schema_migrations (version) VALUES ('20120804130515');
 
 INSERT INTO schema_migrations (version) VALUES ('20120813155642');
+
+INSERT INTO schema_migrations (version) VALUES ('20120830051636');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

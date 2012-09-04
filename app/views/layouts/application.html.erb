@@ -47,6 +47,6 @@
     </div>
   <% end %>
   <%= yield(:post_cookie_javascripts) %>
-  <%= render 'shared/ga' if CONFIG['ga-tracking-id'] -%>
+  <%= render 'layouts/ga' if CONFIG['ga-tracking-id'] -%>
 </body>
 </html>

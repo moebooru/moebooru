@@ -1,43 +1,4 @@
-<!DOCTYPE html>
-<html class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %> hide-advanced-editing">
-<head>
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-  <title><%= html_title %></title>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
-
-  <%# The javascript-hide class is used to hide elements (eg. blacklisted posts) from JavaScript. %>
-  <script type="text/javascript">
-    var css = ".javascript-hide { display: none !important; }";
-    var style = document.createElement("style"); style.type = "text/css";
-    if(style.styleSheet) // IE
-      style.styleSheet.cssText = css;
-    else
-      style.appendChild(document.createTextNode(css));
-    document.getElementsByTagName("head")[0].appendChild(style);
-  </script>
-
-  <%= yield :html_header %>
-  <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
-  <%= stylesheet_link_tag :application %>
-
-  <%= javascript_include_tag :application %>
-  <!--[if lt IE 8]>
-  <script src="/IE8.js" type="text/javascript"></script>
-  <![endif]-->
-  <%= tag :link, :rel => 'search', :type => Mime::OPENSEARCH, :href => opensearch_path(:xml), :title => CONFIG['app_name'] %>
-  <%= CONFIG["custom_html_headers"] %>
-  <!--[if lt IE 7]>
-    <style type="text/css">
-      body div#post-view > div#right-col > div > div#note-container > div.note-body {
-        overflow: visible;
-      }
-    </style>
-    <script src="<%= request.protocol %>ie7-js.googlecode.com/svn/trunk/lib/IE7.js" type="text/javascript"></script>
-  <![endif]-->
-</head>
-<body>
-  <%= render 'layouts/news' %>
+<% content_for :content do %>
   <div id="header">
     <div id="title"><h2 id="site-title"><%= image_tag('logo_small.png', :alt => CONFIG['app_name'], :size=> '484x75', :id => 'logo') %><span><%= tag_header(params[:tags]) %></span></h2></div>
     <%= render :partial => "layouts/menu" %>
@@ -95,8 +56,5 @@
         $("old-browser").show();
     </script>
   <![endif]-->
-  <%= yield :post_cookie_javascripts %>
-
-  <%= render 'shared/ga' if CONFIG['ga-tracking-id'] -%>
-</body>
-</html>
+<% end %>
+<%= render :template => 'layouts/application' %>

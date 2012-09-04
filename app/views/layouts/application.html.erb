@@ -1,14 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %> hide-advanced-editing">
 <head>
-  <title>Moebooru</title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <title><%= html_title %></title>
+  <meta name="description" content="yande.re - A Danbooru focusing on High Resolution Anime Scans, Ecchi Scans, Hentai Scans, Moe Scans, and Bishoujo Scans; unlimited downloads. ">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
+  <%# The javascript-hide class is used to hide elements (eg. blacklisted posts) from JavaScript. %>
+  <script type="text/javascript">
+    var css = ".javascript-hide { display: none !important; }";
+    var style = document.createElement("style"); style.type = "text/css";
+    if(style.styleSheet) // IE
+      style.styleSheet.cssText = css;
+    else
+      style.appendChild(document.createTextNode(css));
+    document.getElementsByTagName("head")[0].appendChild(style);
+  </script>
+
+  <%= yield :html_header %>
+  <%= auto_discovery_link_tag :atom, :controller => "post", :action => "atom", :tags => params[:tags] %>
   <%= stylesheet_link_tag :application %>
+
   <%= javascript_include_tag :application %>
-  <%= csrf_meta_tag %>
+  <!--[if lt IE 8]>
+  <script src="/IE8.js" type="text/javascript"></script>
+  <![endif]-->
+  <%= tag :link, :rel => 'search', :type => Mime::OPENSEARCH, :href => opensearch_path(:xml), :title => CONFIG['app_name'] %>
+  <%= CONFIG["custom_html_headers"] %>
+  <!--[if lt IE 7]>
+    <style type="text/css">
+      body div#post-view > div#right-col > div > div#note-container > div.note-body {
+        overflow: visible;
+      }
+    </style>
+    <script src="<%= request.protocol %>ie7-js.googlecode.com/svn/trunk/lib/IE7.js" type="text/javascript"></script>
+  <![endif]-->
 </head>
 <body>
-
-<%= yield %>
-
+  <%= render :partial => "layouts/notice" %>
+  <% if content_for? :content %>
+    <%= yield :content %>
+  <% else %>
+    <div id="content">
+      <%= yield %>
+    </div>
+  <% end %>
+  <%= yield(:post_cookie_javascripts) %>
+  <%= render 'shared/ga' if CONFIG['ga-tracking-id'] -%>
 </body>
 </html>

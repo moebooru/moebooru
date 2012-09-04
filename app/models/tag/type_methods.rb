@@ -43,7 +43,7 @@ module TagTypeMethods
     def batch_get_tag_types(post_tags)
       post_tags = Set.new(post_tags)
 
-      post_tags_key = post_tags.each_with_object([]) { |i, h| h << { :tag_type => i } }
+      post_tags_key = post_tags.each_with_object([]) { |t, k| k << { :tag_type => t } }
       # Without this, the following splat will eat the last argument because
       # it'll be considered an option instead of key (being a hash).
       post_tags_key << {}

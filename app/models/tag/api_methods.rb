@@ -24,9 +24,9 @@ module TagApiMethods
   module ClassMethods
     # Create a compact list of all active tags, sorted by post_count.
     #
-    # "1:tagme: 2:fixme: 3:fixed:alias: "
+    # "1`tagme` 2`fixme` 3`fixed`alias` "
     #
-    # Each tag is bounded by colons, so ":tagme:" can be used to match a whole tag.
+    # Each tag is bounded by backticks, so "`tagme`" can be used to match a whole tag.
     #
     # This is returned as a preencoded JSON string, so the entire block can be cached.
     def get_json_summary

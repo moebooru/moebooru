@@ -395,20 +395,6 @@ ALTER SEQUENCE artist_urls_id_seq OWNED BY artist_urls.id;
 
 
 --
--- Name: artists; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE artists (
-    id integer NOT NULL,
-    alias_id integer,
-    group_id integer,
-    name text NOT NULL,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL,
-    updater_id integer
-);
-
-
---
 -- Name: artists_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -421,10 +407,17 @@ CREATE SEQUENCE artists_id_seq
 
 
 --
--- Name: artists_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: artists; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE artists_id_seq OWNED BY artists.id;
+CREATE TABLE artists (
+    id integer DEFAULT nextval('artists_id_seq'::regclass) NOT NULL,
+    alias_id integer,
+    group_id integer,
+    name text NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    updater_id integer
+);
 
 
 --
@@ -472,7 +465,7 @@ CREATE TABLE batch_uploads (
     tags character varying(255) DEFAULT ''::character varying NOT NULL,
     active boolean DEFAULT false NOT NULL,
     status character varying(255) DEFAULT 'pending'::character varying NOT NULL,
-    created_at timestamp without time zone DEFAULT '2012-03-04 08:04:54.999796'::timestamp without time zone NOT NULL,
+    created_at timestamp without time zone DEFAULT '2010-08-31 04:17:31.209032'::timestamp without time zone NOT NULL,
     data_as_json character varying(255) DEFAULT '{}'::character varying NOT NULL
 );
 
@@ -530,23 +523,6 @@ ALTER SEQUENCE comment_fragments_id_seq OWNED BY comment_fragments.id;
 
 
 --
--- Name: comments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE comments (
-    id integer NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    post_id integer NOT NULL,
-    user_id integer,
-    body text NOT NULL,
-    ip_addr inet NOT NULL,
-    is_spam boolean,
-    text_search_index tsvector,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
---
 -- Name: comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -559,10 +535,20 @@ CREATE SEQUENCE comments_id_seq
 
 
 --
--- Name: comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: comments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE comments_id_seq OWNED BY comments.id;
+CREATE TABLE comments (
+    id integer DEFAULT nextval('comments_id_seq'::regclass) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    post_id integer NOT NULL,
+    user_id integer,
+    body text NOT NULL,
+    ip_addr inet NOT NULL,
+    is_spam boolean,
+    text_search_index tsvector,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
 
 
 --
@@ -634,18 +620,6 @@ ALTER SEQUENCE favorite_tags_id_seq OWNED BY tag_subscriptions.id;
 
 
 --
--- Name: favorites; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE favorites (
-    id integer NOT NULL,
-    post_id integer NOT NULL,
-    user_id integer NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
---
 -- Name: favorites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -658,10 +632,15 @@ CREATE SEQUENCE favorites_id_seq
 
 
 --
--- Name: favorites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: favorites; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE favorites_id_seq OWNED BY favorites.id;
+CREATE TABLE favorites (
+    id integer DEFAULT nextval('favorites_id_seq'::regclass) NOT NULL,
+    post_id integer NOT NULL,
+    user_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
 
 
 --
@@ -698,23 +677,36 @@ ALTER SEQUENCE flagged_post_details_id_seq OWNED BY flagged_post_details.id;
 
 
 --
--- Name: forum_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: flagged_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE forum_posts (
+CREATE TABLE flagged_posts (
     id integer NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    title text NOT NULL,
-    body text NOT NULL,
-    creator_id integer,
-    parent_id integer,
-    last_updated_by integer,
-    is_sticky boolean DEFAULT false NOT NULL,
-    response_count integer DEFAULT 0 NOT NULL,
-    is_locked boolean DEFAULT false NOT NULL,
-    text_search_index tsvector
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    post_id integer NOT NULL,
+    reason text NOT NULL,
+    user_id integer,
+    is_resolved boolean DEFAULT false NOT NULL
 );
+
+
+--
+-- Name: flagged_posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE flagged_posts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: flagged_posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE flagged_posts_id_seq OWNED BY flagged_posts.id;
 
 
 --
@@ -730,10 +722,35 @@ CREATE SEQUENCE forum_posts_id_seq
 
 
 --
--- Name: forum_posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: forum_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE forum_posts_id_seq OWNED BY forum_posts.id;
+CREATE TABLE forum_posts (
+    id integer DEFAULT nextval('forum_posts_id_seq'::regclass) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    title text NOT NULL,
+    body text NOT NULL,
+    creator_id integer NOT NULL,
+    parent_id integer,
+    last_updated_by integer,
+    is_sticky boolean DEFAULT false NOT NULL,
+    response_count integer DEFAULT 0 NOT NULL,
+    is_locked boolean DEFAULT false NOT NULL,
+    text_search_index tsvector
+);
+
+
+--
+-- Name: forum_posts_user_views_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE forum_posts_user_views_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 --
@@ -873,6 +890,18 @@ ALTER SEQUENCE inlines_id_seq OWNED BY inlines.id;
 
 
 --
+-- Name: invites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE invites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: ip_bans; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -941,11 +970,35 @@ ALTER SEQUENCE job_tasks_id_seq OWNED BY job_tasks.id;
 
 
 --
+-- Name: news_updates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE news_updates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: note_versions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE note_versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: note_versions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE note_versions (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('note_versions_id_seq'::regclass) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     x integer NOT NULL,
@@ -964,10 +1017,10 @@ CREATE TABLE note_versions (
 
 
 --
--- Name: note_versions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: notes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE note_versions_id_seq
+CREATE SEQUENCE notes_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -976,18 +1029,11 @@ CREATE SEQUENCE note_versions_id_seq
 
 
 --
--- Name: note_versions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE note_versions_id_seq OWNED BY note_versions.id;
-
-
---
 -- Name: notes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE notes (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('notes_id_seq'::regclass) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     user_id integer,
@@ -1005,25 +1051,6 @@ CREATE TABLE notes (
 
 
 --
--- Name: notes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE notes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: notes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE notes_id_seq OWNED BY notes.id;
-
-
---
 -- Name: pools; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1037,9 +1064,9 @@ CREATE TABLE pools (
     post_count integer DEFAULT 0 NOT NULL,
     description text DEFAULT ''::text NOT NULL,
     is_active boolean DEFAULT true NOT NULL,
-    search_index tsvector,
     zip_created_at timestamp without time zone,
-    zip_is_warehoused boolean DEFAULT false NOT NULL
+    zip_is_warehoused boolean DEFAULT false NOT NULL,
+    search_index tsvector
 );
 
 
@@ -1097,14 +1124,39 @@ ALTER SEQUENCE pools_posts_id_seq OWNED BY pools_posts.id;
 
 
 --
+-- Name: pools_posts_temp; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE pools_posts_temp (
+    id integer NOT NULL,
+    sequence integer DEFAULT 0 NOT NULL,
+    pool_id integer NOT NULL,
+    post_id integer NOT NULL,
+    next_post_id integer,
+    prev_post_id integer
+);
+
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE posts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE posts (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('posts_id_seq'::regclass) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     user_id integer,
-    score integer DEFAULT 0 NOT NULL,
     source text DEFAULT ''::text NOT NULL,
     md5 text NOT NULL,
     last_commented_at timestamp without time zone,
@@ -1123,13 +1175,16 @@ CREATE TABLE posts (
     parent_id integer,
     has_children boolean DEFAULT false NOT NULL,
     status post_status DEFAULT 'active'::post_status NOT NULL,
+    is_pending boolean DEFAULT false NOT NULL,
     sample_width integer,
     sample_height integer,
+    sample_quality integer,
     change_seq integer,
     last_vote integer DEFAULT 0 NOT NULL,
     anonymous_votes integer DEFAULT 0 NOT NULL,
-    approver_id integer,
     random real DEFAULT random() NOT NULL,
+    approver_id integer,
+    score integer DEFAULT 0 NOT NULL,
     file_size integer DEFAULT 0 NOT NULL,
     sample_size integer DEFAULT 0 NOT NULL,
     crc32 bigint,
@@ -1137,15 +1192,14 @@ CREATE TABLE posts (
     is_held boolean DEFAULT false NOT NULL,
     index_timestamp timestamp without time zone DEFAULT now() NOT NULL,
     is_shown_in_index boolean DEFAULT true NOT NULL,
-    tags_index tsvector,
     jpeg_width integer,
     jpeg_height integer,
     jpeg_size integer DEFAULT 0 NOT NULL,
     jpeg_crc32 bigint,
+    tags_index tsvector,
     frames text DEFAULT ''::text NOT NULL,
     frames_pending text DEFAULT ''::text NOT NULL,
     frames_warehoused boolean DEFAULT false NOT NULL,
-    tags_cache integer[],
     updated_at timestamp without time zone
 );
 
@@ -1207,17 +1261,28 @@ ALTER SEQUENCE post_frames_id_seq OWNED BY post_frames.id;
 
 
 --
--- Name: post_tag_histories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: post_relations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE post_tag_histories (
+CREATE TABLE post_relations (
     id integer NOT NULL,
-    post_id integer NOT NULL,
-    tags text NOT NULL,
-    user_id integer,
-    ip_addr inet NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL
+    created_at timestamp without time zone NOT NULL,
+    post1 integer NOT NULL,
+    post2 integer NOT NULL,
+    total_shared integer NOT NULL
 );
+
+
+--
+-- Name: post_relations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE post_relations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 --
@@ -1233,10 +1298,17 @@ CREATE SEQUENCE post_tag_histories_id_seq
 
 
 --
--- Name: post_tag_histories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: post_tag_histories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE post_tag_histories_id_seq OWNED BY post_tag_histories.id;
+CREATE TABLE post_tag_histories (
+    id integer DEFAULT nextval('post_tag_histories_id_seq'::regclass) NOT NULL,
+    post_id integer NOT NULL,
+    tags text NOT NULL,
+    user_id integer,
+    ip_addr inet,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
 
 
 --
@@ -1248,7 +1320,7 @@ CREATE TABLE post_votes (
     user_id integer NOT NULL,
     post_id integer NOT NULL,
     score integer DEFAULT 0 NOT NULL,
-    updated_at timestamp without time zone DEFAULT '2012-03-04 08:01:49.825058'::timestamp without time zone NOT NULL
+    updated_at timestamp without time zone DEFAULT '2008-04-30 02:45:10.260864'::timestamp without time zone NOT NULL
 );
 
 
@@ -1272,22 +1344,15 @@ ALTER SEQUENCE post_votes_id_seq OWNED BY post_votes.id;
 
 
 --
--- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: posts_id_seq2; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE posts_id_seq
-    START WITH 1
+CREATE SEQUENCE posts_id_seq2
+    START WITH 7168
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
---
--- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
 
 
 --
@@ -1320,20 +1385,6 @@ CREATE TABLE table_data (
 
 
 --
--- Name: tag_aliases; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tag_aliases (
-    id integer NOT NULL,
-    name text NOT NULL,
-    alias_id integer NOT NULL,
-    is_pending boolean DEFAULT false NOT NULL,
-    reason text DEFAULT ''::text NOT NULL,
-    creator_id integer
-);
-
-
---
 -- Name: tag_aliases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1346,20 +1397,13 @@ CREATE SEQUENCE tag_aliases_id_seq
 
 
 --
--- Name: tag_aliases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: tag_aliases; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE tag_aliases_id_seq OWNED BY tag_aliases.id;
-
-
---
--- Name: tag_implications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tag_implications (
-    id integer NOT NULL,
-    consequent_id integer NOT NULL,
-    predicate_id integer NOT NULL,
+CREATE TABLE tag_aliases (
+    id integer DEFAULT nextval('tag_aliases_id_seq'::regclass) NOT NULL,
+    name text NOT NULL,
+    alias_id integer NOT NULL,
     is_pending boolean DEFAULT false NOT NULL,
     reason text DEFAULT ''::text NOT NULL,
     creator_id integer
@@ -1379,24 +1423,16 @@ CREATE SEQUENCE tag_implications_id_seq
 
 
 --
--- Name: tag_implications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: tag_implications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE tag_implications_id_seq OWNED BY tag_implications.id;
-
-
---
--- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tags (
-    id integer NOT NULL,
-    name text NOT NULL,
-    post_count integer DEFAULT 0 NOT NULL,
-    cached_related text DEFAULT '[]'::text NOT NULL,
-    cached_related_expires_on timestamp without time zone DEFAULT now() NOT NULL,
-    tag_type smallint DEFAULT 0 NOT NULL,
-    is_ambiguous boolean DEFAULT false NOT NULL
+CREATE TABLE tag_implications (
+    id integer DEFAULT nextval('tag_implications_id_seq'::regclass) NOT NULL,
+    consequent_id integer NOT NULL,
+    predicate_id integer NOT NULL,
+    is_pending boolean DEFAULT false NOT NULL,
+    reason text DEFAULT ''::text NOT NULL,
+    creator_id integer
 );
 
 
@@ -1413,10 +1449,19 @@ CREATE SEQUENCE tags_id_seq
 
 
 --
--- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
+CREATE TABLE tags (
+    id integer DEFAULT nextval('tags_id_seq'::regclass) NOT NULL,
+    name text NOT NULL,
+    post_count integer DEFAULT 0 NOT NULL,
+    cached_related text DEFAULT '[]'::text NOT NULL,
+    cached_related_expires_on timestamp without time zone DEFAULT now() NOT NULL,
+    tag_type smallint DEFAULT 0 NOT NULL,
+    is_ambiguous boolean DEFAULT false NOT NULL,
+    safe_post_count integer DEFAULT 0 NOT NULL
+);
 
 
 --
@@ -1514,11 +1559,23 @@ ALTER SEQUENCE user_records_id_seq OWNED BY user_records.id;
 
 
 --
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE users (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('users_id_seq'::regclass) NOT NULL,
     name text NOT NULL,
     password_hash text NOT NULL,
     level integer DEFAULT 0 NOT NULL,
@@ -1532,7 +1589,7 @@ CREATE TABLE users (
     last_forum_topic_read_at timestamp without time zone DEFAULT '1960-01-01 00:00:00'::timestamp without time zone NOT NULL,
     has_mail boolean DEFAULT false NOT NULL,
     receive_dmails boolean DEFAULT false NOT NULL,
-    show_samples boolean,
+    show_samples boolean DEFAULT true,
     avatar_post_id integer,
     avatar_width real,
     avatar_height real,
@@ -1552,44 +1609,6 @@ CREATE TABLE users (
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE users_id_seq OWNED BY users.id;
-
-
---
--- Name: wiki_page_versions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE wiki_page_versions (
-    id integer NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    version integer DEFAULT 1 NOT NULL,
-    title text NOT NULL,
-    body text NOT NULL,
-    user_id integer,
-    ip_addr inet NOT NULL,
-    wiki_page_id integer NOT NULL,
-    is_locked boolean DEFAULT false NOT NULL,
-    text_search_index tsvector
-);
-
-
---
 -- Name: wiki_page_versions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1602,18 +1621,11 @@ CREATE SEQUENCE wiki_page_versions_id_seq
 
 
 --
--- Name: wiki_page_versions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: wiki_page_versions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE wiki_page_versions_id_seq OWNED BY wiki_page_versions.id;
-
-
---
--- Name: wiki_pages; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE wiki_pages (
-    id integer NOT NULL,
+CREATE TABLE wiki_page_versions (
+    id integer DEFAULT nextval('wiki_page_versions_id_seq'::regclass) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     version integer DEFAULT 1 NOT NULL,
@@ -1621,6 +1633,7 @@ CREATE TABLE wiki_pages (
     body text NOT NULL,
     user_id integer,
     ip_addr inet NOT NULL,
+    wiki_page_id integer NOT NULL,
     is_locked boolean DEFAULT false NOT NULL,
     text_search_index tsvector
 );
@@ -1639,10 +1652,21 @@ CREATE SEQUENCE wiki_pages_id_seq
 
 
 --
--- Name: wiki_pages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: wiki_pages; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER SEQUENCE wiki_pages_id_seq OWNED BY wiki_pages.id;
+CREATE TABLE wiki_pages (
+    id integer DEFAULT nextval('wiki_pages_id_seq'::regclass) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    version integer DEFAULT 1 NOT NULL,
+    title text NOT NULL,
+    body text NOT NULL,
+    user_id integer,
+    ip_addr inet NOT NULL,
+    is_locked boolean DEFAULT false NOT NULL,
+    text_search_index tsvector
+);
 
 
 --
@@ -1657,13 +1681,6 @@ ALTER TABLE ONLY advertisements ALTER COLUMN id SET DEFAULT nextval('advertiseme
 --
 
 ALTER TABLE ONLY artist_urls ALTER COLUMN id SET DEFAULT nextval('artist_urls_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY artists ALTER COLUMN id SET DEFAULT nextval('artists_id_seq'::regclass);
 
 
 --
@@ -1691,21 +1708,7 @@ ALTER TABLE ONLY comment_fragments ALTER COLUMN id SET DEFAULT nextval('comment_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY comments ALTER COLUMN id SET DEFAULT nextval('comments_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY dmails ALTER COLUMN id SET DEFAULT nextval('dmails_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY favorites ALTER COLUMN id SET DEFAULT nextval('favorites_id_seq'::regclass);
 
 
 --
@@ -1719,7 +1722,7 @@ ALTER TABLE ONLY flagged_post_details ALTER COLUMN id SET DEFAULT nextval('flagg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY forum_posts ALTER COLUMN id SET DEFAULT nextval('forum_posts_id_seq'::regclass);
+ALTER TABLE ONLY flagged_posts ALTER COLUMN id SET DEFAULT nextval('flagged_posts_id_seq'::regclass);
 
 
 --
@@ -1768,20 +1771,6 @@ ALTER TABLE ONLY job_tasks ALTER COLUMN id SET DEFAULT nextval('job_tasks_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY note_versions ALTER COLUMN id SET DEFAULT nextval('note_versions_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY notes ALTER COLUMN id SET DEFAULT nextval('notes_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY pools ALTER COLUMN id SET DEFAULT nextval('pools_id_seq'::regclass);
 
 
@@ -1803,21 +1792,7 @@ ALTER TABLE ONLY post_frames ALTER COLUMN id SET DEFAULT nextval('post_frames_id
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY post_tag_histories ALTER COLUMN id SET DEFAULT nextval('post_tag_histories_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY post_votes ALTER COLUMN id SET DEFAULT nextval('post_votes_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
 
 
 --
@@ -1831,28 +1806,7 @@ ALTER TABLE ONLY posts ALTER COLUMN change_seq SET DEFAULT nextval('post_change_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tag_aliases ALTER COLUMN id SET DEFAULT nextval('tag_aliases_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY tag_implications ALTER COLUMN id SET DEFAULT nextval('tag_implications_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY tag_subscriptions ALTER COLUMN id SET DEFAULT nextval('favorite_tags_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclass);
 
 
 --
@@ -1874,27 +1828,6 @@ ALTER TABLE ONLY user_logs ALTER COLUMN id SET DEFAULT nextval('user_logs_id_seq
 --
 
 ALTER TABLE ONLY user_records ALTER COLUMN id SET DEFAULT nextval('user_records_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY wiki_page_versions ALTER COLUMN id SET DEFAULT nextval('wiki_page_versions_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY wiki_pages ALTER COLUMN id SET DEFAULT nextval('wiki_pages_id_seq'::regclass);
 
 
 --
@@ -2007,6 +1940,14 @@ ALTER TABLE ONLY favorites
 
 ALTER TABLE ONLY flagged_post_details
     ADD CONSTRAINT flagged_post_details_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: flagged_posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY flagged_posts
+    ADD CONSTRAINT flagged_posts_pkey PRIMARY KEY (id);
 
 
 --
@@ -2167,6 +2108,8 @@ ALTER TABLE ONLY tag_implications
 
 ALTER TABLE ONLY tags
     ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+ALTER TABLE tags CLUSTER ON tags_pkey;
 
 
 --
@@ -2335,13 +2278,6 @@ CREATE INDEX idx_posts__last_noted_at ON posts USING btree (last_noted_at) WHERE
 --
 
 CREATE UNIQUE INDEX idx_posts__md5 ON posts USING btree (md5);
-
-
---
--- Name: idx_posts__tags_cache; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX idx_posts__tags_cache ON posts USING gin (tags_cache);
 
 
 --
@@ -2723,13 +2659,6 @@ CREATE INDEX index_user_blacklisted_tags_on_user_id ON user_blacklisted_tags USI
 
 
 --
--- Name: index_user_logs_on_created_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_user_logs_on_created_at ON user_logs USING btree (created_at);
-
-
---
 -- Name: index_user_logs_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2807,6 +2736,20 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
+-- Name: user_logs_created_at_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX user_logs_created_at_idx ON user_logs USING btree (created_at);
+
+
+--
+-- Name: user_logs_user_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX user_logs_user_id_idx ON user_logs USING btree (user_id);
+
+
+--
 -- Name: wiki_pages_search_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2839,13 +2782,6 @@ CREATE RULE delete_histories AS ON DELETE TO posts DO (DELETE FROM history_chang
 --
 
 CREATE RULE delete_histories AS ON DELETE TO tags DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'tags'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'tags'::text)); );
-
-
---
--- Name: delete_histories; Type: RULE; Schema: public; Owner: -
---
-
-CREATE RULE delete_histories AS ON DELETE TO notes DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'notes'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'notes'::text)); );
 
 
 --
@@ -3044,11 +2980,11 @@ ALTER TABLE ONLY comments
 
 
 --
--- Name: fk_favorites__post; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_favorites__post ; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY favorites
-    ADD CONSTRAINT fk_favorites__post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "fk_favorites__post " FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
 
 
 --
@@ -3100,6 +3036,22 @@ ALTER TABLE ONLY notes
 
 
 --
+-- Name: fk_post_relations__post1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_relations
+    ADD CONSTRAINT fk_post_relations__post1 FOREIGN KEY (post1) REFERENCES posts(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_post_relations__post2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_relations
+    ADD CONSTRAINT fk_post_relations__post2 FOREIGN KEY (post2) REFERENCES posts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: fk_post_tag_histories__post; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3113,14 +3065,6 @@ ALTER TABLE ONLY post_tag_histories
 
 ALTER TABLE ONLY posts
     ADD CONSTRAINT fk_posts__user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
-
-
---
--- Name: fk_posts_tags__post; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY posts_tags
-    ADD CONSTRAINT fk_posts_tags__post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
 
 
 --
@@ -3196,11 +3140,19 @@ ALTER TABLE ONLY flagged_post_details
 
 
 --
+-- Name: flagged_posts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY flagged_posts
+    ADD CONSTRAINT flagged_posts_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: forum_posts_creator_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY forum_posts
-    ADD CONSTRAINT forum_posts_creator_id_fkey FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE SET NULL;
+    ADD CONSTRAINT forum_posts_creator_id_fkey FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
@@ -3249,14 +3201,6 @@ ALTER TABLE ONLY inline_images
 
 ALTER TABLE ONLY inlines
     ADD CONSTRAINT inlines_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
-
-
---
--- Name: ip_bans_banned_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY ip_bans
-    ADD CONSTRAINT ip_bans_banned_by_fkey FOREIGN KEY (banned_by) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
@@ -3618,6 +3562,8 @@ INSERT INTO schema_migrations (version) VALUES ('48');
 INSERT INTO schema_migrations (version) VALUES ('49');
 
 INSERT INTO schema_migrations (version) VALUES ('5');
+
+INSERT INTO schema_migrations (version) VALUES ('50');
 
 INSERT INTO schema_migrations (version) VALUES ('51');
 

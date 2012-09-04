@@ -2,7 +2,7 @@ module ApplicationHelper
   def html_title
     base_title = CONFIG['app_name']
     if content_for? :title
-      "#{content_for :title} | #{base_title}"
+      content_for(:title) + " | #{base_title}"
     else
       base_title
     end

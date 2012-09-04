@@ -44,9 +44,12 @@ module TagTypeMethods
       post_tags = Set.new(post_tags)
 
       post_tags_key = post_tags.reduce([]) { |h, i| h += [{ :tag_type => i }]; h }
+      # Without this, the following splat will eat the last argument because
+      # it'll be considered an option instead of key (being a hash).
+      post_tags_key << {}
 
       results = {}
-      Rails.cache.read_multi(post_tags_key).each do |cache_key, value|
+      Rails.cache.read_multi(*post_tags_key).each do |cache_key, value|
         # The if cache_key is required since there's small chance read_multi
         # returning nil key on certain key names.
         results[cache_key[:tag_type]] = value if cache_key

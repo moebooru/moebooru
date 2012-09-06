@@ -352,7 +352,7 @@ en:
   #view/layout/_menu
   layout_logout: "Logout"
   layout_reset: "Reset Password"
-  layout_profile: "My Profle"
+  layout_profile: "My Profile"
   layout_mail: "My Mail"
   layout_fav: "My Favorites"
   layout_settings: "Settings"

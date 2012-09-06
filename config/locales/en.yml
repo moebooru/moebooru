@@ -170,7 +170,7 @@ en:
   batch_rating_explicit: "Explicit"
   batch_rating_questionable: "Questionable"
   batch_rating_safe: "Safe"
-  batch_start_update: "Start upload"
+  batch_start_upload: "Start upload"
   #view/batch/index
   batch_username: "User"
   batch_status: "Status"

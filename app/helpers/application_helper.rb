@@ -1,4 +1,12 @@
 module ApplicationHelper
+  def atom_title
+    base_title = CONFIG['app_name']
+    if content_for? :title
+      "#{h base_title} - #{content_for(:title)}".html_safe
+    else
+      base_title
+    end
+  end
   def navbar_link_to(text, options, html_options = nil)
     if options[:controller] == params[:controller]
       klass = "current-page"

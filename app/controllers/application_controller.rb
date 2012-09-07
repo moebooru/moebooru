@@ -211,11 +211,12 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    def respond_to_list(inst_var_name)
+    def respond_to_list(inst_var_name, formats = {})
       inst_var = instance_variable_get("@#{inst_var_name}")
 
       respond_to do |fmt|
         fmt.html
+        fmt.atom if formats[:atom]
         fmt.json {render :json => inst_var.to_json}
         fmt.xml {render :xml => inst_var.to_xml(:root => inst_var_name)}
       end

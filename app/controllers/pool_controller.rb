@@ -92,7 +92,7 @@ class PoolController < ApplicationController
       @samples[p] = post
     }
 
-    respond_to_list("pools")
+    respond_to_list("pools", :atom => true)
   end
 
   def show

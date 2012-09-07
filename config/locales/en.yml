@@ -157,7 +157,7 @@ en:
   batch_rating_safe: "Safe"
   batch_resume: "Resume"
   batch_retry_failed: "Retry failed"
-  batch_start_update: "Start upload"
+  batch_start_upload: "Start upload"
   # view/batch/index
   batch_status: "Status"
   batch_tags: "Tags"
@@ -511,7 +511,7 @@ en:
   layout_popular: "Popular"
   layout_popular: "Popular"
   layout_posts: "Posts"
-  layout_profile: "My Profle"
+  layout_profile: "My Profile"
   layout_random: "Random"
   layout_requests: "Requests"
   layout_reset: "Reset Password"

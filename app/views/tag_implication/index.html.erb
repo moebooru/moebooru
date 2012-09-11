@@ -38,7 +38,7 @@
     <tbody>
       <% @implications.each do |i| %>
         <tr class="<%= cycle 'even', 'odd' %> <%= i.is_pending? ? 'pending-tag' : nil %>">
-          <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"' : nil %>></td>
+          <td><input type="checkbox" value="1" name="implications[<%= i.id %>]" <%= i.is_pending? ? 'class="pending"'.html_safe : nil %>></td>
           <td><%= link_to h(i.predicate.name), :controller => "post", :action => "index", :tags => i.predicate.name %> (<%= i.predicate.post_count %>)</td>
           <td><%= link_to h(i.consequent.name), :controller => "post", :action => "index", :tags => i.consequent.name %> (<%= i.consequent.post_count %>)</td>
           <td><%= h i.reason %></td>

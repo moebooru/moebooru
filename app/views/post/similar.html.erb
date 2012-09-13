@@ -84,7 +84,7 @@
             <%= hidden_field_tag "id", params[:id], :id=>"destroy_id" %>
             <%= hidden_field_tag "reason", "duplicate" %>
             <%=t :post_sim_dupe_text7 %>
-            <%= link_to_function( t(:post_sim_dupe_text8), nil) do |page| page.call "$('destroy').submit" end %>.
+            <%= link_to_function( t(:post_sim_dupe_text8), "$('destroy').submit") %>.
           </form>
         </ul>
         <div id="blacklisted-notice" style="display: none;">

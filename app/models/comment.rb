@@ -66,6 +66,14 @@ class Comment < ActiveRecord::Base
     author.tr("_", " ")
   end
 
+  def author2
+    user.name
+  end
+
+  def pretty_author2
+    author2.tr '_', ' '
+  end
+
   def api_attributes
     return {
       :id => id,

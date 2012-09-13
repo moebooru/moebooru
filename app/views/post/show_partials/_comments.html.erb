@@ -1,5 +1,5 @@
 <div id="comments" style="margin-top: 1em; max-width: 800px; width: 100%;">
-  <%= render :partial => "comment/comments", :locals => {:comments => Comment.find(:all, :conditions => ["post_id = ?", @post.id], :order => "id"), :post_id => @post.id, :hide => false} %>
+  <%= render :partial => "comment/comments", :locals => {:comments => @post.comments, :post_id => @post.id, :hide => false} %>
 </div>
 
 <% if @page_uses_translations then %>

@@ -396,10 +396,11 @@ class PostController < ApplicationController
       response.headers["Cache-Control"] = "max-age=300" if params[:cache]
       @cache = params[:cache] # temporary
       @body_only = params[:body].to_i == 1
+      @post = Post.includes(:comments => [:user])
       if params[:md5]
-        @post = Post.find_by_md5(params[:md5].downcase) || raise(ActiveRecord::RecordNotFound)
+        @post = @post.find_by_md5(params[:md5].downcase) || raise(ActiveRecord::RecordNotFound)
       else
-        @post = Post.find(params[:id])
+        @post = @post.find(params[:id])
       end
 
       @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")

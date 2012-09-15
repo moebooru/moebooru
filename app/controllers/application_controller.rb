@@ -369,7 +369,7 @@ class ApplicationController < ActionController::Base
         cookies["show_advanced_editing"] = "0"
       end
       cookies["my_tags"] = @current_user.my_tags
-      cookies["blacklisted_tags"] = @current_user.blacklisted_tags_array
+      cookies["blacklisted_tags"] = @current_user.blacklisted_tags_array.to_json
       cookies["held_post_count"] = @current_user.held_post_count.to_s
     else
       cookies.delete :user_info

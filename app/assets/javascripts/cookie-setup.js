@@ -14,6 +14,11 @@ jQuery(document).ready(function($) {
     $('#forum-link').addClass('forum-update');
   };
 
+  // Show block/ban reason if the user is blocked/banned.
+  if ($.cookie('block_reason') != '') {
+    $('#block-reason').html($.cookie('block_reason')).show();
+  };
+
   // Check if there's any pending post moderation queue.
   if (parseInt($.cookie('mod_pending')) > 0) {
     $('#moderate').addClass('mod-pending');

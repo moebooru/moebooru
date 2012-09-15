@@ -43,4 +43,5 @@
 //= require jquery.cookie
 //= require jquery.ui.autocomplete
 //= require compat.jquery
+//= require cookie-defaults
 //= require_tree .

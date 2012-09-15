@@ -4,6 +4,11 @@ jQuery(document).ready(function($) {
     $('#has-mail-notice').show();
   };
 
+  // Check if there's new comment.
+  if ($.cookie('comments_updated') == '1') {
+    $('#comments-link').addClass('comments-update');
+  };
+
   // Check if there's any pending post moderation queue.
   if (parseInt($.cookie('mod_pending')) > 0) {
     $('#moderate').addClass('mod-pending');

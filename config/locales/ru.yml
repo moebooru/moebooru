@@ -180,7 +180,7 @@ ru:
   batch_rating_explicit: "Откровенный"
   batch_rating_questionable: "Спорный"
   batch_rating_safe: "Безопасный"
-  batch_start_update: "Начать загрузку" # lol, we have same word for "download" and "upload"
+  batch_start_upload: "Начать загрузку" # lol, we have same word for "download" and "upload"
   #view/batch/index
   batch_username: "Пользователь"
   batch_status: "Состояние"

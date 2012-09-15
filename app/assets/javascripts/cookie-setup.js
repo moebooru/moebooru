@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
   };
 
   // Show block/ban reason if the user is blocked/banned.
-  if ($.cookie('block_reason') != '') {
+  if ($.cookie('block_reason') && $.cookie('block_reason') != '') {
     $('#block-reason').html($.cookie('block_reason')).show();
   };
 

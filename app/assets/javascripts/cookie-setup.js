@@ -9,6 +9,11 @@ jQuery(document).ready(function($) {
     $('#comments-link').addClass('comments-update');
   };
 
+  // Check if there's new forum post.
+  if ($.cookie('forum_updated') == '1') {
+    $('#forum-link').addClass('forum-update');
+  };
+
   // Check if there's any pending post moderation queue.
   if (parseInt($.cookie('mod_pending')) > 0) {
     $('#moderate').addClass('mod-pending');

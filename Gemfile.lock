@@ -67,7 +67,7 @@ GEM
     mini_magick (3.4)
       subexec (~> 0.2.1)
     multi_json (1.3.6)
-    newrelic_rpm (3.4.2)
+    newrelic_rpm (3.4.2.1)
     nokogiri (1.5.5)
     nokogiri (1.5.5-java)
     pg (0.14.1)

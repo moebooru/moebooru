@@ -157,7 +157,7 @@ ru:
   batch_rating_safe: "Безопасный"
   batch_resume: "Продолжить"
   batch_retry_failed: "Повтор неудачен"
-  batch_start_update: "Начать загрузку"
+  batch_start_upload: "Начать загрузку"
   # view/batch/index
   batch_status: "Состояние"
   batch_tags: "Метки"

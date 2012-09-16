@@ -158,5 +158,15 @@
       $('.vote-desc').html('');
       return false;
     });
+
+    $(document).on('keydown', function (e) {
+      switch (e.which) {
+        case 192: return vote.set(vote.v.remove); // `
+        case  49: return vote.set(vote.v.good);   // 1
+        case  50: return vote.set(vote.v.great);  // 2
+        case  51: return vote.set(vote.v.fav);    // 3
+        default:  return true;
+      }
+    });
   });
 })(jQuery);

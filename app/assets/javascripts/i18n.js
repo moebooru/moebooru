@@ -2,6 +2,7 @@ var I18n = function () {
   this.locale = jQuery.cookie('locale') || 'en';
   this.template = {
     error: "Error",
+    denied: "access denied",
     voting: "Voting",
     vote_saved: "Voting saved",
     'vote.remove': "Remove vote",
@@ -10,7 +11,9 @@ var I18n = function () {
     'vote.fav': "Favorite",
     '__default__': "no translations"
   };
-  this.fetch(this.locale);
+  if (this.locale !== 'en') {
+    this.fetch(this.locale);
+  }
 };
 
 I18n.prototype.fetch = function (locale) {

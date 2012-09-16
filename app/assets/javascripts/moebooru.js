@@ -31,10 +31,15 @@ Moebooru.get = function (key) {
 
 Moebooru.request = function (url, params) {
   jQuery.ajax({
-    url: url,
+    url: PREFIX === '/' ? url : PREFIX+url,
     type: 'POST',
     dataType: 'json',
-    data: params
+    data: params,
+    statusCode: {
+      403: function () {
+        notice(t('error')+': '+t('denied'));
+      }
+    }
   }).done(function (data) {
     Moe.trigger(url+":ready", [data]);
   }).fail(function () {

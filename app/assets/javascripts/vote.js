@@ -160,6 +160,7 @@
     });
 
     $(document).on('keydown', function (e) {
+      if (e.target.nodeName !== 'BODY') return;
       switch (e.which) {
         case 192: return vote.set(vote.v.remove); // `
         case  49: return vote.set(vote.v.good);   // 1

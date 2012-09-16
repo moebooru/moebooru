@@ -37,7 +37,6 @@
 //= require prototype-legacy/url-hash
 //= require prototype-legacy/user
 //= require prototype-legacy/user_record
-//= require prototype-legacy/vote-widget
 //= require jquery
 //= require jquery_ujs
 //= require jquery.cookie

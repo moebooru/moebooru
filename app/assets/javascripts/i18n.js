@@ -2,6 +2,7 @@ var I18n = function () {
   this.locale = jQuery.cookie('locale') || 'en';
   this.template = {
     error: "Error",
+    denied: "access denied",
     voting: "Voting",
     vote_saved: "Voting saved",
     'vote.remove': "Remove vote",

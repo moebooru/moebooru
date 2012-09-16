@@ -1,28 +1,30 @@
-(function () {
+(function ($) {
   var Post = function () {
     this.posts = {};
   };
 
-  Post.prototype.registerPosts = function (posts) {
-    var th = this;
-    if (posts.length == 1) {
-      this.current = posts[0];
+  Post.prototype = {
+    registerPosts: function (posts) {
+      var th = this;
+      if (posts.length == 1) {
+        this.current = posts[0];
+      }
+      posts.forEach(function(p, idx, arr) {
+        p.tags = p.tags.match(/\S+/g) || [];
+        p.metatags = p.tags.clone();
+        p.metatags.push("rating:" + p.rating[0]);
+        p.metatags.push("status:" + p.status);
+        th.posts[p.id] = p;
+      });
+      return false;
+    },
+
+    get: function (post_id) {
+      return this.posts[post_id];
     }
-    posts.forEach(function(p, idx, arr) {
-      p.tags = p.tags.match(/\S+/g) || [];
-      p.metatags = p.tags.clone();
-      p.metatags.push("rating:" + p.rating[0]);
-      p.metatags.push("status:" + p.status);
-      th.posts[p.id] = p;
-    });
-    return false;
   };
 
-  Post.prototype.get = function (post_id) {
-    return this.posts[post_id];
-  };
-
-  jQuery(function($) {
+  $(function() {
     var post = new Post(),
       inLargerVersion = false;
     Moebooru.attach('post', post);
@@ -56,4 +58,4 @@
       }
     });
   });
-})();
+})(jQuery);

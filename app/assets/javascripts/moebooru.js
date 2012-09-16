@@ -31,7 +31,7 @@ Moebooru.get = function (key) {
 
 Moebooru.request = function (url, params) {
   jQuery.ajax({
-    url: url,
+    url: PREFIX === '/' ? url : PREFIX+url,
     type: 'POST',
     dataType: 'json',
     data: params,

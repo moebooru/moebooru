@@ -1,4 +1,4 @@
-(function() {
+(function($) {
   var Vote = function () {
     this.api = {
       set: '/post/vote.json'
@@ -14,62 +14,63 @@
     ];
   };
 
-  Vote.prototype.registerVotes = function (votes) {
-    this.posts = votes;
-  };
+  Vote.prototype = {
+    registerVotes: function (votes) {
+      this.posts = votes;
+    },
 
-  Vote.prototype.registerUserVotes = function (votes) {
-    this.votes = votes;
-  };
+    registerUserVotes: function (votes) {
+      this.votes = votes;
+    },
 
-  Vote.prototype.getScore = function () {
-    this.current_post = Moebooru.get('post').current;
-    try {
-      return this.current_post.score;
-    } catch (error) {}
-    return null;
-  };
+    getScore: function () {
+      this.current_post = Moebooru.get('post').current;
+      try {
+        return this.current_post.score;
+      } catch (error) {}
+      return null;
+    },
 
-  Vote.prototype.getVote = function () {
-    return this.posts[this.current_post.id] || 0;
-  };
+    getVote: function () {
+      return this.posts[this.current_post.id] || 0;
+    },
 
-  Vote.prototype.set = function (vote) {
-    if (vote > this.v.fav) return false;
-    notice(t('voting') + '...');
-    Moebooru.request(this.api.set, {id: this.current_post.id, score: vote});
-    return false;
-  };
+    set: function (vote) {
+      if (vote > this.v.fav) return false;
+      notice(t('voting') + '...');
+      Moebooru.request(this.api.set, {id: this.current_post.id, score: vote});
+      return false;
+    },
 
-  Vote.prototype.updateWidget = function () {
-    var $ = jQuery,
-        score = this.getScore(),
-        vote = this.getVote();
-    for (var i = 1; i <= this.v.fav; i++) {
-      var star = $('.star-'+i);
-      if (i <= vote) {
-        star.removeClass('star-set-after');
-        star.addClass('star-set-upto');
-      } else {
-        star.removeClass('star-set-upto');
-        star.addClass('star-set-after');
+    updateWidget: function () {
+      var score = this.getScore(),
+          vote = this.getVote();
+      for (var i = 1; i <= this.v.fav; i++) {
+        var star = $('.star-'+i);
+        if (i <= vote) {
+          star.removeClass('star-set-after');
+          star.addClass('star-set-upto');
+        } else {
+          star.removeClass('star-set-upto');
+          star.addClass('star-set-after');
+        }
       }
+      if (vote === this.v.fav) {
+        $('#add-to-favs').css('display', 'none');
+        $('#remove-from-favs').css('display', 'list-item');
+      } else {
+        $('#add-to-favs').css('display', 'list-item');
+        $('#remove-from-favs').css('display', 'none');
+      }
+      $('#post-score-'+this.current_post.id).html(score);
+      try {
+        $('#favorited-by').html(Favorite.link_to_users(this.votes[this.v.fav]));
+      } catch (error) {}
+      return false;
     }
-    if (vote === this.v.fav) {
-      $('#add-to-favs').css('display', 'none');
-      $('#remove-from-favs').css('display', 'list-item');
-    } else {
-      $('#add-to-favs').css('display', 'list-item');
-      $('#remove-from-favs').css('display', 'none');
-    }
-    $('#post-score-'+this.current_post.id).html(score);
-    try {
-      $('#favorited-by').html(Favorite.link_to_users(this.votes[this.v.fav]));
-    } catch (error) {}
-    return false;
   };
 
-  jQuery(function($) {
+  $(function() {
     var container = $('#stats'),
         star = $('.star-off'),
         vote = new Vote();
@@ -155,7 +156,7 @@
         star.removeClass('star-hovered-upto');
       }
       $('.vote-desc').html('');
+      return false;
     });
-
   });
-})();
+})(jQuery);

@@ -67,6 +67,9 @@ class UserController < ApplicationController
     if @current_user.is_mod_or_higher?
       @user_ips = @user.user_logs.order('created_at DESC').pluck('ip_addr').uniq
     end
+    respond_to do |format|
+      format.html
+    end
   end
 
   def invites

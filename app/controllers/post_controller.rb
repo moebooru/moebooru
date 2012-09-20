@@ -610,7 +610,7 @@ class PostController < ApplicationController
         @compared_post = Post.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render :status => 404
-        return;
+        return
       end
     end
 

@@ -39,7 +39,7 @@
             <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
               <%= image_tag(get_service_icon(service), :class=>"service-icon", :id=>"list") %>
               <%= link_to "#{service}", params.merge({ :controller => :post, :action => :similar, :services => service }) %>
-              <% if @errors[server] %>
+              <% if @errors and @errors[server] %>
                 <%=t :post_sim_down %>
                 <!-- <%= @errors[server][:message] %> -->
               <% end %>

@@ -118,7 +118,6 @@ class PoolController < ApplicationController
     q[:show_deleted_only] = false
     if @browse_mode == 1 then
       q[:limit] = 1000
-      q[:order] = "portrait_pool"
     else
       q[:limit] = 24
     end

@@ -15,11 +15,6 @@ namespace :maint do
     Post.recalculate_row_count
   end
 
-  desc 'Recalculate fav_count cache'
-  task :recalc_fav => :environment do
-    # Post.recalc_fav_counts
-  end
-
   desc 'Purge unused tags'
   task :purge_tags => :environment do
     Tag.purge_tags

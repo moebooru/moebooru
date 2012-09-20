@@ -1,5 +1,6 @@
 <%- content_for :html_header do -%>
   <%= render 'social_meta' -%>
+  <%= tag 'link', :rel => 'canonical', :href => url_for(:controller => '/post', :action => :show, :id => @post.id, :only_path => false) %>
 <%- end -%>
 <div id="post-view">
   <% if @post.nil? %>

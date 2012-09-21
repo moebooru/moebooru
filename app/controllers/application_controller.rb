@@ -396,7 +396,7 @@ class ApplicationController < ActionController::Base
     def sanitize_params
       if params[:page]
         params[:page] = params[:page].to_i
-        params[:page] = 1 if params[:page] < 1
+        params.delete(:page) if params[:page] <= 1
       end
     end
 

@@ -173,7 +173,6 @@ Moebooru::Application.routes.draw do
 
   # Static
   match 'static/500'
-  match 'static/index'
   match 'static/more'
   match 'static/terms_of_service'
   match '/opensearch' => 'static#opensearch'

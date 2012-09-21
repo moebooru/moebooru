@@ -24,9 +24,9 @@ class TagAliasController < ApplicationController
 
     if params[:query]
       name = "%" + params[:query].to_escaped_for_sql_like + "%"
-      @aliases = TagAlias.paginate :order => "is_pending DESC, name", :per_page => 20, :conditions => ["name LIKE ? ESCAPE E'\\\\' OR alias_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE E'\\\\')", name, name], :page => params[:page]
+      @aliases = TagAlias.paginate :order => "is_pending DESC, name", :per_page => 20, :conditions => ["name LIKE ? ESCAPE E'\\\\' OR alias_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE E'\\\\')", name, name], :page => page_number
     else
-      @aliases = TagAlias.paginate :order => "is_pending DESC, name", :per_page => 20, :page => params[:page]
+      @aliases = TagAlias.paginate :order => "is_pending DESC, name", :per_page => 20, :page => page_number
     end
 
     respond_to_list("aliases")

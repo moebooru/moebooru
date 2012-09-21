@@ -3,7 +3,7 @@ class AdvertisementsController < ApplicationController
   before_filter :admin_only, :except => :redirect
 
   def index
-    @ads = Advertisement.paginate(:page => params[:page], :per_page => 100)
+    @ads = Advertisement.paginate(:page => page_number, :per_page => 100)
   end
 
   def show

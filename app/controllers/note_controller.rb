@@ -6,7 +6,7 @@ class NoteController < ApplicationController
   def search
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
-      @notes = Note.paginate :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => params[:page]
+      @notes = Note.paginate :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => page_number
 
       respond_to_list("notes")
     end
@@ -16,9 +16,9 @@ class NoteController < ApplicationController
     set_title "Notes"
 
     if params[:post_id]
-      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100, :page => params[:page]
+      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100, :page => page_number
     else
-      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 16, :page => params[:page]
+      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 16, :page => page_number
     end
 
     respond_to do |fmt|
@@ -32,13 +32,13 @@ class NoteController < ApplicationController
     set_title "Note History"
 
     if params[:id]
-      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC", :conditions => ["note_id = ?", params[:id].to_i])
+      @notes = NoteVersion.paginate(:page => page_number, :per_page => 25, :order => "id DESC", :conditions => ["note_id = ?", params[:id].to_i])
     elsif params[:post_id]
-      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["post_id = ?", params[:post_id].to_i])
+      @notes = NoteVersion.paginate(:page => page_number, :per_page => 50, :order => "id DESC", :conditions => ["post_id = ?", params[:post_id].to_i])
     elsif params[:user_id]
-      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 50, :order => "id DESC", :conditions => ["user_id = ?", params[:user_id].to_i])
+      @notes = NoteVersion.paginate(:page => page_number, :per_page => 50, :order => "id DESC", :conditions => ["user_id = ?", params[:user_id].to_i])
     else
-      @notes = NoteVersion.paginate(:page => params[:page], :per_page => 25, :order => "id DESC")
+      @notes = NoteVersion.paginate(:page => page_number, :per_page => 25, :order => "id DESC")
     end
 
     respond_to_list("notes")

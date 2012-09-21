@@ -40,7 +40,7 @@ class WikiController < ApplicationController
     search_params = {
       :order => order,
       :per_page => limit,
-      :page => params[:page]
+      :page => page_number
     }
 
     if !query.empty?
@@ -138,9 +138,9 @@ class WikiController < ApplicationController
     set_title "Recent Changes"
 
     if params[:user_id]
-      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => params[:page], :conditions => ["user_id = ?", params[:user_id]]
+      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => page_number, :conditions => ["user_id = ?", params[:user_id]]
     else
-      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => params[:page]
+      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => page_number
     end
     respond_to_list("wiki_pages")
   end

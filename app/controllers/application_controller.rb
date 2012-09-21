@@ -18,11 +18,8 @@ class ApplicationController < ActionController::Base
 
   def sanitize_params
     if params[:page]
-      p = params[:page].to_i
-      p = 1 if p < 1
-      params[:page] = p
-    else
-      params[:page] = 1
+      params[:page] = params[:page].to_i
+      params.delete(:page) if params[:page] <= 1
     end
   end
 
@@ -253,6 +250,7 @@ class ApplicationController < ActionController::Base
   include LoginSystem
   include RespondToHelpers
   include CacheHelper
+  include SessionsHelper
   #local_addresses.clear
 
   before_filter :set_title

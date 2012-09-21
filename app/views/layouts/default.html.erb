@@ -5,6 +5,7 @@
   <title><%= @page_title %></title>
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
+  <%= tag 'link', :rel => 'canonical', :href => @canonical_url ? @canonical_url : url_for(params.merge :only_path => false) %>
 
   <%# The javascript-hide class is used to hide elements (eg. blacklisted posts) from JavaScript. %>
   <script type="text/javascript">

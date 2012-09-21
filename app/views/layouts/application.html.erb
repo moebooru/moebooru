@@ -6,6 +6,7 @@
   <meta name="description" content="yande.re - A Danbooru focusing on High Resolution Anime Scans, Ecchi Scans, Hentai Scans, Moe Scans, and Bishoujo Scans; unlimited downloads. ">
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="top" title="<%= CONFIG["app_name"] %>" href="/">
+  <%= tag 'link', :rel => 'canonical', :href => @canonical_url ? @canonical_url : url_for(params.merge :only_path => false) %>
   <%# The javascript-hide class is used to hide elements (eg. blacklisted posts) from JavaScript. %>
   <script type="text/javascript">
     var css = ".javascript-hide { display: none !important; }";

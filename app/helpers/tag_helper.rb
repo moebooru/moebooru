@@ -47,15 +47,16 @@ module TagHelper
       end
 
       if @current_user.is_privileged_or_higher?
-        html << %{<a href="/post/index?tags=#{u(name)}+#{u(params[:tags])}" class="no-browser-link">+</a> }
-        html << %{<a href="/post/index?tags=-#{u(name)}+#{u(params[:tags])}" class="no-browser-link">&ndash;</a> }
+        html << link_to('+', { :controller => '/post', :action => :index, :tags => "#{name} #{params[:tags]}" }, :class => 'no-browser-link') << ' '
+        html << link_to('&ndash;'.html_safe, { :controller => '/post', :action => :index, :tags => "-#{name} #{params[:tags]}" }, :class => 'no-browser-link') << ' '
       end
 
+      tag_link_options = {}
       if options[:with_hover_highlight] then
-        mouseover=%{ onmouseover='Post.highlight_posts_with_tag("#{escape_javascript(name).gsub("'", "&#145;")}")'}
-        mouseout=%{ onmouseout='Post.highlight_posts_with_tag(null)'}
+        tag_link_options[:mouseover] = "Post.highlight_posts_with_tag('#{escape_javascript(name)}')"
+        tag_link_options[:mouseout] = "Post.highlight_posts_with_tag(null)"
       end
-      html << %{<a href="/post/index?tags=#{u(name)}"#{mouseover}#{mouseout}>#{h(name.tr("_", " "))}</a> }
+      html << link_to(name.tr('_', ' '), { :controller => '/post', :action => :index, :tags => name }, :onmouseover => tag_link_options[:mouseover], :onmouseout => tag_link_options[:mouseout]) << ' '
       html << %{<span class="post-count">#{count}</span> }
       html << '</li>'
     end

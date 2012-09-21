@@ -1164,11 +1164,9 @@ CREATE TABLE posts (
     width integer,
     height integer,
     is_warehoused boolean DEFAULT false NOT NULL,
-    last_voter_ip inet,
     ip_addr inet NOT NULL,
     cached_tags text DEFAULT ''::text NOT NULL,
     is_note_locked boolean DEFAULT false NOT NULL,
-    fav_count integer DEFAULT 0 NOT NULL,
     file_ext text DEFAULT ''::text NOT NULL,
     last_noted_at timestamp without time zone,
     is_rating_locked boolean DEFAULT false NOT NULL,
@@ -1181,7 +1179,6 @@ CREATE TABLE posts (
     sample_quality integer,
     change_seq integer,
     last_vote integer DEFAULT 0 NOT NULL,
-    anonymous_votes integer DEFAULT 0 NOT NULL,
     random real DEFAULT random() NOT NULL,
     approver_id integer,
     score integer DEFAULT 0 NOT NULL,
@@ -3498,6 +3495,16 @@ INSERT INTO schema_migrations (version) VALUES ('20120804130515');
 INSERT INTO schema_migrations (version) VALUES ('20120813155642');
 
 INSERT INTO schema_migrations (version) VALUES ('20120830051636');
+
+INSERT INTO schema_migrations (version) VALUES ('20120920171733');
+
+INSERT INTO schema_migrations (version) VALUES ('20120920172947');
+
+INSERT INTO schema_migrations (version) VALUES ('20120920173324');
+
+INSERT INTO schema_migrations (version) VALUES ('20120920173803');
+
+INSERT INTO schema_migrations (version) VALUES ('20120920174218');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

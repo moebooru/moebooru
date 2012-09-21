@@ -1,11 +1,9 @@
 module SessionsHelper
   def page_number
     if not @page_number
-      @page_number = params[:page].to_i
-      if @page_number < 1
-        @page_number = 1
-      end
+      @page_number = params[:page].blank? ? 1 : params[:page]
+    else
+      @page_number
     end
-    @page_number
   end
 end

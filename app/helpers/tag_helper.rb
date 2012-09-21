@@ -24,7 +24,7 @@ module TagHelper
 
     case tags[0]
     when String
-      tags = Tag.find(:all, :conditions => ["name in (?)", tags], :select => "name, post_count, id").inject({}) {|all, x| all[x.name] = [x.post_count, x.id]; all}.sort {|a, b| a[0] <=> b[0]}.map { |a| [a[0], a[1][0], a[1][1]] }
+      tags = Tag.where(:name => tags).select([:name, :post_count, :id]).map { |t| [t.name, t.post_count, t.id] }.sort
 
     when Hash
       tags = tags.map {|x| [x["name"], x["post_count"], nil]}

@@ -108,7 +108,7 @@
       var a = e.down("A");
       var cnt = e.down("#held-posts-count");
       cnt.update("" + held_posts + " " + (held_posts == 1? "post":"posts"));
-      a.href = "/post/index?tags=holds%3Aonly%20user%3A" + Cookie.get("login") + "%20limit%3A100"
+      a.href = "/post?tags=holds%3Aonly%20user%3A" + Cookie.get("login") + "%20limit%3A100"
       e.show();
     }
   }

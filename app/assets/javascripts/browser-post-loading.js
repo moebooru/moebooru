@@ -27,9 +27,9 @@ PostLoader.prototype.need_more_post_data = function()
 
 /*
  * This is a response time optimization.  If we know the sample URL of what we want to display,
- * we can start loading it from the server without waiting for the full post/index.json response
+ * we can start loading it from the server without waiting for the full post.json response
  * to come back and tell us.  This saves us the time of a round-trip before we start loading the
- * image.  The common case is if the user was on post/index and clicked on a link with "use
+ * image.  The common case is if the user was on post and clicked on a link with "use
  * post browser" enabled.  This allows us to start loading the image immediately, without waiting
  * for any other network activity.
  *
@@ -129,7 +129,7 @@ PostLoader.prototype.server_load_posts = function()
     }
   }
 
-  new Ajax.Request("/post/index.json", {
+  new Ajax.Request("/post.json", {
     parameters: {
       tags: search,
       api_version: 2,

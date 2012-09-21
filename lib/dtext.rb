@@ -37,7 +37,7 @@ module DText
       "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML(title.tr(" ", "_")))}\">#{label}</a>"
     end
     str.gsub!(/\{\{(.+?)\}\}/) do # {{post tags here}} ;search post with tags
-      "<a href=\"/post/index?tags=#{CGI.escape(CGI.unescapeHTML($1))}\">#{$1}</a>"
+      "<a href=\"/post?tags=#{CGI.escape(CGI.unescapeHTML($1))}\">#{$1}</a>"
     end
 
     # Miscellaneous single line tags subtitution.

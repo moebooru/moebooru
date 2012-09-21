@@ -47,7 +47,7 @@ RelatedTags = {
 
     for (var i=0; i<tags.size(); ++i) {
       var tag = tags[i]
-      html += ('<a href="/post/index?tags=' + encodeURIComponent(tag) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
+      html += ('<a href="/post?tags=' + encodeURIComponent(tag) + '" onclick="RelatedTags.toggle(this, \'post_tags\'); return false"')
 
       if (current.include(tag)) {
         html += ' style="background: rgb(0, 111, 250); color: white;"'
@@ -140,7 +140,7 @@ RelatedTags = {
 
   find_artist: function(url) {
     if (url.match(/^http/)) {
-      new Ajax.Request("/artist/index.json", {
+      new Ajax.Request("/artist.json", {
         method: "get",
         parameters: {
           "url": url,

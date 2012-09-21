@@ -467,7 +467,7 @@ BrowserView.prototype.load_post_id_data = function(post_id)
   if(this.current_ajax_request != null)
     return;
 
-  new Ajax.Request("/post/index.json", {
+  new Ajax.Request("/post.json", {
     parameters: {
       tags: "id:" + post_id,
       api_version: 2,

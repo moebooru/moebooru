@@ -1,5 +1,5 @@
 <div class="help">
-  <h1>Help: API 1.13.0+update.2</h1>
+  <h1>Help: API 1.13.0+update.3</h1>
 
   <div class="section">
     <p>Moebooru offers API which is mostly compatible with Danbooru API (version 1.13.0) to make scripting easy. All you need is a way to <a href="http://en.wikipedia.org/wiki/HTTP_GET#Request_methods">GET and POST</a> to <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">URLs</a>. The ability to parse <a href="http://en.wikipedia.org/wiki/Xml">XML</a> or <a href="http://en.wikipedia.org/wiki/Json">JSON</a> responses is nice, but not critical. The simplicity of the API means you can write scripts using JavaScript, Perl, Python, Ruby, even shell languages like bash or tcsh.</p>
@@ -10,7 +10,7 @@
     <div class="section">
       <h2>Basics</h2>
       <p>HTTP defines two request methods: GET and POST. You'll be using these two methods to interact with the Danbooru API. Most API calls that change the state of the database (like creating, updating, or deleting something) require an HTTP POST call. API calls that only retrieve data can typically be done with an HTTP GET call.</p>
-      <p>In the Danbooru API, a URL is analogous to a function name. You pass in the function parameters as a query string. Here's an extremely simple example: <a class="code" href="/post/index.xml?limit=1" target="_blank">/post/index.xml?limit=1</a>.</p>
+      <p>In the Danbooru API, a URL is analogous to a function name. You pass in the function parameters as a query string. Here's an extremely simple example: <a class="code" href="/post.xml?limit=1" target="_blank">/post.xml?limit=1</a>.</p>
       <p>The <code>post</code> part indicates the controller we're working with. In this case it's posts. <code>index</code> describes the action. Here we're retrieving a list of posts. Finally, the <code>xml</code> part describes what format we want the response in. You can specify <code>.xml</code> for XML responses, <code>.json</code> for JSON responses, and nothing at all for HTML responses.</p>
     </div>
 
@@ -106,7 +106,7 @@
 
     <div class="section">
       <h4>List</h4>
-      <p>The base URL is /post/index.xml.</p>
+      <p>The base URL is /post.xml.</p>
       <ul>
         <li><strong>limit</strong> How many posts you want to retrieve. There is a hard limit of 100 posts per request.</li>
         <li><strong>page</strong> The page number.</li>
@@ -187,7 +187,7 @@
 
     <div class="section">
       <h4>List</h4>
-      <p>The base URL is /tag/index.xml.</p>
+      <p>The base URL is /tag.xml.</p>
       <ul>
         <li><strong>limit</strong> How many tags to retrieve. Setting this to 0 will return every tag.</li>
         <li><strong>page</strong> The page number.</li>
@@ -225,7 +225,7 @@
 
     <div class="section">
       <h4>List</h4>
-      <p>The base URL is /artist/index.xml.</p>
+      <p>The base URL is /artist.xml.</p>
       <ul>
         <li><strong>name</strong> The name (or a fragment of the name) of the artist.</li>
         <li><strong>order</strong> Can be <code>date</code> or <code>name</code>.</li>
@@ -304,7 +304,7 @@
 
     <div class="section">
       <h4>List</h4>
-      <p>The base URL is /wiki/index.xml. This retrieves a list of every wiki page.</p>
+      <p>The base URL is /wiki.xml. This retrieves a list of every wiki page.</p>
       <ul>
         <li><strong>order</strong> How you want the pages ordered. Can be: <code>title</code>, <code>date</code>.</li>
         <li><strong>limit</strong> The number of pages to retrieve.</li>
@@ -391,7 +391,7 @@
 
     <div class="section">
       <h4>List</h4>
-      <p>The base URL is /note/index.xml.</p>
+      <p>The base URL is /note.xml.</p>
       <ul>
         <li><strong>post_id</strong> The post id number to retrieve notes for.</li>
       </ul>
@@ -449,7 +449,7 @@
 
     <div class="section">
       <h4>Search</h4>
-      <p>The base URL is /user/index.xml. If you don't specify any parameters you'll get a listing of all users.</p>
+      <p>The base URL is /user.xml. If you don't specify any parameters you'll get a listing of all users.</p>
       <ul>
         <li><strong>id</strong> The id number of the user.</li>
         <li><strong>name</strong> The name of the user.</li>
@@ -465,7 +465,7 @@
 
     <div class="section">
       <h4>List</h4>
-      <p>The base URL is /forum/index.xml. If you don't specify any parameters you'll get a list of all the parent topics.</p>
+      <p>The base URL is /forum.xml. If you don't specify any parameters you'll get a list of all the parent topics.</p>
       <ul>
         <li><strong>parent_id</strong> The parent ID number. You'll return all the responses to that forum post.</li>
       </ul>
@@ -480,7 +480,7 @@
 
     <div class="section">
       <h4>List Pools</h4>
-      <p>The base URL is /pool/index.xml. If you don't specify any parameters you'll get a list of all pools.</p>
+      <p>The base URL is /pool.xml. If you don't specify any parameters you'll get a list of all pools.</p>
       <ul>
         <li><strong>query</strong> The title.</li>
         <li><strong>page</strong> The page.</li>
@@ -566,6 +566,10 @@
     <a name="changelog"></a>
     <h2>Change Log</h2>
     <div class="section">
+      <h4>1.13.0+update.3</h4>
+      <ul>
+        <li>Removed /index from API URLs</li>
+      </ul>
       <h4>1.13.0+update.2</h4>
       <ul>
         <li>Readd favorite/list_users API</li>

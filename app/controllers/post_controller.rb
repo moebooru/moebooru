@@ -261,7 +261,8 @@ class PostController < ApplicationController
   end
 
   def index
-    tags = params[:tags].to_s
+    params[:tags] = Tag.scan_query(params[:tags]).join(' ')
+    tags = params[:tags]
     split_tags = QueryParser.parse(tags)
     page = page_number
 

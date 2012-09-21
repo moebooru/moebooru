@@ -1,4 +1,4 @@
-<%= @canonical_url = url_for(:controller => '/post', :action => :show, :id => @post.id, :only_path => false) %>
+<% @canonical_url = url_for(:controller => '/post', :action => :show, :id => @post.id, :only_path => false) %>
 <%- content_for :html_header do -%>
   <%= render 'social_meta' -%>
 <%- end -%>

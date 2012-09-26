@@ -46,3 +46,7 @@ Moebooru.request = function (url, params) {
     notice(t('error'));
   });
 };
+
+Moebooru.path = function (url) {
+  return PREFIX === '/' ? url : PREFIX + url;
+}

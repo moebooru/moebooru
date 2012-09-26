@@ -10,16 +10,17 @@
     expand: function(parent_id, id) {
       notice("Fetching previous messages...")
 
-      new Ajax.Updater('previous-messages', '/dmail/show_previous_messages', {
-        method: 'get',
-        parameters: {
+      $.ajax({
+        url: Moebooru.path('/dmail/show_previous_messages'),
+        type: 'get',
+        data: {
           "id": id,
           "parent_id": parent_id
-        },
-        onComplete: function() {
-          $('#previous-messages').show()
-          notice("Previous messages loaded")
         }
+      }).done(function(data) {
+        $('#previous-messages').html(data);
+        $('#previous-messages').show();
+        notice('Previous messages loaded');
       })
     }
   }

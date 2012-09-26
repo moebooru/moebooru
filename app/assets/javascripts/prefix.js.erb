@@ -1,1 +1,2 @@
-PREFIX = '<%= ENV['RAILS_RELATIVE_URL_ROOT'] || '/' %>';
+<% url = Rails.application.routes.url_helpers %>
+PREFIX = '<%= url.root_path %>';

@@ -239,7 +239,7 @@ Moebooru::Application.routes.draw do
   # UserRecord
   match 'user_record(/index)' => 'user_record#index'
   match 'user_record/create(/:id)' => 'user_record#create'
-  match 'user_record/destroy(/:id)' => 'user_record#destroy'
+  match 'user_record/destroy(/:id)' => 'user_record#destroy', :via => [:post, :delete]
 
   # Wiki
   match 'wiki(/index)(.:format)' => 'wiki#index'

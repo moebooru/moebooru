@@ -15,7 +15,6 @@
 //= require prototype-legacy/common
 //= require prototype-legacy/cropper
 //= require prototype-legacy/debug-window
-//= require prototype-legacy/dmail
 //= require prototype-legacy/favorite
 //= require prototype-legacy/forum
 //= require prototype-legacy/history
@@ -43,4 +42,5 @@
 //= require jquery.ui.autocomplete
 //= require compat.jquery
 //= require cookie
+//= require dmail
 //= require_tree .

@@ -35,7 +35,6 @@
 //= require prototype-legacy/touchscreen-web-app-helpers
 //= require prototype-legacy/url-hash
 //= require prototype-legacy/user
-//= require prototype-legacy/user_record
 //= require jquery
 //= require jquery_ujs
 //= require jquery.cookie
@@ -43,4 +42,5 @@
 //= require compat.jquery
 //= require cookie
 //= require dmail
+//= require user_record
 //= require_tree .

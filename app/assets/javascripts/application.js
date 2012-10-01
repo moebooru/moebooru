@@ -15,7 +15,6 @@
 //= require prototype-legacy/common
 //= require prototype-legacy/cropper
 //= require prototype-legacy/debug-window
-//= require prototype-legacy/favorite
 //= require prototype-legacy/forum
 //= require prototype-legacy/history
 //= require prototype-legacy/inline_image
@@ -42,5 +41,6 @@
 //= require compat.jquery
 //= require cookie
 //= require dmail
+//= require favorite
 //= require user_record
 //= require_tree .

@@ -373,7 +373,7 @@ class ApplicationController < ActionController::Base
       cookies["held_post_count"] = @current_user.held_post_count.to_s
     else
       cookies.delete :user_info
-      cookies["blacklisted_tags"] = CONFIG["default_blacklists"]
+      cookies["blacklisted_tags"] = CONFIG["default_blacklists"].to_json
     end
 
     if flash[:notice] then

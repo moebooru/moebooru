@@ -3,7 +3,6 @@
 
   this.Vote = function (container, id) {
     var nodes = container.find('*');
-    this.container = container;
     this.desc = nodes.filter('.vote-desc');
     this.stars = nodes.filter('.star-off');
     this.post_score = nodes.filter('#post-score-'+id);
@@ -26,8 +25,8 @@
           403: function () { notice(t('error')+': '+t('denied')); }
         }
       }).done(function (data) {
-        var score = data.posts[0].score;
-        th.updateWidget(vote, score);
+        th.updateWidget(vote, data.posts[0].score);
+        $('#favorited-by').html(Favorite.link_to_users(data.voted_by[favorite])); 
         notice(t('vote_saved'));
       });
       return false;
@@ -70,7 +69,7 @@
             star.removeClass('star-hovered');
           }
         }
-        th.desc.html(th.label[score]);
+        th.desc.text(th.label[score]);
         return false;
       });
 
@@ -82,7 +81,7 @@
           star.removeClass('star-hovered-after');
           star.removeClass('star-hovered-upto');
         }
-        th.desc.html('');
+        th.desc.text('');
         return false;
       });
 
@@ -93,6 +92,8 @@
     },
 
     updateWidget: function (vote, score) {
+      var add = $('#add-to-favs'),
+          rm = $('#remove-from-favs');
       this.vote = vote;
       for (var i = 1; i <= favorite; i++) {
         var star = $(this.stars[i]);
@@ -104,7 +105,28 @@
           star.addClass('star-set-after');
         }
       }
-      this.post_score.html(score);
+      if (vote === favorite) {
+        add.css('display', 'none');
+        rm.css('display', 'list-item');
+      } else {
+        add.css('display', 'list-item');
+        rm.css('display', 'none');
+      }
+      this.post_score.text(score);
+    },
+
+    initShortcut: function () {
+      var th = this;
+      $(document).on('keydown', function (e) {
+        if (e.target.nodeName !== 'BODY') return;
+        switch (e.which) {
+          case 192: return th.set(remove);   // `
+          case  49: return th.set(good);     // 1
+          case  50: return th.set(great);    // 2
+          case  51: return th.set(favorite); // 3
+          default:  return true;
+        }
+      });
     }
   };
 }).call(this, jQuery);

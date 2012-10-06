@@ -32,6 +32,7 @@
   jQuery(function ($) {
     var vote = new Vote($('#stats'), <%= @post.id %>);
     vote.updateWidget(Post.votes.get('<%= @post.id %>'), <%= @post.score %>);
+    vote.initShortcut();
   });
 
   Post.init_add_to_favs(<%= @post.id %>, $("add-to-favs"), $("remove-from-favs"));

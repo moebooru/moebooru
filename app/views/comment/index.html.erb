@@ -53,10 +53,10 @@
   <script type="text/javascript">
     Post.register_resp(<%= json_escape Post.batch_api_data(@posts).to_json.html_safe %>);
     jQuery(function ($) {
-      var posts = <%= @posts.reduce({}) { |h,p| h[p.id] = p.score; h }.to_json.html_safe %>
-      for (var key in posts) {
-        var vote = new Vote($('#comments-for-p'+key), key);
-        vote.updateWidget(Post.votes.get(key), posts[key]);
+      var scores = <%= @posts.reduce({}) { |h,p| h[p.id] = p.score; h }.to_json.html_safe %>
+      for (var id in scores) {
+        var vote = new Vote($('#comments-for-p'+id), id);
+        vote.updateWidget(Post.votes.get(id), scores[id]);
       }
     });
     Post.init_blacklisted({replace: true})

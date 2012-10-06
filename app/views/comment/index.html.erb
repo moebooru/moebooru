@@ -52,11 +52,13 @@
 
   <script type="text/javascript">
     Post.register_resp(<%= json_escape Post.batch_api_data(@posts).to_json.html_safe %>);
-    <% @posts.each do |post| %>
-      var container = $("comments-for-p<%= post.id %>").down(".vote-container");
-      var widget = new VoteWidget(container);
-      widget.set_post_id(<%= post.id %>);
-    <% end %>
+    jQuery(function ($) {
+      var posts = <%= @posts.reduce({}) { |h,p| h[p.id] = p.score; h }.to_json.html_safe %>
+      for (var key in posts) {
+        var vote = new Vote($('#comments-for-p'+key), key);
+        vote.updateWidget(Post.votes.get(key), posts[key]);
+      }
+    });
     Post.init_blacklisted({replace: true})
   </script>
 

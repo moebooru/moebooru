@@ -30,10 +30,10 @@
    return Moebooru['__slug__'][key];
   };
 
-  Moebooru.request = function (url, params) {
+  Moebooru.request = function (url, params/*, type */) {
     $.ajax({
-      url: PREFIX === '/' ? url : PREFIX+url,
-      type: 'POST',
+      url: Moebooru.path(url),
+      type: arguments[2] || 'POST',
       dataType: 'json',
       data: params,
       statusCode: {

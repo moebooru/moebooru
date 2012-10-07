@@ -27,11 +27,11 @@ SitemapGenerator::Sitemap.create do
 SitemapGenerator::Sitemap.default_host = "https://yande.re"
 
    Post.find(:all, :conditions => ["status != 'deleted'"]).each do |post|
-     add %{/post/show/#{post.id}/#{u(post.tag_title)}}, :changefreq => 'daily'
+     add %{/post/show/#{post.id}}, :changefreq => 'daily'
    end
 
    Tag.find(:all).each do |tag|
-     add %{/post/index/?tags=#{tag.name}}, :changefreq => 'daily'
+     add %{/post?tags=#{tag.name}}, :changefreq => 'daily'
    end
 
 end

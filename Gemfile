@@ -28,6 +28,7 @@ gem 'nokogiri'
 gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
+gem 'addressable', :require => 'addressable/uri'
 gem 'mini_magick'
 gem 'image_size'
 

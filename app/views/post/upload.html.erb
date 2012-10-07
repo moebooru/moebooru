@@ -118,6 +118,12 @@
               <label for="post_rating_safe"><%=t :post_upload_s %></label>
             </td>
           </tr>
+          <% if @current_user.is_contributor_or_higher? %>
+            <tr>
+              <th><label for="anonymous"><%= t('.anonymous') %></label></th>
+              <td><%= check_box_tag 'anonymous', '1' %></td>
+            </tr>
+          <% end %>
         </tbody>
       </table>
 

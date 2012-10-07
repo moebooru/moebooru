@@ -699,6 +699,7 @@ en:
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     upload:
+      anonymous: Anonymous Upload
       title: Upload
   post_404: "This post does not exist."
   post_activate: "Activate all held posts"

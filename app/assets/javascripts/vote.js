@@ -3,7 +3,6 @@
 
   this.Vote = function (container, id) {
     var nodes = container.find('*');
-    this.container = container;
     this.desc = nodes.filter('.vote-desc');
     this.stars = nodes.filter('.star-off');
     this.post_score = nodes.filter('#post-score-'+id);

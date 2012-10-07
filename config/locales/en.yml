@@ -106,6 +106,8 @@ en:
     moderate:
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
       mod: mod
+    upload:
+      anonymous: Anonymous Upload
   # ActiveRecord (models)
   activerecord:
     attributes:

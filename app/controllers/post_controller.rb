@@ -47,7 +47,18 @@ class PostController < ApplicationController
       status = "pending"
     end
 
-    @post = Post.create(params[:post].merge(:updater_user_id => @current_user.id, :updater_ip_addr => request.remote_ip, :user_id => @current_user.id, :ip_addr => request.remote_ip, :status => status))
+    if params[:anonymous] == '1' and @current_user.is_contributor_or_higher?
+      user_id = nil
+      # FIXME: someone track down the user of Thread evilry here and nuke
+      #        it please?
+      Thread.current['danbooru-user'] = nil
+      Thread.current['danbooru-user_id'] = nil
+      Thread.current['danbooru-ip_addr'] = request.remote_ip
+    else
+      user_id = @current_user.id
+    end
+
+    @post = Post.create(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase

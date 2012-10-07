@@ -25,9 +25,9 @@ module Danbooru
     limit = 4
 
     while true
-      url = URI.parse(source)
+      url = Addressable::URI.parse(source).normalize
 
-      unless url.is_a?(URI::HTTP)
+      unless url.scheme == 'http'
         raise SocketError, "URL must be HTTP"
       end
 

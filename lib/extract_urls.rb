@@ -5,7 +5,7 @@ module ExtractUrls
   def extract_image_urls(url, body)
     urls = []
     Nokogiri::HTML(body).xpath('//a[@href]').each do |link|
-      urls += [URI.join("#{url}/", link[:href]).to_s] if link[:href] =~ /\.(png|jpg|jpeg)\z/i
+      urls += [Addressable::URI.join("#{url}/", link[:href]).normalize.to_s] if link[:href] =~ /\.(png|jpg|jpeg)\z/i
     end
     return urls
   end

@@ -19,6 +19,8 @@
       <%= render :partial => "post/show_partials/options_panel" %>
       <%= render :partial => "post/show_partials/related_posts_panel" %>
  <br />
+ <a href="https://twitter.com/yande_re" class="twitter-follow-button" data-show-count="false">Follow @yande_re</a>
+ <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
   <% if CONFIG["can_see_ads"].call(@current_user) %>
   <%= render :partial => "vertical" %>
   <% end %>

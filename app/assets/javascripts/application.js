@@ -11,7 +11,6 @@
 //= require prototype-legacy/browser-post-loading
 //= require prototype-legacy/browser-thumb-view
 //= require prototype-legacy/browser-view
-//= require prototype-legacy/comment
 //= require prototype-legacy/common
 //= require prototype-legacy/cropper
 //= require prototype-legacy/debug-window

@@ -30,6 +30,7 @@ gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
 gem 'addressable', :require => 'addressable/uri'
 gem 'turbolinks'
+gem 'coffee-script'
 
 group :development do
   gem 'rspec'

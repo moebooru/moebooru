@@ -61,8 +61,9 @@
     <% if CONFIG["can_see_ads"].call(@current_user) %>
     <%= render :partial => "vertical" %>
     <% end %>
-    <a href="https://twitter.com/yande_re" class="twitter-follow-button" data-show-count="false">Follow @yande_re</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+    <%= render :partial => 'layouts/twitter_link' %>
+
   </div>
   <div class="content">
     <% if @ambiguous_tags.any? %>

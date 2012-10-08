@@ -29,6 +29,7 @@ gem 'unicorn', :platforms => :mri
 gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
 gem 'addressable', :require => 'addressable/uri'
+gem 'turbolinks'
 
 group :development do
   gem 'rspec'

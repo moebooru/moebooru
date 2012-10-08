@@ -62,6 +62,9 @@
     <% if CONFIG["can_see_ads"].call(@current_user) %>
     <%= render :partial => "vertical" %>
     <% end %>
+
+    <%= render :partial => 'layouts/twitter_link' %>
+
   </div>
   <div class="content">
     <% if @ambiguous_tags.any? %>

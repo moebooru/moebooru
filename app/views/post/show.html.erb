@@ -20,7 +20,7 @@
       <%= render :partial => "post/show_partials/options_panel" %>
       <%= render :partial => "post/show_partials/related_posts_panel" %>
  <br />
-  <a href = "http://konachan.com/" target = "_blank"><img src="/images/konachan.png" alt="konachan" width=100 height=30 /></a>
+  <%= render :partial => 'layouts/twitter_link' %>
   <% if CONFIG["can_see_ads"].call(@current_user) %>
   <%= render :partial => "vertical" %>
   <% end %>

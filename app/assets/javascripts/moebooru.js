@@ -51,4 +51,45 @@
   Moebooru.path = function (url) {
     return PREFIX === '/' ? url : PREFIX + url;
   }
+
+  // XXX: Tested on chrome canary
+  // might or might not works in other browser
+  //
+  // TODO: Handle touch events and another fancy related events
+  // for mobile browser
+  Moebooru.dragElement = function(el) {
+    var win = $(window), doc = $(document),
+        prevPos = {x:-1, y:-1};
+    el.on('dragstart', function () { return false; });
+    el.on('mousedown', function (e) {
+      prevPos = { x: e.clientX, y: e.clientY }
+    });
+    el.on('mousemove', function (e) {
+      if (e.which === 1) {
+        scrollTo(currentX(e.clientX), currentY(e.clientY));
+      }
+    });
+
+    // XXX: This two functions below should
+    // probably refactored into one function?
+    function currentX(n) {
+      var max = doc.width() - win.width(),
+          offset = window.scrollX + (prevPos.x - n);
+      if (prevPos.x === n) offset = window.scrollX;
+      prevPos.x = n;
+      if (offset < 0) return 0;
+      if (offset > max) return max;
+      return offset;
+    }
+
+    function currentY(n) {
+      var max = doc.height() - win.height(),
+          offset = window.scrollY + (prevPos.y - n);
+      if (prevPos.y === n) offset = window.scrollY;
+      prevPos.y = n;
+      if (offset < 0) return 0;
+      if (offset > max) return max;
+      return offset;
+    }
+  }
 })(jQuery);

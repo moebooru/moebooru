@@ -76,7 +76,7 @@
     el.on('mousemove', function (e) {
       if (getMouseButton(e) === 1) {
         var scroll = current(e.clientX, e.clientY);
-        scrollTo(scroll.x, scroll.y);
+        scrollTo(scroll[0], scroll[1]);
       }
       return false;
     });
@@ -91,18 +91,15 @@
     }
 
     function current(x, y) {
-      var maxX = doc.width() - win.width(),
-          maxY = doc.height() - win.height(),
-          offX = window.pageXOffset ||
-                 document.documentElement.scrollLeft || document.body.scrollLeft,
-          offY = window.pageYOffset ||
-                 document.documentElement.scrollTop || document.body.scrollTop,
-          offsetX = offX + (prevPos.x - x),
-          offsetY = offY + (prevPos.y - y);
-      offsetX = (prevPos.x === x) ? offX : offsetX;
-      offsetY = (prevPos.y === y) ? offY : offsetY;
+      var max = [doc.width() - win.width(), doc.height() - win.height()],
+          off = [window.pageXOffset || document.documentElement.scrollLeft ||
+                 document.body.scrollLeft, window.pageYOffset ||
+                 document.documentElement.scrollTop || document.body.scrollTop],
+          offset = [off[0] + (prevPos.x - x), off[1] + (prevPos.y - y)];
+      offset[0] = (prevPos.x === x) ? off[0] : offset[0];
+      offset[1] = (prevPos.y === y) ? off[1] : offset[1];
       prevPos.x = x; prevPos.y = y;
-      return {x: offsetX, y:offsetY};
+      return offset;
     }
   }
 })(jQuery);

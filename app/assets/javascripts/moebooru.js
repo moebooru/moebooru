@@ -66,6 +66,7 @@
     el.on('mousedown', function (e) {
       prevPos = {x: e.clientX, y: e.clientY};
       button = e.buttons || e.which;
+      el.css('cursor', 'pointer');
       return false;
     });
 
@@ -77,7 +78,11 @@
       return false;
     });
 
-    doc.on('mouseup', function (e) { button = 0; });
+    doc.on('mouseup', function (e) {
+      button = 0;
+      el.css('cursor', 'auto');
+      return false;
+    });
 
     function current(x, y) {
       var off = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,

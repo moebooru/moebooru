@@ -77,11 +77,10 @@
       return false;
     });
 
-    $(document).on('mouseup', function (e) { button = 0; });
+    doc.on('mouseup', function (e) { button = 0; });
 
     function current(x, y) {
-      var max = [doc.width() - win.width(), doc.height() - win.height()],
-          off = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,
+      var off = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,
                  window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop],
           offset = [off[0] + (prevPos.x - x), off[1] + (prevPos.y - y)];
       offset[0] = (prevPos.x === x) ? off[0] : offset[0];

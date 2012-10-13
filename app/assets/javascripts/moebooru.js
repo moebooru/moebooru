@@ -54,16 +54,12 @@
 
 
 
-  // XXX: Tested on chrome, mozilla, msie10
+  // XXX: Tested on chrome, mozilla, msie(9/10)
   // might or might not works in other browser
-  //
-  // XXX: mousemove event for msie9 (and below, probably)
-  // doesn't emmit distinguishable button(?)
-  // should create some workaround 
   Moebooru.dragElement = function(el) {
     var win = $(window), doc = $(document),
         prevPos = {x:-1, y:-1},
-        button = 0 /*Workaround for msie9*/;
+        button = 0;
 
     el.on('dragstart', function () { return false; });
 
@@ -85,9 +81,8 @@
 
     function current(x, y) {
       var max = [doc.width() - win.width(), doc.height() - win.height()],
-          off = [window.pageXOffset || document.documentElement.scrollLeft ||
-                 document.body.scrollLeft, window.pageYOffset ||
-                 document.documentElement.scrollTop || document.body.scrollTop],
+          off = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,
+                 window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop],
           offset = [off[0] + (prevPos.x - x), off[1] + (prevPos.y - y)];
       offset[0] = (prevPos.x === x) ? off[0] : offset[0];
       offset[1] = (prevPos.y === y) ? off[1] : offset[1];

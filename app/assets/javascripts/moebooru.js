@@ -65,7 +65,7 @@
 
     el.on('mousedown', function (e) {
       prevPos = {x: e.clientX, y: e.clientY};
-      button = e.buttons || e.which;
+      button = e.which;
       el.css('cursor', 'pointer');
       return false;
     });

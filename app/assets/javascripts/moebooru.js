@@ -62,11 +62,17 @@
   // should create some workaround 
   Moebooru.dragElement = function(el) {
     var win = $(window), doc = $(document),
-        prevPos = {x:-1, y:-1};
+        prevPos = {x:-1, y:-1},
+        ie9Button = 0 /*Workaround for msie9*/;
+
     el.on('dragstart', function () { return false; });
+
     el.on('mousedown', function (e) {
       prevPos = {x: e.clientX, y: e.clientY};
+      ie9Button = e.buttons;
+      return false;
     });
+
     el.on('mousemove', function (e) {
       if (getMouseButton(e) === 1) {
         var scroll = current(e.clientX, e.clientY);
@@ -75,9 +81,12 @@
       return false;
     });
 
+    el.on('mouseup', function (e) { ie9Button = 0; });
+
     function getMouseButton(e) {
       var b = $.browser;
-      if (b.mozilla || b.msie) return e.buttons;
+      if (b.msie) return ie9Button;
+      if (b.mozilla) return e.buttons;
       if (b.webkit || b.chrome) return e.which;
     }
 

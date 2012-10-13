@@ -57,14 +57,15 @@
   // XXX: Tested on chrome, mozilla, msie10
   // might or might not works in other browser
   //
-  // TODO: Handle touch events and another fancy related events
-  // for mobile browser
+  // XXX: mousemove event for msie9 (and below, probably)
+  // doesn't emmit distinguishable button(?)
+  // should create some workaround 
   Moebooru.dragElement = function(el) {
     var win = $(window), doc = $(document),
         prevPos = {x:-1, y:-1};
     el.on('dragstart', function () { return false; });
     el.on('mousedown', function (e) {
-      prevPos = { x: e.clientX, y: e.clientY }
+      prevPos = {x: e.clientX, y: e.clientY};
     });
     el.on('mousemove', function (e) {
       if (getMouseButton(e) === 1) {
@@ -84,7 +85,7 @@
       var maxX = doc.width() - win.width(),
           maxY = doc.height() - win.height(),
           offX = window.pageXOffset ||
-                 document.documentElement.scrollLeft ||  document.body.scrollLeft,
+                 document.documentElement.scrollLeft || document.body.scrollLeft,
           offY = window.pageYOffset ||
                  document.documentElement.scrollTop || document.body.scrollTop,
           offsetX = offX + (prevPos.x - x),

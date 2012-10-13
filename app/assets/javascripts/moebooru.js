@@ -64,9 +64,11 @@
     el.on('dragstart', function () { return false; });
 
     el.on('mousedown', function (e) {
-      prevPos = {x: e.clientX, y: e.clientY};
       button = e.which;
-      el.css('cursor', 'pointer');
+      if (button == 1) {
+        el.css('cursor', 'pointer');
+        prevPos = {x: e.clientX, y: e.clientY};
+      }
       return false;
     });
 

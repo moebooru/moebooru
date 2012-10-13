@@ -63,32 +63,25 @@
   Moebooru.dragElement = function(el) {
     var win = $(window), doc = $(document),
         prevPos = {x:-1, y:-1},
-        ie9Button = 0 /*Workaround for msie9*/;
+        button = 0 /*Workaround for msie9*/;
 
     el.on('dragstart', function () { return false; });
 
     el.on('mousedown', function (e) {
       prevPos = {x: e.clientX, y: e.clientY};
-      ie9Button = e.buttons;
+      button = e.buttons || e.which;
       return false;
     });
 
     el.on('mousemove', function (e) {
-      if (getMouseButton(e) === 1) {
+      if (button === 1) {
         var scroll = current(e.clientX, e.clientY);
         scrollTo(scroll[0], scroll[1]);
       }
       return false;
     });
 
-    el.on('mouseup', function (e) { ie9Button = 0; });
-
-    function getMouseButton(e) {
-      var b = $.browser;
-      if (b.msie) return ie9Button;
-      if (b.mozilla) return e.buttons;
-      if (b.webkit || b.chrome) return e.which;
-    }
+    $(document).on('mouseup', function (e) { button = 0; });
 
     function current(x, y) {
       var max = [doc.width() - win.width(), doc.height() - win.height()],

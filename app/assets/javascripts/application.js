@@ -36,7 +36,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.cookie
-//= require jquery.ui.autocomplete
+//= require jquery.ui.all
 //= require compat.jquery
 //= require cookie
 //= require dmail

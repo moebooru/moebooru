@@ -52,7 +52,9 @@
     return PREFIX === '/' ? url : PREFIX + url;
   }
 
-  // XXX: Tested on chrome canary
+
+
+  // XXX: Tested on chrome, mozilla, msie10
   // might or might not works in other browser
   //
   // TODO: Handle touch events and another fancy related events
@@ -65,31 +67,32 @@
       prevPos = { x: e.clientX, y: e.clientY }
     });
     el.on('mousemove', function (e) {
-      if (e.which === 1) {
-        scrollTo(currentX(e.clientX), currentY(e.clientY));
+      if (getMouseButton(e) === 1) {
+        var scroll = current(e.clientX, e.clientY);
+        scrollTo(scroll.x, scroll.y);
       }
+      return false;
     });
 
-    // XXX: This two functions below should
-    // probably refactored into one function?
-    function currentX(n) {
-      var max = doc.width() - win.width(),
-          offset = window.scrollX + (prevPos.x - n);
-      if (prevPos.x === n) offset = window.scrollX;
-      prevPos.x = n;
-      if (offset < 0) return 0;
-      if (offset > max) return max;
-      return offset;
+    function getMouseButton(e) {
+      var b = $.browser;
+      if (b.mozilla || b.msie) return e.buttons;
+      if (b.webkit || b.chrome) return e.which;
     }
 
-    function currentY(n) {
-      var max = doc.height() - win.height(),
-          offset = window.scrollY + (prevPos.y - n);
-      if (prevPos.y === n) offset = window.scrollY;
-      prevPos.y = n;
-      if (offset < 0) return 0;
-      if (offset > max) return max;
-      return offset;
+    function current(x, y) {
+      var maxX = doc.width() - win.width(),
+          maxY = doc.height() - win.height(),
+          offX = window.pageXOffset ||
+                 document.documentElement.scrollLeft ||  document.body.scrollLeft,
+          offY = window.pageYOffset ||
+                 document.documentElement.scrollTop || document.body.scrollTop,
+          offsetX = offX + (prevPos.x - x),
+          offsetY = offY + (prevPos.y - y);
+      offsetX = (prevPos.x === x) ? offX : offsetX;
+      offsetY = (prevPos.y === y) ? offY : offsetY;
+      prevPos.x = x; prevPos.y = y;
+      return {x: offsetX, y:offsetY};
     }
   }
 })(jQuery);

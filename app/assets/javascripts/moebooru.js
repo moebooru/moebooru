@@ -10,7 +10,7 @@
   // might or might not works in other browser
   Moebooru.dragElement = function(el) {
     var win = $(window), doc = $(document),
-        prevPos = {x:-1, y:-1},
+        prevPos = [],
         lclick = 0;
 
     el.on('dragstart', function () { return false; });
@@ -19,7 +19,7 @@
       if (e.which === 1) {
         lclick = 1;
         el.css('cursor', 'pointer');
-        prevPos = {x: e.clientX, y: e.clientY};
+        prevPos = [e.clientX, e.clientY];
       }
       return false;
     });
@@ -33,7 +33,7 @@
     });
 
     doc.on('mouseup', function (e) {
-      button = 0;
+      lclick = 0;
       el.css('cursor', 'auto');
       return false;
     });
@@ -41,8 +41,8 @@
     function current(x, y) {
       var off = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,
                  window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop],
-          offset = [off[0] + (prevPos.x - x), off[1] + (prevPos.y - y)];
-      prevPos.x = x; prevPos.y = y;
+          offset = [off[0] + (prevPos[0] - x), off[1] + (prevPos[1] - y)];
+      prevPos[0] = x; prevPos[1] = y;
       return offset;
     }
   }

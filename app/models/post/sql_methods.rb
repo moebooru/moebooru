@@ -189,22 +189,22 @@ module PostSqlMethods
       tags_index_query = []
 
       if q[:include].any?
-        tags_index_query << "(" + geneate_sql_escape_helper(q[:include]).join(" | ") + ")"
+        tags_index_query << '(' + Array(q[:include]).map { |t| t.to_escaped_for_tsquery }.join(' | ') + ')'
       end
 
       if q[:related].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        tags_index_query << "(" + geneate_sql_escape_helper(q[:related]).join(" & ") + ")"
+        tags_index_query << '(' + Array(q[:related]).map { |t| t.to_escaped_for_tsquery }.join(' & ') + ')'
       end
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG['tag_query_limit']} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-
-        tags_index_query << "!(" + geneate_sql_escape_helper(q[:exclude]).join(" | ") + ")"
+        tags_index_query << '!(' + Array(q[:exclude]).map { |t| t.to_escaped_for_tsquery }.join(' | ') + ')'
       end
 
       if tags_index_query.any?
-        conds << "tags_index @@ to_tsquery('danbooru', E'" + tags_index_query.join(" & ") + "')"
+        conds << "tags_index @@ to_tsquery('danbooru', ?)"
+        cond_params << tags_index_query.join(' & ')
       end
 
       if q[:rating].is_a?(String)

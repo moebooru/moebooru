@@ -1,6 +1,9 @@
 require "download"
 
 class PostController < ApplicationController
+  #ignore specific actions outside of our control
+  newrelic_ignore :only => [:upload, :similar, :create]
+
   layout 'default'
   helper :avatar
 

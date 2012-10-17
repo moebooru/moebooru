@@ -14,7 +14,7 @@ class UserController < ApplicationController
   protected
   def save_cookies(user)
     cookies[:login] = {:value => user.name, :expires => 1.year.from_now}
-    cookies[:pass_hash] = {:value => user.password_hash, :expires => 1.year.from_now}
+    cookies[:pass_hash] = {:value => user.password_hash, :expires => 1.year.from_now, :httponly => true}
     session[:user_id] = user.id
   end
 

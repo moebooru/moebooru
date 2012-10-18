@@ -329,6 +329,7 @@ class PoolController < ApplicationController
   end
 
   def select
+    @post_id = params[:post_id].to_i
     if @current_user.is_anonymous?
       @pools = Pool.find(:all, :order => "name", :conditions => "is_active = TRUE AND is_public = TRUE")
     else

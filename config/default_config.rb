@@ -9,4 +9,4 @@ CONFIG['default_locale'] ||= 'en'
 CONFIG['url_base'] ||= 'http://' + CONFIG['server_host']
 
 # Set secure to false by default due to ssl requirement
-CONFIG['secure'] ||= 'false'
+CONFIG['secure'] ||= false

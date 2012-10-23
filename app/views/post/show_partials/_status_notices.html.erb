@@ -65,10 +65,9 @@
   <% if @post.parent_id %>
     <div class="status-notice">
       <%=t :notice19 %><%= link_to t(:notice20), :action => "show", :id => @post.parent_id %><%
-      %><span class="advanced-editing"> (<%= link_to_function t(:notice21), "Post.reparent_post(#{@post.id}, #{@post.parent_id}, #{@post.get_parent.parent_id ? "true":"false"})" %>)</span>.
+      %><% if @current_user.is_contributor_or_higher? %><span class="advanced-editing"> (<%= link_to_function t(:notice21), "Post.reparent_post(#{@post.id}, #{@post.parent_id}, #{@post.get_parent.parent_id ? "true":"false"})" %>)</span>.<% end %>
     </div>
   <% end %>
-
   <% if @post.has_children? %>
     <% children = @post.children %>
     <div class="status-notice">

@@ -133,6 +133,7 @@ class WikiController < ApplicationController
 
   def recent_changes
     if params[:user_id]
+      params[:user_id] = params[:user_id].to_i
       @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => page_number, :conditions => ["user_id = ?", params[:user_id]]
     else
       @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => page_number

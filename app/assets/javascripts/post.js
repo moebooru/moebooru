@@ -27,7 +27,6 @@
   $(function() {
     var post = new Post(),
       inLargerVersion = false;
-    Moebooru.attach('post', post);
 
     Moe.on('post:add', function (e, data) {
       post.registerPosts(data);

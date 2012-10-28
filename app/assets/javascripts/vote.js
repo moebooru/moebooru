@@ -1,5 +1,5 @@
 (function ($) {
-  const remove = 0, good = 1, great = 2, favorite = 3;
+  var REMOVE = 0, GOOD = 1, GREAT = 2, FAVORITE = 3;
 
   this.Vote = function (container, id) {
     var nodes = container.find('*');
@@ -26,7 +26,7 @@
         }
       }).done(function (data) {
         th.updateWidget(vote, data.posts[0].score);
-        $('#favorited-by').html(Favorite.link_to_users(data.voted_by[favorite])); 
+        $('#favorited-by').html(Favorite.link_to_users(data.voted_by[FAVORITE])); 
         notice(t('vote_saved'));
       });
       return false;
@@ -52,7 +52,7 @@
 
       stars.on('mouseover', function () {
         var score = get_score(this.className);
-        for (var i = 1; i <= favorite; i++) {
+        for (var i = 1; i <= FAVORITE; i++) {
           var star = $(stars[i]);
           if (i <= score) {
             star.removeClass('star-hovered-after');
@@ -74,7 +74,7 @@
       });
 
       stars.on('mouseout', function () {
-        for (var i = 1; i <= favorite; i++) {
+        for (var i = 1; i <= FAVORITE; i++) {
           var star = $(stars[i]);
           star.removeClass('star-hovered');
           star.removeClass('star-unhovered');
@@ -86,7 +86,7 @@
       });
 
       this.vote_up.on('click', function () {
-        if (th.vote < favorite) return th.set(th.vote + 1);
+        if (th.vote < FAVORITE) return th.set(th.vote + 1);
         return false;
       });
     },
@@ -95,7 +95,7 @@
       var add = $('#add-to-favs'),
           rm = $('#remove-from-favs');
       this.vote = vote;
-      for (var i = 1; i <= favorite; i++) {
+      for (var i = 1; i <= FAVORITE; i++) {
         var star = $(this.stars[i]);
         if (i <= vote) {
           star.removeClass('star-set-after');
@@ -105,7 +105,7 @@
           star.addClass('star-set-after');
         }
       }
-      if (vote === favorite) {
+      if (vote === FAVORITE) {
         add.css('display', 'none');
         rm.css('display', 'list-item');
       } else {
@@ -120,10 +120,10 @@
       $(document).on('keydown', function (e) {
         if (e.target.nodeName !== 'BODY') return;
         switch (e.which) {
-          case 192: return th.set(remove);   // `
-          case  49: return th.set(good);     // 1
-          case  50: return th.set(great);    // 2
-          case  51: return th.set(favorite); // 3
+          case 192: return th.set(REMOVE);   // `
+          case  49: return th.set(GOOD);     // 1
+          case  50: return th.set(GREAT);    // 2
+          case  51: return th.set(FAVORITE); // 3
           default:  return true;
         }
       });

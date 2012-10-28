@@ -44,7 +44,8 @@
       Note.updateNoteCount()
       Note.show()
 
-      new WindowDragElement($("image"));
+      //new WindowDragElement($("image"));
+      Moebooru.dragElement(jQuery('.image'));
 
       $("image").observe("click", function(e) { if(!e.stopped) Note.toggle(); }.bindAsEventListener());
     </script>

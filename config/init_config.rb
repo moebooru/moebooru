@@ -159,7 +159,7 @@ CONFIG["enable_parent_posts"] = false
 # Show only the first page of post/index to visitors.
 CONFIG["show_only_first_page"] = false
 
-CONFIG["enable_reporting"] = false
+CONFIG["enable_reporting"] = true
 
 # Enable some web server specific optimizations. Possible values include: apache, nginx, lighttpd.
 CONFIG["web_server"] = "apache"
@@ -287,4 +287,4 @@ CONFIG["min_mpixels"] = nil
 # approved.
 CONFIG["hide_pending_posts"] = false
 
-CONFIG['available_locales'] = %w(de en es ja ru cn)
+CONFIG['available_locales'] = %w(de en es ja ru zh_CN)

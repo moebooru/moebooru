@@ -29,7 +29,7 @@ module Danbooru
       url = Addressable::URI.parse(source)
       url.host = url.normalized_host
       # check if the request uri is not percent-encoded
-      if url.request_uri.match /[^!*'();:@&=+$,\/?#\[\]ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~%]/
+      if url.request_uri.match /[^!*'();:@&=+$,\/?#\[\]ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\-_.~%]/
         url.path = Addressable::URI.encode(url.path)
         url.query = Addressable::URI.encode(url.query)
       end

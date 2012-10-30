@@ -698,10 +698,10 @@ class User < ActiveRecord::Base
       end
 
       if params[:level] && params[:level] != "any"
-        cond.add "level = ?", params[:level]
+        cond.add "level = ?", params[:level].to_i
       end
 
-      cond.add_unless_blank "id = ?", params[:id]
+      cond.add_unless_blank "id = ?", params[:id].to_i
 
       case params[:order]
       when "name"

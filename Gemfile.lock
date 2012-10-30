@@ -155,7 +155,7 @@ GEM
       multi_json (~> 1.0)
       multipart-post (~> 1.1)
       twitter-stream (~> 0.1)
-    treetop (1.4.11)
+    treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
     twitter-stream (0.1.16)

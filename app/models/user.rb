@@ -701,7 +701,7 @@ class User < ActiveRecord::Base
         cond.add "level = ?", params[:level].to_i
       end
 
-      cond.add_unless_blank "id = ?", params[:id].to_i
+      cond.add_unless_blank "id = ?", params[:id]
 
       case params[:order]
       when "name"

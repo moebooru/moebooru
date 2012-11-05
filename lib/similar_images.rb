@@ -189,7 +189,7 @@ module SimilarImages
         post.url = ""
       end
 
-      imgsize = ImageSize.path(source_file)
+      imgsize = ImageSize.new(source_file)
       source_width = imgsize.width
       source_height = imgsize.height
 

@@ -26,7 +26,7 @@
         <%= hidden_field "forum_post", "title", :value => "" %>
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
         <%= text_area "forum_post", "body", :rows => 20, :cols => 80, :value => "" %>
-        <%= submit_tag t(:forum_post) %>
+        <%= submit_tag t('.post') %>
         <%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
       <% end %>
     </div>
@@ -49,7 +49,7 @@
   <li><%= link_to t('.list'), :action => "index" %></li>
   <li><%= link_to t('.new'), :action => "new" %></li>
   <% unless @forum_post.is_parent? %>
-    <li><%= link_to t(:forum_parent), :action => "show", :id => @forum_post.parent_id %></li>
+    <li><%= link_to t('.parent'), :action => "show", :id => @forum_post.parent_id %></li>
   <% end %>
   <li><%= link_to t('.help'), :controller => "help", :action => "forum" %></li>
 <% end %>

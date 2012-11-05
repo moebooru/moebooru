@@ -7,7 +7,7 @@
     <tr><td><label for="forum_post_title"><%=t :forum_title %></label></td><td><%= text_field "forum_post", "title", :size => 60 %></td></tr>
     <tr><td colspan="2"><%= text_area "forum_post", "body", :rows => 20, :cols => 80 %></td></tr>
     <tr><td colspan="2">
-      <%= submit_tag t(:forum_post) %>
+      <%= submit_tag t('.post') %>
       <%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
     </td></tr>
   </table>

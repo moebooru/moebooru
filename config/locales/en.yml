@@ -196,6 +196,10 @@ en:
       sent_by_html: Sent by %{user} %{x_ago}
   # view: /forum
   forum:
+    add:
+      post: Post
+    edit:
+      post: Post
     index:
       created_by: Created by
       help: Help
@@ -203,10 +207,12 @@ en:
       last: last
       mark: Mark all read
       new: New topic
+      post: Post
       title: Forum
     new:
       help: Help
       list: List
+      post: Post
       title: New Topic
     post:
       delete: Delete
@@ -223,8 +229,8 @@ en:
       list: List
       locked: This topic is locked.
       new: New topic
-  forum_parent: "Parent"
-  forum_post: "Post"
+      parent: Parent
+      post: Post
   forum_preview: "Preview"
   # view/forum/index
   forum_quote: "Quote"

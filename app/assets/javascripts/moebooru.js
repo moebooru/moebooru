@@ -11,7 +11,7 @@
   Moebooru.dragElement = function(el) {
     var win = $(window), doc = $(document),
         prevPos = [],
-        lclick = 0;
+        lclick = 1;
 
     el.on('dragstart', function () { return false; });
 
@@ -20,22 +20,22 @@
         lclick = 1;
         el.css('cursor', 'pointer');
         prevPos = [e.clientX, e.clientY];
-      }
-      return false;
-    });
-
-    el.on('mousemove', function (e) {
-      if (lclick) {
-        var scroll = current(e.clientX, e.clientY);
-        scrollTo(scroll[0], scroll[1]);
+        doc.on('mousemove', function (e) {
+          var scroll = current(e.clientX, e.clientY);
+          scrollTo(scroll[0], scroll[1]);
+          return false;
+        });
       }
       return false;
     });
 
     doc.on('mouseup', function (e) {
-      lclick = 0;
-      el.css('cursor', 'auto');
-      return false;
+      if (lclick) {
+        doc.off('mousemove')
+        lclick = 0;
+        el.css('cursor', 'auto');
+        return false;
+      }
     });
 
     function current(x, y) {

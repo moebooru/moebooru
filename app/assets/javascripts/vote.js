@@ -89,6 +89,14 @@
         if (th.vote < FAVORITE) return th.set(th.vote + 1);
         return false;
       });
+
+      $('#add-to-favs').on('click', function () {
+        return th.set(FAVORITE);
+      });
+
+      $('#remove-from-favs').on('click', function () {
+        return th.set(REMOVE);
+      })
     },
 
     updateWidget: function (vote, score) {

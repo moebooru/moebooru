@@ -2,6 +2,17 @@
 // This file is automatically included by javascript_include_tag :defaults
 //
 //= require prefix
+//= require jquery
+//= require jquery_ujs
+//= require jquery.cookie
+//= require jquery.ui.autocomplete
+//= require compat.jquery
+//= require cookie
+//= require dmail
+//= require favorite
+//= require forum
+//= require user_record
+//= require_tree .
 //= require prototype-legacy/prototype
 //= require prototype-legacy/effects
 //= require prototype-legacy/dragdrop
@@ -32,14 +43,4 @@
 //= require prototype-legacy/touchscreen-web-app-helpers
 //= require prototype-legacy/url-hash
 //= require prototype-legacy/user
-//= require jquery
-//= require jquery_ujs
-//= require jquery.cookie
-//= require jquery.ui.autocomplete
-//= require compat.jquery
-//= require cookie
-//= require dmail
-//= require favorite
-//= require forum
-//= require user_record
-//= require_tree .
+

@@ -8,7 +8,7 @@
     <tr><td colspan="2"><%= text_area "forum_post", "body", :rows => 20, :cols => 80 %></td></tr>
     <tr><td colspan="2">
       <%= submit_tag t('.post') %>
-      <%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
+      <%= submit_to_remote "preview", t('.preview'), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
     </td></tr>
   </table>
 <% end %>

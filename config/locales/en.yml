@@ -198,6 +198,7 @@ en:
   forum:
     add:
       post: Post
+      title: Title
     edit:
       post: Post
     index:
@@ -208,6 +209,7 @@ en:
       mark: Mark all read
       new: New topic
       post: Post
+      preview: Preview
       title: Forum
     new:
       help: Help

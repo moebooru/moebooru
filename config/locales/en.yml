@@ -219,6 +219,10 @@ en:
       delete_confirm: Are you sure you want to delete this post?
       edit: Edit
       lock: Lock
+      quote: Quote
+      stick: Stick
+      unlock: Unlock
+      unstick: Unstick
     search:
       author: Author
       last_updated: Last Updated

@@ -75,7 +75,7 @@ en:
       title: Artists
       updated_by: Updated By
     update:
-      preview_button: Preview Notes
+      preview: Preview Notes
   # view: /banned
   banned:
     index:

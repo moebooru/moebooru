@@ -67,7 +67,11 @@ class Comment < ActiveRecord::Base
   end
 
   def author2
-    user.name
+    begin
+      user.name
+    rescue
+      CONFIG['default_guest_name']
+    end
   end
 
   def pretty_author2

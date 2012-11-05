@@ -199,6 +199,7 @@ en:
       is_locked: (locked)
       title: Forum
     search:
+      author: Author
       last_updated_by: '%{t_ago} by %{u}'
   # view: /static
   forum_author: "Author"

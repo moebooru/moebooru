@@ -11,7 +11,7 @@
     <thead>
       <tr>
         <th><%=t :forum_title %></th>
-        <th><%=t :forum_created_by %></th>
+        <th><%= t('.created_by') %></th>
         <th><%=t :forum_updated_by %></th>
         <th><%=t :forum_updated %></th>
         <th><%=t :forum_responses %></th>
@@ -28,7 +28,7 @@
             <% end %>
 
             <% if fp.response_count > 30 %>
-              <%= link_to t(:forum_last), {:action => "show", :id => fp.id, :page => (fp.response_count / 30.0).ceil}, :class => "last-page" %>
+              <%= link_to t('.last'), {:action => "show", :id => fp.id, :page => (fp.response_count / 30.0).ceil}, :class => "last-page" %>
             <% end %>
 
             <% if fp.is_locked? %>
@@ -49,11 +49,11 @@
   </div>
 
   <% content_for :subnavbar do %>
-    <li><%= link_to t(:forum_new), :action => "new" %></li>
+    <li><%= link_to t('.new'), :action => "new" %></li>
     <% unless @current_user.is_anonymous? %>
-      <li><%= link_to_function t(:forum_mark), "Forum.mark_all_read()" %></li>
+      <li><%= link_to_function t('.mark'), "Forum.mark_all_read()" %></li>
     <% end %>
-    <li><%= link_to t(:forum_help), :controller => "help", :action => "forum" %></li>
+    <li><%= link_to t('.help'), :controller => "help", :action => "forum" %></li>
   <% end %>
 
   <div id="preview" style="display: none; margin: 1em 0;">

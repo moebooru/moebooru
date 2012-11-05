@@ -194,34 +194,35 @@ en:
       title: My Inbox
     message:
       sent_by_html: Sent by %{user} %{x_ago}
+  # view: /forum
   forum:
     index:
+      created_by: Created by
+      help: Help
       is_locked: (locked)
+      last: last
+      mark: Mark all read
+      new: New topic
       title: Forum
+    new:
+      help: Help
+      list: List
+      title: New Topic
+    post:
+      delete: Delete
+      delete_confirm: Are you sure you want to delete this post?
+      edit: Edit
+      lock: Lock
     search:
       author: Author
+      last_updated: Last Updated
       last_updated_by: '%{t_ago} by %{u}'
-  # view: /static
-  forum_author: "Author"
-  forum_created_by: "Created by"
-  forum_delete: "Delete"
-  forum_delete_confirm: "Are you sure you want to delete this post?"
-  forum_edit: "Edit"
-  forum_help: "Help"
-  forum_help: "Help"
-  # view/help is being skipped, should be moved to wiki in future
-  # view/history/index
-  forum_last: "last"
-  forum_last_updated: "Last Updated"
-  # view/forum/show
-  forum_list: "List"
-  forum_lock: "Lock"
-  forum_locked: "This topic is locked."
-  forum_mark: "Mark all read"
-  forum_message: "Message"
-  forum_new: "New topic"
-  forum_new_text: "New Topic"
-  # view/forum/search
+      message: Message
+    show:
+      help: Help
+      list: List
+      locked: This topic is locked.
+      new: New topic
   forum_parent: "Parent"
   forum_post: "Post"
   forum_preview: "Preview"

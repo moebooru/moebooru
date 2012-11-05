@@ -1,7 +1,7 @@
 <% provide :title, @forum_post.title %>
 <% if @forum_post.is_locked? %>
   <div class="status-notice">
-    <p><%=t :forum_locked %></p>
+    <p><%= t('.locked') %></p>
   </div>
 <% end %>
 
@@ -46,10 +46,10 @@
   <% unless @forum_post.is_locked? %>
     <li><%= link_to_function t(:forum_reply), "Element.toggle('reply')" %></li>
   <% end %>
-  <li><%= link_to t(:forum_list), :action => "index" %></li>
-  <li><%= link_to t(:forum_new), :action => "new" %></li>
+  <li><%= link_to t('.list'), :action => "index" %></li>
+  <li><%= link_to t('.new'), :action => "new" %></li>
   <% unless @forum_post.is_parent? %>
     <li><%= link_to t(:forum_parent), :action => "show", :id => @forum_post.parent_id %></li>
   <% end %>
-  <li><%= link_to t(:forum_help), :controller => "help", :action => "forum" %></li>
+  <li><%= link_to t('.help'), :controller => "help", :action => "forum" %></li>
 <% end %>

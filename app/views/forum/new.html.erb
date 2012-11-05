@@ -1,4 +1,5 @@
-<h2><%=t :forum_new_text %></h2>
+<% provide :title, t('.title') %>
+<h2><%= t('.title') %></h2>
 
 <div style="margin: 1em 0;">
   <div id="preview" class="response-list" style="display: none;">
@@ -25,8 +26,8 @@
 </div>
 
 <% content_for :subnavbar do %>
-  <li><%= link_to t(:forum_list), :action => "index" %></li>
-  <li><%= link_to t(:forum_help), :controller => "help", :action => "forum" %></li>
+  <li><%= link_to t('.list'), :action => "index" %></li>
+  <li><%= link_to t('.help'), :controller => "help", :action => "forum" %></li>
 <% end %>
 
 <script type="text/javascript">

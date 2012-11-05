@@ -8,9 +8,9 @@
   </div>
   <div class="content">
     <% if post.is_parent? %>
-      <h6><%= h post.title %></h6>
+      <h6><%= post.title %></h6>
     <% else %>
-      <h6 class="response-title"><%= h post.title %></h6>
+      <h6 class="response-title"><%= post.title %></h6>
     <% end %>
     <div class="body">
       <%= format_inlines(format_text(post.body), post.id) %>

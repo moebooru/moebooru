@@ -9,15 +9,14 @@
   // XXX: Tested on chrome, mozilla, msie(9/10)
   // might or might not works in other browser
   Moebooru.dragElement = function(el) {
-    var win = $(window), doc = $(document),
-        prevPos = [],
-        lclick = 1;
+    var win = $(window),
+        doc = $(document),
+        prevPos = [];
 
     el.on('dragstart', function () { return false; });
 
     el.on('mousedown', function (e) {
       if (e.which === 1) {
-        lclick = 1;
         el.css('cursor', 'pointer');
         prevPos = [e.clientX, e.clientY];
         doc.on('mousemove', function (e) {
@@ -25,18 +24,15 @@
           scrollTo(scroll[0], scroll[1]);
           return false;
         });
+        doc.on('mouseup', function (e) {
+          doc.off('mousemove')
+          el.css('cursor', 'auto');
+          return false;
+        });
       }
       return false;
     });
 
-    doc.on('mouseup', function (e) {
-      if (lclick) {
-        doc.off('mousemove')
-        lclick = 0;
-        el.css('cursor', 'auto');
-        return false;
-      }
-    });
 
     function current(x, y) {
       var off = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,

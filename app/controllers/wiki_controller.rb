@@ -166,6 +166,11 @@ class WikiController < ApplicationController
     end
 
     @oldpage = WikiPage.find_page(params[:title], params[:from])
+    unless @oldpage
+      flash[:notice] = 'Page with specified title does not exist'
+      redirect_to :action => :index
+      return
+    end
     @difference = @oldpage.diff(params[:to])
   end
 

@@ -102,24 +102,6 @@ en:
       retry_failed: Retry failed
       title: Batch Queue
       uploading: Uploading
-  batch_cancel: "Cancel all uploads"
-  batch_clear: "Clear finished uploads"
-  batch_complete: " complete"
-  batch_files: "Files"
-  batch_load_file_index: "Load file index"
-  batch_pause: "Pause"
-  batch_paused: "Paused"
-  batch_pending: "Pending"
-  batch_post: "Post #"
-  batch_post_exists: " already exists"
-  batch_queue_uploads: "Queue Uploads"
-  batch_rating: "Rating"
-  batch_rating_explicit: "Explicit"
-  batch_rating_questionable: "Questionable"
-  batch_rating_safe: "Safe"
-  batch_resume: "Resume"
-  batch_retry_failed: "Retry failed"
-  batch_start_upload: "Start upload"
   # view/batch/index
   batch_status: "Status"
   batch_tags: "Tags"

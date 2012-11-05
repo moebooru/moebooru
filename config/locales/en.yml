@@ -165,50 +165,8 @@ en:
     show:
       return: Return to post
       title: Comment
-  # view/comment/_comment
-  comment_ago: " ago"
-  comment_ago2: ""
-  comment_approve: "Approve"
-  # view/comment/search
-  comment_author: "Author"
-  comment_body: "Body"
-  comment_date: "Date"
-  comment_delete: "Delete"
-  comment_edit: "Edit"
-  comment_flag: "Flag for deletion"
-  # view/comment_comments
-  comment_help: "Help"
-  # view/comment/index
-  comment_hidden: "Hidden"
-  comment_list: "List"
-  comment_message: "Message"
-  comment_moderate: "Moderate"
-  comment_post: "Post"
-  comment_quote: "Quote"
-  comment_rating: "Rating"
-  comment_reply: "Reply »"
-  # view/comment/edit
-  comment_return: "Return to post"
-  # view/dmail/_compose
-  comment_save: "Save changes"
-  # view/comment/footer
-  comment_score: "Score"
-  comment_search: "Search"
-  comment_tags: "Tags"
-  comment_time: "Time"
-  # view/comment/show
-  comment_translation: "Comment translation provided by"
-  # view/comment/moderate
-  comment_translation_text: "View untranslated post"
-  comment_translation_text2: "View translated post"
-  comment_user: "User"
-  comments_bump: "Post without bumping"
-  comments_more: "more"
-  comments_none: "No comments."
-  comments_post: "Post"
   confirmations:
     is_sure: Are you sure?
-  crop_avatar: "Select the region to crop all images to and press enter.  This operation can not be undone."
   dmail:
     compose:
       form:
@@ -379,6 +337,10 @@ en:
   imp_text: "Add Implication"
   imp_text2: "You can suggest a new implication, but it must be approved by a moderator before it is activated."
   imp_text3: "The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle."
+  # view: /inline
+  inline:
+    index:
+      crop_avatar: Select the region to crop all images to and press enter. This operation can not be undone.
   # tag sub
   inline_add: "Add image"
   inline_add_desc: "Add description"

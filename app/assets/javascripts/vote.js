@@ -95,7 +95,7 @@
       });
 
       $('#remove-from-favs').on('click', function () {
-        return th.set(REMOVE);
+        return th.set(GREAT);
       })
     },
 

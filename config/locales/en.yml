@@ -45,6 +45,7 @@ en:
       title: New Advertisement
     show:
       title: 'Advertisement #%{id}'
+  # view: /artist
   artist:
     create:
       alias_for: Alias for
@@ -629,7 +630,6 @@ en:
     moderate:
       mod: mod
       title: Moderation Queue
-  # view: /artist
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
     popular_by_day:
       title: Exploring %{year}/%{month}/%{day}

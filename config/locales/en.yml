@@ -194,37 +194,6 @@ en:
       title: My Inbox
     message:
       sent_by_html: Sent by %{user} %{x_ago}
-  # view: /forum
-  dmail_ago: " ago"
-  # view/dmail/mark_all
-  dmail_ago2: ""
-  dmail_body: "Body"
-  # view/dmail/compose
-  dmail_compose: "Compose Message"
-  # view/dmail/footer
-  dmail_empty: "You have no messages"
-  dmail_footer_compose: "Compose"
-  dmail_footer_inbox: "Inbox"
-  dmail_from: "From"
-  dmail_inbox: "My Inbox"
-  dmail_mark: "Mark all read"
-  # view/dmail/inbox
-  dmail_mark_all_text: "Mark All Read"
-  dmail_mark_all_text2: "Are you sure you want to mark all your messages as read?"
-  dmail_message_ago: " ago"
-  # view/forum/add
-  dmail_message_ago2: ""
-  dmail_message_sent: "Sent by "
-  dmail_no: "No"
-  # view/dmail/message
-  dmail_preview: "Preview"
-  dmail_preview_js_text: "Loading preview..."
-  dmail_send: "Send"
-  dmail_title: "Title"
-  dmail_to: "To"
-  dmail_when: "When"
-  dmail_yes: "Yes"
-  edit_comment: "Edit Comment"
   forum:
     index:
       is_locked: (locked)

@@ -101,14 +101,12 @@ en:
       queue_uploads: Queue Uploads
       resume: Resume
       retry_failed: Retry failed
+      status: Status
+      tags: Tags
       title: Batch Queue
       uploading: Uploading
-  # view/batch/index
-  batch_status: "Status"
-  batch_tags: "Tags"
-  batch_uploading: "Uploading"
-  batch_url: "URL"
-  batch_username: "User"
+      url: URL
+      username: User
   buttons:
     _no: 'No'
     _yes: 'Yes'

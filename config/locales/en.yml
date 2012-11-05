@@ -209,8 +209,14 @@ en:
       mark: Mark all read
       new: New topic
       post: Post
+      post_title: Title
       preview: Preview
+      responses: Responses
+      search: Search
+      sticky: Sticky
       title: Forum
+      updated: Updated
+      updated_by: Updated by
     new:
       help: Help
       list: List

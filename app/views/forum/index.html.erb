@@ -3,18 +3,18 @@
   <div id="search" style="margin-bottom: 1em;">
     <%= form_tag({:action => "search"}, :method => :get) do %>
       <%= text_field_tag "query", params[:query], :size => 40 %>
-      <%= submit_tag t(:forum_search)%>
+      <%= submit_tag t('.search')%>
     <% end %>
   </div>
 
   <table class="nowrap highlightable" width="100%">
     <thead>
       <tr>
-        <th><%=t :forum_title %></th>
+        <th><%= t('.post_title') %></th>
         <th><%= t('.created_by') %></th>
-        <th><%=t :forum_updated_by %></th>
-        <th><%=t :forum_updated %></th>
-        <th><%=t :forum_responses %></th>
+        <th><%= t('.updated_by') %></th>
+        <th><%= t('.updated') %></th>
+        <th><%= t('.responses') %></th>
       </tr>
     </thead>
     <tbody>
@@ -22,9 +22,9 @@
         <%= content_tag :tr, :class => cycle('even', 'odd') do %>
           <td class="wrap full">
             <% if @current_user.is_a?(User) && fp.updated_at > @current_user.last_forum_topic_read_at %>
-              <span class="forum-topic unread-topic"><% if fp.is_sticky? %><%=t :forum_sticky %><% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
+              <span class="forum-topic unread-topic"><% if fp.is_sticky? %><%= t('.sticky') %>: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
             <% else %>
-              <span class="forum-topic"><% if fp.is_sticky? %><%=t :forum_sticky %><% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
+              <span class="forum-topic"><% if fp.is_sticky? %><%= t('.sticky') %>: <% end %><%= link_to h(fp.title), :action => "show", :id => fp.id %></span>
             <% end %>
 
             <% if fp.response_count > 30 %>
@@ -71,7 +71,7 @@
           <td colspan="2"><%= text_area "forum_post", "body", :rows => 20, :cols => 80 %></td>
         </tr>
         <tr>
-          <td colspan="2"><%= submit_tag t('.post') %><%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
+          <td colspan="2"><%= submit_tag t('.post') %><%= submit_to_remote "preview", t('.preview'), :url => {:action => "preview"}, :update => "preview", :method => :get, :success => "$('preview').show()" %></td>
         </tr>
       </table>
     <% end %>

@@ -18,7 +18,13 @@ class PoolController < ApplicationController
 
     search_tokens = []
     if params[:query]
-      query = params[:query].shellsplit
+      begin
+        query = params[:query].shellsplit
+      # Will raise error if not a valid shell-quoted string (unbalanced quotes).
+      # Use plain split instead.
+      rescue ArgumentError
+        query = params[:query].split
+      end
 
       query.each { |token|
         if token =~ /^(order|limit|posts):(.+)$/

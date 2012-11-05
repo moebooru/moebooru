@@ -699,6 +699,7 @@ ru:
       statistics_panel:
         uploaded_by_user_html: " %{u}"
     upload:
+      anonymous: "Анонимная Загрузка"
       title: "Добавить"
   post_404: "Нет такого поста."
   post_activate: "Активировать все удержанные посты"

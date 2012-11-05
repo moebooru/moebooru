@@ -102,7 +102,7 @@
     updateWidget: function (vote, score) {
       var add = $('#add-to-favs'),
           rm = $('#remove-from-favs');
-      this.vote = vote;
+      this.vote = vote || 0;
       for (var i = 1; i <= FAVORITE; i++) {
         var star = $(this.stars[i]);
         if (i <= vote) {

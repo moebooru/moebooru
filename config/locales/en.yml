@@ -45,20 +45,6 @@ en:
       title: New Advertisement
     show:
       title: 'Advertisement #%{id}'
-  alias_add: "Add"
-  alias_alias: "Alias"
-  alias_alias_to: "Alias to"
-  alias_approve: "Approve"
-  alias_delete: "Delete"
-  alias_name: "Name"
-  alias_pending: "Select pending"
-  alias_reason: "Reason"
-  alias_reason2: "Reason:"
-  alias_search: "Search Aliases"
-  alias_submit: "Submit"
-  alias_text: "Add Alias"
-  alias_text2: "You can suggest a new alias, but it must be approved by an administrator before it is activated."
-  alias_to: "To"
   artist:
     create:
       alias_for: Alias for
@@ -89,36 +75,12 @@ en:
       updated_by: Updated By
     update:
       preview_button: Preview Notes
-  # view/artist/index
-  artist_index_date: "Date"
-  artist_index_last_modified: "Last Modified"
-  # view/artist/show
-  artist_index_name: "Name"
-  artist_index_search: "Search"
-  artist_index_updated_by: "Updated By"
-  artist_show_create_alias: "Create alias"
-  # view/artist/update
-  artist_show_delete: "Delete"
-  artist_show_edit: "Edit"
-  artist_show_mass_edit: "mass edit"
-  artist_show_url: "URL"
-  artist_show_view_posts: "View posts"
-  artist_title: "This artist is an alias"
-  artist_title2: "This artist is a group"
-  artist_update_cancel: "Cancel"
-  artist_update_preview: "Preview Notes"
-  artist_update_save: "Save"
   # view: /banned
   banned:
     index:
       expires_in: This will expire in %{t}.
       permanent: This ban is permanent.
       reason: You have been banned
-  banned_expire: "This will expire in "
-  banned_period: "."
-  banned_permanent: "This ban is permanent"
-  # view/batch/create
-  banned_reason: "You have been banned:"
   batch:
     create:
       files: Files

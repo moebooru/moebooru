@@ -221,6 +221,7 @@ en:
       help: Help
       list: List
       post: Post
+      preview: Preview
       title: New Topic
     post:
       delete: Delete

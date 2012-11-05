@@ -17,15 +17,16 @@
 
     el.on('mousedown', function (e) {
       if (e.which === 1) {
-        el.css('cursor', 'pointer');
-        prevPos = [e.clientX, e.clientY];
-        doc.on('mousemove', function (e) {
+        var pageScroller = function(e) {
           var scroll = current(e.clientX, e.clientY);
           scrollTo(scroll[0], scroll[1]);
           return false;
-        });
+        };
+        el.css('cursor', 'pointer');
+        prevPos = [e.clientX, e.clientY];
+        doc.on('mousemove', pageScroller);
         doc.on('mouseup', function (e) {
-          doc.off('mousemove')
+          doc.off('mousemove', pageScroller);
           el.css('cursor', 'auto');
           return false;
         });

@@ -201,9 +201,6 @@ en:
     search:
       last_updated_by: '%{t_ago} by %{u}'
   # view: /static
-  forum_ago: " ago"
-  forum_ago2: ""
-  forum_ago3: " ago by "
   forum_author: "Author"
   forum_created_by: "Created by"
   forum_delete: "Delete"

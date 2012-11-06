@@ -237,6 +237,8 @@ en:
       last_updated: Last Updated
       last_updated_by: '%{t_ago} by %{u}'
       message: Message
+      post_title: Title
+      search: Search
     show:
       help: Help
       list: List

@@ -2,14 +2,14 @@
   <div style="margin-bottom: 1em;">
     <%= form_tag({:action => "search"}, :method => :get) do %>
       <%= text_field_tag "query", params[:query], :size => 40 %>
-      <%= submit_tag t(:forum_search)%>
+      <%= submit_tag t('.search')%>
     <% end %>
   </div>
 
   <table class="highlightable">
     <thead>
       <tr>
-        <th width="20%"><%=t :forum_topic %></th>
+        <th width="20%"><%= t('.post_title') %></th>
         <th width="50%"><%= t('.message') %></th>
         <th width="10%"><%= t('.author') %></th>
         <th width="20%"><%= t('.last_updated') %></th>

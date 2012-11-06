@@ -264,7 +264,6 @@ en:
   forum_updated: "Updated"
   forum_updated_by: "Updated by"
   hello: "Hello world"
-  # Generic translation
   help:
     index:
       about: About Moebooru
@@ -279,7 +278,6 @@ en:
       faq: Frequently Asked Questions
       firefox_ext: Firefox Extension
       help: Help
-  # view: /post
       image_sampling: Image Sampling
       irc: IRC
       mass_tag_edit: Mass Tag Edit

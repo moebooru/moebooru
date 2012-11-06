@@ -125,7 +125,7 @@
 
     initShortcut: function () {
       var th = this;
-      $(document).on('keydown', function (e) {
+      $(document).on('keypress', function (e) {
         if (e.target.nodeName !== 'BODY') return;
         switch (e.which) {
           case 192: return th.set(REMOVE);   // `

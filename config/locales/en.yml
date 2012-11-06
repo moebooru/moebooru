@@ -408,6 +408,15 @@ en:
   inline_source: "Source"
   inline_tag: "Inline tag: image #"
   inline_user: "User"
+  job_task:
+    index:
+      table:
+        data: Data
+        id: Id
+        message: Message
+        status: Status
+        type: Type
+      title: Job Tasks
   layout_account: "My Account"
   layout_aliases: "Aliases"
   layout_artists: "Artists"

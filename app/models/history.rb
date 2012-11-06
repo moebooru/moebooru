@@ -53,7 +53,7 @@ class History < ActiveRecord::Base
         next
       end
 
-      if not user.can_change?(change.obj, change.field.to_sym) then
+      if not user.can_change?(change.obj, change.column_name.to_sym) then
         errors[change] = :denied
         next
       end
@@ -87,14 +87,14 @@ class History < ActiveRecord::Base
         if changes
           changes.each do |change|
             if redo_change
-              redo_func = ("%s_redo" % change.field).to_sym
+              redo_func = ("%s_redo" % change.column_name).to_sym
               if object.respond_to?(redo_func) then
                 object.send(redo_func, change)
               else
-                object.attributes = { change.field.to_sym => change.value }
+                object.attributes = { change.column_name.to_sym => change.value }
               end
             else
-              undo_func = ("%s_undo" % change.field).to_sym
+              undo_func = ("%s_undo" % change.column_name).to_sym
               if object.respond_to?(undo_func) then
                 object.send(undo_func, change)
               else
@@ -103,7 +103,7 @@ class History < ActiveRecord::Base
                 else
                   previous = change.options[:default] # when :allow_reverting_to_default
                 end
-                object.attributes = { change.field.to_sym => previous }
+                object.attributes = { change.column_name.to_sym => previous }
               end
             end
           end

@@ -1,6 +1,6 @@
 <div id="forum">
   <div style="margin-bottom: 1em;">
-    <%= form_tag({:action => "search"}, :method => :get) do %>
+    <%= form_tag({ :action => "search" }, :method => :get) do %>
       <%= text_field_tag "query", params[:query], :size => 40 %>
       <%= submit_tag t('.search')%>
     <% end %>
@@ -18,8 +18,8 @@
     <tbody>
       <% @forum_posts.each do |fp| %>
         <%= content_tag :tr, :class => cycle('even', 'odd') do %>
-          <td><%= link_to(fp.root.title, :action => "show", :id => fp.root_id) %></td>
-          <td><%= link_to(fp.body[0, 70] + "...", :action => "show", :id => fp.id) %></td>
+          <td><%= link_to fp.root.title, :action => "show", :id => fp.root_id %></td>
+          <td><%= link_to fp.body[0, 70] + "...", :action => "show", :id => fp.id %></td>
           <td><%= fp.author %></td>
           <td><%= t('.last_updated_by', :t_ago => t('time.x_ago', :t => time_ago_in_words(fp.updated_at)), :u => fp.last_updater) %></td>
         <% end %>

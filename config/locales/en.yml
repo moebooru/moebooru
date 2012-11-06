@@ -246,6 +246,8 @@ en:
       new: New topic
       parent: Parent
       post: Post
+      preview: Preview
+      reply: Reply
   forum_preview: "Preview"
   # view/forum/index
   forum_quote: "Quote"

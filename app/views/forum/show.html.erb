@@ -27,7 +27,7 @@
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
         <%= text_area "forum_post", "body", :rows => 20, :cols => 80, :value => "" %>
         <%= submit_tag t('.post') %>
-        <%= submit_to_remote "preview", t(:forum_preview), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
+        <%= submit_to_remote "preview", t('.preview'), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
       <% end %>
     </div>
   </div>
@@ -44,7 +44,7 @@
 
 <% content_for :subnavbar do %>
   <% unless @forum_post.is_locked? %>
-    <li><%= link_to_function t(:forum_reply), "Element.toggle('reply')" %></li>
+    <li><%= link_to_function t('.reply'), "Element.toggle('reply')" %></li>
   <% end %>
   <li><%= link_to t('.list'), :action => "index" %></li>
   <li><%= link_to t('.new'), :action => "new" %></li>

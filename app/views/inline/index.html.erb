@@ -2,11 +2,11 @@
   <table width="100%" class="highlightable">
     <thead>
       <tr>
-        <th width="40px"><%=t :inline_first_image %></th>
-        <th width="60%"><%=t :inline_description2 %></th>
-        <th width="*"><%=t :inline_user %></th>
-        <th width="*"><%=t :inline_images %></th>
-        <th width="*"><%=t :inline_created %></th>
+        <th width="40px"><%= t('.first_image') %></th>
+        <th width="60%"><%= t('.description2') %></th>
+        <th width="*"><%= t('.user') %></th>
+        <th width="*"><%= t('.images') %></th>
+        <th width="*"><%= t('.created') %></th>
       </tr>
     </thead>
     <tbody>
@@ -39,7 +39,7 @@
 <% end %>
 
 <% content_for :subnavbar do %>
-  <li><%= link_to t(:inline_create), "#", :level => :member, :onclick => "$('create-new').submit(); return false;" %></li>
+  <li><%= link_to t('.create'), "#", :level => :member, :onclick => "$('create-new').submit(); return false;" %></li>
 <% end %>
 
 <%= render :partial => "footer" %>

@@ -371,6 +371,11 @@ en:
       help: Help
       list: List
     index:
+      create: Create
+      description: Description
+      first_image: First image
+      images: Images
+      user: User
   # tag sub
   inline_add: "Add image"
   inline_add_desc: "Add description"

@@ -345,11 +345,32 @@ en:
   imp_text3: "The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle."
   # view: /inline
   inline:
+    crop:
+      crop_avatar: Select the region to crop all images to and press enter. This operation can not be undone.
+    edit:
+      add_do: Add image
+      add_image: Add an image
+      add_image_description: Add description
+      add_set_description_info: click to add a description for this set
+      copy: Copy
+      crop: Crop
+      delete: Delete
+      delete_confirm: Delete this group of images?
+      description: Description
+      file: File
+      move:
+        down: Move down
+        up: Move up
+      preview: Preview
+      remove: Remove image
+      remove_confirm: Remove this image?
+      save: Save changes
+      source: Source
+      tag: 'Inline tag: image #%{id}'
     footer:
       help: Help
       list: List
     index:
-      crop_avatar: Select the region to crop all images to and press enter. This operation can not be undone.
   # tag sub
   inline_add: "Add image"
   inline_add_desc: "Add description"

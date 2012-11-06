@@ -417,6 +417,17 @@ en:
         status: Status
         type: Type
       title: Job Tasks
+    show:
+      nav:
+        list: List
+        restart: Restart
+      table:
+        data: Data
+        id: Id
+        message: Message
+        status: Status
+        type: Type
+      title: 'Job #%{id}'
   layout_account: "My Account"
   layout_aliases: "Aliases"
   layout_artists: "Artists"

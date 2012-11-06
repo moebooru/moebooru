@@ -1,15 +1,15 @@
-<h4>Job #<%= @job_task.id %></h4>
-
+<% provide :title, t('.title', :id => @job_task.id) %>
+<h4><%= t('.title', :id => @job_task.id) %></h4>
 <ul>
-  <li><strong>Type</strong>: <%= @job_task.task_type %></li>
-  <li><strong>Status</strong>: <%= @job_task.status %></li>
-  <li><strong>Data</strong>: <%= @job_task.pretty_data rescue "ERROR" %></li>
-  <li><strong>Message</strong>: <%= @job_task.status_message %></li>
+  <li><strong><%= t('.table.type') %></strong>: <%= @job_task.task_type %></li>
+  <li><strong><%= t('.table.status') %></strong>: <%= @job_task.status %></li>
+  <li><strong><%= t('.table.data') %></strong>: <%= @job_task.pretty_data rescue "ERROR" %></li>
+  <li><strong><%= t('.table.message') %></strong>: <%= @job_task.status_message %></li>
 </ul>
 
 <% content_for :subnavbar do %>
-  <li><%= link_to "List", :action => "index" %></li>
+  <li><%= link_to t('.nav.list'), :action => "index" %></li>
   <% if @job_task.status == "error" %>
-    <li><%= link_to "Restart", :action => "restart", :id => @job_task.id %></li>
+    <li><%= link_to t('.nav.restart'), :action => "restart", :id => @job_task.id %></li>
   <% end %>
 <% end %>

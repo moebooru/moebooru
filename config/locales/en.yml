@@ -587,6 +587,26 @@ en:
     popular_recent:
       title: Exploring %{period}
     show_partials:
+      edit:
+        find_artists: Find artists
+        help: help
+        note_locked: Note locked
+        parent: Parent Post
+        rating: Rating
+        rating_info_html: Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. (%{more})
+        rating_locked: Rating locked
+        rating_locked_info: This post is rating locked.
+        related:
+          artists: Related artists
+          characters: Related characters
+          copyrights: Related copyrights
+          none: None
+          tags: Related tags
+        save: Save changes
+        shown_in_index: Shown in index
+        source: Source
+        tags: Edit Tags
+        tags_info_html: Separate tags with spaces (%{more})
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     upload:

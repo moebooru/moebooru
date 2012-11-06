@@ -7,16 +7,16 @@
     <div id="login-container-with-tabs">
       <div>
         <ul class="flat-list login-tabs" id="login-tabs">
-        <li id="tab-login"><a href="#"><%=t :layout_login %></a></li>
-        <li id="tab-reset"><a href="#"><%=t :layout_reset %></a></li>
+        <li id="tab-login"><a href="#"><%= t('.login') %></a></li>
+        <li id="tab-reset"><a href="#"><%= t('.reset') %></a></li>
         </ul>
       </div>
       <div id="login" style="position: relative;">
         <p id="tab-login-text" class="tab-header-text">
-          <%=t :layout_login_text %>
+          <%= t('.info') %>
         </p>
         <p id="tab-reset-text" class="tab-header-text">
-          <%=t :layout_email_text %>
+          <%= t('.email_info') %>
         </p>
 
         <%= form_tag({ :controller => :user, :action => :authenticate }, :id=>"login-popup") do %>
@@ -26,19 +26,19 @@
 
           <table class="form" style="width: 80%; max-width: 30em; margin-bottom: .5em; margin-left: auto; margin-right: auto;">
             <tr>
-              <th style="width: 8em"><label class="block" for="login-popup-username"><%=t :layout_name %></label></th>
+              <th style="width: 8em"><label class="block" for="login-popup-username"><%= t('.name') %></label></th>
               <td style="width: 10em" align=left><input id="login-popup-username" name="username" type="text" style="width: 100%;"></td>
             </tr>
             <tr id="login-popup-email-box">
-              <th><label class="block" for="login-popup-email"><%=t :layout_email %></label></th>
+              <th><label class="block" for="login-popup-email"><%= t('.email') %></label></th>
               <td align=left><input id="login-popup-email" name="email" type="text" style="width: 100%;"></td>
             </tr>
             <tr id="login-popup-password-box">
-              <th><label class="block" for="login-popup-password"><%=t :layout_password %></label></th>
+              <th><label class="block" for="login-popup-password"><%= t('.password') %></label></th>
               <td align=left><input id="login-popup-password" name="password" type="password" style="width: 100%;"></td>
             </tr>
             <tr id="login-popup-password-confirm-box" style="display: none;">
-              <th><label class="block" for="login-popup-password-confirm"><%=t :layout_confirm%></label></th>
+              <th><label class="block" for="login-popup-password-confirm"><%= t('.password_confirm') %></label></th>
               <td align=left><input id="login-popup-password-confirm" name="password-confirm" type="password" style="width: 100%;"></td>
             </tr>
             <tr>
@@ -47,35 +47,35 @@
               </td>
             </tr>
           </table>
-          <a href="#" id="login-popup-submit" style="margin-bottom: 1em; margin-left: auto; margin-right: auto;"><%=t :layout_login %></a>
+          <a href="#" id="login-popup-submit" style="margin-bottom: 1em; margin-left: auto; margin-right: auto;"><%= t('.login') %></a>
         <% end %>
 
         <div id="login-popup-notices" class="login-popup-notice">
           <span id="login-popup-login-confirm-password">
-            <%=t :layout_not_exist %>
+            <%= t('.popup.not_exist') %>
           </span>
           <span id="login-popup-login-user-exists">
-            <%=t :layout_exists %>
+            <%= t('.popup.exist') %>
           </span>
           <span id="login-popup-reset-user-exists">
-            <%=t :layout_email_reset %>
+            <%= t('.popup.email_reset') %>
           </span>
           <span id="login-popup-reset-user-has-no-email">
-            <%=t :layout_no_email %>
+            <%= t('.popup.no_email') %>
           </span>
           <span id="login-popup-reset-successful">
-            <%=t :layout_reset_successful %>
+            <%= t('.popup.reset_successful') %>
           </span>
           <span id="login-popup-reset-unknown-user">
-            <%=t :layout_unknown_user %>
+            <%= t('.popup.unknown_user') %>
           </span>
           <span id="login-popup-reset-blank">
           </span>
           <span id="login-popup-reset-user-email-incorrect">
-            <%=t :layout_wrong_email %>
+            <%= t('.popup.wrong_email') %>
           </span>
           <span id="login-popup-reset-user-email-invalid">
-            <%=t :layout_invalid_email %>
+            <%= t('.popup.invalid_email') %>
           </span>
           <span id="login-popup-message">
           </span>

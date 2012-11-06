@@ -499,6 +499,25 @@ en:
   layout_wiki: "Wiki"
   layout_wiki_index: "View Wiki Index"
   layout_wrong_email: "The email address specified is not registered with this account."
+  layouts:
+    login:
+      email: Email
+      email_info: If you supplied an email address when you signed up or added a email later, you can have your password reset.
+      info: Please log in. To create a new account, enter the name and password you want to use.
+      login: Login
+      name: Name
+      password: Password
+      password_confirm: Confirm Password
+      popup:
+        email_reset: "Enter the current email address you have registered in your profile.  You'll get an email containing your new password."
+        exist: This user name exists.  If you want to create a new account, please choose a different name.
+        invalid_email: Delivery to this email address has failed.
+        no_email: "You have no email address in your profile, so you can't have your password reset."
+        not_exist: "This user name doesn't exist.  If you want to create a new account, just verify your password and log in."
+        reset_successful: Password reset. Check your email in a few minutes
+        unknown_user: That account does not exist.
+        wrong_email: The email address specified is not registered with this account.
+      reset: Reset Password
   news_ticker: "Tags should be in English/Romaji kthx"
   news_ticker_close: "Close"
   note:

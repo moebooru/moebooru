@@ -303,7 +303,24 @@ en:
   # view: /admin
   history:
     index:
+      change: Change
+      date: Date
+      for: History for
+      id: Id
+      object_type: Type
+      redo: Redo
+      search: Search
+      show:
+        all: Showing all tags
+        changed: Showing only changed tags
       title: History
+      type:
+        all: All
+        pools: Pools
+        posts: Posts
+        tags: Tags
+      undo: Undo
+      user: User
   history_all: "All"
   history_change: "Change"
   # view/inline/crop

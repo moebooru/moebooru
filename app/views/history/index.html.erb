@@ -3,14 +3,14 @@
   <div style="margin-bottom: 1em;">
     <ul class="history-header">
       <% if @type == "all" || @type == "posts" %>
-        <li>» <%= link_to @options[:show_all_tags]? t(:history_showall) : t(:history_showall2), params.merge({:show_all_tags=>@options[:show_all_tags]? 0:1}) %></li>
+        <li>» <%= link_to @options[:show_all_tags]? t('.show.all') : t('.show.changed'), params.merge({:show_all_tags=>@options[:show_all_tags]? 0:1}) %></li>
       <% end %>
 
       <%# If we're searching for a specific object, omit the id/name column and
           show it once at the top.  %>
       <% if @options[:specific_object] && !@changes.empty? %>
         <li>
-          <%=t :history_for %><%= @type.singularize %>:
+          » <%= t('.for') %> <%= @type.singularize %>:
           <%= link_to @options[:show_name] ? @changes.first.group_by_obj.pretty_name : @changes.first.group_by_id, :controller => @changes.first.get_group_by_controller.downcase, :action => "show", :id => @changes.first.group_by_id %>
         </li>
       <% end %>
@@ -24,7 +24,7 @@
       <thead>
         <tr>
           <% if @type == "all" %>
-            <th><%=t :history_type %></th>
+            <th><%= t('.object_type') %></th>
           <% end %>
           <th></th>
           <% if @options[:specific_object] %>
@@ -33,15 +33,15 @@
           <% else %>
             <th>
               <% if @type == "all" %>
-                <%=t :history_id %>
+                <%= t('.id') %>
               <% else %>
                 <%= @type.singularize.capitalize %>
               <% end %>
             </th>
           <% end %>
-          <th><%=t :history_date %></th>
-          <th><%=t :history_user %></th>
-          <th><%=t :history_change %></th>
+          <th><%= t('.date') %></th>
+          <th><%= t('.user') %></th>
+          <th><%= t('.change') %></th>
         </tr>
       </thead>
       <tbody>
@@ -73,20 +73,20 @@
     <div class="history-search-row">
       <div>
         <%= form_tag({:action => "index"}, :method => :get) do %>
-          <%= text_field_tag "search", params[:search], :id => "search", :size => 20 %> <%= submit_tag t(:history_search) %>
+          <%= text_field_tag "search", params[:search], :id => "search", :size => 20 %> <%= submit_tag t('.search') %>
         <% end %>
       </div>
     </div>
 
   <div class="footer history-footer">
-    <%= link_to_function t(:history_undo), "History.undo(false)", :level => :member, :id => "undo" %> |
-    <%= link_to_function t(:history_redo), "History.undo(true)", :level => :member, :id => "redo" %>
+    <%= link_to_function t('.undo'), "History.undo(false)", :level => :member, :id => "undo" %> |
+    <%= link_to_function t('.redo'), "History.undo(true)", :level => :member, :id => "redo" %>
   </div>
   <% content_for :subnavbar do %>
-    <li><%= link_to t(:history_all), :action => "index" %></li>
-    <li><%= link_to t(:history_posts), :action => "index", :search => "type:posts" %></li>
-    <li><%= link_to t(:history_pools), :action => "index", :search => "type:pools" %></li>
-    <li><%= link_to t(:history_tags), :action => "index", :search => "type:tags" %></li>
+    <li><%= link_to t('.type.all'), :action => "index" %></li>
+    <li><%= link_to t('.type.posts'), :action => "index", :search => "type:posts" %></li>
+    <li><%= link_to t('.type.pools'), :action => "index", :search => "type:pools" %></li>
+    <li><%= link_to t('.type.tags'), :action => "index", :search => "type:tags" %></li>
   <% end %>
 </div>
 

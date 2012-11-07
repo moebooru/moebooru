@@ -518,6 +518,72 @@ en:
         unknown_user: That account does not exist.
         wrong_email: The email address specified is not registered with this account.
       reset: Reset Password
+    menu:
+      account:
+        _: My Account
+        change_password: Change Password
+        favorites: My Favorites
+        login: Login
+        logout: Logout
+        mail: My Mail
+        profile: My Profile
+        reset: Reset Password
+        settings: Settings
+      artists:
+        _: Artists
+        create: Create
+        search: Search Artists
+        view: View Artists
+      comments:
+        _: Comments
+        moderate: Moderate
+        search: Search Comments
+        view: View Comments
+      forum:
+        _: Forum
+        new: New Topic
+        search: Search Forums
+        view: View Topics
+      help:
+        _: Help
+        site: Site Help
+      more: More »
+      new_mail: New Mail
+      notes:
+        _: Notes
+        requests: Requests
+        search: Search Notes
+        view: View Notes
+      pools:
+        _: Pools
+        create: Create New Pool
+        search: Search Pools
+        view: View Pools
+      posts:
+        _: Posts
+        batch: Batch Upload
+        history: History
+        image_search: Image Search
+        moderate: Moderate
+        popular: Popular
+        random: Random
+        search: Search Posts
+        upload: Upload
+        view: View Posts
+      tags:
+        _: Tags
+        aliases: Aliases
+        edit: Edit
+        implications: Implications
+        mass_edit: Mass Edit
+        popular: Popular
+        search: Search Tags
+        view: View Tags
+      wiki:
+        _: Wiki
+        create: Create New Page
+        index: View Wiki Index
+        search: Search Wiki
   news_ticker: "Tags should be in English/Romaji kthx"
   news_ticker_close: "Close"
   note:

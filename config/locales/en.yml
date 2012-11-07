@@ -500,6 +500,11 @@ en:
   layout_wiki_index: "View Wiki Index"
   layout_wrong_email: "The email address specified is not registered with this account."
   layouts:
+    default:
+      old_browser:
+        hide: (hide this message)
+        info: Your browser is very old, and this site will not display properly.
+        suggestion: Please consider upgrading to a more recent web browser
     login:
       email: Email
       email_info: If you supplied an email address when you signed up or added a email later, you can have your password reset.
@@ -587,6 +592,12 @@ en:
   news_ticker: "Tags should be in English/Romaji kthx"
   news_ticker_close: "Close"
   note:
+    footer:
+      help: Help
+      history: History
+      list: List
+      requests: Requests
+      search: Search
     history:
       title: Note History
     index:

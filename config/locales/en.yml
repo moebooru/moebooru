@@ -308,22 +308,6 @@ en:
         tags: Tags
       undo: Undo
       user: User
-  history_all: "All"
-  history_change: "Change"
-  # view/inline/crop
-  history_date: "Date"
-  history_for: "» History for "
-  history_id: "Id"
-  history_pools: "Pools"
-  history_posts: "Posts"
-  history_redo: "Redo"
-  history_search: "Search"
-  history_showall: "Showing all tags"
-  history_showall2: "Showing only changed tags"
-  history_tags: "Tags"
-  history_type: "Type"
-  history_undo: "Undo"
-  history_user: "User"
   imp_con: "Consequent"
   imp_pre: "Predicate"
   imp_search: "Search Implications"

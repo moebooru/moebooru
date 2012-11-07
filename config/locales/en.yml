@@ -602,6 +602,8 @@ en:
       title: Note History
     index:
       title: Notes
+    note:
+      click: Click to edit
   # view/note/footer
   note_body: "Body"
   note_click: "Click to edit"

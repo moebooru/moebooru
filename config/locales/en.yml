@@ -341,38 +341,6 @@ en:
       first_image: First image
       images: Images
       user: User
-  # tag sub
-  inline_add: "Add image"
-  inline_add_desc: "Add description"
-  inline_add_description: "click to add a description for this set"
-  inline_add_image: "Add an image"
-  inline_ago: " ago"
-  inline_ago2: ""
-  inline_copy: "Copy"
-  # view/inline/footer
-  inline_create: "Create"
-  # view/layouts/login
-  inline_created: "Created"
-  inline_crop: "Crop"
-  inline_delete: "Delete"
-  inline_delete_confirm: "Delete this group of images?"
-  inline_description: "Description:"
-  inline_description2: "Description"
-  inline_file: "File"
-  inline_first_image: "First image"
-  inline_help: "Help"
-  # view/inline/index
-  inline_images: "Images"
-  inline_list: "List"
-  inline_move_down: "Move down"
-  inline_move_up: "Move up"
-  inline_preview: "Preview"
-  inline_remove: "Remove image"
-  inline_remove_confirm: "Remove this image?"
-  inline_save: "Save changes"
-  inline_source: "Source"
-  inline_tag: "Inline tag: image #"
-  inline_user: "User"
   job_task:
     index:
       table:
@@ -393,30 +361,6 @@ en:
         status: Status
         type: Type
       title: 'Job #%{id}'
-  layout_account: "My Account"
-  layout_aliases: "Aliases"
-  layout_artists: "Artists"
-  layout_batch: "Batch Upload"
-  layout_change_pwd: "Change Password"
-  layout_comments: "Comments"
-  layout_confirm: "Confirm Password"
-  layout_create: "Create"
-  layout_create_pool: "Create New Pool"
-  layout_create_wiki: "Create New Page"
-  layout_edit: "Edit"
-  layout_email: "Email"
-  layout_email_reset: "Enter the current email address you have registered in your profile.  You'll get an email containing your new password."
-  layout_email_text: "If you supplied an email address when you signed up or added a email later, you can have your password reset."
-  layout_exists: "This user name exists.  If you want to create a new account, please choose a different name."
-  layout_fav: "My Favorites"
-  layout_forum: "Forum"
-  layout_forum_topics: "View Topics"
-  layout_help: "Help"
-  layout_history: "History"
-  layout_img_search: "Image Search"
-  layout_imp: "Implications"
-  layout_invalid_email: "Delivery to this email address has failed."
-  # view/layout/_menu
   layout_login: "Login"
   layout_login: "Login"
   layout_login_text: "Please log in. To create a new account, enter the name and password you want to use."

@@ -599,6 +599,15 @@ en:
       requests: Requests
       search: Search
     history:
+      revert: Revert
+      revert_confirm: Do you really wish to revert to this note?
+      table:
+        body: Body
+        date: Date
+        edited: Edited By
+        note: Note
+        options: Options
+        post: Post
       title: Note History
     index:
       title: Notes

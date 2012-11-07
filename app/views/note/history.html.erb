@@ -3,12 +3,12 @@
   <thead>
     <tr>
       <th></th>
-      <th width="5%"><%=t :note_post %></th>
-      <th width="5%"><%=t :note_note %></th>
-      <th width="60%"><%=t :note_body %></th>
-      <th width="10%"><%=t :note_edited %></th>
-      <th width="10%"><%=t :note_date %></th>
-      <th width="10%"><%=t :note_options %></th>
+      <th width="5%"><%= t('.table.post') %></th>
+      <th width="5%"><%= t('.table.note') %></th>
+      <th width="60%"><%= t('.table.body') %></th>
+      <th width="10%"><%= t('.table.edited') %></th>
+      <th width="10%"><%= t('.table.date') %></th>
+      <th width="10%"><%= t('.table.options') %></th>
     </tr>
   </thead>
   <tbody>
@@ -20,7 +20,7 @@
         <td><%= h(note.body) %> <% unless note.is_active? %>(deleted)<% end %></td>
         <td><%= link_to h(note.author), :controller => "user", :action => "show", :id => note.user_id %></td>
         <td><%= note.updated_at.strftime("%D") %></td>
-        <td><%= link_to t(:note_revert), {:controller => "note", :action => "revert", :id => note.note_id, :version => note.version}, :method => :post, :confirm => t(:note_revert_confirm) %></td>
+        <td><%= link_to t('.revert'), {:controller => "note", :action => "revert", :id => note.note_id, :version => note.version}, :method => :post, :confirm => t('.revert_confirm') %></td>
       </tr>
     <% end %>
   </tbody>

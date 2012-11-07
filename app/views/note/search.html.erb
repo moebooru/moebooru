@@ -1,8 +1,8 @@
 <% provide :title, t('.title') %>
-<h4><%=t :note_search %></h4>
+<h4><%= t('.title') %></h4>
 
 <%= form_tag({:action => "search"}, :method => :get) do %>
-  <%= text_field_tag "query", params[:query], :size => 40 %> <%= submit_tag t(:note_search) %>
+  <%= text_field_tag "query", params[:query], :size => 40 %> <%= submit_tag t('.search') %>
 <% end %>
 
 <% if @notes %>

@@ -614,6 +614,7 @@ en:
     note:
       click: Click to edit
     search:
+      search: Search
       title: Search Notes
   # view/note/footer
   note_body: "Body"

@@ -308,12 +308,6 @@ en:
         tags: Tags
       undo: Undo
       user: User
-  imp_con: "Consequent"
-  imp_pre: "Predicate"
-  imp_search: "Search Implications"
-  imp_text: "Add Implication"
-  imp_text2: "You can suggest a new implication, but it must be approved by a moderator before it is activated."
-  imp_text3: "The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle."
   # view: /inline
   inline:
     crop:

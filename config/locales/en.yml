@@ -613,6 +613,8 @@ en:
       title: Notes
     note:
       click: Click to edit
+    search:
+      title: Search Notes
   # view/note/footer
   note_body: "Body"
   note_click: "Click to edit"

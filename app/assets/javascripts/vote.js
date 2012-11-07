@@ -125,16 +125,10 @@
 
     initShortcut: function () {
       var th = this;
-      $(document).on('keypress', function (e) {
-        if (e.target.nodeName !== 'BODY') return;
-        switch (e.which) {
-          case 192: return th.set(REMOVE);   // `
-          case  49: return th.set(GOOD);     // 1
-          case  50: return th.set(GREAT);    // 2
-          case  51: return th.set(FAVORITE); // 3
-          default:  return true;
-        }
-      });
+      Mousetrap.bind('`', function() { th.set(REMOVE); });
+      Mousetrap.bind('1', function() { th.set(GOOD); });
+      Mousetrap.bind('2', function() { th.set(GREAT); });
+      Mousetrap.bind('3', function() { th.set(FAVORITE); });
     }
   };
 }).call(this, jQuery);

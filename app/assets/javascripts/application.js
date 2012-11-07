@@ -7,6 +7,7 @@
 //= require jquery.cookie
 //= require jquery.ui.autocomplete
 //= require compat.jquery
+//= require mousetrap
 //= require cookie
 //= require dmail
 //= require favorite

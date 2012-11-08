@@ -322,7 +322,7 @@ class User < ActiveRecord::Base
     end
 
     def recent_favorite_posts
-      Post.available.joins(:post_votes).where(:post_votes => { :user_id => id, :score => 3 }).order('post_votes.id').limit(6)
+      Post.available.joins(:post_votes).where(:post_votes => { :user_id => id, :score => 3 }).order('post_votes.id DESC').limit(6)
     end
 
     def favorite_post_count(options = {})

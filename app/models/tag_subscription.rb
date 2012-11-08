@@ -24,7 +24,7 @@ class TagSubscription < ActiveRecord::Base
   end
 
   def self.find_posts(user_id, name = nil, limit = CONFIG["tag_subscription_post_limit"])
-    Post.find(:all, :conditions => ["id in (?)", find_post_ids(user_id, name, limit)], :order => "id DESC", :limit => limit)
+    Post.available.where(:id => find_post_ids(user_id, name, limit)).order('id DESC').limit(limit)
   end
 
   def self.process_all

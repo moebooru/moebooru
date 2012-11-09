@@ -18,75 +18,18 @@ es:
     new: {title: Nuevo anuncio}
     show:
       title: 'Anuncio #%{id}'
-  alias_add: "Añadir"
-  alias_alias: "Alias"
-  alias_alias_to: "Alias a"
-  alias_approve: "Aprobar"
-  alias_delete: "Borrar"
-  alias_name: "Nombre"
-  alias_pending: "Seleccionar pendientes"
-  alias_reason: "Razón"
-  alias_reason2: "Razón:"
-  alias_search: "Buscar Alias"
-  alias_submit: "Enviar"
-  alias_text: "Añadir Alias"
-  alias_text2: "Puedes sugerir un nuevo alias de etiqueta pero debe ser aprobado po un administrador antes de ser activado."
-  alias_to: "A"
   artist:
     create: {alias_for: Alias de, aliases: Alias, info: Separa múltiples alias y miembros del grupo con comas., members: Miembros, name: Nombre, notes: Notas, urls: URLs}
     destroy: {confirm: '¿Estás seguro de eliminar %{name}?', title: Eliminar Artista}
     footer: {add: Añadir, help: Ayuda, list: Lista}
     index: {date: Fecha, delete: Borrar artista, edit: Editar artista, find: Encontrar imágenes de este artista, is_alias: Este artista es un alias, is_group: Este artista pertenece a un grupo, last_modified: Última modificación, name: Nombre, search: Búsqueda, title: Artistas, updated_by: Actualizado por}
-    update: {preview_button: Previsualizar notas}
-  artist_index_date: "Fecha"
-  artist_index_last_modified: "Última modificación"
-  artist_index_name: "Nombre"
-  artist_index_search: "Buscar"
-  artist_index_updated_by: "Actualizado por"
-  artist_show_create_alias: "Crear alias"
-  artist_show_delete: "Eliminar"
-  artist_show_edit: "Editar"
-  artist_show_mass_edit: "edición masiva"
-  artist_show_url: "URL"
-  artist_show_view_posts: "Ver posts"
-  artist_title: "Este artista es un alias"
-  artist_title2: "Este artista pertenece a un grupo"
-  artist_update_cancel: "Cancelar"
-  artist_update_preview: "Previsualizar Notas"
-  artist_update_save: "Guardar"
+    update: {preview: Previsualizar notas}
   banned:
     index: {expires_in: 'Expira el %{t}.', permanent: Este bloqueo es permanente., reason: Has sido bloqueado}
-  banned_expire: "Este ban expira en "
-  banned_period: "."
-  banned_permanent: "Este baneo es permanente"
-  banned_reason: "Has sido baneado:"
   batch:
     create: {files: Archivos, load_file_index: Cargar Índice de Archivos, submit: Comenzar a subir, tags: Etiquetas, title: Incluir subidas, url: URL}
-    index: {cancel: Cancelar todas las subidas, clear: Limpiar subidas completadas, completed_html: 'Post %{id} completado', exists_html: 'Post %{id} ya existe', pause: Pausar, paused: Pausado, pending: Pendiente, queue_uploads: Incluir subidas, resume: Continuar, retry_failed: Reintento fallido, title: Incluir por lote,
-      uploading: Subiendo}
-  batch_cancel: "Cancelar todas las subidas"
-  batch_clear: "Eliminar finalizados"
-  batch_complete: " completado"
-  batch_files: "Archivos"
-  batch_load_file_index: "Cargar índice de archivos"
-  batch_pause: "Pausar"
-  batch_paused: "Pausado"
-  batch_pending: "Pendiente"
-  batch_post: "Post #"
-  batch_post_exists: " ya existe"
-  batch_queue_uploads: "Cola de Subidas"
-  batch_rating: "Clasificación"
-  batch_rating_explicit: "Explicito"
-  batch_rating_questionable: "Cuestionable"
-  batch_rating_safe: "Seguro"
-  batch_resume: "Reanudar"
-  batch_retry_failed: "Reintentar fallidos"
-  batch_start_upload: "Comenzar a subir"
-  batch_status: "Estado"
-  batch_tags: "Etiquetas"
-  batch_uploading: "Subiendo"
-  batch_url: "URL"
-  batch_username: "Usuario"
+    index: {cancel: Cancelar todas las subidas, clear: Limpiar subidas completadas, completed_html: 'Post %{id} completado', exists_html: 'Post %{id} ya existe', pause: Pausar, paused: Pausado, pending: Pendiente, queue_uploads: Incluir subidas, resume: Continuar, retry_failed: Reintento fallido, status: Estado, tags: Etiquetas,
+      title: Incluir por lote, uploading: Subiendo, url: URL, username: Usuario}
   buttons:
     _no: 'No'
     _yes: 'Sí'
@@ -108,39 +51,7 @@ es:
     moderate: {approve: Aprobar, author: Autor, body: Cuerpo, delete: Borrar, select_all: Seleccionar todo, select_invert: Invertir selección, title: Moderar comentarios}
     search: {author: Autor, message: Mensaje, post: Post, submit: Búsqueda, time: Fecha}
     show: {return: Regresar a post, title: Comentario}
-  comment_ago: "hace"
-  comment_approve: "Aprobar"
-  comment_author: "Autor"
-  comment_body: "Contenido"
-  comment_date: "Fecha"
-  comment_delete: "Eliminar"
-  comment_edit: "Editar"
-  comment_flag: "Reportar para revisión"
-  comment_help: "Ayuda"
-  comment_hidden: "Oculto"
-  comment_list: "Lista"
-  comment_message: "Mensaje"
-  comment_moderate: "Moderar"
-  comment_post: "Post"
-  comment_quote: "Citar"
-  comment_rating: "Clasificación"
-  comment_reply: "Responder »"
-  comment_return: "Volver al post"
-  comment_save: "Guardar cambios"
-  comment_score: "Puntuación"
-  comment_search: "Buscar"
-  comment_tags: "Etiquetas"
-  comment_time: "Hora"
-  comment_translation: "Traducción del comentario por "
-  comment_translation_text: "Ver post sin traducir"
-  comment_translation_text2: "Ver post traducido"
-  comment_user: "Usuario"
-  comments_bump: "Postear sin promover"
-  comments_more: "más"
-  comments_none: "No hay comentarios"
-  comments_post: "Post"
   confirmations: {is_sure: '¿Estás seguro?'}
-  crop_avatar: "Selecciona la zona que quieres recortar. Esta operación no puede deshacer."
   dmail:
     compose:
       form: {body: Cuerpo, title: Título, to: Para}
@@ -155,64 +66,20 @@ es:
       table: {from: De, title: Título, to: Para, when: Cuándo}
       title: Mi Bandeja de Entrada
     message: {sent_by_html: 'Enviado por %{user} %{x_ago}'}
-  dmail_ago: "hace"
-  dmail_body: "Contenido"
-  dmail_compose: "Redactar mensaje"
-  dmail_empty: "No tienes mensajes"
-  dmail_footer_compose: "Redactar"
-  dmail_footer_inbox: "Bandeja de Entrada"
-  dmail_from: "De"
-  dmail_inbox: "Bandeja de Entrada"
-  dmail_mark: "Marcar todos como leídos"
-  dmail_mark_all_text: "Marcar todos como leídos"
-  dmail_mark_all_text2: "¿Estás seguro que quieres marcar todos los mensajes como leídos?"
-  dmail_message_ago: "hace"
-  dmail_message_sent: "Enviado por "
-  dmail_no: "No"
-  dmail_preview: "Vista Previa"
-  dmail_preview_js_text: "Cargando previsualización..."
-  dmail_send: "Enviar"
-  dmail_title: "Título"
-  dmail_to: "Para"
-  dmail_when: "Cuándo"
-  dmail_yes: "Si"
-  edit_comment: "Editar comentario"
   forum:
-    index: {is_locked: (cerrado), title: Foro}
+    add: {post: Post, title: Título}
+    edit: {post: Post, post_title: Título}
+    index: {created_by: Creado por, help: Ayuda, is_locked: (cerrado), last: last, mark: Marcar todos como leídos, new: Nuevo hilo, post: Post, post_title: Título, preview: Previsualizar, responses: REspuestas, search: Búsqueda, sticky: Importante, title: Foro, updated: Actualizado, updated_by: Actualizado por}
+    new: {help: Ayuda, list: Lista, post: Post, post_title: Título, preview: Previsualizar, title: Nuevo Hilo}
+    post: {delete: Eliminar, delete_confirm: '¿Estás seguro de que quieres eliminar este post?', edit: Edit, lock: Bloquear, quote: Citar, stick: Chincheta, unlock: Desbloquear, unstick: Quitar Chincheta}
     search:
+      author: Autor
+      last_updated: Última actualización
       last_updated_by: '%{t_ago} por %{u}'
-  forum_ago: "hace"
-  forum_ago3: "hace por"
-  forum_author: "Autor"
-  forum_created_by: "Creado por"
-  forum_delete: "Eliminar"
-  forum_delete_confirm: "¿Estás seguro de que quieres eliminar este post?"
-  forum_edit: "Editar"
-  forum_help: "Ayuda"
-  forum_last: "last"
-  forum_last_updated: "Última actualización"
-  forum_list: "Lista"
-  forum_lock: "Bloquear"
-  forum_locked: "Este hilo está bloqueado."
-  forum_mark: "Marcar todos como leídos"
-  forum_message: "Mensaje"
-  forum_new: "Nuevo hilo"
-  forum_new_text: "Nuevo Hilo"
-  forum_parent: "Pariente"
-  forum_post: "Post"
-  forum_preview: "Previsualizar"
-  forum_quote: "Citar"
-  forum_reply: "Responder"
-  forum_responses: "REspuestas"
-  forum_search: "Buscar"
-  forum_stick: "Chincheta"
-  forum_sticky: "Chincheta: "
-  forum_title: "Titulo"
-  forum_unlock: "Desbloquear"
-  forum_unstick: "Quitar Chincheta"
-  forum_updated: "Actualizado"
-  forum_updated_by: "Actualizado por"
-  hello: "Hola mundo"
+      message: Mensaje
+      post_title: Título
+      search: Búsqueda
+    show: {help: Ayuda, list: Lista, locked: Este hilo está bloqueado., new: Nuevo hilo, parent: Pariente, post: Post, preview: Previsualizar, reply: Responder}
   help:
     index: {about: Acerca de Moebooru, accounts: Cuentas, api: API, artists: Artistas, bookmarklet: Marcador, bugs: Errores, cheat_sheet: Lista de Atajos, comments: Comentarios, dtext: DText, faq: Preguntas Frecuentes, firefox_ext: Extensión de Firefox, help: Ayuda, image_sampling: Muestras de Imágenes, irc: IRC, mass_tag_edit: Edición
         de etiquetas en masa, notes: Notas, pools: Álbumes, post_relationships: 'Relaciones de Posts ', posts: Posts, ratings: Clasificaciones, source: Código Fuente, starting: Para comenzar, suggestions: Sugerencias, tag_aliases: Alias de Etiquetas, tag_implications: Implicaciones de Etiquetas, tag_scripts: Scripts
@@ -221,78 +88,46 @@ es:
     submit:
       advertisement: {create: Crear, update: Guardar}
   history:
-    index: {title: Historia}
-  history_all: "Todos"
-  history_change: "Cambio"
-  history_date: "Fecha"
-  history_for: "» Historial para "
-  history_id: "Id"
-  history_pools: "Álbum"
-  history_posts: "Posts"
-  history_redo: "Rehacer"
-  history_search: "Buscar"
-  history_showall: "Mostrar todas las etiquetas"
-  history_showall2: "Mostar las etiquetas que han cambiado"
-  history_tags: "Etiquetas"
-  history_type: "Tipo"
-  history_undo: "Deshacer"
-  history_user: "Usuario"
-  imp_con: "Consecuente"
-  imp_pre: "Predicado"
-  imp_search: "Implicaciones de búsqueda"
-  imp_text: "Añadir Implicación"
-  imp_text2: "Puedes sugerir una Implicación pero debe ser aprobada por un moderador antes de que ésta funcione."
-  imp_text3: "La etiqueta Predicado es la etiqueta base y la etiqueta Consecuente es la etiqueta que será añadida automáticamente. Por ejemplo, una implicación con predicado=cuadrado y consecuente=rectángulo significaría que cualquier post etiquetado con \"cuadrado\" será también etiquetado con \"rectángulo\""
-  inline_add: "Añadir imagen"
-  inline_add_desc: "Añadir descripción"
-  inline_add_description: "haz click para añadir una descripción para este set"
-  inline_add_image: "Añadir una imagen"
-  inline_ago: "hace"
-  inline_copy: "Copiar"
-  inline_create: "Crear"
-  inline_created: "Creado"
-  inline_crop: "Cortar"
-  inline_delete: "Eliminar"
-  inline_delete_confirm: "¿Eliminar este grupo de imágenes?"
-  inline_description: "Descripción:"
-  inline_description2: "Descripción"
-  inline_file: "Archivo"
-  inline_first_image: "Primera imagen"
-  inline_help: "Ayuda"
-  inline_images: "Imágenes"
-  inline_list: "Lista"
-  inline_move_down: "Bajar"
-  inline_move_up: "Subir"
-  inline_preview: "Vista Previa"
-  inline_remove: "Eliminar imagen"
-  inline_remove_confirm: "¿Eliminar esta imagen?"
-  inline_save: "Guardar cambios"
-  inline_source: "Fuente"
-  inline_tag: "Inline tag: image #"
-  inline_user: "Usuario"
-  layout_account: "Mi Cuenta"
-  layout_aliases: "Alias"
-  layout_artists: "Artistas"
-  layout_batch: "Subida en Lote"
-  layout_change_pwd: "Cambiar Contraseña"
-  layout_comments: "Comentarios"
-  layout_confirm: "Confirma la contraseña"
-  layout_create: "Crear"
-  layout_create_pool: "Crear Nuevo Album"
-  layout_create_wiki: "Crear nueva página"
-  layout_edit: "Editar"
-  layout_email: "Email"
-  layout_email_reset: "Enter the email address you have registered in your profile.  You'll get an email containing your new password."
-  layout_email_text: "Si tu cuenta tiene registrado un email, puedes restablecer tu contraseña."
-  layout_exists: "Este usuario ya existe. Si quieres crear una nueva cuenta, por favor elige otro nombre de usuario."
-  layout_fav: "Mis Favoritos"
-  layout_forum: "Foro"
-  layout_forum_topics: "Ver Hilos"
-  layout_help: "Ayuda"
-  layout_history: "Historial"
-  layout_img_search: "Búsqueda de Imagen"
-  layout_imp: "Implicaciones"
-  layout_invalid_email: "El envío a esa dirección de email ha fallado."
+    index:
+      change: Cambiar
+      date: Fecha
+      id: Id
+      object_type: Tipo
+      redo: Rehacer
+      search: Search
+      show: {all: Mostrar todas las etiquetas, changed: Mostar las etiquetas que han cambiado}
+      title: Historia
+      type: {all: Todos, pools: Albums, posts: Posts, tags: Etiquetas}
+      undo: Deshacer
+      user: Usuario
+  inline:
+    crop: {crop_avatar: Selecciona el área para cortar las imágenes y presiona Enter. Esta operación no se puede deshacer.}
+    edit:
+      add_do: Añadir imagen
+      add_image: Añadir una imagen
+      add_image_description: Añadir descripción
+      add_set_description_info: haz click para añadir una descripción para este set
+      copy: Copiar
+      crop: Cortar
+      delete: Delete
+      delete_confirm: ¿Eliminar este grupo de imágenes?
+      description: Descripción
+      file: File
+      move: {down: Bajar, up: Subir}
+      preview: Previsualizar
+      remove: Eliminar imagen
+      remove_confirm: ¿Eliminar esta imagen?
+      save: Save changes
+      source: Fuente
+    footer: {help: Ayuda, list: Lista}
+    index: {create: Crear, description: Descripción, first_image: Primera imagen, images: Imágenes, user: Usuario}
+  job_task:
+    index:
+      table: {id: Id, message: Mensaje, status: Estado, type: Tipo}
+      title: Tareas
+    show:
+      nav: {list: Lista}
+      table: {id: Id, message: Mensaje, status: Estado, type: Tipo}
   layout_login: "Identificación"
   layout_login_text: "Por favor identifícate. Para crear una nueva cuenta, introduce el nombre y contraseña que desees usar."
   layout_logout: "Salir"
@@ -337,11 +172,51 @@ es:
   layout_wiki: "Wiki"
   layout_wiki_index: "Ver Índice de la Wiki"
   layout_wrong_email: "El email introducido no concuerda con la cuenta facilitada."
+  layouts:
+    default:
+      old_browser: {hide: (ocultar este mensaje), info: 'Tu navegador es muy antiguo, la página puede no verse correctamente.'}
+    login:
+      email: Email
+      email_info: Si tu cuenta tiene registrado un email, puedes restablecer tu contraseña.
+      info: Por favor identifícate. Para crear una nueva cuenta, introduce el nombre y contraseña que desees usar.
+      login: Identificarse
+      name: Nombre
+      password: Contraseña
+      password_confirm: Confirmar contraseña
+      popup:
+        email_reset: "Enter the email address you have registered in your profile.  You'll get an email containing your new password."
+        exist: Este usuario ya existe. Si quieres crear una nueva cuenta, por favor elige otro nombre de usuario.
+        invalid_email: El envío a esa dirección de email ha fallado.
+        no_email: "No tienes un email en tu cuenta. Tu contraseña no puede ser restablecida."
+        not_exist: "Este usuario no existe. Si quieres crear una cuenta nueva, simplemente verifica tu contraseña e identifícate."
+        unknown_user: Esta cuenta no existe.
+        wrong_email: El email introducido no concuerda con la cuenta facilitada.
+      reset: Resetear contraseña
+    menu:
+      account: {_: Mi Cuenta, change_password: Cambiar contraseña, favorites: Mis Favoritos, login: Identificarse, logout: Desconectarse, mail: My Correo, profile: Mi Perfil, reset: Resetear contraseña, settings: Configuración}
+      artists: {_: Artistas, create: Crear, search: Buscar Artistas, view: Ver Artistas}
+      comments: {_: Comentarios, moderate: Moderar, search: Buscar Comentarios, view: Ver Comentarios}
+      forum: {_: Foro, new: Nuevo Hilo, search: Buscar en los Foros, view: Ver Hilos}
+      help: {_: Ayuda, site: Ayuda del Sitio}
+      more: Más »
+      new_mail: Mensaje Nuevo
+      notes: {_: Notas, requests: Peticiones, search: Buscar Notas, view: Ver Notas}
+      pools: {_: Álbum, create: Crear Nuevo Album, search: Buscar Albums, view: Ver Albums}
+      posts: {_: Posts, batch: Subida en Lote, history: Historia, image_search: Buscar Imagen, moderate: Moderar, popular: Populares, random: Aleatorio, search: Buscar Posts, upload: Subir, view: View Posts}
+      tags: {_: Etiquetas, aliases: Alias, edit: Edit, implications: Implicaciones, mass_edit: Edición en masa, popular: Populares, search: Buscar Etiquetas, view: Ver Etiquetas}
+      wiki: {_: Wiki, create: Crear nueva página, index: Ver Índice de la Wiki, search: Buscar en la Wiki}
   news_ticker: "Las Etiquetas deben estar en Inglés/Romaji gracias"
   news_ticker_close: "Cerrar"
   note:
-    history: {title: Historia de Notas}
+    footer: {help: Ayuda, history: Historia, list: Lista, requests: Peticiones, search: Search}
+    history:
+      revert: Restaurar
+      revert_confirm: ¿Quieres realmente restaurar esta nota a su estado anterior?
+      table: {body: Contenido, date: Fecha, edited: Editado Por, note: Nota, options: Options, post: Post}
+      title: Historia de Notas
     index: {title: Notas}
+    note: {click: Haz click para editar}
+    search: {search: Búsqueda, title: Buscar Notas}
   note_body: "Contenido"
   note_click: "Haz click para editar"
   note_date: "Fecha"
@@ -459,6 +334,17 @@ es:
     popular_by_week: {title: 'Explorando %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}'}
     popular_recent: {title: 'Explorando %{period}'}
     show_partials:
+      edit:
+        find_artists: Encontrar artistas
+        note_locked: Bloquear Notas
+        parent: Parent Post
+        rating: Clasificación
+        rating_locked_info: No se puede cambiar el Rating.
+        related: {artists: Related artists, characters: Related characters, copyrights: Related copyrights, none: None, tags: Etiquetas relacionadas}
+        save: Save changes
+        shown_in_index: Shown in index
+        source: Fuente
+        tags: Editar etiquetas.
       statistics_panel:
         uploaded_by_user_html: 'por %{u}'
     upload: {anonymous: Subir Anónimamente, title: Subir}
@@ -530,26 +416,26 @@ es:
   post_edit_e: "Explicit"
   post_edit_find_artists: "Encontrar artistas"
   post_edit_help: "help"
-  post_edit_note_locked: "Note locked"
+  post_edit_note_locked: "Bloquear Notas"
   post_edit_parent: "Parent Post"
   post_edit_q: "Questionable"
   post_edit_rating: "Rating"
   post_edit_rating_close: ")"
-  post_edit_rating_locked: "Rating locked"
+  post_edit_rating_locked: "No se puede cambiar el Rating."
   post_edit_rating_text: "Explicit tags include sex, pussy, penis, masturbation, blowjob, etc. ("
   post_edit_related_artists: "Related artists"
   post_edit_related_characters: "Related characters"
   post_edit_related_copyrights: "Related copyrights"
   post_edit_related_none: "None"
-  post_edit_related_tags: "Related tags"
-  post_edit_related_tags2: "Related Tags"
+  post_edit_related_tags: "Etiquetas relacionadas"
+  post_edit_related_tags2: "Etiquetas relacionadas"
   post_edit_s: "Safe"
   post_edit_save: "Save changes"
   post_edit_shown: "Shown in index"
-  post_edit_source: "Source"
-  post_edit_tags: "Tags"
+  post_edit_source: "Fuente"
+  post_edit_tags: "Etiquetas"
   post_edit_tags_close: ")"
-  post_edit_tags_text: "Separate tags with spaces ("
+  post_edit_tags_text: "Separa etiquetas con espacios ("
   post_empty: "Nobody here but us chickens!"
   post_favorited_by: "Favorito de"
   post_file: "File"
@@ -560,7 +446,7 @@ es:
   post_held_view: "ver"
   post_help: "Ayuda"
   post_hidden_posts: "Posts Ocultos"
-  post_history: "History"
+  post_history: "Historial"
   post_history_notes: "Notes"
   post_history_tags: "Tags"
   post_hover_by: " por "
@@ -611,7 +497,7 @@ es:
   post_options_download_larger: "Download larger version"
   post_options_edit: "Edit"
   post_options_flag: "Flag for deletion"
-  post_options_history: "Post history"
+  post_options_history: "Historia de Posts"
   post_options_image: "Image"
   post_options_resize: "Resize image"
   post_options_tl: "Add translation"
@@ -658,7 +544,7 @@ es:
   post_sim_dupe_text8: "delete your post"
   post_sim_dupe_text9: "Your tag blacklist has hidden some potential duplicates.  Use "
   post_sim_edit: "Edit Posts"
-  post_sim_edit_tags: "Edit Tags"
+  post_sim_edit_tags: "Editar etiquetas"
   post_sim_flag: "Flag Post"
   post_sim_gray: "Ignore colors"
   post_sim_mode: "Mode"
@@ -671,7 +557,7 @@ es:
   post_sim_update: "Update"
   post_sim_upload: "Upload this image"
   post_sim_view: "View Posts"
-  post_source: "Source"
+  post_source: "Fuente"
   post_stats: "Statistics"
   post_stats_ago: "hace"
   post_stats_approver: "Aprobado por:"
@@ -681,11 +567,11 @@ es:
   post_stats_rating: "Rating: "
   post_stats_score: "Score: "
   post_stats_size: "Size: "
-  post_stats_source: "Source: "
+  post_stats_source: "Fuente: "
   post_subs: "Suscripciones"
   post_tag_script: "Tag Script"
   post_tag_script_text: "Apply tag script to all of these posts?"
-  post_tags: "Tags"
+  post_tags: "Etiquetas"
   post_update: "Actualizar"
   post_upload: "Subir"
   post_upload_artist: "Encontrar artista"
@@ -749,7 +635,7 @@ es:
   report_percet: "Percentage"
   report_search: "Search"
   report_start: "Start Date"
-  report_tags: "Tags"
+  report_tags: "Etiquetas"
   report_total: "Total"
   report_uploads: "Uploads"
   report_user: "User"
@@ -845,7 +731,7 @@ es:
   static_t7: "Álbumes"
   static_t8: "Comentarios"
   static_t9: "Foro"
-  static_tags: "Tags"
+  static_tags: "Etiquetas"
   static_tags_text: "A paginated list of every tag"
   static_wiki: "wiki"
   static_wiki_text: "Wiki"

@@ -53,6 +53,7 @@
 
     $('#post_tags').on('keydown', function (e) {
       if (e.which == 13) {
+        e.preventDefault();
         $('#edit-form').submit();
       }
     });

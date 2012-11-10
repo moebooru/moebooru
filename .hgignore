@@ -14,3 +14,4 @@
 ^public/robots.txt$
 (^|/)\.rbx/
 ^public/assets/
+^vendor/bundle/

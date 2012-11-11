@@ -114,11 +114,11 @@
         }
       }
       if (vote === FAVORITE) {
-        add.css('display', 'none');
-        rm.css('display', 'list-item');
+        add.hide();
+        rm.show();
       } else {
-        add.css('display', 'list-item');
-        rm.css('display', 'none');
+        add.show();
+        rm.hide();
       }
       this.post_score.text(score);
     },

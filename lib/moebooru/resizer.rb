@@ -12,7 +12,10 @@ module Moebooru
       output_size[:crop_right] ||= image[:width]
       output_size[:crop_width] ||= output_size[:crop_right] - output_size[:crop_left]
       output_size[:crop_height] ||= output_size[:crop_bottom] - output_size[:crop_top]
-      write_size = "#{output_size[:width]}x#{output_size[:height]}"
+      # The '!' is required to force the size, otherwise ImageMagick will try
+      # to outsmart the previously calculated size which isn't exactly smart.
+      # Example: 1253x1770 -> 212x300. In ImageMagick it becomes 212x299.
+      write_size = "#{output_size[:width]}x#{output_size[:height]}!"
       write_crop = "#{output_size[:crop_width]}x#{output_size[:crop_height]}+#{output_size[:crop_left]}+#{output_size[:crop_top]}"
       write_format = write_path.split('.')[-1]
       if write_format =~ /\A(jpe?g|gif|png)\z/i

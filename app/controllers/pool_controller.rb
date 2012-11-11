@@ -43,10 +43,10 @@ class PoolController < ApplicationController
     end
 
     if not search_tokens.empty? then
-      value_index_query = QueryParser.escape_for_tsquery(search_tokens)
+      value_index_query = '(' + Array(search_tokens).map { |t| t.to_escaped_for_tsquery }.join(' & ') + ')'
       if value_index_query.any? then
         conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
-        cond_params << value_index_query.join(" & ")
+        cond_params << value_index_query
 
         # If a search keyword contains spaces, then it was quoted in the search query
         # and we should only match adjacent words.  tsquery won't do this for us; we need

@@ -120,7 +120,7 @@ class HistoryController < ApplicationController
       if cls.nil? then
         conds << "false"
       else
-        hc_conds << "hc.field = ?"
+        hc_conds << "hc.column_name = ?"
         hc_cond_params << field
 
         # A changes that has no previous value is the initial value for that object.  Don't show

@@ -90,11 +90,11 @@
         return false;
       });
 
-      $('#add-to-favs').on('click', function () {
+      $('#add-to-favs > a').on('click', function () {
         return th.set(FAVORITE);
       });
 
-      $('#remove-from-favs').on('click', function () {
+      $('#remove-from-favs > a').on('click', function () {
         return th.set(GREAT);
       })
     },

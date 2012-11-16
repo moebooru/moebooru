@@ -202,6 +202,7 @@ en:
     edit:
       post: Post
       post_title: Title
+      preview: Preview
     index:
       created_by: Created by
       help: Help

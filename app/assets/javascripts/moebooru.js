@@ -30,8 +30,8 @@
           el.css('cursor', 'auto');
           return false;
         });
+        return false;
       }
-      return false;
     });
 
 

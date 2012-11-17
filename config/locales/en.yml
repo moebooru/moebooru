@@ -642,6 +642,23 @@ en:
         toggle_view: Toggle View
         transfer: Transfer Post Data
       title: 'Pool: %{name}'
+    transfer_metadata:
+      from:
+        from: From
+        from_number: 'Transfer from pool number:'
+        to: To
+        transfer: Transfer
+      info_truncated: "These pools don't have the same number of posts."
+      info_truncated_warning: 'Please check that tags are being transferred to the correct posts.'
+      info_what: 'Tags and ratings will be transferred, and the old posts will be parented to the new posts.'
+      reverse: Reverse
+      reverse_text_html: '%{reverse} the transfer'
+      table:
+        from: From
+        tags: Tags
+        to: To
+        transfer: Transfer
+      title_html: 'Transferring post data from posts in pool %{from} to posts in pool %{to}'
   # view/pool/add_post
   pool_active: "Active"
   pool_active_text: "Inactive pools will no longer be selectable when adding a post."

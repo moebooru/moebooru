@@ -575,6 +575,10 @@ en:
   old_browser2: "Please consider upgrading to a more recent web browser:"
   old_browser3: "(hide this message)"
   pool:
+    footer:
+      help: Help
+      list: List
+      new: New
     index:
       title: '%{q} - Pools'
       title_main: Pools

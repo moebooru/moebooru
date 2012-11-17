@@ -1,7 +1,7 @@
 <% content_for :subnavbar do %>
-  <li><%= link_to t(:pool_list), :action => "index" %></li>
-  <li><%= link_to t(:pool_new), :action => "create" %></li>
+  <li><%= link_to t('.list'), :action => "index" %></li>
+  <li><%= link_to t('.new'), :action => "create" %></li>
   <%= yield :footer %>
-  <li><%= link_to t(:pool_help), :controller => "help", :action => "pools" %></li>
+  <li><%= link_to t('.help'), :controller => "help", :action => "pools" %></li>
   <%= yield :footer_final %>
 <% end %>

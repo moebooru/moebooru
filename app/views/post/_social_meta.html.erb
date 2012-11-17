@@ -3,7 +3,7 @@
 <%= tag :meta, :property => 'og:title', :content => html_title %>
 <%= tag :meta, :property => 'og:type', :content => 'article' %>
 <%= tag :meta, :property => 'og:url', :content => url_for(:controller => :post, :action => :show, :id => @post.id, :only_path => false) %>
-<%= tag :meta, :property => 'og:image', :content => @post.sample_url.gsub(/\Ahttps:/, 'http:') %>
+<%= tag :meta, :property => 'og:image', :content => @post.sample_url %>
 <%= tag :meta, :property => 'og:site_name', :content => CONFIG['app_name'] %>
 <%= tag :meta, :property => 'og:description', :content => @post.tags %>
 <%-# Reddit Thumbnail -%>

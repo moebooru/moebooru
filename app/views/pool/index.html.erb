@@ -6,7 +6,7 @@
       <%= hidden_field_tag "order", params[:order] %>
       <% end %>
       <%= text_field_tag "query", params[:query], :size => 40 %>
-      <%= submit_tag t(:pool_search) %>
+      <%= submit_tag t('.search') %>
     <% end %>
   </div>
 
@@ -15,11 +15,11 @@
   <table width="100%" class="highlightable">
     <thead>
       <tr>
-        <th width="60%"><%=t :pool_name %></th>
-        <th width="*"><%=t :pool_creator %></th>
-        <th width="*"><%=t :pool_posts %></th>
-        <th width="*"><%=t :pool_created %></th>
-        <th width="*"><%=t :pool_updated %></th>
+        <th width="60%"><%= t('.table.name') %></th>
+        <th width="*"><%= t('.table.creator') %></th>
+        <th width="*"><%= t('.table.posts') %></th>
+        <th width="*"><%= t('.table.created') %></th>
+        <th width="*"><%= t('.table.updated') %></th>
       </tr>
     </thead>
     <tbody>

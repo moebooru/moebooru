@@ -606,6 +606,13 @@ en:
       search: Search
       title: 'Pool Import: %{name}'
     index:
+      search: Search
+      table:
+        created: Created
+        creator: Creator
+        name: Name
+        posts: Posts
+        updated: Updated
       title: '%{q} - Pools'
       title_main: Pools
     select_form:

@@ -1,10 +1,10 @@
-<h3><%=t :pool_order %><%= link_to @pool.pretty_name, :action => :show, :id => @pool.id  %></h3>
-<p><%=t :pool_order_text %></p>
+<h3><%= t('.title_html', :name => link_to(@pool.pretty_name, :action => :show, :id => @pool.id)) %></h3>
+<p><%= t('.info') %></p>
 
 <script type="text/javascript">
   function orderAutoFill() {
     var i = 0
-    var step = parseInt(prompt('<%=t :pool_interval %>'))
+    var step = parseInt(prompt('<%= t('.interval') %>'))
 
     $$(".pp").each(function(x) {
       x.value = i
@@ -42,7 +42,7 @@
     <thead>
       <tr>
         <th></th>
-        <th><%=t :pool_order2 %></th>
+        <th><%= t('.order') %></th>
       </tr>
     </thead>
     <tbody>
@@ -55,15 +55,15 @@
           </td>
           <td>
             <%= text_field_tag "pool_post_sequence[#{pp.id}]", pp.sequence, :class => "pp", :size => 5, :tabindex => 1 %>
-            <%= link_to_function t(:pool_order_plus_one), "orderShift(#{pp.id}, +1)", :class=>"text-button" %>
-            <%= link_to_function t(:pool_order_minus_one), "orderShift(#{pp.id}, -1)", :class=>"text-button" %>
+            <%= link_to_function t('.plus_one'), "orderShift(#{pp.id}, +1)", :class=>"text-button" %>
+            <%= link_to_function t('.minus_one'), "orderShift(#{pp.id}, -1)", :class=>"text-button" %>
           </td>
         </tr>
       <% end %>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="2"><%= submit_tag t(:pool_save), :tabindex => 2 %> <%= button_to_function t(:pool_order_auto), "orderAutoFill()", :tabindex => 2 %> <%= button_to_function t(:pool_reverse), "orderReverse()", :tabindex => 2 %> <%= button_to_function t(:pool_cancel), "history.back()", :tabindex => 2 %></td>
+        <td colspan="2"><%= submit_tag t('buttons.save'), :tabindex => 2 %> <%= button_to_function t('.auto_order'), "orderAutoFill()", :tabindex => 2 %> <%= button_to_function t('.reverse'), "orderReverse()", :tabindex => 2 %> <%= button_to_function t('buttons.cancel'), "history.back()", :tabindex => 2 %></td>
       </tr>
     </tfoot>
   </table>

@@ -615,6 +615,15 @@ en:
         updated: Updated
       title: '%{q} - Pools'
       title_main: Pools
+    order:
+      auto_order: Auto Order
+      info: Lower numbers will appear first.
+      interval: Enter an interval
+      minus_one: '-1'
+      order: Order
+      plus_one: '+1'
+      reverse: Reverse
+      title_html: 'Pool Ordering: %{name}'
     select_form:
       add: Add
   # view/pool/add_post

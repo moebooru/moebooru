@@ -582,6 +582,10 @@ en:
       order: Order
       pool: Pool
       title: Add to Pool
+    copy:
+      copy: Copy Pool
+      name: Name
+      title: Clone Pool
     footer:
       help: Help
       list: List

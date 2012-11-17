@@ -1,9 +1,10 @@
-<h4><%=t :pool_clone %></h4>
+<% provide :title, t('.title') %>
+<h4><%= t('.title') %></h4>
 
 <%= form_tag(:action => "copy") do %>
   <%= hidden_field_tag "id", params[:id] %>
-  <label><%=t :pool_name %></label> <%= text_field_tag "name", @new_pool.pretty_name %>
-  <%= submit_tag t(:pool_copy) %> <%= button_to_function t(:pool_cancel), "history.back()" %></td>
+  <label><%= t('.name') %></label> <%= text_field_tag "name", @new_pool.pretty_name %>
+  <%= submit_tag t('.copy') %> <%= button_to_function t(:pool_cancel), "history.back()" %></td>
 <% end %>
 
 <%= render :partial => "footer" %>

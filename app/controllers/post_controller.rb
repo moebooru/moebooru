@@ -405,32 +405,33 @@ class PostController < ApplicationController
   end
 
   def show
+    response.headers["Cache-Control"] = "max-age=300" if params[:cache]
+    @cache = params[:cache] # temporary
+    @body_only = params[:body].to_i == 1
+    @post = Post.includes(:comments => [:user])
     begin
-      response.headers["Cache-Control"] = "max-age=300" if params[:cache]
-      @cache = params[:cache] # temporary
-      @body_only = params[:body].to_i == 1
-      @post = Post.includes(:comments => [:user])
       if params[:md5]
         @post = @post.find_by_md5(params[:md5].downcase) || raise(ActiveRecord::RecordNotFound)
       else
         @post = @post.find(params[:id])
       end
-
-      @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")
-      if params.has_key?(:pool_id) then
-        @following_pool_post = PoolPost.find(:first, :conditions => ["active AND pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil
-      else
-        @following_pool_post = PoolPost.find(:first, :conditions => ["active AND post_id = ?", @post.id]) rescue nil
-      end
-      @tags = {:include => @post.cached_tags.split(/ /)}
-      @include_tag_reverse_aliases = true
-      respond_to do |format|
-        format.html
-      end
     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid
       respond_to do |format|
         format.html { render :action => "show_empty", :status => 404 }
       end
+      return
+    end
+
+    @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")
+    if params.has_key?(:pool_id) then
+      @following_pool_post = PoolPost.find(:first, :conditions => ["active AND pool_id = ? AND post_id = ?", params[:pool_id], @post.id]) rescue nil
+    else
+      @following_pool_post = PoolPost.find(:first, :conditions => ["active AND post_id = ?", @post.id]) rescue nil
+    end
+    @tags = {:include => @post.cached_tags.split(/ /)}
+    @include_tag_reverse_aliases = true
+    respond_to do |format|
+      format.html
     end
   end
 

@@ -39,6 +39,7 @@ module Danbooru
         url.query = Addressable::URI.encode(url.query)
       end
 
+      # Addressable doesn't fill in port data if not explicitly given.
       unless url.port
         url.port = url.scheme == 'https' ? 443 : 80
       end

@@ -586,6 +586,13 @@ en:
       copy: Copy Pool
       name: Name
       title: Clone Pool
+    create:
+      cancel: Cancel
+      description: Description
+      is_public: Public?
+      name: Name
+      save: Save
+      title: Create Pool
     footer:
       help: Help
       list: List

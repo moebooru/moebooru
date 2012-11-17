@@ -34,8 +34,12 @@ module Danbooru
         url.query = Addressable::URI.encode(url.query)
       end
 
-      unless url.scheme == 'http'
-        raise SocketError, "URL must be HTTP"
+      unless url.scheme == 'http' or url.scheme == 'https'
+        raise SocketError, "URL must be HTTP or HTTPS"
+      end
+
+      unless url.port
+        url.port = url.scheme == 'https' ? 443 : 80
       end
 
       http = Net::HTTP.new url.host, url.port

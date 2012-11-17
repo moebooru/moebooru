@@ -1,10 +1,11 @@
-<h4><%=t :pool_import %><%= h(@pool.pretty_name) %></h4>
+<% provide :title, t('.title', :name => @pool.pretty_name) %>
+<h4><%= t('.title', :name => @pool.pretty_name) %></h4>
 
-<p><%=t :pool_import_text %></p>
+<p><%= t('.info') %></p>
 
 <div style="margin-bottom: 1em;">
   <%= form_remote_tag(:url => {:action => "import", :format => "js"}, :method => :get) do %>
-    <%= text_field_tag "query", params[:query], :size => 50 %> <%= submit_tag t(:pool_search) %>
+    <%= text_field_tag "query", params[:query], :size => 50 %> <%= submit_tag t('.search') %>
   <% end %>
 </div>
 
@@ -17,7 +18,7 @@
     </div>
 
     <div style="clear: both;">
-      <%= submit_tag t(:pool_import2) %> <%= button_to_function t(:pool_cancel), "history.back()" %>
+      <%= submit_tag t('.import') %> <%= button_to_function t('buttons.cancel'), "history.back()" %>
     </div>
   <% end %>
   </ul>

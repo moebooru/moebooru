@@ -600,6 +600,11 @@ en:
       help: Help
       list: List
       new: New
+    import:
+      import: Import
+      info: You can perform a tag search and import all the matching posts into this pool.
+      search: Search
+      title: 'Pool Import: %{name}'
     index:
       title: '%{q} - Pools'
       title_main: Pools

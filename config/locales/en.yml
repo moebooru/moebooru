@@ -659,6 +659,17 @@ en:
         to: To
         transfer: Transfer
       title_html: 'Transferring post data from posts in pool %{from} to posts in pool %{to}'
+    update:
+      form:
+        description: Description
+        is_active:
+          _: Active
+         info: 'Inactive pools will no longer be selectable when adding a post.'
+        is_public:
+          _: 'Public?'
+          info: 'Public pools allow anyone to add/remove posts.'
+        name: Name
+      title: Edit Pool
   # view/pool/add_post
   pool_active: "Active"
   pool_active_text: "Inactive pools will no longer be selectable when adding a post."

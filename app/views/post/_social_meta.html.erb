@@ -3,8 +3,16 @@
 <%= tag :meta, :property => 'og:title', :content => html_title %>
 <%= tag :meta, :property => 'og:type', :content => 'article' %>
 <%= tag :meta, :property => 'og:url', :content => url_for(:controller => :post, :action => :show, :id => @post.id, :only_path => false) %>
-<%= tag :meta, :property => 'og:image', :content => @post.sample_url %>
+<%= tag :meta, :property => 'og:image', :content => @post.sample_url.gsub(/\Ahttps:/, 'http:') %>
 <%= tag :meta, :property => 'og:site_name', :content => CONFIG['app_name'] %>
 <%= tag :meta, :property => 'og:description', :content => @post.tags %>
 <%-# Reddit Thumbnail -%>
 <%= tag :link, :rel => 'image_src', :href => @post.sample_url %>
+<%# Twitter Card
+  # Other attributes are fulfilled by Open Graph.
+  # Reference: https://dev.twitter.com/docs/cards
+%>
+<% if CONFIG['twitter_id'] %>
+  <%= tag :meta, :name => 'twitter:card', :content => 'photo' %>
+  <%= tag :meta, :name => 'twitter:site', :content => "@#{CONFIG['twitter_id']}" %>
+<% end %>

@@ -28,14 +28,15 @@ module Danbooru
     while true
       url = Addressable::URI.parse(source)
       url.host = url.normalized_host
+
+      unless url.scheme == 'http' or url.scheme == 'https'
+        raise SocketError, "URL must be HTTP or HTTPS"
+      end
+
       # check if the request uri is not percent-encoded
       if url.request_uri.match /[^!*'();:@&=+$,\/?#\[\]ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\-_.~%]/
         url.path = Addressable::URI.encode(url.path)
         url.query = Addressable::URI.encode(url.query)
-      end
-
-      unless url.scheme == 'http' or url.scheme == 'https'
-        raise SocketError, "URL must be HTTP or HTTPS"
       end
 
       unless url.port

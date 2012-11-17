@@ -1,8 +1,9 @@
-<h3><%=t :pool_add %></h3>
+<% provide :title, t('.title') %>
+<h3><%= t('.title') %></h3>
 
 <%= link_to(image_tag(@post.preview_url), :controller => "post", :action => "show", :id => @post.id) %>
 
-<p><%=t :pool_add_text %></p>
+<p><%= t('.info') %></p>
 
 <%= form_tag(:action => "add_post") do %>
   <%= hidden_field_tag("post_id", @post.id) %>
@@ -10,20 +11,20 @@
   <table>
     <tbody>
       <tr>
-        <th width="15%"><label for="pool_name"><%=t :pool_pool %></label></th>
+        <th width="15%"><label for="pool_name"><%= t('.pool') %></label></th>
         <td width="85%">
           <select name="pool_id">
             <%= options_from_collection_for_select @pools, :id, :pretty_name %>
           </select>
       </tr>
       <tr>
-        <th><label for="pool_sequence"><%=t :pool_order %></label></th>
+        <th><label for="pool_sequence"><%= t('.order') %></label></th>
         <td><%= text_field "pool", "sequence", :size => 5, :value => "" %></td>
       </tr>
     </tbody>
   </table>
 
-  <%= submit_tag t(:pool_add) %> <%= button_to_function t(:pool_cancel), "history.back()" %>
+  <%= submit_tag t('.add') %> <%= button_to_function t('.cancel'), "history.back()" %>
 <% end %>
 
 <%= render :partial => "footer" %>

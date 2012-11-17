@@ -575,6 +575,13 @@ en:
   old_browser2: "Please consider upgrading to a more recent web browser:"
   old_browser3: "(hide this message)"
   pool:
+    add_post:
+      add: Add
+      cancel: Cancel
+      info: 'Select a pool to add this post to:'
+      order: Order
+      pool: Pool
+      title: Add to Pool
     footer:
       help: Help
       list: List

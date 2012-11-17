@@ -664,7 +664,7 @@ en:
         description: Description
         is_active:
           _: Active
-         info: 'Inactive pools will no longer be selectable when adding a post.'
+          info: 'Inactive pools will no longer be selectable when adding a post.'
         is_public:
           _: 'Public?'
           info: 'Public pools allow anyone to add/remove posts.'

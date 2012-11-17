@@ -582,6 +582,8 @@ en:
     index:
       title: '%{q} - Pools'
       title_main: Pools
+    select_form:
+      add: Add
   # view/pool/add_post
   pool_active: "Active"
   pool_active_text: "Inactive pools will no longer be selectable when adding a post."

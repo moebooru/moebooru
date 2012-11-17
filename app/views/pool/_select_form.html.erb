@@ -1,5 +1,5 @@
 <%= form_tag(:action => "add_post") do %>
   <%= hidden_field_tag "post_id", params[:post_id] %>
   <%= select_tag "pool_id", options_for_select(@pools.map {|x| [x.name.tr("_", " "), x.id]}, session[:last_pool_id]) %>
-  <%= button_to_function t(:pool_add2), "Pool.add_post(#{@post_id}, $F('pool_id'))", :level => :member %>
+  <%= button_to_function t('.add'), "Pool.add_post(#{@post_id}, $F('pool_id'))", :level => :member %>
 <% end %>

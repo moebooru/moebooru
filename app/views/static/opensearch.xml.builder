@@ -4,5 +4,6 @@ xml.OpenSearchDescription :xmlns => 'http://a9.com/-/spec/opensearch/1.1/' do
   xml.Description "Search images in #{CONFIG['app_name']} image board."
   xml.Contact CONFIG['admin_contact']
   xml.AdultContent '1'
+  # Hardcoded because using :tags => '{searchTerms}' will escape the braces
   xml.Url :type => Mime::HTML, :template => "#{url_for(:controller => :post, :action => :index, :only_path => false)}?tags={searchTerms}"
 end

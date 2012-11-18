@@ -7,7 +7,7 @@ module DText
     result = ""
 
     # Normalize newlines.
-    str.strip
+    str.strip!
     str.gsub!(/(\r\n?)/, "\n")
     str.gsub!(/\n{3,}/, "\n\n")
     str = CGI.escapeHTML str

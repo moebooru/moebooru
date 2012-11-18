@@ -31,5 +31,5 @@ def r(f)
 end
 
 def h(f)
-  Nokogiri::HTML::DocumentFragment.parse(r(f)).to_html.gsub(/>\s*</, "><").gsub(/\n*/, "")
+  Nokogiri::HTML::DocumentFragment.parse(r(f)).to_html.gsub(/>\s*</, "><").gsub(/\n+\s*/, "")
 end

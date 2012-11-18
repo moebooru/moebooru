@@ -12,6 +12,8 @@ module DText
     str.gsub!(/\n{3,}/, "\n\n")
     str = CGI.escapeHTML str
 
+    # Nuke spaces between newlines.
+    str.gsub!(/\p{blank}*\n\p{blank}*/, "\n")
     # Keep newline, use carriage return for split.
     str.gsub!("\n", "\n\r")
     data = str.split("\r")

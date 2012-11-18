@@ -5,7 +5,7 @@
     var nodes = container.find('*');
     this.desc = nodes.filter('.vote-desc');
     this.stars = nodes.filter('.star-off');
-    this.post_score = nodes.filter('#post-score-'+id);
+    this.post_score = (nodes.filter('#post-score-'+id) || nodes.filter('.post-score'));
     this.vote_up = nodes.filter('.vote-up');
     this.post_id = id;
     this.label = [t('vote.remove'), t('vote.good'), t('vote.great'), t('vote.fav')];

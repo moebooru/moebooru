@@ -103,7 +103,7 @@ module DText
       html << "</ul>"
       return html + parseline(str, state)
     end
-    html << str.gsub(/\*+\s+(.+)\n*/, '<li>\1</li>')
+    html << str.gsub(/\*+\s+(.+)\n*/, '<li>\1')
   end
 
   def parseurl(str)

@@ -148,8 +148,9 @@ class Post < ActiveRecord::Base
     # Don't bump posts if the status wasn't "pending"; it might be "flagged".
     if old_status == "pending" and CONFIG["hide_pending_posts"] then
       touch_index_timestamp
-      self.save!
     end
+    # Always try to save to trigger history logging.
+    self.save!
   end
 
   def voted_by

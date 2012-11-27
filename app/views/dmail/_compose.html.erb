@@ -16,7 +16,7 @@
       <tr>
         <th><label for="dmail_to_name"><%= t('.form.to') %></label></th>
         <td>
-          <%= text_field "dmail", "to_name", :class => 'ac-user-name' %>
+          <%= text_field "dmail", "to_name", :value => params[:to], :class => 'ac-user-name' %>
         </td>
       </tr>
       <tr>

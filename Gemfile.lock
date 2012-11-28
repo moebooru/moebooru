@@ -110,6 +110,7 @@ GEM
       bundler (~> 1.0)
       railties (= 3.2.9)
     rails-i18n (0.7.1)
+      i18n (~> 0.5)
     railties (3.2.9)
       actionpack (= 3.2.9)
       activesupport (= 3.2.9)
@@ -137,7 +138,7 @@ GEM
     simple_oauth (0.1.9)
     sitemap_generator (3.4)
       builder
-    sprockets (2.2.1)
+    sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)

@@ -100,6 +100,8 @@ class PoolController < ApplicationController
   end
 
   def show
+    expires_in 60.seconds, :public => true
+
     if params[:samples] == "0" then params.delete(:samples) end
 
     begin

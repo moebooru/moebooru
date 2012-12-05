@@ -55,6 +55,8 @@ class UserController < ApplicationController
   end
 
   def show
+    expires_in 3.hours, :public => true
+
     if params[:name]
       @user = User.find_by_name(params[:name])
     else

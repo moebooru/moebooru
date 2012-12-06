@@ -159,4 +159,10 @@
   </script>
 <% end %>
 
+<script type="text/javascript">
+  new TagCompletionBox($("post_tags"));
+  if(TagCompletion)
+    TagCompletion.observe_tag_changes_on_submit($("edit-form"), $("post_tags"), null);
+</script>
+
 <%= render :partial => "footer" %>

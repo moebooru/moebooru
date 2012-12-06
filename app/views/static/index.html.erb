@@ -10,7 +10,7 @@
   <div style="margin-bottom: 2em;">
     <%= form_tag({:controller => 'post', :action => 'index'}, :method => "get") do %>
       <div>
-        <%= text_field_tag "tags", "", :size => 30 %><br>
+        <%= text_field_tag "tags", "", :size => 30, :autofocus => true %><br>
         <%= submit_tag t('.search'), :name => nil %>
       </div>
     <% end %>

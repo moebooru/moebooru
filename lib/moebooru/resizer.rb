@@ -24,6 +24,8 @@ module Moebooru
         format = file_ext
       end
       image.format write_format do |f|
+        f.background 'black'
+        f.flatten
         f.crop write_crop
         f.resize write_size
         if write_format =~ /\Ajpe?g\z/

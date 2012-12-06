@@ -6,7 +6,7 @@ class UserController < ApplicationController
   before_filter :janitor_only, :only => [:invites]
   before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
   before_filter :post_member_only, :only => [:set_avatar]
-  before_filter :no_anonymous, :only => [:change_password, :change_email]
+  before_filter :no_anonymous, :only => [:change_password, :change_email, :show]
   helper :post, :tag_subscription
   helper :avatar
 

@@ -45,9 +45,7 @@
       img.attr('height', h);
       img.attr('src', this.href);
       img.show();
-      try {
-        window.Note.all.invoke('adjustScale');
-      } catch (e) { }
+      window.Note.all.invoke('adjustScale');
       return false;
     });
 

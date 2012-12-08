@@ -37,9 +37,6 @@
         w = img.attr('large_width'),
         h = img.attr('large_height');
       if (inLargerVersion) { return false; }
-      if (window.Note) {
-        window.Note.all.invoke('adjustScale');
-      }
       inLargerVersion = true;
       $('#resized_notice').hide();
       img.hide();
@@ -48,6 +45,9 @@
       img.attr('height', h);
       img.attr('src', this.href);
       img.show();
+      try {
+        window.Note.all.invoke('adjustScale');
+      } catch (e) { }
       return false;
     });
 

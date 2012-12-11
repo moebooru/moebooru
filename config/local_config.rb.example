@@ -21,3 +21,9 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 # Set to false to prevent loading of unicorn/puma (eg. to use passenger).
 # Default: true
 # CONFIG['standalone'] = true
+
+# Background color when resizing transparent PNG/GIF images.
+# Use web notation or check the list of possible colors here:
+#   http://www.imagemagick.org/script/color.php
+# Default: gray
+# CONFIG['bgcolor'] = 'gray'

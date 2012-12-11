@@ -14,3 +14,5 @@ CONFIG['secure'] ||= false
 CONFIG['standalone'] ||= true
 CONFIG['bundler_groups'] ||= Rails.groups(:assets => %w(development test))
 CONFIG['bundler_groups'] << 'standalone' if CONFIG['standalone']
+
+CONFIG['bgcolor'] ||= 'gray'

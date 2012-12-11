@@ -21,7 +21,7 @@ module Moebooru
       if write_format =~ /\A(jpe?g|gif|png)\z/i
         write_format = write_format.downcase
       else
-        format = file_ext
+        write_format = file_ext
       end
       image.format write_format do |f|
         f.background CONFIG['bgcolor']

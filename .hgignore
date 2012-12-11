@@ -7,7 +7,7 @@
 ^public/system/photos/
 ^[^/]+\.war
 ^bin/
-^public/data(/|$)
+^public/(data|cache)(/|$)
 ^public/javascripts/cached/all\.js
 (extconf\.h|Makefile|mkmf\.log)$
 ^public/sitemap(\d+|_index)\.xml\.gz$

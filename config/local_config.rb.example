@@ -17,3 +17,7 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 
 # Default language. Defaults to en.
 # CONFIG['default_locale'] = 'en'
+
+# Set to false to prevent loading of unicorn/puma (eg. to use passenger).
+# Default: true
+# CONFIG['standalone'] = true

@@ -10,3 +10,7 @@ CONFIG['url_base'] ||= 'http://' + CONFIG['server_host']
 
 # Set secure to false by default due to ssl requirement
 CONFIG['secure'] ||= false
+
+CONFIG['standalone'] ||= true
+CONFIG['bundler_groups'] ||= Rails.groups(:assets => %w(development test))
+CONFIG['bundler_groups'] << 'standalone' if CONFIG['standalone']

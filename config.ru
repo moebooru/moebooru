@@ -5,6 +5,11 @@ if defined? Unicorn
 end
 
 require ::File.expand_path('../config/environment',  __FILE__)
-map (ENV['RAILS_RELATIVE_URL_ROOT'] || '/') do
+# Passenger hates map. And only it, AFAICT.
+if defined? PhusionPassenger
   run Moebooru::Application
+else
+  map (ENV['RAILS_RELATIVE_URL_ROOT'] || '/') do
+    run Moebooru::Application
+  end
 end

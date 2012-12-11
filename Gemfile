@@ -25,8 +25,6 @@ gem 'sitemap_generator'
 gem 'daemons', :require => false
 gem 'newrelic_rpm'
 gem 'nokogiri'
-gem 'unicorn', :platforms => :mri
-gem 'puma', :platforms => [:jruby, :rbx]
 gem 'rails-i18n'
 gem 'addressable', :require => 'addressable/uri'
 gem 'mini_magick'
@@ -35,4 +33,9 @@ gem 'image_size'
 group :development do
   gem 'rspec'
   gem 'ruby-prof', :platforms => :mri, :git => 'git://github.com/wycats/ruby-prof.git'
+end
+
+group :standalone do
+  gem 'unicorn', :platforms => :mri
+  gem 'puma', :platforms => [:jruby, :rbx]
 end

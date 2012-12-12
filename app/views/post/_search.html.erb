@@ -1,9 +1,9 @@
 <div style="margin-bottom: 1em;">
-  <h5><%=t :post_search %></h5>
+  <h5><%= t('.title') %></h5>
   <%= form_tag({:controller => "post", :action => "index"}, :method => "get") do %>
     <div>
       <%= text_field_tag("tags", params[:tags], :size => 20) %>
-      <%= submit_tag t(:post_search), :style => "display: none;" %>
+      <%= submit_tag t('.search'), :style => "display: none;" %>
     </div>
   <% end %>
 </div>

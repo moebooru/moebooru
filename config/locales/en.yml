@@ -799,6 +799,9 @@ en:
       source: Source
     posts:
       empty: Nobody here but us chickens!
+    search:
+      search: Search
+      title: Search
     show_partials:
       edit:
         find_artists: Find artists

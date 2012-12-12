@@ -1,6 +1,6 @@
 <% include_tag_hover_highlight ||= false %>
 <div>
-  <h5><%=t :post_tags %></h5>
+  <h5><%= t('.tags') %></h5>
   <ul id="tag-sidebar">
     <%= tag_links(@tags[:exclude], :prefix => "-", :with_hover_highlight => true, :with_hover_highlight => include_tag_hover_highlight) %>
     <%= tag_links(@tags[:include], :with_aliases => @include_tag_reverse_aliases, :with_hover_highlight => include_tag_hover_highlight) %>

@@ -828,6 +828,8 @@ en:
     tag_script:
       confirm: 'Apply tag script to all of these posts?'
       title: Tag Script
+    tags:
+      title: Tags
     upload:
       anonymous: Anonymous Upload
       title: Upload

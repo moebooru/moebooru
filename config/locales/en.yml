@@ -825,6 +825,9 @@ en:
         tags_info_html: Separate tags with spaces (%{more})
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
+    tag_script:
+      confirm: 'Apply tag script to all of these posts?'
+      title: Tag Script
     upload:
       anonymous: Anonymous Upload
       title: Upload

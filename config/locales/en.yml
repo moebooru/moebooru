@@ -812,6 +812,8 @@ en:
       tags: Tags
       title: Deleted Posts
       user: User
+    favorites:
+      title: Favorited by
     footer:
       batch: Batch
       browse: Browse

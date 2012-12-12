@@ -1,4 +1,4 @@
-<h3><%=t :post_favorited_by %></h3>
+<h3><%= t('.title') %></h3>
 <ul>
 <%- @users.each do |u| %>
   <li><%= link_to h(u.pretty_name), :controller => "post", :action => "index", :tags => "vote:3:#{u.name} order:vote" %></li>

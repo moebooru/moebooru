@@ -758,6 +758,11 @@ en:
       add: Add
       hidden_posts: Hidden Posts
       info: Posts containing all tags will be hidden. Seperate tags with spaces.
+    browse:
+      by:
+        all_html: %{text} %{ago} %{by}
+        by_html: by %{user}
+        text: Posted
     footer:
       batch: Batch
       browse: Browse
@@ -1326,6 +1331,7 @@ en:
   time:
     # t: "16 days", "1 hour", etc (localized)
     x_ago: '%{t} ago'
+    x_ago_html: '%{t} ago'
   user:
     change_email:
       current_email: Current Email

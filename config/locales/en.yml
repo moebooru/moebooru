@@ -754,6 +754,10 @@ en:
   pool_updated: "Updated"
   pool_yes: "Yes"
   post:
+    blacklists:
+      add: Add
+      hidden_posts: Hidden Posts
+      info: Posts containing all tags will be hidden. Seperate tags with spaces.
     moderate:
       mod: mod
       title: Moderation Queue

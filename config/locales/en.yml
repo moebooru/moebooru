@@ -761,7 +761,7 @@ en:
     browse:
       by:
         # Posted / <x> ago / by <user>
-        all_html: %{text} %{ago} %{by}
+        all_html: '%{text} %{ago} %{by}'
         by_html: by %{user}
         text: Posted
       child:

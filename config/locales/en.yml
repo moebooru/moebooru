@@ -758,6 +758,18 @@ en:
       add: Add
       hidden_posts: Hidden Posts
       info: Posts containing all tags will be hidden. Seperate tags with spaces.
+    footer:
+      batch: Batch
+      browse: Browse
+      help: Help
+      history: History
+      image_search: Image Search
+      list: List
+      mod: Moderate
+      popular: Popular
+      random: Random
+      subs: Subscriptions
+      upload: Upload
     moderate:
       mod: mod
       title: Moderation Queue

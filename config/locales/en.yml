@@ -793,6 +793,10 @@ en:
       title: Exploring %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}
     popular_recent:
       title: Exploring %{period}
+    post_atom:
+      data: Image data
+      dimension: Dimension
+      source: Source
     show_partials:
       edit:
         find_artists: Find artists

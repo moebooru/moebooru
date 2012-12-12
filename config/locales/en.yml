@@ -760,9 +760,42 @@ en:
       info: Posts containing all tags will be hidden. Seperate tags with spaces.
     browse:
       by:
+        # Posted / <x> ago / by <user>
         all_html: %{text} %{ago} %{by}
         by_html: by %{user}
         text: Posted
+      child:
+        all_html: This post has %{child}.
+        child: child posts
+      deleted:
+        by: By
+        reason: Reason
+        title: This post was deleted.
+        undelete: undelete
+      download: Download
+      edit: edit
+      flagged_info_html: Flagged by %{user}.
+      frames: Frames
+      held:
+        activate: (activate it)
+        info: This post is held from the index by the poster.
+      hidden: Hidden
+      image_hidden:
+        info: This post is not displayed due to your account settings.
+        show: Double-click here to display the image
+        title: Image Hidden
+      no_result: No search results.
+      parent:
+        all_html: This post has a %{parent} (%{make_parent}).
+        make_parent: make this post the parent
+        parent: parent post
+      parent_post: Parent Post
+      pending_info: This post is pending moderator approval.
+      post_num_html: 'Post #%{num}'
+      reason: Reason
+      score: Score
+      shown_in_index: Shown in Index
+      source: Source
     footer:
       batch: Batch
       browse: Browse

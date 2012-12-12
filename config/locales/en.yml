@@ -796,6 +796,15 @@ en:
       score: Score
       shown_in_index: Shown in Index
       source: Source
+    delete:
+      delete: Delete
+      noaccess_info: (parent post hidden due to access restrictions)
+      noparent_info: This post has no parent. If this post has been replaced, reparent this post before deleting, and votes will be transferred.
+      parent_info: Votes will be transferred to the following parent post. If this is incorrect, reparent this post before deleting it.
+      permanent: Destroy Permanently
+      permanent_info: This post is already deleted. Destroying it will remove it permanently.
+      reason: Reason
+      title: Delete Post
     footer:
       batch: Batch
       browse: Browse

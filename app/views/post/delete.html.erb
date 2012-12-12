@@ -1,4 +1,4 @@
-<h4><%=t :post_delete %></h4>
+<h4><%= t('.title') %></h4>
 
 <% if CONFIG["can_see_post"].call(@current_user, @post) %>
   <%= image_tag @post.preview_url %>
@@ -6,12 +6,12 @@
 
 <%= form_tag(:action => "destroy") do %>
   <%= hidden_field_tag "id", params[:id] %>
-  <label><%=t :post_deleted_reason %></label> <%= text_field_tag "reason" %>
+  <label><%= t('.reason') %></label> <%= text_field_tag "reason" %>
   <% if @post.is_deleted? %>
   <%= hidden_field_tag "destroy", "1" %>
   <% end %>
 
-  <%= submit_tag @post.is_deleted? ? t(:post_delete_perma):t(:post_delete_delete) %> <%= submit_tag t(:post_delete_cancel) %>
+  <%= submit_tag @post.is_deleted? ? t('.permanent') : t('.delete') %> <%= submit_tag t('buttons.cancel') %>
 <% end %>
 
 <div class="deleting-post">
@@ -19,18 +19,18 @@
     <br>
     <p>
     <% if @post_parent %>
-      <%=t :post_delete_parent_text %><p>
+      <%= t('.parent_info') %><p>
     <% if CONFIG["can_see_post"].call(@current_user, @post_parent) %>
       <ul id="post-list-posts"> <%= print_preview(@post_parent, :hide_directlink=>true) %> </ul>
     <% else %>
-      <%=t :post_delete_access %>
+      <%= t('.noaccess_info') %>
     <% end %>
 
     <% else %>
-      <%=t :post_delete_no_parent_text %><p>
+      <%= t('.noparent_info') %><p>
     <% end %>
 <% else %>
-  <%=t :post_delete_perma_text %>
+  <%= t('.permanent_info') %>
 <% end %>
 </div>
 

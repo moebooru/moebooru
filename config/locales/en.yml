@@ -805,6 +805,13 @@ en:
       permanent_info: This post is already deleted. Destroying it will remove it permanently.
       reason: Reason
       title: Delete Post
+    deleted_index:
+      by: Deleted by
+      post: Post
+      reason: Reason
+      tags: Tags
+      title: Deleted Posts
+      user: User
     footer:
       batch: Batch
       browse: Browse

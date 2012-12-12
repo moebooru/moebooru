@@ -2,7 +2,7 @@
 <div id="post-list">
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">
-      <%=t :post_meant %><%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence({ :two_words_connector => ' or ', :last_word_connector => ', or ' }).html_safe %>
+      <%= t('.maybe_you_meant') %>: <%= @tag_suggestions.map {|x| tag_link(x)}.to_sentence({ :two_words_connector => ' or ', :last_word_connector => ', or ' }).html_safe %>
     </div>
   <% end %>
 
@@ -10,12 +10,12 @@
     <%= render :partial => "search" %>
     <% if @current_user.is_privileged_or_higher? %>
     <div style="margin-bottom: 1em;" id="mode-box" class="advanced-editing">
-      <h5><%=t :post_mode %></h5>
+      <h5><%= t('.mode') %></h5>
       <form onsubmit="return false;" action="">
         <div>
           <select name="mode" id="mode" onchange="PostModeMenu.change()" onkeyup="PostModeMenu.change()" style="width: 13em;">
-            <option value="view"><%=t :post_view %></option>
-            <option value="edit"><%=t :post_edit %></option>
+            <option value="view"><%= t('.mode_form.view') %></option>
+            <option value="edit"><%= t('.mode_form.edit') %></option>
 <!--            <option value="rating-s">Rate safe</option>
             <option value="rating-q">Rate questionable</option>
             <option value="rating-e">Rate explicit</option>
@@ -24,13 +24,13 @@
               <option value="lock-note">Lock notes</option>
             <% end %> -->
             <% if @current_user.is_mod_or_higher? %>
-              <option value="approve"><%=t :post_approve %></option>
+              <option value="approve"><%= t('.mode_form.approve') %></option>
             <% end %>
-            <option value="flag"><%=t :post_flag %></option>
-            <option value="apply-tag-script"><%=t :post_script %></option>
-            <option value="reparent-quick"><%=t :post_reparent %></option>
+            <option value="flag"><%= t('.mode_form.flag') %></option>
+            <option value="apply-tag-script"><%= t('.mode_form.script') %></option>
+            <option value="reparent-quick"><%= t('.mode_form.reparent') %></option>
             <% if @searching_pool then %>
-              <option value="remove-from-pool"><%=t :post_pool_remove %></option>
+              <option value="remove-from-pool"><%= t('.mode_form.pool_remove') %></option>
             <% end %>
           </select>
         </div>
@@ -41,17 +41,17 @@
     <% end %>
 
     <% if @searching_pool then %>
-      <%=t :post_viewing %><%= link_to(h(@searching_pool.pretty_name), :controller => "pool", :action => "show", :id => @searching_pool.id) %>.
+      <%= t('.pool_view_html', link_to(@searching_pool.pretty_name, :controller => "pool", :action => "show", :id => @searching_pool.id)) %>
     <% end %>
 
     <% if @showing_holds_only %>
       <% if !@posts.empty? %>
         <div style="margin-bottom: .5em;">
-          <%= link_to_function t(:post_activate), "Post.activate_all_posts()" %>
+          <%= link_to_function t('.activate'), "Post.activate_all_posts()" %>
         </div>
       <% end %>
     <% else %>
-      <div id="held-posts" style="display: none; margin-bottom: .5em;"><%=t :post_held_text %><span id="held-posts-count"></span> (<a href="#"><%=t :post_held_view %></a>).</div>
+      <div id="held-posts" style="display: none; margin-bottom: .5em;"><%= t('.held_html', :count => content_tag(:span, '', :id => 'held-posts-count')) %> (<a href="#"><%= t('.held_view') %></a>).</div>
     <% end %>
 
     <%= render :partial => 'blacklists' %>
@@ -69,7 +69,7 @@
   <div class="content">
     <% if @ambiguous_tags.any? %>
       <div class="status-notice">
-        <%=t :post_amb %><%= @ambiguous_tags.map {|x| link_to(x, :controller => :wiki, :action => :show, :title => x)}.join(', ').html_safe %>
+        <%= t('.ambiguous') %>: <%= @ambiguous_tags.map {|x| link_to(x, :controller => :wiki, :action => :show, :title => x)}.join(', ').html_safe %>
       </div>
     <% end %>
      <% if CONFIG["can_see_ads"].call(@current_user) %>
@@ -79,9 +79,9 @@
     <div id="quick-edit" style="display: none;" class="top-corner-float">
       <%= form_tag(:action => "update") do %>
         <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %>
-        <%= submit_tag t(:post_update) %>
-        <%= tag(:input, :type => 'button', :value => t(:post_cancel), :class => "cancel") %>
-      <h4 style="float: right;"><%=t :post_edit_tags %></h4>
+        <%= submit_tag t('buttons.update') %>
+        <%= tag(:input, :type => 'button', :value => t('buttons.cancel'), :class => "cancel") %>
+      <h4 style="float: right;"><%= t('.edit_tags') %></h4>
       <% end %>
     </div>
 

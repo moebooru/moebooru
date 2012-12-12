@@ -116,6 +116,7 @@ en:
     delete: Delete
     edit: Edit
     save: Save
+    update: Update
   c:
     pool:
       not_found: "Can't find pool with id %{id}"
@@ -837,6 +838,23 @@ en:
       post_number: 'Post #'
       rating: Rating
       score: Score
+    index:
+      activate: Activate all held posts
+      ambiguous: The following tags are ambiguous
+      edit_tags: Edit Tags
+      held_html: You have held %{count}
+      held_view: view
+      maybe_you_meant: Maybe you meant
+      mode: Mode
+      mode_form:
+        approve: Approve posts
+        edit: Edit posts
+        flag: Flag post
+        pool_remove: Remove from pool
+        reparent: Reparent posts
+        script: Apply tag script
+        view: View posts
+      pool_view_html: Viewing pool %{pool}.
     moderate:
       mod: mod
       title: Moderation Queue

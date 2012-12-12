@@ -770,6 +770,17 @@ en:
       random: Random
       subs: Subscriptions
       upload: Upload
+    hover:
+      child: Child
+      flagged:
+        by_html: '%{text} by %{data}'
+        text: Flagged
+      hidden: Hidden
+      parent: Parent
+      pending: Pending
+      post_number: 'Post #'
+      rating: Rating
+      score: Score
     moderate:
       mod: mod
       title: Moderation Queue

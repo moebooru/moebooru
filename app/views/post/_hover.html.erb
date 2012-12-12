@@ -9,7 +9,7 @@
       <span id="hover-file-size"></span>
     </div>
     <div style="padding-right: 1em">
-      <%=t :post_hover_post %><span id="hover-post-id"></span>
+      <%= t('.post_number') %><span id="hover-post-id"></span>
     </div>
   </div>
 
@@ -18,15 +18,15 @@
       <span id="hover-author"></span>
     </div>
     <div style="padding-right: 1em">
-      <%=t :post_hover_score %><span id="hover-score"></span>
-      <%=t :post_hover_rating %><span id="hover-rating"></span>
-      <span id="hover-is-parent"><%=t :post_hover_parent %></span>
-      <span id="hover-is-child"><%=t :post_hover_child %></span>
-      <span id="hover-is-pending"><%=t :post_hover_pending %></span>
-      <span id="hover-not-shown"><%=t :post_hover_hidden %></span>
+      <%= t('.score') %>: <span id="hover-score"></span>
+      <%= t('.rating') %>: <span id="hover-rating"></span>
+      <span id="hover-is-parent"><%= t('.parent') %></span>
+      <span id="hover-is-child"><%= t('.child') %></span>
+      <span id="hover-is-pending"><%= t('.pending') %></span>
+      <span id="hover-not-shown"><%= t('.hidden') %></span>
     </div>
     <div>
-      <span id="hover-is-flagged"><span class="flagged-text"><%=t :post_hover_flagged %></span><%=t :post_hover_by %><span id="hover-flagged-by"></span>: <span id="hover-flagged-reason"> <%=t :post_gar %></span></span>
+      <span id="hover-is-flagged"><%= t('.flagged.by_html', :data => content_tag(:span, '', :id => 'hover-flagged-by'), :text => content_tag(:span, t('.flagged.text'), :class => 'flagged-text')) %>: <span id="hover-flagged-reason">gar</span></span>
     </div>
   </div>
   <div>

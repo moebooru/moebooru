@@ -1,16 +1,16 @@
 <div>
-  <h5><%=t :post_options %></h5>
+  <h5><%= t('.title') %></h5>
   <ul>
-    <li><%= link_to_function t(:post_options_edit), "$('comments').hide(); $('edit').show().scrollTo(); $('post_tags').focus(); Cookie.put('show_defaults_to_edit', 1);" %></li>
+    <li><%= link_to_function t('buttons.edit'), "$('comments').hide(); $('edit').show().scrollTo(); $('post_tags').focus(); Cookie.put('show_defaults_to_edit', 1);" %></li>
     <!-- <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
-      <li><%= link_to_function t(:post_options_resize), "Post.resize_image()" %></li>
+      <li><%= link_to_function t('.resize'), "Post.resize_image()" %></li>
     <% end %> -->
     <% if @post.image? && @post.can_be_seen_by?(@current_user) %>
       <% file_jpeg = @post.get_file_jpeg %>
       <% if @post.use_sample?(@current_user) or @current_user.always_resize_images %>
       <li><%= if(@post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
               else
-                      link_to(t(:post_options_view_larger), file_jpeg[:url],
+                      link_to(t('.view_larger'), file_jpeg[:url],
                       :class => (@post.has_sample? ? "original-file-changed":"original-file-unchanged") + " highres-show",
                       :id => "highres-show")
               end %>
@@ -18,12 +18,12 @@
       <% end %>
       <li><%= if(@post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
                       file_sample = @post.get_file_sample(@current_user)
-                      link_to("#{@post.has_sample? ? t(:post_options_download_larger):t(:post_options_image)} (#{number_to_human_size(file_sample[:size].to_i)} #{file_sample[:ext].upcase})", file_sample[:url],
+                      link_to("#{@post.has_sample? ? t('.download.larger') : t('.download.normal')} (#{number_to_human_size(file_sample[:size].to_i)} #{file_sample[:ext].upcase})", file_sample[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
                       :id => "highres")
 
               else
-                      link_to("#{@post.has_sample? ? t(:post_options_download_larger):t(:post_options_image)} (#{number_to_human_size(file_jpeg[:size].to_i)} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
+                      link_to("#{@post.has_sample? ? t('.download.larger') : t('.download.image')} (#{number_to_human_size(file_jpeg[:size].to_i)} #{file_jpeg[:ext].upcase})", file_jpeg[:url],
                       :class => @post.has_sample? ? "original-file-changed":"original-file-unchanged",
                       :id => "highres")
               end %>
@@ -32,7 +32,7 @@
         <% file_image = @post.get_file_image %>
         <%# If we have a JPEG, the above link was the JPEG.  Link to the PNG here. %>
         <li><%=
-                        link_to("#{t(:post_options_download)} #{ file_image[:ext].upcase } (#{number_to_human_size(file_image[:size].to_i)})", file_image[:url],
+                        link_to("#{t('.download.normal')} #{ file_image[:ext].upcase } (#{number_to_human_size(file_image[:size].to_i)})", file_image[:url],
                         :class => "original-file-unchanged",
                         :id => "png")
                 %>
@@ -40,28 +40,28 @@
       <% end %>
     <% end %>
     <% if @post.can_user_delete?(@current_user) then %>
-    <li><%= link_to t(:post_options_delete), :action => "delete", :id => @post.id %></li>
+    <li><%= link_to t('.delete'), :action => "delete", :id => @post.id %></li>
     <% end %>
     <% if @post.is_deleted? && @current_user.is_janitor_or_higher?%>
-      <li><%= link_to t(:post_options_undelete), :action => "undelete", :id => @post.id %></li>
+      <li><%= link_to t('.undelete'), :action => "undelete", :id => @post.id %></li>
     <% end %>
     <% unless @post.is_flagged? || @post.is_deleted? %>
-      <li><%= link_to_function t(:post_options_flag), "Post.flag(#{@post.id}, function() { window.location.reload(); })", :level => :member %></li>
+      <li><%= link_to_function t('.flag'), "Post.flag(#{@post.id}, function() { window.location.reload(); })", :level => :member %></li>
     <% end %>
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
-      <li><%= link_to_function t(:post_options_tl), "Note.create(#{@post.id})", :level => :member %></li>
+      <li><%= link_to_function t('.add_notes'), "Note.create(#{@post.id})", :level => :member %></li>
     <% end %>
-    <li id="add-to-favs"><%= link_to t(:post_options_add_fav), "#" %></li>
-    <li id="remove-from-favs"><%= link_to t(:post_options_del_fav), "#" %></li>
+    <li id="add-to-favs"><%= link_to t('.favorites.add'), "#" %></li>
+    <li id="remove-from-favs"><%= link_to t('.favorites.remove'), "#" %></li>
     <% if @post.is_pending? && @current_user.is_janitor_or_higher? %>
-      <li><%= link_to_function t(:post_options_approve), "if (confirm('#{t(:post_options_approve_confirm)}')) {Post.approve(#{@post.id})}" %></li>
+      <li><%= link_to_function t('.approve._'), "if (confirm('#{t('.approve.confirm')}')) {Post.approve(#{@post.id})}" %></li>
     <% end %>
     <% unless @post.is_deleted? %>
-      <li id="add-to-pool" class="advanced-editing"><%= link_to t(:post_options_add_pool), {:controller => "pool", :action => "select", :post_id => @post.id}, :remote => true %></li>
+      <li id="add-to-pool" class="advanced-editing"><%= link_to t('.add_to_pool'), {:controller => "pool", :action => "select", :post_id => @post.id}, :remote => true %></li>
     <% end %>
     <% unless @post.is_deleted? %>
-      <li id="set-avatar"><%= link_to t(:post_options_avatar), :controller => "user", :action => "set_avatar", :id => @post.id %></li>
+      <li id="set-avatar"><%= link_to t('.set_avatar'), :controller => "user", :action => "set_avatar", :id => @post.id %></li>
     <% end %>
-    <li><%= link_to t(:post_options_history), :controller => "history", :action => "index", :search => "post:#{@post.id}" %></li>
+    <li><%= link_to t('.history'), :controller => "history", :action => "index", :search => "post:#{@post.id}" %></li>
   </ul>
 </div>

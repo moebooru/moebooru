@@ -850,6 +850,26 @@ en:
       image_footer:
         edit: Edit
         respond: Respond
+      options_panel:
+        add_notes: Add translation
+        add_to_pool: Add to pool
+        approve:
+          _: Approve
+          confirm: Do you really want to approve this post?
+        delete: Delete
+        download:
+          larger: Download larger version
+          normal: Download
+        favorites:
+          add: Add to favorites
+          remove: Remove from favorites
+        flag: Flag for deletion
+        history: Post history
+        resize: Resize image
+        set_avatar: Set avatar
+        title: Options
+        undelete: Undelete
+        view_larger: View larger version
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     tag_script:

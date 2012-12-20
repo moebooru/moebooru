@@ -847,6 +847,9 @@ en:
           _: Download
           info: You must download this file manually.
         save_flash: Save this flash (right click and save)
+      image_footer:
+        edit: Edit
+        respond: Respond
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     tag_script:

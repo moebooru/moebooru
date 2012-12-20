@@ -111,11 +111,16 @@ en:
     _no: 'No'
     _yes: 'Yes'
     add: Add
+    approve: Approve
     back: Back
     cancel: Cancel
     delete: Delete
     edit: Edit
     save: Save
+    search: Search
+    select:
+      all: Select All
+      invert: Invert Selection
     update: Update
   c:
     pool:
@@ -755,9 +760,20 @@ en:
         view: View posts
       pool_view_html: Viewing pool %{pool}.
     moderate:
+      down: down
+      flagged: Flagged
       mod: mod
+      parent: Parent
+      pending: Pending
+      prompt_reason: Enter a reason
+      rating: Rating
+      reason: Reason
+      score: Score
+      size: Size
+      tags: Tags
       title: Moderation Queue
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
+      vote_down_html: vote %{down}
     popular_by_day:
       title: Exploring %{year}/%{month}/%{day}
     popular_by_month:

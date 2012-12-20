@@ -527,24 +527,6 @@ en:
     search:
       search: Search
       title: Search Notes
-  # view/note/footer
-  note_body: "Body"
-  note_click: "Click to edit"
-  note_date: "Date"
-  note_edited: "Edited By"
-  note_help: "Help"
-  # view/note/history
-  note_history: "History"
-  note_list: "List"
-  note_note: "Note"
-  note_options: "Options"
-  # view/note/_note
-  note_post: "Post"
-  note_requests: "Requests"
-  note_revert: "Revert"
-  note_revert_confirm: "Do you really wish to revert to this note?"
-  note_search: "Search"
-  note_search: "Search"
   notice: "This post was flagged for deletion by "
   notice10: "Reason: "
   notice11: "This post has been temporarily held from the index by the poster."
@@ -671,89 +653,6 @@ en:
           info: 'Public pools allow anyone to add/remove posts.'
         name: Name
       title: Edit Pool
-  # view/pool/add_post
-  pool_active: "Active"
-  pool_active_text: "Inactive pools will no longer be selectable when adding a post."
-  # view/post/blacklists
-  pool_add: "Add to Pool"
-  pool_add: "Add"
-  pool_add2: "Add"
-  # view/pool/show
-  pool_add_text: "Select a pool to add this post to:"
-  pool_ago: " ago"
-  pool_ago2: ""
-  pool_cancel: "Cancel"
-  # view/pool/copy
-  pool_clone: "Clone Pool"
-  pool_confirm: "Are you sure you wish to delete "
-  pool_copy: "Copy Pool"
-  # view/pool/create
-  pool_create: "Create Pool"
-  pool_created: "Created"
-  pool_creator: "Creator"
-  pool_delete: "Delete Pool"
-  pool_delete: "Delete"
-  pool_delete_mode: "Delete mode"
-  pool_delete_mode_text: "When delete mode is enabled, clicking on a thumbnail will remove the post from this pool."
-  pool_description: "Description"
-  pool_edit: "Edit Pool"
-  pool_edit: "Edit Pool"
-  # view/pool/update
-  pool_edit: "Edit"
-  pool_help: "Help"
-  # view/pool/import
-  pool_import: "Pool Import: "
-  pool_import2: "Import"
-  pool_import_text: "You can perform a tag search and import all the matching posts into this pool."
-  pool_index: "Index View"
-  pool_interval: "Enter an interval"
-  pool_jpeg: "Download JPGs"
-  pool_list: "List"
-  pool_name: "Name"
-  pool_new: "New"
-  pool_no: "No"
-  # view/pool/footer
-  pool_order: "Order"
-  pool_order: "Pool Ordering: "
-  pool_order2: "Order"
-  pool_order_auto: "Auto Order"
-  pool_order_minus_one: "-1"
-  pool_order_plus_one: "+1"
-  pool_order_text: "Lower numbers will appear first."
-  pool_png: "Download"
-  pool_pool: "Pool"
-  pool_pool2: "Pool: "
-  pool_posts: "Posts"
-  pool_public: "Public?"
-  pool_public_text: "Public pools allow anyone to add/remove posts."
-  pool_question_mark: "?"
-  pool_reverse: "Reverse"
-  # view/pool/select_form
-  pool_save: "Save"
-  # view/pool/destory
-  pool_search: "Search"
-  pool_show_copy: "Copy"
-  pool_show_history: "History"
-  # view/pools/transfer_metadata
-  pool_show_import: "Import"
-  pool_show_order: "Order"
-  pool_show_transfer: "Transfer Post Data"
-  pool_toggle: "Toggle View"
-  pool_transfer: "Transfer from pool number:"
-  pool_transfer_button: "Transfer"
-  pool_transfer_from: "From"
-  pool_transfer_from: "from"
-  pool_transfer_tags: "Tags"
-  pool_transfer_text: "Transferring post data from posts in pool "
-  pool_transfer_text2: "  to posts in pool "
-  pool_transfer_text3: "Tags and ratings will be transferred, and the old posts will be parented to the new posts."
-  pool_transfer_text4: "These pools don't have the same number of posts."
-  pool_transfer_text5: "Please check that tags are being transferred to the correct posts."
-  pool_transfer_text6: " the transfer "
-  pool_transfer_to: "To"
-  pool_transfer_to: "to"
-  pool_updated: "Updated"
-  pool_yes: "Yes"
   post:
     blacklists:
       add: Add

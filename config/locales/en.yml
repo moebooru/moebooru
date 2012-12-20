@@ -891,7 +891,16 @@ en:
         random: Random
         title: Related Posts
       statistics_panel:
-        uploaded_by_user_html: 'by %{u}'
+        approver: Approver
+        favorited_by: Favorited by
+        id: Id
+        posted: Posted
+        posted_data_html: '%{time} by %{user}'
+        rating: Rating
+        score: Score
+        size: Size
+        source: Source
+        title: Statistics
     tag_script:
       confirm: 'Apply tag script to all of these posts?'
       title: Tag Script

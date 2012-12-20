@@ -1,29 +1,29 @@
 <div id="stats" class="vote-container">
-  <h5><%=t :post_stats %></h5>
+  <h5><%= t('.title') %></h5>
   <ul>
-    <li><%=t :post_stats_id %><%= @post.id %></li>
-    <li><%=t :post_stats_posted %><%= link_to t('time.x_ago', :t => time_ago_in_words(@post.created_at)), {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c") %> <%= t('.uploaded_by_user_html', :u => link_to_unless(@post.user_id.nil?, @post.author, :controller => "user", :action => "show", :id => @post.user_id)) %></li>
+    <li><%= t('.id') %>: <%= @post.id %></li>
+    <li><%= t('.posted') %>: <%= t('.posted_data_html', :time => link_to(t('time.x_ago', :t => time_ago_in_words(@post.created_at)), {:action => "index", :tags => "date:" + @post.created_at.strftime("%Y-%m-%d")}, :title => @post.created_at.strftime("%c")), :user => link_to_unless(@post.user_id.nil?, @post.author, :controller => "user", :action => "show", :id => @post.user_id)) %></li>
     <% if @current_user.is_admin? && @post.approver %>
-      <li><%=t :post_stats_approver %><%= @post.approver.name %></li>
+      <li><%= t('.approver') %>: <%= @post.approver.name %></li>
     <% end %>
     <% if @post.image? %>
-      <li><%=t :post_stats_size %><%= @post.width %>x<%= @post.height %></li>
+      <li><%= t('.size') %>: <%= @post.width %>x<%= @post.height %></li>
     <% end %>
     <% unless @post.source.blank? %>
       <% if @post.source[/^http/] %>
-        <li><%=t :post_stats_source %><%= link_to @post.source[7, 20] + "...", @post.normalized_source, :rel => 'nofollow', :target => "_blank" %></li>
+        <li><%= t('.source') %>: <%= link_to @post.source[7, 20] + "...", @post.normalized_source, :rel => 'nofollow', :target => "_blank" %></li>
       <% else %>
-        <li><%=t :post_stats_source %><%= @post.source %></li>
+        <li><%= t('.source') %>: <%= @post.source %></li>
       <% end %>
     <% end %>
-    <li><%=t :post_stats_rating %><%= @post.pretty_rating %> <%= vote_tooltip_widget() %></li>
+    <li><%= t('.rating') %>: <%= @post.pretty_rating %> <%= vote_tooltip_widget() %></li>
 
     <li>
-      <%=t :post_stats_score %><span id="post-score-<%= @post.id %>"><%= @post.score %></span>
+      <%= t('.score') %>: <span id="post-score-<%= @post.id %>"><%= @post.score %></span>
       <%= vote_widget(@current_user) %>
     </li>
 
-    <li><%=t :post_stats_fav %><span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
+    <li><%= t('.favorited_by') %>: <span id="favorited-by"><%= favorite_list(@post) %></span> <span id="favorited-by-more"></span></li>
   </ul>
 </div>
 

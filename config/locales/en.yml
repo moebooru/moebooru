@@ -881,6 +881,15 @@ en:
         transfer:
           _: transfer to parent
           confirm: Are you sure you want to remove this post from %{current_pool} and add the parent post instead?
+      related_posts_panel:
+        find:
+          duplicate: Find dupes
+          similar: Find similar
+        next: Next
+        parent: Parent
+        previous: Previous
+        random: Random
+        title: Related Posts
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     tag_script:

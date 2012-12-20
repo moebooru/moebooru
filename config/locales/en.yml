@@ -775,6 +775,10 @@ en:
       uploaded_by_when_html: Uploaded by %{u} %{t_ago} (%{mod})
       vote_down_html: vote %{down}
     popular_by_day:
+      popular:
+        _: Popular
+        month: Popular (by month)
+        week: Popular (by week)
       title: Exploring %{year}/%{month}/%{day}
     popular_by_month:
       title: Exploring %{year}/%{month}

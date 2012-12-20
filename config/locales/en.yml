@@ -837,6 +837,10 @@ en:
         source: Source
         tags: Edit Tags
         tags_info_html: Separate tags with spaces (%{more})
+      history_panel:
+        notes: Notes
+        tags: Tags
+        title: History
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     tag_script:

@@ -1,7 +1,7 @@
 <div>
-  <h5><%=t :post_history %></h5>
+  <h5><%= t('.title') %></h5>
   <ul>
-    <li><%= link_to t(:post_history_tags), :controller => "history", :action => "index", :search => "post:#{@post.id}" %></li>
-    <li><%= link_to t(:post_history_notes), :controller => "note", :action => "history", :post_id => @post.id %></li>
+    <li><%= link_to t('.tags'), :controller => "history", :action => "index", :search => "post:#{@post.id}" %></li>
+    <li><%= link_to t('.notes'), :controller => "note", :action => "history", :post_id => @post.id %></li>
   </ul>
 </div>

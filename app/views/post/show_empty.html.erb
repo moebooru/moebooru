@@ -1,15 +1,15 @@
 <div id="post-view">
   <div class="sidebar">
     <div>
-      <h5><%=t :post_related_posts %></h5>
+      <h5><%= t('.related._') %></h5>
       <ul>
-        <li><%= link_to t(:post_previous), :controller => "post", :action => "show", :id => params[:id].to_i - 1 %></li>
-        <li><%= link_to t(:post_next), :controller => "post", :action => "show", :id => params[:id].to_i + 1 %></li>
-        <li><%= link_to t(:post_random), :controller => "post", :action => "random" %></li>
+        <li><%= link_to t('.related.previous'), :controller => "post", :action => "show", :id => params[:id].to_i - 1 %></li>
+        <li><%= link_to t('.related.next'), :controller => "post", :action => "show", :id => params[:id].to_i + 1 %></li>
+        <li><%= link_to t('.related.random'), :controller => "post", :action => "random" %></li>
       </ul>
     </div>
   </div>
   <div>
-    <p><%=t :post_404 %></p>
+    <p><%= t('.info') %></p>
   </div>
 </div>

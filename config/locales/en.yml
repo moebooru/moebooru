@@ -809,6 +809,13 @@ en:
       title: Search
     show:
       empty: Nobody here but us chickens!
+    show_empty:
+      info: This post does not exist.
+      related:
+        _: Related Posts
+        next: Next
+        previous: Previous
+        random: Random
     show_partials:
       edit:
         find_artists: Find artists

@@ -1,11 +1,3 @@
 <div id="comments" style="margin-top: 1em; max-width: 800px; width: 100%;">
   <%= render :partial => "comment/comments", :locals => {:comments => @post.comments, :post_id => @post.id, :hide => false} %>
 </div>
-
-<% if @page_uses_translations then %>
-  <% content_for :above_footer do %>
-    <%=t :post_comment_google %><a href="http://translate.google.com">Google</a>.
-    <br>
-  <% end %>
-<% end %>
-

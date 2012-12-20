@@ -1,7 +1,7 @@
 <% if !@post.is_deleted? %>
   <div>
     <% if !@post.can_be_seen_by?(@current_user) %>
-      <p><%=t :post_image_text %></p>
+      <p><%= t('.denied') %></p>
     <% elsif @post.image? %>
       <div id="note-container">
         <% @post.active_notes.each do |note| %>
@@ -26,10 +26,10 @@
         <embed src="<%= @post.file_url %>" width="<%= @post.width %>" height="<%= @post.height %>" allowScriptAccess="never"></embed>
       </object>
 
-      <p><%= link_to t(:post_flash_dl), @post.file_url %></p>
+      <p><%= link_to t('.save_flash'), @post.file_url %></p>
     <% else %>
-      <h2><a href="<%= @post.file_url %>"><%=t :post_download %></a></h2>
-      <p><%=t :post_download_text %></p>
+      <h2><a href="<%= @post.file_url %>"><%= t('.download._') %></a></h2>
+      <p><%= t('.download.info') %></p>
     <% end %>
   </div>
   <div style="margin-bottom: 1em;">

@@ -841,6 +841,12 @@ en:
         notes: Notes
         tags: Tags
         title: History
+      image:
+        denied: You need a privileged account to see this image
+        download:
+          _: Download
+          info: You must download this file manually.
+        save_flash: Save this flash (right click and save)
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     tag_script:

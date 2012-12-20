@@ -41,7 +41,7 @@
     <% end %>
 
     <% if @searching_pool then %>
-      <%= t('.pool_view_html', link_to(@searching_pool.pretty_name, :controller => "pool", :action => "show", :id => @searching_pool.id)) %>
+      <%= t('.pool_view_html', :pool => link_to(@searching_pool.pretty_name, :controller => "pool", :action => "show", :id => @searching_pool.id)) %>
     <% end %>
 
     <% if @showing_holds_only %>

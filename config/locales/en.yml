@@ -901,6 +901,37 @@ en:
         size: Size
         source: Source
         title: Statistics
+      status_notices:
+        by: By
+        deleted_info: This post was deleted.
+        flagged:
+          delete: delete
+          info: 'This post was flagged for deletion by %{user}. Reason: %{reason}'
+          unflag: unflag this post
+        held:
+          activate: activate this post
+          info: This post has been temporarily held from the index by the poster.
+        parent:
+          child: a child post
+          child_post_html: 'post #%{child}'
+          children: child posts
+          has_child_html: This post has %{child}
+          has_parent_html: This post belongs to a %{parent}
+          make_parent: make this post the parent
+          parent: parent post
+        pending:
+          approve:
+            _: approve
+            confirm: Do you really want to approve this post?
+          delete: delete
+          info: This post is pending moderator approval.
+        reason: Reason
+        resized:
+          always_view_original: Always view original
+          hide: Hide this message
+          info_html: This image has been resized. Click on the %{larger} link in the sidebar for a high-quality version.
+          view_larger: View larger version
+        samples_disabled: Image samples have been disabled. If you find this to be too slow, you can turn samples back on in your profile settings.
     tag_script:
       confirm: 'Apply tag script to all of these posts?'
       title: Tag Script

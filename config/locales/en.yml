@@ -787,6 +787,10 @@ en:
         week: Popular (by week)
       title: Exploring %{year}/%{month}
     popular_by_week:
+      popular:
+        _: Popular
+        month: Popular (by month)
+        week: Popular (by week)
       title: Exploring %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}
     popular_recent:
       title: Exploring %{period}

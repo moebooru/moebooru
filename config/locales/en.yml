@@ -870,6 +870,17 @@ en:
         title: Options
         undelete: Undelete
         view_larger: View larger version
+      pool:
+        change: change page
+        info_html: 'This post is %{sequence} in the %{pool} pool'
+        next: 'Next »'
+        previous: '« Previous'
+        remove:
+          _: remove
+          confirm: Are you sure you want to remove this post from %{current_pool}?
+        transfer:
+          _: transfer to parent
+          confirm: Are you sure you want to remove this post from %{current_pool} and add the parent post instead?
       statistics_panel:
         uploaded_by_user_html: 'by %{u}'
     tag_script:

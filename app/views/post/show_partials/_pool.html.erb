@@ -2,21 +2,20 @@
   <div style="display: inline;">
     <p>
       <% if pool_post.prev_post_id %>
-        <%= link_to t(:post_pool_previous), :action => "show", :id => pool_post.prev_post_id, :pool_id => pool_post.pool_id %>
+        <%= link_to t('.previous'), :action => "show", :id => pool_post.prev_post_id, :pool_id => pool_post.pool_id %>
       <% end %>
       <% if pool_post.next_post_id %>
-        <%= link_to t(:post_pool_next), :action => "show", :id => pool_post.next_post_id, :pool_id => pool_post.pool_id %>
+        <%= link_to t('.next'), :action => "show", :id => pool_post.next_post_id, :pool_id => pool_post.pool_id %>
       <% end %>
-      <%=t :post_pool_text %><span id="pool-seq-<%= pool_post.pool_id %>"><%= h(pool_post.pretty_sequence) %></span>
-      <%=t :post_pool_text2 %><%= link_to h(pool.pretty_name), :controller => "pool", :action => "show", :id => pool.id %><%=t :post_pool_text3 %>
+      <%= t('.info_html', :sequence => content_tag(:span, pool_post.pretty_sequence, :id => "pool-seq-#{pool_post.pool_id}"), :pool => link_to(pool.pretty_name, :controller => "pool", :action => "show", :id => pool.id)) %>
       <% pooled_post_id = @post.id %>
 
     <% if @current_user.can_change?(pool_post, :active) %>
       <span class="advanced-editing">
-        (<%= link_to_function t(:post_pool_remove), "if(confirm('#{t(:post_pool_remove_confirm)}#{escape_javascript(pool.pretty_name)}?')) Pool.remove_post(#{@post.id}, #{pool.id})"
-        -%>, <%= link_to_function t(:post_pool_change), "Pool.change_sequence(#{@post.id}, #{pool_post.pool_id}, #{pool_post.sequence.to_json})"
+        (<%= link_to_function t('.remove._'), "if(confirm('#{t('.remove.confirm', :current_pool => escape_javascript(pool.pretty_name))}')) Pool.remove_post(#{@post.id}, #{pool.id})"
+        -%>, <%= link_to_function t('.change'), "Pool.change_sequence(#{@post.id}, #{pool_post.pool_id}, #{pool_post.sequence.to_json})"
         -%><%- if not @post.parent_id.nil?
-        -%>, <%= link_to_function t(:post_pool_xfer), "if(confirm('#{t(:post_pool_remove_confirm)}#{escape_javascript(pool.pretty_name)}#{t(:post_pool_xfer_confirm)}')) Pool.transfer_post(#{@post.id}, #{@post.parent_id}, #{pool.id}, #{pool_post.sequence.to_json})"
+        -%>, <%= link_to_function t('.transfer._'), "if(confirm('#{t('.transfer.confirm', :current_pool => escape_javascript(pool.pretty_name))}')) Pool.transfer_post(#{@post.id}, #{@post.parent_id}, #{pool.id}, #{pool_post.sequence.to_json})"
         -%><%- end -%>)
       </span>
     <%- end %>

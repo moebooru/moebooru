@@ -793,6 +793,10 @@ en:
         week: Popular (by week)
       title: Exploring %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}
     popular_recent:
+      popular:
+        _: Popular
+        month: Popular (by month)
+        week: Popular (by week)
       title: Exploring %{period}
     post_atom:
       data: Image data

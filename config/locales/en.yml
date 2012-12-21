@@ -505,6 +505,8 @@ en:
         create: Create New Page
         index: View Wiki Index
         search: Search Wiki
+    news:
+      close: Close
   news_ticker: "Tags should be in English/Romaji kthx"
   news_ticker_close: "Close"
   note:

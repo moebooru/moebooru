@@ -969,7 +969,48 @@ en:
     tags:
       title: Tags
     upload:
+      already_exists: This post already exists
       anonymous: Anonymous Upload
+      form:
+        file: File
+        find_artist: Find artist
+        find_related:
+          artists: Related artists
+          characters: Related characters
+          circles: Related circles
+          copyrights: Related copyrights
+          none: none
+          tags: Related tags
+        help: help
+        parent: Parent
+        rating:
+          _: Rating
+          info: Explicit tags include sex, pussy, penis, masturbation, blowjob, etc.
+        source:
+          _: Source
+          info: You can enter a URL here to download from a website.
+        tags:
+          _: Tags
+          info: Separate tags with spaces.
+        upload: Upload
+      guidelines:
+        do_not:
+          compression_artifacts: compression artifacts
+          obnoxious_watermarks: obnoxious watermarks
+          tags_html: Do not upload %{tags} art
+          with_html: Do not upload things with %{with}
+        group: Group doujinshi, manga pages, and similar game CGs together
+        info: Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.
+        last_word_connector_or: ', or '
+        limit: You can only upload %{n} today.
+        more_html: Read the %{more_link}
+        more_link: tagging guidelines
+        title: Upload Guidelines
+      posts_deleted:
+        hide: dismiss this message
+        notice_plural_html: Some of your posts were %{recently_deleted}.
+        notice_singular_html: One of your posts was %{recently_deleted}.
+        recently: recently deleted
       title: Upload
   post_404: "This post does not exist."
   post_activate: "Activate all held posts"

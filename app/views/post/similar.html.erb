@@ -5,14 +5,14 @@
         <%= CONFIG["ad_code_index_side"] %>
       <% end %>
       <div style="margin-bottom: 1em;" id="mode-box">
-        <h5><%=t :post_sim_mode %></h5>
+        <h5><%= t('.mode') %></h5>
         <form onsubmit="return false;" action="">
           <div>
             <select name="mode" id="mode" onchange="PostModeMenu.change()" onkeyup="PostModeMenu.change()" style="width: 13em;">
-              <option value="view"><%=t :post_sim_view %></option>
-              <option value="reparent"><%=t :post_sim_reparent %></option>
-              <option value="dupe"><%=t :post_sim_dupe %></option>
-              <option value="edit"><%=t :post_sim_edit %></option>
+              <option value="view"><%= t('.view_posts') %></option>
+              <option value="reparent"><%= t('.reparent') %></option>
+              <option value="dupe"><%= t('.flag_duplicate') %></option>
+              <option value="edit"><%= t('.edit_posts') %></option>
 <!--              <option value="rating-s">Rate Safe</option>
               <option value="rating-q">Rate Questionable</option>
               <option value="rating-e">Rate Explicit</option>
@@ -20,8 +20,8 @@
                 <option value="lock-rating">Lock Rating</option>
                 <option value="lock-note">Lock Notes</option>
               <% end %>-->
-              <option value="flag"><%=t :post_sim_flag %></option>
-              <option value="apply-tag-script"><%=t :post_sim_script %></option>
+              <option value="flag"><%= t('.flag_post') %></option>
+              <option value="apply-tag-script"><%= t('.apply_tag_script') %></option>
             </select>
           </div>
         </form>
@@ -31,16 +31,16 @@
       <%= render :partial => 'blacklists' %>
 
       <div>
-        <h5><%=t :post_sim_services %></h5>
+        <h5><%= t('.services') %></h5>
         <ul>
-          <li> <%= link_to t(:post_sim_services_text), params.merge({ :controller => :post, :action => :similar, :services => 'all' }) %>
+          <li> <%= link_to t('.use_all_services'), params.merge({ :controller => :post, :action => :similar, :services => 'all' }) %>
           <% CONFIG["image_service_list"].map do |service, server| %>
           <li>
             <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
               <%= image_tag(get_service_icon(service), :class=>"service-icon", :id=>"list") %>
               <%= link_to "#{service}", params.merge({ :controller => :post, :action => :similar, :services => service }) %>
               <% if @errors and @errors[server] %>
-                <%=t :post_sim_down %>
+                (<%= t('.down') %>)
                 <!-- <%= @errors[server][:message] %> -->
               <% end %>
             </span>
@@ -48,15 +48,15 @@
         </ul>
       </div>
       <div>
-        <h5><%=t :post_sim_options %></h5>
+        <h5><%= t('.options') %></h5>
         <ul>
-          <li><%= link_to (params[:forcegray] ? t(:post_sim_color) : t(:post_sim_gray)), params.merge({ :forcegray => (params[:forcegray] ? 0 : 1) }) %>
+          <li><%= link_to (params[:forcegray] ? t('.mode_color') : t('.mode_gray')), params.merge({ :forcegray => (params[:forcegray] ? 0 : 1) }) %>
           <% unless params[:threshold] %>
-          <li><%= link_to t(:post_sim_more), params.merge({ :threshold => 0 }) %></li>
+          <li><%= link_to t('.show_more'), params.merge({ :threshold => 0 }) %></li>
           <% end %>
           <% if params[:url] %>
           <li>
-          <%= link_to t(:post_sim_upload), :controller => "post", :action => "upload",
+          <%= link_to t('.upload'), :controller => "post", :action => "upload",
                   :url => (params[:full_url] or params[:url]),
                   :tags => params[:tags],
                   :rating => params[:rating],
@@ -69,38 +69,36 @@
     </div>
     <% if @initial %>
       <div id="duplicate">
-        <%=t :post_sim_dupe_text %>
-        <%=t :post_sim_dupe_text2 %><%= link_to "duplicate post guidelines", :controller => "wiki", :action => "show", :title => "duplicate post_guidelines" %><%=t :post_sim_dupe_period %>
+        <%= t('.duplicate.info_guide_html', :guide => link_to(t('.duplicate.guide'), :controller => '/wiki', :action => :show, :title => 'duplicate')) %>
         <ul>
         <li>
-          <%=t :post_sim_dupe_text3 %>
-          <%= link_to_function( "reparent", "$('mode').value = 'reparent'; PostModeMenu.change();"); %>
-          <%=t :post_sim_dupe_text4 %>
+          <%= t('.duplicate.info_reparent_html', :reparent => link_to_function(t('.duplicate.reparent'), "$('mode').value = 'reparent'; PostModeMenu.change();")) %>
+        </li>
         <li>
-          <%=t :post_sim_dupe_text5 %>
-          <%= link_to_function( t(:post_sim_dupe_text6), "$('mode').value = 'dupe'; PostModeMenu.change();"); %>.
+          <%= t('.duplicate.info_mark_duplicate_html', :mark_duplicate => link_to_function(t('.duplicate.mark_duplicate'), "$('mode').value = 'dupe'; PostModeMenu.change();")) %>
+        </li>
         <li>
           <form action=<%= url_for(:action => "destroy", :name=>"destroy") %> id="destroy" method="post">
             <%= hidden_field_tag "id", params[:id], :id=>"destroy_id" %>
             <%= hidden_field_tag "reason", "duplicate" %>
-            <%=t :post_sim_dupe_text7 %>
-            <%= link_to_function( t(:post_sim_dupe_text8), "$('destroy').submit") %>.
+            <%= t('.duplicate.info_delete_html', :delete => link_to_function(t('.duplicate.delete'), "$('destroy').submit")) %>
           </form>
+        </li>
         </ul>
         <div id="blacklisted-notice" style="display: none;">
-          <%=t :post_sim_dupe_text9 %><b><%=t :post_sim_dupe_text10 %></b><%=t :post_sim_dupe_text11 %>
+          <%= t('.duplicate.info_blacklist_html', :blacklist => content_tag(:b, t('.duplicate.blacklist'))) %>
         </div>
       </div>
     <% end %>
     <div class="content">
       <div id="quick-edit" style="display: none; margin-bottom: 1em;">
-        <h4><%=t :post_sim_edit_tags %></h4>
+        <h4><%= t('.edit_tags') %></h4>
         <%= form_tag(:action => "update") do %>
           <%= hidden_field_tag "id", "" %>
           <%= hidden_field_tag "post[old_tags]", "" %>
           <%= text_area_tag "post[tags]", "", :size => "60x2", :id => "post_tags" %>
-          <%= submit_tag t(:post_sim_update) %>
-          <%= tag(:input, :type => 'button', :value => t(:post_sim_cancel), :class => "cancel") %>
+          <%= submit_tag t('.update') %>
+          <%= tag(:input, :type => 'button', :value => t('buttons.cancel'), :class => "cancel") %>
         <% end %>
       </div>
 
@@ -114,20 +112,20 @@
         <table class="form">
           <tfoot>
             <tr>
-              <td colspan="2"><%= submit_tag t(:post_search), :tabindex => 3, :accesskey => "s" %></td>
+              <td colspan="2"><%= submit_tag t('buttons.search'), :tabindex => 3, :accesskey => "s" %></td>
             </tr>
           </tfoot>
           <tbody>
             <tr>
               <th>
-                <label for="url"><%=t :post_source %></label>
+                <label for="url"><%= t('.source') %></label>
               </th>
               <td>
                 <input id="url" name="url" size="50" type="text" tabindex="1" value="<%= h(params[:url]) %>">
               </td>
             </tr>
             <tr>
-              <th width="20%"><label for="post_file"><%=t :post_file %></label></th>
+              <th width="20%"><label for="post_file"><%= t('.file') %></label></th>
               <td width="80%"><input id="file" name="file" size="50" tabindex="2" type="file"></td>
             </tr>
           </tbody>

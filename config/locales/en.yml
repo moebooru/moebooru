@@ -932,6 +932,37 @@ en:
           info_html: This image has been resized. Click on the %{larger} link in the sidebar for a high-quality version.
           view_larger: View larger version
         samples_disabled: Image samples have been disabled. If you find this to be too slow, you can turn samples back on in your profile settings.
+    similar:
+      apply_tag_script: Apply Tag Script
+      down: down
+      duplicate:
+        blacklist: Hidden Posts
+        delete: delete your post
+        guide: duplicate post guidelines
+        info_blacklist_html: Your tag blacklist has hidden some potential duplicates. Use %{blacklist} in the sidebar to view hidden posts.
+        info_delete_html: Otherwise, please %{delete}.
+        info_guide_html: Your post may be a duplicate. Please read the %{guide}.
+        info_reparent_html: If your post is a better version of an existing one, but the old post should remain, %{reparent} the old post.
+        info_mark_duplicate_html: If your post is a better version of an existing one, and the old post should be deleted, %{mark_duplicate}.
+        mark_duplicate: mark the old post as a duplicate
+        reparent: reparent
+      edit_posts: Edit Posts
+      edit_tags: Edit Tags
+      file: File
+      flag_duplicate: Flag as duplicate
+      flag_post: Flag Post
+      mode: Mode
+      mode_color: "Don't ignore colors"
+      mode_gray: Ignore colors
+      options: Options
+      reparent: Reparent
+      services: Services
+      show_more: Show More
+      source: Source
+      update: Update
+      upload: Upload this image
+      use_all_services: Use all services
+      view_posts: View Posts
     tag_script:
       confirm: 'Apply tag script to all of these posts?'
       title: Tag Script

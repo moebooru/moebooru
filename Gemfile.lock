@@ -94,6 +94,8 @@ GEM
       rack (~> 1.2)
     puma (1.6.3-java)
       rack (~> 1.2)
+    quiet_assets (1.0.1)
+      railties (~> 3.1)
     rack (1.4.1)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -196,6 +198,7 @@ DEPENDENCIES
   nokogiri
   pg
   puma
+  quiet_assets
   rails (~> 3.2.0)
   rails-i18n
   rspec

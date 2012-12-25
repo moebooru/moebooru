@@ -1,4 +1,4 @@
-<div id="main-menu" data-controller="<%= controller.controller_name %>">
+<div class="clearfix" id="main-menu" data-controller="<%= controller.controller_name %>">
   <ul>
     <li class="user"><%= link_to t('.account._'), { :controller => :user, :action => :home } %>
       <ul class="submenu">
@@ -180,10 +180,10 @@
     </li>
     <li class="static"><%= link_to t('.more'), { :controller => :static, :action => :more } %>
     </li>
+    <li class="has-mail">
+      <%= link_to t('.new_mail'), { :controller => '/dmail', :action => :inbox }, :id => 'has-mail-notice' %>
+    </li>
   </ul>
-  <a id="has-mail-notice" class="has-mail" style="display: none;" href="<%= url_for :controller => "dmail", :action => "inbox" %>">
-    <span><%= t('.new_mail') %></span>
-  </a>
   <span id='cn' style="display: none;">
   </span>
 </div>

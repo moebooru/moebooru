@@ -9,10 +9,14 @@ div#main-menu > ul {
   list-style: none;
 }
 div#main-menu ul li {
-  margin: 0 1.6em 0 0;
+  margin: 0;
   padding: 0;
   float: left;
   position: relative;
+}
+div#main-menu > ul > li > a {
+  display: block;
+  padding: 3px 10px;
 }
 div#main-menu .search-box {
   display: none;

@@ -1,5 +1,6 @@
 /*
  *= require jquery.ui.all
+ *= require webtoolkit.clearfix
  *= require_self
  *= require_tree .
  */
@@ -751,9 +752,10 @@ div#forum > table td:first-child {
   text-align: left;
 }
 
-.has-mail > span {
+#has-mail-notice {
   font-weight: bold;
   color: #eeee00;
+  display: none;
 }
 
 .has-deleted-posts {

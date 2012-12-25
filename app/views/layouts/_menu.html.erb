@@ -19,7 +19,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :post, :action => :index), :method => :get do %>
+            <%= form_tag url_for(:controller => :post, :action => :index), :method => :get do %>
               <%= text_field_tag :tags -%>
             <% end %>
           </div>
@@ -42,7 +42,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :comment , :action => :search), :method => :get do %>
+            <%= form_tag url_for(:controller => :comment , :action => :search), :method => :get do %>
               <%= text_field_tag :query -%>
             <% end %>
           </div>
@@ -57,7 +57,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :note, :action => :search), :method => :get do %>
+            <%= form_tag url_for(:controller => :note, :action => :search), :method => :get do %>
               <%= text_field_tag :query -%>
             <% end %>
           </div>
@@ -70,7 +70,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :artist, :action => :index), :method => :get do %>
+            <%= form_tag url_for(:controller => :artist, :action => :index), :method => :get do %>
               <%= text_field_tag :name -%>
             <% end %>
           </div>
@@ -83,7 +83,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :tag, :action => :index), :method => :get do %>
+            <%= form_tag url_for(:controller => :tag, :action => :index), :method => :get do %>
               <%= text_field_tag :name -%>
             <% end %>
           </div>
@@ -101,7 +101,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :pool, :action => :index), :method => :get do %>
+            <%= form_tag url_for(:controller => :pool, :action => :index), :method => :get do %>
               <%= text_field_tag :query -%>
             <% end %>
           </div>
@@ -114,7 +114,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :wiki, :action => :index), :method => :get do %>
+            <%= form_tag url_for(:controller => :wiki, :action => :index), :method => :get do %>
               <%= text_field_tag :query -%>
             <% end %>
           </div>
@@ -127,7 +127,7 @@
       <ul class="submenu">
         <li>
           <div>
-            <% form_tag url_for(:controller => :forum, :action => :search), :method => :get do %>
+            <%= form_tag url_for(:controller => :forum, :action => :search), :method => :get do %>
               <%= text_field_tag :query -%>
             <% end %>
           </div>

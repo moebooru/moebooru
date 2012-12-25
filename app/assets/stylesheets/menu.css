@@ -20,8 +20,6 @@ div#main-menu > ul > li > a {
 }
 div#main-menu > ul > li > a span.submenu-button {
   opacity: 0;
-  border-left: 1px solid black;
-  padding-left: 1px;
 }
 div#main-menu > ul > li:hover > a span.submenu-button {
   opacity: 1;

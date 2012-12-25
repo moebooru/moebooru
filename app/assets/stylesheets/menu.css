@@ -67,6 +67,6 @@ div#main-menu .separator {
   /* For IE7: */
   overflow: hidden;
 }
-div#main-menu .forum-update > a {
+div#main-menu a#forum-link {
   font-weight: bold;
 }

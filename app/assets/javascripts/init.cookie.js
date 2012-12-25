@@ -6,13 +6,14 @@ jQuery(document).ready(function($) {
 
   // Check if there's new comment.
   if ($.cookie('comments_updated') == '1') {
-    $('#comments-link').addClass('comments-update');
+    $('#comments-link').addClass('comments-update')
     $('#comments-link').addClass('bolded');
   };
 
   // Check if there's new forum post.
   if ($.cookie('forum_updated') == '1') {
     $('#forum-link').addClass('forum-update');
+    $('#forum-mark-all-read').show();
   };
 
   // Show block/ban reason if the user is blocked/banned.

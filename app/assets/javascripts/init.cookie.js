@@ -7,6 +7,7 @@ jQuery(document).ready(function($) {
   // Check if there's new comment.
   if ($.cookie('comments_updated') == '1') {
     $('#comments-link').addClass('comments-update');
+    $('#comments-link').addClass('bolded');
   };
 
   // Check if there's new forum post.

@@ -19,9 +19,11 @@
     /*
      * Sets various forum-related menu:
      * - adds 5 latest topics
-     * - set correct class based on read/unread
+     * - sets width of forum submenu.
+     * - sets correct class based on read/unread
      */
     sync_forum_menu: function() {
+      // Adds 5 latest topics.
       var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
       var create_forum_item = function(forum_json) {
         return $('<li/>', {
@@ -37,6 +39,8 @@
       for (var i = menu_items_num - 1; i >=0; i--) {
         this.menu.find('.forum-items-start').after(create_forum_item(forum_menu_items[i]));
       };
+
+      // Sets width of forum submenu.
       var forum_submenu = this.menu.find('.forum ul');
       if (forum_submenu.width() > 200) {
         forum_submenu.css('width', '200px');
@@ -44,6 +48,15 @@
       } else {
         forum_submenu.css('width', '');
         forum_submenu.find('a').css('white-space', '');
+      };
+
+      // Sets correct class based on read/unread.
+      if ($.cookie('forum_updated') == '1') {
+        $('#forum-link').addClass('forum-update');
+        $('#forum-mark-all-read').show();
+      } else {
+        $('#forum-link').removeClass('forum-update');
+        $('#forum-mark-all-read').hide();
       };
     },
 

@@ -10,12 +10,6 @@ jQuery(document).ready(function($) {
     $('#comments-link').addClass('bolded');
   };
 
-  // Check if there's new forum post.
-  if ($.cookie('forum_updated') == '1') {
-    $('#forum-link').addClass('forum-update');
-    $('#forum-mark-all-read').show();
-  };
-
   // Show block/ban reason if the user is blocked/banned.
   if ($.cookie('block_reason') && $.cookie('block_reason') != '') {
     $('#block-reason').text($.cookie('block_reason')).show();

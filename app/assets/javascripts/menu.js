@@ -61,11 +61,11 @@
 
     /*
      * Sets various forum-related menu:
-     * - adds latest topics
-     * - sets correct class based on read/unread
+     * - reset latest topics
+     * - set correct class based on read/unread
      */
     sync_forum_menu: function() {
-      // Adds latest topics.
+      // Reset latest topics.
       var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
       var create_forum_item = function(forum_json) {
         return $('<li/>', {
@@ -86,7 +86,7 @@
         this.menu.find('.forum-items-start').show();
       }
 
-      // Sets correct class based on read/unread.
+      // Set correct class based on read/unread.
       if ($.cookie('forum_updated') == '1') {
         $('#forum-link').addClass('forum-update');
         $('#forum-mark-all-read').show();

@@ -51,7 +51,7 @@ div#main-menu ul li ul li {
   margin: 0;
   padding: 0;
 }
-div#main-menu ul li ul li:hover {
+div#main-menu ul li ul.submenu li:hover {
   background: white;
 }
 div#main-menu ul li ul.submenu li a {
@@ -59,7 +59,7 @@ div#main-menu ul li ul.submenu li a {
   padding: 2px;
   white-space: nowrap;
 }
-div#main-menu ul li ul li:hover a {
+div#main-menu ul li ul.submenu li:hover a {
   color: black;
 }
 div#main-menu .separator {

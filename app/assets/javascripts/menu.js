@@ -60,12 +60,12 @@
 
     /*
      * Sets various forum-related menu:
-     * - adds 5 latest topics
+     * - adds latest topics
      * - sets width of forum submenu.
      * - sets correct class based on read/unread
      */
     sync_forum_menu: function() {
-      // Adds 5 latest topics.
+      // Adds latest topics.
       var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
       var create_forum_item = function(forum_json) {
         return $('<li/>', {
@@ -77,7 +77,7 @@
         });
       };
       this.menu.find('.forum-items-start').nextAll().remove();
-      var menu_items_num = forum_menu_items.length > 5 ? 5 : forum_menu_items.length;
+      var menu_items_num = forum_menu_items.length;
       if (menu_items_num > 0) {
         for (var i = menu_items_num - 1; i >=0; i--) {
           this.menu.find('.forum-items-start').after(create_forum_item(forum_menu_items[i]));

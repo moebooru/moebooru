@@ -16,7 +16,8 @@ div#main-menu ul li {
 }
 div#main-menu > ul > li > a {
   display: block;
-  padding: 3px 5px;
+  margin: 3px 5px;
+  padding: 0;
 }
 div#main-menu > ul > li > a span.submenu-button {
   opacity: 0;
@@ -24,10 +25,6 @@ div#main-menu > ul > li > a span.submenu-button {
 }
 div#main-menu > ul > li:hover > a span.submenu-button {
   opacity: 1;
-}
-div#main-menu > ul > li > a span.submenu-button:hover {
-  background-color: #fff;
-  color: #000;
 }
 div#main-menu .search-box {
   display: none;

@@ -61,7 +61,6 @@
     /*
      * Sets various forum-related menu:
      * - adds latest topics
-     * - sets width of forum submenu.
      * - sets correct class based on read/unread
      */
     sync_forum_menu: function() {
@@ -86,11 +85,6 @@
         };
         this.menu.find('.forum-items-start').show();
       }
-
-      // Sets width of forum submenu.
-      var forum_submenu = this.menu.find('.forum ul');
-      forum_submenu.css('width', '200px');
-      forum_submenu.find('a').css('white-space', 'normal');
 
       // Sets correct class based on read/unread.
       if ($.cookie('forum_updated') == '1') {

@@ -16,13 +16,13 @@
       this.hide();
       if (!submenu_open) {
         submenu.addClass('open');
-        $(document).on('click', this.hide);
+        $(document).on('click', Menu.hide);
       }
     },
 
     hide: function() {
       $('.submenu').removeClass('open');
-      $(document).off('click', this.hide);
+      $(document).off('click', Menu.hide);
     },
 
     // Set link to moderate when there's something in moderation queue.

@@ -34,13 +34,7 @@
           <li><%= link_to t('.posts.batch'), :controller => :batch, :action => :index %></li>
         <% end %>
         <% if @current_user.is_janitor_or_higher? %>
-          <li>
-            <% if Post.flagged.any? %>
-              <%= link_to "#{t('.posts.moderate')} (#{Post.flagged.count})", { :controller => :post, :action => :moderate }, :class => 'bolded' %>
-            <% else %>
-              <%= link_to t('.posts.moderate'), :controller => :post, :action => :moderate %>
-            <% end %>
-          </li>
+          <li><%= link_to t('.posts.moderate'), { :controller => :post, :action => :moderate }, :class => 'moderate' %></li>
         <% end %>
       </ul>
     </li>

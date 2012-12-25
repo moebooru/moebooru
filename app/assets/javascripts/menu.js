@@ -10,6 +10,15 @@
   Menu = {
     menu: null,
 
+    // Set link to moderate when there's something in moderation queue.
+    set_post_moderate_count: function() {
+      var mod_pending = $.cookie('mod_pending');
+      if (mod_pending > 0) {
+        var mod_link = this.menu.find('.moderate');
+        mod_link.text(mod_link.text() + ' (' + mod_pending + ')').addClass('bolded');
+      };
+    },
+
     // Highlight current location (based on controller)
     set_highlight: function() {
       var hl_menu_class = '.' + this.menu.data('controller');
@@ -63,6 +72,7 @@
     init: function() {
       this.menu = $('#main-menu');
       this.set_highlight();
+      this.set_post_moderate_count();
       this.sync_forum_menu();
       /*
        * Shows #cn

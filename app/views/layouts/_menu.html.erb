@@ -1,5 +1,5 @@
 <div class="clearfix" id="main-menu" data-controller="<%= controller.controller_name %>">
-  <% local_cache [:menu, @current_user] do %>
+  <% local_cache [:menu, @current_user.id, @current_user.level] do %>
     <ul>
       <li class="user"><%= link_to t('.account._'), { :controller => :user, :action => :home } %>
         <ul class="submenu">

@@ -172,8 +172,8 @@
     </li>
     <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>
       <ul class="submenu">
-        <% if [:post, :comment, :note, :artist, :tag, :wiki, :pool, :forum].include?(controller.controller_name.to_sym) then %>
-          <li><%= link_to "#{controller.controller_name.to_s.capitalize} Help", :controller => :help, :action => get_help_action_for_controller(controller.controller_name)  %>
+        <% %w(post comment note artist tag wiki pool forum).each do |item| %>
+          <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item }, :class => ['help-item', item] %>
         <% end %>
         <li><%= link_to t('.help.site'), :controller => :help, :action => :index %></li>
       </ul>

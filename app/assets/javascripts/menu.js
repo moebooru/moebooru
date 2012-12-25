@@ -25,6 +25,13 @@
       this.menu.find(hl_menu_class).addClass('current-menu');
     },
 
+    // Hide irrelevant help menu items
+    hide_help_items: function() {
+      var nohide_menu_class = '.help-item.' + this.menu.data('controller');
+      this.menu.find('.help-item').hide();
+      this.menu.find(nohide_menu_class).show();
+    },
+
     show_search_box: function(elem) {
       var
         submenu = $(elem).parents('.submenu'),
@@ -98,6 +105,7 @@
       this.set_highlight();
       this.set_post_moderate_count();
       this.sync_forum_menu();
+      this.hide_help_items();
       /*
        * Shows #cn
        * FIXME: I have no idea what this is for.

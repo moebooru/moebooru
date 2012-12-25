@@ -468,7 +468,15 @@ en:
         view: View Topics
       help:
         _: Help
+        artist: Artist Help
+        comment: Comment Help
+        forum: Forum Help
+        note: Note Help
+        pool: Pool Help
+        post: Post Help
         site: Site Help
+        tag: Tag Help
+        wiki: Wiki Help
       more: More »
       new_mail: New Mail
       notes:

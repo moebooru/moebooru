@@ -56,7 +56,6 @@
           search_box.hide();
           search_box.removeClass('is_modal');
           search_text_box.removeClass('mousetrap');
-          $('.submenu').show();
         },
         show = function() { $('.submenu').hide();
           search_box.show();

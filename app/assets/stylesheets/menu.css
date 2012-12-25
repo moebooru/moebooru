@@ -65,7 +65,7 @@ div#main-menu ul li ul.submenu li:hover {
 }
 div#main-menu ul li ul.submenu li a {
   display: block;
-  padding: 2px;
+  padding: 2px 4px;
   white-space: nowrap;
 }
 div#main-menu ul li ul.submenu li:hover a {

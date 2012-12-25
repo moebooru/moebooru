@@ -10,21 +10,6 @@
   Menu = {
     menu: null,
 
-    toggle: function(elem) {
-      var submenu = $(elem).siblings('.submenu'),
-        submenu_hid = (submenu.css('display') == 'none');
-      this.hide();
-      if (submenu_hid) {
-        submenu.show();
-        $(document).on('click', '*', Menu.hide);
-      }
-    },
-
-    hide: function() {
-      $('.submenu').hide();
-      $(document).off('click', '*', Menu.hide);
-    },
-
     // Set link to moderate when there's something in moderation queue.
     set_post_moderate_count: function() {
       var mod_pending = $.cookie('mod_pending');
@@ -56,18 +41,17 @@
           search_box.hide();
           search_box.removeClass('is_modal');
           search_text_box.removeClass('mousetrap');
+          $('.submenu').show();
         },
         show = function() { $('.submenu').hide();
           search_box.show();
           search_box.addClass('is_modal');
           search_text_box.addClass('mousetrap').focus();
-          var document_click_event = function(e) {
+          $(document).click(function(e) {
             if ($(e.target).parents('.is_modal').length == 0 && !$(e.target).hasClass('is_modal')) {
               hide(e);
-              $(document).off('click', '*', document_click_event);
             };
-          };
-          $(document).on('click', '*', document_click_event);
+          });
           Mousetrap.bind('esc', hide);
         };
       show();

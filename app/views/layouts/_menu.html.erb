@@ -2,7 +2,6 @@
   <% local_cache [:menu, @current_user.id, @current_user.level] do %>
     <ul>
       <li class="user"><%= link_to t('.account._'), { :controller => :user, :action => :home } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="submenu">
           <% if @current_user.is_anonymous? %>
             <li><%= link_to t('.account.login'), { :controller => :user, :action => :login }, { :id => 'login-link', :class => 'login-button' } %></li>
@@ -18,7 +17,6 @@
         </ul>
       </li>
       <li class="post"><%= link_to t('.posts._'), { :controller => :post, :action => :index } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -46,7 +44,6 @@
         </ul>
       </li>
       <li class="comment"><%= link_to t('.comments._'), { :controller => :comment, :action => :index }, { :id => 'comments-link' } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -66,7 +63,6 @@
         </ul>
       </li>
       <li class="note"><%= link_to t('.notes._'), { :controller => :note, :action => :index } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -84,7 +80,6 @@
         </ul>
       </li>
       <li class="artist"><%= link_to t('.artists._'), { :controller => :artist, :action => :index } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -102,7 +97,6 @@
         </ul>
       </li>
       <li class="tag"><%= link_to t('.tags._'), { :controller => :tag, :action => :index } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -125,7 +119,6 @@
         </ul>
       </li>
       <li class="pool"><%= link_to t('.pools._'), { :controller => :pool, :action => :index } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -143,7 +136,6 @@
         </ul>
       </li>
       <li class="wiki"><%= link_to t('.wiki._'), { :controller => :wiki, :action => :show, :title => 'help:home' } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -161,7 +153,6 @@
         </ul>
       </li>
       <li class="forum"><%= link_to t('.forum._'), { :controller => :forum, :action => :index }, { :id => 'forum-link' } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -181,7 +172,6 @@
         </ul>
       </li>
       <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>
-        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="submenu">
           <% %w(post comment note artist tag wiki pool forum).each do |item| %>
             <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item }, :class => ['help-item', item] %>

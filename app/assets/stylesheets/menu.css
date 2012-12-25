@@ -47,14 +47,6 @@ div#main-menu ul li ul.submenu {
   border: 1px solid #666;
   margin: 0;
 }
-div#main-menu > ul > li > a.submenu-button {
-  display: none;
-}
-div#main-menu > ul > li:hover > a.submenu-button {
-  display: block;
-}
-div#main-menu > ul > li:hover > a {
-}
 div#main-menu > ul > li > ul.submenu.open {
   display: block;
 }

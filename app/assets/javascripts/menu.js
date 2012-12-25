@@ -68,10 +68,12 @@
       // Adds latest topics.
       var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
       var create_forum_item = function(forum_json) {
+        var link_text = forum_json[0].length > 20 ? forum_json[0].substr(0,20) + '...' : forum_json[0];
         return $('<li/>', {
           html: $('<a/>', {
             href: Moebooru.path('/forum/show/' + forum_json[1] + '?page=' + forum_json[3]),
-            text: forum_json[0],
+            text: link_text,
+            title: forum_json[0],
             class: forum_json[2] ? 'unread-topic' : null
           }),
         });

@@ -35,6 +35,8 @@ div#main-menu ul li ul.submenu {
   background: black;
   border: 1px solid #666;
   margin: 0;
+  max-width: 200px;
+  overflow: hidden;
   opacity: 0;
   transition: opacity 0.5s, left 0s;
   -o-transition: opacity 0.5s, left 0s;

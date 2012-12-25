@@ -20,7 +20,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :post, :action => :index), :method => :get do %>
-              <%= text_field_tag :tags %><br />
+              <%= generic_text_field_tag :tags %><br />
               <%= get_submit_tag t('.posts.search') %>
             <% end %>
           </div>
@@ -47,7 +47,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :comment , :action => :search), :method => :get do %>
-              <%= text_field_tag :query %><br />
+              <%= generic_text_field_tag :query %><br />
               <%= get_submit_tag t('.comments.search') %>
             <% end %>
           </div>
@@ -66,7 +66,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :note, :action => :search), :method => :get do %>
-              <%= text_field_tag :query %><br />
+              <%= generic_text_field_tag :query %><br />
               <%= get_submit_tag t('.notes.search') %>
             <% end %>
           </div>
@@ -83,7 +83,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :artist, :action => :index), :method => :get do %>
-              <%= text_field_tag :name %><br />
+              <%= generic_text_field_tag :name %><br />
               <%= get_submit_tag t('.artists.search') %>
             <% end %>
           </div>
@@ -100,7 +100,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :tag, :action => :index), :method => :get do %>
-              <%= text_field_tag :name %><br />
+              <%= generic_text_field_tag :name %><br />
               <%= get_submit_tag t('.tags.search') %>
             <% end %>
           </div>
@@ -122,7 +122,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :pool, :action => :index), :method => :get do %>
-              <%= text_field_tag :query %><br />
+              <%= generic_text_field_tag :query %><br />
               <%= get_submit_tag t('.pools.search') %>
             <% end %>
           </div>
@@ -139,7 +139,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :wiki, :action => :index), :method => :get do %>
-              <%= text_field_tag :query %><br />
+              <%= generic_text_field_tag :query %><br />
               <%= get_submit_tag t('.wiki.search') %>
             <% end %>
           </div>
@@ -156,7 +156,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :forum, :action => :search), :method => :get do %>
-              <%= text_field_tag :query %><br />
+              <%= generic_text_field_tag :query %><br />
               <%= get_submit_tag t('.forum.search') %>
             <% end %>
           </div>

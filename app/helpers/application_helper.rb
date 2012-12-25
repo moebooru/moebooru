@@ -212,4 +212,9 @@ module ApplicationHelper
     submit_tag value, options.merge(:name => nil)
   end
 
+  # Text field tag without id.
+  def generic_text_field_tag(name, value = nil, options = {})
+    text_field_tag name, value, options.merge(:id => nil)
+  end
+
 end

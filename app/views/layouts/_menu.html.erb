@@ -28,6 +28,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.posts.view'), :controller => :post, :action => :index %></li>
+        <li><%= link_to t('.posts.search'), { :controller => :post, :action => :index }, :class => 'search-link' %></li>
         <li><%= link_to t('.posts.upload'), :controller => :post, :action => :upload %></li>
         <li><%= link_to t('.posts.random'), :controller => :post, :tags => 'order:random' %></li>
         <li><%= link_to t('.posts.popular'), :controller => :post, :action => 'popular_recent' %></li>
@@ -54,6 +55,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.comments.view'), :controller => :comment, :action => :index %></li>
+        <li><%= link_to t('.comments.search'), { :controller => :comment, :action => :search }, :class => 'search-link' %></li>
         <% if @current_user.is_janitor_or_higher? %>
           <li><%= link_to t('.comments.moderate'), :controller => :comment, :action => :moderate %></li>
         <% end %>
@@ -72,6 +74,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.notes.view'), :controller => :note, :action => :index %></li>
+        <li><%= link_to t('.notes.search'), { :controller => :note, :action => :search }, :class => 'search-link' %></li>
         <li><%= link_to t('.notes.requests'), :controller => :post, :action => :index, :tags => 'translation_request' %></li>
       </ul>
     </li>
@@ -88,6 +91,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.artists.view'), :controller => :artist, :action => :index %></li>
+        <li><%= link_to t('.artists.search'), { :controller => :artist, :action => :index }, :class => 'search-link' %></li>
         <li><%= link_to t('.artists.create'), :controller => :artist, :action => :create %></li>
       </ul>
     </li>
@@ -104,6 +108,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.tags.view'), :controller => :post, :action => :index %></li>
+        <li><%= link_to t('.tags.search'), { :controller => :tag, :action => :index }, :class => 'search-link' %></li>
         <li><%= link_to t('.tags.popular'), :controller => :tag, :action => :popular_by_day %></li>
         <li><%= link_to t('.tags.aliases'), :controller => :tag_alias, :action => :index %></li>
         <li><%= link_to t('.tags.implications'), :controller => :tag_implication, :action => :index %></li>
@@ -125,6 +130,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.pools.view'), :controller => :pool, :action => :index %></li>
+        <li><%= link_to t('.pools.search'), { :controller => :pool, :action => :index }, :class => 'search-link' %></li>
         <li><%= link_to t('.pools.create'), :controller => :pool, :action => :create %></li>
       </ul>
     </li>
@@ -141,6 +147,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.wiki.index'), :controller => :wiki, :action => :index %></li>
+        <li><%= link_to t('.wiki.search'), { :controller => :wiki, :action => :index }, :class => 'search-link' %></li>
         <li><%= link_to t('.wiki.create'), :controller => :wiki, :action => :add %></li>
       </ul>
     </li>
@@ -157,6 +164,7 @@
       </ul>
       <ul class="submenu">
         <li><%= link_to t('.forum.view'), :controller => :forum, :action => :index %></li>
+        <li><%= link_to t('.forum.search'), { :controller => :forum, :action => :index }, :class => 'search-link' %></li>
         <li><%= link_to t('.forum.new'), :controller => :forum, :action => :new %></li>
         <li><%= link_to t('.forum.mark_all_read'), { :controller => :forum, :action => :mark_all_read }, :id => 'forum-mark-all-read', :style => 'display: none;' %></li>
         <li class="forum-items-start"><span class="separator"></span></li>

@@ -21,7 +21,7 @@
           <div>
             <%= form_tag url_for(:controller => :post, :action => :index), :method => :get do %>
               <%= text_field_tag :tags %><br />
-              <%= submit_tag t('.posts.search') %>
+              <%= get_submit_tag t('.posts.search') %>
             <% end %>
           </div>
         </li>
@@ -48,7 +48,7 @@
           <div>
             <%= form_tag url_for(:controller => :comment , :action => :search), :method => :get do %>
               <%= text_field_tag :query %><br />
-              <%= submit_tag t('.comments.search') %>
+              <%= get_submit_tag t('.comments.search') %>
             <% end %>
           </div>
         </li>
@@ -67,7 +67,7 @@
           <div>
             <%= form_tag url_for(:controller => :note, :action => :search), :method => :get do %>
               <%= text_field_tag :query %><br />
-              <%= submit_tag t('.notes.search') %>
+              <%= get_submit_tag t('.notes.search') %>
             <% end %>
           </div>
         </li>
@@ -84,7 +84,7 @@
           <div>
             <%= form_tag url_for(:controller => :artist, :action => :index), :method => :get do %>
               <%= text_field_tag :name %><br />
-              <%= submit_tag t('.artists.search') %>
+              <%= get_submit_tag t('.artists.search') %>
             <% end %>
           </div>
         </li>
@@ -101,7 +101,7 @@
           <div>
             <%= form_tag url_for(:controller => :tag, :action => :index), :method => :get do %>
               <%= text_field_tag :name %><br />
-              <%= submit_tag t('.tags.search') %>
+              <%= get_submit_tag t('.tags.search') %>
             <% end %>
           </div>
         </li>
@@ -123,7 +123,7 @@
           <div>
             <%= form_tag url_for(:controller => :pool, :action => :index), :method => :get do %>
               <%= text_field_tag :query %><br />
-              <%= submit_tag t('.pools.search') %>
+              <%= get_submit_tag t('.pools.search') %>
             <% end %>
           </div>
         </li>
@@ -140,7 +140,7 @@
           <div>
             <%= form_tag url_for(:controller => :wiki, :action => :index), :method => :get do %>
               <%= text_field_tag :query %><br />
-              <%= submit_tag t('.wiki.search') %>
+              <%= get_submit_tag t('.wiki.search') %>
             <% end %>
           </div>
         </li>
@@ -157,7 +157,7 @@
           <div>
             <%= form_tag url_for(:controller => :forum, :action => :search), :method => :get do %>
               <%= text_field_tag :query %><br />
-              <%= submit_tag t('.forum.search') %>
+              <%= get_submit_tag t('.forum.search') %>
             <% end %>
           </div>
         </li>

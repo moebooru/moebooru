@@ -206,4 +206,10 @@ module ApplicationHelper
     return starting_level >= needed_level
   end
 
+  # Submit tag with a twist: removes name from tag form data so it doesn't add
+  # unnecessary query string on forms with GET method.
+  def get_submit_tag(value = "Save changes", options = {})
+    submit_tag value, options.merge(:name => nil)
+  end
+
 end

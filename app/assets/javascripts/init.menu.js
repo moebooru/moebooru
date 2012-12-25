@@ -12,7 +12,8 @@ jQuery(document).ready(function($) {
       }),
     });
   };
-  for (var i = forum_menu_items.length - 1; i >=0; i--) {
+  var menu_items_num = forum_menu_items.length > 5 ? 5 : forum_menu_items.length;
+  for (var i = menu_items_num - 1; i >=0; i--) {
     $('.forum-items-start').after(create_forum_item(forum_menu_items[i]));
   };
   var forum_submenu = $('#main-menu .forum ul');

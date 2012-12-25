@@ -142,9 +142,6 @@
         <li><%= link_to t('.forum.new'), :controller => :forum, :action => :new %></li>
         <li><%= link_to t('.forum.mark_all_read'), { :controller => :forum, :action => :mark_all_read }, :id => 'forum-mark-all-read' %></li>
         <li class="forum-items-start"><span class="separator"></span></li>
-        <% ForumPost.all(:conditions => { :parent_id => nil }, :order => "updated_at DESC", :limit => 5).each do |p| %>
-          <li><%= link_to p.title, { :controller => :forum, :action => :show, :id => p.id, :page => (p.response_count / 30 + 1) }, :id => "menu-forum-post-#{p.id}" %></li>
-        <% end %>
       </ul>
     </li>
     <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>

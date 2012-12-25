@@ -20,7 +20,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :post, :action => :index), :method => :get do %>
-              <%= text_field_tag :tags -%>
+              <%= text_field_tag :tags %>
             <% end %>
           </div>
         </li>
@@ -43,7 +43,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :comment , :action => :search), :method => :get do %>
-              <%= text_field_tag :query -%>
+              <%= text_field_tag :query %>
             <% end %>
           </div>
         </li>
@@ -58,7 +58,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :note, :action => :search), :method => :get do %>
-              <%= text_field_tag :query -%>
+              <%= text_field_tag :query %>
             <% end %>
           </div>
         </li>
@@ -71,7 +71,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :artist, :action => :index), :method => :get do %>
-              <%= text_field_tag :name -%>
+              <%= text_field_tag :name %>
             <% end %>
           </div>
         </li>
@@ -84,7 +84,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :tag, :action => :index), :method => :get do %>
-              <%= text_field_tag :name -%>
+              <%= text_field_tag :name %>
             <% end %>
           </div>
         </li>
@@ -102,7 +102,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :pool, :action => :index), :method => :get do %>
-              <%= text_field_tag :query -%>
+              <%= text_field_tag :query %>
             <% end %>
           </div>
         </li>
@@ -115,7 +115,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :wiki, :action => :index), :method => :get do %>
-              <%= text_field_tag :query -%>
+              <%= text_field_tag :query %>
             <% end %>
           </div>
         </li>
@@ -128,7 +128,7 @@
         <li>
           <div>
             <%= form_tag url_for(:controller => :forum, :action => :search), :method => :get do %>
-              <%= text_field_tag :query -%>
+              <%= text_field_tag :query %>
             <% end %>
           </div>
         </li>
@@ -155,5 +155,5 @@
   <span id='cn' style="display: none;">
   </span>
 </div>
-<%# FIXME: for some reason I need to add a hard space to get the menu layout correct. -%>
+<%# FIXME: for some reason I need to add a hard space to get the menu layout correct. %>
 &nbsp;

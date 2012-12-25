@@ -11,7 +11,7 @@
     menu: null,
 
     toggle: function(elem) {
-      var submenu = $(elem).parent().siblings('.submenu'),
+      var submenu = $(elem).siblings('.submenu'),
         submenu_hid = (submenu.css('display') == 'none');
       this.hide();
       if (submenu_hid) {

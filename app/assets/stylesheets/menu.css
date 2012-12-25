@@ -9,24 +9,24 @@ div#main-menu > ul {
   list-style: none;
 }
 div#main-menu ul li {
-  margin: 0;
+  margin: 0 12px 0 0;
   padding: 0;
   float: left;
   position: relative;
 }
 div#main-menu > ul > li > a {
-  display: block;
-  margin: 3px 5px;
   padding: 0;
+  margin: 0;
 }
-div#main-menu > ul > li > a span.submenu-button {
+div#main-menu > ul > li > a.submenu-button {
   opacity: 0;
   padding: 0 1px;
+  margin: 0;
 }
-div#main-menu > ul > li:hover > a span.submenu-button:hover {
+div#main-menu > ul > li:hover > a.submenu-button:hover {
   opacity: 1;
 }
-div#main-menu > ul > li:hover > a span.submenu-button {
+div#main-menu > ul > li:hover > a.submenu-button {
   opacity: 0.5;
 }
 div#main-menu .search-box {

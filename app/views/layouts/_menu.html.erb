@@ -1,11 +1,8 @@
 <div class="clearfix" id="main-menu" data-controller="<%= controller.controller_name %>">
   <% local_cache [:menu, @current_user.id, @current_user.level] do %>
     <ul>
-      <li class="user">
-        <%= link_to({ :controller => :user, :action => :home }) do %>
-          <%= t('.account._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="user"><%= link_to t('.account._'), { :controller => :user, :action => :home } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="submenu">
           <% if @current_user.is_anonymous? %>
             <li><%= link_to t('.account.login'), { :controller => :user, :action => :login }, { :id => 'login-link', :class => 'login-button' } %></li>
@@ -20,11 +17,8 @@
           <% end %>
         </ul>
       </li>
-      <li class="post">
-        <%= link_to({ :controller => :post, :action => :index }) do %>
-          <%= t('.posts._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="post"><%= link_to t('.posts._'), { :controller => :post, :action => :index } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -51,11 +45,8 @@
           <% end %>
         </ul>
       </li>
-      <li class="comment">
-        <%= link_to({ :controller => :comment, :action => :index }, { :id => 'comments-link' }) do %>
-          <%= t('.comments._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="comment"><%= link_to t('.comments._'), { :controller => :comment, :action => :index }, { :id => 'comments-link' } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -74,11 +65,8 @@
           <% end %>
         </ul>
       </li>
-      <li class="note">
-        <%= link_to({ :controller => :note, :action => :index }) do %>
-          <%= t('.notes._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="note"><%= link_to t('.notes._'), { :controller => :note, :action => :index } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -95,11 +83,8 @@
           <li><%= link_to t('.notes.requests'), :controller => :post, :action => :index, :tags => 'translation_request' %></li>
         </ul>
       </li>
-      <li class="artist">
-        <%= link_to({ :controller => :artist, :action => :index }) do %>
-          <%= t('.artists._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="artist"><%= link_to t('.artists._'), { :controller => :artist, :action => :index } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -116,11 +101,8 @@
           <li><%= link_to t('.artists.create'), :controller => :artist, :action => :create %></li>
         </ul>
       </li>
-      <li class="tag">
-        <%= link_to({ :controller => :tag, :action => :index }) do %>
-          <%= t('.tags._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="tag"><%= link_to t('.tags._'), { :controller => :tag, :action => :index } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -142,11 +124,8 @@
           <% end %>
         </ul>
       </li>
-      <li class="pool">
-        <%= link_to({ :controller => :pool, :action => :index }) do %>
-          <%= t('.pools._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="pool"><%= link_to t('.pools._'), { :controller => :pool, :action => :index } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -163,11 +142,8 @@
           <li><%= link_to t('.pools.create'), :controller => :pool, :action => :create %></li>
         </ul>
       </li>
-      <li class="wiki">
-        <%= link_to({ :controller => :wiki, :action => :show, :title => 'help:home' }) do %>
-          <%= t('.wiki._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="wiki"><%= link_to t('.wiki._'), { :controller => :wiki, :action => :show, :title => 'help:home' } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -184,11 +160,8 @@
           <li><%= link_to t('.wiki.create'), :controller => :wiki, :action => :add %></li>
         </ul>
       </li>
-      <li class="forum">
-        <%= link_to({ :controller => :forum, :action => :index }, { :id => 'forum-link' }) do %>
-          <%= t('.forum._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="forum"><%= link_to t('.forum._'), { :controller => :forum, :action => :index }, { :id => 'forum-link' } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>
             <div>
@@ -207,11 +180,8 @@
           <li class="forum-items-start"><span class="separator"></span></li>
         </ul>
       </li>
-      <li class="help">
-        <%= link_to({ :controller => :help, :action => :index }) do %>
-          <%= t('.help._') %>
-          <%= content_tag :span, '▼', :class => 'submenu-button' %>
-        <% end %>
+      <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>
+        <%= link_to '▼', '#', :class => 'submenu-button' %>
         <ul class="submenu">
           <% %w(post comment note artist tag wiki pool forum).each do |item| %>
             <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item }, :class => ['help-item', item] %>

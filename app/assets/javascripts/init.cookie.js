@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
 
   // Show block/ban reason if the user is blocked/banned.
   if ($.cookie('block_reason') && $.cookie('block_reason') != '') {
-    $('#block-reason').html($.cookie('block_reason')).show();
+    $('#block-reason').text($.cookie('block_reason')).show();
   };
 
   // Check if there's any pending post moderation queue.

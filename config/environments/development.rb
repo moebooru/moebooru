@@ -13,6 +13,9 @@ Moebooru::Application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = true
 
+  # Disable caching view digests for cache_digests.
+  CacheDigests::TemplateDigestor.cache = ActiveSupport::Cache::NullStore.new
+
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
 

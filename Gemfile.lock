@@ -43,6 +43,8 @@ GEM
     addressable (2.3.2)
     arel (3.0.2)
     builder (3.0.4)
+    cache_digests (0.2.0)
+      actionpack (>= 3.2)
     daemons (1.1.9)
     dalli (2.6.0)
     diff-lcs (1.1.3)
@@ -184,6 +186,7 @@ DEPENDENCIES
   activerecord-jdbcpostgresql-adapter
   acts_as_versioned_rails3
   addressable
+  cache_digests
   daemons
   dalli
   diff-lcs

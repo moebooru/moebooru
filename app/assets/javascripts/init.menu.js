@@ -1,4 +1,7 @@
 jQuery(document).ready(function($) {
+  var hl_menu_class = '.' + $('#main-menu').data('controller');
+  $('#main-menu ' + hl_menu_class).addClass('current-menu');
+
   var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
   var create_forum_item = function(forum_json) {
     return $('<li/>', {

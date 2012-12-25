@@ -61,7 +61,7 @@ div#main-menu ul li ul li:hover a {
 div#main-menu .separator {
   display: block;
   width: 100%;
-  background: #AAAAAA;
+  background: #aaa;
   height: 1px;
   margin: 1px 0px;
   /* For IE7: */

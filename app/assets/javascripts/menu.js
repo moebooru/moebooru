@@ -72,7 +72,7 @@
           html: $('<a/>', {
             href: Moebooru.path('/forum/show/' + forum_json[1] + '?page=' + forum_json[3]),
             text: forum_json[0],
-            class: forum_json[2] ? 'unread-topic' : ' '
+            class: forum_json[2] ? 'unread-topic' : null
           }),
         });
       };

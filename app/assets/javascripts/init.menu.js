@@ -24,4 +24,8 @@ jQuery(document).ready(function($) {
     forum_submenu.css('width', 200)
     forum_submenu.find('a').css('white-space', 'normal');
   };
+
+  // Shows #cn
+  // FIXME: I have no idea what this is for.
+  $('#cn').show();
 });

@@ -1,0 +1,66 @@
+div#main-menu {
+  display: block;
+  padding-left: 0;
+  margin-left: 0;
+  width: 100%;
+}
+div#main-menu > ul {
+  float: left;
+  list-style: none;
+  width: 100%;
+}
+div#main-menu ul li {
+  margin: 0 1.6em 0 0;
+  padding: 0;
+  float: left;
+  position: relative;
+}
+div#main-menu ul li ul {
+  position: absolute;
+  list-style: none;
+  float: none;
+  left: -9999px;
+  background: black;
+  border: 1px solid #666;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 1s, left 0s;
+  -o-transition: opacity 1s, left 0s;
+  -webkit-transition: opacity 1s, left 0s;
+  -ms-transition: opacity 1s, left 0s;
+  -moz-transition: opacity 1s, left 0s;
+}
+div#main-menu ul li:hover ul {
+  left: 0;
+  opacity: 1;
+  transition-delay: 0.1s;
+  -o-transition-delay: 0.1s;
+  -webkit-transition-delay: 0.1s;
+  -ms-transition-delay: 0.1s;
+  -moz-transition-delay: 0.1s;
+}
+div#main-menu ul li ul li {
+  float: none;
+  margin: 0;
+  padding: 0;
+}
+div#main-menu ul li ul li:hover {
+  background: white;
+}
+div#main-menu ul li ul li a {
+  display: block;
+  padding: 2px;
+  white-space: nowrap;
+}
+div#main-menu ul li ul li:hover a {
+  color: black;
+}
+div#main-menu .separator {
+  display: block;
+  width: 100%;
+  background: #AAAAAA;
+  height: 1px;
+  margin: 1px 0px;
+  /* For IE7: */
+  overflow: hidden;
+}

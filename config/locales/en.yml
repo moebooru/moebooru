@@ -462,6 +462,7 @@ en:
         view: View Comments
       forum:
         _: Forum
+        mark_all_read: Mark All Read
         new: New Topic
         search: Search Forums
         view: View Topics

@@ -20,9 +20,14 @@ div#main-menu > ul > li > a {
 }
 div#main-menu > ul > li > a span.submenu-button {
   opacity: 0;
+  padding: 0 1px;
 }
 div#main-menu > ul > li:hover > a span.submenu-button {
   opacity: 1;
+}
+div#main-menu > ul > li > a span.submenu-button:hover {
+  background-color: #fff;
+  color: #000;
 }
 div#main-menu .search-box {
   display: none;
@@ -49,8 +54,6 @@ div#main-menu > ul > li:hover > a.submenu-button {
   display: block;
 }
 div#main-menu > ul > li:hover > a {
-  background-color: #fff;
-  color: #000;
 }
 div#main-menu > ul > li > ul.submenu.open {
   display: block;

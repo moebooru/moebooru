@@ -14,6 +14,10 @@ div#main-menu ul li {
   float: left;
   position: relative;
 }
+div#main-menu .search-box {
+  display: none;
+  list-style: none;
+}
 div#main-menu ul li ul.submenu {
   position: absolute;
   list-style: none;

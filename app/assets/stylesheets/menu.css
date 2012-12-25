@@ -17,6 +17,10 @@ div#main-menu ul li {
 div#main-menu .search-box {
   display: none;
   list-style: none;
+  position: absolute;
+  background: black;
+  border: 1px solid #666;
+  padding: 5px;
 }
 div#main-menu ul li ul.submenu {
   position: absolute;

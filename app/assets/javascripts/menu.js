@@ -25,6 +25,32 @@
       this.menu.find(hl_menu_class).addClass('current-menu');
     },
 
+    show_search_box: function(elem) {
+      var
+        submenu = $(elem).parents('.submenu'),
+        search_box = submenu.siblings('.search-box'),
+        search_text_box = search_box.find('[type="text"]'),
+        hide = function(e) {
+          search_box.hide();
+          search_box.removeClass('is_modal');
+          search_text_box.removeClass('mousetrap');
+          $('.submenu').show();
+        },
+        show = function() { $('.submenu').hide();
+          search_box.show();
+          search_box.addClass('is_modal');
+          search_text_box.addClass('mousetrap').focus();
+          $(document).click(function(e) {
+            if ($(e.target).parents('.is_modal').length == 0 && !$(e.target).hasClass('is_modal')) {
+              hide(e);
+            };
+          });
+          Mousetrap.bind('esc', hide);
+        };
+      show();
+      return false;
+    },
+
     /*
      * Sets various forum-related menu:
      * - adds 5 latest topics

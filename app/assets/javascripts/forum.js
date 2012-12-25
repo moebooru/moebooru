@@ -6,7 +6,7 @@
       }).done(function() {
         $('span.forum-topic').removeClass('unread-topic');
         $('div.forum-update').removeClass('forum-update');
-        main_menu.mark_forum_posts_read();
+        Menu.sync_forum_menu();
         notice("Marked all topics as read");
       });
     },

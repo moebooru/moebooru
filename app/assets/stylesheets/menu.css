@@ -86,3 +86,6 @@ div#main-menu a#forum-link.forum-update {
 div#main-menu .forum-items-start {
   display: none;
 }
+div#main-menu #has-mail-notice {
+  display: none;
+}

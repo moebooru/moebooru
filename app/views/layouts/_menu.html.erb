@@ -174,8 +174,6 @@
       Forum.mark_all_read();
       event.stop();
     });
-  if (Cookie.get('comments_updated') == '1')
-    $('comments-link').addClassName('bolded');
   Menu2.forum_status_update();
   $('cn').show();
 </script>

@@ -29,5 +29,10 @@ jQuery(document).ready(function($) {
   if (menu.find('.unread-topic').length > 0) {
     menu.find('.forum').addClass('forum-update');
     menu.find('#forum-mark-all-read').show();
+  };
+
+  // Set style when there's new comment
+  if ($.cookie('comments_updated') == '1') {
+    menu.find('.comment').addClass('bolded');
   }
 });

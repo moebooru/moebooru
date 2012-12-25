@@ -27,6 +27,7 @@ div#main-menu .search-box {
   padding: 5px;
 }
 div#main-menu ul li ul.submenu {
+  z-index: 1000;
   position: absolute;
   list-style: none;
   float: none;

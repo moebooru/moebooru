@@ -10,13 +10,19 @@
   Menu = {
     menu: null,
 
-    show: function(elem) {
-      $(elem).parent().siblings('.submenu').show();
-      $(document).click(this.hide);
+    toggle: function(elem) {
+      var submenu = $(elem).parent().siblings('.submenu'),
+        submenu_display = submenu.css('display');
+      this.hide();
+      if (submenu_display == 'none') {
+        submenu.show();
+        $(document).on('click', this.hide);
+      }
     },
 
     hide: function() {
       $('.submenu').hide();
+      $(document).off('click', this.hide);
     },
 
     // Set link to moderate when there's something in moderation queue.

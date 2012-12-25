@@ -74,3 +74,6 @@ div#main-menu .separator {
 div#main-menu a#forum-link.forum-update {
   font-weight: bold;
 }
+div#main-menu .forum-items-start {
+  display: none;
+}

@@ -45,9 +45,12 @@
       };
       this.menu.find('.forum-items-start').nextAll().remove();
       var menu_items_num = forum_menu_items.length > 5 ? 5 : forum_menu_items.length;
-      for (var i = menu_items_num - 1; i >=0; i--) {
-        this.menu.find('.forum-items-start').after(create_forum_item(forum_menu_items[i]));
-      };
+      if (menu_items_num > 0) {
+        for (var i = menu_items_num - 1; i >=0; i--) {
+          this.menu.find('.forum-items-start').after(create_forum_item(forum_menu_items[i]));
+        };
+        this.menu.find('.forum-items-start').show();
+      }
 
       // Sets width of forum submenu.
       var forum_submenu = this.menu.find('.forum ul');

@@ -1,189 +1,191 @@
 <div class="clearfix" id="main-menu" data-controller="<%= controller.controller_name %>">
-  <ul>
-    <li class="user"><%= link_to t('.account._'), { :controller => :user, :action => :home } %>
-      <ul class="submenu">
-        <% if @current_user.is_anonymous? %>
-          <li><%= link_to t('.account.login'), { :controller => :user, :action => :login }, { :id => 'login-link', :class => 'login-button' } %></li>
-          <li><%= link_to t('.account.reset'), :controller => :user, :action => :reset_password %></li>
-        <% else %>
-          <li><%= link_to t('.account.profile'), :controller => :user, :action => :show, :id => @current_user.id %></li>
-          <li><%= link_to t('.account.mail'), :controller => :dmail, :action => :inbox %></li>
-          <li><%= link_to t('.account.favorites'), :controller => :post, :action => :index, :tags => "order:vote vote:3:#{@current_user.name}" %></li>
-          <li><%= link_to t('.account.settings'), :controller => :user, :action => :edit %></li>
-          <li><%= link_to t('.account.change_password'), :controller => :user, :action => :change_password %></li>
-          <li><%= link_to t('.account.logout'), { :controller => :user, :action => :logout }, :from => request.url %></li>
-        <% end %>
-      </ul>
-    </li>
-    <li class="post"><%= link_to t('.posts._'), { :controller => :post, :action => :index } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :post, :action => :index), :method => :get do %>
-              <%= generic_text_field_tag :tags %><br />
-              <%= get_submit_tag t('.posts.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.posts.view'), :controller => :post, :action => :index %></li>
-        <li><%= link_to t('.posts.search'), { :controller => :post, :action => :index }, :class => 'search-link' %></li>
-        <li><%= link_to t('.posts.upload'), :controller => :post, :action => :upload %></li>
-        <li><%= link_to t('.posts.random'), :controller => :post, :tags => 'order:random' %></li>
-        <li><%= link_to t('.posts.popular'), :controller => :post, :action => 'popular_recent' %></li>
-        <li><%= link_to t('.posts.image_search'), :controller => :post, :action => :similar %></li>
-        <li><%= link_to t('.posts.history'), :controller => :history, :action => :index %></li>
-        <% if @current_user.is_contributor_or_higher? %>
-          <li><%= link_to t('.posts.batch'), :controller => :batch, :action => :index %></li>
-        <% end %>
-        <% if @current_user.is_janitor_or_higher? %>
-          <li><%= link_to t('.posts.moderate'), { :controller => :post, :action => :moderate }, :class => 'moderate' %></li>
-        <% end %>
-      </ul>
-    </li>
-    <li class="comment"><%= link_to t('.comments._'), { :controller => :comment, :action => :index }, { :id => 'comments-link' } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :comment , :action => :search), :method => :get do %>
-              <%= generic_text_field_tag :query %><br />
-              <%= get_submit_tag t('.comments.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.comments.view'), :controller => :comment, :action => :index %></li>
-        <li><%= link_to t('.comments.search'), { :controller => :comment, :action => :search }, :class => 'search-link' %></li>
-        <% if @current_user.is_janitor_or_higher? %>
-          <li><%= link_to t('.comments.moderate'), :controller => :comment, :action => :moderate %></li>
-        <% end %>
-      </ul>
-    </li>
-    <li class="note"><%= link_to t('.notes._'), { :controller => :note, :action => :index } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :note, :action => :search), :method => :get do %>
-              <%= generic_text_field_tag :query %><br />
-              <%= get_submit_tag t('.notes.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.notes.view'), :controller => :note, :action => :index %></li>
-        <li><%= link_to t('.notes.search'), { :controller => :note, :action => :search }, :class => 'search-link' %></li>
-        <li><%= link_to t('.notes.requests'), :controller => :post, :action => :index, :tags => 'translation_request' %></li>
-      </ul>
-    </li>
-    <li class="artist"><%= link_to t('.artists._'), { :controller => :artist, :action => :index } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :artist, :action => :index), :method => :get do %>
-              <%= generic_text_field_tag :name %><br />
-              <%= get_submit_tag t('.artists.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.artists.view'), :controller => :artist, :action => :index %></li>
-        <li><%= link_to t('.artists.search'), { :controller => :artist, :action => :index }, :class => 'search-link' %></li>
-        <li><%= link_to t('.artists.create'), :controller => :artist, :action => :create %></li>
-      </ul>
-    </li>
-    <li class="tag"><%= link_to t('.tags._'), { :controller => :tag, :action => :index } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :tag, :action => :index), :method => :get do %>
-              <%= generic_text_field_tag :name %><br />
-              <%= get_submit_tag t('.tags.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.tags.view'), :controller => :post, :action => :index %></li>
-        <li><%= link_to t('.tags.search'), { :controller => :tag, :action => :index }, :class => 'search-link' %></li>
-        <li><%= link_to t('.tags.popular'), :controller => :tag, :action => :popular_by_day %></li>
-        <li><%= link_to t('.tags.aliases'), :controller => :tag_alias, :action => :index %></li>
-        <li><%= link_to t('.tags.implications'), :controller => :tag_implication, :action => :index %></li>
-        <% if @current_user.is_janitor_or_higher? %>
-          <li><%= link_to t('.tags.mass_edit'), :controller => :tag, :action => :mass_edit %></li>
-        <% end %>
-      </ul>
-    </li>
-    <li class="pool"><%= link_to t('.pools._'), { :controller => :pool, :action => :index } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :pool, :action => :index), :method => :get do %>
-              <%= generic_text_field_tag :query %><br />
-              <%= get_submit_tag t('.pools.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.pools.view'), :controller => :pool, :action => :index %></li>
-        <li><%= link_to t('.pools.search'), { :controller => :pool, :action => :index }, :class => 'search-link' %></li>
-        <li><%= link_to t('.pools.create'), :controller => :pool, :action => :create %></li>
-      </ul>
-    </li>
-    <li class="wiki"><%= link_to t('.wiki._'), { :controller => :wiki, :action => :show, :title => 'help:home' } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :wiki, :action => :index), :method => :get do %>
-              <%= generic_text_field_tag :query %><br />
-              <%= get_submit_tag t('.wiki.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.wiki.index'), :controller => :wiki, :action => :index %></li>
-        <li><%= link_to t('.wiki.search'), { :controller => :wiki, :action => :index }, :class => 'search-link' %></li>
-        <li><%= link_to t('.wiki.create'), :controller => :wiki, :action => :add %></li>
-      </ul>
-    </li>
-    <li class="forum"><%= link_to t('.forum._'), { :controller => :forum, :action => :index }, { :id => 'forum-link' } %>
-      <ul class="search-box">
-        <li>
-          <div>
-            <%= form_tag url_for(:controller => :forum, :action => :search), :method => :get do %>
-              <%= generic_text_field_tag :query %><br />
-              <%= get_submit_tag t('.forum.search') %>
-            <% end %>
-          </div>
-        </li>
-      </ul>
-      <ul class="submenu">
-        <li><%= link_to t('.forum.view'), :controller => :forum, :action => :index %></li>
-        <li><%= link_to t('.forum.search'), { :controller => :forum, :action => :index }, :class => 'search-link' %></li>
-        <li><%= link_to t('.forum.new'), :controller => :forum, :action => :new %></li>
-        <li><%= link_to t('.forum.mark_all_read'), { :controller => :forum, :action => :mark_all_read }, :id => 'forum-mark-all-read', :style => 'display: none;' %></li>
-        <li class="forum-items-start"><span class="separator"></span></li>
-      </ul>
-    </li>
-    <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>
-      <ul class="submenu">
-        <% %w(post comment note artist tag wiki pool forum).each do |item| %>
-          <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item }, :class => ['help-item', item] %>
-        <% end %>
-        <li><%= link_to t('.help.site'), :controller => :help, :action => :index %></li>
-      </ul>
-    </li>
-    <li class="static"><%= link_to t('.more'), { :controller => :static, :action => :more } %>
-    </li>
-    <li class="has-mail">
-      <%= link_to t('.new_mail'), { :controller => '/dmail', :action => :inbox }, :id => 'has-mail-notice' %>
-    </li>
-  </ul>
-  <span id='cn' style="display: none;">
-  </span>
+  <% local_cache [:menu, @current_user] do %>
+    <ul>
+      <li class="user"><%= link_to t('.account._'), { :controller => :user, :action => :home } %>
+        <ul class="submenu">
+          <% if @current_user.is_anonymous? %>
+            <li><%= link_to t('.account.login'), { :controller => :user, :action => :login }, { :id => 'login-link', :class => 'login-button' } %></li>
+            <li><%= link_to t('.account.reset'), :controller => :user, :action => :reset_password %></li>
+          <% else %>
+            <li><%= link_to t('.account.profile'), :controller => :user, :action => :show, :id => @current_user.id %></li>
+            <li><%= link_to t('.account.mail'), :controller => :dmail, :action => :inbox %></li>
+            <li><%= link_to t('.account.favorites'), :controller => :post, :action => :index, :tags => "order:vote vote:3:#{@current_user.name}" %></li>
+            <li><%= link_to t('.account.settings'), :controller => :user, :action => :edit %></li>
+            <li><%= link_to t('.account.change_password'), :controller => :user, :action => :change_password %></li>
+            <li><%= link_to t('.account.logout'), { :controller => :user, :action => :logout }, :from => request.url %></li>
+          <% end %>
+        </ul>
+      </li>
+      <li class="post"><%= link_to t('.posts._'), { :controller => :post, :action => :index } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :post, :action => :index), :method => :get do %>
+                <%= generic_text_field_tag :tags %><br />
+                <%= get_submit_tag t('.posts.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.posts.view'), :controller => :post, :action => :index %></li>
+          <li><%= link_to t('.posts.search'), { :controller => :post, :action => :index }, :class => 'search-link' %></li>
+          <li><%= link_to t('.posts.upload'), :controller => :post, :action => :upload %></li>
+          <li><%= link_to t('.posts.random'), :controller => :post, :tags => 'order:random' %></li>
+          <li><%= link_to t('.posts.popular'), :controller => :post, :action => 'popular_recent' %></li>
+          <li><%= link_to t('.posts.image_search'), :controller => :post, :action => :similar %></li>
+          <li><%= link_to t('.posts.history'), :controller => :history, :action => :index %></li>
+          <% if @current_user.is_contributor_or_higher? %>
+            <li><%= link_to t('.posts.batch'), :controller => :batch, :action => :index %></li>
+          <% end %>
+          <% if @current_user.is_janitor_or_higher? %>
+            <li><%= link_to t('.posts.moderate'), { :controller => :post, :action => :moderate }, :class => 'moderate' %></li>
+          <% end %>
+        </ul>
+      </li>
+      <li class="comment"><%= link_to t('.comments._'), { :controller => :comment, :action => :index }, { :id => 'comments-link' } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :comment , :action => :search), :method => :get do %>
+                <%= generic_text_field_tag :query %><br />
+                <%= get_submit_tag t('.comments.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.comments.view'), :controller => :comment, :action => :index %></li>
+          <li><%= link_to t('.comments.search'), { :controller => :comment, :action => :search }, :class => 'search-link' %></li>
+          <% if @current_user.is_janitor_or_higher? %>
+            <li><%= link_to t('.comments.moderate'), :controller => :comment, :action => :moderate %></li>
+          <% end %>
+        </ul>
+      </li>
+      <li class="note"><%= link_to t('.notes._'), { :controller => :note, :action => :index } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :note, :action => :search), :method => :get do %>
+                <%= generic_text_field_tag :query %><br />
+                <%= get_submit_tag t('.notes.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.notes.view'), :controller => :note, :action => :index %></li>
+          <li><%= link_to t('.notes.search'), { :controller => :note, :action => :search }, :class => 'search-link' %></li>
+          <li><%= link_to t('.notes.requests'), :controller => :post, :action => :index, :tags => 'translation_request' %></li>
+        </ul>
+      </li>
+      <li class="artist"><%= link_to t('.artists._'), { :controller => :artist, :action => :index } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :artist, :action => :index), :method => :get do %>
+                <%= generic_text_field_tag :name %><br />
+                <%= get_submit_tag t('.artists.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.artists.view'), :controller => :artist, :action => :index %></li>
+          <li><%= link_to t('.artists.search'), { :controller => :artist, :action => :index }, :class => 'search-link' %></li>
+          <li><%= link_to t('.artists.create'), :controller => :artist, :action => :create %></li>
+        </ul>
+      </li>
+      <li class="tag"><%= link_to t('.tags._'), { :controller => :tag, :action => :index } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :tag, :action => :index), :method => :get do %>
+                <%= generic_text_field_tag :name %><br />
+                <%= get_submit_tag t('.tags.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.tags.view'), :controller => :post, :action => :index %></li>
+          <li><%= link_to t('.tags.search'), { :controller => :tag, :action => :index }, :class => 'search-link' %></li>
+          <li><%= link_to t('.tags.popular'), :controller => :tag, :action => :popular_by_day %></li>
+          <li><%= link_to t('.tags.aliases'), :controller => :tag_alias, :action => :index %></li>
+          <li><%= link_to t('.tags.implications'), :controller => :tag_implication, :action => :index %></li>
+          <% if @current_user.is_janitor_or_higher? %>
+            <li><%= link_to t('.tags.mass_edit'), :controller => :tag, :action => :mass_edit %></li>
+          <% end %>
+        </ul>
+      </li>
+      <li class="pool"><%= link_to t('.pools._'), { :controller => :pool, :action => :index } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :pool, :action => :index), :method => :get do %>
+                <%= generic_text_field_tag :query %><br />
+                <%= get_submit_tag t('.pools.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.pools.view'), :controller => :pool, :action => :index %></li>
+          <li><%= link_to t('.pools.search'), { :controller => :pool, :action => :index }, :class => 'search-link' %></li>
+          <li><%= link_to t('.pools.create'), :controller => :pool, :action => :create %></li>
+        </ul>
+      </li>
+      <li class="wiki"><%= link_to t('.wiki._'), { :controller => :wiki, :action => :show, :title => 'help:home' } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :wiki, :action => :index), :method => :get do %>
+                <%= generic_text_field_tag :query %><br />
+                <%= get_submit_tag t('.wiki.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.wiki.index'), :controller => :wiki, :action => :index %></li>
+          <li><%= link_to t('.wiki.search'), { :controller => :wiki, :action => :index }, :class => 'search-link' %></li>
+          <li><%= link_to t('.wiki.create'), :controller => :wiki, :action => :add %></li>
+        </ul>
+      </li>
+      <li class="forum"><%= link_to t('.forum._'), { :controller => :forum, :action => :index }, { :id => 'forum-link' } %>
+        <ul class="search-box">
+          <li>
+            <div>
+              <%= form_tag url_for(:controller => :forum, :action => :search), :method => :get do %>
+                <%= generic_text_field_tag :query %><br />
+                <%= get_submit_tag t('.forum.search') %>
+              <% end %>
+            </div>
+          </li>
+        </ul>
+        <ul class="submenu">
+          <li><%= link_to t('.forum.view'), :controller => :forum, :action => :index %></li>
+          <li><%= link_to t('.forum.search'), { :controller => :forum, :action => :index }, :class => 'search-link' %></li>
+          <li><%= link_to t('.forum.new'), :controller => :forum, :action => :new %></li>
+          <li><%= link_to t('.forum.mark_all_read'), { :controller => :forum, :action => :mark_all_read }, :id => 'forum-mark-all-read', :style => 'display: none;' %></li>
+          <li class="forum-items-start"><span class="separator"></span></li>
+        </ul>
+      </li>
+      <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>
+        <ul class="submenu">
+          <% %w(post comment note artist tag wiki pool forum).each do |item| %>
+            <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item }, :class => ['help-item', item] %>
+          <% end %>
+          <li><%= link_to t('.help.site'), :controller => :help, :action => :index %></li>
+        </ul>
+      </li>
+      <li class="static"><%= link_to t('.more'), { :controller => :static, :action => :more } %>
+      </li>
+      <li class="has-mail">
+        <%= link_to t('.new_mail'), { :controller => '/dmail', :action => :inbox }, :id => 'has-mail-notice' %>
+      </li>
+    </ul>
+    <span id='cn' style="display: none;">
+    </span>
+  <% end %>
 </div>

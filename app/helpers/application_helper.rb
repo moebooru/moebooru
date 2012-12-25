@@ -217,4 +217,12 @@ module ApplicationHelper
     text_field_tag name, value, options.merge(:id => nil)
   end
 
+  # Cache with locale. Only works when the name is an array or string.
+  def local_cache(name = {}, options = nil, &block)
+    if (name.is_a? String) || (name.is_a? Array)
+      name = Array(name)
+      name << I18n.locale
+    end
+    cache name, options, &block
+  end
 end

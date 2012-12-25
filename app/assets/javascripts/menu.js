@@ -12,16 +12,16 @@
 
     toggle: function(elem) {
       var submenu = $(elem).parent().siblings('.submenu'),
-        submenu_open = submenu.hasClass('open');
+        submenu_hid = (submenu.css('display') == 'none');
       this.hide();
-      if (!submenu_open) {
-        submenu.addClass('open');
+      if (submenu_hid) {
+        submenu.show();
         $(document).on('click', Menu.hide);
       }
     },
 
     hide: function() {
-      $('.submenu').removeClass('open');
+      $('.submenu').hide();
       $(document).off('click', Menu.hide);
     },
 

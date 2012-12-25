@@ -47,9 +47,6 @@ div#main-menu ul li ul.submenu {
   border: 1px solid #666;
   margin: 0;
 }
-div#main-menu > ul > li > ul.submenu.open {
-  display: block;
-}
 div#main-menu ul li ul li {
   float: none;
   margin: 0;

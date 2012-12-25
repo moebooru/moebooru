@@ -14,7 +14,7 @@ div#main-menu ul li {
   float: left;
   position: relative;
 }
-div#main-menu ul li ul {
+div#main-menu ul li ul.submenu {
   position: absolute;
   list-style: none;
   float: none;
@@ -33,7 +33,7 @@ div#main-menu > ul > li:hover > a {
   background-color: #fff;
   color: #000;
 }
-div#main-menu ul li:hover ul {
+div#main-menu ul li:hover ul.submenu {
   left: 0;
   opacity: 1;
   transition-delay: 0.1s;
@@ -50,7 +50,7 @@ div#main-menu ul li ul li {
 div#main-menu ul li ul li:hover {
   background: white;
 }
-div#main-menu ul li ul li a {
+div#main-menu ul li ul.submenu li a {
   display: block;
   padding: 2px;
   white-space: nowrap;

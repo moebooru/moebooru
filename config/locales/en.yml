@@ -828,6 +828,7 @@ en:
           confirm: Do you really want to approve this post?
         delete: Delete
         download:
+          image: Image
           larger: Download larger version
           normal: Download
         favorites:

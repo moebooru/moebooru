@@ -140,7 +140,7 @@
         </li>
         <li><%= link_to t('.forum.view'), :controller => :forum, :action => :index %></li>
         <li><%= link_to t('.forum.new'), :controller => :forum, :action => :new %></li>
-        <li><%= link_to t('.forum.mark_all_read'), { :controller => :forum, :action => :mark_all_read }, :id => 'forum-mark-all-read' %></li>
+        <li><%= link_to t('.forum.mark_all_read'), { :controller => :forum, :action => :mark_all_read }, :id => 'forum-mark-all-read', :style => 'display: none;' %></li>
         <li class="forum-items-start"><span class="separator"></span></li>
       </ul>
     </li>

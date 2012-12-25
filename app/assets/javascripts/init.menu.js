@@ -24,4 +24,10 @@ jQuery(document).ready(function($) {
     forum_submenu.css('width', 200)
     forum_submenu.find('a').css('white-space', 'normal');
   };
+
+  // Set styles when there's any unread forum post
+  if (menu.find('.unread-topic').length > 0) {
+    menu.find('.forum').addClass('forum-update');
+    menu.find('#forum-mark-all-read').show();
+  }
 });

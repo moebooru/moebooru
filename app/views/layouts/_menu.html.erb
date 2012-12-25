@@ -163,15 +163,3 @@
 </div>
 <%# FIXME: for some reason I need to add a hard space to get the menu layout correct. -%>
 &nbsp;
-<script type="text/javascript">
-  if ($('login-link'))
-    $('login-link').observe('click', function(event) {
-      User.run_login(false, {});
-      event.stop();
-    });
-  if ($('forum-mark-all-read'))
-    $('forum-mark-all-read').observe('click', function(event) {
-      Forum.mark_all_read();
-      event.stop();
-    });
-</script>

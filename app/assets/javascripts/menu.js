@@ -39,8 +39,11 @@
       };
       var forum_submenu = this.menu.find('.forum ul');
       if (forum_submenu.width() > 200) {
-        forum_submenu.css('width', 200)
+        forum_submenu.css('width', '200px');
         forum_submenu.find('a').css('white-space', 'normal');
+      } else {
+        forum_submenu.css('width', '');
+        forum_submenu.find('a').css('white-space', '');
       };
     },
 

@@ -29,6 +29,10 @@ div#main-menu ul li ul {
   -ms-transition: opacity 1s, left 0s;
   -moz-transition: opacity 1s, left 0s;
 }
+div#main-menu > ul > li:hover > a {
+  background-color: #fff;
+  color: #000;
+}
 div#main-menu ul li:hover ul {
   left: 0;
   opacity: 1;

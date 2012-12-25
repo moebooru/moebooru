@@ -1,7 +1,9 @@
 jQuery(document).ready(function($) {
+  // Highlight current location (based on controller)
   var hl_menu_class = '.' + $('#main-menu').data('controller');
   $('#main-menu ' + hl_menu_class).addClass('current-menu');
 
+  // Add 5 latest forum topics to forum submenu
   var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
   var create_forum_item = function(forum_json) {
     return $('<li/>', {

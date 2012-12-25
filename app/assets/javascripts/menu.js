@@ -10,6 +10,15 @@
   Menu = {
     menu: null,
 
+    show: function(elem) {
+      $(elem).parent().siblings('.submenu').show();
+      $(document).click(this.hide);
+    },
+
+    hide: function() {
+      $('.submenu').hide();
+    },
+
     // Set link to moderate when there's something in moderation queue.
     set_post_moderate_count: function() {
       var mod_pending = $.cookie('mod_pending');

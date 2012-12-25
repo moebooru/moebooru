@@ -16,7 +16,15 @@ div#main-menu ul li {
 }
 div#main-menu > ul > li > a {
   display: block;
-  padding: 3px 10px;
+  padding: 3px 5px;
+}
+div#main-menu > ul > li > a span.submenu-button {
+  opacity: 0;
+  border-left: 1px solid black;
+  padding-left: 1px;
+}
+div#main-menu > ul > li:hover > a span.submenu-button {
+  opacity: 1;
 }
 div#main-menu .search-box {
   display: none;
@@ -31,29 +39,23 @@ div#main-menu ul li ul.submenu {
   position: absolute;
   list-style: none;
   float: none;
-  left: -9999px;
+  display: none;
   background: black;
   border: 1px solid #666;
   margin: 0;
-  opacity: 0;
-  transition: opacity 0.5s, left 0s;
-  -o-transition: opacity 0.5s, left 0s;
-  -webkit-transition: opacity 0.5s, left 0s;
-  -ms-transition: opacity 0.5s, left 0s;
-  -moz-transition: opacity 0.5s, left 0s;
+}
+div#main-menu > ul > li > a.submenu-button {
+  display: none;
+}
+div#main-menu > ul > li:hover > a.submenu-button {
+  display: block;
 }
 div#main-menu > ul > li:hover > a {
   background-color: #fff;
   color: #000;
 }
-div#main-menu ul li:hover ul.submenu {
-  left: 0;
-  opacity: 1;
-  transition-delay: 0.25s;
-  -o-transition-delay: 0.25s;
-  -webkit-transition-delay: 0.25s;
-  -ms-transition-delay: 0.25s;
-  -moz-transition-delay: 0.25s;
+div#main-menu > ul > li > ul.submenu.open {
+  display: block;
 }
 div#main-menu ul li ul li {
   float: none;

@@ -1,7 +1,8 @@
 jQuery(document).ready(function($) {
+  var menu = $('#main-menu');
   // Highlight current location (based on controller)
-  var hl_menu_class = '.' + $('#main-menu').data('controller');
-  $('#main-menu ' + hl_menu_class).addClass('current-menu');
+  var hl_menu_class = '.' + menu.data('controller');
+  menu.find(hl_menu_class).addClass('current-menu');
 
   // Add 5 latest forum topics to forum submenu
   var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
@@ -18,7 +19,7 @@ jQuery(document).ready(function($) {
   for (var i = menu_items_num - 1; i >=0; i--) {
     $('.forum-items-start').after(create_forum_item(forum_menu_items[i]));
   };
-  var forum_submenu = $('#main-menu .forum ul');
+  var forum_submenu = menu.find('.forum ul');
   if (forum_submenu.width() > 200) {
     forum_submenu.css('width', 200)
     forum_submenu.find('a').css('white-space', 'normal');

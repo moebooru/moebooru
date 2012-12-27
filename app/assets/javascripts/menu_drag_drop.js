@@ -48,7 +48,6 @@ MenuDragDrop = {
     }
     var target = $(e.target);
     if (this.submenus.find(target).length > 0) {
-      console.log('what');
       target[0].click();
     }
   },

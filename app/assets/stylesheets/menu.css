@@ -54,16 +54,13 @@ div#main-menu ul li ul li {
   margin: 0;
   padding: 0;
 }
-div#main-menu ul li ul.submenu li:hover {
-  background: #ee8887;
-}
 div#main-menu ul li ul.submenu li a {
   display: block;
   padding: 2px 4px;
   white-space: nowrap;
 }
 div#main-menu ul li ul.submenu li:hover a {
-  color: black;
+  background: #222;
 }
 div#main-menu .separator {
   display: block;

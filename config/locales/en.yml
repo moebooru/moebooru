@@ -852,7 +852,7 @@ en:
         view_larger: View larger version
       pool:
         change: change page
-        info_html: 'This post is %{sequence} in the %{pool} pool'
+        info_html: 'This post is %{sequence} in the %{pool} pool.'
         next: 'Next »'
         previous: '« Previous'
         remove:
@@ -886,7 +886,7 @@ en:
         deleted_info: This post was deleted.
         flagged:
           delete: delete
-          info: 'This post was flagged for deletion by %{user}. Reason: %{reason}'
+          info: 'This post was flagged for deletion by %{user}. Reason: %{reason}.'
           unflag: unflag this post
         held:
           activate: activate this post
@@ -895,8 +895,8 @@ en:
           child: a child post
           child_post_html: 'post #%{child}'
           children: child posts
-          has_child_html: This post has %{child}
-          has_parent_html: This post belongs to a %{parent}
+          has_child_html: This post has %{child}.
+          has_parent_html: This post belongs to a %{parent}.
           make_parent: make this post the parent
           parent: parent post
         pending:

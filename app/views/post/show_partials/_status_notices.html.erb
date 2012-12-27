@@ -65,13 +65,13 @@
   <% if @post.parent_id %>
     <div class="status-notice">
       <%= t('.parent.has_parent_html', :parent => link_to(t('.parent.parent'), :action => "show", :id => @post.parent_id)) %><%
-      %><% if @current_user.is_contributor_or_higher? %><span class="advanced-editing"> (<%= link_to_function t('.parent.make_parent'), "Post.reparent_post(#{@post.id}, #{@post.parent_id}, #{@post.get_parent.parent_id ? "true":"false"})" %>)</span>.<% end %>
+      %><% if @current_user.is_contributor_or_higher? %><span class="advanced-editing"> (<%= link_to_function t('.parent.make_parent'), "Post.reparent_post(#{@post.id}, #{@post.parent_id}, #{@post.get_parent.parent_id ? "true":"false"})" %>)</span><% end %>
     </div>
   <% end %>
   <% if @post.has_children? %>
     <% children = @post.children %>
     <div class="status-notice">
-      <%= t('.parent.has_child_html', :child => link_to((children.length == 1 ? t('.parent.child') : t('.parent.children')), :action => "index", :tags => "parent:#{@post.id}")) %> (<%= t('.parent.child_post_html', :child => children.map { |child| link_to child.id, :action => :show, :id => child.id }.join(', ').html_safe) %>).
+      <%= t('.parent.has_child_html', :child => link_to((children.length == 1 ? t('.parent.child') : t('.parent.children')), :action => "index", :tags => "parent:#{@post.id}")) %> (<%= t('.parent.child_post_html', :child => children.map { |child| link_to child.id, :action => :show, :id => child.id }.join(', ').html_safe) %>)
     </div>
   <% end %>
 <% end %>

@@ -51,9 +51,7 @@ module PostImageStoreMethods
     end
 
     def preview_path
-      if status == "deleted"
-        "#{Rails.root}/public/deleted-preview.png"
-      elsif image?
+      if image?
         "#{Rails.root}/public/data/preview/#{md5}.jpg"
       else
         "#{Rails.root}/public/download-preview.png"
@@ -71,7 +69,9 @@ module PostImageStoreMethods
 #        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"
 #      end
 
-      if self.image?
+      if status == "deleted"
+        "#{Rails.root}/public/deleted-preview.png"
+      elsif self.image?
         CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else
         CONFIG["url_base"] + "/download-preview.png"

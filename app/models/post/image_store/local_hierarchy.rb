@@ -17,9 +17,7 @@ module PostImageStoreMethods
     end
 
     def preview_path
-      if status == "deleted"
-        "#{Rails.root}/public/deleted-preview.png"
-      elsif image?
+      if image?
         "#{Rails.root}/public/data/preview/#{file_hierarchy}/#{md5}.jpg"
       else
         "#{Rails.root}/public/download-preview.png"
@@ -31,7 +29,9 @@ module PostImageStoreMethods
     end
 
     def preview_url
-      if image?
+      if status == "deleted"
+        "#{Rails.root}/public/deleted-preview.png"
+      elsif image?
         CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
       else
         CONFIG["url_base"] + "/download-preview.png"

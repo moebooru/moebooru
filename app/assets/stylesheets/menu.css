@@ -19,12 +19,12 @@ div#main-menu > ul > li > a {
   margin: 0;
 }
 div#main-menu > ul > li > a.submenu-button {
-  opacity: 0;
+  opacity: 0.3;
   padding: 0 1px;
   margin: 0;
 }
 div#main-menu > ul > li:hover > a.submenu-button {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 div#main-menu > ul > li:hover > a.submenu-button:hover {
   opacity: 1;

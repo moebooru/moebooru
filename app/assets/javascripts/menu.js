@@ -65,10 +65,10 @@
           var document_click_event = function(e) {
             if ($(e.target).parents('.is_modal').length == 0 && !$(e.target).hasClass('is_modal')) {
               hide(e);
-              $(document).off('click', '*', document_click_event);
+              $(document).off('mousedown', '*', document_click_event);
             };
           };
-          $(document).on('click', '*', document_click_event);
+          $(document).on('mousedown', '*', document_click_event);
           Mousetrap.bind('esc', hide);
         };
       show();

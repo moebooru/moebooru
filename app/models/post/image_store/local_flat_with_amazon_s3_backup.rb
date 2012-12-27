@@ -70,7 +70,7 @@ module PostImageStoreMethods
 #      end
 
       if status == "deleted"
-        "#{Rails.root}/public/deleted-preview.png"
+        CONFIG['url_base'] + "/public/deleted-preview.png"
       elsif self.image?
         CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else

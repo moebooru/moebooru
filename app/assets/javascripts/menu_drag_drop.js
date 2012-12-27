@@ -3,6 +3,7 @@ MenuDragDrop = {
   menu_links: null,
   submenus: null,
   submenu_links: null,
+  which: null,
   drag_start_target: null,
   drag_start_submenu: null,
   drag_started: false,
@@ -48,16 +49,21 @@ MenuDragDrop = {
       this.end_drag_drop();
     }
     var target = $(e.target);
-    if (this.submenus.find(target).length > 0) {
+    // only trigger click if it's submenu link and the button didn't change.
+    // A different, normal click will be triggered if it's different button.
+    if (this.submenus.find(target).length > 0 && this.which == e.which) {
+      // if started with middle click, open the target in a new window.
+      if (this.which == '2') {
+        target.attr('target', '_blank');
+      };
       target[0].click();
-    }
-    this.submenu_links.attr('target', null);
+      target.attr('target', null);
+    };
   },
   mousedown: function(e) {
-    if (e.which != '1' && e.which != '2') {
+    this.which = e.which;
+    if (this.which != '1' && this.which != '2') {
       return;
-    } else if (e.which == '2') {
-      this.submenu_links.attr('target', '_blank');
     };
     this.drag_start_target = $(e.currentTarget);
     this.drag_start_submenu = this.drag_start_target.siblings('.submenu');

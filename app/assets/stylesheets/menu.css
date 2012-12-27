@@ -45,7 +45,7 @@ div#main-menu ul li ul.submenu {
   -moz-transition: opacity 0.5s, left 0s;
 }
 div#main-menu > ul > li:hover > a {
-  background-color: #fff;
+  background-color: #ee8887;
   color: #000;
 }
 div#main-menu ul li:hover ul.submenu {
@@ -63,7 +63,7 @@ div#main-menu ul li ul li {
   padding: 0;
 }
 div#main-menu ul li ul.submenu li:hover {
-  background: white;
+  background: #ee8887;
 }
 div#main-menu ul li ul.submenu li a {
   display: block;

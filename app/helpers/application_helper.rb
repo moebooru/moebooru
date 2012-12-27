@@ -33,7 +33,8 @@ module ApplicationHelper
 
   def format_text(text, options = {})
     # The parses is more or less html safe
-    DText.parse(text).html_safe
+    # FIXME: for some reason rbx requires force encoding here.
+    DText.parse(text).force_encoding('utf-8').html_safe
   end
 
   def format_inline(inline, num, id, preview_html=nil)

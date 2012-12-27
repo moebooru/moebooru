@@ -38,6 +38,7 @@ MenuDragDrop = {
     this.menu_links.off('mouseenter', $.proxy(this.menu_links_enter, this));
     this.submenu_links.off('mouseenter', $.proxy(this.submenu_links_enter, this));
     this.submenu_links.off('mouseleave', $.proxy(this.submenu_links_leave, this));
+    this.submenu_links.removeClass('hover');
     this.drag_started = false;
   },
   mouseup: function(e) {

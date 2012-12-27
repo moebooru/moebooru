@@ -1,35 +1,33 @@
-<% local_cache [comment, comment.user, @current_user.has_permission?(comment)] do %>
-  <div class="comment avatar-container" id="c<%= comment.id %>">
-    <div class="author">
-      <% if comment.user_id %>
-        <h6><%= link_to comment.pretty_author2, { :controller => :user, :action => :show, :id => comment.user_id } %></h6>
-      <% else %>
-        <h6><%= comment.pretty_author2 %></h6>
-      <% end %>
-      <span class="date" title="Posted at <%= comment.created_at.strftime('%c') %>">
-        <%= link_to t('time.x_ago', :t => time_ago_in_words(comment.created_at)), :controller => "post", :action => "show", :id => comment.post_id, :anchor => ("c#{comment.id}") %>
-      </span>
-      <% if comment.user and comment.user.has_avatar? then %>
-        <div class="comment-avatar-container"> <%= avatar(comment.user, comment.id) %> </div>
+<div class="comment avatar-container" id="c<%= comment.id %>">
+  <div class="author">
+    <% if comment.user_id %>
+      <h6><%= link_to comment.pretty_author2, { :controller => :user, :action => :show, :id => comment.user_id } %></h6>
+    <% else %>
+      <h6><%= comment.pretty_author2 %></h6>
+    <% end %>
+    <span class="date" title="Posted at <%= comment.created_at.strftime('%c') %>">
+      <%= link_to t('time.x_ago', :t => time_ago_in_words(comment.created_at)), :controller => "post", :action => "show", :id => comment.post_id, :anchor => ("c#{comment.id}") %>
+    </span>
+    <% if comment.user and comment.user.has_avatar? then %>
+      <div class="comment-avatar-container"> <%= avatar(comment.user, comment.id) %> </div>
+    <% end %>
+  </div>
+  <div class="content">
+    <div class="body">
+      <% cache [:comment_formatted_body, comment] do %>
+        <%= format_inlines(format_text(comment.body, :mode => :comment), comment.id) %>
       <% end %>
     </div>
-    <div class="content">
-      <div class="body">
-        <% cache [:comment_formatted_body, comment] do %>
-          <%= format_inlines(format_text(comment.body, :mode => :comment), comment.id) %>
+    <div class="post-footer" style="clear: left;">
+      <ul class="flat-list pipe-list">
+        <li> <%= link_to_function t('.quote'), "Comment.quote(#{comment.id})" %>
+        <% if @current_user.has_permission?(comment) %>
+          <li> <%= link_to t('.edit'), :controller => "comment", :action => "edit", :id => comment.id %>
+          <li> <%= link_to_function t('.delete'), "Comment.destroy(#{comment.id})" %>
+        <% else %>
+          <li> <%= link_to_function t('.flag'), "Comment.flag(#{comment.id})" %>
         <% end %>
-      </div>
-      <div class="post-footer" style="clear: left;">
-        <ul class="flat-list pipe-list">
-          <li> <%= link_to_function t('.quote'), "Comment.quote(#{comment.id})" %>
-          <% if @current_user.has_permission?(comment) %>
-            <li> <%= link_to t('.edit'), :controller => "comment", :action => "edit", :id => comment.id %>
-            <li> <%= link_to_function t('.delete'), "Comment.destroy(#{comment.id})" %>
-          <% else %>
-            <li> <%= link_to_function t('.flag'), "Comment.flag(#{comment.id})" %>
-          <% end %>
-        </ul>
-      </div>
+      </ul>
     </div>
   </div>
-<% end %>
+</div>

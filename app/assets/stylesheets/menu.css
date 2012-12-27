@@ -59,6 +59,9 @@ div#main-menu ul li ul.submenu li a {
   padding: 2px 4px;
   white-space: nowrap;
 }
+div#main-menu ul li ul.submenu li a.hover {
+  background: #222;
+}
 div#main-menu ul li ul.submenu li:hover a {
   background: #222;
 }

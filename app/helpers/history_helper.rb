@@ -192,7 +192,8 @@ module HistoryHelper
       html << " (#{link_to("%i more..." % hidden, :search => "change:%i" % history.id)})"
     end
 
-    return html.html_safe
+    # FIXME: more why.jpg on rbx.
+    return html.force_encoding('utf-8').html_safe
   end
 
   def format_change(history, change, options, table_options)

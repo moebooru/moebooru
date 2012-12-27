@@ -25,13 +25,13 @@
 </div>
 
 <% content_for :post_cookie_javascripts do %>
-<script type="text/javascript">
-  var blacklist_options = {};
-  <% if @search_id %>
-    blacklist_options.exclude = <%= json_escape @search_id.to_json.html_safe %>;
-  <% end %>
-  Post.init_blacklisted(blacklist_options)
+  <script type="text/javascript">
+    var blacklist_options = {};
+    <% if @search_id %>
+      blacklist_options.exclude = <%= json_escape @search_id.to_json.html_safe %>;
+    <% end %>
+    Post.init_blacklisted(blacklist_options)
 
-  Post.init_post_list();
-</script>
+    Post.init_post_list();
+  </script>
 <% end %>

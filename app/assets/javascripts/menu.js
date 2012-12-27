@@ -21,6 +21,8 @@
           submenu.show();
         }
         return false;
+      } else if (target.parents('.submenu').length > 0 && e.which == '2') {
+        return;
       } else {
         $('.submenu').hide();
       }

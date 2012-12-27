@@ -83,10 +83,9 @@ class Artist < ActiveRecord::Base
     end
 
     def commit_aliases
-      transaction do
-        connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{id}")
-
-        if @alias_names
+      if @alias_names
+        transaction do
+          connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{id}")
           @alias_names.each do |name|
             a = Artist.find_or_create_by_name(name)
             a.update_attributes(:alias_id => id, :updater_id => updater_id)

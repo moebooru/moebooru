@@ -51,11 +51,14 @@ MenuDragDrop = {
     if (this.submenus.find(target).length > 0) {
       target[0].click();
     }
+    this.submenu_links.attr('target', null);
   },
   mousedown: function(e) {
-    if (e.which != '1') {
+    if (e.which != '1' && e.which != '2') {
       return;
-    }
+    } else if (e.which == '2') {
+      this.submenu_links.attr('target', '_blank');
+    };
     this.drag_start_target = $(e.currentTarget);
     this.drag_start_submenu = this.drag_start_target.siblings('.submenu');
     $(document).on('mouseup', $.proxy(this.mouseup, this));

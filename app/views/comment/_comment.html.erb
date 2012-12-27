@@ -14,7 +14,9 @@
   </div>
   <div class="content">
     <div class="body">
-      <%= Rails.cache.fetch({ :type => :comment_formatted_body, :id => comment.id }) { format_inlines(format_text(comment.body, :mode => :comment), comment.id) } %>
+      <% cache [:comment_formatted_body, comment] do %>
+        <%= format_inlines(format_text(comment.body, :mode => :comment), comment.id) %>
+      <% end %>
     </div>
     <div class="post-footer" style="clear: left;">
       <ul class="flat-list pipe-list">

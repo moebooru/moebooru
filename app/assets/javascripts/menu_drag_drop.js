@@ -24,6 +24,7 @@ MenuDragDrop = {
   },
   do_drag_drop: function() {
     this.drag_start_target.off('mouseleave', $.proxy(this.do_drag_drop, this));
+    this.submenus.hide();
     this.drag_start_submenu.css('opacity', '0.4').show();
     this.drag_start_submenu.on('mousemove', $.proxy(this.start_submenu_enter, this));
     this.menu_links.on('mouseenter', $.proxy(this.menu_links_enter, this));

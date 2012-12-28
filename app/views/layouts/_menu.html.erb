@@ -83,7 +83,7 @@
           <li><%= link_to t('.notes.requests'), :controller => :post, :action => :index, :tags => 'translation_request' %></li>
         </ul>
       </li>
-      <li class="artist"><%= link_to t('.artists._'), { :controller => :artist, :action => :index } %>
+      <li class="artist"><%= link_to t('.artists._'), { :controller => :artist, :action => :index, :order => 'date' } %>
         <%= link_to '■', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>

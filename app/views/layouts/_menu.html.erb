@@ -114,7 +114,7 @@
           </li>
         </ul>
         <ul class="submenu">
-          <li><%= link_to t('.tags.view'), :controller => :post, :action => :index %></li>
+          <li><%= link_to t('.tags.view'), :controller => '/tag', :action => :index %></li>
           <li><%= link_to t('.tags.search'), { :controller => :tag, :action => :index }, :class => 'search-link' %></li>
           <li><%= link_to t('.tags.popular'), :controller => :tag, :action => :popular_by_day %></li>
           <li><%= link_to t('.tags.aliases'), :controller => :tag_alias, :action => :index %></li>

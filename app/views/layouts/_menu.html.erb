@@ -101,7 +101,7 @@
           <li><%= link_to t('.artists.create'), :controller => :artist, :action => :create %></li>
         </ul>
       </li>
-      <li class="tag"><%= link_to t('.tags._'), { :controller => :tag, :action => :index } %>
+      <li class="tag"><%= link_to t('.tags._'), { :controller => :tag, :action => :index, :order => 'date' } %>
         <%= link_to '■', '#', :class => 'submenu-button' %>
         <ul class="search-box">
           <li>

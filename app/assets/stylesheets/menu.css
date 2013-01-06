@@ -83,6 +83,3 @@ div#main-menu .forum-items-start {
 div#main-menu #has-mail-notice {
   display: none;
 }
-div#main-menu #has-mail-notice:hover {
-  background: #ee0;
-}

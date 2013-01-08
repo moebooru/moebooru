@@ -6,6 +6,7 @@
         <ul class="submenu">
           <% if @current_user.is_anonymous? %>
             <li><%= link_to t('.account.login'), { :controller => :user, :action => :login }, { :id => 'login-link', :class => 'login-button' } %></li>
+            <li><%= link_to t('.account.register'), :controller => :user, :action => :signup %></li>
             <li><%= link_to t('.account.reset'), :controller => :user, :action => :reset_password %></li>
           <% else %>
             <li><%= link_to t('.account.profile'), :controller => :user, :action => :show, :id => @current_user.id %></li>

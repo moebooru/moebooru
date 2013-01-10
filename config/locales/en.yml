@@ -468,14 +468,14 @@ en:
         view: View Topics
       help:
         _: Help
-        artist: Artist Help
-        comment: Comment Help
+        artists: Artist Help
+        comments: Comment Help
         forum: Forum Help
-        note: Note Help
-        pool: Pool Help
-        post: Post Help
+        notes: Note Help
+        pools: Pool Help
+        posts: Post Help
         site: Site Help
-        tag: Tag Help
+        tags: Tag Help
         wiki: Wiki Help
       more: More »
       new_mail: New Mail

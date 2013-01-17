@@ -33,7 +33,6 @@ gem 'cache_digests'
 
 group :development do
   gem 'rspec'
-  gem 'ruby-prof', :platforms => :mri, :git => 'git://github.com/wycats/ruby-prof.git'
   gem 'quiet_assets'
 end
 

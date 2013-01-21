@@ -21,6 +21,9 @@
       <%= render :partial => "post/show_partials/related_posts_panel" %>
  <br />
   <%= render :partial => 'layouts/twitter_link' %>
+ <br />
+  <%= render :partial => "post/show_partials/social_sharing" %>
+ <br />
   <% if CONFIG["can_see_ads"].call(@current_user) %>
   <%= render :partial => "vertical" %>
   <% end %>

@@ -258,5 +258,5 @@ Moebooru::Application.routes.draw do
   match 'wiki/destroy(.:format)' => 'wiki#destroy', :via => [:post, :delete]
   post 'wiki/create(.:format)' => 'wiki#create'
 
-  root :to => 'static#index'
+  root :to => 'post#index'
 end

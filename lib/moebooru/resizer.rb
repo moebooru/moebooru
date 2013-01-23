@@ -32,6 +32,10 @@ module Moebooru
         if write_format =~ /\Ajpe?g\z/
           f.sampling_factor '2x2,1x1,1x1'
         end
+        # Any other colorspaces suck for storing images.
+        # Since we're just resizing stuff here, actual colorspace shouldn't
+        # matter much.
+        f.colorspace 'RGB'
         f.quality output_quality.to_s
       end
       image.write write_path

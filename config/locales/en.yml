@@ -95,7 +95,7 @@ en:
       clear: Clear finished uploads
       completed_html: Post %{id} complete
       exists_html: Post %{id} already exists
-      pause: Puase
+      pause: Pause
       paused: Paused
       pending: Pending
       queue_uploads: Queue Uploads

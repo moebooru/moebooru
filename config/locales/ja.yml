@@ -1,65 +1,225 @@
 ja:
   activerecord:
     attributes:
-      advertisement: {ad_type: 広告タイプ, height: 高さ, hit_count: ヒット数, image_url: 画像のURL, referral_url: 具体的なurl, reset_hit_count: ヒット数をリセット, status: ステータス, width: 幅}
-      user: {current_password: 現在のパスワード, password: パスワード, password_confirmation: パスワード確認}
-    models: {advertisement: 広告}
+      advertisement:
+        ad_type: 広告タイプ
+        height: 高さ
+        hit_count: ヒット数
+        image_url: 画像のURL
+        referral_url: 具体的なurl
+        reset_hit_count: ヒット数をリセット
+        status: ステータス
+        width: 幅
+      user:
+        current_password: 現在のパスワード
+        password: パスワード
+        password_confirmation: パスワード確認
+    models:
+      advertisement: 広告
   admin:
-    edit_user: {level: レベル, save: セーブ, user: ユーザー}
-    index: {edit_user: ユーザを編集, reset_password: パスワードをリセット, title: 管理人}
-    reset_password: {name: 名前, reset: リセット, title: パスワードをリセット}
+    edit_user:
+      level: レベル
+      save: セーブ
+      user: ユーザー
+    index:
+      cache_statistics: キャッシュ統計
+      edit_user: ユーザを編集
+      reset_password: パスワードをリセット
+      title: 管理人
+    reset_password:
+      name: 名前
+      reset: リセット
+      title: パスワードをリセット
   advertisements:
     edit:
       title: '広告 #%{id} を編集'
-    index: {reset_hit_count: ヒット数をリセット, title: 広告}
-    new: {title: 新しい広告}
+    index:
+      reset_hit_count: ヒット数をリセット
+      title: 広告
+    new:
+      title: 新しい広告
     show:
       title: '広告 #%{id}'
   artist:
-    create: {alias_for: 別名for, aliases: 別名, members: メンバー, name: 名前, notes: 注釈, urls: URLs}
-    destroy: {title: 絵師を削除}
-    footer: {add: 追加, help: ヘルプ, list: リスト}
-    index: {date: 日付, delete: 絵師を削除, edit: 絵師を編集, is_alias: この作家は別名です, is_group: この絵師はグループです, last_modified: 最終更新日, name: 名前, search: 検索, title: 絵師, updated_by: 更新者}
-    update: {preview: 注釈プレビュー}
+    create:
+      alias_for: 別名for
+      aliases: 別名
+      members: メンバー
+      name: 名前
+      notes: 注釈
+      urls: URLs
+    destroy:
+      confirm: あなたは本当に「%{name}」を削除したいですか?
+      title: 絵師を削除
+    footer:
+      add: 追加
+      help: ヘルプ
+      list: リスト
+    index:
+      date: 日付
+      delete: 絵師を削除
+      edit: 絵師を編集
+      find: この作家の投稿検索
+      is_alias: この作家は別名です
+      is_group: この絵師はグループです
+      last_modified: 最終更新日
+      name: 名前
+      search: 検索
+      title: 絵師
+      updated_by: 更新者
+    update:
+      preview: 注釈プレビュー
   batch:
-    create: {files: ファイル, load_file_index: ファイルインデックスをロード, submit: アップロード始め, tags: タグ, title: アップロード待ち行列, url: URL}
-    index: {cancel: '全てのアップロードをキャンセル ', clear: 完成したアップロードをクリアーする, paused: 一時停止中, pending: 更新中, queue_uploads: アップロード待ち行列, resume: 続け, retry_failed: リトライ失敗しました, status: ステータス, tags: タグ, uploading: アップロード中, url: URL, username: ユーザー}
+    create:
+      files: ファイル
+      load_file_index: ファイルインデックスをロード
+      submit: アップロード始め
+      tags: タグ
+      title: アップロード待ち行列
+      url: URL
+    index:
+      cancel: '全てのアップロードをキャンセル '
+      clear: 完成したアップロードをクリアーする
+      pause: 休止
+      paused: 一時停止中
+      pending: 更新中
+      queue_uploads: アップロード待ち行列
+      resume: 続け
+      retry_failed: リトライ失敗しました
+      status: ステータス
+      tags: タグ
+      title: バッチ待ち行列
+      uploading: アップロード中
+      url: URL
+      username: ユーザー
   buttons:
     _no: 'いいえ'
     _yes: 'はい'
     add: 追加
+    approve: 承認
     back: 戻る
     cancel: キャンセル
     delete: 削除
     edit: 編集
     save: セーブ
+    search: 検索
+    select:
+      all: すべてを選択する
+      invert: 選択を反転
+    update: 更新
   comment:
-    comment: {delete: 削除, edit: 編集, flag: 削除フラグ, quote: 引用する}
-    comments: {bump: Post without bumping, more: もっと, post: 投稿, reply: 返信 »}
-    edit: {save: 変更をセーブする, title: コメントを編集}
-    footer: {help: ヘルプ, list: リスト, search: 検索, moderate: モデレート}
-    index: {date: 日付, empty: コメントはありません。, hidden: 非表示, score: スコア, tags: タグ, title: コメント, user: ユーザー}
-    moderate: {approve: 承認, author: 書いた人, body: 内容, delete: 削除, select_all: すべてを選択する, select_invert: 選択を反転}
-    search: {author: 書いた人, message: メッセージ, post: 投稿, submit: 検索, time: 時間}
-    show: {return: 投稿を戻る, title: コメント}
+    comment:
+      delete: 削除
+      edit: 編集
+      flag: 削除フラグ
+      quote: 引用する
+    comments:
+      bump: Post without bumping
+      more: もっと
+      post: 投稿
+      reply: 返信 »
+    edit:
+      save: 変更をセーブする
+      title: コメントを編集
+    footer:
+      help: ヘルプ
+      list: リスト
+      search: 検索
+      moderate: モデレート
+    index:
+      date: 日付
+      empty: コメントはありません。
+      hidden: 非表示
+      score: スコア
+      tags: タグ
+      title: コメント
+      user: ユーザー
+    moderate:
+      approve: 承認
+      author: 書いた人
+      body: 内容
+      delete: 削除
+      select_all: すべてを選択する
+      select_invert: 選択を反転
+      title: コメントモデレート
+    search:
+      author: 書いた人
+      message: メッセージ
+      post: 投稿
+      submit: 検索
+      time: 時間
+    show:
+      return: 投稿を戻る
+      title: コメント
+  confirmations:
+    is_sure: 本当に宜しいですか？
   dmail:
     compose:
-      form: {body: 内容, title: タイトル, to: To}
+      form:
+        body: 内容
+        title: タイトル
+        to: To
       preview: プレビュー
       preview_loading: プレビューロード中・・・
       send: メールを送信
       title: メール作成
-    confirm_mark_all_read: {title: 全て既読にす, info: あなたは本当に全てのメッセージを既読にしいですか？}
-    footer: {compose: メール作成, inbox: 受信トレイ, mark_all_read: 全て既読にす}
+    confirm_mark_all_read:
+      title: 全て既読にす
+      info: あなたは本当に全てのメッセージを既読にしいですか？
+    footer:
+      compose: メール作成
+      inbox: 受信トレイ
+      mark_all_read: 全て既読にす
     inbox:
-      table: {from: 差出人, title: タイトル, when: 送信日時}
+      empty: メッセージはありません。
+      table:
+        from: 差出人
+        title: タイトル
+        to: To
+        when: 送信日時
       title: 受信トレイ
+    message:
+      sent_by_html: '送信者: %{user} %{x_ago} 前'
   forum:
-    add: {post: 投稿, title: タイトル}
-    edit: {post: 投稿, post_title: タイトル}
-    index: {created_by: 作成者, help: ヘルプ, is_locked: (locked), last: 最終, mark: 全て既読にす, new: 新しいトピック, post: 投稿, post_title: タイトル, preview: プレビュー, responses: 返信, search: 検索, sticky: Sticky, title: フォーラム, updated: 更新日, updated_by: 更新者}
-    new: {help: ヘルプ, list: リスト, post: 投稿, post_title: タイトル, preview: プレビュー, title: 新しいトピック}
-    post: {delete: 削除, delete_confirm: あなたは本当にこの投稿を削除したいですか？, edit: 編集, lock: ロック, quote: 引用する, stick: スティック, unlock: アンロック, unstick: アンスティック}
+    add:
+      post: 投稿
+      title: タイトル
+    edit:
+      post: 投稿
+      post_title: タイトル
+      preview: プレビュー
+    index:
+      created_by: 作成者
+      help: ヘルプ
+      is_locked: (locked)
+      last: 最終
+      mark: 全て既読にす
+      new: 新しいトピック
+      post: 投稿
+      post_title: タイトル
+      preview: プレビュー
+      responses: 返信
+      search: 検索
+      sticky: Sticky
+      title: フォーラム
+      updated: 更新日
+      updated_by: 更新者
+    new:
+      help: ヘルプ
+      list: リスト
+      post: 投稿
+      post_title: タイトル
+      preview: プレビュー
+      title: 新しいトピック
+    post:
+      delete: 削除
+      delete_confirm: あなたは本当にこの投稿を削除したいですか？
+      edit: 編集
+      lock: ロック
+      quote: 引用する
+      stick: スティック
+      unlock: アンロック
+      unstick: アンスティック
     search:
       author: 書いた人
       last_updated: 最終更新日
@@ -67,23 +227,65 @@ ja:
       message: メッセージ
       post_title: タイトル
       search: 検索
-    show: {help: ヘルプ, list: リスト, locked: このトピックはロックされています。, new: 新しいトピック, parent: 親投稿, post: 投稿, preview: プレビュー, reply: 返信}
+    show:
+      help: ヘルプ
+      list: リスト
+      locked: このトピックはロックされています。
+      new: 新しいトピック
+      parent: 親投稿
+      post: 投稿
+      preview: プレビュー
+      reply: 返信
   help:
-    index: {api: API, artists: 絵師, bookmarklet: ブックマークレット, comments: コメント, dtext: DText, firefox_ext: Firefox拡張, help: ヘルプ, image_sampling: 画像のサンプル, irc: IRC, notes: 注釈, pools: プール, posts: 投稿, tag_aliases: タグのエイリアス, tag_scripts: タグスクリプト, tags: タグ, voting: ' 投票', wiki: wiki}
+    index:
+      about: Moebooruについて
+      accounts: アカウント
+      api: API
+      artists: 絵師
+      bookmarklet: ブックマークレット
+      bugs: バグ
+      cheat_sheet: チートシート
+      comments: コメント
+      dtext: DText
+      faq: よくある質問
+      firefox_ext: Firefox拡張
+      help: ヘルプ
+      image_sampling: 画像のサンプル
+      irc: IRC
+      mass_tag_edit: 大規模なタグ編集
+      notes: 注釈
+      pools: プール
+      posts: 投稿
+      ratings: レイティング
+      source: ソースコード
+      tag_aliases: タグのエイリアス
+      tag_scripts: タグスクリプト
+      tags: タグ
+      voting: ' 投票'
+      wiki: wiki
   helpers:
     submit:
-      advertisement: {create: 作成, update: セーブ}
+      advertisement:
+        create: 作成
+        update: セーブ
   history:
     index:
       change: 変更
       date: 日付
+      for: の履歴
       id: ID
       object_type: タイプ
       redo: やり直す
       search: 検索
-      show: {all: すべてのタグを表示します, changed: 変わったタグだけを表示します}
+      show:
+        all: すべてのタグを表示します
+        changed: 変わったタグだけを表示します
       title: 履歴
-      type: {all: 全て, pools: プール, posts: 投稿, tags: タグ}
+      type:
+        all: 全て
+        pools: プール
+        posts: 投稿
+        tags: タグ
       undo: 元に戻す
       user: ユーザー
   inline:
@@ -98,21 +300,44 @@ ja:
       delete_confirm: あなたは本当にこの画像グループを削除したいですか？
       description: 説明
       file: ファイル
-      move: {down: 下がる, up: 上がる}
+      move:
+        down: 下がる
+        up: 上がる
       preview: プレビュー
       remove: 画像を除去
       remove_confirm: この画像を除去したい？
       save: 変更をセーブする
       source: 出典
-    footer: {help: ヘルプ, list: リスト}
-    index: {create: 作成, description: 説明, first_image: 最初の画像, images: 画像, user: ユーザー}
+      tag: 'Inline タグ: image　 #%{id}'
+    footer:
+      help: ヘルプ
+      list: リスト
+    index:
+      create: 作成
+      description: 説明
+      first_image: 最初の画像
+      images: 画像
+      user: ユーザー
   job_task:
     index:
-      table: {id: ID, message: メッセージ, status: ステータス, type: タイプ}
+      table:
+        data: Data
+        id: ID
+        message: メッセージ
+        status: ステータス
+        type: タイプ
       title: ジョブのタスク
     show:
-      nav: {list: リスト}
-      table: {id: ID, message: メッセージ, status: ステータス, type: タイプ}
+      nav:
+        list: リスト
+        restart: 再起動
+      table:
+        data: Data
+        id: ID
+        message: メッセージ
+        status: ステータス
+        type: タイプ
+      title: 'Job #%{id}'
   layout_login: "ログイン"
   layout_login_text: "ログインしてください。新しいアカウントを作成するには、使用する名前とパスワードを入力します。"
   layout_logout: "ログアウト"
@@ -159,7 +384,9 @@ ja:
   layout_wrong_email: "指定されたEメールアドレスはこのアカウントで登録されていません。"
   layouts:
     default:
-      old_browser: {hide: (このメッセージを隠す), info: 'Your browser is very old, and this site will not display properly.'}
+      old_browser:
+        hide: (このメッセージを隠す)
+        info: Your browser is very old, and this site will not display properly.
     login:
       email: Eメール
       email_info: もしサインアップ時にEメールアドレスを設定しているなら、ここでパスワードをリセットすることができます。新しいパスワードを含んだEメールを受け取ることでしょう。
@@ -178,417 +405,475 @@ ja:
         wrong_email: 指定されたEメールアドレスはこのアカウントで登録されていません。
       reset: パスワードをリセット
     menu:
-      account: {_: マイアカウント, change_password: パスワード変更, favorites: お気に入り, login: ログイン, logout: ログアウト, mail: メール, profile: プロフィール, reset: パスワードをリセット, settings: 設定}
-      artists: {_: 絵師, create: 作成, search: 絵師を検索, view: 絵師を表示}
-      comments: {_: コメント, moderate: モデレート, search: コメントを検索, view: コメントを表示}
-      forum: {_: フォーラム, new: 新しいトピック, search: フォーラムを検索, view: トピックを表示}
-      help: {_: ヘルプ, site: サイトヘルプ}
+      account:
+        _: マイアカウント
+        change_password: パスワード変更
+        favorites: お気に入り
+        login: ログイン
+        logout: ログアウト
+        mail: メール
+        profile: プロフィール
+        reset: パスワードをリセット
+        settings: 設定
+      artists:
+        _: 絵師
+        create: 作成
+        search: 絵師を検索
+        view: 絵師を表示
+      comments:
+        _: コメント
+        moderate: モデレート
+        search: コメントを検索
+        view: コメントを表示
+      forum:
+        _: フォーラム
+        mark_all_read: 全て既読にす
+        new: 新しいトピック
+        search: フォーラムを検索
+        view: トピックを表示
+      help:
+        _: ヘルプ
+        artist: 検索ヘルプ
+        comment: コメントヘルプ
+        forum: フォーラムヘルプ
+        note: 注釈ヘルプ
+        pool: プールヘルプ
+        post: 投稿ヘルプ
+        site: サイトヘルプ
+        tag: タグヘルプ
+        wiki: Wikiヘルプ
       more: もっと »
       new_mail: 新しいメール
-      notes: {_: 注釈, requests: リクエスト, search: 注釈を検索, view: 注釈を表示}
-      pools: {_: プール, create: 新しいプールを作成, search: プールを検索, view: プールを表示}
-      posts: {_: 投稿, batch: バッチアップロード, history: 履歴, image_search: 画像で検索, moderate: モデレート, popular: 人気, random: ランダム, search: 投稿を検索, upload: アップロード, view: 投稿を見る}
-      tags: {_: タグ, aliases: エイリアス, edit: 編集, implications: 包含関係, mass_edit: 大規模な編集, popular: 人気, search: タグを検索, view: タグを表示}
-      wiki: {_: Wiki, create: 新しいページを作成, index: Wikiインデックスを表示, search: Wikiを検索}
-  news_ticker_close: "閉める"
+      notes:
+        _: 注釈
+        requests: リクエスト
+        search: 注釈を検索
+        view: 注釈を表示
+      pools:
+        _: プール
+        create: 新しいプールを作成
+        search: プールを検索
+        view: プールを表示
+      posts:
+        _: 投稿
+        batch: バッチアップロード
+        history: 履歴
+        image_search: 画像で検索
+        moderate: モデレート
+        popular: 人気
+        random: ランダム
+        search: 投稿を検索
+        upload: アップロード
+        view: 投稿を見る
+      tags:
+        _: タグ
+        aliases: エイリアス
+        edit: 編集
+        implications: 包含関係
+        mass_edit: 大規模な編集
+        popular: 人気
+        search: タグを検索
+        view: タグを表示
+      wiki:
+        _: Wiki
+        create: 新しいページを作成
+        index: Wikiインデックスを表示
+        search: Wikiを検索
+    news:
+      close: 閉める
   note:
-    footer: {help: ヘルプ, history: 履歴, list: リスト, requests: リクエスト, search: 検索}
+    footer:
+      help: ヘルプ
+      history: 履歴
+      list: リスト
+      requests: リクエスト
+      search: 検索
     history:
       revert: 取り消し
       revert_confirm: あなたは本当にこの注釈に戻したいのですか？
-      table: {body: 内容, date: 日付, edited: 編集者, note: 注釈, options: オプション, post: 投稿}
-    index: {title: 注釈}
-    note: {click: クリックして編集}
-    search: {search: 検索, title: 注釈を検索}
-  note_body: "内容"
-  note_click: "クリックして編集"
-  note_date: "日付"
-  note_edited: "編集者"
-  note_help: "ヘルプ"
-  note_history: "履歴"
-  note_list: "リスト"
-  note_note: "注釈"
-  note_options: "オプション"
-  note_post: "投稿"
-  note_requests: "リクエスト"
-  note_revert: "取り消し"
-  note_revert_confirm: "あなたは本当にこの注釈に戻したいのですか？"
-  note_search: "検索"
-  notice: "　からこの投稿はして削除のためにフラグを立てました "
-  notice10: "理由: "
-  notice11: "この投稿は一時的にポスターでインデックスから開催されています。"
-  notice12: "この投稿をアクティベートする"
-  notice13: "This image has been resized. Click on the "
-  notice14: "拡大バージョンを表示"
-  notice15: " link in the sidebar for a high-quality version."
-  notice16: "常にオリジナルを表示する"
-  notice17: "このメッセージを隠す"
-  notice18: "Image samples have been disabled. If you find this to be too slow, you can turn samples back on in your profile settings."
-  notice19: "This post belongs to a "
-  notice2: "この投稿のフラグを消す"
-  notice20: "親投稿"
-  notice21: "この投稿を親に成る"
-  notice22: "この投稿は "
-  notice23: "子投稿があります"
-  notice24: "子投稿"
-  notice3: "削除"
-  notice4: "この投稿はモデレーターの承認が保留されています。"
-  notice5: "理由: "
-  notice6: "承認"
-  notice7: "削除"
-  notice8: "この投稿は削除されました。"
-  notice9: "　から"
-  notice_text: "Do you really want to approve this post?"
-  old_browser: "Your browser is very old, and this site will not display properly."
-  old_browser2: "Please consider upgrading to a more recent web browser:"
-  old_browser3: "(このメッセージを隠す)"
+      table:
+        body: 内容
+        date: 日付
+        edited: 編集者
+        note: 注釈
+        options: オプション
+        post: 投稿
+      title: 注釈の履歴
+    index:
+      title: 注釈
+    note:
+      click: クリックして編集
+    search:
+      search: 検索
+      title: 注釈を検索
   pool:
-    index: {title_main: プール}
-  pool_active: "アクティブ"
-  pool_active_text: "投稿を追加する場合は、非アクティブプールは、もはや選択されません。"
-  pool_add: "追加"
-  pool_add2: "追加"
-  pool_add_text: "この投稿を追加するには、プールを選択:"
-  pool_ago: " 前"
-  pool_cancel: "キャンセル"
-  pool_clone: "プールをクローン"
-  pool_confirm: "あなたは本当にこのプールを削除したいですか"
-  pool_copy: "プールをコピー"
-  pool_create: "プールを作成"
-  pool_created: "作成日"
-  pool_creator: "作成者"
-  pool_delete: "削除"
-  pool_delete_mode: "削除モード"
-  pool_delete_mode_text: "削除モードを有効にしていると、サムネイルをクリックしてその投稿をプールから除去することができます。"
-  pool_description: "説明"
-  pool_edit: "プールを編集"
-  pool_help: "ヘルプ"
-  pool_import: "プールのインポート: "
-  pool_import2: "インポート"
-  pool_import_text: "あなたは、タグ検索を実行すると、このプールに一致するすべての記事をインポートすることができます。"
-  pool_index: "インデックス表示"
-  pool_interval: "間隔を入力"
-  pool_jpeg: "ダウンロードJPGs"
-  pool_list: "リスト"
-  pool_name: "名前"
-  pool_new: "新規"
-  pool_no: "いいえ"
-  pool_order: "プールの順番づけ: "
-  pool_order2: "順番"
-  pool_order_auto: "オートオーダー"
-  pool_order_minus_one: "-1"
-  pool_order_plus_one: "+1"
-  pool_order_text: "より低い数字のものが最初に来ます。"
-  pool_png: "ダウンロード"
-  pool_pool: "プール"
-  pool_pool2: "プール: "
-  pool_posts: "投稿"
-  pool_public: "公共？"
-  pool_public_text: "公共のプールは、投稿を追加/削除するために誰もが可能になります。"
-  pool_question_mark: "？"
-  pool_reverse: "逆"
-  pool_save: "セーブ"
-  pool_search: "検索"
-  pool_show_copy: "コピー"
-  pool_show_history: "履歴"
-  pool_show_import: "インポート"
-  pool_show_order: "順番"
-  pool_show_transfer: "投稿データを転送する"
-  pool_toggle: "表示を切り替える"
-  pool_transfer: "プール番から転送:"
-  pool_transfer_button: "転送"
-  pool_transfer_from: "から"
-  pool_transfer_tags: "タグ"
-  pool_transfer_text: "プール内の投稿から投稿データを転送して "
-  pool_transfer_text2: "  プール内の投稿に "
-  pool_transfer_text3: "タグやレーティングは、転送され、古い投稿が新しい投稿に転送されます。"
-  pool_transfer_text4: "これらのプールは、投稿の数が同じではありません。"
-  pool_transfer_text5: "タグが正しい投稿に移されていることを確認してください。"
-  pool_transfer_text6: " 転送 "
-  pool_transfer_to: "に"
-  pool_updated: "更新日"
-  pool_yes: "はい"
+    add_post:
+      add: 追加
+      cancel: キャンセル
+      info: 'この投稿を追加するには、プールを選択:'
+      order: 順番
+      pool: プール
+      title: プールに追加
+    copy:
+      copy: プールをコピー
+      name: 名前
+      title: プールをクローン
+    create:
+      cancel: キャンセル
+      description: 説明
+      is_public: 公共？
+      name: 名前
+      save: セーブ
+      title: プールを作成
+    destroy:
+      confirm: 'あなたは本当に「%{name}」プールを削除したいですか?'
+      title: 削除
+    footer:
+      help: ヘルプ
+      list: リスト
+      new: 新規
+    import:
+      import: インポート
+      info: あなたは、タグ検索を実行すると、このプールに一致するすべての記事をインポートすることができます。
+      search: 検索
+      title: 'プールのインポート: %{name}'
+    index:
+      search: 検索
+      table:
+        created: 作成日
+        creator: 作成者
+        name: 名前
+        posts: 投稿
+        updated: 更新日
+      title: '%{q} - プール'
+      title_main: プール
+    order:
+      auto_order: オートオーダー
+      info: より低い数字のものが最初に来ます。
+      interval: 間隔を入力
+      minus_one: '-1'
+      order: 順番
+      plus_one: '+1'
+      reverse: 逆
+      title_html: 'プールの順番づけ: %{name}'
+    select_form:
+      add: 追加
+    show:
+      delete_mode_info: '削除モードを有効にしていると、サムネイルをクリックしてその投稿をプールから除去することができます。'
+      links:
+        copy: コピー
+        delete: 削除
+        delete_mode: 削除モード
+        edit: プールを編集
+        history: 履歴
+        import: インポート
+        index_view: インデックス表示
+        jpeg: ダウンロードJPGs
+        order: 順番
+        png: ダウンロード
+        toggle_view: 表示を切り替える
+        transfer: 投稿データを転送する
+      title: 'プール: %{name}'
+    transfer_metadata:
+      from:
+        from: 差出人
+        from_number: 'プール番から転送:'
+        to: To
+        transfer: 転送
+      info_truncated: "これらのプールは、投稿の数が同じではありません。"
+      info_truncated_warning: 'タグが正しい投稿に移されていることを確認してください。'
+      info_what: 'タグやレーティングは、転送され、古い投稿が新しい投稿に転送されます。'
+      reverse: 逆
+      table:
+        from: 差出人
+        tags: タグ
+        to: To
+        transfer: 転送
+    update:
+      form:
+        description: 説明
+        is_active:
+          _: アクティブ
+          info: '投稿を追加する場合は、非アクティブプールは、もはや選択されません。'
+        is_public:
+          _: '公共？'
+          info: '公共のプールは、投稿を追加/削除するために誰もが可能になります。'
+        name: 名前
+      title: プールを編集
   post:
-    moderate: {mod: モデレーター}
+    blacklists:
+      add: 追加
+      hidden_posts: Hidden Posts
+      info: 全てのタグをすべて含むような投稿は表示されません。 スペースでタグを区切ります。
+    browse:
+      by:
+        all_html: '%{text} %{ago}前 %{by}から'
+        by_html: '%{user}から'
+      child:
+        child: 子投稿
+      deleted:
+        reason: 理由
+        title: この投稿は削除されました。
+        undelete: アンデリート
+      edit: 編集
+      frames: フレーム
+      held:
+        activate: (アクティベートする)
+        info: この投稿は投稿者によってインデックスから開催されます。
+      hidden: 非表示
+      image_hidden:
+        info: この投稿は、アカウントの設定が原因で表示されません。
+        show: 画像を表示するには、ここをダブルクリックします
+        title: 画像が非表示
+      no_result: 検索結果がありません。
+      parent:
+        make_parent: この投稿を親に成る
+        parent: 親投稿
+      parent_post: 親投稿
+      pending_info: この投稿はモデレーターの承認を更新中
+      score: スコア
+      shown_in_index: インデックスに表示
+      source: 出典
+    delete:
+      noaccess_info: (親投稿はアクセス制限が原因で非表示)
+      parent_info: Votes will be transferred to the following parent post. If this is incorrect, reparent this post before deleting it.
+      permanent: 恒久的に破壊する
+      permanent_info: This post is already deleted. Destroying it will remove it permanently.
+      title: 投稿を削除
+    deleted_index:
+      by: 削除者
+      post: 投稿
+      title: 削除された投稿
+      user: ユーザー
+    favorites:
+      title: お気に入りにした人
+    footer:
+      batch: バッチ
+      browse: ブラウズ
+      image_search: 画像で検索
+      mod: モデレート
+      popular: 人気
+      random: ランダム
+      subs: 購読
+      upload: アップロード
+    hover:
+      child: 子投稿
+      flagged:
+        text: フラグ
+      parent: 親投稿
+      pending: 更新中
+      post_number: '投稿ID'
+      rating: レーティング
+    index:
+      activate: すべての開かれた投稿をアクティベートする
+      edit_tags: 編集用タグ
+      held_view: 表示
+      mode: モード
+      mode_form:
+        edit: 投稿を編集
+        flag: 投稿をフラグ
+        reparent: Reparent 投稿
+        script: タグスクリプトを適用
+        view: 投稿を見る
+    moderate:
+      down: 下
+      mod: モデレーター
+      prompt_reason: 理由を入力
+      tags: タグ
+      vote_down_html: スコア%{down}
+    popular_by_day:
+      popular:
+        _: 人気
+        month: 人気 (月ごと)
+        week: 人気 (週ごと)
+    popular_by_month:
+      popular:
+        _: 人気
+        month: 人気 (月ごと)
+        week: 人気 (週ごと)
+    popular_by_week:
+      popular:
+        _: 人気
+        month: 人気 (月ごと)
+        week: 人気 (週ごと)
+    popular_recent:
+      popular:
+        _: 人気
+        month: 人気 (月ごと)
+        week: 人気 (週ごと)
+    post_atom:
+      data: 画像データ
+      source: 出典
+    posts:
+      empty: だれもいないよ
+    search:
+      search: 検索
+      title: 検索
+    show_empty:
+      info: この投稿は存在しません。
+      related:
+        _: 関連する投稿
+        next: 次
+        previous: 前
+        random: ランダム
     show_partials:
       edit:
+        find_artists: 作家を探す
+        help: ヘルプ
         note_locked: 注釈(ロック)
         parent: 親投稿
         rating: レーティング
+        rating_info_html: 明示的なタグは、セックス、マンコ、ペニス、オナニー、フェラチオ、などが含まれる。
+        rating_locked: レーティングロック
         rating_locked_info: レーティングロック中
-        related: {artists: 関連絵師, characters: 関連するキャラクター, copyrights: 関連する作品, none: なし, tags: 関連するタグ}
+        related:
+          artists: 関連絵師
+          characters: 関連するキャラクター
+          copyrights: 関連する作品
+          none: なし
+          tags: 関連するタグ
         save: 変更をセーブする
         shown_in_index: インデックスに表示
         source: 出典
         tags: 編集用タグ
+        tags_info_html: スペースでタグを区切ります。(%{more})
+      history_panel:
+        notes: 注釈
+        tags: タグ
+        title: 履歴
+      image:
+        denied: この画像を表示するには、特権を持つアカウントが必要です
+        download:
+          _: ダウンロード
+          info: 上にある「ダウンロード」をクリックして下さい。ファイルを表示します。
+        save_flash: （右クリックして保存する）は、このフラッシュを保存する
+      image_footer:
+        edit: 編集
+        respond: コメント
+      options_panel:
+        add_notes: 訳を追加
+        add_to_pool: プールに追加
+        approve:
+          confirm: Do you really want to approve this post?
+        delete: 削除
+        download:
+          image: 画像
+          larger: 拡大版をダウンロード
+          normal: ダウンロード
+        favorites:
+          add: お気に入りに追加
+          remove: お気に入りから削除
+        flag: 削除フラグ
+        history: 投稿の履歴
+        resize: 画像をリサイズ
+        set_avatar: Set avatar
+        title: オプション
+        undelete: アンデリート
+        view_larger: 拡大バージョンを表示
+      pool:
+        next: '次 »'
+        previous: '« 前'
+        remove:
+          _: 削除
+        transfer:
+          _: 親への転送
+      related_posts_panel:
+        find:
+          duplicate: 重複を見つける
+          similar: 類似画像を検索
+        next: 次
+        parent: 親投稿
+        previous: 前
+        random: ランダム
+        title: 関連する投稿
       statistics_panel:
-        uploaded_by_user_html: 'by %{u}'
-    upload: {title: アップロード}
-  post_404: "この投稿は存在しません。"
-  post_activate: "すべての開かれた投稿をアクティベートする"
-  post_amb: "次のタグが曖昧です: "
-  post_approve: "投稿を承認"
-  post_batch: "バッチ"
-  post_blacklist_add: "追加"
-  post_blacklist_text: "全てのタグをすべて含むような投稿は表示されません。 スペースでタグを区切ります。"
-  post_browse: "ブラウズ"
-  post_browse_cancel: "キャンセル"
-  post_browse_explicit: "露骨"
-  post_browse_frame: "フレームを追加"
-  post_browse_frames: "フレーム"
-  post_browse_no_results: "検索結果がありません。"
-  post_browse_parent: "親投稿"
-  post_browse_questionable: "疑わしい"
-  post_browse_rating: "レーティング"
-  post_browse_safe: "安全"
-  post_browse_save: "セーブ"
-  post_browse_show_in_index: "インデックスに表示"
-  post_browse_source: "出典"
-  post_browse_text: "画像が非表示"
-  post_browse_text10: "出典: "
-  post_browse_text11: "この投稿は削除されました。"
-  post_browse_text12: "By: "
-  post_browse_text13: "理由: "
-  post_browse_text14: "アンデリート"
-  post_browse_text15: "ダウンロード:"
-  post_browse_text16: "この投稿は "
-  post_browse_text17: "親投稿"
-  post_browse_text18: " (この投稿が親投稿に成る)"
-  post_browse_text19: "この投稿は "
-  post_browse_text2: "この投稿は、アカウントの設定が原因で表示されません。"
-  post_browse_text20: "子投稿"
-  post_browse_text21: "フラグ者"
-  post_browse_text22: "理由: "
-  post_browse_text23: "この投稿はモデレーターの承認を更新中"
-  post_browse_text24: "この投稿は投稿者によってインデックスから開催されます。"
-  post_browse_text25: "(アクティベートする)"
-  post_browse_text26: "編集"
-  post_browse_text3: "画像を表示するには、ここをダブルクリックします"
-  post_browse_text4: "投稿ID"
-  post_browse_text5: "非表示"
-  post_browse_text6: "に投稿 "
-  post_browse_text7: " から　前 "
-  post_browse_text8: "スコア: "
-  post_browse_text9: "フレーム: "
-  post_cancel: "キャンセル"
-  post_comment_google: "Comment translation provided by "
-  post_delete: "投稿を削除"
-  post_delete_access: "(親投稿はアクセス制限が原因で非表示)"
-  post_delete_cancel: "キャンセル"
-  post_delete_delete: "削除"
-  post_delete_no_parent_text: "This post has no parent.  If this post has been replaced, reparent this post before deleting, and votes will be transferred."
-  post_delete_parent_text: "Votes will be transferred to the following parent post. If this is incorrect, reparent this post before deleting it."
-  post_delete_perma: "恒久的に破壊する"
-  post_delete_perma_text: "This post is already deleted. Destroying it will remove it permanently."
-  post_deleted_by: "削除者"
-  post_deleted_post: "投稿"
-  post_deleted_posts: "削除された投稿"
-  post_deleted_reason: "理由"
-  post_deleted_tags: "タグ"
-  post_deleted_user: "ユーザー"
-  post_download: "ダウンロード"
-  post_download_text: "上にある「ダウンロード」をクリックして下さい。ファイルを表示します。"
-  post_edit: "投稿を編集"
-  post_edit_e: "露骨"
-  post_edit_help: "ヘルプ"
-  post_edit_note_locked: "注釈(ロック)"
-  post_edit_parent: "親投稿"
-  post_edit_q: "疑わしい"
-  post_edit_rating: "レーティング"
-  post_edit_rating_close: ")"
-  post_edit_rating_locked: "レーティングロック中"
-  post_edit_rating_text: "明示的なタグは、セックス、オマンコ、ペニス、オナニー、フェラ、などがあります ("
-  post_edit_related_artists: "関連絵師"
-  post_edit_related_characters: "関連するキャラクター"
-  post_edit_related_copyrights: "関連する作品"
-  post_edit_related_none: "なし"
-  post_edit_related_tags: "関連するタグ"
-  post_edit_related_tags2: "関連するタグ"
-  post_edit_s: "安全"
-  post_edit_save: "変更をセーブする"
-  post_edit_shown: "インデックスに表示"
-  post_edit_source: "出典"
-  post_edit_tags: "タグ"
-  post_edit_tags_close: ")"
-  post_edit_tags_text: "スペースでタグを区切ります。 ("
-  post_empty: "だれもいないよ"
-  post_favorited_by: "お気に入りにした人"
-  post_file: "ファイル"
-  post_flag: "投稿をフラグ"
-  post_flash_dl: "（右クリックして保存する）は、このフラッシュを保存する"
-  post_gar: "gar"
-  post_held_text: "あなたが開催して "
-  post_held_view: "表示"
-  post_help: "ヘルプ"
-  post_hidden_posts: "非表示投稿"
-  post_history: "履歴"
-  post_history_notes: "注釈"
-  post_history_tags: "タグ"
-  post_hover_by: " から "
-  post_hover_child: "子投稿"
-  post_hover_flagged: "フラグ"
-  post_hover_hidden: "非表示"
-  post_hover_parent: "親投稿"
-  post_hover_pending: "更新中"
-  post_hover_post: "投稿ID"
-  post_hover_rating: "レーティング: "
-  post_hover_score: "スコア: "
-  post_image: "画像で検索"
-  post_image_edit: "編集"
-  post_image_respond: "コメント"
-  post_image_text: "この画像を表示するには、特権を持つアカウントが必要です"
-  post_list: "リスト"
-  post_meant: "もしかして: "
-  post_mod: "モデレート"
-  post_mod_ago: " 前 "
-  post_mod_approve: "承認"
-  post_mod_delete: "削除"
-  post_mod_down: "下"
-  post_mod_enter_reason: "理由を入力"
-  post_mod_flagged: "フラグ"
-  post_mod_invert: "選択を反転"
-  post_mod_mod: "モデレーター"
-  post_mod_parent: "親投稿: "
-  post_mod_pending: "更新中"
-  post_mod_rating: "レーティング: "
-  post_mod_reason: "理由: "
-  post_mod_score: "スコア: "
-  post_mod_search: "検索"
-  post_mod_select: "すべてを選択する"
-  post_mod_size: "サイズ: "
-  post_mod_tags: "タグ： "
-  post_mod_uploaded: "アップロード者"
-  post_mode: "モード"
-  post_next: "次の投稿"
-  post_options: "オプション"
-  post_options_add_pool: "プールに追加"
-  post_options_approve: "承認"
-  post_options_approve_confirm: "Do you really want to approve this post?"
-  post_options_avatar: "Set avatar"
-  post_options_del_fav: "お気に入りから削除"
-  post_options_delete: "削除"
-  post_options_download: "ダウンロード"
-  post_options_download_larger: "拡大版をダウンロード"
-  post_options_edit: "編集"
-  post_options_flag: "削除フラグ"
-  post_options_history: "投稿の履歴"
-  post_options_image: "画像"
-  post_options_resize: "画像をリサイズ"
-  post_options_tl: "訳を追加"
-  post_options_undelete: "アンデリート"
-  post_options_view_larger: "拡大バージョンを表示"
-  post_pool_next: "次 »"
-  post_pool_previous: "« 前"
-  post_pool_remove: "削除"
-  post_pool_remove_confirm: "Are you sure you want to remove this post from "
-  post_pool_text: "この投稿は "
-  post_pool_text2: "で "
-  post_pool_text3: " プール"
-  post_pool_xfer: "親への転送"
-  post_pool_xfer_confirm: " and add the parent post instead?"
-  post_popular: "人気"
-  post_previous: "前の投稿"
-  post_random: "ランダム"
-  post_related: "関連する投稿"
-  post_related_dupe: "重複を見つける"
-  post_related_next: "次"
-  post_related_parent: "親投稿"
-  post_related_posts: "関連する投稿"
-  post_related_previous: "前"
-  post_related_random: "ランダム"
-  post_related_sim: "類似画像を検索"
-  post_reparent: "Reparent 投稿"
-  post_script: "タグスクリプトを適用"
-  post_search: "検索"
-  post_sim_cancel: "キャンセル"
-  post_sim_color: "色を無視しない"
-  post_sim_down: "(下)"
-  post_sim_dupe: "複製をフラグする"
-  post_sim_dupe_period: "."
-  post_sim_dupe_text: "あなたの投稿が重複している可能性があります。"
-  post_sim_dupe_text10: "Hidden Posts"
-  post_sim_dupe_text11: " in the sidebar to view hidden posts."
-  post_sim_dupe_text2: " を呼んでください"
-  post_sim_dupe_text3: "If your post is a better version of an existing one, but the old post should remain,"
-  post_sim_dupe_text4: "the old post."
-  post_sim_dupe_text5: "If your post is a better version of an existing one, and the old post should be deleted, "
-  post_sim_dupe_text6: "mark the old post as a duplicate"
-  post_sim_dupe_text7: "Otherwise, please "
-  post_sim_dupe_text8: "delete your post"
-  post_sim_dupe_text9: "Your tag blacklist has hidden some potential duplicates.  Use "
-  post_sim_edit: "投稿を編集"
-  post_sim_edit_tags: "編集用タグ"
-  post_sim_flag: "投稿をフラグ"
-  post_sim_gray: "色を無視する"
-  post_sim_mode: "モード"
-  post_sim_more: "もっと表示"
-  post_sim_options: "オプション"
-  post_sim_reparent: "Reparent"
-  post_sim_script: "タグスクリプトを適用"
-  post_sim_services: "サービス"
-  post_sim_services_text: "すべてのサービスを使用します。 "
-  post_sim_update: "Update"
-  post_sim_upload: "この画像をアップロード"
-  post_sim_view: "投稿を見る"
-  post_source: "出典"
-  post_stats: "統計"
-  post_stats_ago: " 前"
-  post_stats_approver: "承認者"
-  post_stats_fav: "お気に入りにした人: "
-  post_stats_id: "Id: "
-  post_stats_posted: "投稿: "
-  post_stats_rating: "レーティング: "
-  post_stats_score: "スコア: "
-  post_stats_size: "サイズ: "
-  post_stats_source: "出典: "
-  post_subs: "購読"
-  post_tag_script: "タグスクリプト"
-  post_tag_script_text: "これらのすべての投稿にタグスクリプトを適用しますか？"
-  post_tags: "タグ"
-  post_update: "更新"
-  post_upload: "アップロード"
-  post_upload_artist: "絵師を探す"
-  post_upload_e: "露骨"
-  post_upload_file: "ファイル"
-  post_upload_parent: "親投稿"
-  post_upload_q: "疑わしい"
-  post_upload_rating: "レーティング"
-  post_upload_rating_text: "明示的なタグは、セックス、オマンコ、ペニス、オナニー、フェラ、などがあります"
-  post_upload_related: "なし"
-  post_upload_related_circles: "関連するサークル"
-  post_upload_s: "安全"
-  post_upload_source: "出典"
-  post_upload_source_text: "You can enter a URL here to download from a website."
-  post_upload_tags: "タグ"
-  post_upload_tags_help: "ヘルプ"
-  post_upload_tags_text: "スペースでタグを区切ります。"
-  post_upload_text: "One"
-  post_upload_text10: "Do not upload "
-  post_upload_text11: " or "
-  post_upload_text12: " art"
-  post_upload_text13: "Do not upload things with "
-  post_upload_text14: "Group doujinshi, manga pages, and similar game CGs together"
-  post_upload_text15: "Read the "
-  post_upload_text16: "You can only upload "
-  post_upload_text17: " today."
-  post_upload_text18: "This post already exists: "
-  post_upload_text2: "Some"
-  post_upload_text3: " of your posts "
-  post_upload_text4: "was"
-  post_upload_text5: "were"
-  post_upload_text6: "recently deleted"
-  post_upload_text7: "dismiss this message"
-  post_upload_text8: "Upload Guidelines"
-  post_upload_text9: "Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban."
-  post_view: "投稿を見る"
-  post_viewing: "プールを見る "
-  ratings: {_: レーティング, e: 露骨, q: 疑わしい, s: 安全}
+        favorited_by: 'お気に入りにした人:'
+        id: ID
+        posted: '投稿:'
+        title: 統計
+      status_notices:
+        flagged:
+          delete: 削除
+          unflag: この投稿のフラグを消す
+        held:
+          activate: この投稿をアクティベートする
+          info: この投稿は一時的にポスターでインデックスから開催されています。
+        parent:
+          child: 子投稿があります
+        pending:
+          approve:
+            _: 承認
+        resized:
+          always_view_original: 常にオリジナルを表示する
+          hide: このメッセージを隠す
+        samples_disabled: Image samples have been disabled. If you find this to be too slow, you can turn samples back on in your profile settings.
+    similar:
+      apply_tag_script: タグスクリプトを適用
+      duplicate:
+        delete: delete your post
+        mark_duplicate: mark the old post as a duplicate
+      edit_posts: 投稿を編集
+      file: ファイル
+      flag_duplicate: 複製をフラグする
+      flag_post: 投稿をフラグ
+      mode_color: "色を無視しない"
+      mode_gray: 色を無視する
+      reparent: Reparent
+      services: サービス
+      show_more: もっと表示
+      upload: この画像をアップロード
+      view_posts: 投稿を見る
+    tag_script:
+      confirm: 'これらのすべての投稿にタグスクリプトを適用しますか？'
+      title: タグスクリプト
+    upload:
+      anonymous: 匿名アップロード
+      form:
+        file: ファイル
+        find_artist: 絵師を探す
+        find_related:
+          artists: 関連絵師
+          characters: 関連するキャラクター
+          circles: 関連するサークル
+          copyrights: 関連する作品
+          tags: 関連するタグ
+        help: ヘルプ
+        parent: 親投稿
+        rating:
+          _: レーティング
+          info: 明示的なタグは、セックス、マンコ、ペニス、オナニー、フェラチオ、などが含まれる。
+        source:
+          _: 出典
+          info: You can enter a URL here to download from a website.
+        tags:
+          _: タグ
+          info: スペースでタグを区切ります。
+        upload: アップロード
+      guidelines:
+        do_not:
+          compression_artifacts: 圧縮劣化
+          obnoxious_watermarks: 嫌な透かし
+        group: Group doujinshi, manga pages, and similar game CGs together
+        info: Please keep the following guidelines in mind when uploading something. Consistently violating these rules will result in a ban.
+        more_link: タグガイドライン
+        title: Upload Guidelines
+      posts_deleted:
+        hide: dismiss this message
+        recently: recently deleted
+      title: アップロード
+  ratings:
+    _: レーティング
+    e: 露骨
+    q: 疑わしい
+    s: 安全
   record_action: "Action"
   record_add2: "追加"
   record_ago: " 前"
   record_body: "内容"
   record_cancel: "キャンセル"
   record_delete: "削除"
+  record_list: "ユーザーのリスト"
+  record_list2: "すべてのリスト"
   record_reason: "理由"
   record_submit: "送る"
   record_user: "ユーザー"
@@ -611,7 +896,8 @@ ja:
   report_votes_text: "The following report shows user votes over the past three days."
   report_wiki: "Wiki"
   static:
-    index: {search: 検索}
+    index:
+      search: 検索
   static1: "ヘルプ"
   static10: "ランダム"
   static11: "最近の削除"
@@ -712,19 +998,29 @@ ja:
   sub_text2: " タグ購読."
   sub_vis: "表示"
   tag:
-    cloud: {title: タグ}
-    index: {title: タグ}
+    cloud:
+      title: タグ
+    index:
+      title: タグ
+    mass_edit:
+      title: 大規模なタグ編集
   tag_action: "Action"
   tag_alias:
     index:
       add: 追加
-      add_new: {alias_to: エイリアスに, info: 'You can suggest a new alias, but it must be approved by an administrator before it is activated.', name: 名前, submit: 送る, title: エイリアスを追加}
+      add_new:
+        alias_to: エイリアスに
+        info: You can suggest a new alias, but it must be approved by an administrator before it is activated.
+        name: 名前
+        submit: 送る
+        title: エイリアスを追加
       alias: エイリアス
       approve: 承認
       delete: 削除
       reason: 理由
       search: エイリアスを検索
       title: タグのエイリアス
+      to: To
   tag_aliases: "エイリアス"
   tag_amb: "曖昧さ"
   tag_cancel: "キャンセル"
@@ -738,14 +1034,18 @@ ja:
   tag_implication:
     index:
       add: 追加
-      add_new: {title: 包含関係を追加, info: 'The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with
-          rectangle.', info_moderation: 'You can suggest a new implication, but it must be approved by a moderator before it is activated.', submit: 送る}
+      add_new:
+        title: 包含関係を追加
+        info: The predicate tag is the tag that is matched against, and the consequent tag is the tag that is added. For example, a tag implication with predicate=square consequent=rectangle would mean any post tagged with square would also be tagged with rectangle.
+        info_moderation: You can suggest a new implication, but it must be approved by a moderator before it is activated.
+        submit: 送る
       approve: 承認
       consequent: 帰結
       delete: 削除
       predicate: 前提
       reason: 理由
       search: 包含関係を検索
+      title: タグ包含関係
   tag_js: "あなたは本当にこのタグの編集したいですか？"
   tag_js_preview: "プレビュー"
   tag_js_preview_txt: "ロード中・・・"
@@ -765,21 +1065,47 @@ ja:
   tag_wild: "ワイルドカードとして*を使用しています。"
   time:
     x_ago: '%{t}前'
+    x_ago_html: '%{t}前'
   user:
-    change_email: {current_password: パスワード確認, new_email: 新しいEmail}
-    change_password: {new_password: 新しいパスワード}
-    edit: {email: Eメール, update_email: 変更}
-    home: {action_info: From here you can access account-specific options and features., blocked_users: ブロックされたユーザー, change_password: パスワード変更, invites: 招待, login: ログイン, logout: ログアウト, moderator_tools: モデレーターツール, my_favorites: お気に入り, my_mail: メール, my_profile: プロフィール, not_logged_in: あなたはログインしていません。,
-      reset_password: パスワードをリセット, settings: 設定, title: マイアカウント}
-    index: {title: ユーザー}
-    login: {title: ログイン}
-    logout: {title: ログアウト}
-    reset_password: {title: パスワードをリセット}
+    change_email:
+      current_password: パスワード確認
+      new_email: 新しいEmail
+    change_password:
+      new_password: 新しいパスワード
+    edit:
+      email: Eメール
+      update_email: 変更
+    home:
+      action_info: From here you can access account-specific options and features.
+      blocked_users: ブロックされたユーザー
+      change_password: パスワード変更
+      invites: 招待
+      login: ログイン
+      logout: ログアウト
+      moderator_tools: モデレーターツール
+      my_favorites: お気に入り
+      my_mail: メール
+      my_profile: プロフィール
+      no_signup: サインアップは無効化されています
+      not_logged_in: あなたはログインしていません。
+      reset_password: パスワードをリセット
+      settings: 設定
+      title: マイアカウント
+    index:
+      title: ユーザー
+    login:
+      title: ログイン
+    logout:
+      title: ログアウト
+    reset_password:
+      title: パスワードをリセット
     show:
       own_title: プロフィール
       title: "%{name}の　プロフィール"
-    show_blocked_users: {title: ブロックされたユーザー}
-    signup: {title: サインアップ}
+    show_blocked_users:
+      title: ブロックされたユーザー
+    signup:
+      title: サインアップ
   user1: "ブラックリストのタグ"
   user10: " or edit a post."
   user11: "画像をリサイズ"
@@ -811,6 +1137,7 @@ ja:
   user_confirm_pwd: "パスワード再入力"
   user_deleted_posts: "削除された投稿"
   user_duration: "デュレイション (日)"
+  user_edits: "編集"
   user_home: "あなたはログインしていません。"
   user_home10: "» メール"
   user_home11: "» お気に入り"
@@ -832,12 +1159,18 @@ ja:
   user_list: "リスト"
   user_login_text1: "ログイン"
   user_login_text8: "あなたのパスワードをリセットに"
+  user_logout_link: "&#171; ログイン"
+  user_logout_text: "ログアウト"
   user_new_pwd: "新しいパスワード"
+  user_note_edits: "注釈の編集"
   user_password: "パスワード"
   user_password_confirm: "パスワード確認"
   user_password_text: "5文字以上入力してください"
   user_posts: "投稿"
   user_reason: "理由"
+  user_reason2: "(理由："
+  user_reason3: ")"
+  user_rec_invites: "最近の招待"
   user_record_none: "なし"
   user_resend_email: "Eメール"
   user_resend_submit: "送る"
@@ -845,19 +1178,27 @@ ja:
   user_reset_email: "Eメール"
   user_reset_name: "名前"
   user_save: "セーブ"
+  user_send_msg: "メッセージを送る"
   user_set_avatar: "Set avatar"
   user_signup: "サインアップ"
   user_signup_email: "Eメール"
   user_signup_name: "名前"
   user_signup_text: "サインアップ"
+  user_signup_text2: "サインアップは無効化されています"
+  user_sub2: "タグ購読"
   user_submit: "送る"
   user_subs: "購読タグ"
+  user_tag_edits: "タグの編集"
+  user_uploaded: "アップロードした"
+  user_uploaded_tags: "アップロードしたタグ"
   user_uploads: "アップロード"
   user_user: "ユーザー"
   user_votes: "Votes"
   user_when: "送信日時"
+  user_wiki_edits: "Wikiの編集"
   users: "ユーザー"
   users_deleted: "削除されました"
+  users_joined: "参加"
   users_level: "レベル"
   users_name: "名前"
   users_notes: "注釈"
@@ -865,5 +1206,13 @@ ja:
   users_posts: "投稿"
   users_search: "検索"
   wiki:
-    footer: {list: リスト, new: 新規, help: ヘルプ}
-    index: {title: Wiki}
+    footer:
+      list: リスト
+      new: 新規
+      help: ヘルプ
+    history:
+      title: Wikiの履歴
+    index:
+      title: Wiki
+    recent_changes:
+      title: 最近の変更

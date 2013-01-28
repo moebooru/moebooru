@@ -1,83 +1,241 @@
 zh_CN:
   activerecord:
     attributes:
-      advertisement: {ad_type: 广告类型, height: 图像高度, hit_count: 点击数, image_url: 图像链接, referral_url: 推荐网址, reset_hit_count: 重置点击数,
-        status: 状态, width: 宽度}
-      user: {current_password: 当前密码, password: 密码, password_confirmation: 密码确认}
+      advertisement:
+        ad_type: 广告类型
+        height: 图像高度
+        hit_count: 点击数
+        image_url: 图像链接
+        referral_url: 推荐网址
+        reset_hit_count: 重置点击数
+        status: 状态
+        width: 宽度
+      user:
+        current_password: 当前密码
+        password: 密码
+        password_confirmation: 密码确认
     errors:
       models:
-        wiki_page: {no_change: 页面内容/标题 无变化}
-    models: {advertisement: 广告}
+        wiki_page:
+          no_change: 页面内容/标题 无变化
+    models:
+      advertisement: 广告
   admin:
-    edit_user: {level: 等级, save: 保存, user: 用户}
-    index: {cache_statistics: 缓存统计, edit_user: 编辑用户, reset_password: 重置密码, title: 管理员}
-    reset_password: {name: 用户名, reset: 重置, title: 重置密码}
+    edit_user:
+      level: 等级
+      save: 保存
+      user: 用户
+    index:
+      cache_statistics: 缓存统计
+      edit_user: 编辑用户
+      reset_password: 重置密码
+      title: 管理员
+    reset_password:
+      name: 用户名
+      reset: 重置
+      title: 重置密码
   advertisements:
     edit:
       title: '编辑广告#%{id}'
-    index: {reset_hit_count: 重置点击数, title: 广告}
-    new: {title: 新广告}
+    index:
+      reset_hit_count: 重置点击数
+      title: 广告
+    new:
+      title: 新广告
     show:
       title: '广告#%{id}'
   artist:
-    create: {alias_for: 别称 for, aliases: 别称, info: 用逗号开多个别称与组别内容, members: 成员, name: 绘师名, notes: 附注, urls: URLs}
-    destroy: {confirm: '你确定删除%{name}吗？', title: 删除绘师}
-    footer: {add: 添加, help: 帮助, list: 列表}
-    index: {date: 日期, delete: 删除绘师, edit: 编辑绘师, find: 按绘师找图, is_alias: 此 绘师 是一个别称为, is_group: 该绘师（隶属于）一社团,
-      last_modified: 最后编辑者为, name: 名称, search: 搜索, title: 绘师, updated_by: 更新者}
-    update: {preview: 预览附注}
+    create:
+      alias_for: 别称 for
+      aliases: 别称
+      info: 用逗号开多个别称与组别内容
+      members: 成员
+      name: 绘师名
+      notes: 附注
+      urls: URLs
+    destroy:
+      confirm: 你确定删除%{name}吗？
+      title: 删除绘师
+    footer:
+      add: 添加
+      help: 帮助
+      list: 列表
+    index:
+      date: 日期
+      delete: 删除绘师
+      edit: 编辑绘师
+      find: 按绘师找图
+      is_alias: 此 绘师 是一个别称为
+      is_group: 该绘师（隶属于）一社团
+      last_modified: 最后编辑者为
+      name: 名称
+      search: 搜索
+      title: 绘师
+      updated_by: 更新者
+    update:
+      preview: 预览附注
   banned:
-    index: {expires_in: '这将会在 %{t} 到期.', permanent: 永久封禁, reason: 你已经被封禁}
+    index:
+      expires_in: 这将会在 %{t} 到期.
+      permanent: 永久封禁
+      reason: 你已经被封禁
   batch:
-    create: {files: 文件, load_file_index: 载入文件目录, submit: 开始上传, tags: 标签, title: 队列上传, url: URL}
-    index: {cancel: 取消所有上传, clear: 清除已完成上传, completed_html: 'Post %{id} 完成', exists_html: 'Post %{id} 已经存在',
-      pause: 暂停, paused: 已暂停, pending: 等待审核中, queue_uploads: 队列上传, resume: 继续, retry_failed: 重试失败, status: 状态,
-      tags: 标签, title: 批量队列, uploading: 上传中, url: URL, username: 用户}
+    create:
+      files: 文件
+      load_file_index: 载入文件目录
+      submit: 开始上传
+      tags: 标签
+      title: 队列上传
+      url: URL
+    index:
+      cancel: 取消所有上传
+      clear: 清除已完成上传
+      completed_html: Post %{id} 完成
+      exists_html: Post %{id} 已经存在
+      pause: 暂停
+      paused: 已暂停
+      pending: 等待审核中
+      queue_uploads: 队列上传
+      resume: 继续
+      retry_failed: 重试失败
+      status: 状态
+      tags: 标签
+      title: 批量队列
+      uploading: 上传中
+      url: URL
+      username: 用户
   buttons:
     _no: '否'
     _yes: '是'
     add: 添加
+    approve: 通过
     back: 返回
     cancel: 取消
     delete: 删除
     edit: 编辑
     save: 保存
+    search: 搜索
+    select:
+      all: 全选
+      invert: 反向选定
+    update: 更新
   c:
     pool:
       not_found: "找不到id为%{id}的图集"
   comment:
-    comment: {delete: 删除, edit: 编辑, flag: 标记待删除, quote: 引用}
-    comments: {bump: 发帖不顶帖, more: 更多, post: 发送, reply: 回复}
-    edit: {save: 保存更改, title: 编辑评论}
-    footer: {help: 帮助, list: 列表, search: 搜索, moderate: 管理}
-    index: {date: 日期, empty: 暂无评论, hidden: 隐藏, score: 得分, tags: 标签, title: 评论, translation_html: '评论由 %{p}
-        翻译', user: 用户}
-    moderate: {approve: 通过, author: 作者, body: 正文, delete: 删除, select_all: 选择所有, select_invert: 反向选定, title: 管理评论}
-    search: {author: 作者, message: 消息, post: 投稿, submit: 搜索, time: 时间}
-    show: {return: 回到图帖, title: 评论}
-  confirmations: {is_sure: 你确定要这样做？}
+    comment:
+      delete: 删除
+      edit: 编辑
+      flag: 标记待删除
+      quote: 引用
+    comments:
+      bump: 发帖不顶帖
+      more: 更多
+      post: 发送
+      reply: 回复
+    edit:
+      save: 保存更改
+      title: 编辑评论
+    footer:
+      help: 帮助
+      list: 列表
+      search: 搜索
+      moderate: 管理
+    index:
+      date: 日期
+      empty: 暂无评论
+      hidden: 隐藏
+      score: 得分
+      tags: 标签
+      title: 评论
+      translation_html: 评论由 %{p} 翻译
+      user: 用户
+    moderate:
+      approve: 通过
+      author: 作者
+      body: 正文
+      delete: 删除
+      select_all: 选择所有
+      select_invert: 反向选定
+      title: 管理评论
+    search:
+      author: 作者
+      message: 消息
+      post: 投稿
+      submit: 搜索
+      time: 时间
+    show:
+      return: 回到图帖
+      title: 评论
+  confirmations:
+    is_sure: 确定要这样做？
   dmail:
     compose:
-      form: {body: 正文, title: 标题, to: To}
+      form:
+        body: 正文
+        title: 标题
+        to: To
       preview: 预览
       preview_loading: 预览加载中…
       send: 发送
       title: 编写消息
-    confirm_mark_all_read: {title: 全部标为已读, info: 你确定将所有邮件标为已读吗？}
-    footer: {compose: 编写, inbox: 收件箱, mark_all_read: 全部标为已读}
+    confirm_mark_all_read:
+      title: 全部标为已读
+      info: 你确定将所有邮件标为已读吗？
+    footer:
+      compose: 编写
+      inbox: 收件箱
+      mark_all_read: 全部标为已读
     inbox:
-      empty: 你没有消息./
-      table: {from: 来自, title: 标题, to: 致, when: 时间}
+      empty: 你没有消息.
+      table:
+        from: 来自
+        title: 标题
+        to: 致
+        when: 时间
       title: 收件箱
-    message: {sent_by_html: '由 %{user} %{x_ago} 前发送'}
+    message:
+      sent_by_html: 由 %{user} %{x_ago} 前发送
   forum:
-    add: {post: 发送, title: 标题}
-    edit: {post: 发送, post_title: 标题}
-    index: {created_by: 创建者, help: 帮助, is_locked: (锁定), last: 最近, mark: 全部标为已读, new: 新主题, post: 发送, post_title: 标题,
-      preview: 预览, responses: 反应, search: 搜索, sticky: 置顶, title: 论坛, updated: 最后更新, updated_by: 更新者}
-    new: {help: 帮助, list: 列表, post: 发送, post_title: 标题, preview: 预览, title: 新主题}
-    post: {delete: 删除, delete_confirm: '你确认删除此帖吗?', edit: 编辑, lock: 锁定, quote: 引用, stick: 置顶, unlock: 解除锁定,
-      unstick: 解除置顶}
+    add:
+      post: 发送
+      title: 标题
+    edit:
+      post: 发送
+      post_title: 标题
+      preview: 预览
+    index:
+      created_by: 创建者
+      help: 帮助
+      is_locked: (锁定)
+      last: 最近
+      mark: 全部标为已读
+      new: 新主题
+      post: 发送
+      post_title: 标题
+      preview: 预览
+      responses: 反应
+      search: 搜索
+      sticky: 置顶
+      title: 论坛
+      updated: 最后更新
+      updated_by: 更新者
+    new:
+      help: 帮助
+      list: 列表
+      post: 发送
+      post_title: 标题
+      preview: 预览
+      title: 新主题
+    post:
+      delete: 删除
+      delete_confirm: 你确认删除此帖吗?
+      edit: 编辑
+      lock: 锁定
+      quote: 引用
+      stick: 置顶
+      unlock: 解除锁定
+      unstick: 解除置顶
     search:
       author: 作者
       last_updated: 按更新时间
@@ -85,31 +243,74 @@ zh_CN:
       message: 消息
       post_title: 标题
       search: 搜索
-    show: {help: 帮助, list: 列表, locked: 该主题已被锁定., new: 新主题, parent: 父项, post: 发送, preview: 预览, reply: 回复}
+    show:
+      help: 帮助
+      list: 列表
+      locked: 该主题已被锁定.
+      new: 新主题
+      parent: 父项
+      post: 发送
+      preview: 预览
+      reply: 回复
   help:
-    index: {about: 关于 Moebooru, accounts: 账户, api: API, artists: 绘师, bookmarklet: 书签, bugs: Bugs, cheat_sheet: 使用技巧,
-      comments: 评论, dtext: DText, faq: 常见问题, firefox_ext: 火狐拓展, help: 帮助, image_sampling: 图片示例, irc: IRC即时聊天,
-      mass_tag_edit: 批量标签编辑, notes: 附注, pools: 图集, post_relationships: 图帖间的关系, posts: 投稿, ratings: 评级, source: 源代码,
-      starting: 开始使用, suggestions: 建议, tag_aliases: 标签别称, tag_implications: 标签映射, tag_scripts: 标签脚本, tags: 标签,
-      voting: 投票, wiki: Wiki}
+    index:
+      about: 关于 Moebooru
+      accounts: 账户
+      api: API
+      artists: 绘师
+      bookmarklet: 书签
+      bugs: Bugs
+      cheat_sheet: 使用技巧
+      comments: 评论
+      dtext: DText
+      faq: 常见问题
+      firefox_ext: 火狐拓展
+      help: 帮助
+      image_sampling: 图片示例
+      irc: IRC即时聊天
+      mass_tag_edit: 批量标签编辑
+      notes: 附注
+      pools: 图集
+      post_relationships: 图帖间的关系
+      posts: 投稿
+      ratings: 评级
+      source: 源代码
+      starting: 开始使用
+      suggestions: 建议
+      tag_aliases: 标签别称
+      tag_implications: 标签映射
+      tag_scripts: 标签脚本
+      tags: 标签
+      voting: 投票
+      wiki: Wiki
   helpers:
     submit:
-      advertisement: {create: 新建, update: 保存}
+      advertisement:
+        create: 新建
+        update: 保存
   history:
     index:
       change: 更改
       date: 日期
+      for: 历史记录：
       id: Id
       object_type: 类型
       redo: 重做
       search: 搜索
-      show: {all: 显示所有标签, changed: 仅显示变更的标签}
+      show:
+        all: 显示所有标签
+        changed: 仅显示变更的标签
       title: 历史
-      type: {all: 全部, pools: 图集, posts: 投稿, tags: 标签}
+      type:
+        all: 全部
+        pools: 图集
+        posts: 投稿
+        tags: 标签
       undo: 撤销
       user: 用户
   inline:
-    crop: {crop_avatar: 选择区域然后按下回车键以裁剪图片。这个操作将无法被撤销。}
+    crop:
+      crop_avatar: 选择区域然后按下回车键以裁剪图片。这个操作将无法被撤销。
     edit:
       add_do: 添加图片
       add_image: 添加一张图片
@@ -121,21 +322,44 @@ zh_CN:
       delete_confirm: 确认删除这组图片吗?
       description: 描述
       file: 文件
-      move: {down: 下移, up: 上移}
+      move:
+        down: 下移
+        up: 上移
       preview: 预览
       remove: 移除图片
       remove_confirm: 确认移除吗?
       save: 更档保存
       source: Source
-    footer: {help: 帮助, list: 列表}
-    index: {create: 新建, description: 描述, first_image: 第一张图片, images: 图片, user: 用户}
+      tag: 'Inline标签: 图像 #%{id}'
+    footer:
+      help: 帮助
+      list: 列表
+    index:
+      create: 新建
+      description: 描述
+      first_image: 第一张图片
+      images: 图片
+      user: 用户
   job_task:
     index:
-      table: {data: 数据, id: Id, message: 消息, status: 状态, type: 类型}
+      table:
+        data: 数据
+        id: Id
+        message: 消息
+        status: 状态
+        type: 类型
       title: 工作任务
     show:
-      nav: {list: 列表, restart: 重新开始}
-      table: {data: 数据, id: Id, message: 消息, status: 状态, type: 类型}
+      nav:
+        list: 列表
+        restart: 重新开始
+      table:
+        data: 数据
+        id: Id
+        message: 消息
+        status: 状态
+        type: 类型
+      title: '项目 #%{id}'
   layout_login: "登录"
   layout_login_text: "登录. 创建新帐号, 输入用户名与密码."
   layout_logout: "登出"
@@ -182,11 +406,14 @@ zh_CN:
   layout_wrong_email: "email地址与帐号不相符."
   layouts:
     default:
-      old_browser: {hide: (隐藏此条消息), info: 你的浏览器太旧了，因此这个站点也许不能被正确的显示}
+      old_browser:
+        hide: (隐藏此条消息)
+        info: 你的浏览器太旧了，因此这个站点也许不能被正确的显示
+        suggestion: 请考虑更新浏览器至较新版本
     login:
       email: Email地址
       email_info: 若你在创建帐号时提供电邮信箱或者在注册后更新电邮信息, 之后你可以重置登录密码.
-      info: 登录. 创建新帐号, 输入用户名与密码.
+      info: 请先登录. 若要创建新帐号,您也可以在此输入您想要使用的用户名与密码.
       login: 登陆
       name: 用户名
       password: 密码
@@ -202,148 +429,357 @@ zh_CN:
         wrong_email: email地址与帐号不相符.
       reset: 重置密码
     menu:
-      account: {_: 我的账户, change_password: 更改密码, favorites: 我的收藏, login: 登陆, logout: 登出, mail: 我的邮件, profile: 个人资料,
-        reset: 重置密码, settings: 设置}
-      artists: {_: 绘师, create: 新建, search: 搜索绘师, view: 查看绘师}
-      comments: {_: 评论, moderate: 管理, search: 搜索评论, view: 查看评论}
-      forum: {_: 论坛, new: 新主题, search: 搜索论坛, view: 查看主题}
-      help: {_: 帮助, site: 本站帮助页}
+      account:
+        _: 我的账户
+        change_password: 更改密码
+        favorites: 我的收藏
+        login: 登陆
+        logout: 登出
+        mail: 我的邮件
+        profile: 个人资料
+        reset: 重置密码
+        settings: 设置
+      artists:
+        _: 绘师
+        create: 新建
+        search: 搜索绘师
+        view: 查看绘师
+      comments:
+        _: 评论
+        moderate: 管理
+        search: 搜索评论
+        view: 查看评论
+      forum:
+        _: 论坛
+        mark_all_read: 全部标为已读
+        new: 新主题
+        search: 搜索论坛
+        view: 查看主题
+      help:
+        _: 帮助
+        artist: 画师帮助
+        comment: 评论帮助
+        forum: 论坛帮助
+        note: 附注帮助
+        pool: 图集帮助
+        post: 看贴帮助
+        site: 本站帮助页
+        tag: 标签帮助
+        wiki: wiki帮助
       more: 更多 »
       new_mail: 新邮件
-      notes: {_: 附注, requests: 请求, search: 搜索附注, view: 查看附注}
-      pools: {_: 图集, create: 创建新图集, search: 搜索图集, view: 查看图集}
-      posts: {_: 投稿, batch: 批量上传, history: 历史, image_search: 以图搜图, moderate: 管理, popular: 人气, random: 随机,
-        search: 搜索帖子, upload: 上传, view: 看贴}
-      tags: {_: 标签, aliases: 别称, edit: 编辑, implications: 关联, mass_edit: 批量编辑, popular: 人气, search: 搜索标签, view: 查看标签}
-      wiki: {_: 维基, create: 创建新页面, index: 查看维基索引, search: 搜索维基}
-  news_ticker: "标签必须以 英文字符/罗马字 存在，谢谢配合~"
-  news_ticker_close: "关闭"
+      notes:
+        _: 附注
+        requests: 请求
+        search: 搜索附注
+        view: 查看附注
+      pools:
+        _: 图集
+        create: 创建新图集
+        search: 搜索图集
+        view: 查看图集
+      posts:
+        _: 投稿
+        batch: 批量上传
+        history: 历史
+        image_search: 以图搜图
+        moderate: 管理
+        popular: 人气
+        random: 随机
+        search: 搜索帖子
+        upload: 上传
+        view: 看贴
+      tags:
+        _: 标签
+        aliases: 别称
+        edit: 编辑
+        implications: 关联
+        mass_edit: 批量编辑
+        popular: 人气
+        search: 搜索标签
+        view: 查看标签
+      wiki:
+        _: 维基
+        create: 创建新页面
+        index: 查看维基索引
+        search: 搜索维基
+    news:
+      close: 关闭
   note:
-    footer: {help: 帮助, history: 历史, list: 列表, requests: 请求, search: 搜索}
+    footer:
+      help: 帮助
+      history: 历史
+      list: 列表
+      requests: 请求
+      search: 搜索
     history:
       revert: 撤销
       revert_confirm: 确认撤销对此附注的编辑吗?
-      table: {body: 正文, date: 日期, edited: 编辑者, note: 附注, options: 选项, post: 投稿}
+      table:
+        body: 正文
+        date: 日期
+        edited: 编辑者
+        note: 附注
+        options: 选项
+        post: 投稿
       title: 附注历史
-    index: {title: 附注}
-    note: {click: 点击开始编辑}
-    search: {search: 搜索, title: 搜索附注}
-  note_body: "正文"
-  note_click: "点击开始编辑"
-  note_date: "日期"
-  note_edited: "编辑者"
-  note_help: "帮助"
-  note_history: "历史"
-  note_list: "列表"
-  note_note: "附注"
-  note_options: "选项"
-  note_post: "发送"
-  note_requests: "请求"
-  note_revert: "撤销"
-  note_revert_confirm: "确认撤销对此附注的编辑吗?"
-  note_search: "搜索"
-  notice: "在本投稿上标记请求管理员删除的用户是 "
-  notice10: "理由: "
-  notice11: "此图帖被上传者暂时挂起."
-  notice12: "激活本帖"
-  notice13: "图片尺寸已被重置，点击 "
-  notice14: "看大图"
-  notice15: " 在sidebar中看高解析度版本."
-  notice16: "只看原图"
-  notice17: "隐藏此信息"
-  notice18: "显示图片样张功能已被关闭. 若你感到浏览效率降低,请在帐号设定中打开显示样张功能."
-  notice19: "此帖隶属于一 "
-  notice2: "撤销标记"
-  notice20: "父项贴"
-  notice21: "将此帖设为父项"
-  notice22: "此帖含"
-  notice23: "子项"
-  notice24: "子项"
-  notice3: "删除"
-  notice4: "此帖等待管理员批准."
-  notice5: "理由: "
-  notice6: "通过"
-  notice7: "删除"
-  notice8: "此帖已被删除."
-  notice9: "删贴人为: "
-  notice_text: "确定通过此投稿？"
-  old_browser: "你的浏览器太旧了，因此这个站点也许不能被正确的显示"
-  old_browser2: "请确认你的浏览器已经升级到了一个更新近的版本。"
-  old_browser3: "(隐藏此条消息)"
-  pool:
     index:
+      title: 附注
+    note:
+      click: 点击开始编辑
+    search:
+      search: 搜索
+      title: 搜索附注
+  pool:
+    add_post:
+      add: 添加项
+      cancel: 取消
+      info: '选择将此图帖要加入的图集:'
+      order: 排序
+      pool: 图集
+      title: 添加到图集
+    copy:
+      copy: 复制图集
+      name: 绘师名
+      title: 复制克隆
+    create:
+      cancel: 取消
+      description: 描述
+      is_public: 公开此图集吗?
+      name: 绘师名
+      save: 保存
+      title: 创建图集
+    destroy:
+      confirm: '你确定要删除图集 %{name} 吗？'
+      title: 删除
+    footer:
+      help: 帮助
+      list: 列表
+      new: 新建
+    import:
+      import: 导入
+      info: 在进行标签搜索后，你可以往图集中导入所有符合条件的帖子.
+      search: 搜索
+      title: '导入图集: %{name}'
+    index:
+      search: 搜索
+      table:
+        created: 创建时间
+        creator: 创建者
+        name: 绘师名
+        posts: 帖子
+        updated: 最后更新
       title: '%{q} - 图集'
       title_main: 图集
-  pool_active: "活动"
-  pool_active_text: "非活动的图集将不再出现在图帖的添加到图集的下拉菜单中."
-  pool_add: "添加"
-  pool_add2: "添加"
-  pool_add_text: "选择将此图帖要加入的图集:"
-  pool_ago: "前"
-  pool_cancel: "取消"
-  pool_clone: "复制克隆"
-  pool_confirm: "确定要删除"
-  pool_copy: "复制图集"
-  pool_create: "创建图集"
-  pool_created: "创建时间"
-  pool_creator: "创建者"
-  pool_delete: "删除"
-  pool_delete_mode: "删除模式"
-  pool_delete_mode_text: "启动删除模式后, 点击缩略图标即可把帖子从图集中删去."
-  pool_description: "描述"
-  pool_edit: "编辑"
-  pool_help: "帮助"
-  pool_import: "往图集导入: "
-  pool_import2: "导入"
-  pool_import_text: "在进行标签搜索后，你可以往图集中导入所有符合条件的帖子."
-  pool_index: "索引查看"
-  pool_interval: "输入步长"
-  pool_jpeg: "下载JPG格式"
-  pool_list: "列表"
-  pool_name: "名称"
-  pool_new: "新建"
-  pool_no: "否"
-  pool_order: "排序图集: "
-  pool_order2: "排序"
-  pool_order_auto: "自动排序"
-  pool_order_minus_one: "-1"
-  pool_order_plus_one: "+1"
-  pool_order_text: "图帖将以升序排列."
-  pool_png: "下载"
-  pool_pool: "图集"
-  pool_pool2: "图集"
-  pool_posts: "投稿"
-  pool_public: "公开此图集吗?"
-  pool_public_text: "公开图集允许任何用户增减图帖."
-  pool_question_mark: "?"
-  pool_reverse: "撤销"
-  pool_save: "保存"
-  pool_search: "搜索"
-  pool_show_copy: "复制"
-  pool_show_history: "历史"
-  pool_show_import: "导入"
-  pool_show_order: "排序"
-  pool_show_transfer: "转移图帖数据"
-  pool_toggle: "切换视图"
-  pool_transfer: "从图集序号转换"
-  pool_transfer_button: "转移"
-  pool_transfer_from: "来源"
-  pool_transfer_tags: "标签"
-  pool_transfer_text: "从图集中的投稿转移数据"
-  pool_transfer_text2: "  to posts in pool "
-  pool_transfer_text3: "标签和评级将会被转移, 旧投稿将成为新投稿的父项."
-  pool_transfer_text4: "以下图集中投稿的数量不相等."
-  pool_transfer_text5: "请检查加注到投稿上的标签是否正确."
-  pool_transfer_text6: " 转移人 "
-  pool_transfer_to: "至"
-  pool_updated: "最后更新"
-  pool_yes: "是"
+    order:
+      auto_order: 自动排序
+      info: 图帖将以升序排列.
+      interval: 输入步长
+      minus_one: '-1'
+      order: 排序
+      plus_one: '+1'
+      reverse: 撤销
+      title_html: '排序图集: %{name}'
+    select_form:
+      add: 添加项
+    show:
+      delete_mode_info: '启动删除模式后, 点击缩略图标即可把帖子从图集中删去.'
+      links:
+        copy: 复制
+        delete: 删除
+        delete_mode: 删除模式
+        edit: 编辑
+        history: 历史记
+        import: 导入
+        index_view: 索引查看
+        jpeg: 下载JPG格式
+        order: 排序
+        png: 下载
+        toggle_view: 切换视图
+        transfer: 转移图帖数据
+      title: '图集: %{name}'
+    transfer_metadata:
+      from:
+        from: 来自
+        from_number: '从图集序号转换'
+        to: To
+        transfer: 转移
+      info_truncated: "以下图集中投稿的数量不相等."
+      info_truncated_warning: '请检查加注到投稿上的标签是否正确.'
+      info_what: '标签和评级将会被转移, 旧投稿将成为新投稿的父项.'
+      reverse: 撤销
+      table:
+        from: 来自
+        tags: 标签
+        to: To
+        transfer: 转移
+      title_html: '将%{from}图集中的图片数据转移到%{to}图集中'
+    update:
+      form:
+        description: 描述
+        is_active:
+          _: 活动
+          info: '非活动的图集将不再出现在图帖的添加到图集的下拉菜单中.'
+        is_public:
+          _: '公开此图集吗?'
+          info: '公开图集允许任何用户增减图帖.'
+        name: 绘师名
+      title: 编辑图集
   post:
-    moderate: {mod: mod, title: 管理队列, uploaded_by_when_html: '上传于 %{u} %{t_ago} (%{mod})'}
-    popular_by_day: {title: '正在浏览 %{year}/%{month}/%{day}'}
-    popular_by_month: {title: '正在浏览 %{year}/%{month}'}
-    popular_by_week: {title: '正在浏览 %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}'}
-    popular_recent: {title: '正在浏览 %{period}'}
+    blacklists:
+      add: 添加
+      hidden_posts: 隐藏帖
+      info: 含以下标签的贴将被隐藏。用空格来标签分隔不同标签.
+    browse:
+      by:
+        all_html: '%{text} %{ago} %{by}'
+        by_html: by %{user}
+        text: 已投稿
+      child:
+        all_html: 此投稿有 %{child}.
+        child: 子项
+      deleted:
+        by: By
+        reason: 理由
+        title: 此帖已被删除.
+        undelete: 撤销删除
+      download: 下载
+      edit: 编辑
+      flagged_info_html: 被 %{user} 标记.
+      frames: 边框
+      held:
+        activate: (激活)
+        info: 此图帖被上传者挂起.
+      hidden: 隐藏
+      image_hidden:
+        info: 按照你的帐号设定这张图片不显示.
+        show: 双击以显示此图片
+        title: 隐藏图片
+      no_result: 无搜索结果。
+      parent:
+        all_html: 此投稿有父项 %{parent} (%{make_parent}).
+        make_parent: 将此帖设为父项
+        parent: 父项
+      parent_post: 父投稿
+      pending_info: 本帖正在等待管理员批准.
+      post_num_html: '投稿 #%{num}'
+      reason: 原因
+      score: 得分
+      shown_in_index: 在索引中显示
+      source: Source
+    delete:
+      delete: 删除
+      noaccess_info: (由于访问限制父项帖隐藏)
+      noparent_info: 此投稿没有父项。如果此投稿将被其他投稿替代，请在删除前先重新parent，这样投票将自动转移。
+      parent_info: 用户评分将随父项帖子一同转移. 若出现问题, 在删除帖子前重新将其设为父项.
+      permanent: 永久性删除
+      permanent_info: 此帖已被删除. 再次删除将使其永久性删除.
+      reason: 原因
+      title: 删除帖子
+    deleted_index:
+      by: 删除人
+      post: 帖子
+      reason: 原因
+      tags: 标签
+      title: 已删除投稿
+      user: 用户
+    favorites:
+      title: 收藏者
+    footer:
+      batch: 批量
+      browse: 浏览
+      help: 帮助
+      history: 历史
+      image_search: 以图搜图
+      list: 列表
+      mod: 管理
+      popular: 人气
+      random: 随机
+      subs: 订阅
+      upload: 上传
+    hover:
+      child: 子项
+      flagged:
+        by_html: '%{text} by %{data}'
+        text: 已被标记
+      hidden: 隐藏
+      parent: 父项
+      pending: 等待中
+      post_number: '帖子ID #'
+      rating: 评级
+      score: 分数
+    index:
+      activate: 激活所有被挂起的图帖
+      ambiguous: 以下标签是有歧义的
+      edit_tags: 编辑标签
+      held_html: 你已挂起 %{count}
+      held_view: 查看
+      maybe_you_meant: 或许你想找的是
+      mode: 模式
+      mode_form:
+        approve: 通过投稿
+        edit: 编辑帖子
+        flag: 往此贴插旗
+        pool_remove: 从图池移除
+        reparent: 将帖子重置为父项
+        script: 使用标签脚本
+        view: 看贴
+      pool_view_html: 正在浏览图池 %{pool}.
+    moderate:
+      down: down
+      flagged: 标记的
+      mod: mod
+      parent: 父项
+      pending: 悬置
+      prompt_reason: 输入理由
+      rating: 评级
+      reason: 原因
+      score: 评分
+      size: 尺寸
+      tags: 标签
+      title: 管理队列
+      uploaded_by_when_html: 上传于 %{u} %{t_ago} (%{mod})
+    popular_by_day:
+      popular:
+        _: 人气
+        month: 人气（按月）
+        week: 人气（按周）
+      title: 正在浏览 %{year}/%{month}/%{day}
+    popular_by_month:
+      popular:
+        _: 人气
+        month: 人气 (按月)
+        week: 人气 （按周）
+      title: 正在浏览 %{year}/%{month}
+    popular_by_week:
+      popular:
+        _: '人气 '
+        month: 人气 (按月)
+        week: 人气 (按周)
+      title: 正在浏览 %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}
+    popular_recent:
+      popular:
+        _: 人气
+        month: 人气 (按月)
+        week: 人气 (按周)
+      title: 正在浏览 %{period}
+    post_atom:
+      data: 图片数据
+      source: 来源
+    posts:
+      empty: 没有结果!
+    search:
+      search: 搜索
+      title: 搜索
+    show:
+      empty: 找不到结果
+    show_empty:
+      info: 此贴不存在。
+      related:
+        _: 相关的帖子
+        next: 后一帖
+        previous: 前一帖
+        random: 随机
     show_partials:
       edit:
         find_artists: 搜索绘师
@@ -351,278 +787,180 @@ zh_CN:
         note_locked: 附注已被锁定
         parent: 父投稿
         rating: 分级
+        rating_info_html: 露骨的标签包括性，生殖器官，手淫，口交 等。 (%{more})
         rating_locked: 评分锁定
         rating_locked_info: 分级已被锁定
-        related: {artists: 相关绘师, characters: 相关角色, copyrights: 相关版权, none: 无, tags: 相关的标签}
+        related:
+          artists: 相关绘师
+          characters: 相关角色
+          copyrights: 相关版权
+          none: 无
+          tags: 相关的标签
         save: 更档保存
         shown_in_index: 在索引中显示
         source: Source
         tags: 编辑标签
+        tags_info_html: 以空格分隔不同标签 (%{more})
+      history_panel:
+        notes: 附注
+        tags: 标签
+        title: 历史
+      image:
+        denied: 帐号等级不足，无法观看此帖
+        download:
+          _: 下载
+          info: 文件必须手动下载.
+        save_flash: 保持flash (右键保存)
+      image_footer:
+        edit: 编辑
+        respond: 反应
+      options_panel:
+        add_notes: 添加翻译
+        add_to_pool: 加入图集
+        approve:
+          _: 通过
+          confirm: 确定通过此投稿？
+        delete: 删除
+        download:
+          image: 图片
+          larger: 下载大图
+          normal: 下载
+        favorites:
+          add: 加入收藏
+          remove: 从收藏中移除
+        flag: 标记删除
+        history: 图帖历史
+        resize: 重置图片尺寸
+        set_avatar: 设置头像
+        title: 选项
+        undelete: 取消删除
+        view_larger: 看大图
+      pool:
+        change: 修改页码
+        info_html: '这张图片是%{pool}图集中的第%{sequence}号'
+        next: '后一投稿 »'
+        previous: '« 前一投稿'
+        remove:
+          _: 移除
+          confirm: 你确定要从%{current_pool}图集中移除这张图片吗？
+        transfer:
+          _: 转移至父项
+          confirm: 你确定要把这张图片从%{current_pool}图集中移除并把这张图的父项加入到图集中吗？
+      related_posts_panel:
+        find:
+          duplicate: 查重
+          similar: 查找类似
+        next: 下一张
+        parent: 父项
+        previous: 前一张
+        random: 随机
+        title: 关联投稿
       statistics_panel:
-        uploaded_by_user_html: 'by %{u}'
-    upload: {anonymous: 匿名上传, title: 上传}
-  post_404: "此贴不存在。"
-  post_activate: "激活所有被挂起的图帖"
-  post_amb: "以下标签是多义的："
-  post_approve: "批准此帖"
-  post_batch: "批量"
-  post_blacklist_add: "添加"
-  post_blacklist_text: "含以下标签的贴将被隐藏。用空格来标签分隔不同标签."
-  post_browse: "浏览"
-  post_browse_cancel: "取消"
-  post_browse_explicit: "露骨"
-  post_browse_frame: "添加边框"
-  post_browse_frames: "边框"
-  post_browse_no_results: "无搜索结果。"
-  post_browse_parent: "查看父帖"
-  post_browse_questionable: "擦边"
-  post_browse_rating: "分级"
-  post_browse_safe: "安全"
-  post_browse_save: "保存"
-  post_browse_show_in_index: "在索引中显示"
-  post_browse_source: "来源"
-  post_browse_text: "隐藏图片"
-  post_browse_text10: "来源: "
-  post_browse_text11: "此帖已被删除."
-  post_browse_text12: "删除人: "
-  post_browse_text13: "理由: "
-  post_browse_text14: "撤销删除"
-  post_browse_text15: "下载:"
-  post_browse_text16: "此贴含"
-  post_browse_text17: "父项"
-  post_browse_text18: " (将此贴设为父项)"
-  post_browse_text19: "此贴含"
-  post_browse_text2: "按照你的帐号设定这张图片不显示."
-  post_browse_text20: "子项"
-  post_browse_text21: "标记人: "
-  post_browse_text22: "理由: "
-  post_browse_text23: "本帖正在等待管理员批准."
-  post_browse_text24: "此图帖被上传者挂起."
-  post_browse_text25: "(激活)"
-  post_browse_text26: "编辑"
-  post_browse_text3: "双击显示此图片"
-  post_browse_text4: "Post #"
-  post_browse_text5: "隐藏"
-  post_browse_text6: "Posted "
-  post_browse_text7: " 之前由 "
-  post_browse_text8: "评分: "
-  post_browse_text9: "框架: "
-  post_cancel: "取消"
-  post_comment_google: "翻译此评论的用户为 "
-  post_delete: "删除帖子"
-  post_delete_access: "(由于访问限制父项帖隐藏)"
-  post_delete_cancel: "取消"
-  post_delete_delete: "删除"
-  post_delete_no_parent_text: "此帖未隶属于任何父项帖.  若要替换本帖, 在删除前设其为父项帖, 用户评分将被一同转移."
-  post_delete_parent_text: "用户评分将随父项帖子一同转移. 若出现问题, 在删除帖子前重新将其设为父项."
-  post_delete_perma: "永久性删除"
-  post_delete_perma_text: "此帖已被删除. 再次删除将使其永久性删除."
-  post_deleted_by: "删除人"
-  post_deleted_post: "帖子"
-  post_deleted_posts: "被删除的帖子"
-  post_deleted_reason: "理由"
-  post_deleted_tags: "标签"
-  post_deleted_user: "用户"
-  post_download: "下载"
-  post_download_text: "文件必须手动下载."
-  post_edit: "编辑帖子"
-  post_edit_e: "露骨"
-  post_edit_find_artists: "搜索绘师"
-  post_edit_help: "帮助"
-  post_edit_note_locked: "附注已被锁定"
-  post_edit_parent: "父投稿"
-  post_edit_q: "擦边"
-  post_edit_rating: "分级"
-  post_edit_rating_close: ")"
-  post_edit_rating_locked: "分级已被锁定"
-  post_edit_rating_text: "露骨级标签包括以下 sex, pussy, penis, masturbation, blowjob等 ("
-  post_edit_related_artists: "相关绘师"
-  post_edit_related_characters: "相关角色"
-  post_edit_related_copyrights: "相关版权"
-  post_edit_related_none: "无"
-  post_edit_related_tags: "相关的标签"
-  post_edit_related_tags2: "相关的标签"
-  post_edit_s: "安全"
-  post_edit_save: "更档保存"
-  post_edit_shown: "在索引中显示"
-  post_edit_source: "来源"
-  post_edit_tags: "标签"
-  post_edit_tags_close: ")"
-  post_edit_tags_text: "用空格键分割标签 ("
-  post_empty: "没有结果!"
-  post_favorited_by: "收藏者"
-  post_file: "文件"
-  post_flag: "往此贴插旗"
-  post_flash_dl: "保持flash (右键保存)"
-  post_gar: "gar"
-  post_held_text: "由你挂起的贴 "
-  post_held_view: "查看"
-  post_help: "帮助"
-  post_hidden_posts: "隐藏的贴"
-  post_history: "历史记"
-  post_history_notes: "附注"
-  post_history_tags: "标签"
-  post_hover_by: " 由 "
-  post_hover_child: "子项"
-  post_hover_flagged: "已被插旗"
-  post_hover_hidden: "隐藏"
-  post_hover_parent: "父项"
-  post_hover_pending: "等待中"
-  post_hover_post: "帖子ID #"
-  post_hover_rating: "评级: "
-  post_hover_score: "评分: "
-  post_image: "以图搜图"
-  post_image_edit: "编辑"
-  post_image_respond: "反应"
-  post_image_text: "帐号等级不足，无法观看此帖"
-  post_list: "列表"
-  post_meant: "或许你想找的是: "
-  post_mod: "管理"
-  post_mod_ago: " 以前 "
-  post_mod_approve: "通过"
-  post_mod_delete: "删除"
-  post_mod_down: "down"
-  post_mod_enter_reason: "输入理由"
-  post_mod_flagged: "已被标记"
-  post_mod_invert: "反向选定"
-  post_mod_mod: "mod"
-  post_mod_parent: "父项: "
-  post_mod_pending: "等待中"
-  post_mod_rating: "分级: "
-  post_mod_reason: "理由: "
-  post_mod_score: "评分: "
-  post_mod_search: "搜索"
-  post_mod_select: "全选"
-  post_mod_size: "尺寸: "
-  post_mod_tags: "标签: "
-  post_mod_uploaded: "上传人"
-  post_mode: "模式"
-  post_next: "下一个"
-  post_options: "选项"
-  post_options_add_fav: "加入收藏"
-  post_options_add_pool: "加入图集"
-  post_options_approve: "通过"
-  post_options_approve_confirm: "确定通过此投稿？"
-  post_options_avatar: "设为头像"
-  post_options_del_fav: "从收藏中移除"
-  post_options_delete: "删除"
-  post_options_download: "下载"
-  post_options_download_larger: "下载大图"
-  post_options_edit: "编辑"
-  post_options_flag: "标记删除"
-  post_options_history: "图帖历史"
-  post_options_image: "图片"
-  post_options_resize: "重置图片尺寸"
-  post_options_tl: "添加翻译"
-  post_options_undelete: "取消删除"
-  post_options_view_larger: "看大图"
-  post_pool_change: "修改页码"
-  post_pool_next: "后一投稿 »"
-  post_pool_previous: "« 前一投稿"
-  post_pool_remove: "移除"
-  post_pool_remove_confirm: "你确定移除这个投稿从"
-  post_pool_text: "本帖隶"
-  post_pool_text2: "属于"
-  post_pool_text3: "图集"
-  post_pool_xfer: "转移至父项"
-  post_pool_xfer_confirm: "同时添加父项作为替代？"
-  post_popular: "人气"
-  post_previous: "上一个"
-  post_random: "随机"
-  post_related: "相关帖"
-  post_related_dupe: "查重"
-  post_related_next: "后一帖"
-  post_related_parent: "父项"
-  post_related_posts: "相关的帖子"
-  post_related_previous: "前一帖"
-  post_related_random: "随机"
-  post_related_sim: "查找类似"
-  post_reparent: "将帖子重置为父项"
-  post_script: "使用标签脚本"
-  post_search: "搜索"
-  post_sim_cancel: "取消"
-  post_sim_color: "不忽略颜色"
-  post_sim_down: "(下)"
-  post_sim_dupe: "插旗：此图重复"
-  post_sim_dupe_period: "."
-  post_sim_dupe_text: "你所上传的图片可能与本站已有图片重复."
-  post_sim_dupe_text10: "隐藏帖"
-  post_sim_dupe_text11: " 在sidebar中查看隐藏帖."
-  post_sim_dupe_text2: "请阅读以下条文 "
-  post_sim_dupe_text3: "若你上传的图片比本站已有版本质量更高,并愿意保留旧版本"
-  post_sim_dupe_text4: "旧版本."
-  post_sim_dupe_text5: "若你上传的图片比本站已有版本质量更高, 希望删除旧版本 "
-  post_sim_dupe_text6: "往旧版本上插重复旗帜"
-  post_sim_dupe_text7: "否则 "
-  post_sim_dupe_text8: "请删除你刚才发的贴"
-  post_sim_dupe_text9: "你所设的标签黑名单可能导致部分重复贴被隐藏.  请查看 "
-  post_sim_edit: "编辑帖子"
-  post_sim_edit_tags: "编辑标签"
-  post_sim_flag: "插旗"
-  post_sim_gray: "忽略颜色"
-  post_sim_mode: "模式"
-  post_sim_more: "显示更多"
-  post_sim_options: "选项"
-  post_sim_reparent: "重置父项"
-  post_sim_script: "使用标签脚本"
-  post_sim_services: "服务"
-  post_sim_services_text: "启用全部服务 "
-  post_sim_update: "更新"
-  post_sim_upload: "上传这张图片"
-  post_sim_view: "看贴"
-  post_source: "来源"
-  post_stats: "统计"
-  post_stats_ago: "前"
-  post_stats_approver: "审核人："
-  post_stats_fav: "收藏者:"
-  post_stats_id: "Id: "
-  post_stats_posted: "发帖人: "
-  post_stats_rating: "分级: "
-  post_stats_score: "评分: "
-  post_stats_size: "图片尺寸: "
-  post_stats_source: "来源: "
-  post_subs: "订阅"
-  post_tag_script: "标签脚本"
-  post_tag_script_text: "对以下所有帖子使用标签脚本吗?"
-  post_tags: "标签"
-  post_update: "更新"
-  post_upload: "上传"
-  post_upload_artist: "找到绘师"
-  post_upload_e: "露骨的"
-  post_upload_file: "文件"
-  post_upload_parent: "父项"
-  post_upload_q: "有疑问"
-  post_upload_rating: "评级"
-  post_upload_rating_text: "露骨的标签包括性，生殖器官，手淫，口交 等。"
-  post_upload_related: "无"
-  post_upload_related_circles: "相关社团"
-  post_upload_s: " 安全"
-  post_upload_source: "来源"
-  post_upload_source_text: "你可以在这里输入一个链接（URL）以从另一个网站上导入图像"
-  post_upload_tags: "标签"
-  post_upload_tags_help: "帮助"
-  post_upload_tags_text: "以空格分开标签"
-  post_upload_text: "One"
-  post_upload_text10: "不要上传"
-  post_upload_text11: "或"
-  post_upload_text12: "艺术"
-  post_upload_text13: "请勿上传有关"
-  post_upload_text14: "同人志团体，漫画页，以及类似的CG"
-  post_upload_text15: "请阅读"
-  post_upload_text16: "你只可以上传"
-  post_upload_text17: "今天"
-  post_upload_text18: "本图贴已存在"
-  post_upload_text2: "一些"
-  post_upload_text3: "你的图贴"
-  post_upload_text4: "是"
-  post_upload_text5: "是"
-  post_upload_text6: "最近被删除"
-  post_upload_text7: "忽略这条信息"
-  post_upload_text8: "上传准则"
-  post_upload_text9: "上传时，请小心遵守下面的准则。任何违反准则的行为将会导致封禁。"
-  post_view: "看贴"
-  post_viewing: "查看图集"
-  ratings: {_: 评级, e: 露骨, q: 擦边, s: 安全}
+        approver: 审核者：
+        favorited_by: 收藏者：
+        id: Id
+        posted: 已投稿
+        posted_data_html: '%{time} by %{user}'
+        rating: 评分
+        score: 得分
+        size: 尺寸
+        source: 来源
+        title: 统计
+      status_notices:
+        by: By
+        deleted_info: 该投稿已被删除。
+        flagged:
+          delete: 删除
+          unflag: 撤销标记
+        held:
+          activate: 激活本帖
+          info: 此图帖被上传者暂时挂起.
+        parent:
+          child: 子项
+          child_post_html: '投稿 #%{child}'
+          children: 子投稿
+          parent: 父投稿
+        pending:
+          approve:
+            _: 通过
+            confirm: 真的要通过这项投稿？
+          delete: 删除
+          info: 此图片正在等待管理员审核。
+        reason: 原因
+        resized:
+          always_view_original: 只看原图
+          hide: 隐藏此信息
+          info_html: 此图片已经被酌情缩小。如需查看高分辨率版本，请点击侧边栏上的%{larger}链接。
+          view_larger: 点击查看大图
+        samples_disabled: 显示图片样张功能已被关闭. 若你感到浏览效率降低,请在帐号设定中打开显示样张功能.
+    similar:
+      apply_tag_script: 使用标签脚本
+      duplicate:
+        blacklist: 被隐藏的投稿
+        delete: 请删除你刚才发的贴
+        mark_duplicate: 往旧版本上插重复旗帜
+      edit_posts: 编辑帖子
+      edit_tags: 编辑标签
+      file: 文件
+      flag_duplicate: 插旗：此图重复
+      flag_post: 插旗
+      mode_color: "不忽略颜色"
+      mode_gray: 忽略颜色
+      options: 选项
+      reparent: 重置父项
+      services: 服务
+      show_more: 显示更多
+      source: 来源
+      update: 更新
+      upload: 上传这张图片
+      use_all_services: 开启所有服务
+      view_posts: 看贴
+    tag_script:
+      confirm: '对以下所有帖子使用标签脚本吗?'
+      title: 标签脚本
+    tags:
+      title: 标签
+    upload:
+      already_exists: 此投稿已存在
+      anonymous: 匿名上传
+      form:
+        find_artist: 找到绘师
+        find_related:
+          artists: 相关绘师
+          characters: 相关角色
+          circles: 相关社团
+          copyrights: 相关版权
+          none: 无
+          tags: 相关的标签
+        help: 帮助
+        parent: 父项
+        rating:
+          _: 评级
+        source:
+          _: 来源
+          info: 你可以在这里输入一个链接（URL）以从另一个网站上导入图像
+        tags:
+          _: 标签
+        upload: 上传
+      guidelines:
+        do_not:
+          obnoxious_watermarks: 不良水印
+        group: 同人志团体，漫画页，以及类似的CG
+        info: 上传时，请小心遵守下面的准则。任何违反准则的行为将会导致封禁。
+        last_word_connector_or: '，或'
+        limit: 你今天只能上传 %{n} 张。
+        more_html: 请阅读 %{more_link}
+        title: 上传准则
+      posts_deleted:
+        hide: 忽略这条信息
+        notice_plural_html: 你的一些投稿属于 %{recently_deleted}.
+        recently: 最近被删除
+      title: 上传
+  ratings:
+    _: 评级
+    e: 露骨
+    q: 擦边
+    s: 安全
   record_action: "动作"
   record_add: "增加记录 为"
   record_add2: "添加"
@@ -657,7 +995,8 @@ zh_CN:
   report_votes_text: "本报告显示：该用户在3天内参与过评分."
   report_wiki: "维基"
   static:
-    index: {search: 搜索}
+    index:
+      search: 搜索
   static1: "帮助"
   static10: "随机"
   static11: "最近删除"
@@ -758,14 +1097,22 @@ zh_CN:
   sub_text2: "订阅标签"
   sub_vis: "可见"
   tag:
-    cloud: {title: 标签}
-    index: {title: 标签}
-    mass_edit: {title: 批量编辑标签}
+    cloud:
+      title: 标签
+    index:
+      title: 标签
+    mass_edit:
+      title: 批量编辑标签
   tag_action: "动作"
   tag_alias:
     index:
       add: 添加
-      add_new: {alias_to: 等同于, info: 您可以建议一个别称，但它必须待管理员审核通过后才能生效, name: 用户名, submit: 提交, title: 添加别称}
+      add_new:
+        alias_to: 等同于
+        info: 您可以建议一个别称，但它必须待管理员审核通过后才能生效
+        name: 用户名
+        submit: 提交
+        title: 添加别称
       alias: 别称
       approve: 通过
       delete: 删除
@@ -787,8 +1134,11 @@ zh_CN:
   tag_implication:
     index:
       add: 添加项
-      add_new: {title: 添加关联项, info: 若前提标签被添加，与之关联的结论标签也会随之被添加。例如，前提标签是：正方形，结论标签是：长方形，任何投稿被添加“正方形”标签的同时也会被添加“长方形”的标签。,
-        info_moderation: 您可以建议一个新的关联项，但它必须待管理员审核通过后才能生效, submit: 提交}
+      add_new:
+        title: 添加关联项
+        info: 若前提标签被添加，与之关联的结论标签也会随之被添加。例如，前提标签是：正方形，结论标签是：长方形，任何投稿被添加“正方形”标签的同时也会被添加“长方形”的标签。
+        info_moderation: 您可以建议一个新的关联项，但它必须待管理员审核通过后才能生效
+        submit: 提交
       approve: 通过
       consequent: 结论
       delete: 删除
@@ -816,10 +1166,19 @@ zh_CN:
   tag_wild: "使用 * 作为通配符"
   time:
     x_ago: '%{t} 前'
+    x_ago_html: '%{t} 前'
   user:
-    change_email: {current_email: 当前Email地址, current_password: 当前密码, new_email: 新Email地址}
-    change_password: {new_password: 新密码}
-    edit: {email: Email, no_email: 无, title: 编辑账户, update_email: 更改}
+    change_email:
+      current_email: 当前Email地址
+      current_password: 当前密码
+      new_email: 新Email地址
+    change_password:
+      new_password: 新密码
+    edit:
+      email: Email
+      no_email: 无
+      title: 编辑账户
+      update_email: 更改
     home:
       action_info: 在这里你可以您可以对您的个人账号进行设置及对账号的相关信息进行浏览。
       blocked_users: 封禁用户
@@ -838,17 +1197,25 @@ zh_CN:
       settings: 设置
       signup: 注册
       title: 我的账户
-    index: {title: 用户}
-    login: {title: 登录}
-    logout: {title: 登出}
-    reset_password: {title: 重置密码}
+    index:
+      title: 用户
+    login:
+      title: 登录
+    logout:
+      title: 登出
+    reset_password:
+      title: 重置密码
     show:
       avatar:
-        remove: {confirm: 移除头像？, link: (移除)}
+        remove:
+          confirm: 移除头像？
+          link: (移除)
       own_title: 我的资料
       title: "%{name}的个人资料"
-    show_blocked_users: {title: 被封禁用户}
-    signup: {title: 注册}
+    show_blocked_users:
+      title: 被封禁用户
+    signup:
+      title: 注册
   user1: "标签黑名单"
   user10: "或编辑投稿"
   user11: "调整图像大小"
@@ -889,7 +1256,7 @@ zh_CN:
   user_duration: "持续登陆(天数)"
   user_edit: "(编辑)"
   user_edits: "编辑次数"
-  user_expire2: " ; expires: "
+  user_expire2: " ; 截至: "
   user_expires: "截至"
   user_fav: "收藏"
   user_fav2: "收藏"
@@ -922,14 +1289,14 @@ zh_CN:
   user_level: "等级"
   user_list: "列表"
   user_login_text1: "登陆"
-  user_login_text10: "这里"
+  user_login_text10: "点击这里"
   user_login_text11: "注册功能当前关闭"
   user_login_text2: "您还未激活您的账户。点击"
-  user_login_text3: "这里"
+  user_login_text3: "点击这里"
   user_login_text4: "为了重新发送确认邮件至"
-  user_login_text5: "你需要一个账号以连接到一些部分of"
+  user_login_text5: "你需要一个账号以连接到一些部分 of "
   user_login_text6: "点击"
-  user_login_text7: "这里"
+  user_login_text7: "点击这里"
   user_login_text8: "为了重置您的密码。"
   user_login_text9: "您可以注册一个账号"
   user_logout_link: "&#171; 登陆"
@@ -993,8 +1360,15 @@ zh_CN:
   users_posts: "投稿"
   users_search: "搜索"
   wiki:
-    diff: {title: Wiki Diff比较}
-    footer: {list: 列表, new: 新建, help: 帮助}
-    history: {title: Wiki历史}
-    index: {title: Wiki}
-    recent_changes: {title: 最近更改}
+    diff:
+      title: Wiki Diff比较
+    footer:
+      list: 列表
+      new: 新建
+      help: 帮助
+    history:
+      title: Wiki历史
+    index:
+      title: Wiki
+    recent_changes:
+      title: 最近更改

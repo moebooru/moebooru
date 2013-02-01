@@ -2,9 +2,9 @@ var I18n = function () {
   this.locale = jQuery.cookie('locale') || 'en';
   this.template = {
     error: "Error",
-    denied: "access denied",
+    denied: "Access Denied",
     voting: "Voting",
-    vote_saved: "Voting saved",
+    vote_saved: "Vote saved",
     'vote.remove': "Remove vote",
     'vote.good': "Good",
     'vote.great': "Great",

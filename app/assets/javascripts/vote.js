@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, t) {
   var REMOVE = 0, GOOD = 1, GREAT = 2, FAVORITE = 3;
 
   this.Vote = function (container, id) {
@@ -8,14 +8,14 @@
     this.post_score = nodes.filter('#post-score-'+id+', .post-score');
     this.vote_up = nodes.filter('.vote-up');
     this.post_id = id;
-    this.label = [t('vote.remove'), t('vote.good'), t('vote.great'), t('vote.fav')];
+    this.label = [t('.remove'), t('.good'), t('.great'), t('.fav')];
     this.setupEvents();
   };
 
   this.Vote.prototype = {
     set: function (vote) {
       var th = this;
-      notice(t('voting')+'...');
+      notice(t('.voting'));
       $.ajax({
         url: Moebooru.path('/post/vote.json'),
         data: {id: this.post_id, score: vote},
@@ -27,7 +27,7 @@
       }).done(function (data) {
         th.updateWidget(vote, data.posts[0].score);
         $('#favorited-by').html(Favorite.link_to_users(data.voted_by[FAVORITE])); 
-        notice(t('vote_saved'));
+        notice(t('.saved'));
       });
       return false;
     },
@@ -131,5 +131,5 @@
       Mousetrap.bind('3', function() { th.set(FAVORITE); });
     }
   };
-}).call(this, jQuery);
+}).call(this, jQuery, I18n.scopify('js.vote'));
 

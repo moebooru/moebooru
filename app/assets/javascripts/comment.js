@@ -1,4 +1,4 @@
-(function($) {
+(function($, t) {
   Comment = {
     spoiler: function(obj) {
       var text = $(obj).next('.spoilertext');
@@ -8,10 +8,10 @@
     },
 
     flag: function(id) {
-      if(!confirm('Flag this comment?'))
+      if(!confirm(t('.flag_ask')))
         return;
 
-      notice('Flagging comment for deletion...')
+      notice(t('.flag_process'))
 
       $.ajax({
         url: Moebooru.path('/comment/mark_as_spam.json'),
@@ -21,10 +21,10 @@
           'comment[is_spam]': 1
         }
       }).done(function(resp) {
-        notice('Comment flagged for deletion');
+        notice(t('.flag_notice'));
       }).fail(function(resp) {
         var resp = $.parseJSON(resp.responseText)
-        notice('Error: ' + resp.reason);
+        notice(t('js.error') + resp.reason);
       })
     },
 
@@ -46,12 +46,12 @@
         reply_box.val(reply_box.val() + body);
         reply_box.focus();
       }).fail(function() {
-        notice('Error quoting comment')
+        notice(t('.quote_error'))
       });
     },
 
     destroy: function(id) {
-      if (!confirm('Are you sure you want to delete this comment?') ) {
+      if (!confirm(t('.delete_ask')) ) {
         return;
       }
       $.ajax({
@@ -62,7 +62,7 @@
         document.location.reload()
       }).fail(function(resp) {
         var resp = $.parseJSON(resp.responseText)
-        notice('Error deleting comment: ' + resp.reason)
+        notice(t('.delete_error') + resp.reason)
       });
     },
 
@@ -73,4 +73,4 @@
       $('#reply-' + post_id).find('textarea').focus();
     }
   }
-}) (jQuery);
+}) (jQuery, I18n.scopify('js.comment'));

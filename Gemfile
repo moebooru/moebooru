@@ -37,7 +37,7 @@ group :development do
 end
 
 group :test, :development do
-  gem 'rspec'
+  gem 'rspec-rails'
 end
 
 group :standalone do

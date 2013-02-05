@@ -111,14 +111,17 @@ GEM
     rake (10.0.3)
     rdoc (3.12)
       json (~> 1.4)
-    rspec (2.12.0)
-      rspec-core (~> 2.12.0)
-      rspec-expectations (~> 2.12.0)
-      rspec-mocks (~> 2.12.0)
     rspec-core (2.12.2)
     rspec-expectations (2.12.1)
       diff-lcs (~> 1.1.3)
     rspec-mocks (2.12.2)
+    rspec-rails (2.12.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 2.12.0)
+      rspec-expectations (~> 2.12.0)
+      rspec-mocks (~> 2.12.0)
     sass (3.2.5)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -175,7 +178,7 @@ DEPENDENCIES
   quiet_assets
   rails (~> 3.2.0)
   rails-i18n
-  rspec
+  rspec-rails
   sass-rails (~> 3.2.3)
   sitemap_generator
   uglifier (>= 1.0.3)

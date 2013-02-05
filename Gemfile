@@ -33,8 +33,11 @@ gem 'cache_digests'
 gem 'i18n-js'
 
 group :development do
-  gem 'rspec'
   gem 'quiet_assets'
+end
+
+group :test, :development do
+  gem 'rspec'
 end
 
 group :standalone do

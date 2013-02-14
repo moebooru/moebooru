@@ -1,14 +1,15 @@
+<% sample_url = (@post.rating == 'e') ? image_path('stubs/explicit.png') : @post.sample_url %>
 <%# Facebook Open Graph
   # Reference: https://developers.facebook.com/docs/opengraphprotocol/
 %>
 <%= tag :meta, :property => 'og:title', :content => html_title %>
 <%= tag :meta, :property => 'og:type', :content => 'article' %>
 <%= tag :meta, :property => 'og:url', :content => url_for(:controller => :post, :action => :show, :id => @post.id, :only_path => false) %>
-<%= tag :meta, :property => 'og:image', :content => @post.sample_url %>
+<%= tag :meta, :property => 'og:image', :content => sample_url %>
 <%= tag :meta, :property => 'og:site_name', :content => CONFIG['app_name'] %>
 <%= tag :meta, :property => 'og:description', :content => @post.tags %>
 <%# Reddit Thumbnail %>
-<%= tag :link, :rel => 'image_src', :href => @post.sample_url %>
+<%= tag :link, :rel => 'image_src', :href => sample_url %>
 <%# Twitter Card
   # Other attributes are fulfilled by Open Graph.
   # Reference: https://dev.twitter.com/docs/cards

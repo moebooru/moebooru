@@ -135,7 +135,7 @@
           :parent => link_to(t('.parent.parent'), '#'),
           :make_parent =>
             content_tag(:span, :class => ['reparent-post', 'advanced-editing']) do
-              " (#{link_to(t('.parent.make_parent'), '#')})"
+              " (#{link_to(t('.parent.make_parent'), '#')})".html_safe
             end
         )
       %>

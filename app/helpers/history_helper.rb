@@ -258,15 +258,15 @@ module HistoryHelper
         html << "frames changed: #{h(change.value.empty? ? '(none)':change.value)}"
 
       when "is_rating_locked"
-        html << (change.value == 't' ? added : removed)
+        html << (change.value.trueish? ? added : removed)
         html << "rating-locked"
 
       when "is_note_locked"
-        html << (change.value == 't' ? added : removed)
+        html << (change.value.trueish? ? added : removed)
         html << "note-locked"
 
       when "is_shown_in_index"
-        html << (change.value == 't' ? added : removed)
+        html << (change.value.trueish? ? added : removed)
         html << "shown"
 
       when "cached_tags"
@@ -336,10 +336,10 @@ module HistoryHelper
           end
         end
       when "is_public"
-        html << (change.value == 't' ? added : removed)
+        html << (change.value.trueish?  ? added : removed)
         html << "public"
       when "is_active"
-        html << (change.value == 't' ? added : removed)
+        html << (change.value.trueish? ? added : removed)
         html << "active"
       end
     when "pools_posts"
@@ -347,7 +347,7 @@ module HistoryHelper
       sort_key = change.obj.post.id
       case change.column_name
       when "active"
-        html << (change.value == 't' ? added : removed)
+        html << (change.value.trueish? ? added : removed)
 
         html << link_to("post #%i" % change.obj.post_id, :controller => "post", :action => "show", :id => change.obj.post_id)
 
@@ -369,7 +369,7 @@ module HistoryHelper
           html << %{←<span class="tag-type-#{tag_type}">#{tag_type}</span>}
         end
       when "is_ambiguous"
-        html << (change.value == 't' ? added : removed)
+        html << (change.value.trueish? ? added : removed)
         html << "ambiguous"
       end
     when "notes"
@@ -389,7 +389,7 @@ module HistoryHelper
       when "width"
         html << "width:#{h(change.value)}"
       when "is_active"
-        if change.value == 't' then
+        if change.value.trueish? then
           # Don't show the note initially being set to active.
           return nil if not change.previous
           html << "undeleted"

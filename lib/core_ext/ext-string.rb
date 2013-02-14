@@ -25,6 +25,14 @@ class String
     end
   end
 
+  # Returns true if it looks like true
+  # Originally, checking == 't' was enough, but somewhere along the way,
+  # true is stored as '1' instead.
+  # This function allows simple modification without need to update database.
+  def trueish?
+    ['1', 't'].include? self
+  end
+
   # Escapes string to be usable in a SQL LIKE.
   # Adds backslash to \, %, and _ and replace * with % (SQL wildcard)
   def to_escaped_for_sql_like

@@ -670,7 +670,7 @@ en:
         title: Image Hidden
       no_result: No search results.
       parent:
-        all_html: This post has a %{parent} (%{make_parent}).
+        all_html: This post has a %{parent}%{make_parent}.
         make_parent: make this post the parent
         parent: parent post
       parent_post: Parent Post

@@ -130,7 +130,15 @@
       <a href="#" class="download-png"><span class="download-png-desc"></span></a>
     </div>
     <div class="parent-post">
-      <%= t('.parent.all_html', :parent => link_to(t('.parent.parent'), '#'), :make_parent => content_tag(:span, link_to(t('.parent.make_parent'), '#'), :class => ['reparent-post', 'advanced-editing'])) %>
+      <%=
+        t('.parent.all_html',
+          :parent => link_to(t('.parent.parent'), '#'),
+          :make_parent =>
+            content_tag(:span, :class => ['reparent-post', 'advanced-editing']) do
+              " (#{link_to(t('.parent.make_parent'), '#')})"
+            end
+        )
+      %>
     </div>
     <div class="child-posts"><%= t('.child.all_html', :child => link_to(t('.child.child'), '#')) %></div>
     <div class="flagged-info">

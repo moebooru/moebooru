@@ -69,7 +69,7 @@ module TagHelper
     if options[:with_aliases] then
       # Map tags to aliases to the tag, and include the original tag so search engines can
       # find it.
-      id_list = tags.map { |t| t[2] }
+      id_list = tags.map { |t| t[3] }
       alternate_tags = TagAlias.where(:alias_id => id_list).pluck(:name)
       if not alternate_tags.empty?
         html << %{<span style="display: none;">#{alternate_tags.map { |t| t.tr("_", " ") }.join(" ")}</span>}

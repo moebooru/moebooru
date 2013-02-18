@@ -22,21 +22,26 @@ module TagHelper
 
     html = ""
 
+
     case tags[0]
     when String
-      tags = Tag.where(:name => tags).select([:name, :post_count, :id]).map { |t| [t.name, t.post_count, t.id] }.sort
+      tags = Tag.where(:name => tags).select([:name, :post_count, :id, :tag_type]).map { |t| [Tag.type_name_from_value(t.tag_type), t.name, t.post_count, t.id] }
 
     when Hash
       tags = tags.map {|x| [x["name"], x["post_count"], nil]}
+      tags_type = Tag.batch_get_tag_types(tags.map { |data| data[0] })
+      tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
 
     when Tag
       tags = tags.map {|x| [x.name, x.post_count, x.id]}
+      tags_type = Tag.batch_get_tag_types(tags.map { |data| data[0] })
+      tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
     end
 
-    tags.each do |name, count, id|
-      name ||= "UNKNOWN"
+    tags.sort!
 
-      tag_type = Tag.type_name(name)
+    tags.each do |tag_type, name, count, id|
+      name ||= "UNKNOWN"
 
       html << %{<li class="tag-type-#{tag_type}">}
 

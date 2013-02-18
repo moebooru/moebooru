@@ -27,13 +27,13 @@ module TagHelper
     when String
       tags = Tag.where(:name => tags).select([:name, :post_count, :id, :tag_type]).map { |t| [Tag.type_name_from_value(t.tag_type), t.name, t.post_count, t.id] }
 
-    when Hash
-      tags = tags.map {|x| [x["name"], x["post_count"], nil]}
-      tags_type = Tag.batch_get_tag_types(tags.map { |data| data[0] })
-      tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
-
-    when Tag
-      tags = tags.map {|x| [x.name, x.post_count, x.id]}
+    when Hash, Tag, Array
+      case tags[0]
+      when Hash
+        tags = tags.map {|x| [x["name"], x["post_count"], nil]}
+      when Tag
+        tags = tags.map {|x| [x.name, x.post_count, x.id]}
+      end
       tags_type = Tag.batch_get_tag_types(tags.map { |data| data[0] })
       tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
     end

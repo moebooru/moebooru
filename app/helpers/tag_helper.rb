@@ -38,7 +38,9 @@ module TagHelper
       tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
     end
 
-    tags.sort!
+    if controller.action_name == 'show'
+      tags.sort!
+    end
 
     tags.each do |tag_type, name, count, id|
       name ||= "UNKNOWN"

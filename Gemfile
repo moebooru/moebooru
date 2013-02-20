@@ -35,6 +35,7 @@ gem 'i18n-js'
 group :development do
   gem 'quiet_assets'
   gem 'puma'
+  gem 'ruby-prof', :platforms => :mri
 end
 
 group :test, :development do

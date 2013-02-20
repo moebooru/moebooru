@@ -123,6 +123,7 @@ GEM
       rspec-core (~> 2.12.0)
       rspec-expectations (~> 2.12.0)
       rspec-mocks (~> 2.12.0)
+    ruby-prof (0.12.2)
     sass (3.2.5)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -182,6 +183,7 @@ DEPENDENCIES
   rails (~> 3.2.0)
   rails-i18n
   rspec-rails
+  ruby-prof
   sass-rails (~> 3.2.3)
   sitemap_generator
   uglifier (>= 1.0.3)

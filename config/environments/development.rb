@@ -37,4 +37,7 @@ Moebooru::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  # Do not cache assets ever
+  config.action_dispatch.rack_cache = nil
 end

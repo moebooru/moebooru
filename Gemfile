@@ -45,3 +45,6 @@ group :standalone do
   gem 'unicorn', :platforms => :mri
   gem 'puma', :platforms => [:jruby, :rbx]
 end
+
+gem 'oj', :platforms => :ruby
+gem 'multi_json'

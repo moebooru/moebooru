@@ -75,6 +75,7 @@ GEM
     newrelic_rpm (3.5.6.55)
     nokogiri (1.5.6)
     nokogiri (1.5.6-java)
+    oj (2.0.1)
     pg (0.14.1)
     polyglot (0.3.3)
     puma (1.6.3)
@@ -171,8 +172,10 @@ DEPENDENCIES
   jquery-ui-rails
   json
   mini_magick
+  multi_json
   newrelic_rpm
   nokogiri
+  oj
   pg
   puma
   quiet_assets

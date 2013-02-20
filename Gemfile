@@ -34,6 +34,7 @@ gem 'i18n-js'
 
 group :development do
   gem 'quiet_assets'
+  gem 'puma'
 end
 
 group :test, :development do

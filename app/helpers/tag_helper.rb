@@ -40,7 +40,7 @@ module TagHelper
 
     case controller.action_name
     when 'show'
-      tags.sort!
+      tags.sort_by! { |a| Tag::TYPE_ORDER[a[0]] }
     when 'index'
       tags.sort_by! { |a| [Tag::TYPE_ORDER[a[0]], -a[2].to_i, a[1]] }
     end

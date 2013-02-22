@@ -38,8 +38,12 @@ module TagHelper
       tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
     end
 
-    if controller.action_name == 'show'
+    case controller.action_name
+    when 'show'
       tags.sort!
+    when 'index'
+      tags.sort!
+      tags.sort_by! { |a| [-a[2].to_i, a[0], a[1]] }
     end
 
     tags.each do |tag_type, name, count, id|

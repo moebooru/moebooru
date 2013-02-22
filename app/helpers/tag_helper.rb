@@ -43,7 +43,7 @@ module TagHelper
       tags.sort!
     when 'index'
       tags.sort!
-      tags.sort_by! { |a| [a[0], -a[2].to_i, a[1]] }
+      tags.sort_by! { |a| [Tag::TYPE_ORDER[a[0]], -a[2].to_i, a[1]] }
     end
 
     tags.each do |tag_type, name, count, id|

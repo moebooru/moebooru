@@ -42,7 +42,6 @@ module TagHelper
     when 'show'
       tags.sort!
     when 'index'
-      tags.sort!
       tags.sort_by! { |a| [Tag::TYPE_ORDER[a[0]], -a[2].to_i, a[1]] }
     end
 

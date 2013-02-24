@@ -52,7 +52,6 @@ GEM
     i18n (0.6.1)
     i18n-js (2.1.2)
       i18n
-    image_size (1.1.1)
     jdbc-postgres (9.2.1002.1)
     journey (1.0.4)
     jquery-rails (2.2.1)
@@ -168,7 +167,6 @@ DEPENDENCIES
   exception_notification
   geoip
   i18n-js
-  image_size
   jquery-rails
   jquery-ui-rails
   json

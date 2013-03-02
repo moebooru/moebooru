@@ -184,8 +184,9 @@
       <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>
         <%= link_to '■', '#', :class => 'submenu-button' %>
         <ul class="submenu">
+          <%# FIXME: should pluralize everything one day %>
           <% %w(post comment note artist tag pool).each do |item| %>
-            <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item.pluralize }, :class => ['help-item', item] %>
+            <li><%= link_to t(".help.#{item.pluralize}"), { :controller => :help, :action => item.pluralize }, :class => ['help-item', item] %>
           <% end %>
           <% %w(wiki forum).each do |item| %>
             <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item }, :class => ['help-item', item] %>

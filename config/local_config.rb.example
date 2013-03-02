@@ -30,3 +30,6 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 #   http://www.imagemagick.org/script/color.php
 # Default: gray
 # CONFIG['bgcolor'] = 'gray'
+
+# Tag type ordering in various locations.
+# CONFIG['tag_order'] = %w(artist copyright character general)

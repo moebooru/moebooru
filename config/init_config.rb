@@ -213,6 +213,7 @@ CONFIG["tag_types"] = {
   "copy" => 3,
   "char" => 4
 }
+CONFIG['tag_order'] = %w(artist copyright character general)
 
 # Tag type IDs to not list in recent tag summaries, such as on the side of post/index:
 CONFIG["exclude_from_tag_sidebar"] = [0]

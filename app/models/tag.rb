@@ -9,14 +9,10 @@ class Tag < ActiveRecord::Base
   has_and_belongs_to_many :_posts, :class_name => 'Post'
   has_many :tag_aliases, :foreign_key => 'alias_id'
 
-  TYPE_ORDER = {
-    'circle' => 0,
-    'artist' => 1,
-    'copyright' => 2,
-    'character' => 3,
-    'general' => 4,
-    'faults' => 5,
-  }
+  TYPE_ORDER = {}
+  CONFIG['tag_order'].each_with_index do |type, index|
+    TYPE_ORDER[type] = index
+  end
 
   def self.count_by_period(start, stop, options = {})
     options[:limit] ||= 50

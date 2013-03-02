@@ -2,6 +2,11 @@ module Moebooru
   module Resizer
     class ResizeError < Exception; end
 
+    # Meaning of sRGB and RGB flipped at 6.7.5.
+    # Reference: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=20501
+    TARGET_COLORSPACE = MiniMagick::image_magick_version >= Gem::Version.create('6.7.5') ?
+                        'sRGB' : 'RGB'
+
     def resize(file_ext, read_path, write_path, output_size, output_quality)
       image = MiniMagick::Image.open(read_path)
       output_size[:width] ||= image[:width]
@@ -35,7 +40,7 @@ module Moebooru
         # Any other colorspaces suck for storing images.
         # Since we're just resizing stuff here, actual colorspace shouldn't
         # matter much.
-        f.colorspace 'RGB'
+        f.colorspace TARGET_COLORSPACE
         f.quality output_quality.to_s
       end
       image.write write_path

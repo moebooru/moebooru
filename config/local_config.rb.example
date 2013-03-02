@@ -31,5 +31,21 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 # Default: gray
 # CONFIG['bgcolor'] = 'gray'
 
+# Map tag type ids with names.
+# The primary one is the one starts with uppercase.
+# CONFIG['tag_types'] = {
+#   'General' => 0,
+#   'Artist' => 1,
+#   'Copyright' => 3,
+#   'Character' => 4,
+#   'general' => 0,
+#   'artist' => 1,
+#   'copyright' => 3,
+#   'character' => 4,
+#   'art' => 1,
+#   'copy' => 3,
+#   'char' => 4
+# }
+
 # Tag type ordering in various locations.
 # CONFIG['tag_order'] = %w(artist copyright character general)

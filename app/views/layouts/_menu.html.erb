@@ -184,7 +184,10 @@
       <li class="help"><%= link_to t('.help._'), { :controller => :help, :action => :index } %>
         <%= link_to '■', '#', :class => 'submenu-button' %>
         <ul class="submenu">
-          <% %w(post comment note artist tag wiki pool forum).each do |item| %>
+          <% %w(post comment note artist tag pool).each do |item| %>
+            <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item.pluralize }, :class => ['help-item', item] %>
+          <% end %>
+          <% %w(wiki forum).each do |item| %>
             <li><%= link_to t(".help.#{item}"), { :controller => :help, :action => item }, :class => ['help-item', item] %>
           <% end %>
           <li><%= link_to t('.help.site'), :controller => :help, :action => :index %></li>

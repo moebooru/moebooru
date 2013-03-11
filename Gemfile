@@ -30,6 +30,7 @@ gem 'addressable', :require => 'addressable/uri'
 gem 'mini_magick'
 gem 'cache_digests'
 gem 'i18n-js'
+gem 'statify'
 
 group :development do
   gem 'quiet_assets'

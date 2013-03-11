@@ -91,5 +91,9 @@ module Moebooru
     # Save cache in different location to avoid collision.
     config.action_controller.page_cache_directory = config.root.join('public', 'cache')
 
+    # Statify configuration
+    config.statify.categories = [:sql, :garbage_collection, :cache, :controller]
+    config.statify.statsd = Statsd.new('127.0.0.1', 8125)
+
   end
 end

@@ -188,6 +188,7 @@ DEPENDENCIES
   sass-rails (~> 3.2.3)
   sitemap_generator
   statify
+  statsd-ruby
   uglifier (>= 1.0.3)
   unicorn
   will-paginate-i18n

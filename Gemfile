@@ -31,6 +31,7 @@ gem 'mini_magick'
 gem 'cache_digests'
 gem 'i18n-js'
 gem 'statify'
+gem 'statsd-ruby', :require => 'statsd'
 
 group :development do
   gem 'quiet_assets'

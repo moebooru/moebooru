@@ -10,6 +10,7 @@
     this.post_id = id;
     this.label = [t('.remove'), t('.good'), t('.great'), t('.fav')];
     this.setupEvents();
+    this.data = { score: null, vote: null };
   };
 
   this.Vote.prototype = {
@@ -103,6 +104,8 @@
       var add = $('#add-to-favs'),
           rm = $('#remove-from-favs');
       this.vote = vote || 0;
+      this.data.score = score;
+      this.data.vote = vote;
       for (var i = 1; i <= FAVORITE; i++) {
         var star = $(this.stars[i]);
         if (i <= vote) {

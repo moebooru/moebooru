@@ -114,9 +114,7 @@ class BatchController < ApplicationController
   def enqueue
     # Ignore duplicate URLs across users, but duplicate URLs for the same user aren't allowed.
     # If that happens, just update the tags.
-    count = 0
-    for url in params[:files] do
-      count += 1
+    params[:files].each do |url|
       tags = params[:post][:tags] || ""
       tags = tags.split(/ /)
       if params[:post][:rating] then
@@ -133,7 +131,7 @@ class BatchController < ApplicationController
       b.save!
     end
 
-    flash[:notice] = "Queued %i files" % count
+    flash[:notice] = "Queued %i files" % params[:files].count
     redirect_to :action => "index"
   end
 end

@@ -50,6 +50,8 @@ Moebooru::Application.configure do
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.default_url_options = { host: CONFIG['server_host'] }
+  config.action_mailer.delivery_method = :sendmail
 
   # Enable threaded mode except for rake tasks as it doesn't work quite well
   # Reference: http://groups.google.com/group/rubyonrails-core/browse_thread/thread/b13dbe0b8f12b7dc

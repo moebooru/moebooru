@@ -677,39 +677,6 @@ ALTER SEQUENCE flagged_post_details_id_seq OWNED BY flagged_post_details.id;
 
 
 --
--- Name: flagged_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE flagged_posts (
-    id integer NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL,
-    post_id integer NOT NULL,
-    reason text NOT NULL,
-    user_id integer,
-    is_resolved boolean DEFAULT false NOT NULL
-);
-
-
---
--- Name: flagged_posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE flagged_posts_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: flagged_posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE flagged_posts_id_seq OWNED BY flagged_posts.id;
-
-
---
 -- Name: forum_posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1124,20 +1091,6 @@ ALTER SEQUENCE pools_posts_id_seq OWNED BY pools_posts.id;
 
 
 --
--- Name: pools_posts_temp; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE pools_posts_temp (
-    id integer NOT NULL,
-    sequence integer DEFAULT 0 NOT NULL,
-    pool_id integer NOT NULL,
-    post_id integer NOT NULL,
-    next_post_id integer,
-    prev_post_id integer
-);
-
-
---
 -- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1254,19 +1207,6 @@ CREATE SEQUENCE post_frames_id_seq
 --
 
 ALTER SEQUENCE post_frames_id_seq OWNED BY post_frames.id;
-
-
---
--- Name: post_relations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE post_relations (
-    id integer NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    post1 integer NOT NULL,
-    post2 integer NOT NULL,
-    total_shared integer NOT NULL
-);
 
 
 --
@@ -1718,13 +1658,6 @@ ALTER TABLE ONLY flagged_post_details ALTER COLUMN id SET DEFAULT nextval('flagg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY flagged_posts ALTER COLUMN id SET DEFAULT nextval('flagged_posts_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY histories ALTER COLUMN id SET DEFAULT nextval('histories_id_seq'::regclass);
 
 
@@ -1936,14 +1869,6 @@ ALTER TABLE ONLY favorites
 
 ALTER TABLE ONLY flagged_post_details
     ADD CONSTRAINT flagged_post_details_pkey PRIMARY KEY (id);
-
-
---
--- Name: flagged_posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY flagged_posts
-    ADD CONSTRAINT flagged_posts_pkey PRIMARY KEY (id);
 
 
 --
@@ -3032,22 +2957,6 @@ ALTER TABLE ONLY notes
 
 
 --
--- Name: fk_post_relations__post1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_relations
-    ADD CONSTRAINT fk_post_relations__post1 FOREIGN KEY (post1) REFERENCES posts(id) ON DELETE CASCADE;
-
-
---
--- Name: fk_post_relations__post2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_relations
-    ADD CONSTRAINT fk_post_relations__post2 FOREIGN KEY (post2) REFERENCES posts(id) ON DELETE CASCADE;
-
-
---
 -- Name: fk_post_tag_histories__post; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3133,14 +3042,6 @@ ALTER TABLE ONLY flagged_post_details
 
 ALTER TABLE ONLY flagged_post_details
     ADD CONSTRAINT flagged_post_details_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-
-
---
--- Name: flagged_posts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY flagged_posts
-    ADD CONSTRAINT flagged_posts_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --

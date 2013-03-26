@@ -171,6 +171,11 @@ Moebooru::Application.routes.draw do
   match 'report/votes'
   match 'report/set_dates'
 
+  # Settings
+  namespace :settings do
+    resource :api, only: [:show]
+  end
+
   # Static
   match 'static/500'
   match 'static/more'

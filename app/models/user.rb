@@ -151,23 +151,13 @@ class User < ActiveRecord::Base
 
   module UserNameMethods
     module ClassMethods
-      def find_name_helper(user_id)
-        if user_id.nil?
-          return CONFIG["default_guest_name"]
-        end
-
-        user = where(:id => user_id).select(:name).first
-
-        if user
-          return user.name
-        else
-          return CONFIG["default_guest_name"]
-        end
-      end
-
       def find_name(user_id)
         return Rails.cache.fetch("user_name:#{user_id}") do
-          find_name_helper(user_id)
+          begin
+            find(user_id).name
+          rescue ActiveRecord::RecordNotFound
+            CONFIG['default_guest_name']
+          end
         end
       end
 

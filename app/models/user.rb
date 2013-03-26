@@ -162,7 +162,7 @@ class User < ActiveRecord::Base
       end
 
       def find_by_name(name)
-        find(:first, :conditions => ["lower(name) = lower(?)", name])
+        where('lower(name) = lower(?)', name).first
       end
     end
 

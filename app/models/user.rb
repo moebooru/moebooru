@@ -152,7 +152,7 @@ class User < ActiveRecord::Base
   module UserNameMethods
     module ClassMethods
       def find_name(user_id)
-        return Rails.cache.fetch("user_name:#{user_id}") do
+        Rails.cache.fetch("user_name:#{user_id}") do
           begin
             find(user_id).name
           rescue ActiveRecord::RecordNotFound

@@ -73,10 +73,10 @@ module TagParseMethods
             q[:user] = $2
           elsif $1 == "vote"
             vote, user = $2.split(":")
-            user_id = User.find_by_name_nocase(user).id rescue nil
+            user_id = User.find_by_name(user).id rescue nil
             q[:vote] = [parse_helper(vote), user_id]
           elsif $1 == "-vote"
-            q[:vote_negated] = User.find_by_name_nocase($2).id rescue nil
+            q[:vote_negated] = User.find_by_name($2).id rescue nil
             q[:error] = "no user named %s" % user if q[:vote_negated].nil?
           elsif $1 == "fav"
             q[:fav] = $2

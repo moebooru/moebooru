@@ -1540,7 +1540,8 @@ CREATE TABLE users (
     language text DEFAULT ''::text NOT NULL,
     secondary_languages text DEFAULT ''::text NOT NULL,
     pool_browse_mode integer DEFAULT 1 NOT NULL,
-    use_browser boolean DEFAULT false NOT NULL
+    use_browser boolean DEFAULT false NOT NULL,
+    api_key character varying(255)
 );
 
 
@@ -3407,6 +3408,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120920173803');
 INSERT INTO schema_migrations (version) VALUES ('20120920174218');
 
 INSERT INTO schema_migrations (version) VALUES ('20120921040720');
+
+INSERT INTO schema_migrations (version) VALUES ('20130326154700');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

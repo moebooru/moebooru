@@ -173,7 +173,9 @@ Moebooru::Application.routes.draw do
 
   # Settings
   namespace :settings do
-    resource :api, only: [:show]
+    resource :api, only: [:show] do
+      post 'reset'
+    end
   end
 
   # Static

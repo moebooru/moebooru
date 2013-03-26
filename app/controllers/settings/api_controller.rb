@@ -4,6 +4,12 @@ class Settings::ApiController < Settings::BaseController
   def show
   end
 
+  def reset
+    @user.set_api_key
+    @user.save
+    redirect_to action: :show
+  end
+
   private
   def ensure_api_key
     unless @user.api_key

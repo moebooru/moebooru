@@ -1,1 +1,5 @@
 API Key: <%= @user.api_key %>
+
+<%= form_tag reset_settings_api_path do %>
+  <%= submit_tag 'Reset' %>
+<% end %>

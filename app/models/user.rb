@@ -6,6 +6,12 @@ class User < ActiveRecord::Base
   attr_accessor :current_email
   class AlreadyFavoritedError < Exception; end
 
+  before_save :set_api_key
+
+  def set_api_key
+    self.api_key = SecureRandom.urlsafe_base64
+  end
+
   def log(ip)
     Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
       Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_id => 1.day) do

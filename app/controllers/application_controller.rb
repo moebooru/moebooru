@@ -90,6 +90,11 @@ class ApplicationController < ActionController::Base
         @current_user = User.find(session[:user_id])
       end
 
+      if !@current_user && params[:api_key]
+        @from_api = true
+        User.find_by_api_key(params[:api_key])
+      end
+
       if @current_user == nil && session[:user_id]
         @current_user = User.find_by_id(session[:user_id])
       end

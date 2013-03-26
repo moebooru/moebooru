@@ -92,7 +92,7 @@ class ApplicationController < ActionController::Base
 
       if !@current_user && params[:api_key]
         @from_api = true
-        User.find_by_api_key(params[:api_key])
+        @current_user = User.find_by_api_key(params[:api_key])
       end
 
       if @current_user == nil && session[:user_id]
@@ -241,6 +241,7 @@ class ApplicationController < ActionController::Base
   #local_addresses.clear
 
   before_filter :set_current_user
+  before_filter :limit_api
   before_filter :set_country
   before_filter :check_ip_ban
   after_filter :init_cookies
@@ -387,6 +388,13 @@ class ApplicationController < ActionController::Base
   end
 
   private
+  def limit_api
+    request.session_options[:skip] = true
+    if @from_api && !(request.format.xml? || request.format.json?)
+      render nothing: true, status: 404
+    end
+  end
+
     def set_locale
       if params[:locale] and CONFIG['available_locales'].include?(params[:locale])
         cookies['locale'] = { :value => params[:locale], :expires => 1.year.from_now }

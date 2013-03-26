@@ -2588,6 +2588,13 @@ CREATE INDEX index_user_logs_on_user_id ON user_logs USING btree (user_id);
 
 
 --
+-- Name: index_users_on_api_key; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_users_on_api_key ON users USING btree (api_key);
+
+
+--
 -- Name: index_users_on_avatar_post_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3410,6 +3417,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120920174218');
 INSERT INTO schema_migrations (version) VALUES ('20120921040720');
 
 INSERT INTO schema_migrations (version) VALUES ('20130326154700');
+
+INSERT INTO schema_migrations (version) VALUES ('20130326161630');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

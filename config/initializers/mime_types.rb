@@ -4,3 +4,4 @@
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register_alias "text/html", :iphone
 Mime::Type.register 'application/opensearchdescription+xml', :opensearch
+Mime::Type.register 'application/zip', :zip

@@ -1,7 +1,7 @@
 class Settings::BaseController < ApplicationController
   before_filter :no_anonymous
   before_filter :set_user
-  layout false
+  layout 'default'
 
   private
   def set_user

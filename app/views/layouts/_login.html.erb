@@ -19,7 +19,7 @@
           <%= t('.email_info') %>
         </p>
 
-        <%= form_tag({ :controller => :user, :action => :authenticate }, :id=>"login-popup") do %>
+        <%= form_tag({ controller: '/user', :action => :authenticate }, :id=>"login-popup") do %>
           <div style="position: absolute; top: 0; right: 0;">
             <a href="#" id="login-popup-cancel" style="font-size: 1.2em; padding: 2px;">ⓧ</a>
           </div>

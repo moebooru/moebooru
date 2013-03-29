@@ -1,0 +1,30 @@
+<% content_for :content do %>
+  <div id="header">
+    <div id="title">
+      <h2 id="site-title">
+        <%= link_to image_tag('logo_small.png', alt: CONFIG['app_name'], size: '484x75', id: 'logo'), root_path %>
+      </h2>
+    </div>
+    <%= render 'layouts/menu' %>
+  </div>
+  <% render 'layouts/notice' %>
+
+  <div class="blocked" id="block-reason" style="display: none;">
+  </div>
+
+  <div id="main">
+    <div id="menu" class="settings">
+      <h3><%= t('.menu.title') %></h3>
+      <ul>
+        <li><%= link_to t('user.edit.title'), controller: '/user', action: :edit %></li>
+        <li><%= link_to t('settings.api.show.title'), settings_api_path %></li>
+        <li><%= link_to t('user.change_email.title'), user_change_email_path %></li>
+        <li><%= link_to t('user.change_password.title'), user_change_password_path %></li>
+      </ul>
+    </div>
+    <div id="content">
+      <%= yield %>
+    </div>
+  </div>
+<% end %>
+<%= render template: 'layouts/application' %>

@@ -1,3 +1,4 @@
+<% provide :title, t('.title') %>
 <div id="user-edit">
   <%= form_for @current_user, :url => { :action => :update } do |f| %>
     <%= hidden_field :render, :view, :value => :change_email %>

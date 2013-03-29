@@ -516,6 +516,9 @@ en:
         search: Search Wiki
     news:
       close: Close
+    settings:
+      menu:
+        title: Settings
   note:
     footer:
       help: Help
@@ -1033,6 +1036,10 @@ en:
   # static
   report_votes_text: "The following report shows user votes over the past three days."
   report_wiki: "Wiki"
+  settings:
+    api:
+      show:
+        title: API Key
   static:
     index:
       search: Search
@@ -1221,8 +1228,10 @@ en:
       current_email: Current Email
       current_password: Current password
       new_email: New Email
+      title: Change Email Address
     change_password:
       new_password: New password
+      title: Change Password
     edit:
       email: Email
       no_email: none

@@ -29,7 +29,11 @@
         <tr>
           <th>
             <label class="block" for="user_email"><%=t :user_signup_email %></label>
-            <p><%=t :user_signup_email_text %></p>
+            <% if CONFIG["enable_account_email_activation"] == true %>
+            	<p><%=t :user_signup_email_text_wa %></p>
+            <% else %>
+            	<p><%=t :user_signup_email_text %></p>
+            <% end %>
           </th>
           <td>
             <%= text_field "user", "email", :size => 30 %>

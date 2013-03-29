@@ -1380,6 +1380,7 @@ en:
   user_signup: "Signup"
   user_signup_email: "Email"
   user_signup_email_text: "Optional, for email notifications and password resets."
+  user_signup_email_text_wa: "Required for account activation, email notifications and password resets."
   user_signup_name: "Name"
   user_signup_name_text: "Please remember your name will be easy to Google on this site."
   user_signup_text: "Signup"

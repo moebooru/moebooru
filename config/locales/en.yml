@@ -1039,6 +1039,8 @@ en:
   settings:
     api:
       show:
+        info: Your API Key
+        reset: Reset
         title: API Key
   static:
     index:

@@ -1,5 +1,11 @@
-API Key: <%= @user.api_key %>
+<% provide :title, t('.title') %>
+<h1><%= t('.title') %></h1>
+<div>
+  <%= t('.info') %>: <%= @user.api_key %>
+</div>
 
-<%= form_tag reset_settings_api_path do %>
-  <%= submit_tag 'Reset' %>
-<% end %>
+<div>
+  <%= form_tag reset_settings_api_path do %>
+    <%= submit_tag t('.reset') %>
+  <% end %>
+</div>

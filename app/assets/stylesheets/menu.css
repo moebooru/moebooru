@@ -47,7 +47,6 @@ div#main-menu ul li ul.submenu {
   border: 1px solid #666;
   margin: 0;
   max-width: 200px;
-  overflow: hidden;
 }
 div#main-menu ul li ul li {
   float: none;
@@ -58,6 +57,8 @@ div#main-menu ul li ul.submenu li a {
   display: block;
   padding: 2px 4px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 div#main-menu ul li ul.submenu li a.hover {
   background: #222;

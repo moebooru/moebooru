@@ -2,6 +2,27 @@
   #menu {
     float: left;
     width: 200px;
+    padding: 0 20px 0 0;
+
+    h5 {
+      padding: 0 10px 10px 10px;
+    }
+
+    ul {
+      list-style: none;
+
+      li {
+        margin: 0;
+        a {
+          display: block;
+          padding: 4px 10px;
+
+          &:hover {
+            background: #333;
+          }
+        }
+      }
+    }
   }
   #content {
   }

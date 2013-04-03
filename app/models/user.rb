@@ -12,6 +12,10 @@ class User < ActiveRecord::Base
     self.api_key = SecureRandom.urlsafe_base64
   end
 
+  def self.authenticate_with_api_key(username, api_key)
+    where(name: username, api_key: api_key).first
+  end
+
   def log(ip)
     Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
       Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_id => 1.day) do

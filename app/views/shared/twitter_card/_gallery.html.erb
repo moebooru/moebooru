@@ -1,0 +1,21 @@
+<% if CONFIG['twitter_id'] %>
+  <% content_for :html_header do %>
+    <%# Facebook Open Graph
+      # Reference: https://developers.facebook.com/docs/opengraphprotocol/
+    %>
+    <%= tag :meta, property: 'og:title', content: html_title %>
+    <%= tag :meta, property: 'og:url', content: url_for(params) %>
+    <% if description.present? %>
+      <%= tag :meta, property: 'og:description', content: description %>
+    <% end %>
+    <%# Twitter Card
+      # Other attributes are fulfilled by Open Graph.
+      # Reference: https://dev.twitter.com/docs/cards
+    %>
+    <%= tag :meta, name: 'twitter:card', content: 'gallery' %>
+    <%= tag :meta, name: 'twitter:site', content: "@#{CONFIG['twitter_id']}" %>
+    <% posts.first(4).each_with_index do |p, i| %>
+      <%= tag :meta, name: "twitter:image#{i}:src", content: p.rating == 'e' ? "#{request.protocol}#{request.host_with_port}#{image_path('stubs/explicit.png')}" : p.sample_url %>
+    <% end %>
+  <% end %>
+<% end %>

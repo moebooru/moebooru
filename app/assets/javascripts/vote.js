@@ -23,7 +23,7 @@
         dataType: 'json',
         type: 'post',
         statusCode: {
-          403: function () { notice(t('js.error')+': '+t('js.denied')); }
+          403: function () { notice(t('js.error') + t('js.denied')); }
         }
       }).done(function (data) {
         th.updateWidget(vote, data.posts[0].score);

@@ -1,4 +1,4 @@
-(function($) {
+(function($, t) {
   Dmail = {
     respond: function(to) {
       $('#dmail_to_name').val(to);
@@ -8,7 +8,7 @@
     },
 
     expand: function(parent_id, id) {
-      notice("Fetching previous messages...")
+      notice(t('.fetch_prev_msg'))
 
       $.ajax({
         url: Moebooru.path('/dmail/show_previous_messages'),
@@ -20,8 +20,8 @@
       }).done(function(data) {
         $('#previous-messages').html(data);
         $('#previous-messages').show();
-        notice('Previous messages loaded');
+        notice(t('.prev_msg_loaded'));
       })
     }
   }
-}) (jQuery);
+}) (jQuery, I18n.scopify('js.dmail'));

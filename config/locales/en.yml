@@ -1455,6 +1455,7 @@ en:
       prev_msg_loaded: Previous messages loaded
     error: 'Error: '
     no_translation: 'No translation: '
+    noone: no one
     vote:
       remove: Remove vote
       good: Good

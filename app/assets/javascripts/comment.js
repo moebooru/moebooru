@@ -37,7 +37,7 @@
         }
       }).done(function(resp) {
         var stripped_body = resp.body.replace(/\[quote\](?:.|\n|\r)+?\[\/quote\](?:\r\n|\r|\n)*/gm, '')
-        var body = '[quote]' + resp.creator + ' said:\n' + stripped_body + '\n[/quote]\n\n'
+        var body = '[quote]' + resp.creator + ' '+ t('js.said') +'\n' + stripped_body + '\n[/quote]\n\n'
         $('#reply-' + resp.post_id).show()
         if ($('#respond-link-' + resp.post_id)) {
           $('#respond-link-' + resp.post_id).hide()

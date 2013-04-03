@@ -1454,8 +1454,12 @@ en:
       fetch_prev_msg: Fetching previous messages...
       prev_msg_loaded: Previous messages loaded
     error: 'Error: '
+    forum:
+      mark_as_read: Marked all topics as read
+      quote_error: Error quoting forum post
     no_translation: 'No translation: '
     noone: no one
+    said: said:
     vote:
       remove: Remove vote
       good: Good

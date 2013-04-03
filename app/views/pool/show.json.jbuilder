@@ -25,12 +25,12 @@ json.posts @posts do |p|
   json.actual_preview_width p.raw_preview_dimensions[0]
   json.actual_preview_height p.raw_preview_dimensions[1]
   json.sample_url p.sample_url
-  json.sample_width p.sample_width || width
-  json.sample_height p.sample_height || height
+  json.sample_width p.sample_width || p. width
+  json.sample_height p.sample_height || p. height
   json.sample_file_size p.sample_size
   json.jpeg_url p.jpeg_url
-  json.jpeg_width p.jpeg_width || width
-  json.jpeg_height p.jpeg_height || height
+  json.jpeg_width p.jpeg_width || p. width
+  json.jpeg_height p.jpeg_height || p. height
   json.jpeg_file_size p.jpeg_size
   json.rating p.rating
   json.has_children p.has_children

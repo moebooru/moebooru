@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   end
 
   def self.authenticate_with_api_key(username, api_key)
-    first.where(name: username, api_key: api_key)
+    where(name: username, api_key: api_key).first
   end
 
   def log(ip)

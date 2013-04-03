@@ -12,6 +12,6 @@
   <%= tag :meta, :name => 'twitter:card', content: 'gallery' %>
   <%= tag :meta, :name => 'twitter:site', :content => "@#{CONFIG['twitter_id']}" %>
   <% @posts.first(4).each_with_index do |p, i| %>
-    <%= tag :meta, name: "twitter:image#{i}:src", content: p.rating == 'e' ? image_path('stubs/explicit.png') : p.sample_url %>
+    <%= tag :meta, name: "twitter:image#{i}:src", content: p.rating == 'e' ? "#{request.protocol}#{request.host_with_port}#{image_path('stubs/explicit.png')}" : p.sample_url %>
   <% end %>
 <% end %>

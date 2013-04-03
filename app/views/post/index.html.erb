@@ -1,4 +1,9 @@
 <% provide :title, '/' + params[:tags].to_s.tr('_', ' ') %>
+<% if @posts.count >= 4 %>
+  <% content_for :html_header do %>
+    <%= render 'social_meta_gallery' %>
+  <% end %>
+<% end %>
 <div id="post-list">
   <% if @tag_suggestions && @tag_suggestions.any? %>
     <div class="status-notice">

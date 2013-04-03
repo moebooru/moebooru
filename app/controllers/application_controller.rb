@@ -90,9 +90,9 @@ class ApplicationController < ActionController::Base
         @current_user = User.find(session[:user_id])
       end
 
-      if !@current_user && params[:api_key]
+      if !@current_user and params[:api_key] and params[:username]
         @from_api = true
-        @current_user = User.find_by_api_key(params[:api_key])
+        @current_user = User.authenticate_with_api_key(params[:username], params[:api_key])
       end
 
       if @current_user == nil && session[:user_id]

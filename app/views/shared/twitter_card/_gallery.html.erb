@@ -5,7 +5,7 @@
     %>
     <%= tag :meta, property: 'og:title', content: html_title %>
     <%= tag :meta, property: 'og:url', content: url_for(params) %>
-    <% if description.present? %>
+    <% if defined? description %>
       <%= tag :meta, property: 'og:description', content: description %>
     <% end %>
     <%# Twitter Card

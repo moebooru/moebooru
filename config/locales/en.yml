@@ -1459,7 +1459,7 @@ en:
       quote_error: Error quoting forum post
     no_translation: 'No translation: '
     noone: no one
-    said: said:
+    said: 'said:'
     vote:
       remove: Remove vote
       good: Good

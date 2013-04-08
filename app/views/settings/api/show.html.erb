@@ -5,7 +5,7 @@
 </div>
 
 <div>
-  <%= form_tag reset_settings_api_path do %>
+  <%= form_tag settings_api_path, method: :put do %>
     <%= submit_tag t('.reset') %>
   <% end %>
 </div>

@@ -4,7 +4,7 @@ class Settings::ApiController < Settings::BaseController
   def show
   end
 
-  def reset
+  def update
     @user.set_api_key
     @user.save
     redirect_to action: :show

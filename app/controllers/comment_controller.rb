@@ -101,7 +101,7 @@ class CommentController < ApplicationController
         keywords << s
       }
 
-      if kewords.any?
+      if keywords.any?
         conds << 'text_search_index @@ to_tsquery(?)'
         cond_params << keywords.map { |k| k.to_escaped_for_tsquery }.join(' & ')
       end

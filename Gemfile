@@ -50,4 +50,3 @@ end
 gem 'oj', :platforms => :ruby
 gem 'multi_json'
 gem 'jbuilder'
-gem 'escape_utils', :platforms => :mri

@@ -2,6 +2,8 @@
 if defined? Unicorn
   require 'unicorn/oob_gc'
   use Unicorn::OobGC
+  require 'unicorn/worker_killer'
+  use Unicorn::WorkerKiller::MaxRequests, 3072, 4096
 end
 
 require ::File.expand_path('../config/environment',  __FILE__)

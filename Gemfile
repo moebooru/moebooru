@@ -44,6 +44,7 @@ end
 
 group :standalone do
   gem 'unicorn', :platforms => :mri
+  gem 'unicorn-worker-killer', :platforms => :mri
   gem 'puma', :platforms => [:jruby, :rbx]
 end
 

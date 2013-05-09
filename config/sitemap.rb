@@ -26,6 +26,10 @@ SitemapGenerator::Sitemap.create do
   #   end
 SitemapGenerator::Sitemap.default_host = "https://yande.re"
 
+SitemapGenerator::Sitemap.create_index = true
+SitemapGenerator::Sitemap.namer = SitemapGenerator::SimpleNamer.new(:sitemap, :zero => '_index')
+
+
    Post.find(:all, :conditions => ["status != 'deleted'"]).each do |post|
      add %{/post/show/#{post.id}}, :changefreq => 'daily'
    end

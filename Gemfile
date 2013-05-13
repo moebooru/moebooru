@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 3.2.0'
-gem 'rack-mini-profiler'
 gem 'jquery-rails'
 
 group :assets do
@@ -52,3 +51,4 @@ end
 gem 'oj', :platforms => :ruby
 gem 'multi_json'
 gem 'jbuilder'
+gem 'rack-mini-profiler'

@@ -241,6 +241,7 @@ class ApplicationController < ActionController::Base
   #local_addresses.clear
 
   before_filter :set_current_user
+  before_filter :mini_profiler_check
   before_filter :limit_api
   before_filter :set_country
   before_filter :check_ip_ban
@@ -431,5 +432,10 @@ class ApplicationController < ActionController::Base
 
     def sanitize_id
       params[:id] = params[:id].to_i
+    end
+    def mini_profiler_check
+      if @current_user.is_admin_or_higher?
+        Rack::MiniProfiler.authorize_request
+      end
     end
 end

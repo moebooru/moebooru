@@ -121,7 +121,7 @@ Moebooru::Application.routes.draw do
   match 'pool/show(.:format)(/:id)' => 'pool#show'
   match 'pool/transfer_metadata'
   match 'pool/update(.:format)(/:id)' => 'pool#update'
-  match 'pool/zip/:id/:filename' => 'pool#zip', :constraints => { :filename => /.*/ }
+  match 'pool/zip/:id/:filename.:format' => 'pool#zip', :constraints => { :filename => /.*/ }
 
   # Post
   match 'post(/index)(.:format)' => 'post#index'

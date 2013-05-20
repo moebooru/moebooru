@@ -123,7 +123,7 @@ CONFIG["enable_caching"] = false
 CONFIG["enable_aggressive_caching"] = false
 
 # The server and port where the memcache client can be accessed. Only relevant if you enable caching.
-CONFIG["memcache_servers"] = ["localhost:4000"]
+CONFIG["memcache_servers"] = ["localhost:11211"]
 
 # Any post rated safe or questionable that has one of the following tags will automatically be rated explicit.
 CONFIG["explicit_tags"] = %w(pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape asshole footjob handjob blowjob cunnilingus anal_sex)

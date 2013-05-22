@@ -79,7 +79,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.23)
-    mini_magick (3.5.0)
+    mini_magick (3.6.0)
       subexec (~> 0.2.1)
     multi_json (1.7.3)
     newrelic_rpm (3.6.2.96)

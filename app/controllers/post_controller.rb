@@ -12,8 +12,6 @@ class PostController < ApplicationController
   before_filter :janitor_only, :only => [:moderate, :undelete]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
-  around_filter :cache_action, :only => [:index, :atom, :piclens]
-
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
 
   def activate

@@ -314,15 +314,23 @@ class ApplicationController < ActionController::Base
   def init_cookies
     return if params[:format] == "xml" || params[:format] == "json"
 
-    forum_posts = ForumPost.find(:all, :order => "updated_at DESC", :limit => 10, :conditions => "parent_id IS NULL")
-    cookies["current_forum_posts"] = forum_posts.map { |fp|
-      if @current_user.is_anonymous?
-        updated = false
-      else
-        updated = fp.updated_at > @current_user.last_forum_topic_read_at
+    jsdata = {}
+    jsdata[:forum_posts] = Rails.cache.fetch "forum_posts" do
+      ForumPost.select([:id, :title, :updated_at, :response_count]).where(parent_id: nil).order("updated_at DESC").limit(10).map do |fp|
+        {
+          id: fp.id,
+          title: fp.title,
+          updated_at: fp.updated_at,
+          pages: ((fp.response_count + 1) / 30.0).ceil
+        }
       end
-      [fp.title, fp.id, updated, (fp.response_count / 30.0).ceil]
-    }.to_json
+    end
+    jsdata[:forum_post_last_read_at] = if @current_user.is_anonymous?
+      Time.now
+    else
+      @current_user.last_forum_topic_read_at || Time.at(0)
+    end
+    jsdata.each { |name, data| cookies[name] = data.to_json }
 
     cookies["country"] = @current_user_country
 
@@ -335,12 +343,6 @@ class ApplicationController < ActionController::Base
         cookies["has_mail"] = "1"
       else
         cookies["has_mail"] = "0"
-      end
-
-      if @current_user.is_privileged_or_higher? && ForumPost.updated?(@current_user)
-        cookies["forum_updated"] = "1"
-      else
-        cookies["forum_updated"] = "0"
       end
 
       if @current_user.is_privileged_or_higher? && Comment.updated?(@current_user)

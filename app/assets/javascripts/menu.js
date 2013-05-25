@@ -81,29 +81,33 @@
      * - set correct class based on read/unread
      */
     sync_forum_menu: function() {
+      var
+        self = this,
+        last_read = $.parseJSON($.cookie("forum_post_last_read_at")),
+        forum_menu_items = $.parseJSON($.cookie("forum_posts")),
+        forum_submenu = $("li.forum ul.submenu", self.menu),
+        forum_items_start = forum_submenu.find('.forum-items-start').show();
+        create_forum_item = function(post_data) {
+          return $("<li/>", {
+            html: $("<a/>", {
+              href: Moebooru.path("/forum/show/" + post_data.id + "?page=" + post_data.pages),
+              text: post_data.title,
+              title: post_data.title,
+              class: (post_data.updated_at > last_read) ? "unread-topic" : null
+              })
+          })
+        }
       // Reset latest topics.
-      var forum_menu_items = $.parseJSON($.cookie('current_forum_posts'));
-      var create_forum_item = function(forum_json) {
-        return $('<li/>', {
-          html: $('<a/>', {
-            href: Moebooru.path('/forum/show/' + forum_json[1] + '?page=' + forum_json[3]),
-            text: forum_json[0],
-            title: forum_json[0],
-            class: forum_json[2] ? 'unread-topic' : null
-          }),
-        });
-      };
-      this.menu.find('.forum-items-start').nextAll().remove();
-      var menu_items_num = forum_menu_items.length;
-      if (menu_items_num > 0) {
-        for (var i = menu_items_num - 1; i >=0; i--) {
-          this.menu.find('.forum-items-start').after(create_forum_item(forum_menu_items[i]));
-        };
-        this.menu.find('.forum-items-start').show();
+      forum_items_start.nextAll().remove();
+      if (forum_menu_items.length > 0) {
+        $.each(forum_menu_items, function(_i, post_data) {
+          forum_submenu.append(create_forum_item(post_data))
+          forum_items_start.show();
+        })
       }
 
       // Set correct class based on read/unread.
-      if ($.cookie('forum_updated') == '1') {
+      if (forum_menu_items.first().updated_at > last_read) {
         $('#forum-link').addClass('forum-update');
         $('#forum-mark-all-read').show();
       } else {

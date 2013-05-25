@@ -19,12 +19,8 @@ class Comment < ActiveRecord::Base
   end
 
   def self.updated?(user)
-    conds = []
-    conds += ["user_id <> %d" % [user.id]] unless user.is_anonymous?
-
-    newest_comment = Comment.find(:first, :order => "id desc", :limit => 1, :select => "created_at", :conditions => conds)
-    return false if newest_comment == nil
-    return newest_comment.created_at > user.last_comment_read_at
+    newest_comment = self.select(:created_at).order("id DESC").first
+    newest_comment.created_at > user.last_comment_read_at if newest_comment
   end
 
   def update_last_commented_at

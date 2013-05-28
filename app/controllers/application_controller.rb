@@ -321,7 +321,7 @@ class ApplicationController < ActionController::Base
           id: fp.id,
           title: fp.title,
           updated_at: fp.updated_at,
-          pages: ((fp.response_count + 1) / 30.0).ceil
+          pages: ((fp.response_count == 0 ? 1 : fp.response_count) / 30.0).ceil
         }
       end
     end

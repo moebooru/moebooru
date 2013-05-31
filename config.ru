@@ -3,9 +3,9 @@ if defined? Unicorn
   use Raindrops::Middleware
   require 'unicorn/oob_gc'
   GC.disable
-  use Unicorn::OobGC
+  use Unicorn::OobGC, 16
   require 'unicorn/worker_killer'
-  use Unicorn::WorkerKiller::MaxRequests, 4096, 8192
+  use Unicorn::WorkerKiller::MaxRequests, 1024, 4096
 end
 
 require ::File.expand_path('../config/environment',  __FILE__)

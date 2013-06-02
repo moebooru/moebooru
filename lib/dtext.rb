@@ -92,7 +92,7 @@ module DText
       state.push "1"
       html << "<ul>"
     else
-      n = (str.split()[0] || "").count("*")
+      n = ((str =~ /^\*+\s+/ && str.split()[0]) || "").count("*")
       if n < state.last.to_i
         html << '</ul>' * (state.last.to_i - n)
         state[-1] = n.to_s
@@ -100,11 +100,10 @@ module DText
         html << '<ul>'
         state[-1] = (state.last.to_i + 1).to_s
       end
-    end
-    if not str =~ /^\*+\s+/
-      state.pop
-      html << "</ul>"
-      return html + parseline(str, state)
+      if not str =~ /^\*+\s+/
+        state.pop
+        return html + parseline(str, state)
+      end
     end
     html << str.gsub(/\*+\s+(.+)\n*/, '<li>\1')
   end

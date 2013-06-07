@@ -1,9 +1,3 @@
-GIT
-  remote: git://github.com/ruby-prof/ruby-prof.git
-  revision: 8b248d16b12fc8c0ddbdf7ff2666d7b422690206
-  specs:
-    ruby-prof (0.13.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -199,7 +193,6 @@ DEPENDENCIES
   rails (~> 3.2.0)
   rails-i18n
   rspec-rails
-  ruby-prof!
   sass-rails (~> 3.2.3)
   sitemap_generator
   uglifier (>= 1.0.3)

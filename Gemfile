@@ -41,7 +41,11 @@ group :test, :development do
 end
 
 group :standalone do
-  gem "puma"
+  platform :mri do
+    gem "unicorn"
+    gem "unicorn-worker-killer"
+  end
+  gem "puma", platforms: [:jruby, :rbx]
 end
 
 gem 'oj', :platforms => :ruby

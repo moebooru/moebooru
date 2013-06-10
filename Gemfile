@@ -48,7 +48,7 @@ group :standalone do
   gem "puma", platforms: [:jruby, :rbx]
 end
 
-gem 'oj', :platforms => :ruby
+gem 'oj', :platforms => :mri
 gem 'multi_json'
 gem 'jbuilder'
 gem 'rack-mini-profiler'

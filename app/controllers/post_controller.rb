@@ -419,6 +419,7 @@ class PostController < ApplicationController
       end
       return
     end
+    fresh_when :etag => @post, :last_modified => @post.updated_at and return
 
     @pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{@post.id} AND active", :order => "pools.name", :select => "pools.name, pools.id")
     if params.has_key?(:pool_id) then

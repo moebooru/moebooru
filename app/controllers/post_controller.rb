@@ -406,9 +406,6 @@ class PostController < ApplicationController
   end
 
   def show
-    response.headers["Cache-Control"] = "max-age=300" if params[:cache]
-    @cache = params[:cache] # temporary
-    @body_only = params[:body].to_i == 1
     @post = Post.includes(:comments => [:user])
     begin
       if params[:md5]

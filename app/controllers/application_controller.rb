@@ -93,6 +93,7 @@ class ApplicationController < ActionController::Base
       if !@current_user and params[:api_key] and params[:username]
         @from_api = true
         @current_user = User.authenticate_with_api_key(params[:username], params[:api_key])
+        head :forbidden and return unless @current_user
       end
 
       if @current_user == nil && session[:user_id]

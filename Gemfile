@@ -10,7 +10,7 @@ group :assets do
   gem "jquery-ui-rails"
 end
 
-gem "pg", :platforms => [:ruby, :mswin]
+gem "pg", :platforms => [:ruby, :mswin, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
 gem "diff-lcs"
@@ -45,7 +45,7 @@ group :standalone do
     gem "unicorn-worker-killer"
   end
   gem "puma", :platforms => [:jruby, :rbx]
-  gem "thin", :platforms => :mswin
+  gem "thin", :platforms => [:mswin, :mingw]
 end
 
 gem "oj", :platforms => :mri

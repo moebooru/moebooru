@@ -10,7 +10,7 @@ group :assets do
   gem "jquery-ui-rails"
 end
 
-gem "pg", :platforms => :ruby
+gem "pg", :platforms => [:ruby, :mswin]
 gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
 gem "diff-lcs"
@@ -27,7 +27,7 @@ gem "newrelic_rpm"
 gem "nokogiri"
 gem "rails-i18n"
 gem "addressable", :require => "addressable/uri"
-gem "mini_magick"
+gem "mini_magick", "= 3.5.0"
 gem "cache_digests"
 gem "i18n-js"
 
@@ -45,6 +45,7 @@ group :standalone do
     gem "unicorn-worker-killer"
   end
   gem "puma", :platforms => [:jruby, :rbx]
+  gem "thin", :platforms => :mswin
 end
 
 gem "oj", :platforms => :mri

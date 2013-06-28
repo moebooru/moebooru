@@ -91,6 +91,8 @@ GEM
     pg (0.15.1)
     pg (0.15.1-x86-mingw32)
     polyglot (0.3.3)
+    protected_attributes (1.0.2)
+      activemodel (>= 4.0.0.beta, < 5.0)
     puma (2.1.1)
       rack (>= 1.1, < 2.0)
     puma (2.1.1-java)
@@ -199,6 +201,7 @@ DEPENDENCIES
   nokogiri
   oj
   pg
+  protected_attributes
   puma
   quiet_assets
   rack-mini-profiler

@@ -10,7 +10,11 @@ gem "jquery-ui-rails"
 gem "pg", :platforms => [:ruby, :mswin, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
+### FIXME: remove this
 gem "actionpack-page_caching"
+gem "protected_attributes"
+### FIXME: remove this
+
 gem "diff-lcs"
 gem "json"
 gem "dalli"

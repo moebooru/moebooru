@@ -44,8 +44,9 @@ GEM
     diff-lcs (1.2.4)
     erubis (2.7.0)
     eventmachine (1.0.3-x86-mingw32)
-    exception_notification (3.0.1)
+    exception_notification (4.0.0.rc1)
       actionmailer (>= 3.0.4)
+      activesupport (>= 3.0.4)
     execjs (1.4.0)
       multi_json (~> 1.0)
     geoip (1.2.1)
@@ -181,7 +182,7 @@ DEPENDENCIES
   daemons
   dalli
   diff-lcs
-  exception_notification
+  exception_notification (>= 4.0.0.rc1)
   geoip
   hooves
   i18n-js

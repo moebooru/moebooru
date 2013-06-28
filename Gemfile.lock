@@ -53,6 +53,8 @@ GEM
       multi_json (~> 1.0)
     geoip (1.2.1)
     hike (1.2.3)
+    hooves (0.7)
+      unicorn (> 0)
     i18n (0.6.1)
     i18n-js (2.1.2)
       i18n
@@ -188,6 +190,7 @@ DEPENDENCIES
   diff-lcs
   exception_notification
   geoip
+  hooves
   i18n-js
   jbuilder
   jquery-rails

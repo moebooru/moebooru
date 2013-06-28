@@ -598,8 +598,8 @@ class User < ActiveRecord::Base
 
   module UserLanguageMethods
     def self.included(m)
-      m.validates_format_of :language, :with => /^([a-z\-]+)|$/
-      m.validates_format_of :secondary_languages, :with => /^([a-z\-]+(,[a-z\0]+)*)?$/
+      m.validates_format_of :language, :with => /\A([a-z\-]+)|\z/
+      m.validates_format_of :secondary_languages, :with => /\A([a-z\-]+(,[a-z\0]+)*)?\z/
       m.before_validation :commit_secondary_languages
     end
 

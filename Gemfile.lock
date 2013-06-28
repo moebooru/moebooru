@@ -10,6 +10,8 @@ GEM
       erubis (~> 2.7.0)
       rack (~> 1.5.2)
       rack-test (~> 0.6.2)
+    actionpack-page_caching (1.0.0)
+      actionpack (>= 4.0.0.beta, < 5.0)
     activemodel (4.0.0)
       activesupport (= 4.0.0)
       builder (~> 3.1.0)
@@ -175,6 +177,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
+  actionpack-page_caching
   activerecord-jdbcpostgresql-adapter
   acts_as_versioned_rails3
   addressable

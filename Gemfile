@@ -10,6 +10,7 @@ gem "jquery-ui-rails"
 gem "pg", :platforms => [:ruby, :mswin, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
+gem "actionpack-page_caching"
 gem "diff-lcs"
 gem "json"
 gem "dalli"

@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %> hide-advanced-editing">
 <head>
+<% if params[:tags] =~ /(source:|fav:|date:|rating:|mpixels:|parent:|sub:|vote:|score:|order:|user:|limit:|holds:|pool:|[ \-])/ %>
+<meta name="robots" content="noindex">
+<% end %>
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <title><%= html_title %></title>
   <meta name="description" content="yande.re - A Danbooru focusing on High Resolution Anime Scans, Ecchi Scans, Hentai Scans, Moe Scans, and Bishoujo Scans; unlimited downloads. ">

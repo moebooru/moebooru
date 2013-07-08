@@ -3,7 +3,7 @@ if defined? Unicorn
   use Raindrops::Middleware
   require 'unicorn/oob_gc'
   GC.disable
-  use Unicorn::OobGC, 16
+  use Unicorn::OobGC, 5
   require 'unicorn/worker_killer'
   use Unicorn::WorkerKiller::MaxRequests, 1024, 4096
 end

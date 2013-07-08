@@ -48,6 +48,8 @@ module Moebooru
       raise
     rescue Exception => e
       raise ResizeError, e.to_s
+    ensure
+      image.destroy! if image
     end
 
     # If allow_enlarge is true, always scale to fit, even if the source area is

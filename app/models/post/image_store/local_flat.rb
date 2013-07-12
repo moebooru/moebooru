@@ -35,7 +35,7 @@ module PostImageStoreMethods
     end
 
     def jpeg_path
-      "#{Rails.root}/public/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
+      "#{Rails.root}/public/data/jpeg/#{md5}.jpg"
     end
 
     def store_jpeg_url
@@ -68,16 +68,19 @@ module PostImageStoreMethods
       FileUtils.chmod(0664, file_path)
 
       if image?
+        FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
         FileUtils.mv(tempfile_preview_path, preview_path)
         FileUtils.chmod(0664, preview_path)
       end
 
       if File.exists?(tempfile_sample_path)
+        FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
         FileUtils.mv(tempfile_sample_path, sample_path)
         FileUtils.chmod(0664, sample_path)
       end
 
       if File.exists?(tempfile_jpeg_path)
+        FileUtils.mkdir_p(File.dirname(jpeg_path), :mode => 0775)
         FileUtils.mv(tempfile_jpeg_path, jpeg_path)
         FileUtils.chmod(0664, jpeg_path)
       end

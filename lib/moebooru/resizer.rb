@@ -44,10 +44,12 @@ module Moebooru
         f.quality output_quality.to_s
       end
       image.write write_path
-      rescue IOError
-        raise
-      rescue Exception => e
-        raise ResizeError, e.to_s
+    rescue IOError
+      raise
+    rescue Exception => e
+      raise ResizeError, e.to_s
+    ensure
+      image.destroy! if image
     end
 
     # If allow_enlarge is true, always scale to fit, even if the source area is

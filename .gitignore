@@ -1,4 +1,3 @@
-syntax: glob
 .bundle/
 bin/
 config/database.yml

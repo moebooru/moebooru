@@ -47,7 +47,7 @@
     </tr>
     <tr>
       <td><strong><%=t :user_deleted_posts %></strong></td>
-      <td><%= link_to Post.count(:all, :conditions => { :status => 'deleted', :user_id => @user.id.to_i }), :controller => "post", :action => "deleted_index", :user_id => @user.id %></td>
+      <td><%= link_to Post.where(:user_id => @user.id).where("status = ?", "deleted").count, :controller => "post", :action => "deleted_index", :user_id => @user.id %></td>
     </tr>
     <tr>
       <th><%=t :user_votes %></th>

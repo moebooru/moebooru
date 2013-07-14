@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
     def self.included(m)
       m.after_save :commit_blacklists
       m.after_create :set_default_blacklisted_tags
-      m.has_many :user_blacklisted_tags, :dependent => :delete_all, :order => :id
+      m.has_many :user_blacklisted_tags, lambda { order "id" }, :dependent => :delete_all
     end
 
     def blacklisted_tags=(blacklists)
@@ -574,7 +574,7 @@ class User < ActiveRecord::Base
 
   module UserTagSubscriptionMethods
     def self.included(m)
-      m.has_many :tag_subscriptions, :dependent => :delete_all, :order => "name"
+      m.has_many :tag_subscriptions, lambda { order "name" }, :dependent => :delete_all
     end
 
     def tag_subscriptions_text=(text)

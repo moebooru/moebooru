@@ -11,7 +11,7 @@ module TagTypeMethods
     end
 
     def type_name_helper(tag_name) # :nodoc:
-      tag = Tag.find(:first, :conditions => ["name = ?", tag_name], :select => "tag_type")
+      tag = Tag.where(:name => tag_name).select(:tag_type).first
 
       if tag == nil
         "general"

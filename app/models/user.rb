@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
         UserLog.where('created_at < ?', 3.days.ago).delete_all
       end
       begin
-        log_entry = self.user_logs.find_or_initialize_by_ip_addr(:ip_addr => ip)
+        log_entry = self.user_logs.find_or_initialize_by(:ip_addr => ip)
         log_entry.created_at = Time.now
         log_entry.save
       # Once in a blue moon there will be race condition on find_or_initialize

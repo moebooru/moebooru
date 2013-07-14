@@ -409,7 +409,7 @@ class PostController < ApplicationController
     @post = Post.includes(:comments => [:user])
     begin
       if params[:md5]
-        @post = @post.find_by_md5(params[:md5].downcase) || raise(ActiveRecord::RecordNotFound)
+        @post = @post.find_by! :md5 => params[:md5].downcase
       else
         @post = @post.find(params[:id])
       end

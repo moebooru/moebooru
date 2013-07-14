@@ -1,6 +1,6 @@
 module PostCommentMethods
   def self.included(m)
-    m.has_many :comments, :order => "id"
+    m.has_many :comments, lambda { order "id" }
   end
 
   def recent_comments

@@ -353,7 +353,7 @@ class ApplicationController < ActionController::Base
       end
 
       if @current_user.is_janitor_or_higher? then
-        mod_pending = Post.count(:conditions => "status = 'flagged' or status = 'pending'")
+        mod_pending = Post.where("status IN (?)", %w(flagged pending)).count
         cookies["mod_pending"] = mod_pending.to_s
       end
 

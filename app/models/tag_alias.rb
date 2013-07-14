@@ -1,5 +1,5 @@
 class TagAlias < ActiveRecord::Base
-  belongs_to :tag, :foreign_key => 'alias_id'
+  belongs_to :tag, :foreign_key => "alias_id"
   before_create :normalize
   before_create :validate_uniqueness
   after_destroy :expire_tag_cache_after_deletion

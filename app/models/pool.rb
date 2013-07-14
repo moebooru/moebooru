@@ -16,7 +16,7 @@ class Pool < ActiveRecord::Base
     def self.included(m)
       m.extend(ClassMethods)
       m.has_many :pool_posts, lambda { where("pools_posts.active").order("nat_sort(sequence), post_id") }, :class_name => "PoolPost"
-      m.has_many :all_pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id"
+      m.has_many :all_pool_posts, lambda { order "nat_sort(sequence), post_id" }, :class_name => "PoolPost"
       m.versioned :name
       m.versioned :description, :default => ""
       m.versioned :is_public, :default => true

@@ -3,7 +3,7 @@ class TagSubscription < ActiveRecord::Base
   belongs_to :user
   before_create :initialize_post_ids
   before_save :normalize_name
-  scope :visible, where(:is_visible_on_profile => true)
+  scope :visible, lambda { where :is_visible_on_profile => true }
 
   def normalize_name
     self.name = name.gsub(/\P{Word}/, '_')

@@ -158,9 +158,9 @@ class Post < ActiveRecord::Base
     # Cache results
     if @voted_by.nil?
       @voted_by = {}
-      (1..3).each { |v|
-        @voted_by[v] = User.find(:all, :joins => "JOIN post_votes v ON v.user_id = users.id", :select => "users.name, users.id", :conditions => ["v.post_id = ? and v.score = ?", self.id, v], :order => "v.updated_at DESC") || []
-      }
+      (1..3).each do |v|
+        @voted_by[v] = User.select("users.name, users.id").joins(:post_votes).where(:post_votes => { :post_id => self.id, :score => v }).order("post_votes.updated_at DESC")
+      end
     end
 
     return @voted_by

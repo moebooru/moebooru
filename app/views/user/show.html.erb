@@ -7,7 +7,7 @@
     <div style="position: absolute; bottom: 0; margin-bottom: 15px; left: <%= @user.avatar_width+5 %>px; ">
       <% if @current_user.has_permission?(@user) then %>
         &nbsp;<%= link_to t(:user_edit), :controller => "user", :action => "set_avatar", :id => @user.avatar_post.id.to_s, :user_id => @user.id %>
-        <%= link_to t('.avatar.remove.link'), { :controller => '/user', :action => :remove_avatar, :id => @user.id }, :method => :post, :confirm => t('.avatar.remove.confirm') %>
+        <%= link_to t('.avatar.remove.link'), { :controller => '/user', :action => :remove_avatar, :id => @user.id }, :method => :post, :data => { :confirm => t('.avatar.remove.confirm') } %>
       <% end %>
       <h2><%= h(@user.pretty_name) %></h2>
     </div>

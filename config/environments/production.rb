@@ -70,10 +70,6 @@ Moebooru::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  # config.active_record.auto_explain_threshold_in_seconds = 0.5
-
   config.middleware.use ExceptionNotifier,
     :email_prefix => ('[%s] ' % CONFIG['app_name']),
     :sender_address => ('%s <%s>' % ['notifier', CONFIG['email_from']]),

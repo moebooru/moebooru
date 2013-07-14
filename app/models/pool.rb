@@ -15,7 +15,7 @@ class Pool < ActiveRecord::Base
   module PostMethods
     def self.included(m)
       m.extend(ClassMethods)
-      m.has_many :pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id", :conditions => "pools_posts.active"
+      m.has_many :pool_posts, lambda { where("pools_posts.active").order("nat_sort(sequence), post_id") }, :class_name => "PoolPost"
       m.has_many :all_pool_posts, :class_name => "PoolPost", :order => "nat_sort(sequence), post_id"
       m.versioned :name
       m.versioned :description, :default => ""

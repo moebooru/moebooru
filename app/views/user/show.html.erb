@@ -43,7 +43,7 @@
     </tr>
     <tr>
       <td><strong><%=t :user_posts %></strong></td>
-      <td><%= link_to Post.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></td>
+      <td><%= link_to Post.where(:user_id => @user.id).count, :controller => "post", :action => "index", :tags => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong><%=t :user_deleted_posts %></strong></td>

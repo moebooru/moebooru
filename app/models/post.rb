@@ -18,10 +18,10 @@ class Post < ActiveRecord::Base
   set_callback :delete, :before, :clear_avatars
   after_save :commit_flag
   has_and_belongs_to_many :_tags, :class_name => 'Tag'
-  scope :available, where('posts.status <> ?', 'deleted')
+  scope :available, lambda { where("posts.status <> ?", "deleted") }
   scope :has_any_tags, lambda { |tags| where('posts.tags_index @@ ?', Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' | ')) }
   scope :has_all_tags, lambda { |tags| where('posts.tags_index @@ ?', Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' & ')) }
-  scope :flagged, :conditions => { :status => 'flagged' }
+  scope :flagged, lambda { where :status => "flagged" }
 
   def self.slow_has_all_tags(tags)
     p = Post.scoped

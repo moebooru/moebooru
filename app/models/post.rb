@@ -5,7 +5,7 @@ class Post < ActiveRecord::Base
 
   define_callbacks :delete
   define_callbacks :undelete
-  has_many :notes, :order => "id desc"
+  has_many :notes, lambda { order "id DESC" }
   has_one :flag_detail, :class_name => "FlaggedPostDetail"
   belongs_to :user
   before_validation :set_random!, :on => :create

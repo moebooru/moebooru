@@ -64,27 +64,27 @@
     </tr>
     <tr>
       <td><strong><%=t :user_comments %></strong></td>
-      <td><%= link_to Comment.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
+      <td><%= link_to Comment.where(:user_id => @user.id).count, :controller => "comment", :action => "search", :query => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong><%=t :user_edits %></strong></td>
-      <td><%= link_to History.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "history", :action => "index", :search => "user:#{@user.name}" %></td>
+      <td><%= link_to History.where(:user_id => @user.id).count, :controller => "history", :action => "index", :search => "user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong><%=t :user_tag_edits %></strong></td>
-      <td><%= link_to History.count(:all, :conditions => { :user_id => @user.id.to_i, :group_by_table => 'posts' }), :controller => "history", :action => "index", :search => "type:post user:#{@user.name}" %></td>
+      <td><%= link_to History.where(:user_id => @user.id, :group_by_table => "posts").count, :controller => "history", :action => "index", :search => "type:post user:#{@user.name}" %></td>
     </tr>
     <tr>
       <td><strong><%=t :user_note_edits %></strong></td>
-      <td><%= link_to NoteVersion.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "note", :action => "history", :user_id => @user.id %></td>
+      <td><%= link_to NoteVersion.where(:user_id => @user.id).count, :controller => "note", :action => "history", :user_id => @user.id %></td>
     </tr>
     <tr>
       <td><strong><%=t :user_wiki_edits %></strong></td>
-      <td><%= link_to WikiPageVersion.count(:all, :conditions => { :user_id => @user.id.to_i }), :controller => "wiki", :action => "recent_changes", :user_id => @user.id %></td>
+      <td><%= link_to WikiPageVersion.where(:user_id => @user.id).count, :controller => "wiki", :action => "recent_changes", :user_id => @user.id %></td>
     </tr>
     <tr>
       <td><strong><%=t :user_forum_posts %></strong></td>
-      <td><%= ForumPost.count(:all, :conditions => { :creator_id => @user.id.to_i }) %></td>
+      <td><%= ForumPost.where(:creator_id => @user.id).count %></td>
     </tr>
     <% if @user.invited_by %>
       <tr>

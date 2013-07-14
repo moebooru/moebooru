@@ -6,7 +6,7 @@ class NoteController < ApplicationController
   def search
     if params[:query]
       query = params[:query].scan(/\S+/).join(" & ")
-      @notes = Note.paginate :order => "id asc", :per_page => 25, :conditions => ["text_search_index @@ plainto_tsquery(?)", query], :page => page_number
+      @notes = Note.where("text_search_index @@ plainto_tsquery(?)", query).order(:id).paginate(:per_page => 25, :page => page_number)
 
       respond_to_list("notes")
     end

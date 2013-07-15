@@ -14,7 +14,7 @@
   }
 </script>
 
-<form method="post" action="/comment/moderate">
+<%= form_tag url_for(:controller => "/comment", :action => :moderate) do %>
   <table>
     <thead>
       <tr>
@@ -43,4 +43,4 @@
       <% end %>
     </tbody>
   </table>
-</form>
+<% end %>

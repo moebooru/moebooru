@@ -183,8 +183,9 @@ class User < ActiveRecord::Base
       m.after_save :update_cached_name
     end
 
+    # FIXME: nuke this
     def pretty_name
-      name.tr("_", " ")
+      name
     end
 
     def update_cached_name

@@ -78,11 +78,11 @@
           <%= t('.duplicate.info_mark_duplicate_html', :mark_duplicate => link_to_function(t('.duplicate.mark_duplicate'), "$('mode').value = 'dupe'; PostModeMenu.change();")) %>
         </li>
         <li>
-          <form action=<%= url_for(:action => "destroy", :name=>"destroy") %> id="destroy" method="post">
+          <%= form_tag url_for(:action => "destroy", :name=>"destroy"), :id => "destroy"  do %>
             <%= hidden_field_tag "id", params[:id], :id=>"destroy_id" %>
             <%= hidden_field_tag "reason", "duplicate" %>
             <%= t('.duplicate.info_delete_html', :delete => link_to_function(t('.duplicate.delete'), "$('destroy').submit")) %>
-          </form>
+          <% end %>
         </li>
         </ul>
         <div id="blacklisted-notice" style="display: none;">

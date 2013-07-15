@@ -21,7 +21,7 @@
 
 <div style="margin-bottom: 2em;">
   <h2><%= t('.pending') %></h2>
-  <form method="post" action="/post/moderate">
+  <%= form_tag url_for(:controller => "/post", :action => :moderate) do %>
     <%= hidden_field_tag "reason", "" %>
 
     <table width="100%">
@@ -61,12 +61,12 @@
         <% end %>
       </tbody>
     </table>
-  </form>
+  <% end %>
 </div>
 
 <div>
   <h2><%= t('.flagged') %></h2>
-  <form method="post" action="/post/moderate">
+  <%= form_tag url_for(:controller => "/post", :action => :moderate) do %>
     <%= hidden_field_tag "reason2", "" %>
 
     <table width="100%">
@@ -106,7 +106,7 @@
         <% end %>
       </tbody>
     </table>
-  </form>
+  <% end %>
 
   <script type="text/javascript">
     var cells = $$(".checkbox-cell")

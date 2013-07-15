@@ -36,7 +36,7 @@ gem "i18n-js"
 
 group :development do
   gem "quiet_assets"
-  gem "hooves", :platforms => :mri
+  gem "puma"
 end
 
 group :test, :development do

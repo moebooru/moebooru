@@ -340,6 +340,8 @@ class PoolController < ApplicationController
   # Generate a ZIP control file for nginx, and redirect to the ZIP.
   if CONFIG["pool_zips"]
     def zip
+      # FIXME: should use the correct mime type instead of this hackery.
+      Rack::MiniProfiler.deauthorize_request
       pool = Pool.find(params[:id], :include => [:pool_posts => :post])
       @pool_zip = pool.get_zip_data(params)
       headers["X-Archive-Files"] = "zip"

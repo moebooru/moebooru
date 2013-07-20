@@ -156,7 +156,7 @@ Moebooru::Application.routes.draw do
   match 'post/destroy(.:format)(/:id)' => 'post#destroy', :via => [:post, :delete]
   post 'post/create(.:format)' => 'post#create'
 
-  match 'atom' => 'post#atom', :default => { :format => :atom }, :via => [:post, :get]
+  match 'atom' => 'post#atom', :defaults => { :format => :atom }, :via => [:post, :get]
   match 'download' => 'post#download', :via => [:post, :get]
   match 'histogram' => 'post#histogram', :via => [:post, :get]
 

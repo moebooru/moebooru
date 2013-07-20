@@ -2,7 +2,7 @@
 <html class="action-<%= params[:controller] %> action-<%= params[:controller] %>-<%= params[:action] %> hide-advanced-editing">
 <head>
 <% if params[:tags] =~ /(source:|fav:|date:|rating:|mpixels:|parent:|sub:|vote:|score:|order:|user:|limit:|holds:|pool:|[ \-])/ %>
-<meta name="robots" content="noindex">
+<meta name="robots" content="none">
 <% end %>
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <title><%= html_title %></title>

@@ -2,7 +2,7 @@ module PostParentMethods
   module ClassMethods
     def update_has_children(post_id)
       has_children = Post.exists?(["parent_id = ? AND status <> 'deleted'", post_id])
-      execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", has_children, post_id)
+      execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", !!has_children, post_id)
     end
 
     def recalculate_has_children

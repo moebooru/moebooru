@@ -983,7 +983,7 @@ zh_CN:
   report_level: "等级"
   report_limit: "限制"
   report_notes: "附录"
-  report_percet: "百分率"
+  report_percent: "百分率"
   report_search: "搜索"
   report_start: "起始日期"
   report_tags: "标签"

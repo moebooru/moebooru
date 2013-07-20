@@ -884,7 +884,7 @@ ja:
   report_level: "レベル"
   report_limit: "制限"
   report_notes: "注釈"
-  report_percet: "パーセンテージ"
+  report_percent: "パーセンテージ"
   report_search: "検索"
   report_start: "開始日"
   report_tags: "タグ"

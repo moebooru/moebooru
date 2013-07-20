@@ -631,7 +631,7 @@ ru:
   report_level: "Уровень"
   report_limit: "Ограничение"
   report_notes: "Заметки"
-  report_percet: "Проценты"
+  report_percent: "Проценты"
   report_search: "Поиск"
   report_start: "Начальная Дата"
   report_tags: "Метки"

@@ -56,7 +56,7 @@ class ForumPost < ActiveRecord::Base
     def self.included(m)
       m.after_create :update_parent_on_create
       m.before_destroy :update_parent_on_destroy
-      m.has_many :children, :class_name => "ForumPost", :foreign_key => :parent_id, :order => "id"
+      m.has_many :children, lambda { order "id" }, :class_name => "ForumPost", :foreign_key => :parent_id
       m.belongs_to :parent, :class_name => "ForumPost", :foreign_key => :parent_id
     end
 

@@ -49,7 +49,7 @@ Moebooru::Application.routes.draw do
   # Dmail
   match 'dmail(/inbox)' => 'dmail#inbox', :via => [:post, :get]
   match 'dmail/compose', :via => [:post, :get]
-  match 'dmail/preview', :via => [:post, :get]
+  get 'dmail/preview'
   match 'dmail/show(/:id)' => 'dmail#show', :via => [:post, :get]
   match 'dmail/show_previous_messages', :via => [:post, :get]
   post 'dmail/create'

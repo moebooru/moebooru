@@ -5,7 +5,7 @@ if defined? Unicorn
   GC.disable
   use Unicorn::OobGC, 5
   require 'unicorn/worker_killer'
-  use Unicorn::WorkerKiller::MaxRequests, 1024, 4096
+  use Unicorn::WorkerKiller::MaxRequests, 4096, 8192
 end
 
 require ::File.expand_path('../config/environment',  __FILE__)

@@ -69,7 +69,7 @@ Moebooru::Application.configure do
   config.active_support.deprecation = :notify
 
   config.middleware.use ExceptionNotification::Rack,
-    :ignore_exceptions => %w(ActionController::UnknownFormat) + ExceptionNotifier.ignored_exceptions,
+    :ignore_exceptions => %w(ActionController::BadRequest ActionController::UnknownFormat) + ExceptionNotifier.ignored_exceptions,
     :email => {
       :email_prefix => ('[%s] ' % CONFIG['app_name']),
       :sender_address => ('%s <%s>' % ['notifier', CONFIG['email_from']]),

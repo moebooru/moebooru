@@ -81,39 +81,42 @@
      * - set correct class based on read/unread
      */
     sync_forum_menu: function() {
-      var
-        self = this,
-        last_read = $.parseJSON($.cookie("forum_post_last_read_at")),
-        forum_menu_items = $.parseJSON($.cookie("forum_posts")),
-        forum_submenu = $("li.forum ul.submenu", self.menu),
-        forum_items_start = forum_submenu.find('.forum-items-start').show();
-        create_forum_item = function(post_data) {
-          return $("<li/>", {
-            html: $("<a/>", {
-              href: Moebooru.path("/forum/show/" + post_data.id + "?page=" + post_data.pages),
-              text: post_data.title,
-              title: post_data.title,
-              class: (post_data.updated_at > last_read) ? "unread-topic" : null
+      var self = this
+      $.get(Moebooru.path('/forum.json'),
+        { latest: 1 }, function(resp) {
+            last_read = $.parseJSON($.cookie("forum_post_last_read_at")),
+            forum_menu_items = resp,
+            forum_submenu = $("li.forum ul.submenu", self.menu),
+            forum_items_start = forum_submenu.find('.forum-items-start').show();
+            create_forum_item = function(post_data) {
+              return $("<li/>", {
+                html: $("<a/>", {
+                  href: Moebooru.path("/forum/show/" + post_data.id + "?page=" + post_data.pages),
+                  text: post_data.title,
+                  title: post_data.title,
+                  class: (post_data.updated_at > last_read) ? "unread-topic" : null
+                  })
               })
-          })
-        }
-      // Reset latest topics.
-      forum_items_start.nextAll().remove();
-      if (forum_menu_items.length > 0) {
-        $.each(forum_menu_items, function(_i, post_data) {
-          forum_submenu.append(create_forum_item(post_data))
-          forum_items_start.show();
-        })
-      }
+            }
+          // Reset latest topics.
+          forum_items_start.nextAll().remove();
+          if (forum_menu_items.length > 0) {
+            $.each(forum_menu_items, function(_i, post_data) {
+              forum_submenu.append(create_forum_item(post_data))
+              forum_items_start.show();
+            })
+          }
 
-      // Set correct class based on read/unread.
-      if (forum_menu_items.first().updated_at > last_read) {
-        $('#forum-link').addClass('forum-update');
-        $('#forum-mark-all-read').show();
-      } else {
-        $('#forum-link').removeClass('forum-update');
-        $('#forum-mark-all-read').hide();
-      };
+          // Set correct class based on read/unread.
+          if (forum_menu_items.first().updated_at > last_read) {
+            $('#forum-link').addClass('forum-update');
+            $('#forum-mark-all-read').show();
+          } else {
+            $('#forum-link').removeClass('forum-update');
+            $('#forum-mark-all-read').hide();
+          };
+        }
+      )
     },
 
     init: function() {

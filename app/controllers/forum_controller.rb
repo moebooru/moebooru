@@ -117,6 +117,8 @@ class ForumController < ApplicationController
   def index
     if params[:parent_id]
       @forum_posts = ForumPost.includes(:updater, :creator).paginate :order => "is_sticky desc, updated_at DESC", :per_page => 100, :conditions => ["parent_id = ?", params[:parent_id]], :page => page_number
+    elsif params[:latest]
+      @forum_posts = ForumPost.includes(:updater, :creator).where(:parent_id => nil).order("updated_at DESC").paginate(:page => 1, :per_page => 10)
     else
       @forum_posts = ForumPost.includes(:updater, :creator).paginate :order => "is_sticky desc, updated_at DESC", :per_page => 30, :conditions => "parent_id IS NULL", :page => page_number
     end

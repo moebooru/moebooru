@@ -316,16 +316,6 @@ class ApplicationController < ActionController::Base
     return if params[:format] == "xml" || params[:format] == "json"
 
     jsdata = {}
-    jsdata[:forum_posts] = Rails.cache.fetch "forum_posts" do
-      ForumPost.select([:id, :title, :updated_at, :response_count]).where(parent_id: nil).order("updated_at DESC").limit(10).map do |fp|
-        {
-          id: fp.id,
-          title: fp.title,
-          updated_at: fp.updated_at,
-          pages: ((fp.response_count == 0 ? 1 : fp.response_count) / 30.0).ceil
-        }
-      end
-    end
     jsdata[:forum_post_last_read_at] = if @current_user.is_anonymous?
       Time.now
     else

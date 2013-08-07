@@ -103,7 +103,9 @@ class ForumPost < ActiveRecord::Base
         :creator_id => creator_id,
         :id => id,
         :parent_id => parent_id,
-        :title => title
+        :title => title,
+        :updated_at => updated_at,
+        :pages => ((response_count == 0 ? 1 : response_count) / 30.0).ceil
       }
     end
 

@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/moebooru/moebooru.png)](https://codeclimate.com/github/moebooru/moebooru)
+
 Moebooru
 ========
 

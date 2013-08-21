@@ -237,7 +237,7 @@ Moebooru::Application.routes.draw do
   match 'user/unblock', :via => [:post, :get]
   match 'user/authenticate', :via => [:post, :put]
   match 'user/modify_blacklist', :via => [:post, :put]
-  match 'user/update', :via => [:post, :put]
+  match 'user/update', :via => [:post, :put, :patch]
   post 'user/create'
   post 'user/remove_avatar/:id' => 'user#remove_avatar'
 

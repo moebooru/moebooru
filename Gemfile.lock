@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/edogawaconan/minimagick.git
+  revision: bbe1f94b2ab834a2acc0e0965b6b6cc325b7d365
+  specs:
+    mini_magick (3.6.0)
+      subexec (~> 0.2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -72,8 +79,6 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.24)
-    mini_magick (3.6.0)
-      subexec (~> 0.2.1)
     mini_portile (0.5.1)
     minitest (4.7.5)
     multi_json (1.7.9)
@@ -195,7 +200,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   json
-  mini_magick
+  mini_magick!
   multi_json
   newrelic_rpm
   nokogiri

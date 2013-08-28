@@ -34,7 +34,7 @@ gem "addressable", :require => "addressable/uri"
 #        security fix. Newer version which fixes problems
 #        on Windows has yet to be released. Hence master
 #        version.
-gem "mini_magick"
+gem "mini_magick", :github => "edogawaconan/minimagick"
 gem "cache_digests"
 gem "i18n-js"
 

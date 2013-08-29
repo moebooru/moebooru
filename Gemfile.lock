@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/edogawaconan/minimagick.git
-  revision: bbe1f94b2ab834a2acc0e0965b6b6cc325b7d365
+  remote: git://github.com/minimagick/minimagick.git
+  revision: de72f6c83506059b3bb213ef19134f02f9404fcc
   specs:
     mini_magick (3.6.0)
       subexec (~> 0.2.1)

@@ -13,7 +13,7 @@ This project is based on original Moebooru which is being used in [yande.re Imag
 As this is still in development, bug reports are welcome.
 
 * [Demo site](http://moe.myconan.net)
-* [Source Repository](http://bitbucket.org/edogawaconan/moebooru)
+* [Source Repository](http://github.com/moebooru/moebooru)
 
 Requirements
 ------------
@@ -34,7 +34,7 @@ On RHEL5 (and 6), it goes like this:
 * jhead
 * libxslt-devel
 * libyaml-devel
-* mercurial
+* git
 * openssl-devel
 * pcre-devel
 * postgresql84-contrib

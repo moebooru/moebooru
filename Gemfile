@@ -9,7 +9,7 @@ gem "uglifier"
 gem "jquery-ui-rails"
 
 gem "pg", :platforms => [:ruby, :mswin, :mingw]
-gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
+gem "activerecord-jdbcpostgresql-adapter", "~> 1.3.0.rc1", :platforms => :jruby
 
 ### FIXME: remove this
 gem "actionpack-page_caching"

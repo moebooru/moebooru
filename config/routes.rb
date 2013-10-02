@@ -264,4 +264,7 @@ Moebooru::Application.routes.draw do
   post 'wiki/create(.:format)' => 'wiki#create'
 
   root :to => 'static#index'
+
+  get "errors/not_found" if Rails.env.development?
+  match "*path" => "errors#not_found", :via => :all unless Rails.env.development?
 end

@@ -40,11 +40,11 @@ Moebooru::Application.configure do
   config.log_formatter = Logger::Formatter.new
 
   # See everything in the log (default is :info)
-  config.log_level = :info
+  config.log_level = :warn
   config.logger = Logger.new(STDOUT)
 
   # Recommended by http://help.papertrailapp.com/kb/configuration/unicorn
-  config.logger.level = Logger.const_get('INFO')
+  config.logger.level = Logger.const_get('WARN')
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]

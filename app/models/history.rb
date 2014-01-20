@@ -1,6 +1,6 @@
 class History < ActiveRecord::Base
   belongs_to :user
-  has_many :history_changes, :order => "id"
+  has_many :history_changes, -> { order("id") }
 
   def aux
     return {} if aux_as_json.nil?

@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
 
   def log(ip)
     Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
-      Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_id => 1.day) do
+      Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_in => 1.day) do
         UserLog.where('created_at < ?', 3.days.ago).delete_all
       end
       begin

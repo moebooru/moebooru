@@ -1,9 +1,10 @@
 # This file is used by Rack-based servers to start the application.
 if defined? Unicorn
   use Raindrops::Middleware
-  require 'unicorn/oob_gc'
-  GC.disable
-  use Unicorn::OobGC, 5
+  require 'gctools/oobgc'
+    if defined?(Unicorn::HttpRequest)
+      use GC::OOB::UnicornMiddleware
+    end
   require 'unicorn/worker_killer'
   use Unicorn::WorkerKiller::MaxRequests, 4096, 8192
 end

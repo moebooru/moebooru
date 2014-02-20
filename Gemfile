@@ -51,6 +51,7 @@ group :standalone do
   platform :mri do
     gem "unicorn"
     gem "unicorn-worker-killer"
+    gem "gctools"
   end
   gem "puma", :platforms => [:jruby, :rbx]
   gem "thin", :platforms => [:mswin, :mingw]

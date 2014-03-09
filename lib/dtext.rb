@@ -109,15 +109,20 @@ module DText
   end
 
   def parseurl(str)
-    # Basic URL pattern
-    url = /(h?ttps?:\/\/\[?(:{0,2}[\w\-]+)((:{1,2}|\.)[\w\-]+)*\]?(:\d+)*(\/[^\s\n<]*)*)/
+    # url
+    str.gsub! %r{(^|[\s\(>])(h?ttps?://(?:(?!&gt;&gt;)[^\s<"])+[^\s<".])}, '\1<a href="\2">\2</a>'
 
-    # Substitute url tag in this form:
-    str.gsub!(/(^|[\s\(>])#{url}/, '\1<a href="\2">\2</a>')                       # url
-    str.gsub!(/&lt;&lt;\s*#{url}\s*\|\s*(.+?)\s*&gt;&gt;/, '<a href="\1">\7</a>') # <<url|label>>
-    str.gsub!(/(^|[\s>])&quot;(.+?)&quot;:#{url}/, '\1<a href="\3">\2</a>')       # "label":url
-    str.gsub!(/&lt;&lt;\s*#{url}\s*&gt;&gt;/, '<a href="\1">\1</a>')              # <<url>>
-    str.gsub!(/<a href="ttp/, '<a href="http')                                    # Fix ttp(s) scheme
+    # <<url|label>>
+    str.gsub! %r{&lt;&lt;(h?ttps?://(?:(?!&gt;&gt;).)+)\|((?:(?!&gt;&gt;).)+)&gt;&gt;}, '<a href="\1">\2</a>'
+
+    # <<url>>
+    str.gsub! %r{&lt;&lt;(h?ttps?:\/\/(?:(?!&gt;&gt;).)+)&gt;&gt;}, '<a href="\1">\1</a>'
+
+    # "label":url
+    str.gsub! %r{(^|[\s>])&quot;((?:(?!&quot;).)+)&quot;:(h?ttps?://[^\s<"]+[^\s<".])}, '\1<a href="\3">\2</a>'
+
+    # Fix ttp(s) scheme
+    str.gsub! /<a href="ttp/, '<a href="http'
     return str
   end
 

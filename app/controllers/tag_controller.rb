@@ -62,7 +62,7 @@ class TagController < ApplicationController
     end
 
     if params[:type].present?
-      @tags = @tags.where tag_type => params[:type].to_i
+      @tags = @tags.where :tag_type => params[:type].to_i
     end
 
     if params[:after_id].present?
@@ -70,7 +70,7 @@ class TagController < ApplicationController
     end
 
     if params[:id].present?
-      @tags = @tags.where id: params[:id].to_i
+      @tags = @tags.where :id => params[:id].to_i
     end
 
     @tags = if limit

@@ -1,27 +1,36 @@
 # encoding: utf-8
-require 'iconv' if RUBY_VERSION < '1.9'
 
 class String
   # Strip out invalid utf8
-  def to_valid_utf8
-    if RUBY_VERSION < '1.9'
+  if RUBY_VERSION > "2.1"
+    def to_valid_utf8
+      str = self
+      str.force_encoding Encoding::UTF_8
+      str.scrub "?"
+    end
+  elsif RUBY_VERSION > "1.9"
+    def to_valid_utf8
+      str = self
+      str.force_encoding Encoding::UTF_8
+      unless str.valid_encoding?
+        str.encode!(Encoding::UTF_16LE,
+                    :invalid => :replace,
+                    :undef => :replace,
+                    :replace => "?").encode! Encoding::UTF_8
+      end
+      str
+    end
+  else
+    require "iconv"
+
+    def to_valid_utf8
       # Use iconv on ruby 1.8.x
-      ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+      ic = Iconv.new("UTF-8//IGNORE", "UTF-8")
       # The weird iconv parameter is required thanks to iconv not stripping
-      # invalid character if it's at the end of input string.
+      # invalid character if it"s at the end of input string.
       # Reference:
       # - http://po-ru.com/diary/fixing-invalid-utf-8-in-ruby-revisited
-      return ic.iconv(self + ' ')[0..-2]
-    else
-      # This one faster than the one previously used (converting three times).
-      # Idea from here https://github.com/rails/rails/pull/3789/files
-      str = self
-      str.force_encoding(Encoding::UTF_8)
-      if str.valid_encoding?
-        str
-      else
-        str.chars.map{ |c| c.valid_encoding? ? c : '?' }.join
-      end
+      return ic.iconv(self + " ")[0..-2]
     end
   end
 

@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -584,39 +585,6 @@ CREATE SEQUENCE dmails_id_seq
 --
 
 ALTER SEQUENCE dmails_id_seq OWNED BY dmails.id;
-
-
---
--- Name: tag_subscriptions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tag_subscriptions (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    tag_query text NOT NULL,
-    cached_post_ids text DEFAULT ''::text NOT NULL,
-    name character varying(255) DEFAULT 'General'::character varying NOT NULL,
-    is_visible_on_profile boolean DEFAULT true NOT NULL
-);
-
-
---
--- Name: favorite_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE favorite_tags_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: favorite_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE favorite_tags_id_seq OWNED BY tag_subscriptions.id;
 
 
 --
@@ -1373,6 +1341,39 @@ CREATE TABLE tag_implications (
 
 
 --
+-- Name: tag_subscriptions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE tag_subscriptions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    tag_query text NOT NULL,
+    cached_post_ids text DEFAULT ''::text NOT NULL,
+    name character varying(255) DEFAULT 'General'::character varying NOT NULL,
+    is_visible_on_profile boolean DEFAULT true NOT NULL
+);
+
+
+--
+-- Name: tag_subscriptions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE tag_subscriptions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tag_subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE tag_subscriptions_id_seq OWNED BY tag_subscriptions.id;
+
+
+--
 -- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1736,7 +1737,7 @@ ALTER TABLE ONLY posts ALTER COLUMN change_seq SET DEFAULT nextval('post_change_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tag_subscriptions ALTER COLUMN id SET DEFAULT nextval('favorite_tags_id_seq'::regclass);
+ALTER TABLE ONLY tag_subscriptions ALTER COLUMN id SET DEFAULT nextval('tag_subscriptions_id_seq'::regclass);
 
 
 --
@@ -2689,28 +2690,48 @@ CREATE INDEX wiki_pages_search_idx ON wiki_pages USING gin (text_search_index);
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO pools DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO pools DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools'::text));
+);
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO pools_posts DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools_posts'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools_posts'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO pools_posts DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools_posts'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools_posts'::text));
+);
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO posts DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'posts'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'posts'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO posts DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'posts'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'posts'::text));
+);
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO tags DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'tags'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'tags'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO tags DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'tags'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'tags'::text));
+);
 
 
 --
@@ -3264,6 +3285,8 @@ ALTER TABLE ONLY users
 -- PostgreSQL database dump complete
 --
 
+SET search_path TO "$user",public;
+
 INSERT INTO schema_migrations (version) VALUES ('1');
 
 INSERT INTO schema_migrations (version) VALUES ('10');
@@ -3419,6 +3442,8 @@ INSERT INTO schema_migrations (version) VALUES ('20120921040720');
 INSERT INTO schema_migrations (version) VALUES ('20130326154700');
 
 INSERT INTO schema_migrations (version) VALUES ('20130326161630');
+
+INSERT INTO schema_migrations (version) VALUES ('20140309152432');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

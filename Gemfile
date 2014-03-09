@@ -56,4 +56,4 @@ end
 gem "oj", :platforms => :mri
 gem "multi_json"
 gem "jbuilder"
-gem "rack-mini-profiler"
+gem "rack-mini-profiler", :group => :development

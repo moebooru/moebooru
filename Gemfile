@@ -40,7 +40,6 @@ gem "i18n-js"
 
 group :development do
   gem "quiet_assets"
-  gem "puma"
 end
 
 group :standalone do
@@ -51,6 +50,10 @@ group :standalone do
   end
   gem "puma", :platforms => [:jruby, :rbx]
   gem "thin", :platforms => [:mswin, :mingw]
+end
+
+group :development do
+  gem "hooves", :platforms => :mri, :require => "hooves/default"
 end
 
 gem "oj", :platforms => :mri

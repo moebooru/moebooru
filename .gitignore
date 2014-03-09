@@ -1,5 +1,4 @@
 /.bundle
-/bin
 /config/database.yml
 /config/local_config.rb
 /config/newrelic.yml

@@ -32,77 +32,54 @@ class TagController < ApplicationController
   end
 
   def index
-    # TODO: convert to nagato
-    if params[:limit] == "0"
-      limit = nil
-    elsif params[:limit] == nil
-      limit = 50
-    else
-      limit = params[:limit].to_i
+    limit = case params[:limit].presence
+            when nil then 50
+            when "0" then nil
+            else params[:limit].to_i
+            end
+
+    order = case params[:order]
+            when "count"
+              "post_count desc"
+            when "date"
+              "id desc"
+            else
+              "name"
+            end
+
+    @tags = Tag.all
+
+    if params[:name].present?
+      keyword = if params[:name].include? "*"
+                  params[:name].to_escaped_for_sql_like
+                else
+                  "*#{params[:name]}*".to_escaped_for_sql_like
+                end
+      @tags = @tags.where "name LIKE ?", keyword
     end
 
-    case params[:order]
-    when "name"
-      order = "name"
-
-    when "count"
-      order = "post_count desc"
-
-    when "date"
-      order = "id desc"
-
-    else
-      order = "name"
+    if params[:type].present?
+      @tags = @tags.where tag_type => params[:type].to_i
     end
 
-    conds = ["true"]
-    cond_params = []
-
-    unless params[:name].blank?
-      conds << "name LIKE ? ESCAPE E'\\\\'"
-
-      if params[:name].include?("*")
-        cond_params << params[:name].to_escaped_for_sql_like
-      else
-        cond_params << "%" + params[:name].to_escaped_for_sql_like + "%"
-      end
+    if params[:after_id].present?
+      @tags = @tags.where "id >= ?", params[:after_id].to_i
     end
 
-    unless params[:type].blank?
-      conds << "tag_type = ?"
-      cond_params << params[:type].to_i
+    if params[:id].present?
+      @tags = @tags.where id: params[:id].to_i
     end
 
-    if params[:after_id]
-      conds << "id >= ?"
-      cond_params << params[:after_id]
-    end
-
-    if params[:id]
-      conds << "id = ?"
-      cond_params << params[:id]
-    end
+    @tags = if limit
+              @tags.paginate :per_page => limit, :page => page_number, :order => order
+            else
+              @tags.order order
+            end
 
     respond_to do |fmt|
-      fmt.html do
-        @tags = Tag.paginate :order => order, :per_page => 50, :conditions => [conds.join(" AND "), *cond_params], :page => page_number
-      end
-      fmt.xml do
-        order = nil if params[:order] == nil
-        conds = conds.join(" AND ")
-        if conds == "true" && CONFIG["web_server"] == "nginx" && File.exists?("#{Rails.root}/public/tags.xml")
-          # Special case: instead of rebuilding a list of every tag every time, cache it locally and tell the web
-          # server to stream it directly. This only works on Nginx.
-          response.headers["X-Accel-Redirect"] = "#{Rails.root}/public/tags.xml"
-          render :nothing => true
-        else
-          render :xml => Tag.find(:all, :order => order, :limit => limit, :conditions => [conds, *cond_params]).to_xml(:root => "tags")
-        end
-      end
-      fmt.json do
-        @tags = Tag.find(:all, :order => order, :limit => limit, :conditions => [conds.join(" AND "), *cond_params])
-        render :json => @tags.to_json
-      end
+      fmt.html
+      fmt.xml { render :xml => @tags, :root => "tags" }
+      fmt.json { render :json => @tags }
     end
   end
 

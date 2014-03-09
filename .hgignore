@@ -1,5 +1,4 @@
 ^\.bundle$
-^bin$
 ^config/database\.yml$
 ^config/local_config\.rb$
 ^config/newrelic\.yml$
@@ -9,6 +8,6 @@
 ^public/cache$
 ^public/data$
 ^public/robots\.txt$
-^public/sitemap*\.xml\.gz$
+^public/sitemap.*\.xml\.gz$
 ^tmp$
 ^vendor/bundle$

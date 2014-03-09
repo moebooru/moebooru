@@ -242,7 +242,7 @@ class ApplicationController < ActionController::Base
   #local_addresses.clear
 
   before_filter :set_current_user
-  before_filter :mini_profiler_check
+  before_filter :mini_profiler_check if Rails.env.development?
   before_filter :limit_api
   before_filter :set_country
   before_filter :check_ip_ban

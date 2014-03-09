@@ -341,7 +341,7 @@ class PoolController < ApplicationController
   if CONFIG["pool_zips"]
     def zip
       # FIXME: should use the correct mime type instead of this hackery.
-      Rack::MiniProfiler.deauthorize_request
+      Rack::MiniProfiler.deauthorize_request if Rails.env.development?
       pool = Pool.find(params[:id], :include => [:pool_posts => :post])
       @pool_zip = pool.get_zip_data(params)
       headers["X-Archive-Files"] = "zip"

@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
       end
 
       def authenticate_hash(name, pass)
-        find(:first, :conditions => ["lower(name) = lower(?) AND password_hash = ?", name, pass])
+        where("LOWER(users.name) = LOWER(?)", name).where(:password_hash => pass).first
       end
 
       def sha1(pass)

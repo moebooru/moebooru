@@ -1,7 +1,0 @@
-posts:
-  name: posts
-  row_count: 5
-
-users:
-  name: users
-  row_count: 5

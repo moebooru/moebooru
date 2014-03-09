@@ -43,10 +43,6 @@ group :development do
   gem "puma"
 end
 
-group :test, :development do
-  gem "rspec-rails"
-end
-
 group :standalone do
   platform :mri do
     gem "unicorn"

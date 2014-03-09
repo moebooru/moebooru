@@ -33,9 +33,12 @@ class TagController < ApplicationController
 
   def index
     limit = case params[:limit].presence
-            when nil then 50
-            when "0" then nil
-            else params[:limit].to_i
+            when nil
+              50
+            when "0"
+              request.format.html? ? 30 : nil
+            else
+              params[:limit].to_i
             end
 
     order = case params[:order]

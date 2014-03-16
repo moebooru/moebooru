@@ -43,8 +43,6 @@
     <% content_for :post_cookie_javascripts do %>
       <script type="text/javascript">
 
-        RelatedTags.init(Cookie.get('my_tags'), '<%= params[:url] %>')
-
         if (Cookie.get('resize_image') == '1') {
           Post.resize_image()
         }

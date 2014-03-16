@@ -62,12 +62,13 @@
             <td>
               <%= text_area "post", "tags", :readonly => !@post.can_be_seen_by?(@current_user), :size => "50x4", :value => @post.cached_tags, :tabindex => 10 %>
             <% if @post.can_be_seen_by?(@current_user) %>
-              <%= link_to_function t('.related.tags'), "RelatedTags.find('post_tags')" %> |
-              <%= link_to_function t('.related.artists'), "RelatedTags.find('post_tags', 'artist')" %> |
-              <%= link_to_function t('.related.characters'), "RelatedTags.find('post_tags', 'char')" %> |
-              <%= link_to_function t('.related.copyrights'), "RelatedTags.find('post_tags', 'copyright')" %>
+              <%= link_to t(".related.tags"), "#", :data => { :toggle => "related-tags", :type => "all" } %> |
+              <%= link_to t(".related.artists"), "#", :data => { :toggle => "related-tags", :type => "artist" } %> |
+              <%= link_to t(".related.characters"), "#", :data => { :toggle => "related-tags", :type => "char" } %> |
+              <%= link_to t(".related.copyrights"), "#", :data => { :toggle => "related-tags", :type => "copyright" } %> |
+              <%= link_to t("post.upload.form.find_related.circles"), "#", :data => { :toggle => "related-tags", :type => "circle" } %>
               <% if CONFIG["enable_artists"] %>
-              | <%= link_to_function(t('.find_artists'), "RelatedTags.find_artist($F('post_source'))") %>
+                | <%= link_to t(".find_artists"), "#", :data => { :toggle => "related-tags", :type => "artist-url" } %>
               <% end %>
             <% end %>
             </td>

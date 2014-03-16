@@ -1,0 +1,18 @@
+.tag-column {
+  h6 {
+    font-style: italic;
+  }
+
+  ul {
+    list-style: none;
+
+    li {
+      margin: 0;
+
+      a.highlighted {
+        color: white;
+        background: rgb(0, 111, 250);
+      }
+    }
+  }
+}

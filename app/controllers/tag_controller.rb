@@ -123,7 +123,7 @@ class TagController < ApplicationController
   end
 
   def related
-    if params[:type]
+    if params[:type].present?
       @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|

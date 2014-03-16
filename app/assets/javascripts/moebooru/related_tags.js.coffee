@@ -77,7 +77,7 @@ jQuery(document).ready ($) ->
       else
         newVal = "#{currentTags} #{tagName}"
 
-      newVal = "#{newVal.replace(/^\s+|\s+$/g, "").replace(/\s\s+/g, " ")} "
+      newVal = "#{newVal.trim().replace(/\s\s+/g, " ")} "
       newVal = "" if newVal == " "
 
       @source().val(newVal)

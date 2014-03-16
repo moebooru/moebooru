@@ -2,11 +2,14 @@ source "https://rubygems.org"
 
 gem "rails", "~> 4.0.0"
 gem "rails-observers"
+
+gem "coffee-rails", "~> 4.0.0"
+gem "coffee-rails-source-maps", :group => :development
 gem "jquery-rails"
+gem "jquery-ui-rails"
+gem "uglifier"
 
 gem "sass-rails"
-gem "uglifier"
-gem "jquery-ui-rails"
 
 gem "pg", :platforms => [:ruby, :mswin, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", "~> 1.3.0.rc1", :platforms => :jruby

@@ -79,9 +79,9 @@
               <% end %>
             </th>
             <td>
-              <%= text_field "post", "source", :value => params["url"], :size => 50, :tabindex => 2 %>
+              <%= text_field "post", "source", :value => (params["url"] || params["ref"]), :size => 50, :tabindex => 2 %>
               <% if CONFIG["enable_artists"] %>
-                <%= link_to_function(t('.form.find_artist'), "RelatedTags.find_artist($F('post_source'))") %>
+                <%= link_to t(".form.find_artist"), "#", :data => { :toggle => "related-tags", :type => "artist-url" } %>
               <% end %>
             </td>
           </tr>
@@ -94,11 +94,11 @@
             </th>
             <td>
               <%= text_area "post", "tags", :value => params[:tags], :size => "60x2", :tabindex => 3 %>
-              <%= link_to_function t('.form.find_related.tags'), "RelatedTags.find('post_tags')" %> |
-              <%= link_to_function t('.form.find_related.artists'), "RelatedTags.find('post_tags', 'artist')" %> |
-              <%= link_to_function t('.form.find_related.characters'), "RelatedTags.find('post_tags', 'char')" %> |
-              <%= link_to_function t('.form.find_related.copyrights'), "RelatedTags.find('post_tags', 'copyright')" %> |
-              <%= link_to_function t('.form.find_related.circles'), "RelatedTags.find('post_tags', 'circle')" %>
+              <%= link_to t(".form.find_related.tags"), "#", :data => { :toggle => "related-tags", :type => "all" } %> |
+              <%= link_to t(".form.find_related.artists"), "#", :data => { :toggle => "related-tags", :type => "artist" } %> |
+              <%= link_to t(".form.find_related.characters"), "#", :data => { :toggle => "related-tags", :type => "char" } %> |
+              <%= link_to t(".form.find_related.copyrights"), "#", :data => { :toggle => "related-tags", :type => "copyright" } %> |
+              <%= link_to t(".form.find_related.circles"), "#", :data => { :toggle => "related-tags", :type => "circle" } %>
             </td>
           </tr>
           <% if CONFIG["enable_parent_posts"] %>
@@ -159,12 +159,6 @@
     }
   }.bindAsEventListener());
 </script>
-
-<% content_for :post_cookie_javascripts do %>
-  <script type="text/javascript">
-    RelatedTags.init(Cookie.unescape(Cookie.get('my_tags')), '<%= params[:ref] || params[:url] %>')
-  </script>
-<% end %>
 
 <script type="text/javascript">
   new TagCompletionBox($("post_tags"));

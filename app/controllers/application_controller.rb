@@ -281,7 +281,7 @@ class ApplicationController < ActionController::Base
     if params[:tags] || (params[:post] && params[:post][:tags])
       tags = TagAlias.to_aliased((params[:tags] || params[:post][:tags]).to_s.to_valid_utf8.downcase.split)
       tags += cookies["recent_tags"].to_s.to_valid_utf8.downcase.split
-      cookies["recent_tags"] = tags.slice(0, 20).join(" ").uniq
+      cookies["recent_tags"] = tags.uniq.slice(0, 20).join(" ")
     end
   end
 

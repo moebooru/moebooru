@@ -2,6 +2,7 @@
 require 'digest/md5'
 
 class ApplicationController < ActionController::Base
+  before_action :filter_spam
   before_filter :set_locale
   before_filter :sanitize_params
 
@@ -430,5 +431,9 @@ class ApplicationController < ActionController::Base
       if @current_user.is_admin_or_higher?
         Rack::MiniProfiler.authorize_request
       end
+    end
+
+    def filter_spam
+      head :ok if params[:url1].present?
     end
 end

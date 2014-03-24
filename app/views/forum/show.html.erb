@@ -23,6 +23,7 @@
 
     <div id="reply" style="display: none; clear: both;">
       <%= form_tag({:action => "create"}, :level => :member) do %>
+        <%= render "shared/filter_spam" %>
         <%= hidden_field "forum_post", "title", :value => "" %>
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
         <%= text_area "forum_post", "body", :rows => 20, :cols => 80, :value => "" %>

@@ -25,7 +25,7 @@
         el.css('cursor', 'pointer');
         prevPos = [e.clientX, e.clientY];
         doc.on('mousemove', pageScroller);
-        doc.on('mouseup', function (e) {
+        doc.one('mouseup', function (e) {
           doc.off('mousemove', pageScroller);
           el.css('cursor', 'auto');
           return false;

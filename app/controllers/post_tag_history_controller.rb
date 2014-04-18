@@ -1,8 +1,5 @@
 class PostTagHistoryController < ApplicationController
-  layout 'default'
-
   def index
-    redirect_to :controller => "history", :action => "post"
-    return
+    redirect_to :controller => "post", :action => "index"
   end
 end

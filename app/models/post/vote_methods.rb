@@ -37,8 +37,12 @@ module PostVoteMethods
     if user.is_anonymous?
       return false
     end
-    vote = post_votes.find_or_initialize_by_user_id user.id
-    vote.update_attributes(:score => score, :updated_at => Time.now)
+    if score > 0
+      vote = post_votes.find_or_initialize_by :user_id => user.id
+      vote.update :score => score
+    else
+      post_votes.where(:user_id => user.id).delete_all
+    end
 
     recalculate_score!
 

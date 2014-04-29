@@ -1224,7 +1224,7 @@ CREATE TABLE post_votes (
     user_id integer NOT NULL,
     post_id integer NOT NULL,
     score integer DEFAULT 0 NOT NULL,
-    updated_at timestamp without time zone DEFAULT '2008-04-30 02:45:10.260864'::timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -3444,6 +3444,10 @@ INSERT INTO schema_migrations (version) VALUES ('20130326154700');
 INSERT INTO schema_migrations (version) VALUES ('20130326161630');
 
 INSERT INTO schema_migrations (version) VALUES ('20140309152432');
+
+INSERT INTO schema_migrations (version) VALUES ('20140427041839');
+
+INSERT INTO schema_migrations (version) VALUES ('20140429125422');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

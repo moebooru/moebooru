@@ -266,5 +266,5 @@ Moebooru::Application.routes.draw do
   root :to => 'static#index'
 
   get "errors/not_found" if Rails.env.development?
-  match "*path" => "errors#not_found", :via => :all unless Rails.env.development?
+  match "*path" => "errors#not_found", :via => [:get, :post] unless Rails.env.development?
 end

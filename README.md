@@ -5,7 +5,7 @@ Moebooru
 
 This project is based on original Moebooru which is being used in [yande.re Image Board](http://yande.re). Changes compared to original Moebooru:
 
-* Compatible with Ruby 1.9, JRuby 1.7, and Rubinius 2.0
+* Compatible with Ruby 1.9.3 and later (alternative implementations' compatiblity needs confirmation)
 * Uses Rails 4.0
 * Updated gems
 * Pool ZIP support for nginx (with `mod_zip`)

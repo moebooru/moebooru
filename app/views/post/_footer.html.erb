@@ -1,6 +1,6 @@
 <% content_for :subnavbar do %>
   <li><%= link_to t('.list'), :controller => "post", :action => "index" %></li>
-  <li><%= link_to t('.browse'), {:controller => "post", :action => "browse", :anchor => '/'} %></li>
+  <li><%= link_to t('.browse'), {:controller => "post", :action => "browse", :anchor => "#{params[:id]}/#{params[:tags]}"} %></li>
   <li><%= link_to t('.upload'), :controller => "post", :action => "upload" %></li>
   <!-- <li id="my-subscriptions-container"><%= link_to t('.subs'), "/", :id => "my-subscriptions" %></li> -->
   <li><%= link_to t('.random'), :controller => "post", :tags => "order:random" %></li>

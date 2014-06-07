@@ -44,11 +44,6 @@
 <% if !@post.is_deleted? && @post.use_sample?(@current_user) && @post.can_be_seen_by?(@current_user) && !@post.tags.include?("dakimakura")%>
   <div class="status-notice" style="display: none;" id="resized_notice">
     <%= t('.resized.info_html', :larger => link_to(t('.resized.view_larger'), @post.get_file_jpeg[:url], :class => "highres-show")) %>
-    <!--
-    <% unless @current_user.is_anonymous? || CONFIG["force_image_samples"] %>
-      <%= link_to_function t('.resized.always_view_original'), :onclick => "User.disable_samples()" %>.
-    <% end %>
-    -->
     <%= link_to_function t('.resized.hide'), "$('resized_notice').hide(); Cookie.put('hide_resized_notice', '1')" %>.
     <script type="text/javascript">
       if (Cookie.get("hide_resized_notice") != "1") {

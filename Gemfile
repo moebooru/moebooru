@@ -33,10 +33,6 @@ gem "newrelic_rpm"
 gem "nokogiri"
 gem "rails-i18n"
 gem "addressable", :require => "addressable/uri"
-# FIXME: 3.6.0 doesn't work on Windows but it contains
-#        security fix. Newer version which fixes problems
-#        on Windows has yet to be released. Hence master
-#        version.
 gem "mini_magick"
 gem "cache_digests"
 gem "i18n-js"

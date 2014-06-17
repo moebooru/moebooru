@@ -48,7 +48,7 @@ module TagHelper
     tags.each do |tag_type, name, count, id|
       name ||= "UNKNOWN"
 
-      html << %{<li class="tag-link tag-type-#{tag_type}" data-name="#{name}" data-type="#{tag_type}">}
+      html << %{<li class="tag-link tag-type-#{html_escape(tag_type)}" data-name="#{html_escape(name)}" data-type="#{html_escape(tag_type)}">}
 
       if CONFIG["enable_artists"] && tag_type == "artist"
         html << %{<a href="/artist/show?name=#{u(name)}">?</a> }

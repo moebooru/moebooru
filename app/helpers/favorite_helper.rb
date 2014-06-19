@@ -20,6 +20,6 @@ module FavoriteHelper
       end
     end
 
-    return html.html_safe
+    html.html_safe
   end
 end

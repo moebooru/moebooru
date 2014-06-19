@@ -3,13 +3,13 @@ source "https://rubygems.org"
 gem "rails", "~> 4.0.0"
 gem "rails-observers"
 
-gem "coffee-rails", "~> 4.0.0"
+gem "coffee-rails", "~> 4.0.0" # Rails default version
 gem "coffee-rails-source-maps", :group => :development
 gem "jquery-rails"
 gem "jquery-ui-rails"
-gem "uglifier"
+gem "uglifier", ">= 1.3.0" # Rails default version
 
-gem "sass-rails"
+gem "sass-rails", "~> 4.0.2" # Rails default version
 
 gem "pg", :platforms => [:ruby, :mswin, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", "~> 1.3.0.rc1", :platforms => :jruby
@@ -55,7 +55,7 @@ end
 
 gem "oj", :platforms => :mri
 gem "multi_json"
-gem "jbuilder"
+gem "jbuilder", "~> 1.2"
 
 # Must be last.
 gem "rack-mini-profiler", :group => :development

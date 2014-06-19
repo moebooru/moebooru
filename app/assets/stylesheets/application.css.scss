@@ -1,9 +1,15 @@
-/*
- *= require jquery.ui.all
- *= require webtoolkit.clearfix
- *= require_self
- *= require_tree .
- */
+@import "jquery.ui.all";
+@import "webtoolkit.clearfix";
+
+@import "autocomplete";
+@import "filter_spam";
+@import "menu";
+@import "pool";
+@import "profiler";
+@import "related_tags";
+
+@import "layouts/settings";
+
 body {
   word-wrap: break-word;
 }

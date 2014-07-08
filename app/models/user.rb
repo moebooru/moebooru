@@ -308,7 +308,7 @@ class User < ActiveRecord::Base
     end
 
     def post_count
-      @post_count ||= posts.where('status = ?', 'active').count
+      @post_count ||= posts.where(:status => 'active').count
     end
 
     def held_post_count

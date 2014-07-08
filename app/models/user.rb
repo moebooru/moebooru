@@ -328,13 +328,15 @@ class User < ActiveRecord::Base
     end
 
     def set_role
-      if User.first.nil?
-        self.level = CONFIG["user_levels"]["Admin"]
-      elsif CONFIG["enable_account_email_activation"]
-        self.level = CONFIG["user_levels"]["Unactivated"]
-      else
-        self.level = CONFIG["starting_level"]
-      end
+      self.level = if User.exists?
+                     if CONFIG["enable_account_email_activation"]
+                       CONFIG["user_levels"]["Unactivated"]
+                     else
+                       CONFIG["starting_level"]
+                     end
+                   else
+                     CONFIG["user_levels"]["Admin"]
+                   end
 
       self.last_logged_in_at = Time.now
     end

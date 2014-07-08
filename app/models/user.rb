@@ -289,8 +289,14 @@ class User < ActiveRecord::Base
   end
 
   module UserPostMethods
+    extend ActiveSupport::Concern
+
+    included do
+      has_many :posts
+    end
+
     def recent_uploaded_posts
-      Post.find_by_sql("SELECT p.* FROM posts p WHERE p.user_id = #{id} AND p.status <> 'deleted' ORDER BY p.id DESC LIMIT 6")
+      posts.available.order(:id => :desc).limit(6)
     end
 
     def recent_favorite_posts
@@ -302,7 +308,7 @@ class User < ActiveRecord::Base
     end
 
     def post_count
-      @post_count ||= Post.count(:conditions => ["user_id = ? AND status = 'active'", id])
+      @post_count ||= posts.where('status = ?', 'active').count
     end
 
     def held_post_count

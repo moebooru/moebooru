@@ -312,12 +312,7 @@ class User < ActiveRecord::Base
     end
 
     def held_post_count
-      version = Rails.cache.read("$cache_version").to_i
-      key = "held-post-count/v=#{version}/u=#{self.id}"
-
-      Rails.cache.fetch key do
-        Post.where(:user_id => self.id, :is_held => true).where("status <> ?", "deleted").count
-      end
+      posts.available.where(:is_held => true).count
     end
   end
 

@@ -170,7 +170,7 @@ class User < ActiveRecord::Base
       end
 
       def find_by_name(name)
-        where('lower(name) = lower(?)', name).first
+        find_by('LOWER(name) = LOWER(?)', name)
       end
     end
 

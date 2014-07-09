@@ -1,4 +1,6 @@
 #= require moebooru
+#= require utils/fixed-encode-uri-component
+
 jQuery(document).ready ($) ->
   window.Moebooru.relatedTags =
     recentTags: -> ($.cookie("recent_tags") || "").match(/\S+/g) || []
@@ -6,7 +8,7 @@ jQuery(document).ready ($) ->
     artistSource: -> $("#post_source").val()
     source: -> $ "#post_tags"
     target: -> $ "#related"
-    tagUrl: (tag) -> Moebooru.path "/post?tags=#{encodeURIComponent tag}"
+    tagUrl: (tag) -> Moebooru.path "/post?tags=#{fixedEncodeURIComponent(tag)}"
 
     getTags: ->
       source = @source()

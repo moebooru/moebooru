@@ -12,7 +12,7 @@ local_cache [@posts.map(&:id), params[:verbose]], expires: 1.hour do
         entry.content render(:partial => 'post_atom', :formats => :html, :locals => { :post => post, :post_url => post_url }), :type => 'html'
         entry.author do |author|
           author.name post.author
-          author.url url_for(:controller => :user, :action => :show, :id => post.user_id, :only_path => false)
+          author.uri url_for(:controller => :user, :action => :show, :id => post.user_id, :only_path => false)
         end
       end
     end

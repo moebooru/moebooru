@@ -30,12 +30,12 @@ SitemapGenerator::Sitemap.create_index = true
 SitemapGenerator::Sitemap.namer = SitemapGenerator::SimpleNamer.new(:sitemap, :zero => '_index')
 
 
-   Post.find(:all, :conditions => ["status != 'deleted'"]).each do |post|
-     add %{/post/show/#{post.id}}, :changefreq => 'daily'
+   Post.available.pluck(:id).each do |post_id|
+     add "/post/show/#{post_id}", :changefreq => "daily"
    end
 
-   Tag.find(:all).each do |tag|
-     add %{/post?tags=#{tag.name}}, :changefreq => 'daily'
+   Tag.pluck(:name).each do |tag_name|
+     add "/post?#{{ :tag => tag_name }.to_param}", :changefreq => "daily"
    end
 
 end

@@ -1,5 +1,7 @@
 # Set the host name for URL creation
-SitemapGenerator::Sitemap.default_host = "http://www.example.com"
+SitemapGenerator::Sitemap.default_host = "https://yande.re"
+SitemapGenerator::Sitemap.create_index = true
+SitemapGenerator::Sitemap.namer = SitemapGenerator::SimpleNamer.new(:sitemap, :zero => "_index")
 
 SitemapGenerator::Sitemap.create do
   # Put links creation logic here.
@@ -24,18 +26,11 @@ SitemapGenerator::Sitemap.create do
   #   Article.find_each do |article|
   #     add article_path(article), :lastmod => article.updated_at
   #   end
-SitemapGenerator::Sitemap.default_host = "https://yande.re"
+  Post.available.pluck(:id).each do |post_id|
+    add "/post/show/#{post_id}", :changefreq => "daily"
+  end
 
-SitemapGenerator::Sitemap.create_index = true
-SitemapGenerator::Sitemap.namer = SitemapGenerator::SimpleNamer.new(:sitemap, :zero => '_index')
-
-
-   Post.available.pluck(:id).each do |post_id|
-     add "/post/show/#{post_id}", :changefreq => "daily"
-   end
-
-   Tag.pluck(:name).each do |tag_name|
-     add "/post?#{{ :tag => tag_name }.to_param}", :changefreq => "daily"
-   end
-
+  Tag.pluck(:name).each do |tag_name|
+    add "/post?#{{ :tag => tag_name }.to_param}", :changefreq => "daily"
+  end
 end

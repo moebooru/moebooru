@@ -1,7 +1,7 @@
 module TagParseMethods
   module ClassMethods
     def scan_query(query)
-      query.to_s.downcase.split.uniq
+      query.to_s.to_valid_utf8.downcase.split.uniq
     end
 
     def scan_tags(tags)

@@ -849,7 +849,7 @@ ThumbnailView.prototype.expand_post = function(post_idx)
 
   var overlay = this.container.down(".browser-thumb-hover-overlay");
   overlay.hide();
-  overlay.down("IMG").src = "/assets/blank.gif";
+  overlay.down("IMG").src = "<%= image_path "blank.gif" %>";
 
   this.expanded_post_idx = post_idx;
   if(post_idx == null)

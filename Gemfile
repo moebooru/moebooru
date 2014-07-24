@@ -11,6 +11,8 @@ gem "uglifier", ">= 1.3.0" # Rails default version
 
 gem "sass-rails", "~> 4.0.2" # Rails default version
 
+gem "non-stupid-digest-assets"
+
 gem "pg", :platforms => [:ruby, :mswin, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", "~> 1.3.0.rc1", :platforms => :jruby
 

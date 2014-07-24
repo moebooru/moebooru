@@ -94,6 +94,7 @@ GEM
     nokogiri (1.6.2.1-java)
     nokogiri (1.6.2.1-x86-mingw32)
       mini_portile (= 0.6.0)
+    non-stupid-digest-assets (1.0.4)
     oj (2.9.9)
     pg (0.17.1)
     pg (0.17.1-x86-mingw32)
@@ -203,6 +204,7 @@ DEPENDENCIES
   multi_json
   newrelic_rpm
   nokogiri
+  non-stupid-digest-assets
   oj
   pg
   protected_attributes

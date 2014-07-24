@@ -3,20 +3,7 @@
   <head>
     <title>Too Many Requests (429)</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <style type="text/css">
-      body {
-        background: #222;
-        color: #fff;
-        font-family: tahoma, sans-serif;
-        text-align: center;
-      }
-      a {
-        color: #ee8887;
-        text-decoration: none;
-      }
-      a:hover { color: #ffaaae; }
-    </style>
+    <link rel="stylesheet" href="<%= stylesheet_path "application-error" %>">
   </head>
   <body>
     <h1>Too Many Requests</h1>
@@ -24,7 +11,10 @@
     <p>
       Abusive bot detected, calm down and try again in a hour.
       If you think this is incorrect, tweet <a href="https://twitter.com/yande_re">us</a>.
-      Connection limits: 5 total on <code>/image/</code> and <code>/jpeg/</code>, 5 on <code>/sample/</code>, and 1 on <code>/zip/</code>.
+    </p>
+
+    <p>
+      Connection limits: 5 on <code>/image/</code> and <code>/jpeg/</code>, 5 on <code>/sample/</code>, and 1 on <code>/zip/</code>.
       Configure download bot correctly or else stay banned.
     </p>
 

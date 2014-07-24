@@ -1,0 +1,22 @@
+body {
+  background: #222;
+  color: #fff;
+  font-family: tahoma, sans-serif;
+  text-align: center;
+  font-size: 13px;
+}
+
+a {
+  color: #ee8887;
+  text-decoration: none;
+
+  &:hover { color: #ffaaae; }
+}
+
+h1 { font-size: 2em; }
+
+p {
+  width: 30em;
+  margin: auto;
+  margin-bottom: 1em;
+}

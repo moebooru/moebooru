@@ -2,11 +2,13 @@ if defined?(::Encoding)
   require "rack/utils"
 
   module Rack::Utils
-    def unescape(s, encoding = Encoding::UTF_8)
-      decoded_string = URI.decode_www_form_component(s, encoding)
-      decoded_string.valid_encoding? ? decoded_string : nil
+    # Refuse to unescape anything other than UTF-8.
+    def unescape(s, _encoding = "")
+      # *Might* be garbage string. Scrub.
+      URI.decode_www_form_component(s, Encoding::UTF_8).to_valid_utf8
     rescue ArgumentError
-      nil
+      # Garbage string. Scrub.
+      s.to_valid_utf8
     end
     module_function :unescape
   end

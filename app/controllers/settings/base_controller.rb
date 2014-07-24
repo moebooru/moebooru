@@ -1,6 +1,6 @@
 class Settings::BaseController < ApplicationController
-  before_filter :no_anonymous
-  before_filter :set_user
+  before_action :no_anonymous
+  before_action :set_user
   layout 'settings'
 
   private

@@ -528,7 +528,7 @@ Post = {
       {
         if(bld)
         {
-          thumb.src = "/images/blank.gif";
+          thumb.src = "<%= image_path "blank.gif" %>";
 
           /* Trying to work around Firefox displaying the old thumb.src briefly before loading
            * the blacklisted thumbnail, even though they're applied at the same time: */
@@ -959,7 +959,7 @@ Post = {
     image.style.height = "auto";
     if(Post.is_blacklisted(post_id))
     {
-      image.src = "/images/blacklisted-preview.png";
+      image.src = "<%= image_path "blacklisted-preview.png" %>";
     }
     else
     {
@@ -1061,7 +1061,7 @@ Post = {
     {
       hover.hide();
       overlay.hide();
-      overlay.down("IMG").src = "/images/blank.gif";
+      overlay.down("IMG").src = "<%= image_path "blank.gif" %>";
       return;
     }
     hover.down("#hover-dimensions").innerHTML = post.width + "x" + post.height;

@@ -6,9 +6,9 @@
       document.write('<meta name="viewport" content="target-densityDpi=150; user-scalable=0;">');
 
     if(navigator.platform == "iPad")
-      document.write('<link rel="apple-touch-startup-image" href="/images/iphone-startup-ipad.png">');
+      document.write('<link rel="apple-touch-startup-image" href="<%= image_path "iphone-startup-ipad.png" %>">');
     else
-      document.write('<link rel="apple-touch-startup-image" href="/images/iphone-startup.png">');
+      document.write('<link rel="apple-touch-startup-image" href="<%= image_path "iphone-startup.png" %>">');
   </script>
 
   <meta name="apple-mobile-web-app-capable" content="yes" >
@@ -16,7 +16,7 @@
   <meta name="application-name" content="<%= CONFIG["app_name"].gsub(".", " ") %>">
   <meta name="application-url" content="/post/browse">
 
-  <link rel="apple-touch-icon" href="/images/iphone-icon.png">
+  <link rel="apple-touch-icon" href="<%= image_path "iphone-icon.png" %>">
   <style type="text/css">
     /* iPhone tends to highlight things oddly, sometimes even highlighting the
      * entire page on swipe.  Turn tap highlighting off. */
@@ -90,15 +90,15 @@
   <div class="post-info" style="display: none;">
     <ul class="post-info-right-edge" style="float: right; text-align: right;">
       <li style="margin-top: 1px; margin-right: 1px;">
-        <img style="cursor: pointer;" class="toggle-zoom zoom-icon-in" src="/images/icon-zoom-in.png" width=20 height=20>
-        <img style="cursor: pointer;" class="toggle-zoom zoom-icon-out" src="/images/icon-zoom-out.png" width=20 height=20>
-        <img style="" class="zoom-icon-none" src="/images/icon-zoom-none.png">
+        <img style="cursor: pointer;" class="toggle-zoom zoom-icon-in" src="<%= image_path "icon-zoom-in.png" %>" width=20 height=20>
+        <img style="cursor: pointer;" class="toggle-zoom zoom-icon-out" src="<%= image_path "icon-zoom-out.png" %>" width=20 height=20>
+        <img style="" class="zoom-icon-none" src="<%= image_path "icon-zoom-none.png" %>">
       </li>
       <li>
-        <img style="margin-top: 1px; margin-right: 1px; cursor: pointer;" class="flag-button member-only" src="/images/icon-flag.png" width=20 height=20>
+        <img style="margin-top: 1px; margin-right: 1px; cursor: pointer;" class="flag-button member-only" src="<%= image_path "icon-flag.png" %>" width=20 height=20>
       </li>
       <li>
-        <img style="margin-top: 1px; margin-right: 1px; cursor: pointer;" class="post-delete moderator-only" src="/images/icon-delete.png" width=20 height=20>
+        <img style="margin-top: 1px; margin-right: 1px; cursor: pointer;" class="post-delete moderator-only" src="<%= image_path "icon-delete.png" %>" width=20 height=20>
       </li>
     </ul>
 

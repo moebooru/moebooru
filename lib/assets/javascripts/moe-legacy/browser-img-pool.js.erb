@@ -47,7 +47,7 @@ var ImgPoolHandlerWebKit = Class.create({
      */
     img.observe("load", this.blank_image_loaded_event);
     this.pool_waiting.push(img);
-    img.src = "/images/blank.png";
+    img.src = "<%= image_path "blank.gif" %>";
   },
 
   blank_image_loaded_event: function(event)
@@ -67,7 +67,7 @@ var ImgPoolHandlerDummy = Class.create({
 
   release: function(img)
   {
-    img.src = "/images/blank.png";
+    img.src = "<%= image_path "blank.gif" %>";
   }
 });
 

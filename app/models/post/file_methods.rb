@@ -305,7 +305,7 @@ module PostFileMethods
   def set_image_status
     return true if not image_is_too_small
 
-    return if self.user.is_contributor_or_higher?
+    return if self.user.try(:is_contributor_or_higher?)
 
     self.status = "pending"
     self.status_reason = "low-res"

@@ -2,7 +2,7 @@
 <div id="post-popular">
   <h3>
     <% ["1d","1w","1m","1y"].each do |period| %>
-      <% if @params[:period] == period %>
+      <% if params[:period] == period %>
         <%= @period_name.capitalize %>
       <% else %>
         <%= link_to period, :controller => "post", :action => "popular_recent", :period => period %>

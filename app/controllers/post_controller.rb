@@ -57,7 +57,7 @@ class PostController < ApplicationController
       user_id = @current_user.id
     end
 
-    @post = Post.create((params[:post] || {})).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
+    @post = Post.create((params[:post] || {}).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase

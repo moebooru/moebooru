@@ -15,7 +15,7 @@ class TagImplicationController < ApplicationController
   end
 
   def update
-    ids = params[:implications].keys
+    ids = params[:implications].try(:keys)
 
     case params[:commit]
     when "Delete"
@@ -43,6 +43,8 @@ class TagImplicationController < ApplicationController
       else
         access_denied
       end
+    else
+      head :bad_request
     end
   end
 

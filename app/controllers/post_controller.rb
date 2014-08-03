@@ -459,7 +459,6 @@ class PostController < ApplicationController
       period = 1.day
     end
 
-    @params = params
     @end = Time.now
     @start = @end - period
     @previous = @start - period

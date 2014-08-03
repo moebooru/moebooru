@@ -470,41 +470,27 @@ class PostController < ApplicationController
   end
 
   def popular_by_day
-    if params[:year] && params[:month] && params[:day]
-      @day = Time.gm(params[:year].to_i, params[:month], params[:day])
-    else
-      @day = Time.new.getgm.at_beginning_of_day
-    end
+    @day = query_date.beginning_of_day
 
-    @posts = Post.available.where('created_at BETWEEN ? AND ?', @day, @day.tomorrow).order('score DESC').limit(20)
+    @posts = Post.available.where(:created_at => @day.all_day).order(:score => :desc).limit(20)
 
     respond_to_list("posts")
   end
 
   def popular_by_week
-    if params[:year] && params[:month] && params[:day]
-      @start = Time.gm(params[:year].to_i, params[:month], params[:day]).beginning_of_week
-    else
-      @start = Time.new.getgm.beginning_of_week
-    end
+    @start = query_date.beginning_of_week
+    @end = @start.end_of_week
 
-    @end = @start.next_week
-
-    @posts = Post.available.where('created_at BETWEEN ? AND ?', @start, @end).order('score DESC').limit(20)
+    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(20)
 
     respond_to_list("posts")
   end
 
   def popular_by_month
-    if params[:year] && params[:month]
-      @start = Time.gm(params[:year].to_i, params[:month], 1)
-    else
-      @start = Time.new.getgm.beginning_of_month
-    end
+    @start = query_date.beginning_of_month
+    @end = @start.end_of_month
 
-    @end = @start.next_month
-
-    @posts = Post.available.where('created_at BETWEEN ? AND ?', @start, @end).order('score DESC').limit(20)
+    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(20)
 
     respond_to_list("posts")
   end
@@ -872,4 +858,17 @@ class PostController < ApplicationController
     send_data data, :filename => filename, :disposition => "attachment", :type => type
   end
 
+  private
+
+  def query_date
+    begin
+      @query_date ||= if params[:year] && params[:month]
+                        Time.local params[:year], params[:month], (params[:day] || 1)
+                      else
+                        Time.current
+                      end
+    rescue ArgumentError
+      head :bad_request
+    end
+  end
 end

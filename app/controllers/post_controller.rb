@@ -464,7 +464,7 @@ class PostController < ApplicationController
     @start = @end - period
     @previous = @start - period
 
-    @posts = Post.find(:all, :conditions => ["status <> 'deleted' AND posts.index_timestamp >= ? AND posts.index_timestamp <= ? ", @start, @end], :order => "score DESC", :limit => 20)
+    @posts = Post.available.where(:index_timestamp => @start..@end).order(:score => :desc).limit(20)
 
     respond_to_list("posts")
   end

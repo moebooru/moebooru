@@ -152,6 +152,7 @@ class UserController < ApplicationController
   end
 
   def login
+    respond_to { |format| format.html }
   end
 
   def create

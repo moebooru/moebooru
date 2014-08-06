@@ -2,6 +2,7 @@ class TagController < ApplicationController
   layout 'default'
   before_filter :mod_only, :only => [:mass_edit, :edit_preview]
   before_filter :member_only, :only => [:update, :edit]
+  before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
 
   def cloud
     @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}
@@ -165,33 +166,21 @@ class TagController < ApplicationController
   end
 
   def popular_by_day
-    if params["year"] and params["month"] and params["day"]
-      @day = Time.gm(params["year"].to_i, params["month"], params["day"])
-    else
-      @day = Time.new.getgm.at_beginning_of_day
-    end
+    @day = @query_date.beginning_of_day
 
-    @tags = Tag.count_by_period(@day.beginning_of_day, @day.tomorrow.beginning_of_day)
+    @tags = Tag.count_by_period(@day, @day.end_of_day)
   end
 
   def popular_by_week
-    if params["year"] and params["month"] and params["day"]
-      @day = Time.gm(params["year"].to_i, params["month"], params["day"]).beginning_of_week
-    else
-      @day = Time.new.getgm.at_beginning_of_day.beginning_of_week
-    end
+    @day = @query_date.beginning_of_week
 
-    @tags = Tag.count_by_period(@day, @day.next_week)
+    @tags = Tag.count_by_period(@day, @day.end_of_week)
   end
 
   def popular_by_month
-    if params["year"] and params["month"]
-      @day = Time.gm(params["year"].to_i, params["month"], params["day"]).beginning_of_month
-    else
-      @day = Time.new.getgm.at_beginning_of_day.beginning_of_month
-    end
+    @day = @query_date.beginning_of_month
 
-    @tags = Tag.count_by_period(@day, @day.next_month)
+    @tags = Tag.count_by_period(@day, @day.end_of_month)
   end
 
   def show

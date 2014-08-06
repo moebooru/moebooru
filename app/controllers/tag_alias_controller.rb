@@ -31,7 +31,7 @@ class TagAliasController < ApplicationController
   end
 
   def update
-    ids = params[:aliases].keys
+    ids = params[:aliases].try(:keys)
 
     case params[:commit]
     when "Delete"
@@ -59,6 +59,8 @@ class TagAliasController < ApplicationController
       else
         access_denied
       end
+    else
+      head :bad_request
     end
   end
 end

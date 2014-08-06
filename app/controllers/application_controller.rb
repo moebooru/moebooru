@@ -2,6 +2,7 @@
 require 'digest/md5'
 
 class ApplicationController < ActionController::Base
+  rescue_from ActiveRecord::StatementInvalid, with: :rescue_pg_invalid_date
   before_action :filter_spam
   before_filter :set_locale
   before_filter :sanitize_params
@@ -387,6 +388,15 @@ class ApplicationController < ActionController::Base
     if @from_api && !(request.format.xml? || request.format.json? || request.format.zip?)
       request.session_options[:skip] = true
       render nothing: true, status: 404
+    end
+  end
+
+  # FIXME: better error handling instead of blank 400.
+  def rescue_pg_invalid_date(exception)
+    if exception.original_exception.class == PG::DatetimeFieldOverflow
+      head :bad_request
+    else
+      raise exception
     end
   end
 

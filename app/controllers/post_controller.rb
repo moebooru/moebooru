@@ -857,18 +857,4 @@ class PostController < ApplicationController
 
     send_data data, :filename => filename, :disposition => "attachment", :type => type
   end
-
-  private
-
-  def set_query_date
-    begin
-      @query_date ||= if params[:year] && params[:month]
-                        Time.local params[:year], params[:month], (params[:day] || 1)
-                      else
-                        Time.current
-                      end
-    rescue ArgumentError
-      head :bad_request
-    end
-  end
 end

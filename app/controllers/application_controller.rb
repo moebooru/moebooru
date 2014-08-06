@@ -400,6 +400,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_query_date
+    begin
+      @query_date ||= if params[:year] && params[:month]
+                        Time.local params[:year], params[:month], (params[:day] || 1)
+                      else
+                        Time.current
+                      end
+    rescue ArgumentError
+      head :bad_request
+    end
+  end
+
     def set_locale
       if params[:locale] and CONFIG['available_locales'].include?(params[:locale])
         cookies['locale'] = { :value => params[:locale], :expires => 1.year.from_now }

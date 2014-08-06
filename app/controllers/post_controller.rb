@@ -10,6 +10,7 @@ class PostController < ApplicationController
   before_filter :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
   before_filter :post_member_only, :only => [:update, :upload, :flag]
   before_filter :janitor_only, :only => [:moderate, :undelete]
+  before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
   after_filter :save_tags_to_cookie, :only => [:update, :create]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
@@ -469,7 +470,7 @@ class PostController < ApplicationController
   end
 
   def popular_by_day
-    @day = query_date.beginning_of_day
+    @day = @query_date.beginning_of_day
 
     @posts = Post.available.where(:created_at => @day.all_day).order(:score => :desc).limit(20)
 
@@ -477,7 +478,7 @@ class PostController < ApplicationController
   end
 
   def popular_by_week
-    @start = query_date.beginning_of_week
+    @start = @query_date.beginning_of_week
     @end = @start.end_of_week
 
     @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(20)
@@ -486,7 +487,7 @@ class PostController < ApplicationController
   end
 
   def popular_by_month
-    @start = query_date.beginning_of_month
+    @start = @query_date.beginning_of_month
     @end = @start.end_of_month
 
     @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(20)
@@ -859,7 +860,7 @@ class PostController < ApplicationController
 
   private
 
-  def query_date
+  def set_query_date
     begin
       @query_date ||= if params[:year] && params[:month]
                         Time.local params[:year], params[:month], (params[:day] || 1)

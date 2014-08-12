@@ -174,7 +174,7 @@ class HistoryController < ApplicationController
       @type = @changes.first.group_by_table.pluralize
     end
 
-    render :action => :index
+    respond_to { |format| format.html }
   end
 
   def undo

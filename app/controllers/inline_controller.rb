@@ -139,16 +139,10 @@ class InlineController < ApplicationController
   end
 
   def crop
-    @inline = Inline.find_by_id(params[:id])
-    @image = @inline.inline_images[0] rescue nil
-    if @inline.nil? || @image.nil?
-      redirect_to "/404"
-      return
-    end
-    unless @current_user.has_permission?(@inline)
-      access_denied()
-      return
-    end
+    @inline = Inline.find(params[:id])
+    @image = @inline.inline_images.take!
+
+    return access_denied unless @current_user.has_permission? @inline
 
     if request.post?
       if @inline.crop(params) then

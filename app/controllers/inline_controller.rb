@@ -134,11 +134,8 @@ class InlineController < ApplicationController
   end
 
   def edit
-    @inline = Inline.find_by_id(params[:id])
-    if @inline.nil?
-      redirect_to "/404"
-      return
-    end
+    @inline = Inline.find(params[:id])
+    respond_to { |format| format.html }
   end
 
   def crop

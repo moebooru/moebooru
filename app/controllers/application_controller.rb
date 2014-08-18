@@ -2,7 +2,7 @@
 require 'digest/md5'
 
 class ApplicationController < ActionController::Base
-  rescue_from ActiveRecord::StatementInvalid, with: :rescue_pg_invalid_date
+  rescue_from ActiveRecord::StatementInvalid, with: :rescue_pg_invalid_query
   before_action :filter_spam
   before_filter :set_locale
   before_filter :sanitize_params
@@ -392,8 +392,9 @@ class ApplicationController < ActionController::Base
   end
 
   # FIXME: better error handling instead of blank 400.
-  def rescue_pg_invalid_date(exception)
-    if exception.original_exception.class == PG::DatetimeFieldOverflow
+  def rescue_pg_invalid_query(exception)
+    case exception.original_exception
+    when PG::DatetimeFieldOverflow, PG::NumericValueOutOfRange
       head :bad_request
     else
       raise exception

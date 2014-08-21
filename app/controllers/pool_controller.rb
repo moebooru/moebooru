@@ -275,7 +275,7 @@ class PoolController < ApplicationController
 
     if request.post?
       PoolPost.transaction do
-        params[:pool_post_sequence].each do |i, seq|
+        params.fetch(:pool_post_sequence, []).each do |i, seq|
           PoolPost.update(i, :sequence => seq)
         end
 

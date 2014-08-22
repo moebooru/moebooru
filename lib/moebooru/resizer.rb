@@ -4,10 +4,11 @@ module Moebooru
   module Resizer
     class ResizeError < Exception; end
 
-    # Meaning of sRGB and RGB flipped at 6.7.5.
-    # Reference: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=20501
     BGCOLOR = (CONFIG["bgcolor"] if defined? CONFIG) || "white"
     ICC_DIR = File.expand_path "../resizer/icc", __FILE__
+
+    # Meaning of sRGB and RGB flipped at 6.7.5.
+    # Reference: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=20501
     TARGET_COLORSPACE = MiniMagick::image_magick_version >= Gem::Version.create('6.7.5') ?
                         'sRGB' : 'RGB'
 

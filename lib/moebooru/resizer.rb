@@ -4,13 +4,21 @@ module Moebooru
 
     # Meaning of sRGB and RGB flipped at 6.7.5.
     # Reference: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=20501
+    ICC_DIR = File.expand_path "../resizer/icc", __FILE__
     TARGET_COLORSPACE = MiniMagick::image_magick_version >= Gem::Version.create('6.7.5') ?
                         'sRGB' : 'RGB'
 
     def resize(file_ext, read_path, write_path, output_size, output_quality)
       image = MiniMagick::Image.open(read_path)
-      output_size[:width] ||= image[:width]
-      output_size[:height] ||= image[:height]
+      from_cmyk = image[:colorspace].end_with? 'CMYK'
+      if output_size[:width] && output_size[:height].nil?
+        output_size[:height] = image[:height] * output_size[:width] / image[:width]
+      elsif output_size[:height] && output_size[:width].nil?
+        output_size[:width] = image[:width] * output_size[:height] / image[:height]
+      else
+        output_size[:width] ||= image[:width]
+        output_size[:height] ||= image[:height]
+      end
       output_size[:crop_top] ||= 0
       output_size[:crop_bottom] ||= image[:height]
       output_size[:crop_left] ||= 0
@@ -36,6 +44,11 @@ module Moebooru
         f.repage.+
         if write_format =~ /\Ajpe?g\z/
           f.sampling_factor '2x2,1x1,1x1'
+        end
+        # Explicitly convert CMYK images
+        if from_cmyk
+          f.profile "#{ICC_DIR}/ISOcoated_v2_bas.ICC"
+          f.profile "#{ICC_DIR}/sRGB.icc"
         end
         # Any other colorspaces suck for storing images.
         # Since we're just resizing stuff here, actual colorspace shouldn't

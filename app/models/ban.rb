@@ -27,7 +27,5 @@ class Ban < ActiveRecord::Base
     @duration = dur
   end
 
-  def duration
-    @duration
-  end
+  attr_reader :duration
 end

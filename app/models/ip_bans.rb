@@ -11,7 +11,5 @@ class IpBans < ActiveRecord::Base
     end
   end
 
-  def duration
-    @duration
-  end
+  attr_reader :duration
 end

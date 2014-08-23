@@ -18,7 +18,7 @@ class CreateUserBlacklistedTags < ActiveRecord::Migration
 
     User.find(:all, :order => "id").each do |user|
       unless user[:blacklisted_tags].blank?
-        tags = user[:blacklisted_tags].scan(/\S+/).each do |tag|
+        user[:blacklisted_tags].scan(/\S+/).each do |tag|
           UserBlacklistedTags.create(:user_id => user.id, :tags => tag)
         end
       end

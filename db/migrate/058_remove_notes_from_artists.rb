@@ -7,7 +7,7 @@ class RemoveNotesFromArtists < ActiveRecord::Migration
       if page
         page.update_attributes(:body => notes, :ip_addr => "127.0.0.1", :user_id => 1)
       else
-        page = WikiPage.create(:title => artist.name, :body => notes, :ip_addr => "127.0.0.1", :user_id => 1)
+        WikiPage.create(:title => artist.name, :body => notes, :ip_addr => "127.0.0.1", :user_id => 1)
       end
     end
 

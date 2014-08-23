@@ -69,7 +69,7 @@ class PostFrames < ActiveRecord::Base
   def self.process_frames(update_status=nil)
     # Find a post with out-of-date frames.  This SQL is designed to use the
     # post_frames_out_of_date index.
-    post = Post.find(:first, :conditions => ["frames <> frames_pending AND (frames <> '' OR frames_pending <> '')"])
+    post = Post.find_by("frames <> frames_pending AND (frames <> '' OR frames_pending <> '')")
     if not post.nil?
       if update_status then
         update_status.call("Creating frames for post #{post.id}")
@@ -79,9 +79,14 @@ class PostFrames < ActiveRecord::Base
   end
 
   def self.find_frame(frame_desc)
-    conds = ["post_id = ? AND source_left = ? AND source_top = ? AND source_width = ? AND source_height = ?",
-      frame_desc[:post_id], frame_desc[:source_left], frame_desc[:source_top], frame_desc[:source_width], frame_desc[:source_height]]
-    return PostFrames.find(:first, :conditions => conds)
+    conds = {
+      :post_id => frame_desc[:post_id],
+      :source_left => frame_desc[:source_left],
+      :source_top => frame_desc[:source_top],
+      :source_width => frame_desc[:source_width],
+      :source_height => frame_desc[:source_height]
+    }
+    PostFrames.find_by(conds)
   end
 
   def self.process_post(post)
@@ -91,7 +96,7 @@ class PostFrames < ActiveRecord::Base
     # and set it false for the rest.
     frames = PostFrames.parse_frames(post.frames_pending, post.id)
 
-    execute_sql("UPDATE post_frames SET is_target = 'f' WHERE post_id = ?", post.id)
+    where(:post_id => post.id).update_all(:is_target => false)
     frames.each_index do |idx|
       frame_desc = frames[idx]
       frame = PostFrames.find_frame(frame_desc)
@@ -108,7 +113,7 @@ class PostFrames < ActiveRecord::Base
     # work to do.
     #
     # Try to find a post that needs to be created.
-    frame = PostFrames.find(:first, :conditions => ["post_id = ? AND is_target AND NOT is_created", post.id])
+    frame = PostFrames.find_by(:post_id => post.id, :is_target => true, :is_created => false)
     if frame then
       frame.create_file
       return true
@@ -117,7 +122,7 @@ class PostFrames < ActiveRecord::Base
     # All frames are created.  Finalize the frames, activating the target ones and deactivating the
     # old non-target ones.
     logger.info("Finished creating frames for post #{post.id}; finalizing")
-    execute_sql("UPDATE post_frames SET is_active=is_target WHERE post_id=?", post.id)
+    where(:post_id => post.id).update_all('is_active = is_target')
 
     # Set frames_warehoused to true only if all of the new target frames are already warehoused.
     frames_warehoused = !PostFrames.exists?(["post_id = ? AND is_target AND NOT is_warehoused", post.id])
@@ -132,11 +137,11 @@ class PostFrames < ActiveRecord::Base
   # Warehouse frames.  Only frames which are created and finalized will be warehoused.
   def self.warehouse_frames(update_status=nil)
     # Find a post with frames that need warehousing.
-    post = Post.find(:first, :conditions => ["frames = frames_pending AND frames <> '' AND NOT frames_warehoused"])
+    post = Post.find_by("frames = frames_pending AND frames <> '' AND NOT frames_warehoused")
     return false if post.nil?
 
     # Try to find a frame that needs to be warehoused.
-    frame = PostFrames.find(:first, :conditions => ["post_id = ? AND is_active AND NOT is_warehoused", post.id])
+    frame = PostFrames.find_by(:post_id => post.id, :is_active => true, :is_warehoused => false)
     if frame then
       if update_status then
         update_status.call("Warehousing frames for post #{frame.post_id}")
@@ -157,7 +162,7 @@ class PostFrames < ActiveRecord::Base
     end
 
     # Find a file that needs to be unwarehoused.
-    frame = PostFrames.find(:first, :conditions => ["NOT is_target AND NOT is_active AND is_warehoused"])
+    frame = PostFrames.find_by(:is_target => false, :is_active => false, :is_warehoused => true)
     if not frame.nil? then
       if update_status then
         update_status.call("Unwarehousing old frames for post #{frame.post_id}")
@@ -171,7 +176,7 @@ class PostFrames < ActiveRecord::Base
 
     # Find a file that needs to be deleted.  Only do this after unwarehousing the image, so we don't
     # end up in a confusing state where a file is on a mirror and not the master.
-    frame = PostFrames.find(:first, :conditions => ["NOT is_active AND NOT is_target AND is_created AND NOT is_warehoused"])
+    frame = PostFrames.find_by(:is_active => false, :is_target => false, :is_create => true, :is_warehoused => false)
     if not frame.nil? then
       logger.info("Deleting #{frame.id}")
       FileUtils.rm_f(frame.file_path)
@@ -180,7 +185,7 @@ class PostFrames < ActiveRecord::Base
     end
 
     # Delete any records that are completely cleaned up.
-    execute_sql("DELETE FROM post_frames pp WHERE NOT is_target AND NOT is_active AND NOT is_created AND NOT is_warehoused")
+    delete_all :is_target => false, :is_active => false, :is_created => false, :is_warehoused => false
   end
 
   def create_file

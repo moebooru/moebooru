@@ -38,7 +38,7 @@ module Post::ApiMethods
       :frames_pending_string => frames_pending,
       :frames_pending => frames_api_data(frames_pending),
       :frames_string => frames,
-      :frames => frames_api_data(frames),
+      :frames => frames_api_data(frames)
     }
 
     if status == "deleted"
@@ -74,7 +74,7 @@ module Post::ApiMethods
   def api_data
     {
       :post => self,
-      :tags => Tag.batch_get_tag_types_for_posts([self]),
+      :tags => Tag.batch_get_tag_types_for_posts([self])
     }
   end
 

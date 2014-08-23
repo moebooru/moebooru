@@ -150,7 +150,7 @@ module ActiveRecord
         opt = {
           :class => to_s.to_sym,
           :controller => to_s,
-          :action => "show",
+          :action => "show"
         }.merge(options)
 
         unless opt[:foreign_key]

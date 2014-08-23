@@ -95,7 +95,7 @@ class ApplicationTest < ActiveSupport::TestCase
           { :rating => "e" }, { :rating => "s" },
 
           # rating code path is different for metatags:
-          { :tags => "rating:e" }, { :tags => "rating:s" },
+          { :tags => "rating:e" }, { :tags => "rating:s" }
         ],
         # changing either way from s -> e -> s should invalidate both s and e
         :affected_searches => ["rating:s", "rating:e", "-rating:s", "-rating:e", "id:1", "pool:#{pool_id}"]
@@ -114,10 +114,10 @@ class ApplicationTest < ActiveSupport::TestCase
           { :tags => "pool:dummy" },
           { :tags => "-pool:dummy" },
           { :tags => "pool:#{pool_id}" },
-          { :tags => "-pool:#{pool_id}" },
+          { :tags => "-pool:#{pool_id}" }
         ],
         :affected_searches => ["pool:dummy", "pool:#{pool_id}"]
-      },
+      }
     ]
 
     tests.each do |test|

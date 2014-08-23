@@ -321,7 +321,7 @@ class InlineImage < ActiveRecord::Base
       :description => description,
       :file_url => file_url,
       :sample_url => sample_url,
-      :preview_url => preview_url,
+      :preview_url => preview_url
     }
   end
 

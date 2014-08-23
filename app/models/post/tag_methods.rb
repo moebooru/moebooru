@@ -42,7 +42,7 @@ module Post::TagMethods
         :removed_tags => old_tags - new_tags,
         :unchanged_tags => new_tags & old_tags,
         :obsolete_added_tags => (new_tags - old_tags) - latest_tags,
-        :obsolete_removed_tags => (old_tags - new_tags) & latest_tags,
+        :obsolete_removed_tags => (old_tags - new_tags) & latest_tags
       }
     end
   end

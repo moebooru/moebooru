@@ -42,7 +42,7 @@ class PoolPost < ActiveRecord::Base
         :active => active,
         :sequence => sequence,
         :next_post_id => next_post_id,
-        :prev_post_id => prev_post_id,
+        :prev_post_id => prev_post_id
       }
     end
 

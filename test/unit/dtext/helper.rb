@@ -9,7 +9,7 @@ def p(str)
   DText.parse(str).gsub(/>\s*</, "><").gsub(/\n*/, "")
 end
 
-def find_test()
+def find_test
   begin
     test = Dir.entries(TestDir).select { |f| f =~ /^[^\.](?=.*\.txt$)/ }
   rescue

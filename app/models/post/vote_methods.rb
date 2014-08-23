@@ -23,7 +23,7 @@ module Post::VoteMethods
     m.extend(ClassMethods)
   end
 
-  def recalculate_score!()
+  def recalculate_score!
     save!
     Post.recalculate_score(self.id)
     connection.clear_query_cache

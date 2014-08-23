@@ -57,13 +57,13 @@ class WikiPageTest < ActiveSupport::TestCase
 
     w1.lock!
     assert_equal(true, w1.is_locked?)
-    assert_equal(true, WikiPageVersion.find(:first, :conditions => ["wiki_page_id = ? AND version = 1", w1.id]).is_locked?)
-    assert_equal(true, WikiPageVersion.find(:first, :conditions => ["wiki_page_id = ? AND version = 2", w1.id]).is_locked?)
+    assert_equal(true, WikiPageVersion.find_by(:wiki_page_id => w1.id, :version => 1).is_locked?)
+    assert_equal(true, WikiPageVersion.find_by(:wiki_page_id => w1.id, :version => 2).is_locked?)
 
     w1.unlock!
     assert_equal(false, w1.is_locked?)
-    assert_equal(false, WikiPageVersion.find(:first, :conditions => ["wiki_page_id = ? AND version = 1", w1.id]).is_locked?)
-    assert_equal(false, WikiPageVersion.find(:first, :conditions => ["wiki_page_id = ? AND version = 2", w1.id]).is_locked?)
+    assert_equal(false, WikiPageVersion.find_by(:wiki_page_id => w1.id, :version => 1).is_locked?)
+    assert_equal(false, WikiPageVersion.find_by(:wiki_page_id => w1.id, :version => 2).is_locked?)
   end
 
   def test_rename

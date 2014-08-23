@@ -82,7 +82,7 @@ class TagController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml { render :xml => @tags, :root => "tags" }
+      fmt.xml
       fmt.json { render :json => @tags }
     end
   end

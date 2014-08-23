@@ -366,7 +366,7 @@ class User < ActiveRecord::Base
     # attribute usually corresponds with an actual attribute in the class, but any value
     # can be used.
     def can_change?(record, attribute)
-      method = "can_change_#{attribute.to_s}?"
+      method = "can_change_#{attribute}?"
       if is_mod_or_higher?
         true
       elsif record.respond_to?(method)
@@ -493,7 +493,7 @@ class User < ActiveRecord::Base
         return false
       end
 
-      tempfile_path = "#{Rails.root}/public/data/#{SecureRandom.random_number(2**32).to_s}.avatar.jpg"
+      tempfile_path = "#{Rails.root}/public/data/#{SecureRandom.random_number(2**32)}.avatar.jpg"
 
       def reduce_and_crop(image_width, image_height, params)
         cropped_image_width = image_width * (params[:right].to_f - params[:left].to_f)

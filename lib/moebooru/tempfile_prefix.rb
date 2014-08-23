@@ -3,7 +3,7 @@ module Moebooru
     attr_accessor :tempfile_prefix
 
     def tempfile_prefix
-      @tempfile_prefix ||= Rails.root.join("public/data").join("temp-#{SecureRandom.random_number(2**32).to_s}")
+      @tempfile_prefix ||= Rails.root.join("public/data").join("temp-#{SecureRandom.random_number(2**32)}")
     end
   end
 end

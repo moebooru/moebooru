@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
     end
 
     def can_change?(record, attribute)
-      method = "can_change_#{attribute.to_s}?"
+      method = "can_change_#{attribute}?"
       if record.respond_to?(method)
         record.__send__(method, self)
       elsif record.respond_to?(:can_change?)

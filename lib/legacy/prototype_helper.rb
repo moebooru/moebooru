@@ -559,7 +559,7 @@ module ActionView
 
           def block_to_function(block)
             generator = self.class.new(@context, &block)
-            literal("function() { #{generator.to_s} }")
+            literal("function() { #{generator} }")
           end
 
           def method_missing(method, *_arguments)

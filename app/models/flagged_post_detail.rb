@@ -6,10 +6,10 @@ class FlaggedPostDetail < ActiveRecord::Base
   attr_accessor :hide_user
 
   def author
-    if self.user_id.nil?
+    if user_id.nil?
       return "system"
     else
-      return User.find_name(self.user_id)
+      return User.find_name(user_id)
     end
   end
 

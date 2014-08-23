@@ -65,7 +65,7 @@ class InlineImage < ActiveRecord::Base
   # Call once a file is available in tempfile_image_path.
   def got_file
     generate_hash(tempfile_image_path)
-    FileUtils.chmod(0775, self.tempfile_image_path)
+    FileUtils.chmod(0775, tempfile_image_path)
     self.file_needs_move = true
     self.received_file = true
   end
@@ -105,7 +105,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def determine_content_type
-    return true if self.file_ext
+    return true if file_ext
 
     if !File.exist?(tempfile_image_path)
       errors.add(:base, "No file received")
@@ -127,7 +127,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def set_image_dimensions
-    return true if self.width and self.height
+    return true if width and height
     imgsize = ImageSize.path(tempfile_image_path)
     self.width = imgsize.width
     self.height = imgsize.height
@@ -223,8 +223,8 @@ class InlineImage < ActiveRecord::Base
   end
 
   def set_default_sequence
-    return if !self.sequence.nil?
-    siblings = self.inline.inline_images
+    return if !sequence.nil?
+    siblings = inline.inline_images
     max_sequence = siblings.map { |image| image.sequence }.max
     max_sequence ||= 0
     self.sequence = max_sequence + 1
@@ -241,7 +241,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def has_sample?
-    (!self.sample_height.nil?)
+    (!sample_height.nil?)
   end
 
   def file_name
@@ -283,7 +283,7 @@ class InlineImage < ActiveRecord::Base
   def delete_file
     # If several inlines use the same image, they'll share the same file via the MD5.  Only
     # delete the file if this is the last one using it.
-    exists = InlineImage.find(:first, :conditions => ["id <> ? AND md5 = ?", self.id, self.md5])
+    exists = InlineImage.find(:first, :conditions => ["id <> ? AND md5 = ?", id, md5])
     return if !exists.nil?
 
     FileUtils.rm_f(file_path)
@@ -296,10 +296,10 @@ class InlineImage < ActiveRecord::Base
   # of the column, capitalized, so if we say "foo", the message is "Md5 foo".  This is
   # useless.
   def validate_uniqueness
-    siblings = self.inline.inline_images
+    siblings = inline.inline_images
     for s in siblings do
       next if s.id == self
-      if s.md5 == self.md5
+      if s.md5 == md5
         errors.add(:base, "##{s.sequence} already exists.")
         return false
       end

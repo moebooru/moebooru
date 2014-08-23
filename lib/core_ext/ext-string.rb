@@ -45,17 +45,17 @@ class String
   # Escapes string to be usable in a SQL LIKE.
   # Adds backslash to \, %, and _ and replace * with % (SQL wildcard)
   def to_escaped_for_sql_like
-    self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub("*", "%")
+    gsub(/[\\%_]/) { |x| '\\' + x }.gsub("*", "%")
   end
 
   # Nuke nulls and anything after it because it sucks.
   # The characters \()&|!:' and any spaces (\p{Space}) must be escaped
   # by prepending them with \ before passed to tsquery.
   def to_escaped_for_tsquery
-    self.gsub(/\0.*/, "").gsub(/[\p{Space}\\()&|!:']/) { |x| '\\' + x }
+    gsub(/\0.*/, "").gsub(/[\p{Space}\\()&|!:']/) { |x| '\\' + x }
   end
 
   def to_escaped_js
-    self.gsub(/\\/, '\0\0').gsub(/['"]/) { |m| "\\#{m}" }.gsub(/\r\n|\r|\n/, '\\n')
+    gsub(/\\/, '\0\0').gsub(/['"]/) { |m| "\\#{m}" }.gsub(/\r\n|\r|\n/, '\\n')
   end
 end

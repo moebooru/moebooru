@@ -43,7 +43,7 @@ class HistoryChange < ActiveRecord::Base
 
   def is_obsolete?
     latest_change = latest
-    self.value != latest_change.value
+    value != latest_change.value
   end
 
   def has_default?
@@ -58,15 +58,15 @@ class HistoryChange < ActiveRecord::Base
   def default_history
     return nil if !has_default?
 
-    History.new :table_name => self.table_name,
-                    :remote_id => self.remote_id,
-                    :column_name => self.column_name,
+    History.new :table_name => table_name,
+                    :remote_id => remote_id,
+                    :column_name => column_name,
                     :value => get_default
   end
 
   # Return the object this change modifies.
   def obj
-    @obj ||= master_class.find(self.remote_id)
+    @obj ||= master_class.find(remote_id)
     @obj
   end
 

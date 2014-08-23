@@ -19,7 +19,7 @@ class Ban < ActiveRecord::Base
   end
 
   def save_to_record
-    UserRecord.create(:user_id => self.user_id, :reported_by => self.banned_by, :is_positive => false, :body => "Blocked: #{self.reason}")
+    UserRecord.create(:user_id => user_id, :reported_by => banned_by, :is_positive => false, :body => "Blocked: #{reason}")
   end
 
   def duration=(dur)

@@ -237,7 +237,7 @@ class PostFrames < ActiveRecord::Base
     Mirrors.copy_file_to_mirrors(preview_path)
 
     # Mark the frame warehoused.
-    self.update_attributes(:is_warehoused => true)
+    update_attributes(:is_warehoused => true)
   end
 
   def self.filename(frame)

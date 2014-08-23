@@ -19,7 +19,7 @@ class Comment < ActiveRecord::Base
   end
 
   def self.updated?(user)
-    newest_comment = self.select(:created_at).order("id DESC").first
+    newest_comment = select(:created_at).order("id DESC").first
     newest_comment.created_at > user.last_comment_read_at if newest_comment
   end
 
@@ -33,7 +33,7 @@ class Comment < ActiveRecord::Base
   end
 
   def get_formatted_body
-    format_inlines(format_text(self.body, :mode => :comment), self.id)
+    format_inlines(format_text(body, :mode => :comment), id)
   end
 
   def update_fragments
@@ -42,19 +42,19 @@ class Comment < ActiveRecord::Base
   # Get the comment translated into the requested language.  Languages in source_langs
   # will be left untranslated.
   def get_translated_formatted_body_uncached(target_lang, source_langs)
-      [self.get_formatted_body, []]
+      [get_formatted_body, []]
   end
 
   def get_translated_formatted_body(target_lang, source_langs)
     source_lang_list = source_langs.join(",")
-    key = "comment:" + self.id.to_s + ":" + self.updated_at.to_f.to_s + ":" + target_lang + ":" + source_lang_list
+    key = "comment:" + id.to_s + ":" + updated_at.to_f.to_s + ":" + target_lang + ":" + source_lang_list
     Rails.cache.fetch(key) {
       get_translated_formatted_body_uncached(target_lang, source_langs)
     }
   end
 
   def author
-    User.find_name(self.user_id)
+    User.find_name(user_id)
   end
 
   def pretty_author

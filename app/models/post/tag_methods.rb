@@ -58,7 +58,7 @@ module Post::TagMethods
   end
 
   def cached_tags_undo(change, redo_changes = false)
-    current_tags = self.cached_tags.scan(/\S+/)
+    current_tags = cached_tags.scan(/\S+/)
     prev = change.previous
 
     change, prev = prev, change if redo_changes
@@ -106,7 +106,7 @@ module Post::TagMethods
 
   # Returns all versioned tags and metatags.
   def cached_tags_versioned
-    ["rating:" + self.rating, cached_tags].join(" ")
+    ["rating:" + rating, cached_tags].join(" ")
   end
 
   # Commit metatags; this is done before save, so any changes are stored normally.
@@ -195,8 +195,8 @@ module Post::TagMethods
           if cmd == "parent" then
             # If we have a parent, remove ourself from the pool and add our parent in
             # our place.  If we have no parent, do nothing and leave us in the pool.
-            if !self.parent_id.nil?
-              pool.transfer_post_to_parent(self.id, self.parent_id)
+            if !parent_id.nil?
+              pool.transfer_post_to_parent(id, parent_id)
             end
             next
           end
@@ -220,13 +220,13 @@ module Post::TagMethods
             # Don't just use set_parent, or history won't be saved, since it saves directly
             # to the database.
             p = Post.find(child_id)
-            p.parent_id = self.id
+            p.parent_id = id
             p.save!
           end
         end
       end
 
-      self.new_tags << "tagme" if new_tags.empty?
+      new_tags << "tagme" if new_tags.empty?
       self.new_tags = TagAlias.to_aliased(new_tags)
       self.new_tags = TagImplication.with_implied(new_tags).uniq
 
@@ -235,10 +235,10 @@ module Post::TagMethods
       self.new_tags = new_tags.map { |x| Tag.find_or_create_by_name(x) }.uniq
 
       # If any tags are newly active, expire the tag cache.
-      if !self.new_tags.empty? then
+      if !new_tags.empty? then
         any_new_tags = false
-        previous_tags = self.cached_tags.split(" ")
-        self.new_tags.each do |tag|
+        previous_tags = cached_tags.split(" ")
+        new_tags.each do |tag|
           # If this tag is in old_tags, then it's already active and we just removed it
           # in the above DELETE, so it's not really a newly activated tag.  (This isn't
           # self.old_tags; that's the tags the user saw before he edited, not the data
@@ -267,15 +267,15 @@ module Post::TagMethods
         INSERT INTO posts_tags (post_id, tag_id)
         SELECT t.post_id, t.tag_id
          FROM (VALUES #{tag_set}) AS t(post_id, tag_id)
-         WHERE t.tag_id NOT IN (SELECT tag_id FROM posts_tags pt WHERE pt.post_id = #{self.id})
+         WHERE t.tag_id NOT IN (SELECT tag_id FROM posts_tags pt WHERE pt.post_id = #{id})
       EOS
 
       execute_sql(sql)
 
-      Post.recalculate_cached_tags(self.id)
+      Post.recalculate_cached_tags(id)
 
       # Store the old cached_tags, so we can expire them.
-      self.old_cached_tags = self.cached_tags
+      self.old_cached_tags = cached_tags
       self.cached_tags = select_value_sql("SELECT cached_tags FROM posts WHERE id = #{id}")
 
       self.new_tags = nil

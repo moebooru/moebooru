@@ -61,7 +61,7 @@ module Post::FileMethods
     # - general tags can either be important ("fixme") or useless ("red hair")
     # - remove character tags first;
 
-    tags = Tag.compact_tags(self.cached_tags, 150)
+    tags = Tag.compact_tags(cached_tags, 150)
     if options[:type] == :sample then
       tags = "sample"
     end
@@ -69,7 +69,7 @@ module Post::FileMethods
     # Filter characters.
     tags = tags.gsub(/[\/]/, "_")
 
-    name = "#{self.id} #{tags}"
+    name = "#{id} #{tags}"
     if CONFIG["download_filename_prefix"] != ""
       name = CONFIG["download_filename_prefix"] + " " + name
     end
@@ -142,7 +142,7 @@ module Post::FileMethods
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
     }
-    return false if self.jpeg_crc32 == crc32_accum
+    return false if jpeg_crc32 == crc32_accum
 
     self.jpeg_crc32 = crc32_accum
     true
@@ -239,7 +239,7 @@ module Post::FileMethods
         end
       end
 
-      if self.source.to_s =~ /^http/ and self.source.to_s !~ /pixiv\.net/ then
+      if source.to_s =~ /^http/ and source.to_s !~ /pixiv\.net/ then
         #self.source = "Image board"
         self.source = ""
       end
@@ -297,15 +297,15 @@ module Post::FileMethods
   # we know the size.  If we do it in another module the order of operations is unclear.
   def image_is_too_small
     return false if CONFIG["min_mpixels"].nil?
-    return false if self.width.nil?
-    return false if self.width * self.height >= CONFIG["min_mpixels"]
+    return false if width.nil?
+    return false if width * height >= CONFIG["min_mpixels"]
     true
   end
 
   def set_image_status
     return true if !image_is_too_small
 
-    return if self.user.try(:is_contributor_or_higher?)
+    return if user.try(:is_contributor_or_higher?)
 
     self.status = "pending"
     self.status_reason = "low-res"
@@ -316,10 +316,10 @@ module Post::FileMethods
   # This must be done after set_image_status.
   def check_pending_count
     return if CONFIG["max_pending_images"].nil?
-    return if self.status != "pending"
-    return if self.user.is_contributor_or_higher?
+    return if status != "pending"
+    return if user.is_contributor_or_higher?
 
-    pending_posts = Post.count(:conditions => ["user_id = ? AND status = 'pending'", self.user_id])
+    pending_posts = Post.count(:conditions => ["user_id = ? AND status = 'pending'", user_id])
     return if pending_posts < CONFIG["max_pending_images"]
 
     errors.add(:base, "You have too many posts pending moderation")

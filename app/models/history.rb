@@ -76,7 +76,7 @@ class History < ActiveRecord::Base
         while node[:parent] do
           node = node[:parent]
         end
-        self.stack_object_recurse(node, stack, done)
+        stack_object_recurse(node, stack, done)
       end
     end
 
@@ -141,7 +141,7 @@ private
   # Find and return the node for table_name/id in objects.  Recursively create
   # nodes for parent objects.
   def self.cache_object_recurse(objects, table_name, id, object)
-    node = self.cache_object(objects, table_name, id, object)
+    node = cache_object(objects, table_name, id, object)
 
     # If this class has a master class, register the master object for update callbacks too.
     master = object.versioned_master_object
@@ -165,7 +165,7 @@ private
 
     if node[:children] then
       node[:children].each { |child|
-        self.stack_object_recurse(child, stack, done)
+        stack_object_recurse(child, stack, done)
       }
     end
   end

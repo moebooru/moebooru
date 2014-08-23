@@ -68,7 +68,7 @@ class Pool < ActiveRecord::Base
         end
 
         unless options[:skip_update_pool_links]
-          self.reload
+          reload
           update_pool_links
         end
       end
@@ -85,7 +85,7 @@ class Pool < ActiveRecord::Base
           pool_post.active = false
           pool_post.save!
 
-          self.reload # saving pool_post modified us
+          reload # saving pool_post modified us
           update_pool_links
         end
       end
@@ -101,8 +101,8 @@ class Pool < ActiveRecord::Base
       return if !parent_pool_post.nil?
 
       sequence = pool_post.sequence
-      self.remove_post(post_id)
-      self.add_post(parent_id, :sequence => sequence)
+      remove_post(post_id)
+      add_post(parent_id, :sequence => sequence)
     end
 
     def get_sample
@@ -110,7 +110,7 @@ class Pool < ActiveRecord::Base
       # the index.
       PoolPost.find(:all, :order => "posts.is_shown_in_index DESC, nat_sort(pools_posts.sequence), pools_posts.post_id",
                     :joins => "JOIN posts ON posts.id = pools_posts.post_id",
-                    :conditions => ["pool_id = ? AND posts.status = 'active' AND pools_posts.active", self.id]).each { |pool_post|
+                    :conditions => ["pool_id = ? AND posts.status = 'active' AND pools_posts.active", id]).each { |pool_post|
         return pool_post.post if pool_post.post.can_be_seen_by?(Thread.current["danbooru-user"])
       }
       return rescue nil

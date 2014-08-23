@@ -60,6 +60,6 @@ module Post::ParentMethods
   end
 
   def get_parent
-    Post.find(:first, :conditions => ["id = ?", self.parent_id])
+    Post.find(:first, :conditions => ["id = ?", parent_id])
   end
 end

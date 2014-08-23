@@ -101,7 +101,7 @@ class JobTask < ActiveRecord::Base
     data = {}
     (1..10).each do
       post = Post.find(:first, :conditions => ["NOT is_warehoused AND status <> 'deleted'"], :order => "is_held ASC, index_timestamp DESC")
-      break if not post
+      break if !post
 
       data["left"] = Post.count(:conditions => ["NOT is_warehoused AND status <> 'deleted'"])
       data["post_id"] = post.id

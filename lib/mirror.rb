@@ -88,7 +88,7 @@ module Mirrors
           end
         end
 
-        if not system("/usr/bin/scp", "-pq", "-o", "Compression no", "-o", "BatchMode=yes",
+        if !system("/usr/bin/scp", "-pq", "-o", "Compression no", "-o", "BatchMode=yes",
                      "-o", "ConnectTimeout=%i" % timeout,
                      file, "#{remote_user_host}:#{remote_filename}") then
           raise MirrorError, "Error copying #{file} to #{remote_user_host}:#{remote_filename}"
@@ -132,7 +132,7 @@ module Mirrors
     return CONFIG["url_base"] if !CONFIG["image_servers"] || CONFIG["image_servers"].empty?
     raise 'CONFIG["url_base"] is set incorrectly; please see config/default_config.rb' if CONFIG["image_servers"][0].class == String
 
-    if not is_warehoused
+    if !is_warehoused
       # return CONFIG["url_base"]
       return CONFIG["image_servers"][0][:server]
     end
@@ -144,7 +144,7 @@ module Mirrors
       }
     end
 
-    if not options[:preview] then
+    if !options[:preview] then
       mirrors =  mirrors.select { |mirror|
         mirror[:previews_only] != true
       }
@@ -178,7 +178,7 @@ module Mirrors
 
     # If this server has aliases, and an ID has been specified, pick a random server alias
     # with the ID as a seed so we always use the same server name for the same image.
-    if not options[:id].nil? and not server[:aliases].nil? and options[:use_aliases] then
+    if !options[:id].nil? and !server[:aliases].nil? and options[:use_aliases] then
       server_count = server[:aliases].length + 1
       server_index = options[:id] % server_count
       if server_index == 0 then

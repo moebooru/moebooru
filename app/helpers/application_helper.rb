@@ -43,7 +43,7 @@ module ApplicationHelper
     end
 
     url = inline.inline_images.first.preview_url
-    if not preview_html
+    if !preview_html
       preview_html = %{<img src="#{url}">}
     end
     id_text = "inline-%s-%i" % [id, num]

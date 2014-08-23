@@ -53,7 +53,7 @@ class History < ActiveRecord::Base
         next
       end
 
-      if not user.can_change?(change.obj, change.column_name.to_sym) then
+      if !user.can_change?(change.obj, change.column_name.to_sym) then
         errors[change] = :denied
         next
       end

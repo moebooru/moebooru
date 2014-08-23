@@ -59,7 +59,7 @@ class Pool < ActiveRecord::Base
         if pool_post
           # If :ignore_already_exists, we won't raise PostAlreadyExistsError; this allows
           # he sequence to be changed if the post already exists.
-          raise PostAlreadyExistsError if pool_post.active and not options[:ignore_already_exists]
+          raise PostAlreadyExistsError if pool_post.active and !options[:ignore_already_exists]
           pool_post.active = true
           pool_post.sequence = seq
           pool_post.save!
@@ -98,7 +98,7 @@ class Pool < ActiveRecord::Base
     def transfer_post_to_parent(post_id, parent_id)
       pool_post = pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
       parent_pool_post = pool_posts.find(:first, :conditions => ["post_id = ?", parent_id])
-      return if not parent_pool_post.nil?
+      return if !parent_pool_post.nil?
 
       sequence = pool_post.sequence
       self.remove_post(post_id)
@@ -121,7 +121,7 @@ class Pool < ActiveRecord::Base
     end
 
     def can_change?(user, attribute)
-      return false if not user.is_member_or_higher?
+      return false if !user.is_member_or_higher?
       return is_public? || user.has_permission?(self)
     end
 

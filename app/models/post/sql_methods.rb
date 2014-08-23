@@ -157,7 +157,7 @@ module Post::SqlMethods
       if q.key?(:pool)
         conds << "pools_posts.active = true"
 
-        if not q.key?(:order)
+        if !q.key?(:order)
           pool_ordering = " ORDER BY pools_posts.pool_id ASC, nat_sort(pools_posts.sequence), pools_posts.post_id"
         end
 
@@ -246,7 +246,7 @@ module Post::SqlMethods
         end
       else
         # Hide held posts by default only when not using the API.
-        if not options[:from_api] then
+        if !options[:from_api] then
           conds << "NOT p.is_held"
         end
       end
@@ -260,7 +260,7 @@ module Post::SqlMethods
         end
       else
         # Hide pending posts by default only when not using the API.
-        if CONFIG["hide_pending_posts"] and not options[:from_api] then
+        if CONFIG["hide_pending_posts"] and !options[:from_api] then
           conds << "p.status <> 'pending'"
         end
       end
@@ -271,7 +271,7 @@ module Post::SqlMethods
         else
           conds << "NOT p.is_shown_in_index"
         end
-      elsif original_query.blank? and not options[:from_api]
+      elsif original_query.blank? and !options[:from_api]
         # Hide not shown posts by default only when not using the API.
         conds << "p.is_shown_in_index"
       end

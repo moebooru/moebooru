@@ -53,7 +53,7 @@ module ActiveRecord
         end
       end
 
-      if not history then
+      if !history then
         options = {
           :group_by_table => self.class.get_group_by_table_name,
           :group_by_id => self.get_group_by_id,
@@ -123,12 +123,12 @@ module ActiveRecord
       # :allow_reverting_to_default => true can be undone; the default value will
       # be treated as the previous value.
       def versioned(att, *options)
-        if not @versioned_attributes
+        if !@versioned_attributes
           @versioned_attributes = {}
           self.after_save :save_versioned_attributes
           self.after_create :remember_new
 
-          self.versioning_group_by if not @versioning_group_by
+          self.versioning_group_by if !@versioning_group_by
         end
 
         @versioned_attributes[att] = *options || {}
@@ -150,7 +150,7 @@ module ActiveRecord
           :action => "show",
         }.merge(options)
 
-        if not opt[:foreign_key]
+        if !opt[:foreign_key]
           if opt[:class] == self.to_s.to_sym
             opt[:foreign_key] = :id
           else
@@ -177,7 +177,7 @@ module ActiveRecord
       def get_versioned_default(name)
         attr = get_versioned_attributes[name]
         return nil, false if attr.nil?
-        return nil, false if not attr.include?(:default)
+        return nil, false if !attr.include?(:default)
         return attr[:default], true
       end
 
@@ -268,7 +268,7 @@ module ActiveRecord
           # Verify that the attributes we were told to update are actually versioned.
           missing_attributes = attrs - c.get_versioned_attributes.keys
           p c.get_versioned_attributes
-          if not missing_attributes.empty?
+          if !missing_attributes.empty?
             raise "Tried to add versioned propertes for table \"%s\" that aren't versioned: %s" % [table_name, missing_attributes.join(" ")]
           end
         else
@@ -287,7 +287,7 @@ module ActiveRecord
           if column_exists
             true
           else
-            if not options[:allow_missing]
+            if !options[:allow_missing]
               raise "Expected to add versioned property \"%s\" for table \"%s\", but that column doesn't exist in the database" % [att, table_name]
             end
 
@@ -309,7 +309,7 @@ module ActiveRecord
             history = History.find(:first, :order => "id ASC",
                                    :conditions => ["group_by_table = ? AND group_by_id = ?", group_by_table, group_by_id])
 
-            if not history
+            if !history
               #p "new history"
               options = {
                 :group_by_table=> group_by_table,

@@ -56,7 +56,7 @@ module Tag::ApiMethods
       tags.each { |tag|
         id = tag["id"]
         if id != last_tag_id then
-          if not last_tag_id.nil? then
+          if !last_tag_id.nil? then
             tags_with_type << current_tag
           end
 
@@ -64,11 +64,11 @@ module Tag::ApiMethods
           current_tag = "%s`%s`" % [tag["tag_type"], tag["name"]]
         end
 
-        if not tag["alias"].nil? then
+        if !tag["alias"].nil? then
           current_tag << tag["alias"] + "`"
         end
       }
-      if not last_tag_id.nil? then
+      if !last_tag_id.nil? then
         tags_with_type << current_tag
       end
 

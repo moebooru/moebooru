@@ -31,7 +31,7 @@ class UserController < ApplicationController
   #        planned for 3.2 branch (at least 3.2.1).
   def remove_avatar
     # When removing other user's avatar, ensure current user is mod or higher.
-    if @current_user.id != params[:id] and not @current_user.is_mod_or_higher?
+    if @current_user.id != params[:id] and !@current_user.is_mod_or_higher?
       access_denied
       return
     end
@@ -125,7 +125,7 @@ class UserController < ApplicationController
       ret = { :exists => false }
       ret[:name] = params[:username]
 
-      if not user
+      if !user
         respond_to_success("User does not exist", {}, :api => {:response => "unknown-user"}.merge(ret))
         return
       end
@@ -138,7 +138,7 @@ class UserController < ApplicationController
       ret[:no_email] = user.email.blank?
 
       user = User.authenticate(params[:username], params[:password] || "")
-      if not user
+      if !user
         respond_to_success("Wrong password", {}, :api => {:response => "wrong-password"}.merge(ret))
         return
       end
@@ -211,7 +211,7 @@ class UserController < ApplicationController
 
     tags = @current_user.blacklisted_tags_array
     added_tags.each { |tag|
-      tags << tag if not tags.include?(tag)
+      tags << tag if !tags.include?(tag)
     }
 
     tags -= removed_tags

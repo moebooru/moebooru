@@ -71,7 +71,7 @@ class PostController < ApplicationController
             options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
 
             res = SimilarImages.similar_images(options)
-            if not res[:posts].empty?
+            if !res[:posts].empty?
               @post.tags = @post.tags + " possible_duplicate"
               @post.save!
               api_data[:has_similar_hits] = true
@@ -116,7 +116,7 @@ class PostController < ApplicationController
 
               # Include post data for the parent: deleted posts aren't counted as children, so
               # their has_children attribute may change.
-              posts << post.get_parent if not post.parent_id.nil?
+              posts << post.get_parent if !post.parent_id.nil?
             end
             post.reload
             posts << post
@@ -145,7 +145,7 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
-    if @post.is_deleted? and not @current_user.is_mod_or_higher?
+    if @post.is_deleted? and !@current_user.is_mod_or_higher?
       respond_to_error("Post Locked", { :action => :show, :id => params[:id] }, { :status => 422 })
       return
     end
@@ -210,7 +210,7 @@ class PostController < ApplicationController
     api_data = Post.batch_api_data(posts)
 
     url = params[:url]
-    url = {:action => "index"} if not url
+    url = {:action => "index"} if !url
     respond_to_success("Posts updated", url, :api => api_data)
   end
 
@@ -316,7 +316,7 @@ class PostController < ApplicationController
     offset = @posts.offset
     posts_to_load = @posts.per_page
 
-    if not from_api then
+    if !from_api then
       # For forward preloading:
       posts_to_load += @posts.per_page
 
@@ -334,7 +334,7 @@ class PostController < ApplicationController
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
 
     @preload = []
-    if not from_api then
+    if !from_api then
       if page && page > 1 then
         @preload = results[0, limit] || []
         results = results[limit..-1] || []
@@ -346,9 +346,9 @@ class PostController < ApplicationController
 
     # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
     # can be enabled by specifying filter=1.
-    if not from_api or params[:filter] == "1" then
-      results = results.delete_if { |post| not post.can_be_seen_by?(@current_user, :show_deleted => true) }
-      @preload = @preload.delete_if { |post| not post.can_be_seen_by?(@current_user) }
+    if !from_api or params[:filter] == "1" then
+      results = results.delete_if { |post| !post.can_be_seen_by?(@current_user, :show_deleted => true) }
+      @preload = @preload.delete_if { |post| !post.can_be_seen_by?(@current_user) }
     end
 
     if from_api and params[:api_version] == "2" and params[:format] != "json" then
@@ -504,7 +504,7 @@ class PostController < ApplicationController
   end
 
   def vote
-    if not params.key?(:score) then
+    if !params.key?(:score) then
       vote =  PostVote.find_by(:user_id => @current_user.id, :post_id => params[:id])
       score = vote ? vote.score: 0
       respond_to_success("", {}, :api => {:vote => score})
@@ -593,7 +593,7 @@ class PostController < ApplicationController
     if params[:threshold].blank? then params.delete(:threshold) end
     if params[:forcegray].blank? || params[:forcegray] == "0" then params.delete(:forcegray) end
     if params[:initial] == "0" then params.delete(:initial) end
-    if not SimilarImages.valid_saved_search(params[:search_id]) then params.delete(:search_id) end
+    if !SimilarImages.valid_saved_search(params[:search_id]) then params.delete(:search_id) end
     params[:width] = params[:width].to_i if params[:width]
     params[:height] = params[:height].to_i if params[:height]
 
@@ -736,7 +736,7 @@ class PostController < ApplicationController
         respond_to_error(@errors[:error], {:action => "index"}, :status => 503)
         return
       end
-      if not @searched
+      if !@searched
         respond_to_error("no search supplied", {:action => "index"}, :status => 503)
         return
       end

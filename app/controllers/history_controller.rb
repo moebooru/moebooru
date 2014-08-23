@@ -138,7 +138,7 @@ class HistoryController < ApplicationController
       cond_params += hc_cond_params
     end
 
-    if q.key?(:type) and not q.key?(:change) then
+    if q.key?(:type) and !q.key?(:change) then
       @type = q[:type]
     else
       @type = "all"
@@ -205,7 +205,7 @@ class HistoryController < ApplicationController
     successful = 0
     failed = 0
     @changes.each { |change|
-      if not errors[change]
+      if !errors[change]
         successful += 1
         next
       end

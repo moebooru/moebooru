@@ -20,7 +20,7 @@ class FlaggedPostDetail < ActiveRecord::Base
       select_value_sql(
         "SELECT COUNT(*) FROM flagged_post_details fpd JOIN posts p ON (p.id = fpd.post_id) " +
         "WHERE p.status = 'deleted' AND p.user_id = ? AND fpd.user_id <> ? AND fpd.created_at > ?",
-          user.id, user.id, user.last_deleted_post_seen_at).to_i
+        user.id, user.id, user.last_deleted_post_seen_at).to_i
     end
   end
 

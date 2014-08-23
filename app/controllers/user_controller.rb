@@ -257,12 +257,12 @@ class UserController < ApplicationController
           new_password = @user.reset_password
           UserMailer.new_password(@user, new_password).deliver
           respond_to_success("Password reset. Check your email in a few minutes.",
-                           { :action => "login" }, :api => { :result => "success" })
+                             { :action => "login" }, :api => { :result => "success" })
           return
         end
       rescue Net::SMTPSyntaxError, Net::SMTPFatalError
         respond_to_success("Your email address was invalid",
-                         { :action => "login" }, :api => { :result => "invalid-email" })
+                           { :action => "login" }, :api => { :result => "invalid-email" })
         return
       end
     else

@@ -51,7 +51,7 @@ class PostFrames < ActiveRecord::Base
 
   def self.frame_preview_dimensions(frame)
     Moebooru::Resizer.reduce_to({ :width => frame[:source_width], :height => frame[:source_height] },
-                              { :width => 300, :height => 300 })
+                                { :width => 300, :height => 300 })
   end
 
   # Clamp frames to the size of the actual post, and remove any empty frames.

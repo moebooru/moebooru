@@ -9,7 +9,7 @@ class TagAlias < ActiveRecord::Base
   # === Parameters
   # * :tags<Array<String>>:: list of tags to transform.
   def self.to_aliased(tags)
-    Array(tags).inject([]) do |aliased_tags, tag_name|
+    Array(tags).reduce([]) do |aliased_tags, tag_name|
       aliased_tags << to_aliased_helper(tag_name)
     end
   end

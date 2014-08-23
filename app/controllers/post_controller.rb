@@ -206,7 +206,7 @@ class PostController < ApplicationController
 
     # Updates to one post may affect others, so only generate the return list after we've already
     # updated everything.
-    posts = Post.find_by_sql(["SELECT * FROM posts WHERE id IN (?)", ids.map { |id, t| id }])
+    posts = Post.find_by_sql(["SELECT * FROM posts WHERE id IN (?)", ids.map { |id, _t| id }])
     api_data = Post.batch_api_data(posts)
 
     url = params[:url]

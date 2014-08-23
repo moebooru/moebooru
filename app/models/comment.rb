@@ -13,7 +13,7 @@ class Comment < ActiveRecord::Base
   attr_accessor :do_not_bump_post
 
   def self.generate_sql(params)
-    Nagato::Builder.new do |builder, cond|
+    Nagato::Builder.new do |_builder, cond|
       cond.add_unless_blank "post_id = ?", params[:post_id]
     end.to_hash
   end

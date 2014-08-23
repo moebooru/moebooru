@@ -76,7 +76,7 @@ module ActiveRecord
     public
     def save_versioned_attributes
       transaction do
-        self.class.get_versioned_attributes.each do |att, options|
+        self.class.get_versioned_attributes.each do |att, _options|
           # Always save all properties on creation.
           #
           # Don't use _changed?; it'll be true if a field was changed and then changed back,
@@ -275,7 +275,7 @@ module ActiveRecord
           attrs = c.get_versioned_attributes
         end
 
-        attrs.each do |att, opts|
+        attrs.each do |att, _opts|
           # If any histories already exist for this attribute, assume that it's already been updated.
           next if HistoryChange.find(:first, :conditions => ["table_name = ? AND column_name = ?", table_name, att.to_s])
           attributes_to_update << att
@@ -346,7 +346,7 @@ module ActiveRecord
               to_create += [escaped_options]
             end
 
-            columns = to_create.first.map { |key, value| key.to_s }
+            columns = to_create.first.map { |key, _value| key.to_s }
 
             values = []
             to_create.each do |row|

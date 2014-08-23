@@ -6,7 +6,7 @@ module SimilarImages
     services = services
     services ||= "local"
     if services == "all"
-      services = CONFIG["image_service_list"].map { |a, b| a }
+      services = CONFIG["image_service_list"].map { |a, _b| a }
     else
       services = services.split(/,/)
     end

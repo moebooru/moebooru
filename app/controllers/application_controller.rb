@@ -58,7 +58,7 @@ class ApplicationController < ActionController::Base
     def pool_browse_mode; 1; end
     def always_resize_images; true; end
 
-    CONFIG["user_levels"].each do |name, value|
+    CONFIG["user_levels"].each do |name, _value|
       normalized_name = name.downcase.gsub(/ /, "_")
 
       define_method("is_#{normalized_name}?") do
@@ -148,7 +148,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    CONFIG["user_levels"].each do |name, value|
+    CONFIG["user_levels"].each do |name, _value|
       normalized_name = name.downcase.gsub(/ /, "_")
 
       define_method("#{normalized_name}_only") do

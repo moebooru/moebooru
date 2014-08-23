@@ -43,7 +43,7 @@ module TagHelper
       tags.sort_by! { |a| [Tag::TYPE_ORDER[a[0]], -a[2].to_i, a[1]] }
     end
 
-    tags.each do |tag_type, name, count, id|
+    tags.each do |tag_type, name, count, _id|
       name ||= "UNKNOWN"
 
       html << %{<li class="tag-link tag-type-#{html_escape(tag_type)}" data-name="#{html_escape(name)}" data-type="#{html_escape(tag_type)}">}

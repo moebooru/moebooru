@@ -581,22 +581,19 @@ class User < ActiveRecord::Base
       m.before_validation :commit_secondary_languages
     end
 
-    def secondary_language_array=(langs)
-      @secondary_languages = langs
-    end
+    attr_writer :secondary_language_array
 
     def secondary_language_array
-      return @secondary_languages if @secondary_languages
-      secondary_languages.split(",")
+      @secondary_language_array || secondary_languages.split(",")
     end
 
     def commit_secondary_languages
-      return unless @secondary_languages
+      return unless secondary_language_array
 
-      if @secondary_languages.include?("none") then
+      if secondary_language_array.include?("none") then
         self.secondary_languages = ""
       else
-        self.secondary_languages = @secondary_languages.join(",")
+        self.secondary_languages = secondary_language_array.join(",")
       end
     end
   end

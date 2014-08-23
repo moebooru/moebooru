@@ -11,14 +11,13 @@ module TagHelper
     else
       content_tag(:span, prefix, :class => "#{obsolete_tag}")
     end
-    html += content_tag(:span, :class => "tag-type-#{tag_type} #{obsolete_tag}") do
+    html << content_tag(:span, :class => "tag-type-#{tag_type} #{obsolete_tag}") do
       link_to(name, :controller => :post, :action => :index, :tags => name)
     end
   end
 
   def tag_links(tags, options = {})
     return "" if tags.blank?
-    prefix = options[:prefix] || ""
 
     html = ""
 

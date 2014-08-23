@@ -1,5 +1,5 @@
 def get_metatags(tags)
-  metatags, tags = tags.scan(/\S+/).partition { |x| x =~ /^(?:rating):/ }
+  metatags, _tags = tags.scan(/\S+/).partition { |x| x =~ /^(?:rating):/ }
   ret = {}
   metatags.each do |metatag|
     case metatag
@@ -28,7 +28,7 @@ namespace :posts do
       begin
         post.regenerate_hash
         post.generate_sample_hash
-      rescue SocketError, URI::Error, Timeout::Error, SystemCallError => x
+      rescue SocketError, URI::Error, Timeout::Error, SystemCallError
         next
       end
 
@@ -36,7 +36,6 @@ namespace :posts do
         # Changing the MD5 would break the file path, and we only care about populating
         # CRC32.
         p "warning: post #{post.id} MD5 is incorrect; got #{post.md5}, expected #{old_md5} (corrupted file?)"
-        old_md5 = post.md5
       end
       post.save!
     end

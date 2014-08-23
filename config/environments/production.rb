@@ -35,7 +35,7 @@ Moebooru::Application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = CONFIG['secure']
+  config.force_ssl = CONFIG["secure"]
 
   # Default logging formatter to keep PID and timestamp
   config.log_formatter = Logger::Formatter.new
@@ -45,7 +45,7 @@ Moebooru::Application.configure do
   config.logger = Logger.new(STDOUT)
 
   # Recommended by http://help.papertrailapp.com/kb/configuration/unicorn
-  config.logger.level = Logger.const_get('WARN')
+  config.logger.level = Logger.const_get("WARN")
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
@@ -66,7 +66,7 @@ Moebooru::Application.configure do
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options = { :host => CONFIG['server_host'] }
+  config.action_mailer.default_url_options = { :host => CONFIG["server_host"] }
   config.action_mailer.delivery_method = :sendmail
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
@@ -79,9 +79,9 @@ Moebooru::Application.configure do
   config.middleware.use ExceptionNotification::Rack,
     :ignore_exceptions => %w(ActionController::BadRequest ActionController::UnknownFormat) + ExceptionNotifier.ignored_exceptions,
     :email => {
-      :email_prefix => ('[%s] ' % CONFIG['app_name']),
-      :sender_address => ('%s <%s>' % ['notifier', CONFIG['email_from']]),
-      :exception_recipients => CONFIG['admin_contact']
+      :email_prefix => ("[%s] " % CONFIG["app_name"]),
+      :sender_address => ("%s <%s>" % ["notifier", CONFIG["email_from"]]),
+      :exception_recipients => CONFIG["admin_contact"]
     }
 
 end

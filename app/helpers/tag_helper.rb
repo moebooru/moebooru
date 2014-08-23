@@ -1,13 +1,13 @@
 module TagHelper
   def tag_link(name, options = {})
-    name ||= 'UNKNOWN'
-    prefix = options[:prefix] || ''
+    name ||= "UNKNOWN"
+    prefix = options[:prefix] || ""
     obsolete = options[:obsolete] || []
 
     tag_type = Tag.type_name(name)
-    obsolete_tag = ([name] & obsolete).empty? ? '' : 'obsolete'
+    obsolete_tag = ([name] & obsolete).empty? ? "" : "obsolete"
     html = if prefix.blank?
-      ''.html_safe
+      "".html_safe
     else
       content_tag(:span, prefix, :class => "#{obsolete_tag}")
     end
@@ -39,9 +39,9 @@ module TagHelper
     end
 
     case controller.action_name
-    when 'show'
+    when "show"
       tags.sort_by! { |a| [Tag::TYPE_ORDER[a[0]], a[1]] }
-    when 'index'
+    when "index"
       tags.sort_by! { |a| [Tag::TYPE_ORDER[a[0]], -a[2].to_i, a[1]] }
     end
 
@@ -57,8 +57,8 @@ module TagHelper
       end
 
       if @current_user.is_privileged_or_higher?
-        html << link_to('+', { :controller => '/post', :action => :index, :tags => "#{name} #{params[:tags]}" }, :class => 'no-browser-link') << ' '
-        html << link_to('&ndash;'.html_safe, { :controller => '/post', :action => :index, :tags => "-#{name} #{params[:tags]}" }, :class => 'no-browser-link') << ' '
+        html << link_to("+", { :controller => "/post", :action => :index, :tags => "#{name} #{params[:tags]}" }, :class => "no-browser-link") << " "
+        html << link_to("&ndash;".html_safe, { :controller => "/post", :action => :index, :tags => "-#{name} #{params[:tags]}" }, :class => "no-browser-link") << " "
       end
 
       tag_link_options = {}
@@ -66,9 +66,9 @@ module TagHelper
         tag_link_options[:mouseover] = "Post.highlight_posts_with_tag('#{escape_javascript(name)}')"
         tag_link_options[:mouseout] = "Post.highlight_posts_with_tag(null)"
       end
-      html << link_to(name.tr('_', ' '), { :controller => '/post', :action => :index, :tags => name }, :onmouseover => tag_link_options[:mouseover], :onmouseout => tag_link_options[:mouseout]) << ' '
+      html << link_to(name.tr("_", " "), { :controller => "/post", :action => :index, :tags => name }, :onmouseover => tag_link_options[:mouseover], :onmouseout => tag_link_options[:mouseout]) << " "
       html << %{<span class="post-count">#{count}</span> }
-      html << '</li>'
+      html << "</li>"
     end
 
     if options[:with_aliases] then
@@ -85,12 +85,12 @@ module TagHelper
   end
 
   def cloud_view(tags, divisor = 6)
-    html = ''.html_safe
+    html = "".html_safe
 
-    tags.sort {|a, b| a['name'] <=> b['name']}.each do |tag|
-      size = Math.log(tag['post_count'].to_i) / divisor
-      size = size < 0.8 ? '0.8' : '%.1f' % size
-      html << link_to(tag['name'], { :controller => :post, :action => :index, :tags => tag['name'] }, { :style => "font-size: #{size}em", :title => "#{tag['post_count']} posts" })
+    tags.sort {|a, b| a["name"] <=> b["name"]}.each do |tag|
+      size = Math.log(tag["post_count"].to_i) / divisor
+      size = size < 0.8 ? "0.8" : "%.1f" % size
+      html << link_to(tag["name"], { :controller => :post, :action => :index, :tags => tag["name"] }, { :style => "font-size: #{size}em", :title => "#{tag["post_count"]} posts" })
     end
 
     return html.html_safe

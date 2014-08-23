@@ -21,7 +21,7 @@ module Post::RatingMethods
     if %w(q e s).include?(r)
       new_rating = r
     else
-      new_rating = 'q'
+      new_rating = "q"
     end
 
     return if rating == new_rating

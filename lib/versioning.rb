@@ -1,6 +1,6 @@
-require 'history_change'
-require 'history'
-require 'set'
+require "history_change"
+require "history"
+require "set"
 
 module Versioned
   def get_versioned_classes

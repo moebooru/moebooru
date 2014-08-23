@@ -1,10 +1,10 @@
 # encoding: utf-8
-require 'cgi'
-require 'nokogiri'
+require "cgi"
+require "nokogiri"
 
 module DText
   def parse(str)
-    state = ['newline']
+    state = ["newline"]
     result = ""
 
     # Normalize newlines.
@@ -34,7 +34,7 @@ module DText
   def parseinline(str)
     # Short links subtitution:
     str.gsub!(/\[\[(.+?)\]\]/) do # [[title]] or [[title|label]] ;link to wiki
-      data = $1.split('|', 2)
+      data = $1.split("|", 2)
       title = data[0]
       label = data[1].nil? ? title : data[1]
       "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML(title.tr(" ", "_")))}\">#{label}</a>"
@@ -58,11 +58,11 @@ module DText
     # Multi line spoiler tags.
     str.gsub! /\[spoilers?\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">spoiler</span></span><div class="spoilertext" style="display: none">'
     str.gsub! /\[spoilers?=(.+?)\]/, '<span class="spoiler" onclick="Comment.spoiler(this); return false;"><span class="spoilerwarning">\1</span></span><div class="spoilertext" style="display: none">'
-    str.gsub! /\[\/spoilers?\]/, '</div>'
+    str.gsub! /\[\/spoilers?\]/, "</div>"
 
     # Quote.
-    str.gsub! /\[quote\]/, '<blockquote><div>'
-    str.gsub! /\[\/quote\]/, '</div></blockquote>'
+    str.gsub! /\[quote\]/, "<blockquote><div>"
+    str.gsub! /\[\/quote\]/, "</div></blockquote>"
 
     str = parseurl(str)
 
@@ -72,7 +72,7 @@ module DText
     str.gsub! /(<\/(ul|h\d+|blockquote)>)\n+/, '\1'
     # And after opening blockquote.
     str.gsub! /(<blockquote><div>)\n+/, '\1'
-    str.gsub! /\n/, '<br>'
+    str.gsub! /\n/, "<br>"
     str
   end
 
@@ -94,10 +94,10 @@ module DText
     else
       n = ((str =~ /^\*+\s+/ && str.split()[0]) || "").count("*")
       if n < state.last.to_i
-        html << '</ul>' * (state.last.to_i - n)
+        html << "</ul>" * (state.last.to_i - n)
         state[-1] = n.to_s
       elsif n > state.last.to_i
-        html << '<ul>'
+        html << "<ul>"
         state[-1] = (state.last.to_i + 1).to_s
       end
       if not str =~ /^\*+\s+/

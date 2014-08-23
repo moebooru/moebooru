@@ -1,4 +1,4 @@
-require 'post'
+require "post"
 
 class ConvertFavoritesToVotes < ActiveRecord::Migration
   def self.up

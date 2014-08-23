@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class TagAliasTest < ActiveSupport::TestCase
   def setup
@@ -15,7 +15,7 @@ class TagAliasTest < ActiveSupport::TestCase
   end
   
   def create_post(tags, params = {})
-    post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
     @test_number += 1
     post
   end
@@ -57,7 +57,7 @@ class TagAliasTest < ActiveSupport::TestCase
     assert_equal("tag5 tag6 tag7", p1.cached_tags)
     assert_equal("tag5", p2.cached_tags)
     assert_equal("tag8", p3.cached_tags)
-    ta.approve(1, '127.0.0.1')
+    ta.approve(1, "127.0.0.1")
     p1.reload
     p2.reload
     p3.reload

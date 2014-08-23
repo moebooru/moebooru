@@ -1,5 +1,5 @@
 class BannedController < ApplicationController
-  layout 'bare'
+  layout "bare"
   def index
       @ban = get_ip_ban()
       if not @ban

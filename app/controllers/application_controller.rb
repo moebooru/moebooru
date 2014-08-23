@@ -1,5 +1,5 @@
 # encoding: utf-8
-require 'digest/md5'
+require "digest/md5"
 
 class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::StatementInvalid, :with => :rescue_pg_invalid_query
@@ -141,9 +141,9 @@ class ApplicationController < ActionController::Base
     def set_country
       @current_user_country = Rails.cache.fetch({ :type => :geoip, :ip => request.remote_ip }, :expires_in => 1.month) do
         begin
-          GeoIP.new(Rails.root.join('db', 'GeoIP.dat').to_s).country(request.remote_ip).country_code2
+          GeoIP.new(Rails.root.join("db", "GeoIP.dat").to_s).country(request.remote_ip).country_code2
         rescue
-          '--'
+          "--"
         end
       end
     end
@@ -306,7 +306,7 @@ class ApplicationController < ActionController::Base
 
       yield
 
-      if key && response.headers['Status'] =~ /^200/
+      if key && response.headers["Status"] =~ /^200/
         Rails.cache.write(key, response.body, :expires_in => expiry)
       end
     else
@@ -351,7 +351,7 @@ class ApplicationController < ActionController::Base
 
       if @current_user.is_blocked?
         if @current_user.ban
-          cookies["block_reason"] = "You have been blocked. Reason: #{@current_user.ban.reason}. Expires: #{@current_user.ban.expires_at.strftime('%Y-%m-%d')}"
+          cookies["block_reason"] = "You have been blocked. Reason: #{@current_user.ban.reason}. Expires: #{@current_user.ban.expires_at.strftime("%Y-%m-%d")}"
         else
           cookies["block_reason"] = "You have been blocked."
         end
@@ -414,13 +414,13 @@ class ApplicationController < ActionController::Base
   end
 
     def set_locale
-      if params[:locale] and CONFIG['available_locales'].include?(params[:locale])
-        cookies['locale'] = { :value => params[:locale], :expires => 1.year.from_now }
+      if params[:locale] and CONFIG["available_locales"].include?(params[:locale])
+        cookies["locale"] = { :value => params[:locale], :expires => 1.year.from_now }
         I18n.locale = params[:locale].to_sym
-      elsif cookies['locale'] and CONFIG['available_locales'].include?(cookies['locale'])
-        I18n.locale = cookies['locale'].to_sym
+      elsif cookies["locale"] and CONFIG["available_locales"].include?(cookies["locale"])
+        I18n.locale = cookies["locale"].to_sym
       else
-        I18n.locale = CONFIG['default_locale']
+        I18n.locale = CONFIG["default_locale"]
       end
     end
 

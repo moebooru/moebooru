@@ -1,9 +1,9 @@
-require './lib/dtext.rb'
-require 'nokogiri'
+require "./lib/dtext.rb"
+require "nokogiri"
 
 include DText
 
-TestDir = File.expand_path('../tests', __FILE__)
+TestDir = File.expand_path("../tests", __FILE__)
 
 def p(str)
   DText.parse(str).gsub(/>\s*</, "><").gsub(/\n*/, "")

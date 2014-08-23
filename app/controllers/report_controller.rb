@@ -1,12 +1,12 @@
 class ReportController < ApplicationController
-  layout 'default'
+  layout "default"
   before_filter :set_dates
   helper :user
 
   def tag_updates
     @users = Report.tag_updates(@start_date, @end_date, @limit, @level)
     @report_title = "Tag Updates"
-    @change_params = lambda {|user_id| { :controller => 'history', :action => 'index', :search => "type:post user:#{User.find(user_id).name}" } }
+    @change_params = lambda {|user_id| { :controller => "history", :action => "index", :search => "type:post user:#{User.find(user_id).name}" } }
     render :action => "common"
   end
 

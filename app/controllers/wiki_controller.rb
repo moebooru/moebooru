@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class WikiController < ApplicationController
-  layout 'default'
+  layout "default"
   before_filter :post_member_only, :only => [:update, :create, :edit, :revert]
   before_filter :mod_only, :only => [:lock, :unlock, :destroy, :rename]
   helper :post
@@ -126,7 +126,7 @@ class WikiController < ApplicationController
       if @page.save
         respond_to_success("Page reverted", :action => "show", :title => params[:title])
       else
-        respond_to_error((@page.errors.full_messages.first rescue "Error reverting page"), { :action => 'show', :title => params[:title] })
+        respond_to_error((@page.errors.full_messages.first rescue "Error reverting page"), { :action => "show", :title => params[:title] })
       end
     end
   end
@@ -148,7 +148,7 @@ class WikiController < ApplicationController
     elsif params[:id]
       wiki_id = params[:id]
     end
-    @wiki_pages = WikiPageVersion.all(:conditions => { :wiki_page_id => wiki_id }, :order => 'version DESC')
+    @wiki_pages = WikiPageVersion.all(:conditions => { :wiki_page_id => wiki_id }, :order => "version DESC")
 
     respond_to_list("wiki_pages")
   end
@@ -167,7 +167,7 @@ class WikiController < ApplicationController
 
     @oldpage = WikiPage.find_page(params[:title], params[:from])
     unless @oldpage
-      flash[:notice] = 'Page with specified title does not exist'
+      flash[:notice] = "Page with specified title does not exist"
       redirect_to :action => :index
       return
     end

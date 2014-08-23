@@ -1,5 +1,5 @@
 CONFIG = {}
-require File.expand_path '../../lib/languages', __FILE__
+require File.expand_path "../../lib/languages", __FILE__
 # The version of this Moebooru.
 CONFIG["version"] = "4.0.0-a.1"
 
@@ -213,7 +213,7 @@ CONFIG["tag_types"] = {
   "copy" => 3,
   "char" => 4
 }
-CONFIG['tag_order'] = %w(artist copyright character general)
+CONFIG["tag_order"] = %w(artist copyright character general)
 
 # Tag type IDs to not list in recent tag summaries, such as on the side of post/index:
 CONFIG["exclude_from_tag_sidebar"] = [0]
@@ -288,4 +288,4 @@ CONFIG["min_mpixels"] = nil
 # approved.
 CONFIG["hide_pending_posts"] = false
 
-CONFIG['available_locales'] = %w(de en es ja ru zh_CN)
+CONFIG["available_locales"] = %w(de en es ja ru zh_CN)

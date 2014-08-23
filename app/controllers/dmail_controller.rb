@@ -16,7 +16,7 @@ class DmailController < ApplicationController
   end
 
   def create
-    if Dmail.where(:from_id => @current_user.id).where('created_at > ?', 1.hour.ago).count > 10
+    if Dmail.where(:from_id => @current_user.id).where("created_at > ?", 1.hour.ago).count > 10
       flash[:notice] = "You can't send more than 10 dmails per hour."
       redirect_to :action => :inbox
       return

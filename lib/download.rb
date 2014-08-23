@@ -1,5 +1,5 @@
 require "base64"
-require 'net/https'
+require "net/https"
 
 # This simulates an http.request_get response, for data: URLs.
 class LocalData
@@ -29,7 +29,7 @@ module Danbooru
       url = Addressable::URI.parse(source)
       url.host = url.normalized_host
 
-      unless url.scheme == 'http' or url.scheme == 'https'
+      unless url.scheme == "http" or url.scheme == "https"
         raise SocketError, "URL must be HTTP or HTTPS"
       end
 
@@ -41,11 +41,11 @@ module Danbooru
 
       # Addressable doesn't fill in port data if not explicitly given.
       unless url.port
-        url.port = url.scheme == 'https' ? 443 : 80
+        url.port = url.scheme == "https" ? 443 : 80
       end
 
       http = Net::HTTP.new url.host, url.port
-      if url.scheme == 'https'
+      if url.scheme == "https"
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end

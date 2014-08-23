@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class TagTest < ActiveSupport::TestCase
   def setup
@@ -14,7 +14,7 @@ class TagTest < ActiveSupport::TestCase
   end
   
   def create_post(tags, params = {})
-    post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => '127.0.0.1', :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
     @test_number += 1
     post
   end
@@ -130,7 +130,7 @@ class TagTest < ActiveSupport::TestCase
   
   def test_related
     p1 = create_post("tag1 tag2")
-    p2 = create_post('tag1 tag2 tag3')
+    p2 = create_post("tag1 tag2 tag3")
     
     t = Tag.find_by_name("tag1")
     related = t.related.sort {|a, b| a[0] <=> b[0]}
@@ -160,7 +160,7 @@ class TagTest < ActiveSupport::TestCase
   
   def test_related_by_type
     p1 = create_post("tag1 artist:tag2")
-    p2 = create_post('tag1 tag2 artist:tag3 copyright:tag4')
+    p2 = create_post("tag1 tag2 artist:tag3 copyright:tag4")
     
     related = Tag.calculate_related_by_type("tag1", CONFIG["tag_types"]["Artist"]).sort {|a, b| a["name"] <=> b["name"]}
     assert_equal(2, related.size)

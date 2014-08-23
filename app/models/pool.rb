@@ -1,4 +1,4 @@
-require 'mirror'
+require "mirror"
 require "erb"
 include ERB::Util
 
@@ -225,7 +225,7 @@ class Pool < ActiveRecord::Base
       sum = 0
       pool_posts.each do |pool_post|
         post = pool_post.post
-        next if post.status == 'deleted'
+        next if post.status == "deleted"
         sum += options[:jpeg] && post.has_jpeg? ? post.jpeg_size : post.file_size
       end
 
@@ -256,7 +256,7 @@ class Pool < ActiveRecord::Base
       filename_count = {}
       pool_posts.each do |pool_post|
         post = pool_post.post
-        next if post.status == 'deleted'
+        next if post.status == "deleted"
 
         # Strip Rails.root/public off the file path, so the paths are relative to document-root.
         if jpeg && post.has_jpeg?
@@ -266,7 +266,7 @@ class Pool < ActiveRecord::Base
           path = post.file_path
           file_ext = post.file_ext
         end
-        path = path[Rails.root.join('public').to_s.length .. path.length]
+        path = path[Rails.root.join("public").to_s.length .. path.length]
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
@@ -301,7 +301,7 @@ class Pool < ActiveRecord::Base
           file_size = post.file_size
           crc32 = post.crc32
         end
-        crc32 = crc32 ? '%08x' % crc32.to_i : '-'
+        crc32 = crc32 ? "%08x" % crc32.to_i : "-"
         buf += [{ :filename => filename, :path => path, :file_size => file_size, :crc32 => crc32 }]
       end
 
@@ -332,7 +332,7 @@ class Pool < ActiveRecord::Base
       filename_count = {}
       pool_posts.each do |pool_post|
         post = pool_post.post
-        next if post.status == 'deleted'
+        next if post.status == "deleted"
 
         # Strip Rails.root/public off the file path, so the paths are relative to document-root.
         if jpeg && post.has_jpeg?
@@ -342,7 +342,7 @@ class Pool < ActiveRecord::Base
           path = post.file_path
           file_ext = post.file_ext
         end
-        path = path[Rails.root.join('public').to_s.length .. path.length]
+        path = path[Rails.root.join("public").to_s.length .. path.length]
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".

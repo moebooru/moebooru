@@ -1,4 +1,4 @@
-require 'diff'
+require "diff"
 
 class WikiPage < ActiveRecord::Base
   acts_as_versioned_rails3 :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
@@ -107,7 +107,7 @@ class WikiPage < ActiveRecord::Base
 
   protected
     def ensure_changed
-      unless (changed & ['title', 'body']).any?
+      unless (changed & ["title", "body"]).any?
         errors.add :base, :no_change
       end
     end

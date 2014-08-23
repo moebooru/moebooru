@@ -45,7 +45,7 @@ class AddFullTextIndexOnPostTags < ActiveRecord::Migration
   def self.down
   end
 end
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class ApplicationTest < ActiveSupport::TestCase
   fixtures :users, :posts
@@ -53,7 +53,7 @@ class ApplicationTest < ActiveSupport::TestCase
   include ApplicationHelper
 
   def update_post(post, params = {})
-    post.update_attributes({:updater_user_id => 1, :updater_ip_addr => '127.0.0.1'}.merge(params))
+    post.update_attributes({:updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
   end
   
   def get_cache_keys(searches)

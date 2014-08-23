@@ -1,7 +1,7 @@
 # FIXME: someone nuke this remote thingy plzthx.
-require 'set'
-require 'active_support/json'
-require 'active_support/core_ext/object/blank'
+require "set"
+require "active_support/json"
+require "active_support/core_ext/object/blank"
 
 module ActionView
   # = Action View Prototype Helpers
@@ -115,12 +115,12 @@ module ActionView
     def remote_function(options)
       javascript_options = options_for_ajax(options)
 
-      update = ''
+      update = ""
       if options[:update] && options[:update].is_a?(Hash)
         update  = []
         update << "success:'#{options[:update][:success]}'" if options[:update][:success]
         update << "failure:'#{options[:update][:failure]}'" if options[:update][:failure]
-        update  = '{' + update.join(',') + '}'
+        update  = "{" + update.join(",") + "}"
       elsif options[:update]
         update << "'#{options[:update]}'"
       end
@@ -328,7 +328,7 @@ module ActionView
         #   page.replace_html 'person-45', :partial => 'person', :object => @person
         #
         def replace_html(id, *options_for_render)
-          call 'Element.update', id, render(*options_for_render)
+          call "Element.update", id, render(*options_for_render)
         end
 
         # Replaces the "outer HTML" (i.e., the entire element, not just its
@@ -362,7 +362,7 @@ module ActionView
         #   page.replace 'person_45', :partial => 'person', :object => @person
         #
         def replace(id, *options_for_render)
-          call 'Element.replace', id, render(*options_for_render)
+          call "Element.replace", id, render(*options_for_render)
         end
 
         # Removes the DOM elements with the given +ids+ from the page.
@@ -374,7 +374,7 @@ module ActionView
         #  page.remove 'person_23', 'person_9', 'person_2'
         #
         def remove(*ids)
-          loop_on_multiple_args 'Element.remove', ids
+          loop_on_multiple_args "Element.remove", ids
         end
 
         # Shows hidden DOM elements with the given +ids+.
@@ -386,7 +386,7 @@ module ActionView
         #  page.show 'person_6', 'person_13', 'person_223'
         #
         def show(*ids)
-          loop_on_multiple_args 'Element.show', ids
+          loop_on_multiple_args "Element.show", ids
         end
 
         # Hides the visible DOM elements with the given +ids+.
@@ -398,7 +398,7 @@ module ActionView
         #  page.hide 'person_29', 'person_9', 'person_0'
         #
         def hide(*ids)
-          loop_on_multiple_args 'Element.hide', ids
+          loop_on_multiple_args "Element.hide", ids
         end
 
         # Toggles the visibility of the DOM elements with the given +ids+.
@@ -410,7 +410,7 @@ module ActionView
         #  page.toggle 'person_14', 'person_12', 'person_23'      # Shows the previously hidden elements
         #
         def toggle(*ids)
-          loop_on_multiple_args 'Element.toggle', ids
+          loop_on_multiple_args "Element.toggle", ids
         end
 
         # Displays an alert dialog with the given +message+.
@@ -420,7 +420,7 @@ module ActionView
         #   # Generates: alert('This message is from Rails!')
         #   page.alert('This message is from Rails!')
         def alert(message)
-          call 'alert', message
+          call "alert", message
         end
 
         # Redirects the browser to the given +location+ using JavaScript, in the same form as +url_for+.
@@ -444,7 +444,7 @@ module ActionView
         #  # Generates: window.location.reload();
         #  page.reload
         def reload
-          record 'window.location.reload()'
+          record "window.location.reload()"
         end
 
         # Calls the JavaScript +function+, optionally with the given +arguments+.
@@ -528,7 +528,7 @@ module ActionView
           end
 
           def record(line)
-            line = "#{line.to_s.chomp.gsub(/\;\z/, '')};"
+            line = "#{line.to_s.chomp.gsub(/\;\z/, "")};"
             self << line
             line
           end
@@ -554,7 +554,7 @@ module ActionView
 
           def arguments_for_call(arguments, block = nil)
             arguments << block_to_function(block) if block
-            arguments.map { |argument| javascript_object_for(argument) }.join ', '
+            arguments.map { |argument| javascript_object_for(argument) }.join ", "
           end
 
           def block_to_function(block)
@@ -594,35 +594,35 @@ module ActionView
     protected
       def options_for_javascript(options)
         if options.empty?
-          '{}'
+          "{}"
         else
-          "{#{options.keys.map { |k| "#{k}:#{options[k]}" }.sort.join(', ')}}"
+          "{#{options.keys.map { |k| "#{k}:#{options[k]}" }.sort.join(", ")}}"
         end
       end
 
       def options_for_ajax(options)
         js_options = build_callbacks(options)
 
-        js_options['asynchronous'] = options[:type] != :synchronous
-        js_options['method']       = method_option_to_s(options[:method]) if options[:method]
-        js_options['insertion']    = "'#{options[:position].to_s.downcase}'" if options[:position]
-        js_options['evalScripts']  = options[:script].nil? || options[:script]
+        js_options["asynchronous"] = options[:type] != :synchronous
+        js_options["method"]       = method_option_to_s(options[:method]) if options[:method]
+        js_options["insertion"]    = "'#{options[:position].to_s.downcase}'" if options[:position]
+        js_options["evalScripts"]  = options[:script].nil? || options[:script]
 
         if options[:form]
-          js_options['parameters'] = 'Form.serialize(this)'
+          js_options["parameters"] = "Form.serialize(this)"
         elsif options[:submit]
-          js_options['parameters'] = "Form.serialize('#{options[:submit]}')"
+          js_options["parameters"] = "Form.serialize('#{options[:submit]}')"
         elsif options[:with]
-          js_options['parameters'] = options[:with]
+          js_options["parameters"] = options[:with]
         end
 
         if protect_against_forgery? && !options[:form]
-          if js_options['parameters']
-            js_options['parameters'] << " + '&"
+          if js_options["parameters"]
+            js_options["parameters"] << " + '&"
           else
-            js_options['parameters'] = "'"
+            js_options["parameters"] = "'"
           end
-          js_options['parameters'] << "#{request_forgery_protection_token}=' + encodeURIComponent('#{escape_javascript form_authenticity_token}')"
+          js_options["parameters"] << "#{request_forgery_protection_token}=' + encodeURIComponent('#{escape_javascript form_authenticity_token}')"
         end
 
         options_for_javascript(js_options)
@@ -636,7 +636,7 @@ module ActionView
         callbacks = {}
         options.each do |callback, code|
           if CALLBACKS.include?(callback)
-            name = 'on' + callback.to_s.capitalize
+            name = "on" + callback.to_s.capitalize
             callbacks[name] = "function(request){#{code}}"
           end
         end
@@ -679,7 +679,7 @@ module ActionView
       end
 
       def append_to_function_chain!(call)
-        function_chain[-1].chomp!(';')
+        function_chain[-1].chomp!(";")
         function_chain[-1] += ".#{call};"
       end
   end
@@ -706,11 +706,11 @@ module ActionView
     end
 
     def replace_html(*options_for_render)
-      call 'update', @generator.send(:render, *options_for_render)
+      call "update", @generator.send(:render, *options_for_render)
     end
 
     def replace(*options_for_render)
-      call 'replace', @generator.send(:render, *options_for_render)
+      call "replace", @generator.send(:render, *options_for_render)
     end
 
     def reload(options_for_replace = {})
@@ -788,11 +788,11 @@ module ActionView
       append_enumerable_function!("zip(#{arguments_for_call arguments}")
       if block
         function_chain[-1] += ", function(array) {"
-        yield ::ActiveSupport::JSON::Variable.new('array')
+        yield ::ActiveSupport::JSON::Variable.new("array")
         add_return_statement!
-        @generator << '});'
+        @generator << "});"
       else
-        function_chain[-1] += ');'
+        function_chain[-1] += ");"
       end
     end
 
@@ -815,15 +815,15 @@ module ActionView
       def enumerate(enumerable, options = {}, &block)
         options[:method_args] ||= []
         options[:yield_args]  ||= []
-        yield_args  = options[:yield_args] * ', '
+        yield_args  = options[:yield_args] * ", "
         method_args = arguments_for_call options[:method_args] # foo, bar, function
-        method_args << ', ' unless method_args.blank?
+        method_args << ", " unless method_args.blank?
         add_variable_assignment!(options[:variable]) if options[:variable]
         append_enumerable_function!("#{enumerable.to_s.camelize(:lower)}(#{method_args}function(#{yield_args}) {")
         # only yield as many params as were passed in the block
         yield(*options[:yield_args].collect { |p| JavaScriptVariableProxy.new(@generator, p) }[0..block.arity-1])
         add_return_statement! if options[:return]
-        @generator << '});'
+        @generator << "});"
       end
 
       def add_variable_assignment!(variable)
@@ -832,12 +832,12 @@ module ActionView
 
       def add_return_statement!
         unless function_chain.last =~ /return/
-          function_chain.push("return #{function_chain.pop.chomp(';')};")
+          function_chain.push("return #{function_chain.pop.chomp(";")};")
         end
       end
 
       def append_enumerable_function!(call)
-        function_chain[-1].chomp!(';')
+        function_chain[-1].chomp!(";")
         function_chain[-1] += ".#{call}"
       end
   end

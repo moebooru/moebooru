@@ -43,7 +43,7 @@ class PoolController < ApplicationController
     end
 
     if not search_tokens.empty? then
-      value_index_query = '(' + Array(search_tokens).map { |t| t.to_escaped_for_tsquery }.join(' & ') + ')'
+      value_index_query = "(" + Array(search_tokens).map { |t| t.to_escaped_for_tsquery }.join(" & ") + ")"
       conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
       cond_params << value_index_query
 
@@ -105,7 +105,7 @@ class PoolController < ApplicationController
     begin
       @pool = Pool.find(params[:id].to_i, :include => [:pool_posts => :post])
     rescue
-      flash[:notice] = t('c.pool.not_found', :id => params[:id].to_i)
+      flash[:notice] = t("c.pool.not_found", :id => params[:id].to_i)
       redirect_to :action => :index
       return
     end

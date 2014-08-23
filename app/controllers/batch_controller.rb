@@ -1,7 +1,7 @@
-require 'extract_urls'
+require "extract_urls"
 
 class BatchController < ApplicationController
-  layout 'default'
+  layout "default"
   before_filter :contributor_only, :only => [:index, :create, :enqueue, :update]
 
   def index

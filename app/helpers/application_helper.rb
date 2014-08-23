@@ -1,6 +1,6 @@
 module ApplicationHelper
   def atom_title
-    base_title = CONFIG['app_name']
+    base_title = CONFIG["app_name"]
     if content_for? :title
       "#{h base_title} - #{content_for(:title)}".html_safe
     else
@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def html_title
-    base_title = CONFIG['app_name']
+    base_title = CONFIG["app_name"]
     if content_for? :title
       content_for(:title) + " | #{base_title}"
     else
@@ -34,7 +34,7 @@ module ApplicationHelper
   def format_text(text, options = {})
     # The parses is more or less html safe
     # FIXME: for some reason rbx requires force encoding here.
-    DText.parse(text).force_encoding('utf-8').html_safe
+    DText.parse(text).force_encoding("utf-8").html_safe
   end
 
   def format_inline(inline, num, id, preview_html=nil)
@@ -61,7 +61,7 @@ module ApplicationHelper
     inline_id = "inline-%s-%i" % [id, num]
     # FIXME: for some reason rails invoked the old, useless json_escape when
     #        used here.
-    script = 'InlineImage.register("%s", %s);' % [inline_id, inline.to_json.gsub('/', '\/')]
+    script = 'InlineImage.register("%s", %s);' % [inline_id, inline.to_json.gsub("/", '\/')]
     return block.html_safe, script.html_safe, inline_id
   end
 
@@ -82,7 +82,7 @@ module ApplicationHelper
     }
 
     if num > 0 then
-      text << '<script language="javascript">' + list.join("\n") + '</script>'
+      text << '<script language="javascript">' + list.join("\n") + "</script>"
     end
 
     text.html_safe
@@ -97,7 +97,7 @@ module ApplicationHelper
 
   def tag_header(tags)
     unless tags.blank?
-      ('/' + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")).html_safe
+      ("/" + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")).html_safe
     end
   end
 

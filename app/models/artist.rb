@@ -7,7 +7,7 @@ class Artist < ActiveRecord::Base
 
         while artists.empty? && url.size > 10
           u = "#{url.to_escaped_for_sql_like}%"
-          artists += Artist.joins(:artist_urls).where(:alias_id => nil).where('artist_urls.normalized_url LIKE ?', u).order(:name)
+          artists += Artist.joins(:artist_urls).where(:alias_id => nil).where("artist_urls.normalized_url LIKE ?", u).order(:name)
 
           # Remove duplicates based on name
           artists = artists.inject({}) {|all, artist| all[artist.name] = artist ; all}.values
@@ -218,7 +218,7 @@ class Artist < ActiveRecord::Base
   attr_accessor :updater_ip_addr
 
   def normalize
-    self.name = name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, '_')
+    self.name = name.downcase.gsub(/^\s+/, "").gsub(/\s+$/, "").gsub(/ /, "_")
   end
 
   def to_s

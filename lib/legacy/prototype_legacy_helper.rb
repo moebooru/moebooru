@@ -29,7 +29,7 @@ module PrototypeHelper
   #
   # <tt>options</tt> argument is the same as in form_remote_tag.
   def submit_to_remote(name, value, options = {})
-    options[:with] ||= 'Form.serialize(this.form)'
+    options[:with] ||= "Form.serialize(this.form)"
 
     html_options = options.delete(:html) || {}
     html_options[:name] = name
@@ -358,9 +358,9 @@ module PrototypeHelper
   #
   def observe_field(field_id, options = {})
     if options[:frequency] && options[:frequency] > 0
-      build_observer('Form.Element.Observer', field_id, options)
+      build_observer("Form.Element.Observer", field_id, options)
     else
-      build_observer('Form.Element.EventObserver', field_id, options)
+      build_observer("Form.Element.EventObserver", field_id, options)
     end
   end
 
@@ -374,9 +374,9 @@ module PrototypeHelper
   # <tt>:with</tt> option is set to the serialized form by default.
   def observe_form(form_id, options = {})
     if options[:frequency]
-      build_observer('Form.Observer', form_id, options)
+      build_observer("Form.Observer", form_id, options)
     else
-      build_observer('Form.EventObserver', form_id, options)
+      build_observer("Form.EventObserver", form_id, options)
     end
   end
 
@@ -416,7 +416,7 @@ module PrototypeHelper
       if options[:with] && (options[:with] !~ /[\{=(.]/)
         options[:with] = "'#{options[:with]}=' + encodeURIComponent(value)"
       else
-        options[:with] ||= 'value' unless options[:function]
+        options[:with] ||= "value" unless options[:function]
       end
 
       callback = options[:function] || remote_function(options)

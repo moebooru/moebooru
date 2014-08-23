@@ -1,5 +1,5 @@
-require 'multipart'
-require 'external_post'
+require "multipart"
+require "external_post"
 
 module SimilarImages
   def get_services(services)
@@ -35,7 +35,7 @@ module SimilarImages
 
     # If the source is a local post, read the preview and send it with the request.
     if options[:type] == :post then
-      source_file = File.open(options[:source].preview_path, 'rb') do |file| file.read end
+      source_file = File.open(options[:source].preview_path, "rb") do |file| file.read end
       source_filename = options[:source].preview_path
     elsif options[:type] == :file then
       source_file = options[:source].read
@@ -108,7 +108,7 @@ module SimilarImages
       end
 
       if not doc.root
-        errors[server] = { :message => 'invalid response' }
+        errors[server] = { :message => "invalid response" }
         next
       end
 
@@ -119,10 +119,10 @@ module SimilarImages
 
       threshold = (options[:threshold] || doc.root[:threshold]).to_f
 
-      doc.search('matches/match').each do |element|
+      doc.search("matches/match").each do |element|
         if element[:sim].to_f >= threshold and element[:sim].to_f > 0
           service = element[:service]
-          image = element.search('[id]').first
+          image = element.search("[id]").first
 
           id = image[:id]
           md5 = element[:md5]
@@ -215,7 +215,7 @@ module SimilarImages
       FileUtils.mkdir_p(SEARCH_CACHE_DIR, :mode => 0775)
 
       tempfile_path = "#{SEARCH_CACHE_DIR}/#{SecureRandom.random_number(2**32).to_s}.upload"
-      File.open(tempfile_path, 'wb') { |f| yield f }
+      File.open(tempfile_path, "wb") { |f| yield f }
 
       # Use the resizer to validate the file and convert it to a thumbnail-size JPEG.
       imgsize = ImageSize.path(tempfile_path)
@@ -233,7 +233,7 @@ module SimilarImages
       Moebooru::Resizer.resize(ext, tempfile_path, tempfile_path_resize, size, 95)
       FileUtils.mv(tempfile_path_resize, tempfile_path)
 
-      md5 = File.open(tempfile_path, 'rb') {|fp| Digest::MD5.hexdigest(fp.read)}
+      md5 = File.open(tempfile_path, "rb") {|fp| Digest::MD5.hexdigest(fp.read)}
       id = "#{md5}.#{ext}"
       file_path = "#{SEARCH_CACHE_DIR}/#{id}"
 
@@ -266,7 +266,7 @@ module SimilarImages
     end
 
     # Touch the file to delay its deletion.
-    File.open(file_path, 'a')
+    File.open(file_path, "a")
     return file_path
   end
 

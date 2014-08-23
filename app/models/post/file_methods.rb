@@ -23,11 +23,11 @@ module Post::FileMethods
   include Moebooru::TempfilePrefix
 
   def strip_exif
-    if file_ext.downcase == 'jpg' then
+    if file_ext.downcase == "jpg" then
       # FIXME: awesome way to strip EXIF.
       #        This will silently fail on systems without jhead in their PATH
       #        and may cause confusion for some bored ones.
-      system('jhead', '-purejpg', tempfile_path)
+      system("jhead", "-purejpg", tempfile_path)
     end
     return true
   end
@@ -120,7 +120,7 @@ module Post::FileMethods
     # Compute both hashes in one pass.
     md5_obj = Digest::MD5.new
     crc32_accum = 0
-    File.open(path, 'rb') { |fp|
+    File.open(path, "rb") { |fp|
       buf = ""
       while fp.read(1024*64, buf) do
         md5_obj << buf
@@ -136,7 +136,7 @@ module Post::FileMethods
     return false if not has_jpeg?
 
     crc32_accum = 0
-    File.open(jpeg_path, 'rb') { |fp|
+    File.open(jpeg_path, "rb") { |fp|
       buf = ""
       while fp.read(1024*64, buf) do
         crc32_accum = Zlib.crc32(buf, crc32_accum)
@@ -275,7 +275,7 @@ module Post::FileMethods
       # copy the file to danbooru's directory.
       FileUtils.cp(f.tempfile.path, tempfile_path)
     else
-      File.open(tempfile_path, 'wb') {|nf| nf.write(f.read)}
+      File.open(tempfile_path, "wb") {|nf| nf.write(f.read)}
     end
 
     self.received_file = true
@@ -439,7 +439,7 @@ module Post::FileMethods
     self.sample_size = File.size(tempfile_sample_path)
 
     crc32_accum = 0
-    File.open(tempfile_sample_path, 'rb') { |fp|
+    File.open(tempfile_sample_path, "rb") { |fp|
       buf = ""
       while fp.read(1024*64, buf) do
         crc32_accum = Zlib.crc32(buf, crc32_accum)
@@ -541,7 +541,7 @@ module Post::FileMethods
     self.jpeg_size = File.size(tempfile_jpeg_path)
 
     crc32_accum = 0
-    File.open(tempfile_jpeg_path, 'rb') { |fp|
+    File.open(tempfile_jpeg_path, "rb") { |fp|
       buf = ""
       while fp.read(1024*64, buf) do
         crc32_accum = Zlib.crc32(buf, crc32_accum)

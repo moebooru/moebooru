@@ -65,7 +65,7 @@ module Mirrors
       raise "Invalid filename to mirror: \"%s" % file
     end
 
-    expected_md5 = File.open(file, 'rb') {|fp| Digest::MD5.hexdigest(fp.read)}
+    expected_md5 = File.open(file, "rb") {|fp| Digest::MD5.hexdigest(fp.read)}
 
     target_mirrors = filter_mirror_list(options)
     target_mirrors.each { |mirror|

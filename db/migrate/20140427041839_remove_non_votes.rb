@@ -3,7 +3,7 @@ class RemoveNonVotes < ActiveRecord::Migration
   end
 
   def up
-    PostVote.where('score < 1').delete_all
+    PostVote.where("score < 1").delete_all
   end
 
   def down

@@ -70,7 +70,7 @@ module Post::ImageStore
 #      end
 
       if status == "deleted"
-        CONFIG['url_base'] + "/deleted-preview.png"
+        CONFIG["url_base"] + "/deleted-preview.png"
       elsif self.image?
         CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else

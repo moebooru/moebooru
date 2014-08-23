@@ -1,4 +1,4 @@
-require 'mini_magick'
+require "mini_magick"
 
 module Moebooru
   module Resizer
@@ -9,12 +9,12 @@ module Moebooru
 
     # Meaning of sRGB and RGB flipped at 6.7.5.
     # Reference: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=20501
-    TARGET_COLORSPACE = MiniMagick::image_magick_version >= Gem::Version.create('6.7.5') ?
-                        'sRGB' : 'RGB'
+    TARGET_COLORSPACE = MiniMagick::image_magick_version >= Gem::Version.create("6.7.5") ?
+                        "sRGB" : "RGB"
 
     def resize(file_ext, read_path, write_path, output_size, output_quality)
       image = MiniMagick::Image.open(read_path)
-      from_cmyk = image[:colorspace].end_with? 'CMYK'
+      from_cmyk = image[:colorspace].end_with? "CMYK"
       if output_size[:width] && output_size[:height].nil?
         output_size[:height] = image[:height] * output_size[:width] / image[:width]
       elsif output_size[:height] && output_size[:width].nil?
@@ -34,7 +34,7 @@ module Moebooru
       # Example: 1253x1770 -> 212x300. In ImageMagick it becomes 212x299.
       write_size = "#{output_size[:width]}x#{output_size[:height]}!"
       write_crop = "#{output_size[:crop_width]}x#{output_size[:crop_height]}+#{output_size[:crop_left]}+#{output_size[:crop_top]}"
-      write_format = write_path.split('.')[-1]
+      write_format = write_path.split(".")[-1]
       if write_format =~ /\A(jpe?g|gif|png)\z/i
         write_format = write_format.downcase
       else
@@ -47,7 +47,7 @@ module Moebooru
         f.resize write_size
         f.repage.+
         if write_format =~ /\Ajpe?g\z/
-          f.sampling_factor '2x2,1x1,1x1'
+          f.sampling_factor "2x2,1x1,1x1"
         end
         # Explicitly convert CMYK images
         if from_cmyk

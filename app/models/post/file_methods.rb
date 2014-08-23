@@ -216,7 +216,7 @@ module Post::FileMethods
 
     begin
       Moebooru::Resizer.resize(ext, path, tempfile_preview_path, size, 85)
-    rescue Exception => x
+    rescue => x
       errors.add "preview", "couldn't be generated (#{x})"
       return false
     end
@@ -429,7 +429,7 @@ module Post::FileMethods
 
     begin
       Moebooru::Resizer.resize(file_ext, path, tempfile_sample_path, size, CONFIG["sample_quality"])
-    rescue Exception => x
+    rescue => x
       errors.add "sample", "couldn't be created: #{x}"
       return false
     end
@@ -531,7 +531,7 @@ module Post::FileMethods
     size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => CONFIG["jpeg_width"], :height => CONFIG["jpeg_height"] }, CONFIG["jpeg_ratio"])
     begin
       Moebooru::Resizer.resize(file_ext, path, tempfile_jpeg_path, size, CONFIG["jpeg_quality"])
-    rescue Exception => x
+    rescue => x
       errors.add "jpeg", "couldn't be created: #{x}"
       return false
     end

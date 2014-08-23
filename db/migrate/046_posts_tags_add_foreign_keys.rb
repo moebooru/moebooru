@@ -12,12 +12,12 @@ class PostsTagsAddForeignKeys < ActiveRecord::Migration
   def self.down
     begin
       execute "alter table posts_tags drop constraint fk_posts_tags__post"
-    rescue Exception
+    rescue
     end
 
     begin
       execute "alter table posts_tags drop constraint fk_posts_tags__tag"
-    rescue Exception
+    rescue
     end
   end
 end

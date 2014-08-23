@@ -171,7 +171,7 @@ class InlineImage < ActiveRecord::Base
 
     begin
       Moebooru::Resizer.resize(file_ext, path, tempfile_sample_path, sample_size, 95)
-    rescue Exception => x
+    rescue => x
       errors.add "sample", "couldn't be created: #{x}"
       return false
     end
@@ -198,7 +198,7 @@ class InlineImage < ActiveRecord::Base
 
     begin
       Moebooru::Resizer.resize(ext, path, tempfile_preview_path, preview_dimensions, 95)
-    rescue Exception => x
+    rescue => x
       errors.add "preview", "couldn't be generated (#{x})"
       return false
     end

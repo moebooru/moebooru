@@ -16,7 +16,7 @@ module Tag::ParseMethods
       elsif type == :date
         begin
           x.to_date
-        rescue Exception
+        rescue
           nil
         end
       end

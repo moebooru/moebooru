@@ -63,7 +63,7 @@ module Moebooru
       image.write write_path
     rescue IOError
       raise
-    rescue Exception => e
+    rescue => e
       raise ResizeError, e.to_s
     ensure
       image.destroy! if image

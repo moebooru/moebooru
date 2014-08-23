@@ -47,7 +47,7 @@ class HistoryChange < ActiveRecord::Base
   end
 
   def has_default?
-    options.has_key?(:default)
+    options.key?(:default)
   end
 
   def get_default

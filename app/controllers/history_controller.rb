@@ -35,14 +35,14 @@ class HistoryController < ApplicationController
       end
     }
 
-    q[:type] = q[:type].pluralize if q.has_key?(:type)
-    q[:inner_type] = q[:inner_type].pluralize if q.has_key?(:inner_type)
+    q[:type] = q[:type].pluralize if q.key?(:type)
+    q[:inner_type] = q[:inner_type].pluralize if q.key?(:inner_type)
 
     # If notes:id has been specified, search using the inner key in history_changes
     # rather than the grouping table in histories.  We don't expose this in general.
     # Searching based on hc.table_name without specifying an ID is slow, and the
     # details here shouldn't be visible anyway.
-    if q.has_key?(:type) and q.has_key?(:id) and q[:type] == "notes" then
+    if q.key?(:type) and q.key?(:id) and q[:type] == "notes" then
       q[:inner_type] = q[:type]
       q[:remote_id] = q[:id]
 
@@ -66,35 +66,35 @@ class HistoryController < ApplicationController
       end
     end
 
-    if q.has_key?(:id) then
+    if q.key?(:id) then
       conds << "group_by_id = ?"
       cond_params << q[:id]
     end
 
-    if q.has_key?(:type) then
+    if q.key?(:type) then
 
       conds << "group_by_table = ?"
       cond_params << q[:type]
     end
 
-    if q.has_key?(:change)
+    if q.key?(:change)
       conds << "histories.id = ?"
       cond_params << q[:change]
     end
 
-    if q.has_key?(:type)
+    if q.key?(:type)
       conds << "group_by_table = ?"
       cond_params << q[:type]
     end
 
-    if q.has_key?(:inner_type)
+    if q.key?(:inner_type)
       q[:inner_type] = q[:inner_type].pluralize
 
       hc_conds << "hc.table_name = ?"
       hc_cond_params << q[:inner_type]
     end
 
-    if q.has_key?(:remote_id)
+    if q.key?(:remote_id)
       hc_conds << "hc.remote_id = ?"
       hc_cond_params << q[:remote_id]
     end
@@ -105,7 +105,7 @@ class HistoryController < ApplicationController
       hc_cond_params << value_index_query
     end
 
-    if q.has_key?(:field) and q.has_key?(:type)
+    if q.key?(:field) and q.key?(:type)
       # Look up a particular field change, eg. "type:posts field:rating".
       # XXX: The WHERE id IN (SELECT id...) used to implement this is slow when we don't have
       # anything else filtering the results.
@@ -138,7 +138,7 @@ class HistoryController < ApplicationController
       cond_params += hc_cond_params
     end
 
-    if q.has_key?(:type) and not q.has_key?(:change) then
+    if q.key?(:type) and not q.key?(:change) then
       @type = q[:type]
     else
       @type = "all"
@@ -149,8 +149,8 @@ class HistoryController < ApplicationController
     # :show_all_tags => don't omit post tags that didn't change
     @options = {
       :show_all_tags => params[:show_all_tags] == "1",
-      :specific_object => (q.has_key?(:type) and q.has_key?(:id)),
-      :specific_history => q.has_key?(:change),
+      :specific_object => (q.key?(:type) and q.key?(:id)),
+      :specific_history => q.key?(:change),
     }
 
     @options[:show_name] = false
@@ -170,7 +170,7 @@ class HistoryController < ApplicationController
 
     # If we're searching for a specific change, force the display to the
     # type of the change we found.
-    if q.has_key?(:change) && !@changes.empty?
+    if q.key?(:change) && !@changes.empty?
       @type = @changes.first.group_by_table.pluralize
     end
 

@@ -175,7 +175,7 @@ class ApplicationController < ActionController::Base
   end
 
   module RespondToHelpers
-  protected
+    protected
     def respond_to_success(notice, redirect_to_params, options = {})
       extra_api_params = options[:api] || {}
 

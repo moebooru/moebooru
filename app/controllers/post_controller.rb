@@ -288,7 +288,7 @@ class PostController < ApplicationController
     q = Tag.parse_query(tags)
 
     limit = params[:limit].to_i
-    limit = q[:limit].to_i if q.has_key?(:limit)
+    limit = q[:limit].to_i if q.key?(:limit)
     limit = 16 if limit <= 0
     limit = 1000 if limit > 1000
 
@@ -306,7 +306,7 @@ class PostController < ApplicationController
     end
 
     @ambiguous_tags = Tag.select_ambiguous(split_tags)
-    if q.has_key?(:pool) and q[:pool].is_a?(Integer) then
+    if q.key?(:pool) and q[:pool].is_a?(Integer) then
       @searching_pool = Pool.find_by_id(q[:pool])
     end
 
@@ -330,7 +330,7 @@ class PostController < ApplicationController
       end
     end
 
-    @showing_holds_only = q.has_key?(:show_holds) && q[:show_holds] == :only
+    @showing_holds_only = q.key?(:show_holds) && q[:show_holds] == :only
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
 
     @preload = []
@@ -422,7 +422,7 @@ class PostController < ApplicationController
     end
 
     @pools = Pool.select(%w(pools.name pools.id)).joins(:pool_posts).where(:pools_posts => { :post_id => @post.id, :active => true }).order(:name)
-    if params.has_key?(:pool_id) then
+    if params.key?(:pool_id) then
       @following_pool_post = PoolPost.where(:active => true, :pool_id => params[:pool_id], :post_id => @post.id).first
     else
       @following_pool_post = PoolPost.where(:active => true, :post_id => @post.id).first
@@ -504,7 +504,7 @@ class PostController < ApplicationController
   end
 
   def vote
-    if not params.has_key?(:score) then
+    if not params.key?(:score) then
       vote =  PostVote.find_by(:user_id => @current_user.id, :post_id => params[:id])
       score = vote ? vote.score: 0
       respond_to_success("", {}, :api => {:vote => score})

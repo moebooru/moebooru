@@ -21,7 +21,7 @@ class Hash
   def to_xml(options = {})
     options[:indent] ||= 2
     options[:root] ||= "hash"
-    dasherize = !options.has_key?(:dasherize) || options[:dasherize]
+    dasherize = !options.key?(:dasherize) || options[:dasherize]
     root = options.delete(:root).to_s
     root = root.dasherize if dasherize
 

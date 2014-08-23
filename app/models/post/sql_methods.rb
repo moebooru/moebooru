@@ -55,7 +55,7 @@ module Post::SqlMethods
       join_params = []
       cond_params = []
 
-      if q.has_key?(:error)
+      if q.key?(:error)
         conds << "FALSE"
       end
 
@@ -77,7 +77,7 @@ module Post::SqlMethods
         cond_params << q[:ext].downcase.split(/,/)
       end
 
-      if q.has_key?(:show_deleted_only)
+      if q.key?(:show_deleted_only)
         if q[:show_deleted_only]
           conds << "p.status = 'deleted'"
         end
@@ -86,11 +86,11 @@ module Post::SqlMethods
         conds << "p.status <> 'deleted'"
       end
 
-      if q.has_key?(:parent_id) && q[:parent_id].is_a?(Integer)
+      if q.key?(:parent_id) && q[:parent_id].is_a?(Integer)
         conds << "(p.parent_id = ? or p.id = ?)"
         cond_params << q[:parent_id]
         cond_params << q[:parent_id]
-      elsif q.has_key?(:parent_id) && q[:parent_id] == false
+      elsif q.key?(:parent_id) && q[:parent_id] == false
         conds << "p.parent_id is null"
       end
 
@@ -118,13 +118,13 @@ module Post::SqlMethods
         cond_params << q[:fav]
       end
 
-      if q.has_key?(:vote_negated)
+      if q.key?(:vote_negated)
         joins << "LEFT JOIN post_votes v ON p.id = v.post_id AND v.user_id = ?"
         join_params << q[:vote_negated]
         conds << "v.score IS NULL"
       end
 
-      if q.has_key?(:vote)
+      if q.key?(:vote)
         joins << "JOIN post_votes v ON p.id = v.post_id"
         conds << "v.user_id = ?"
         cond_params << q[:vote][1]
@@ -138,7 +138,7 @@ module Post::SqlMethods
         cond_params << q[:user]
       end
 
-      if q.has_key?(:exclude_pools)
+      if q.key?(:exclude_pools)
         q[:exclude_pools].each_index do |i|
           if q[:exclude_pools][i].is_a?(Integer)
             joins << "LEFT JOIN pools_posts ep#{i} ON (ep#{i}.post_id = p.id AND ep#{i}.pool_id = ?)"
@@ -154,10 +154,10 @@ module Post::SqlMethods
         end
       end
 
-      if q.has_key?(:pool)
+      if q.key?(:pool)
         conds << "pools_posts.active = true"
 
-        if not q.has_key?(:order)
+        if not q.key?(:order)
           pool_ordering = " ORDER BY pools_posts.pool_id ASC, nat_sort(pools_posts.sequence), pools_posts.post_id"
         end
 
@@ -237,7 +237,7 @@ module Post::SqlMethods
         conds << "p.status = 'flagged'"
       end
 
-      if q.has_key?(:show_holds)
+      if q.key?(:show_holds)
         if q[:show_holds] == :only
           conds << "p.is_held"
         elsif q[:show_holds] == :hide
@@ -251,7 +251,7 @@ module Post::SqlMethods
         end
       end
 
-      if q.has_key?(:show_pending)
+      if q.key?(:show_pending)
         if q[:show_pending] == :only
           conds << "p.status = 'pending'"
         elsif q[:show_pending] == :hide
@@ -265,7 +265,7 @@ module Post::SqlMethods
         end
       end
 
-      if q.has_key?(:shown_in_index)
+      if q.key?(:shown_in_index)
         if q[:shown_in_index]
           conds << "p.is_shown_in_index"
         else
@@ -289,7 +289,7 @@ module Post::SqlMethods
       sql << " FROM " + joins.join(" ")
       sql << " WHERE " + conds.join(" AND ")
 
-      if q.has_key?(:order) && !options[:count]
+      if q.key?(:order) && !options[:count]
         case q[:order]
         when "id"
           sql << " ORDER BY p.id"
@@ -319,7 +319,7 @@ module Post::SqlMethods
 
         when "portrait_pool"
           # We can only do this if we're searching for a pool.
-          if q.has_key?(:pool) then
+          if q.key?(:pool) then
             sql << " ORDER BY 1.0*width / GREATEST(1, height), nat_sort(pools_posts.sequence), pools_posts.post_id"
           end
 
@@ -330,7 +330,7 @@ module Post::SqlMethods
           sql << " ORDER BY change_seq DESC"
 
         when "vote"
-          if q.has_key?(:vote)
+          if q.key?(:vote)
             sql << " ORDER BY v.updated_at DESC"
           end
 

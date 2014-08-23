@@ -62,7 +62,7 @@ module Danbooru
           headers["Referer"] = "http://www.pixiv.net"
 
           # Don't download the small version
-          if source =~ %r!(/img/.+?/.+?)_m.+$!
+          if source =~ %r{(/img/.+?/.+?)_m.+$}
             match = Regexp.last_match[1]
             source.sub!(match + "_m", match)
           end

@@ -44,10 +44,10 @@ module ApplicationHelper
 
     url = inline.inline_images.first.preview_url
     unless preview_html
-      preview_html = %{<img src="#{url}">}
+      preview_html = %(<img src="#{url}">)
     end
     id_text = "inline-%s-%i" % [id, num]
-    block = %{
+    block = %(
       <div class="inline-image" id="#{id_text}">
         <div class="inline-thumb" style="display: inline;">
         #{preview_html}
@@ -57,7 +57,7 @@ module ApplicationHelper
           <span class="main-inline-image"></span>
         </div>
       </div>
-    }
+    )
     inline_id = "inline-%s-%i" % [id, num]
     # FIXME: for some reason rails invoked the old, useless json_escape when
     #        used here.

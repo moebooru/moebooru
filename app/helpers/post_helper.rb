@@ -30,16 +30,16 @@ module PostHelper
 
     image_class = "preview"
     image_id = options[:image_id]
-    image_id = %{id="#{h(image_id)}"} if image_id
+    image_id = %(id="#{h(image_id)}") if image_id
     if is_post then
       image_title = h("Rating: #{post.pretty_rating} Score: #{post.score} Tags: #{post.cached_tags} User: #{post.author}")
     else
       image_title = ""
     end
     link_onclick = options[:onclick]
-    link_onclick = %{onclick="#{link_onclick}"} if link_onclick
-    link_onmouseover = %{ onmouseover="#{options[:onmouseover]}"} if options[:onmouseover]
-    link_onmouseout = %{ onmouseout="#{options[:onmouseout]}"} if options[:onmouseout]
+    link_onclick = %(onclick="#{link_onclick}") if link_onclick
+    link_onmouseover = %(onmouseover="#{options[:onmouseover]}") if options[:onmouseover]
+    link_onmouseout = %(onmouseout="#{options[:onmouseout]}") if options[:onmouseout]
 
     if options[:display] == :block then
       # Show the thumbnail at its actual resolution, and crop it with northern orientation
@@ -60,10 +60,10 @@ module PostHelper
       crop_left = 0
     end
 
-    image = %{<img src="#{post.preview_url}" style="margin-left: #{-crop_left}px;" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">}
+    image = %(<img src="#{post.preview_url}" style="margin-left: #{-crop_left}px;" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">)
     if is_post then
-      plid = %{<span class="plid">#pl #{request.protocol}#{h CONFIG["server_host"]}/post/show/#{post.id}</span>}
-      target_url = %{/post/show/#{post.id}/#{u(post.tag_title)}#{options[:url_params] || ""}}
+      plid = %(<span class="plid">#pl #{request.protocol}#{h CONFIG["server_host"]}/post/show/#{post.id}</span>)
+      target_url = %(/post/show/#{post.id}/#{u(post.tag_title)}#{options[:url_params] || ""})
     else
       plid = ""
       target_url = post.url
@@ -71,8 +71,8 @@ module PostHelper
 
     link_class = "thumb"
     link_class += " no-browser-link" unless is_post
-    link = %{<a class="#{link_class}" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
-    div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
+    link = %(<a class="#{link_class}" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>)
+    div = %(<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>)
 
     if post.use_jpeg?(@current_user) && !options[:disable_jpeg_direct_links] then
       if post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?
@@ -97,31 +97,33 @@ module PostHelper
     end
 
     directlink_info =
-    %{<span class="directlink-info">} +
-        %{<img class="directlink-icon directlink-icon-large" src="#{image_path "ddl_large.gif"}" alt="">} +         %{<img class="directlink-icon directlink-icon-small" src="#{image_path "ddl.gif"}" alt="">} +         %{<img class="parent-display" src="#{image_path "post-star-parent.gif"}" alt="">} +
-        %{<img class="child-display" src="#{image_path "post-star-child.gif"}" alt="">} +
-        %{<img class="flagged-display" src="#{image_path "post-star-flagged.gif"}" alt="">} +
-        %{<img class="pending-display" src="#{image_path "post-star-pending.gif"}" alt="">} +
-      %{</span>}
+      %(<span class="directlink-info">) +
+        %(<img class="directlink-icon directlink-icon-large" src="#{image_path "ddl_large.gif"}" alt="">) +
+        %(<img class="directlink-icon directlink-icon-small" src="#{image_path "ddl.gif"}" alt="">) +
+        %(<img class="parent-display" src="#{image_path "post-star-parent.gif"}" alt="">) +
+        %(<img class="child-display" src="#{image_path "post-star-child.gif"}" alt="">) +
+        %(<img class="flagged-display" src="#{image_path "post-star-flagged.gif"}" alt="">) +
+        %(<img class="pending-display" src="#{image_path "post-star-pending.gif"}" alt="">) +
+        %(</span>)
     li_class = ""
 
     ddl_class = "directlink"
     ddl_class += (post.width.to_i > 1500 || post.height.to_i > 1500) ? " largeimg" : " smallimg"
 
     if options[:similarity]
-      icon = %{<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">}
+      icon = %(<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">)
 
       ddl_class += " similar similar-directlink"
       li_class += " similar-match" if options[:similarity].to_f >= 90 rescue false
       li_class += " similar-original" if options[:similarity].to_s == "Original"
-      directlink_info = %{<span class="similar-text">#{icon}</span>#{directlink_info}}
+      directlink_info = %(<span class="similar-text">#{icon}</span>#{directlink_info})
     end
 
     if options[:hide_directlink]
       directlink = ""
     else
-      directlink_res = %{<span class="directlink-res">#{dl_width} x #{dl_height}</span>}
-      directlink = %{<a class="#{ddl_class}" href="#{dl_url}">#{directlink_info}#{directlink_res}</a>}
+      directlink_res = %(<span class="directlink-res">#{dl_width} x #{dl_height}</span>)
+      directlink = %(<a class="#{ddl_class}" href="#{dl_url}">#{directlink_info}#{directlink_res}</a>)
     end
 
     if is_post
@@ -137,7 +139,7 @@ module PostHelper
     li_class += " pending" if post.is_pending?
     li_class += " mode-browse" if options[:display] == :large
     # We need to specify a width on the <li>, since IE7 won't figure it out on its own.
-    item = %{<li style="width: #{block_size[0] + 10}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>}
+    item = %(<li style="width: #{block_size[0] + 10}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>)
     item.html_safe
   end
 
@@ -147,19 +149,19 @@ module PostHelper
 
     # Set no-browser-link on external image links, so the Post.InitBrowserLinks knows not to
     # change these links to post/browse.
-    image = %{<img src="#{post.preview_url}" alt="#{(post.md5)}" class="#{image_class} width="#{width}" height="#{height}">}
-    link = %{<a class="thumb" href="#{post.url} class='no-browser-link'">#{image}</a>}
-    icon = %{<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">}
-    div = %{<div class="inner">#{link}</div>}
+    image = %(<img src="#{post.preview_url}" alt="#{(post.md5)}" class="#{image_class} width="#{width}" height="#{height}">)
+    link = %(<a class="thumb" href="#{post.url} class='no-browser-link'">#{image}</a>)
+    icon = %(<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">)
+    div = %(<div class="inner">#{link}</div>)
 
     size = if post.width > 0 then (%{ (#{post.width}x#{post.height})}) else "" end
     similarity_class = "similar"
     similarity_class += " similar-match" if options[:similarity].to_f >= 90 rescue false
     similarity_class += " similar-original" if options[:similarity].to_s == "Original"
-    similarity_text = options[:similarity].to_s == "Original" ? "Image" : %{#{options[:similarity].to_i}%}
-    similarity = %{<a class="#{similarity_class}" href="#{post.url}"><span>#{icon}#{similarity_text}#{size}</span></a>}
+    similarity_text = options[:similarity].to_s == "Original" ? "Image" : "#{options[:similarity].to_i}%"
+    similarity = %(<a class="#{similarity_class}" href="#{post.url}"><span>#{icon}#{similarity_text}#{size}</span></a>)
     li_class = ""
-    item = %{<li id="p#{post.id}" class="#{li_class}">#{div}#{similarity}</li>}
+    item = %(<li id="p#{post.id}" class="#{li_class}">#{div}#{similarity}</li>)
     item
   end
 
@@ -170,17 +172,17 @@ module PostHelper
   def vote_widget(user, className = "standard-vote-widget")
     html = ""
 
-    html << %{<span class="stars #{className}">}
+    html << %(<span class="stars #{className}">)
 
     unless user.is_anonymous?
       (0..3).each do |vote|
-        html << %{<a href="#" class="star star-#{vote} star-off"></a>}
+        html << %(<a href="#" class="star star-#{vote} star-off"></a>)
       end
 
-      html << %{<span class="vote-up-block"><a class="star vote-up" href="#"></a></span>}
+      html << %(<span class="vote-up-block"><a class="star vote-up" href="#"></a></span>)
     end
 
-    html << %{</span>}
+    html << %(</span>)
     html.html_safe
   end
 

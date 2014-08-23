@@ -207,15 +207,15 @@ class InlineImage < ActiveRecord::Base
 
   def move_file
     return true if !file_needs_move
-    FileUtils.mkdir_p(File.dirname(file_path));
+    FileUtils.mkdir_p(File.dirname(file_path))
     FileUtils.mv(tempfile_image_path, file_path)
 
     if File.exist?(tempfile_preview_path)
-      FileUtils.mkdir_p(File.dirname(preview_path));
+      FileUtils.mkdir_p(File.dirname(preview_path))
       FileUtils.mv(tempfile_preview_path, preview_path)
     end
     if File.exist?(tempfile_sample_path)
-      FileUtils.mkdir_p(File.dirname(sample_path));
+      FileUtils.mkdir_p(File.dirname(sample_path))
       FileUtils.mv(tempfile_sample_path, sample_path)
     end
     self.file_needs_move = false

@@ -188,7 +188,7 @@ class User < ActiveRecord::Base
     end
 
     def user_info_cookie
-      [id, level, use_browser ? "1" : "0"].join(";");
+      [id, level, use_browser ? "1" : "0"].join(";")
     end
   end
 

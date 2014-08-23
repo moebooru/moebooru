@@ -16,7 +16,7 @@ module SimilarImages
   end
 
   def similar_images(options = {})
-    errors = {};
+    errors = {}
 
     local_service = CONFIG["local_image_service"]
 

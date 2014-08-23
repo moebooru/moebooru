@@ -104,7 +104,7 @@ class Post < ActiveRecord::Base
   end
 
   def set_random!
-    self.random = rand;
+    self.random = rand
   end
 
   def set_index_timestamp!

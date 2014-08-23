@@ -19,7 +19,7 @@ module Danbooru
 
     escape_html = lambda { |str| str.gsub(/&/, "&amp;").gsub(/</, "&lt;").gsub(/>/, "&gt;") }
 
-    output = thisarr;
+    output = thisarr
     output.each { |q| q.replace(escape_html[q]) }
 
     diffs.reverse_each do |hunk|

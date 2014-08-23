@@ -18,7 +18,7 @@ class Note < ActiveRecord::Base
   # display it along with the change to identify what was being changed at the time.
   # Otherwise, we'd have to look back through history for each change to figure out
   # what the body was at the time.
-  versioning_aux_callback :aux_callback
+  self.versioning_aux_callback = :aux_callback
   def aux_callback
     # If our body has been changed and we have an old one, record it as the body;
     # otherwise if we're a new note and have no old body, record the current one.

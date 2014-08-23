@@ -62,7 +62,7 @@ module ActiveRecord
           :user_id => Thread.current["danbooru-user_id"]
         }
 
-        cb = self.class.get_versioning_aux_callback
+        cb = self.class.versioning_aux_callback
         if cb then
           options[:aux] = send(cb)
         end
@@ -169,13 +169,7 @@ module ActiveRecord
       #
       # The callback must return a hash; its contents will be serialized into aux.  This
       # is used where we need additional data for a particular type of history.
-      def versioning_aux_callback(func)
-        @versioning_aux_callback = func
-      end
-
-      def get_versioning_aux_callback
-        @versioning_aux_callback
-      end
+      attr_accessor :versioning_aux_callback
 
       def get_versioned_default(name)
         attr = get_versioned_attributes[name]

@@ -269,11 +269,11 @@ module Post::FileMethods
   def file=(f)
     return if f.nil? || f.size == 0
 
-    if f.tempfile.path
+    if f.path
       # Large files are stored in the temp directory, so instead of
       # reading/rewriting through Ruby, just rely on system calls to
       # copy the file to danbooru's directory.
-      FileUtils.cp(f.tempfile.path, tempfile_path)
+      FileUtils.cp(f.path, tempfile_path)
     else
       File.open(tempfile_path, "wb") { |nf| nf.write(f.read) }
     end

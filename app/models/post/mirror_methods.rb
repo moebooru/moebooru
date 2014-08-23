@@ -1,11 +1,11 @@
 require "mirror"
 
-class MirrorError < Exception ; end
+class MirrorError < Exception; end
 
 module Post::MirrorMethods
   # On :normal, upload all files to all mirrors except :previews_only ones.
   # On :previews_only, upload previews to previews_only mirrors.
-  def upload_to_mirrors_internal(mode=:normal)
+  def upload_to_mirrors_internal(mode = :normal)
     files_to_copy = []
     if mode != :previews_only then
       files_to_copy << self.file_path

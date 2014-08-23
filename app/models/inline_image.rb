@@ -76,7 +76,7 @@ class InlineImage < ActiveRecord::Base
     if f.tempfile.path
       FileUtils.cp(f.tempfile.path, tempfile_image_path)
     else
-      File.open(tempfile_image_path, "wb") {|nf| nf.write(f.read)}
+      File.open(tempfile_image_path, "wb") { |nf| nf.write(f.read) }
     end
 
     got_file
@@ -136,11 +136,11 @@ class InlineImage < ActiveRecord::Base
   end
 
   def preview_dimensions
-    return Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => 150, :height => 150})
+    return Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 150, :height => 150 })
   end
 
   def thumb_size
-    size = Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => 400, :height => 400})
+    size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 400, :height => 400 })
   end
 
   def generate_sample
@@ -158,7 +158,7 @@ class InlineImage < ActiveRecord::Base
     # If we're not reducing the resolution for the sample image, only reencode if the
     # source image is above the reencode threshold.  Anything smaller won't be reduced
     # enough by the reencode to bother, so don't reencode it and save disk space.
-    sample_size = Moebooru::Resizer.reduce_to({:width => width, :height => height}, {:width => CONFIG["inline_sample_width"], :height => CONFIG["inline_sample_height"]})
+    sample_size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => CONFIG["inline_sample_width"], :height => CONFIG["inline_sample_height"] })
     if sample_size[:width] == width && sample_size[:height] == height && File.size?(path) < CONFIG["sample_always_generate_size"]
       return true
     end
@@ -234,7 +234,7 @@ class InlineImage < ActiveRecord::Base
     md5_obj = Digest::MD5.new
     File.open(path, "rb") { |fp|
       buf = ""
-      while fp.read(1024*64, buf) do md5_obj << buf end
+      while fp.read(1024 * 64, buf) do md5_obj << buf end
     }
 
     self.md5 = md5_obj.hexdigest

@@ -29,9 +29,9 @@ module TagHelper
     when Hash, Tag, Array
       case tags[0]
       when Hash
-        tags = tags.map {|x| [x["name"], x["post_count"], nil]}
+        tags = tags.map { |x| [x["name"], x["post_count"], nil] }
       when Tag
-        tags = tags.map {|x| [x.name, x.post_count, x.id]}
+        tags = tags.map { |x| [x.name, x.post_count, x.id] }
       end
       tags_type = Tag.batch_get_tag_types(tags.map { |data| data[0] })
       tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
@@ -86,7 +86,7 @@ module TagHelper
   def cloud_view(tags, divisor = 6)
     html = "".html_safe
 
-    tags.sort {|a, b| a["name"] <=> b["name"]}.each do |tag|
+    tags.sort { |a, b| a["name"] <=> b["name"] }.each do |tag|
       size = Math.log(tag["post_count"].to_i) / divisor
       size = size < 0.8 ? "0.8" : "%.1f" % size
       html << link_to(tag["name"], { :controller => :post, :action => :index, :tags => tag["name"] }, { :style => "font-size: #{size}em", :title => "#{tag["post_count"]} posts" })
@@ -101,10 +101,10 @@ module TagHelper
     end
 
     all = []
-    pattern, related = tags.split(/\s+/).partition {|i| i.include?("*")}
-    pattern.each {|i| all += Tag.find(:all, :conditions => ["name LIKE ?", i.tr("*", "%")]).map {|j| j.name}}
+    pattern, related = tags.split(/\s+/).partition { |i| i.include?("*") }
+    pattern.each { |i| all += Tag.find(:all, :conditions => ["name LIKE ?", i.tr("*", "%")]).map { |j| j.name } }
     if related.any?
-      Tag.find(:all, :conditions => ["name IN (?)", TagAlias.to_aliased(related)]).each {|i| all += i.related.map {|j| j[0]}}
+      Tag.find(:all, :conditions => ["name IN (?)", TagAlias.to_aliased(related)]).each { |i| all += i.related.map { |j| j[0] } }
     end
     all.join(" ")
   end

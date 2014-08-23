@@ -5,7 +5,7 @@ class TagController < ApplicationController
   before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
 
   def cloud
-    @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort {|a, b| a.name <=> b.name}
+    @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort { |a, b| a.name <=> b.name }
   end
 
   # Generates list of tag names matching parameter term.
@@ -23,7 +23,7 @@ class TagController < ApplicationController
       # hasn't changed since then, return an empty response.
       version = Tag.get_summary_version
       if params[:version].to_i == version then
-        render :json => {:version => version, :unchanged => true}
+        render :json => { :version => version, :unchanged => true }
         return
       end
     end
@@ -90,12 +90,12 @@ class TagController < ApplicationController
   def mass_edit
     if request.post?
       if params[:start].blank?
-        respond_to_error("Start tag missing", {:action => "mass_edit"}, :status => 424)
+        respond_to_error("Start tag missing", { :action => "mass_edit" }, :status => 424)
         return
       end
 
       if CONFIG["enable_asynchronous_tasks"]
-        task = JobTask.create(:task_type => "mass_tag_edit", :status => "pending", :data => {"start_tags" => params[:start], "result_tags" => params[:result], "updater_id" => session[:user_id], "updater_ip_addr" => request.remote_ip})
+        task = JobTask.create(:task_type => "mass_tag_edit", :status => "pending", :data => { "start_tags" => params[:start], "result_tags" => params[:result], "updater_id" => session[:user_id], "updater_ip_addr" => request.remote_ip })
         respond_to_success("Mass tag edit job created", :controller => "job_task", :action => "index")
       else
         Tag.mass_edit(params[:start], params[:result], @current_user.id, request.remote_ip)
@@ -128,19 +128,19 @@ class TagController < ApplicationController
       @tags = Tag.scan_tags(params[:tags])
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|
-        all[x] = Tag.calculate_related_by_type(x, CONFIG["tag_types"][params[:type]]).map {|y| [y["name"], y["post_count"]]}
+        all[x] = Tag.calculate_related_by_type(x, CONFIG["tag_types"][params[:type]]).map { |y| [y["name"], y["post_count"]] }
         all
       end
     else
       @tags = Tag.scan_tags(params[:tags])
-      @patterns, @tags = @tags.partition {|x| x.include?("*")}
+      @patterns, @tags = @tags.partition { |x| x.include?("*") }
       @tags = TagAlias.to_aliased(@tags)
       @tags = @tags.inject({}) do |all, x|
-        all[x] = Tag.find_related(x).map {|y| [y[0], y[1]]}
+        all[x] = Tag.find_related(x).map { |y| [y[0], y[1]] }
         all
       end
       @patterns.each do |x|
-        @tags[x] = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", x.to_escaped_for_sql_like]).map {|y| [y.name, y.post_count]}
+        @tags[x] = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", x.to_escaped_for_sql_like]).map { |y| [y.name, y.post_count] }
       end
     end
 
@@ -161,7 +161,7 @@ class TagController < ApplicationController
 
         render :xml => xml
       end
-      fmt.json {render :json => @tags.to_json}
+      fmt.json { render :json => @tags.to_json }
     end
   end
 

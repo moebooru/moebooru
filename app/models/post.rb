@@ -178,7 +178,7 @@ class Post < ActiveRecord::Base
   end
 
   def active_notes
-    notes.select {|x| x.is_active?}
+    notes.select { |x| x.is_active? }
   end
 
   STATUSES.each do |x|
@@ -187,7 +187,7 @@ class Post < ActiveRecord::Base
     end
   end
 
-  def can_be_seen_by?(user, options={})
+  def can_be_seen_by?(user, options = {})
     if !options[:show_deleted] and self.status == "deleted"
       return false
     end

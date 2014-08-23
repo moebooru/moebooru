@@ -12,11 +12,11 @@ module Report
     users = ActiveRecord::Base.select_all_sql("SELECT users.id, COUNT(*) as change_count FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND ") + " GROUP BY users.id ORDER BY change_count DESC LIMIT #{limit}", *params).to_a
 
     conds << "users.id NOT IN (?)"
-    params << users.map {|x| x["id"]}
+    params << users.map { |x| x["id"] }
 
     other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql_array(["SELECT COUNT(*) FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND "), *params])).to_i
 
-    users << {"id" => nil, "change_count" => other_count}
+    users << { "id" => nil, "change_count" => other_count }
 
     users.each do |user|
       user["change_count"] = user["change_count"].to_i
@@ -37,7 +37,7 @@ module Report
       user["change_count"] = user["change_count"] - Post.count(:all, :conditions => ["created_at BETWEEN ? AND ? AND user_id =?", start, stop, user["user_id"]])
     end
     bottom = users.pop
-    users.sort! {|a, b| b["change_count"] <=> a["change_count"]}
+    users.sort! { |a, b| b["change_count"] <=> a["change_count"] }
     users.push(bottom)
     users
   end

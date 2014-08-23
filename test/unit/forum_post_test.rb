@@ -10,7 +10,7 @@ class ForumPostTest < ActiveSupport::TestCase
   end
 
   def create_post(msg, parent_id = nil, params = {})
-    ForumPost.create({:creator_id => 1, :body => msg, :title => msg, :is_sticky => false, :is_locked => false, :parent_id => parent_id}.merge(params))
+    ForumPost.create({ :creator_id => 1, :body => msg, :title => msg, :is_sticky => false, :is_locked => false, :parent_id => parent_id }.merge(params))
   end
 
   def test_parents

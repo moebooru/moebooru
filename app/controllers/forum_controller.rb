@@ -23,7 +23,7 @@ class ForumController < ApplicationController
       @preview = true
       forum_post = ForumPost.new(params[:forum_post].merge(:creator_id => session[:user_id]))
       forum_post.created_at = Time.now
-      render :partial => "post", :locals => {:post => forum_post}
+      render :partial => "post", :locals => { :post => forum_post }
     else
       render :text => ""
     end

@@ -17,7 +17,7 @@ namespace :i18n do
       yaml_target = YAML.load(File.open(File.expand_path(yaml_path(target))))
 
       def compare(yaml_1, yaml_2)
-        def flatten_keys(hash, prefix="")
+        def flatten_keys(hash, prefix = "")
           keys = []
           hash.keys.each do |key|
             if hash[key].is_a? Hash

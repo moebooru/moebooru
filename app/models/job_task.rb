@@ -70,7 +70,7 @@ class JobTask < ActiveRecord::Base
     return if Rails.cache.read("delay-tag-sub-calc")
     Rails.cache.write("delay-tag-sub-calc", "1", :expires_in => 360.minutes)
     TagSubscription.process_all
-    update_attributes(:data => {:last_run => Time.now.strftime("%Y-%m-%d %H:%M")})
+    update_attributes(:data => { :last_run => Time.now.strftime("%Y-%m-%d %H:%M") })
   end
 
   def update_data(*args)
@@ -88,7 +88,7 @@ class JobTask < ActiveRecord::Base
     update_data("step" => "purging old tags")
     Tag.purge_tags
 
-    update_data("next_run" => Time.now.to_i + 60*60*6, "step" => nil)
+    update_data("next_run" => Time.now.to_i + 60 * 60 * 6, "step" => nil)
   end
 
   def execute_upload_posts_to_mirrors
@@ -123,7 +123,7 @@ class JobTask < ActiveRecord::Base
     upload = BatchUpload.find(:first, :conditions => ["status = 'pending'"], :order => "id ASC")
     if upload.nil? then return end
 
-    update_attributes(:data => {:id => upload.id, :user_id => upload.user_id, :url => upload.url})
+    update_attributes(:data => { :id => upload.id, :user_id => upload.user_id, :url => upload.url })
     upload.run
   end
 

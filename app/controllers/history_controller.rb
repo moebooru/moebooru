@@ -7,7 +7,7 @@ class HistoryController < ApplicationController
   def index
     search = params[:search] || ""
 
-    q = Hash.new {|h, k| h[k] = []}
+    q = Hash.new { |h, k| h[k] = [] }
 
     search.split(" ").each { |s|
       if s =~ /^(.+?):(.*)/
@@ -218,6 +218,6 @@ class HistoryController < ApplicationController
     }
     error_texts.uniq!
 
-    respond_to_success("Changes made.", {:action => "index"}, :api => {:successful=>successful, :failed=>failed, :errors=>error_texts})
+    respond_to_success("Changes made.", { :action => "index" }, :api => { :successful => successful, :failed => failed, :errors => error_texts })
   end
 end

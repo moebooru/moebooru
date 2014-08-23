@@ -12,7 +12,7 @@ class UserMailerTest < ActiveSupport::TestCase
   end
 
   def create_user(name, params = {})
-    user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com"}.merge(params))
+    user = User.new({ :password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com" }.merge(params))
     user.name = name
     user.level = CONFIG["user_levels"]["Member"]
     user.save
@@ -28,7 +28,7 @@ class UserMailerTest < ActiveSupport::TestCase
 
   def test_new_password
     user = create_user("bob")
-    assert_nothing_raised {UserMailer.deliver_new_password(user, "zugzug2")}
+    assert_nothing_raised { UserMailer.deliver_new_password(user, "zugzug2") }
     assert_not_equal(0, ActionMailer::Base.deliveries.size)
     assert_equal("From: #{CONFIG["admin_contact"]}\r\nTo: bob@danbooru.com\r\nSubject: #{CONFIG["app_name"]} - Password Reset\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Hello, bob. Your password has been reset to <code>zugzug2</code>.</p>\n\n<p>You can login to <a href=\"http://#{CONFIG["server_host"]}/user/login\">#{CONFIG["app_name"]}</a> and change your password to something else.</p>\n", ActionMailer::Base.deliveries[0].encoded)
   end
@@ -36,7 +36,7 @@ class UserMailerTest < ActiveSupport::TestCase
   def test_dmail
     sender = User.find(1)
     receiver = User.find(2)
-    assert_nothing_raised {UserMailer.deliver_dmail(sender, receiver, "test title", "test body")}
+    assert_nothing_raised { UserMailer.deliver_dmail(sender, receiver, "test title", "test body") }
     assert_not_equal(0, ActionMailer::Base.deliveries.size)
     assert_equal("From: #{CONFIG["admin_contact"]}\r\nTo: admin@danbooru.com\r\nSubject: Dev - Message received from mod\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>mod said:</p>\n\n<div>\n  <p>test body</p>\n</div>\n", ActionMailer::Base.deliveries[0].encoded)
   end

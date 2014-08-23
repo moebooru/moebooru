@@ -10,7 +10,7 @@ class Artist < ActiveRecord::Base
           artists += Artist.joins(:artist_urls).where(:alias_id => nil).where("artist_urls.normalized_url LIKE ?", u).order(:name)
 
           # Remove duplicates based on name
-          artists = artists.inject({}) {|all, artist| all[artist.name] = artist ; all}.values
+          artists = artists.inject({}) { |all, artist| all[artist.name] = artist; all }.values
           url = File.dirname(url)
         end
 
@@ -39,7 +39,7 @@ class Artist < ActiveRecord::Base
     end
 
     def urls
-      artist_urls.map {|x| x.url}.join("\n")
+      artist_urls.map { |x| x.url }.join("\n")
     end
   end
 
@@ -190,7 +190,7 @@ class Artist < ActiveRecord::Base
         :name => name,
         :alias_id => alias_id,
         :group_id => group_id,
-        :urls => artist_urls.map {|x| x.url}
+        :urls => artist_urls.map { |x| x.url }
       }
     end
 
@@ -229,7 +229,7 @@ class Artist < ActiveRecord::Base
     b = Nagato::Builder.new do |builder, cond|
       case name
       when /^http/
-        cond.add "id IN (?)", find_all_by_url(name).map {|x| x.id}
+        cond.add "id IN (?)", find_all_by_url(name).map { |x| x.id }
 
       else
         cond.add "name LIKE ? ESCAPE E'\\\\'", name.to_escaped_for_sql_like + "%"

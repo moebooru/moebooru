@@ -23,7 +23,7 @@ class Ban < ActiveRecord::Base
   end
 
   def duration=(dur)
-    self.expires_at = (dur.to_f * 60*60*24).seconds.from_now
+    self.expires_at = (dur.to_f * 60 * 60 * 24).seconds.from_now
     @duration = dur
   end
 

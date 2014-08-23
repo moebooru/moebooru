@@ -17,15 +17,15 @@ module Danbooru
     cbo = Diff::LCS::ContextDiffCallbacks.new
     diffs = thisarr.diff(otharr, cbo)
 
-    escape_html = lambda {|str| str.gsub(/&/,"&amp;").gsub(/</,"&lt;").gsub(/>/,"&gt;")}
+    escape_html = lambda { |str| str.gsub(/&/, "&amp;").gsub(/</, "&lt;").gsub(/>/, "&gt;") }
 
     output = thisarr;
     output.each { |q| q.replace(escape_html[q]) }
 
     diffs.reverse_each do |hunk|
-      newchange = hunk.max{|a,b| a.old_position <=> b.old_position}
+      newchange = hunk.max { |a, b| a.old_position <=> b.old_position }
       newstart = newchange.old_position
-      oldstart = hunk.min{|a,b| a.old_position <=> b.old_position}.old_position
+      oldstart = hunk.min { |a, b| a.old_position <=> b.old_position }.old_position
 
       if newchange.action == "+"
         output.insert(newstart, TAG_INS_CLOSE)
@@ -50,7 +50,7 @@ module Danbooru
       end
 
       if hunk[0].action == "-"
-        output.insert((newstart == oldstart || newchange.action != "+") ? newstart+1 : newstart, TAG_DEL_CLOSE)
+        output.insert((newstart == oldstart || newchange.action != "+") ? newstart + 1 : newstart, TAG_DEL_CLOSE)
         output.insert(oldstart, TAG_DEL)
       end
     end

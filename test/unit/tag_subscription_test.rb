@@ -8,13 +8,13 @@ class TagSubscriptionTest < ActiveSupport::TestCase
   end
 
   def create_post(tags, params = {})
-    post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    post = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
     @test_number += 1
     post
   end
 
   def create_tag_subscription(tags, params = {})
-    TagSubscription.create({:tag_query => tags, :name => "General", :user_id => 1}.merge(params))
+    TagSubscription.create({ :tag_query => tags, :name => "General", :user_id => 1 }.merge(params))
   end
 
   def test_initial_posts
@@ -48,9 +48,9 @@ class TagSubscriptionTest < ActiveSupport::TestCase
     ft1 = create_tag_subscription("tag2")
     ft2 = create_tag_subscription("tag3", :name => "Special")
 
-    assert_equal([p3.id, p2.id, p1.id], TagSubscription.find_post_ids(1).sort.reverse.map {|x| x.to_i})
-    assert_equal([p3.id, p1.id], TagSubscription.find_post_ids(1, "Special").sort.reverse.map {|x| x.to_i})
-    assert_equal([p3.id], TagSubscription.find_post_ids(1, nil, 1).map {|x| x.to_i})
+    assert_equal([p3.id, p2.id, p1.id], TagSubscription.find_post_ids(1).sort.reverse.map { |x| x.to_i })
+    assert_equal([p3.id, p1.id], TagSubscription.find_post_ids(1, "Special").sort.reverse.map { |x| x.to_i })
+    assert_equal([p3.id], TagSubscription.find_post_ids(1, nil, 1).map { |x| x.to_i })
   end
 
   def test_process_all

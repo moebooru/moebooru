@@ -6,7 +6,7 @@ class IpBans < ActiveRecord::Base
       self.expires_at = nil
       @duration = nil
     else
-      self.expires_at = (dur.to_f * 60*60*24).seconds.from_now
+      self.expires_at = (dur.to_f * 60 * 60 * 24).seconds.from_now
       @duration = dur
     end
   end

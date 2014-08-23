@@ -107,7 +107,7 @@ CONFIG["download_filename_prefix"] = ""
 
 # Files over this size will always generate a sample, even if already within
 # the above dimensions.
-CONFIG["sample_always_generate_size"] = 512*1024
+CONFIG["sample_always_generate_size"] = 512 * 1024
 
 # These three configs are only relevant if you're using the Amazon S3 image store.
 CONFIG["amazon_s3_access_key_id"] = ""
@@ -151,7 +151,7 @@ CONFIG["vote_descriptions"] = {
 }
 
 # The maximum image size that will be downloaded by a URL.
-CONFIG["max_image_size"] = 1024*1024*256
+CONFIG["max_image_size"] = 1024 * 1024 * 256
 
 # This allows posts to have parent-child relationships. However, this requires manually updating the post counts stored in table_data by periodically running the script/maintenance script.
 CONFIG["enable_parent_posts"] = false

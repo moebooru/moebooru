@@ -57,14 +57,14 @@ module Post::TagMethods
     m.versioned :cached_tags
   end
 
-  def cached_tags_undo(change, redo_changes=false)
+  def cached_tags_undo(change, redo_changes = false)
     current_tags = self.cached_tags.scan(/\S+/)
     prev = change.previous
 
     change, prev = prev, change if redo_changes
     changes = Post.tag_changes(change, prev, change.latest)
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
-    self.attributes = {:tags => new_tags.join(" ")}
+    self.attributes = { :tags => new_tags.join(" ") }
   end
 
   def cached_tags_redo(change)
@@ -114,7 +114,7 @@ module Post::TagMethods
     return if new_tags.nil?
 
     transaction do
-      metatags, self.new_tags = new_tags.partition {|x| x=~ /^(hold|unhold|show|hide|\+flag|source:.*)$/}
+      metatags, self.new_tags = new_tags.partition { |x| x =~ /^(hold|unhold|show|hide|\+flag|source:.*)$/ }
       metatags.each do |metatag|
         case metatag
         when /^hold$/
@@ -152,7 +152,7 @@ module Post::TagMethods
       self.new_tags = (current_tags + new_tags) - old_tags + (current_tags & new_tags)
     end
 
-    metatags, self.new_tags = new_tags.partition {|x| x=~ /^((?:-pool|pool|rating|parent|child):|[qse]$)/}
+    metatags, self.new_tags = new_tags.partition { |x| x =~ /^((?:-pool|pool|rating|parent|child):|[qse]$)/ }
 
     transaction do
       metatags.each do |metatag|
@@ -169,7 +169,7 @@ module Post::TagMethods
 
             # Set :ignore_already_exists, so pool:1:2 can be used to change the sequence number
             # of a post that already exists in the pool.
-            options = {:user => User.find(updater_user_id), :ignore_already_exists => true}
+            options = { :user => User.find(updater_user_id), :ignore_already_exists => true }
             if defined?(seq) then
               options[:sequence] = seq
             end
@@ -232,7 +232,7 @@ module Post::TagMethods
 
       # TODO: be more selective in deleting from the join table
       execute_sql("DELETE FROM posts_tags WHERE post_id = ?", id)
-      self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
+      self.new_tags = new_tags.map { |x| Tag.find_or_create_by_name(x) }.uniq
 
       # If any tags are newly active, expire the tag cache.
       if !self.new_tags.empty? then
@@ -261,7 +261,7 @@ module Post::TagMethods
       # any that already exist.  Normally, the inner SELECT will return no rows; if
       # another process inserts rows before our INSERT, it'll return the rows that it
       # inserted and we'll avoid duplicating them.
-      tag_set = new_tags.map {|x| ("(#{id}, #{x.id})")}.join(", ")
+      tag_set = new_tags.map { |x| ("(#{id}, #{x.id})") }.join(", ")
       #execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + tag_set)
       sql = <<-EOS
         INSERT INTO posts_tags (post_id, tag_id)

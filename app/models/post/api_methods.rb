@@ -85,7 +85,7 @@ module Post::ApiMethods
       params.delete(:frames_warehoused)
     end
 
-    def batch_api_data(posts, options={})
+    def batch_api_data(posts, options = {})
       result = { :posts => posts }
       if !options[:exclude_pools] then
         pool_posts = Pool.get_pool_posts_from_posts(posts)

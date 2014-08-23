@@ -37,7 +37,7 @@ module ApplicationHelper
     DText.parse(text).force_encoding("utf-8").html_safe
   end
 
-  def format_inline(inline, num, id, preview_html=nil)
+  def format_inline(inline, num, id, preview_html = nil)
     if inline.inline_images.empty? then
       return ""
     end
@@ -97,7 +97,7 @@ module ApplicationHelper
 
   def tag_header(tags)
     unless tags.blank?
-      ("/" + Tag.scan_query(tags).map {|t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t)}.join("+")).html_safe
+      ("/" + Tag.scan_query(tags).map { |t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t) }.join("+")).html_safe
     end
   end
 

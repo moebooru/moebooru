@@ -68,7 +68,7 @@ class WikiController < ApplicationController
     page = WikiPage.create(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
 
     if page.errors.empty?
-      respond_to_success("Page created", {:action => "show", :title => page.title}, :location => url_for(:action => "show", :title => page.title))
+      respond_to_success("Page created", { :action => "show", :title => page.title }, :location => url_for(:action => "show", :title => page.title))
     else
       respond_to_error(page, :action => "index")
     end
@@ -90,12 +90,12 @@ class WikiController < ApplicationController
     @page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
 
     if @page.is_locked?
-      respond_to_error("Page is locked", {:action => "show", :title => @page.title}, :status => 422)
+      respond_to_error("Page is locked", { :action => "show", :title => @page.title }, :status => 422)
     else
       if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
         respond_to_success("Page updated", :action => "show", :title => @page.title)
       else
-        respond_to_error(@page, {:action => "show", :title => @page.title})
+        respond_to_error(@page, { :action => "show", :title => @page.title })
       end
     end
   end
@@ -108,7 +108,7 @@ class WikiController < ApplicationController
 
     @title = params[:title]
     @page = WikiPage.find_page(params[:title], params[:version])
-    @posts = Post.find_by_tag_join(params[:title], :limit => 8).select {|x| x.can_be_seen_by?(@current_user)}
+    @posts = Post.find_by_tag_join(params[:title], :limit => 8).select { |x| x.can_be_seen_by?(@current_user) }
     @artist = Artist.find_by_name(params[:title])
     @tag = Tag.find_by_name(params[:title])
   end
@@ -117,7 +117,7 @@ class WikiController < ApplicationController
     @page = WikiPage.find_page(params[:title])
 
     if @page.is_locked?
-      respond_to_error("Page is locked", {:action => "show", :title => params[:title]}, :status => 422)
+      respond_to_error("Page is locked", { :action => "show", :title => params[:title] }, :status => 422)
     else
       @page.revert_to(params[:version])
       @page.ip_addr = request.remote_ip

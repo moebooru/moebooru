@@ -13,7 +13,7 @@ class BatchController < ApplicationController
       user_id = @current_user.id
     end
 
-    p = {:per_page => 25, :order => "created_at ASC, id ASC", :page => page_number}
+    p = { :per_page => 25, :order => "created_at ASC, id ASC", :page => page_number }
     conds = []
     cond_params = []
     if !user_id.nil? then

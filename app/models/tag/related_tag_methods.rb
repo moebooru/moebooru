@@ -5,9 +5,13 @@ module Tag::RelatedTagMethods
     # Hash in format { 'name' => tag_name, 'post_count' => tag_post_count }
     def calculate_related_by_type(tag, type, limit = 25)
       Rails.cache.fetch({ :category => :reltags_by_type, :type => type, :tag => tag }, :expires_in => 1.hour) do
-        Post.available.has_all_tags(tag).joins(:_tags).where(:tags => { :tag_type => type }).group("tags.name").count(:all, :order => "count_all DESC", :limit => limit).reduce([]) do
-          |result, hash| result << { "name" => hash[0], "post_count" => hash[1] }
-        end
+        Post.available.has_all_tags(tag).joins(:_tags)
+          .where(:tags => { :tag_type => type })
+          .group("tags.name")
+          .order("count_all DESC")
+          .limit(limit)
+          .count
+          .map { |name, count| { "post_count" => count, "name" => name } }
       end
     end
 
@@ -15,9 +19,12 @@ module Tag::RelatedTagMethods
       tags = Array(tags)
       return [] if tags.empty?
       Rails.cache.fetch({ :category => :reltags, :tags => tags }, :expires_in => 1.hour) do
-        Post.available.has_all_tags(tags).joins(:_tags).group("tags.name").count(:all, :order => "count_all DESC", :limit => limit).reduce([]) do
-          |result, hash| result << [hash[0], hash[1]]
-        end
+        Post.available.has_all_tags(tags).joins(:_tags)
+          .group("tags.name")
+          .order("count_all DESC")
+          .limit(limit)
+          .count
+          .map { |name, count| [name, count] }
       end
     end
 

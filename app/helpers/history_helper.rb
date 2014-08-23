@@ -202,21 +202,21 @@ module HistoryHelper
       classes << ["obsolete"]
     end
 
-    added = %{<span class="added">+</span>}
-    removed = %{<span class="removed">-</span>}
+    added = %(<span class="added">+</span>)
+    removed = %(<span class="removed">-</span>)
 
     sort_key = change.remote_id
     case change.table_name
     when"posts"
       case change.column_name
       when "rating"
-        html << %{<span class="changed-post-rating">rating:}
+        html << %(<span class="changed-post-rating">rating:)
         html << change.value
         if change.previous then
-          html << %{←}
+          html << %(←)
           html << change.previous.value
         end
-        html << %{</span>}
+        html << %(</span>)
       when "parent_id"
         html << "parent:"
         if change.value
@@ -231,7 +231,7 @@ module HistoryHelper
         end
 
         if change.previous
-          html << %{←}
+          html << %(←)
           if change.previous.value
             begin
               old = Post.find(change.previous.value.to_i)
@@ -349,7 +349,7 @@ module HistoryHelper
       when "sequence"
         seq = "order:%i:%s" % [change.obj.post_id, change.value]
         if change.previous then
-          seq << %{←#{change.previous.value}}
+          seq << %(←#{change.previous.value})
         end
         html << link_to("%s" % seq, :controller => "post", :action => "show", :id => change.obj.post_id)
       end
@@ -358,10 +358,10 @@ module HistoryHelper
       when "tag_type"
         html << "type:"
         tag_type = Tag.type_name_from_value(change.value.to_i)
-        html << %{<span class="tag-type-#{tag_type}">#{tag_type}</span>}
+        html << %(<span class="tag-type-#{tag_type}">#{tag_type}</span>)
         if change.previous then
           tag_type = Tag.type_name_from_value(change.previous.value.to_i)
-          html << %{←<span class="tag-type-#{tag_type}">#{tag_type}</span>}
+          html << %(←<span class="tag-type-#{tag_type}">#{tag_type}</span>)
         end
       when "is_ambiguous"
         html << (change.value.trueish? ? added : removed)
@@ -395,7 +395,7 @@ module HistoryHelper
     end
 
     span = ""
-    span << %{<span class="#{classes.join(" ")}">#{html}</span>}
+    span << %(<span class="#{classes.join(" ")}">#{html}</span>)
 
     {
       :html => span,
@@ -408,7 +408,7 @@ module HistoryHelper
     return [] if tags.blank?
 
     html = ""
-    html << %{<span class="#{ options[:class] }">}
+    html << %(<span class="#{ options[:class] }">)
 
     tags_html = []
     tags.each do |name|
@@ -418,7 +418,7 @@ module HistoryHelper
     return [] if tags_html.empty?
 
     html << tags_html.join(" ")
-    html << %{</span>}
+    html << %(</span>)
     [html]
   end
 end

@@ -46,12 +46,12 @@ module TagHelper
     tags.each do |tag_type, name, count, _id|
       name ||= "UNKNOWN"
 
-      html << %{<li class="tag-link tag-type-#{html_escape(tag_type)}" data-name="#{html_escape(name)}" data-type="#{html_escape(tag_type)}">}
+      html << %(<li class="tag-link tag-type-#{html_escape(tag_type)}" data-name="#{html_escape(name)}" data-type="#{html_escape(tag_type)}">)
 
       if CONFIG["enable_artists"] && tag_type == "artist"
-        html << %{<a href="/artist/show?name=#{u(name)}">?</a> }
+        html << %(<a href="/artist/show?name=#{u(name)}">?</a>)
       else
-        html << %{<a href="/wiki/show?title=#{u(name)}">?</a> }
+        html << %(<a href="/wiki/show?title=#{u(name)}">?</a>)
       end
 
       if @current_user.is_privileged_or_higher?
@@ -65,7 +65,7 @@ module TagHelper
         tag_link_options[:mouseout] = "Post.highlight_posts_with_tag(null)"
       end
       html << link_to(name.tr("_", " "), { :controller => "/post", :action => :index, :tags => name }, :onmouseover => tag_link_options[:mouseover], :onmouseout => tag_link_options[:mouseout]) << " "
-      html << %{<span class="post-count">#{count}</span> }
+      html << %(<span class="post-count">#{count}</span>)
       html << "</li>"
     end
 
@@ -75,7 +75,7 @@ module TagHelper
       id_list = tags.map { |t| t[3] }
       alternate_tags = TagAlias.where(:alias_id => id_list).pluck(:name)
       unless alternate_tags.empty?
-        html << %{<span style="display: none;">#{alternate_tags.map { |t| t.tr("_", " ") }.join(" ")}</span>}
+        html << %(<span style="display: none;">#{alternate_tags.map { |t| t.tr("_", " ") }.join(" ")}</span>)
       end
     end
 

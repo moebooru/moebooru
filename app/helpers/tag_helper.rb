@@ -22,7 +22,6 @@ module TagHelper
 
     html = ""
 
-
     case tags[0]
     when String
       tags = Tag.where(:name => tags).select([:name, :post_count, :id, :tag_type]).map { |t| [Tag.type_name_from_value(t.tag_type), t.name, t.post_count, t.id] }

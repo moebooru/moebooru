@@ -394,7 +394,6 @@ class User < ActiveRecord::Base
       end
     end
 
-
     module ClassMethods
       def get_user_level(level)
         if not @user_level then
@@ -551,7 +550,6 @@ class User < ActiveRecord::Base
         :avatar_timestamp => Time.now)
     end
   end
-
 
   module UserTagSubscriptionMethods
     def self.included(m)

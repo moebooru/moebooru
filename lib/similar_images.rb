@@ -107,7 +107,7 @@ module SimilarImages
         next
       end
 
-      if not doc.root
+      if !doc.root
         errors[server] = { :message => "invalid response" }
         next
       end
@@ -164,7 +164,7 @@ module SimilarImages
     posts_external = posts_external.sort { |a, b| similarity[b] <=> similarity[a] }
 
     errors.map { |server,error|
-      if not error[:services]
+      if !error[:services]
         error[:services] = services_by_server[server] rescue server
       end
     }
@@ -258,10 +258,10 @@ module SimilarImages
 
   # Find a saved file.
   def find_saved_search(id)
-    if not valid_saved_search(id) then return nil end
+    if !valid_saved_search(id) then return nil end
 
     file_path = "#{SEARCH_CACHE_DIR}/#{id}"
-    if not File.exist?(file_path)
+    if !File.exist?(file_path)
       return nil
     end
 
@@ -273,7 +273,7 @@ module SimilarImages
   # Delete old searches.
   def cull_old_searches
     Dir.foreach(SEARCH_CACHE_DIR) { |path|
-      next if not valid_saved_search(path)
+      next if !valid_saved_search(path)
 
       file = "#{SEARCH_CACHE_DIR}/#{path}"
       mtime = File.mtime(file)

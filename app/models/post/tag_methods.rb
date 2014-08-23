@@ -195,7 +195,7 @@ module Post::TagMethods
           if cmd == "parent" then
             # If we have a parent, remove ourself from the pool and add our parent in
             # our place.  If we have no parent, do nothing and leave us in the pool.
-            if not self.parent_id.nil?
+            if !self.parent_id.nil?
               pool.transfer_post_to_parent(self.id, self.parent_id)
             end
             next
@@ -235,7 +235,7 @@ module Post::TagMethods
       self.new_tags = new_tags.map {|x| Tag.find_or_create_by_name(x)}.uniq
 
       # If any tags are newly active, expire the tag cache.
-      if not self.new_tags.empty? then
+      if !self.new_tags.empty? then
         any_new_tags = false
         previous_tags = self.cached_tags.split(" ")
         self.new_tags.each do |tag|
@@ -243,7 +243,7 @@ module Post::TagMethods
           # in the above DELETE, so it's not really a newly activated tag.  (This isn't
           # self.old_tags; that's the tags the user saw before he edited, not the data
           # we're replacing.)
-          if tag.post_count == 0 and not previous_tags.include?(tag.name) then
+          if tag.post_count == 0 and !previous_tags.include?(tag.name) then
             any_new_tags = true
           end
         end

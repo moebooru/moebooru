@@ -396,7 +396,7 @@ class User < ActiveRecord::Base
 
     module ClassMethods
       def get_user_level(level)
-        if not @user_level then
+        if !@user_level then
           @user_level = {}
           CONFIG["user_levels"].each do |name, value|
             normalized_name = name.downcase.gsub(/ /, "_").to_sym
@@ -468,7 +468,7 @@ class User < ActiveRecord::Base
     end
 
     def has_avatar?
-      return (not self.avatar_post_id.nil?)
+      return (!self.avatar_post_id.nil?)
     end
 
     def avatar_path
@@ -477,7 +477,7 @@ class User < ActiveRecord::Base
 
     def set_avatar(params)
       post = Post.find(params[:post_id])
-      if not post.can_be_seen_by?(self)
+      if !post.can_be_seen_by?(self)
         errors.add(:access, "denied")
         return false
       end
@@ -521,7 +521,7 @@ class User < ActiveRecord::Base
         end
       end
 
-      if not use_sample
+      if !use_sample
         image_path = post.file_path
         image_ext = post.file_ext
         size = reduce_and_crop(post.width, post.height, params)
@@ -592,7 +592,7 @@ class User < ActiveRecord::Base
     end
 
     def commit_secondary_languages
-      return if not @secondary_languages
+      return if !@secondary_languages
 
       if @secondary_languages.include?("none") then
         self.secondary_languages = ""
@@ -603,7 +603,7 @@ class User < ActiveRecord::Base
   end
 
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
-  validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| not rec.email.empty?}
+  validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| !rec.email.empty?}
   before_create :set_show_samples if CONFIG["show_samples"]
   has_one :ban
 

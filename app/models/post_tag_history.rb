@@ -56,7 +56,7 @@ class PostTagHistory < ActiveRecord::Base
     current_tags = post.cached_tags.scan(/\S+/)
 
     prev = previous
-    return if not prev
+    return if !prev
 
     changes = tag_changes(prev)
 

@@ -42,7 +42,7 @@ class PoolController < ApplicationController
       }
     end
 
-    if not search_tokens.empty? then
+    if !search_tokens.empty? then
       value_index_query = "(" + Array(search_tokens).map { |t| t.to_escaped_for_tsquery }.join(" & ") + ")"
       conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
       cond_params << value_index_query
@@ -63,7 +63,7 @@ class PoolController < ApplicationController
       query.each { |q|
         # Don't do this if there are no spaces in the query, so we don't turn off tsquery
         # parsing when we don't need to.
-        next if not q.include?(" ")
+        next if !q.include?(" ")
         conds << "(position(LOWER(?) IN LOWER(replace_underscores(name))) > 0 OR position(LOWER(?) IN LOWER(description)) > 0)"
         cond_params << q
         cond_params << q
@@ -92,7 +92,7 @@ class PoolController < ApplicationController
     @samples = {}
     @pools.each { |p|
       post = p.get_sample
-      if not post then next end
+      if !post then next end
       @samples[p] = post
     }
 
@@ -185,7 +185,7 @@ class PoolController < ApplicationController
     if request.post?
       @new_pool.save
 
-      if not @new_pool.errors.empty? then
+      if !@new_pool.errors.empty? then
         respond_to_error(@new_pool, :action => "index")
         return
       end
@@ -352,7 +352,7 @@ class PoolController < ApplicationController
   def transfer_metadata
     @to = Pool.find(params[:to])
 
-    if not params[:from] then
+    if !params[:from] then
       @from = nil
       return
     end

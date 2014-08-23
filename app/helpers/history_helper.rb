@@ -134,7 +134,7 @@ module HistoryHelper
         field_options = table_options[:fields][field] || get_default_field_options
 
         # Check for entry limits.
-        if not options[:specific_history]
+        if !options[:specific_history]
           max = field_options[:max_to_display]
           if max && group.length > max
             hidden += group.length - max
@@ -149,7 +149,7 @@ module HistoryHelper
           end
 
           part = format_change(history, c, options, table_options)
-          next if not part
+          next if !part
 
           part = part.merge(:primary_order => field_options[:primary_order] || table_options[:primary_order])
           parts << part
@@ -299,7 +299,7 @@ module HistoryHelper
         if change.value == "" then
           html << "description removed"
         else
-          if not change.previous then
+          if !change.previous then
             html << "description: "
           elsif change.previous.value == "" then
             html << "description added: "
@@ -321,7 +321,7 @@ module HistoryHelper
           multiple_lines = text.include?("<br>")
 
           show_in_detail = options[:specific_history] || options[:specific_object]
-          if not multiple_lines then
+          if !multiple_lines then
             display = text
           elsif show_diff then
             display = "<div class='diff text-block'>#{text}</div>"
@@ -329,7 +329,7 @@ module HistoryHelper
             display = "<div class='initial-diff text-block'>#{text}</div>"
           end
 
-          if multiple_lines and not show_in_detail then
+          if multiple_lines and !show_in_detail then
             html << "<a onclick='$(this).hide(); $(this).next().show()' href='#'>(show changes)</a><div style='display: none;'>#{display}</div>"
           else
             html << display
@@ -391,7 +391,7 @@ module HistoryHelper
       when "is_active"
         if change.value.trueish? then
           # Don't show the note initially being set to active.
-          return nil if not change.previous
+          return nil if !change.previous
           html << "undeleted"
         else
           html << "deleted"

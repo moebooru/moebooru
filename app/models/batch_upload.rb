@@ -29,7 +29,7 @@ class BatchUpload < ActiveRecord::Base
         options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
 
         res = SimilarImages.similar_images(options)
-        if not res[:posts].empty?
+        if !res[:posts].empty?
           @post.tags = @post.tags + " possible_duplicate"
           @post.save!
         end

@@ -197,7 +197,7 @@ class PoolTest < ActiveSupport::TestCase
         assert_equal(nil, pp.master_id)
       end
 
-      if not pp.active
+      if !pp.active
         # An inactive post must never have a slave.
         assert_equal(nil, pp.slave_id)
       end

@@ -88,11 +88,11 @@ class Post < ActiveRecord::Base
   end
 
   def can_user_delete?(user)
-    if not user.has_permission?(self)
+    if !user.has_permission?(self)
       return false
     end
 
-    if not user.is_mod_or_higher? and Time.now - self.created_at > 1.day and not is_held
+    if !user.is_mod_or_higher? and Time.now - self.created_at > 1.day and !is_held
       return false
     end
 
@@ -129,7 +129,7 @@ class Post < ActiveRecord::Base
   # If the flag_post metatag was used and the current user has access, flag the post.
   def commit_flag
     return if self.metatag_flagged.nil?
-    return if not Thread.current["danbooru-user"].is_mod_or_higher?
+    return if !Thread.current["danbooru-user"].is_mod_or_higher?
     return if self.status != "active"
 
     self.flag!(self.metatag_flagged, Thread.current["danbooru-user"].id)
@@ -188,7 +188,7 @@ class Post < ActiveRecord::Base
   end
 
   def can_be_seen_by?(user, options={})
-    if not options[:show_deleted] and self.status == "deleted"
+    if !options[:show_deleted] and self.status == "deleted"
       return false
     end
     CONFIG["can_see_post"].call(user, self)

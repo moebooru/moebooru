@@ -41,7 +41,7 @@ class PostFrames < ActiveRecord::Base
   def self.frame_image_dimensions(frame)
     size = {:width=>frame[:source_width], :height=>frame[:source_height]}
 
-    if not CONFIG["sample_width"].nil?
+    if !CONFIG["sample_width"].nil?
       size = Moebooru::Resizer.reduce_to(size, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]}, CONFIG["sample_ratio"])
     end
     size = Moebooru::Resizer.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, 1, false, true)
@@ -70,7 +70,7 @@ class PostFrames < ActiveRecord::Base
     # Find a post with out-of-date frames.  This SQL is designed to use the
     # post_frames_out_of_date index.
     post = Post.find_by("frames <> frames_pending AND (frames <> '' OR frames_pending <> '')")
-    if not post.nil?
+    if !post.nil?
       if update_status then
         update_status.call("Creating frames for post #{post.id}")
       end
@@ -163,7 +163,7 @@ class PostFrames < ActiveRecord::Base
 
     # Find a file that needs to be unwarehoused.
     frame = PostFrames.find_by(:is_target => false, :is_active => false, :is_warehoused => true)
-    if not frame.nil? then
+    if !frame.nil? then
       if update_status then
         update_status.call("Unwarehousing old frames for post #{frame.post_id}")
       end
@@ -177,7 +177,7 @@ class PostFrames < ActiveRecord::Base
     # Find a file that needs to be deleted.  Only do this after unwarehousing the image, so we don't
     # end up in a confusing state where a file is on a mirror and not the master.
     frame = PostFrames.find_by(:is_active => false, :is_target => false, :is_create => true, :is_warehoused => false)
-    if not frame.nil? then
+    if !frame.nil? then
       logger.info("Deleting #{frame.id}")
       FileUtils.rm_f(frame.file_path)
       frame.update_attributes(:is_created => false)
@@ -189,7 +189,7 @@ class PostFrames < ActiveRecord::Base
   end
 
   def create_file
-    return if not is_target
+    return if !is_target
     return if is_created
 
     logger.info("Create post frame: post ##{post_id}, frame #{id}")
@@ -230,7 +230,7 @@ class PostFrames < ActiveRecord::Base
 
   def warehouse_frame
     return if is_warehoused
-    return if not is_created
+    return if !is_created
 
     logger.info("Warehousing frame #{id}...")
     Mirrors.copy_file_to_mirrors(file_path)

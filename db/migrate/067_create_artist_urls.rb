@@ -8,13 +8,13 @@ class CreateArtistUrls < ActiveRecord::Migration
       t.column :url, :text, :null => false
       t.column :normalized_url, :text, :null => false
     end
-    
+
     add_index :artist_urls, :artist_id
     add_index :artist_urls, :url
     add_index :artist_urls, :normalized_url
-    
+
     add_foreign_key :artist_urls, :artist_id, :artists, :id
-    
+
     Artist.find(:all, :order => "id").each do |artist|
       [:url_a, :url_b, :url_c].each do |field|
         unless artist[field].blank?
@@ -22,7 +22,7 @@ class CreateArtistUrls < ActiveRecord::Migration
         end
       end
     end
-    
+
     remove_column :artists, :url_a
     remove_column :artists, :url_b
     remove_column :artists, :url_c

@@ -30,11 +30,11 @@ class AddFullTextIndexOnPostTags < ActiveRecord::Migration
         HEADLINE = pg_catalog.prsd_headline,
         LEXTYPES = testprs_lextype
     )"
-    
+
     execute "create text search configuration public.danbooru (PARSER = public.testparser)"
     execute "alter text search configuration public.danbooru add mapping for word with simple"
     execute "set default_text_search_config = 'public.danbooru'"
-    
+
     execute "alter table posts add column tags_index tsvector"
     execute "update posts set tags_index = to_tsvector('danbooru', cached_tags)"
     execute "create index index_posts_on_tags_index on posts using gin(tags_index)"
@@ -55,10 +55,10 @@ class ApplicationTest < ActiveSupport::TestCase
   def update_post(post, params = {})
     post.update_attributes({:updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
   end
-  
+
   def get_cache_keys(searches)
     ret = {}
-    
+
     searches.each do |search|
       result = Post.find_by_sql(Post.generate_sql(search, :order => "p.id DESC"))
       params = { :tags => search }
@@ -66,7 +66,7 @@ class ApplicationTest < ActiveSupport::TestCase
 
       ret[search] = key
     end
-    
+
     return ret
   end
 
@@ -135,12 +135,12 @@ class ApplicationTest < ActiveSupport::TestCase
         before.each_pair do |key, val|
           assert_not_equal(val, after[key], "Ran <#{change[:tags]}>")
         end
-        
+
         before = after
       end
     end
   end
-  
+
   def test_cache_key_limit
     assert_equal(true, CONFIG["enable_caching"], "Can't test caching with caching disabled")
 

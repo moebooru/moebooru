@@ -6,7 +6,7 @@ class UserRecordTest < ActiveSupport::TestCase
       CACHE.flush_all
     end
   end
-  
+
   def create_user(name, params = {})
     user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com"}.merge(params))
     user.name = name

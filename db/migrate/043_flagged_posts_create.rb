@@ -8,7 +8,7 @@ class FlaggedPostsCreate < ActiveRecord::Migration
         reason text not null
       )
     EOS
-    
+
     execute "alter table posts drop column is_flagged"
   end
 

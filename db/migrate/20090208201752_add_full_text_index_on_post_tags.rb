@@ -30,11 +30,11 @@ class AddFullTextIndexOnPostTags < ActiveRecord::Migration
         HEADLINE = pg_catalog.prsd_headline,
         LEXTYPES = testprs_lextype
     )"
-    
+
     execute "create text search configuration public.danbooru (PARSER = public.testparser)"
     execute "alter text search configuration public.danbooru add mapping for word with simple"
     execute "set default_text_search_config = 'public.danbooru'"
-    
+
     execute "alter table posts add column tags_index tsvector"
     execute "update posts set tags_index = to_tsvector('danbooru', cached_tags)"
     execute "create index index_posts_on_tags_index on posts using gin(tags_index)"

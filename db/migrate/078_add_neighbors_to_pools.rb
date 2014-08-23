@@ -13,9 +13,9 @@ class AddNeighborsToPools < ActiveRecord::Migration
     add_column :pools_posts, :prev_post_id, :integer
     add_foreign_key :pools_posts, :next_post_id, :posts, :id, :on_delete => :set_null
     add_foreign_key :pools_posts, :prev_post_id, :posts, :id, :on_delete => :set_null
-    
+
     PoolPost.reset_column_information
-    
+
     Pool.find(:all).each do |pool|
       pp = pool.pool_posts
 

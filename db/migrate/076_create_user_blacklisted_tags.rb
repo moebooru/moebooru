@@ -10,11 +10,11 @@ class CreateUserBlacklistedTags < ActiveRecord::Migration
       t.column :user_id, :integer, :null => false
       t.column :tags, :text, :null => false
     end
-    
+
     add_index :user_blacklisted_tags, :user_id
-    
+
     add_foreign_key :user_blacklisted_tags, :user_id, :users, :id, :on_delete => :cascade
-    UserBlacklistedTags.reset_column_information    
+    UserBlacklistedTags.reset_column_information
 
     User.find(:all, :order => "id").each do |user|
       unless user[:blacklisted_tags].blank?
@@ -23,7 +23,7 @@ class CreateUserBlacklistedTags < ActiveRecord::Migration
         end
       end
     end
-    
+
     remove_column :users, :blacklisted_tags
   end
 

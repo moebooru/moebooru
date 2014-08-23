@@ -7,7 +7,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     if CONFIG["enable_caching"]
       CACHE.flush_all
     end
-    
+
     @test_number = 1
   end
 
@@ -16,7 +16,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     @test_number += 1
     p
   end
-  
+
   def update_post(post, params = {})
     post.update_attributes({:updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
   end
@@ -29,9 +29,9 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     assert_equal(3, p1.tag_history.size)
     assert_equal("tag3", p1.tag_history[0].tags)
     assert_equal("tag2", p1.tag_history[1].tags)
-    assert_equal("tag1", p1.tag_history[2].tags)    
+    assert_equal("tag1", p1.tag_history[2].tags)
   end
-  
+
   def test_rating
     p1 = create_post
     update_post(p1, :rating => "e", :tags => "tag1")
@@ -42,13 +42,13 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     assert_equal("e", p1.tag_history[1].rating)
     assert_equal("s", p1.tag_history[2].rating)
   end
-  
+
   def test_api
     p1 = create_post
     assert_nothing_raised {p1.tag_history[0].to_json}
     assert_nothing_raised {p1.tag_history[0].to_xml}
   end
-  
+
   def test_undo
     p1 = create_post(:tags => "a")
     update_post(p1, :tags => "a b")
@@ -59,7 +59,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     p1.reload
     assert_equal("a", p1.cached_tags)
   end
-  
+
   def test_changes_after_adding_tags
     p1 = create_post
     update_post(p1, :tags => "tag1 tag2")

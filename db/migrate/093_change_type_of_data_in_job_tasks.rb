@@ -6,6 +6,6 @@ class ChangeTypeOfDataInJobTasks < ActiveRecord::Migration
 
   def self.down
     remove_column :job_tasks, :data_as_json
-    add_column :job_tasks, :data_as_json, :string, :null => false, :default => "{}"    
+    add_column :job_tasks, :data_as_json, :string, :null => false, :default => "{}"
   end
 end

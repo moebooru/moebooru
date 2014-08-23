@@ -19,7 +19,7 @@ class AddFtsToHistory < ActiveRecord::Migration
         ELSE
           first := false;
         END IF;
-        
+
         result := result || words[i];
       END LOOP;
       RETURN result;

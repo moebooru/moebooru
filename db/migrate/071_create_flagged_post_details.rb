@@ -4,10 +4,10 @@ end
 class FlaggedPostDetail < ActiveRecord::Base
 end
 
-class CreateFlaggedPostDetails < ActiveRecord::Migration  
+class CreateFlaggedPostDetails < ActiveRecord::Migration
   def self.up
     remove_column :posts, :approved_by
-    
+
     create_table :flagged_post_details do |t|
       t.column :created_at, :datetime, :null => false
       t.column :post_id, :integer, :null => false
@@ -15,15 +15,15 @@ class CreateFlaggedPostDetails < ActiveRecord::Migration
       t.column :user_id, :integer, :null => false
       t.column :is_resolved, :boolean, :null => false
     end
-    
+
     add_index :flagged_post_details, :post_id
     add_foreign_key :flagged_post_details, :post_id, :posts, :id
     add_foreign_key :flagged_post_details, :user_id, :users, :id
-    
+
     Post.find(:all, :conditions => "deletion_reason <> ''", :select => "deletion_reason, id, status").each do |post|
       FlaggedPostDetail.create(:post_id => post.id, :reason => post.deletion_reason, :user_id => 1, :is_resolved => (post.status == "deleted"))
     end
-    
+
     remove_column :posts, :deletion_reason
   end
 

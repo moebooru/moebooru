@@ -5,8 +5,8 @@ class FavoriteTags < ActiveRecord::Migration
       t.column :tag_query, :text, :null => false
       t.column :cached_post_ids, :text, :null => false, :default => ""
     end
-    
-    add_index :favorite_tags, :user_id    
+
+    add_index :favorite_tags, :user_id
   end
 
   def self.down

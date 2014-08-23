@@ -379,11 +379,7 @@ class PoolController < ApplicationController
       data[:from] = from
       data[:to] = to
 
-      from_tags = from.tags.split(" ")
-      to_tags = to.tags.split(" ")
-
-      tags = []
-      tags.concat(from_tags)
+      tags = from.tags.split(" ")
 
       if from.rating != to.rating then
         tags << "rating:%s" % to.rating

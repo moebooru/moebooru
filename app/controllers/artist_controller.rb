@@ -91,7 +91,7 @@ class ArtistController < ApplicationController
 
   def show
     if params[:name]
-      @artist = Artist.find_by(name: params[:name])
+      @artist = Artist.find_by(:name => params[:name])
     else
       @artist = Artist.find(params[:id])
     end

@@ -2,7 +2,7 @@
 require 'digest/md5'
 
 class ApplicationController < ActionController::Base
-  rescue_from ActiveRecord::StatementInvalid, with: :rescue_pg_invalid_query
+  rescue_from ActiveRecord::StatementInvalid, :with => :rescue_pg_invalid_query
   before_action :filter_spam
   before_filter :set_locale
   before_filter :sanitize_params
@@ -387,7 +387,7 @@ class ApplicationController < ActionController::Base
   def limit_api
     if @from_api && !(request.format.xml? || request.format.json? || request.format.zip?)
       request.session_options[:skip] = true
-      render nothing: true, status: 404
+      render :nothing => true, :status => 404
     end
   end
 

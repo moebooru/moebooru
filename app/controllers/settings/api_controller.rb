@@ -7,7 +7,7 @@ class Settings::ApiController < Settings::BaseController
   def update
     @user.set_api_key
     @user.save
-    redirect_to action: :show
+    redirect_to :action => :show
   end
 
   private

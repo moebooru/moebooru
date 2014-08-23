@@ -47,13 +47,13 @@ class UserController < ApplicationController
 
   def change_password
     @title = 'Change Password'
-    render layout: 'settings'
+    render :layout => 'settings'
   end
 
   def change_email
     @title = 'Change Email'
     @current_user.current_email = @current_user.email
-    render layout: 'settings'
+    render :layout => 'settings'
   end
 
   def show
@@ -228,7 +228,7 @@ class UserController < ApplicationController
 
   def edit
     @user = @current_user
-    render layout: 'settings'
+    render :layout => 'settings'
   end
 
   def reset_password

@@ -71,8 +71,8 @@ class Tag < ActiveRecord::Base
 
   def self.purge_tags
     sql =
-      "DELETE FROM tags " +
-      "WHERE post_count = 0 AND " +
+      "DELETE FROM tags " \
+      "WHERE post_count = 0 AND " \
       "id NOT IN (SELECT alias_id FROM tag_aliases UNION SELECT predicate_id FROM tag_implications UNION SELECT consequent_id FROM tag_implications)"
     execute_sql sql
   end

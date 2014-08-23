@@ -713,7 +713,7 @@ module ActionView
     end
 
     def reload(options_for_replace = {})
-      replace(options_for_replace.merge({ :partial => @id.to_s }))
+      replace(options_for_replace.merge(:partial => @id.to_s))
     end
   end
 

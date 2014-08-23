@@ -95,7 +95,7 @@ class WikiController < ApplicationController
       if @page.update_attributes(params[:wiki_page].merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
         respond_to_success("Page updated", :action => "show", :title => @page.title)
       else
-        respond_to_error(@page, { :action => "show", :title => @page.title })
+        respond_to_error(@page, :action => "show", :title => @page.title)
       end
     end
   end
@@ -126,7 +126,7 @@ class WikiController < ApplicationController
       if @page.save
         respond_to_success("Page reverted", :action => "show", :title => params[:title])
       else
-        respond_to_error((@page.errors.full_messages.first rescue "Error reverting page"), { :action => "show", :title => params[:title] })
+        respond_to_error((@page.errors.full_messages.first rescue "Error reverting page"), :action => "show", :title => params[:title])
       end
     end
   end

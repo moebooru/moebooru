@@ -39,7 +39,7 @@ class Hash
       end
     end
 
-    options.reverse_merge!({ :builder => Builder::XmlMarkup.new(:indent => options[:indent]) })
+    options.reverse_merge!(:builder => Builder::XmlMarkup.new(:indent => options[:indent]))
     if !options[:skip_instruct]
       options[:skip_instruct] = true
       options[:builder].instruct!

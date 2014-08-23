@@ -28,7 +28,7 @@ class TagControllerTest < ActionController::TestCase
   end
 
   def test_mass_edit
-    get :mass_edit, {}, { :user_id => 2 }
+    get :mass_edit, {}, :user_id => 2
     assert_response :success
 
     # Can't easily test the mass_edit action. The daemon process does the actual work.
@@ -43,17 +43,17 @@ class TagControllerTest < ActionController::TestCase
     p2 = create_post("hoge moge", 2)
     p3 = create_post("lodge", 3)
 
-    get :edit_preview, { :tags => "hoge" }, { :user_id => 2 }
+    get :edit_preview, { :tags => "hoge" }, :user_id => 2
     assert_response :success
   end
 
   def test_update
     p1 = create_post("hoge", 1)
 
-    get :edit, { :name => "hoge" }, { :user_id => 3 }
+    get :edit, { :name => "hoge" }, :user_id => 3
     assert_response :success
 
-    post :update, { :tag => { :name => "hoge", :tag_type => CONFIG["tag_types"]["Artist"] } }, { :user_id => 3 }
+    post :update, { :tag => { :name => "hoge", :tag_type => CONFIG["tag_types"]["Artist"] } }, :user_id => 3
     assert_equal(CONFIG["tag_types"]["Artist"], Tag.find_by_name("hoge").tag_type)
   end
 

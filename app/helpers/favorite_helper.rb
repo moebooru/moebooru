@@ -3,7 +3,7 @@ module FavoriteHelper
     html = "".html_safe
 
     users = post.favorited_by
-    users_link = users.map { |user| link_to user.pretty_name, { :controller => :user, :action => :show, :id => user.id } }
+    users_link = users.map { |user| link_to user.pretty_name, :controller => :user, :action => :show, :id => user.id  }
 
     if users.empty?
       html << "no one"

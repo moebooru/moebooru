@@ -60,7 +60,7 @@ class DmailController < ApplicationController
       end
 
       @current_user.update_attribute(:has_mail, false)
-      respond_to_success("All messages marked as read", { :action => "inbox" })
+      respond_to_success("All messages marked as read", :action => "inbox")
     else
       redirect_to :action => "inbox"
     end

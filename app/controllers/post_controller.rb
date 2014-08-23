@@ -146,7 +146,7 @@ class PostController < ApplicationController
   def update
     @post = Post.find(params[:id])
     if @post.is_deleted? and !@current_user.is_mod_or_higher?
-      respond_to_error("Post Locked", { :action => :show, :id => params[:id] }, { :status => 422 })
+      respond_to_error("Post Locked", { :action => :show, :id => params[:id] }, :status => 422)
       return
     end
     user_id = @current_user.id
@@ -377,11 +377,11 @@ class PostController < ApplicationController
           return
         end
 
-        api_data = Post.batch_api_data(@posts, {
+        api_data = Post.batch_api_data(@posts,
           :exclude_tags => params[:include_tags] != "1",
           :exclude_votes => params[:include_votes] != "1",
-          :exclude_pools => params[:include_pools] != "1",
-        })
+          :exclude_pools => params[:include_pools] != "1"
+        )
 
         render :json => api_data.to_json
       }
@@ -636,9 +636,9 @@ class PostController < ApplicationController
     # file from before.  These files are expired after a while; we check for expired files
     # when doing later searches, so we don't need a cron job.
     def search(params)
-      options = params.merge({
-        :services => @services,
-      })
+      options = params.merge(
+        :services => @services
+      )
 
       # Check search_id first, so options links that include it will use it.  If the
       # user searches with the actual form, search_id will be cleared on submission.

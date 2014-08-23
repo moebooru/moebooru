@@ -234,7 +234,6 @@ class ApplicationController < ActionController::Base
       @record = record
       render :status => 500, :layout => "bare", :inline => "<%= render 'shared/error_messages', :object => @record %>"
     end
-
   end
 
   include LoginSystem

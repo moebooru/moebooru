@@ -7,5 +7,4 @@ class UserRecord < ActiveRecord::Base
   def user=(name)
     self.user_id = User.find_by_name(name).id rescue nil
   end
-
 end

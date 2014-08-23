@@ -1,6 +1,6 @@
 class InlineController < ApplicationController
   layout "default"
-  before_filter :member_only, :only => [:create, :copy]
+  before_action :member_only, :only => [:create, :copy]
 
   def create
     # If this user already has an inline with no images, use it.

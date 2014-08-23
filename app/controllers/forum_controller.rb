@@ -1,10 +1,10 @@
 class ForumController < ApplicationController
   layout "default"
   helper :avatar
-  before_filter :sanitize_id, :only => [:show]
-  before_filter :mod_only, :only => [:stick, :unstick, :lock, :unlock]
-  before_filter :member_only, :only => [:destroy, :update, :edit, :add, :mark_all_read, :preview]
-  before_filter :post_member_only, :only => [:create]
+  before_action :sanitize_id, :only => [:show]
+  before_action :mod_only, :only => [:stick, :unstick, :lock, :unlock]
+  before_action :member_only, :only => [:destroy, :update, :edit, :add, :mark_all_read, :preview]
+  before_action :post_member_only, :only => [:create]
 
   def stick
     ForumPost.stick!(params[:id])

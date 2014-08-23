@@ -2,11 +2,11 @@ require "digest/sha2"
 
 class UserController < ApplicationController
   layout "default"
-  before_filter :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]
-  before_filter :janitor_only, :only => [:invites]
-  before_filter :mod_only, :only => [:block, :unblock, :show_blocked_users]
-  before_filter :post_member_only, :only => [:set_avatar]
-  before_filter :no_anonymous, :only => [:change_password, :change_email, :show]
+  before_action :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]
+  before_action :janitor_only, :only => [:invites]
+  before_action :mod_only, :only => [:block, :unblock, :show_blocked_users]
+  before_action :post_member_only, :only => [:set_avatar]
+  before_action :no_anonymous, :only => [:change_password, :change_email, :show]
   helper :post, :tag_subscription
   helper :avatar
 

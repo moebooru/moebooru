@@ -1,6 +1,6 @@
 class TagImplicationController < ApplicationController
   layout "default"
-  before_filter :member_only, :only => [:create]
+  before_action :member_only, :only => [:create]
 
   def create
     ti = TagImplication.new(params[:tag_implication].merge(:is_pending => true))

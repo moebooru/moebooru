@@ -1,6 +1,6 @@
 class ReportController < ApplicationController
   layout "default"
-  before_filter :set_dates
+  before_action :set_dates
   helper :user
 
   def tag_updates

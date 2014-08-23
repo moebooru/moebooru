@@ -2,8 +2,8 @@ class CommentController < ApplicationController
   layout "default"
   helper :avatar
 
-  before_filter :member_only, :only => [:create, :destroy, :update]
-  before_filter :janitor_only, :only => [:moderate]
+  before_action :member_only, :only => [:create, :destroy, :update]
+  before_action :janitor_only, :only => [:moderate]
   helper :post
 
   def edit

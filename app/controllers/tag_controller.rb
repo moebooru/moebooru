@@ -1,7 +1,7 @@
 class TagController < ApplicationController
   layout "default"
-  before_filter :mod_only, :only => [:mass_edit, :edit_preview]
-  before_filter :member_only, :only => [:update, :edit]
+  before_action :mod_only, :only => [:mass_edit, :edit_preview]
+  before_action :member_only, :only => [:update, :edit]
   before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
 
   def cloud

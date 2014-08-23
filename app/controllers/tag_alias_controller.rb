@@ -1,6 +1,6 @@
 class TagAliasController < ApplicationController
   layout "default"
-  before_filter :member_only, :only => [:create]
+  before_action :member_only, :only => [:create]
 
   def create
     ta = TagAlias.new(params[:tag_alias].merge(:is_pending => true))

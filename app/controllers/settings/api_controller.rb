@@ -1,5 +1,5 @@
 class Settings::ApiController < Settings::BaseController
-  before_filter :ensure_api_key
+  before_action :ensure_api_key
 
   def show
   end

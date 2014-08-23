@@ -1,5 +1,5 @@
 class DmailController < ApplicationController
-  before_filter :blocked_only
+  before_action :blocked_only
   layout "default"
 
   def preview

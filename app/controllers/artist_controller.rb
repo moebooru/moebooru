@@ -3,8 +3,8 @@
 class ArtistController < ApplicationController
   layout "default"
 
-  before_filter :post_member_only, :only => [:create, :update]
-  before_filter :post_privileged_only, :only => [:destroy]
+  before_action :post_member_only, :only => [:create, :update]
+  before_action :post_privileged_only, :only => [:destroy]
   helper :post, :wiki
 
   def preview

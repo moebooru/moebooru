@@ -2,7 +2,7 @@ require "extract_urls"
 
 class BatchController < ApplicationController
   layout "default"
-  before_filter :contributor_only, :only => [:index, :create, :enqueue, :update]
+  before_action :contributor_only, :only => [:index, :create, :enqueue, :update]
 
   def index
     if @current_user.is_mod_or_higher? and params[:user_id] == "all" then

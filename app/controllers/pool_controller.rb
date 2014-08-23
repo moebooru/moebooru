@@ -1,8 +1,8 @@
 class PoolController < ApplicationController
   layout "default"
-  before_filter :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]
-  before_filter :post_member_only, :only => [:create]
-  before_filter :contributor_only, :only => [:copy, :transfer_metadata]
+  before_action :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]
+  before_action :post_member_only, :only => [:create]
+  before_action :contributor_only, :only => [:copy, :transfer_metadata]
   helper :post
 
   def index

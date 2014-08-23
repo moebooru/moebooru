@@ -1,6 +1,6 @@
 class UserRecordController < ApplicationController
   layout "default"
-  before_filter :privileged_only, :only => [:create, :destroy]
+  before_action :privileged_only, :only => [:create, :destroy]
 
   def index
     if params[:user_id]

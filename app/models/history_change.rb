@@ -51,7 +51,7 @@ class HistoryChange < ActiveRecord::Base
   end
 
   def get_default
-    default = options[:default]
+    options[:default]
   end
 
   # Return the default value for the field recorded by this change.

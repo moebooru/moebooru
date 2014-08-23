@@ -23,11 +23,10 @@ class ArtistUrl < ActiveRecord::Base
       url = File.dirname(url)
     end
 
-    url = url.gsub(/^http:\/\/blog\d+\.fc2/, "http://blog*.fc2")
-    url = url.gsub(/^http:\/\/blog-imgs-\d+\.fc2/, "http://blog*.fc2")
-    # See documentation in self.normalize for examples
-    url = url.gsub(/^http:\/\/img\d+\.pixiv\.net/, "http://img*.pixiv.net")
-    url = url.gsub(/^http:\/\/i\d+\.pixiv\.net\/img\d+/, "http://img*.pixiv.net")
+    url.gsub(/^http:\/\/blog\d+\.fc2/, "http://blog*.fc2")
+      .gsub(/^http:\/\/blog-imgs-\d+\.fc2/, "http://blog*.fc2")
+      .gsub(/^http:\/\/img\d+\.pixiv\.net/, "http://img*.pixiv.net")
+      .gsub(/^http:\/\/i\d+\.pixiv\.net\/img\d+/, "http://img*.pixiv.net")
   end
 
   def normalize

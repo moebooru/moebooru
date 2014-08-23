@@ -79,7 +79,7 @@ class NoteControllerTest < ActionController::TestCase
   def test_index
     setup_test
 
-    note = create_note("hoge", @post1.id)
+    create_note("hoge", @post1.id)
 
     get :index, {}, :user_id => 1
     assert_response :success
@@ -91,7 +91,7 @@ class NoteControllerTest < ActionController::TestCase
   def test_search
     setup_test
 
-    note = create_note("hoge", @post1.id)
+    create_note("hoge", @post1.id)
 
     get :search, {}, :user_id => 1
     assert_response :success

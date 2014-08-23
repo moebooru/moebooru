@@ -27,8 +27,8 @@ class WikiControllerTest < ActionController::TestCase
   end
 
   def test_index
-    page1 = create_page("hoge")
-    page2 = create_page("moge")
+    create_page("hoge")
+    create_page("moge")
 
     get :index
     assert_response :success
@@ -96,7 +96,7 @@ class WikiControllerTest < ActionController::TestCase
   end
 
   def test_recent_changes
-    page1 = create_page("hoge")
+    create_page("hoge")
     page2 = create_page("moge")
     page2.update_attributes(:body => "moge moge")
     page2.update_attributes(:body => "moge moge moge")
@@ -124,7 +124,7 @@ class WikiControllerTest < ActionController::TestCase
   end
 
   def test_rename
-    page = create_page("moge")
+    create_page("moge")
 
     get :rename, { :title => "moge" }, :user_id => 2
     assert_response :success

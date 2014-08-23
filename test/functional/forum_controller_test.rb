@@ -78,12 +78,12 @@ class ForumControllerTest < ActionController::TestCase
 
   def test_index
     p1 = create_post("hello")
-    p2 = create_post("hello", p1.id)
-    p3 = create_post("hello", p1.id)
+    create_post("hello", p1.id)
+    create_post("hello", p1.id)
     p4 = create_post("hello")
-    p5 = create_post("hello", p4.id)
-    p6 = create_post("hello", p4.id)
-    p7 = create_post("hello", p4.id)
+    create_post("hello", p4.id)
+    create_post("hello", p4.id)
+    create_post("hello", p4.id)
 
     get :index, {}, :user_id => 1
     assert_response :success
@@ -94,12 +94,12 @@ class ForumControllerTest < ActionController::TestCase
 
   def test_search
     p1 = create_post("hello")
-    p2 = create_post("margery", p1.id)
-    p3 = create_post("daw", p1.id)
+    create_post("margery", p1.id)
+    create_post("daw", p1.id)
     p4 = create_post("existential")
-    p5 = create_post("pie", p4.id)
-    p6 = create_post("moon", p4.id)
-    p7 = create_post("knife", p4.id)
+    create_post("pie", p4.id)
+    create_post("moon", p4.id)
+    create_post("knife", p4.id)
 
     get :search, {}, :user_id => 1
     assert_response :success
@@ -110,12 +110,12 @@ class ForumControllerTest < ActionController::TestCase
 
   def test_mark_all_read
     p1 = create_post("hello")
-    p2 = create_post("margery", p1.id)
-    p3 = create_post("daw", p1.id)
+    create_post("margery", p1.id)
+    create_post("daw", p1.id)
     p4 = create_post("existential")
-    p5 = create_post("pie", p4.id)
-    p6 = create_post("moon", p4.id)
-    p7 = create_post("knife", p4.id)
+    create_post("pie", p4.id)
+    create_post("moon", p4.id)
+    create_post("knife", p4.id)
 
     post :mark_all_read, {}, :user_id => 1
     assert_response :success

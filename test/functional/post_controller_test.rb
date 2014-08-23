@@ -40,7 +40,7 @@ class PostControllerTest < ActionController::TestCase
   def test_moderate
     p1 = create_post("hoge", 1, :status => "pending")
     p2 = create_post("hoge", 2)
-    p3 = create_post("moge", 3)
+    create_post("moge", 3)
 
     p2.flag!("sage", 1)
 

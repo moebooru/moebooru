@@ -60,7 +60,7 @@ class ApplicationTest < ActiveSupport::TestCase
     ret = {}
 
     searches.each do |search|
-      result = Post.find_by_sql(Post.generate_sql(search, :order => "p.id DESC"))
+      Post.find_by_sql(Post.generate_sql(search, :order => "p.id DESC"))
       params = { :tags => search }
       key = get_cache_key("post", "index", params)[0]
 
@@ -120,7 +120,6 @@ class ApplicationTest < ActiveSupport::TestCase
       },
     ]
 
-    message = []
     tests.each do |test|
       before = get_cache_keys(test[:affected_searches])
       update_post(Post.find(1), test[:setup]) if test[:setup]

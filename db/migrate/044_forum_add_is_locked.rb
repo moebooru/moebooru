@@ -25,6 +25,6 @@ class ForumAddIsLocked < ActiveRecord::Migration
   		execute "CREATE INDEX forum_posts_user_views__forum_post_id__idx ON forum_posts_user_views (forum_post_id)"
   		execute "CREATE INDEX forum_posts_user_views__user_id__idx ON forum_posts_user_views (user_id)"
   		execute "ALTER TABLE forum_posts_user_views ADD CONSTRAINT forum_posts_user_views__unique_forum_post_id_user_id UNIQUE (forum_post_id, user_id)"
-  	end
+    end
   end
 end

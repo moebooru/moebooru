@@ -41,7 +41,7 @@ module Post::MirrorMethods
     begin
       upload_to_mirrors_internal(:normal)
       upload_to_mirrors_internal(:previews_only)
-    rescue MirrorError => e
+    rescue MirrorError
       # The post might be deleted while it's uploading.  Check the post status after
       # an error.
       reload

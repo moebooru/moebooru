@@ -109,8 +109,8 @@ class Pool < ActiveRecord::Base
       # By preference, pick the first post (by sequence) in the pool that isn't hidden from
       # the index.
       PoolPost.find(:all, :order => "posts.is_shown_in_index DESC, nat_sort(pools_posts.sequence), pools_posts.post_id",
-                    :joins => "JOIN posts ON posts.id = pools_posts.post_id",
-                    :conditions => ["pool_id = ? AND posts.status = 'active' AND pools_posts.active", id]).each do |pool_post|
+                          :joins => "JOIN posts ON posts.id = pools_posts.post_id",
+                          :conditions => ["pool_id = ? AND posts.status = 'active' AND pools_posts.active", id]).each do |pool_post|
         return pool_post.post if pool_post.post.can_be_seen_by?(Thread.current["danbooru-user"])
       end
       return rescue nil

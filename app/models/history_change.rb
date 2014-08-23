@@ -59,9 +59,9 @@ class HistoryChange < ActiveRecord::Base
     return nil unless has_default?
 
     History.new :table_name => table_name,
-                    :remote_id => remote_id,
-                    :column_name => column_name,
-                    :value => get_default
+                :remote_id => remote_id,
+                :column_name => column_name,
+                :value => get_default
   end
 
   # Return the object this change modifies.
@@ -72,17 +72,17 @@ class HistoryChange < ActiveRecord::Base
 
   def latest
     HistoryChange.find(:first, :order => "id DESC",
-                 :conditions => ["table_name = ? AND remote_id = ? AND column_name = ?", table_name, remote_id, column_name])
+                               :conditions => ["table_name = ? AND remote_id = ? AND column_name = ?", table_name, remote_id, column_name])
   end
 
   def next
     HistoryChange.find(:first, :order => "h.id ASC",
-                 :conditions => ["table_name = ? AND remote_id = ? AND id > ? AND column_name = ?", table_name, remote_id, id, column_name])
+                               :conditions => ["table_name = ? AND remote_id = ? AND id > ? AND column_name = ?", table_name, remote_id, id, column_name])
   end
 
   def set_previous
     self.previous = HistoryChange.find(:first, :order => "id DESC",
-                 :conditions => ["table_name = ? AND remote_id = ? AND id < ? AND column_name = ?", table_name, remote_id, id, column_name])
+                                               :conditions => ["table_name = ? AND remote_id = ? AND id < ? AND column_name = ?", table_name, remote_id, id, column_name])
     self.save!
   end
 end

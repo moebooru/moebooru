@@ -67,7 +67,6 @@ class HistoryChange < ActiveRecord::Base
   # Return the object this change modifies.
   def obj
     @obj ||= master_class.find(remote_id)
-    @obj
   end
 
   def latest

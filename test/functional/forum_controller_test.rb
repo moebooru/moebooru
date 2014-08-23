@@ -13,24 +13,24 @@ class ForumControllerTest < ActionController::TestCase
     post :stick, {:id => p.id}, {:user_id => 2}
     p.reload
     assert(p.is_sticky?, "Post should be sticky")
-    
+
     post :unstick, {:id => p.id}, {:user_id => 2}
     p.reload
     assert(!p.is_sticky?, "Post should not be sticky")
   end
-  
+
   def test_lock
     p = create_post("parent")
-    
+
     post :lock, {:id => p.id}, {:user_id => 2}
     p.reload
     assert(p.is_locked?, "Post should be locked")
-    
+
     post :unlock, {:id => p.id}, {:user_id => 2}
     p.reload
     assert(!p.is_locked?, "Post should not be locked")
   end
-  
+
   def test_create
     post :create, {:forum_post => {:title => "hey", :body => "hey"}}, {:user_id => 4}
     p1 = ForumPost.find_by_title("hey")
@@ -49,33 +49,33 @@ class ForumControllerTest < ActionController::TestCase
     assert_equal(3, p1.last_updated_by)
     assert_equal(p2.created_at.to_i, p1.updated_at.to_i)
   end
-  
+
   def test_destroy
     p1 = create_post("hello")
     p2 = create_post("go away", p1.id)
-    
+
     post :destroy, {:id => p1.id}, {:user_id => 1}
     assert_nil(ForumPost.find_by_id(p1.id))
     assert_nil(ForumPost.find_by_id(p2.id))
   end
-  
+
   def test_update
     p1 = create_post("hello")
-    
+
     get :edit, {:id => p1.id}, {:user_id => 1}
     assert_response :success
-    
+
     post :update, {:id => p1.id, :forum_post => {:body => "taxes"}}, {:user_id => 1}
     p1.reload
     assert_equal("taxes", p1.body)
   end
-  
+
   def test_show
     p1 = create_post("hello")
     get :show, {:id => p1.id}, {:user_id => 1}
     assert_response :success
   end
-  
+
   def test_index
     p1 = create_post("hello")
     p2 = create_post("hello", p1.id)
@@ -84,14 +84,14 @@ class ForumControllerTest < ActionController::TestCase
     p5 = create_post("hello", p4.id)
     p6 = create_post("hello", p4.id)
     p7 = create_post("hello", p4.id)
-    
+
     get :index, {}, {:user_id => 1}
     assert_response :success
-    
+
     get :index, {:parent_id => p4.id}, {:user_id => 1}
     assert_response :success
   end
-  
+
   def test_search
     p1 = create_post("hello")
     p2 = create_post("margery", p1.id)
@@ -100,14 +100,14 @@ class ForumControllerTest < ActionController::TestCase
     p5 = create_post("pie", p4.id)
     p6 = create_post("moon", p4.id)
     p7 = create_post("knife", p4.id)
-    
+
     get :search, {}, {:user_id => 1}
     assert_response :success
-    
+
     get :search, {:query => "hello"}, {:user_id => 1}
     assert_response :success
   end
-  
+
   def test_mark_all_read
     p1 = create_post("hello")
     p2 = create_post("margery", p1.id)

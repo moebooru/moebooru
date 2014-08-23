@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 class JobTaskTest < ActiveSupport::TestCase
   fixtures :users
-  
+
   def test_all
     begin
       ta = TagAlias.create(:name => "a", :alias => "b", :creator_id => 1, :is_pending => true)

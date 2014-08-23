@@ -17,7 +17,7 @@ class NoReallyAddPostVotes < ActiveRecord::Migration
       t.column :score, :integer, :null => false, :default => 0
       t.column :updated_at, :timestamp, :null => false, :default => "now()"
     end
-    
+
     # This should probably be the primary key, but ActiveRecord assumes the primary
     # key is a single column.
     execute "ALTER TABLE post_votes ADD UNIQUE (user_id, post_id)"

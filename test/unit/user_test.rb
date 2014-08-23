@@ -2,15 +2,15 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 class UserTest < ActiveSupport::TestCase
   fixtures :users
-  
+
   def setup
     if CONFIG["enable_caching"]
       CACHE.flush_all
     end
-    
+
     @post_number = 1
   end
-  
+
   def create_user(name, params = {})
     user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "a@b.net"}.merge(params))
     user.name = name
@@ -18,26 +18,26 @@ class UserTest < ActiveSupport::TestCase
     user.save
     user
   end
-  
+
   def create_post(tags, user_id = 1, params = {})
     post = Post.create({:user_id => user_id, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@post_number}.jpg")}.merge(params))
     @post_number += 1
     post
   end
-  
+
   def create_favorite(user_id, post_id)
     PostVotes.create(:user_id => user_id, :post_id => post_id, :score => 3)
   end
-  
+
   def test_blacklists
     CONFIG["default_blacklists"] = "tag1"
     user = create_user("bob")
     assert_equal("tag1\n", user.blacklisted_tags)
-    
+
     user.update_attributes(:blacklisted_tags => "tag2\ntag3\n")
     assert_equal("tag2\ntag3\n", user.blacklisted_tags)
   end
-  
+
   def test_authentication
     user = create_user("bob")
     assert(User.authenticate("bob", "zugzug1"), "Authentication should have succeeded")
@@ -45,7 +45,7 @@ class UserTest < ActiveSupport::TestCase
     assert(User.authenticate_hash("bob", user.password_hash), "Authentication should have succeeded")
     assert(!User.authenticate_hash("bob", "xxxx"), "Authentication should not have succeeded")
   end
-  
+
   def test_passwords
     user = create_user("bob")
     user.password = "zugzug5"
@@ -53,7 +53,7 @@ class UserTest < ActiveSupport::TestCase
     user.save
     user.reload
     assert(User.authenticate("bob", "zugzug5"), "Authentication should have succeeded")
-    
+
     user.password = "zugzug6"
     user.password_confirmation = "zugzug5"
     user.save
@@ -63,11 +63,11 @@ class UserTest < ActiveSupport::TestCase
     user.password_confirmation = "x5"
     user.save
     assert_equal(["Password is too short (minimum is 5 characters)"], user.errors.full_messages)
-    
+
     new_pass = user.reset_password
     assert(User.authenticate("bob", new_pass), "Authentication should have succeeded")
   end
-  
+
   def test_counts
     assert_equal(5, User.fast_count)
     user = create_user("bob")
@@ -75,7 +75,7 @@ class UserTest < ActiveSupport::TestCase
     user.destroy
     assert_equal(5, User.fast_count)
   end
-  
+
   def test_find_name
     user = create_user("bob")
     assert_equal(CONFIG["default_guest_name"], User.find_name(-1))
@@ -84,13 +84,13 @@ class UserTest < ActiveSupport::TestCase
     user.save
     assert_equal("max", User.find_name(user.id))
   end
-  
+
   def test_api
     user = create_user("bob")
     assert_nothing_raised {user.to_json}
     assert_nothing_raised {user.to_xml}
   end
-  
+
   def test_uploaded_tags
     create_post("tag1")
     create_post("tag1")
@@ -103,7 +103,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal("tag2", results[1]["tag"])
     assert_equal("1", results[1]["count"])
   end
-  
+
   def test_uploaded_posts
     p1 = create_post("tag1", 2)
     p2 = create_post("tag2", 2)
@@ -112,7 +112,7 @@ class UserTest < ActiveSupport::TestCase
     results = User.find(2).recent_uploaded_posts.map(&:id).sort
     assert_equal([p1.id, p2.id, p3.id], results)
   end
-  
+
   def test_favorite_posts
     p1 = create_post("tag1")
     p2 = create_post("tag2")
@@ -123,7 +123,7 @@ class UserTest < ActiveSupport::TestCase
     results = User.find(2).recent_favorite_posts.map(&:id).sort
     assert_equal([p1.id, p2.id], results)
   end
-  
+
 #  def test_favorites
 #    p1 = create_post("tag1")
 #    p2 = create_post("tag2")
@@ -138,7 +138,7 @@ class UserTest < ActiveSupport::TestCase
 #    assert_nil(Favorite.find(:first, :conditions => ["user_id = 1 AND post_id = ?", p1.id]))
 #    assert_nothing_raised {user.delete_favorite(p1.id)}
 #  end
-  
+
   def test_levels
     admin = User.find(1)
     mod = User.find(2)
@@ -151,7 +151,7 @@ class UserTest < ActiveSupport::TestCase
     assert(mod.has_permission?(p1), "Mod should have permission")
     assert(!priv.has_permission?(p1), "Non-mod should not have permission")
     assert(member.has_permission?(p1), "Owner should have permission")
-    
+
     assert(mod.is_mod_or_higher?)
     assert(mod.is_blocked_or_higher?)
     assert(!mod.is_blocked_or_lower?)

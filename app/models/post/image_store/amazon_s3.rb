@@ -11,11 +11,11 @@ module Post::ImageStore
           AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.tempfile_preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
         end
 
-        if File.exists?(tempfile_sample_path)
+        if File.exist?(tempfile_sample_path)
           AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg", open(self.tempfile_sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
         end
 
-        if File.exists?(tempfile_jpeg_path)
+        if File.exist?(tempfile_jpeg_path)
           AWS::S3::S3Object.store("jpeg/#{md5}.jpg", open(self.tempfile_jpeg_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Cache-Control" => "max-age=315360000")
         end
 

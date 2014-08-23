@@ -7,12 +7,12 @@ MAX_BACKUPS = 30
 
 home = File.expand_path("~")
 
-if !File.exists?("#{home}/.s3/access_key")
+if !File.exist?("#{home}/.s3/access_key")
   STDERR.puts "Access key not found"
   exit 1
 end
 
-if !File.exists?("#{home}/.s3/secret_access_key")
+if !File.exist?("#{home}/.s3/secret_access_key")
   STDERR.puts "Secret access key not found"
   exit 1
 end

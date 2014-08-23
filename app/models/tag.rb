@@ -21,9 +21,9 @@ class Tag < ActiveRecord::Base
     tag_types_to_show = TAG_TYPE_INDEXES - options[:exclude_types]
     Tag.group(:name).joins(:_posts)
       .where(:posts => { :created_at => start..stop }, :tag_type => tag_types_to_show)
-      .order('count_all DESC').limit(options[:limit])
+      .order("count_all DESC").limit(options[:limit])
       .count
-      .map { |name, count| { 'post_count' => count, 'name' => name } }
+      .map { |name, count| { "post_count" => count, "name" => name } }
   end
 
   def pretty_name

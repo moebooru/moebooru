@@ -35,7 +35,7 @@ class UserRecordController < ApplicationController
 
       respond_to_success("Record updated", :action => "index", :user_id => params[:id])
     else
-      access_denied()
+      access_denied
     end
   end
 end

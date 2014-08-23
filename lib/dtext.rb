@@ -89,7 +89,7 @@ module DText
   def parselist(str, state)
     html = ""
     if state.last =~ /\d/
-      n = ((str =~ /^\*+\s+/ && str.split()[0]) || "").count("*")
+      n = ((str =~ /^\*+\s+/ && str.split[0]) || "").count("*")
       if n < state.last.to_i
         html << "</ul>" * (state.last.to_i - n)
         state[-1] = n.to_s

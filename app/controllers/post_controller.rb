@@ -247,7 +247,7 @@ class PostController < ApplicationController
         respond_to_success("Post deleted", :action => "show", :id => params[:id])
       end
     else
-      access_denied()
+      access_denied
     end
   end
 
@@ -544,7 +544,7 @@ class PostController < ApplicationController
       end
 
       if !@current_user.is_mod_or_higher? and @current_user.id != post.flag_detail.user_id then
-        access_denied()
+        access_denied
         return
       end
 
@@ -791,7 +791,7 @@ class PostController < ApplicationController
       fmt.xml do
         x = Builder::XmlMarkup.new(:indent => 2)
         x.instruct!
-        render :xml => x.posts() {
+        render :xml => x.posts {
          unless res[:errors].empty?
             res[:errors].map { |server, error|
               { :server => server, :message => error[:message], :services => error[:services].join(",") }.to_xml(:root => "error", :builder => x, :skip_instruct => true)
@@ -799,11 +799,11 @@ class PostController < ApplicationController
          end
 
           if res[:source]
-           x.source() {
+           x.source {
              res[:source].to_xml(:builder => x, :skip_instruct => true)
            }
           else
-           x.source() {
+           x.source {
              res[:external_source].to_xml(:builder => x, :skip_instruct => true)
            }
           end

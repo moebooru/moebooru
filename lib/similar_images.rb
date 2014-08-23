@@ -134,7 +134,7 @@ module SimilarImages
               similarity[post] = element[:sim].to_f
             end
           elsif service
-            post = ExternalPost.new()
+            post = ExternalPost.new
             post.id = "#{next_id}"
             next_id = next_id + 1
             post.md5 = md5
@@ -174,7 +174,7 @@ module SimilarImages
       ret[:similarity][options[:source]] = "Original"
       ret[:search_id] = ret[:source].id
     else
-      post = ExternalPost.new()
+      post = ExternalPost.new
       #      post.md5 = md5
       post.preview_url = options[:source_thumb]
       post.url = options[:full_url] || options[:url] || options[:source_thumb]

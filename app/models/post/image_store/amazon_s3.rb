@@ -21,7 +21,7 @@ module Post::ImageStore
 
         return true
       ensure
-        self.delete_tempfile()
+        self.delete_tempfile
       end
     end
 

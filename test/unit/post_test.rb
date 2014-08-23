@@ -63,29 +63,29 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def search_posts(tags)
-    Post.find_by_sql(Post.generate_sql(tags)).sort {|a, b| a.id <=> b.id}
+    Post.find_by_sql(Post.generate_sql(tags)).sort { |a, b| a.id <=> b.id }
   end
 
   def create_pool(name, params = {})
-    Pool.create({:name => name, :user_id => 1, :is_public => false, :description => "hoge"}.merge(params))
+    Pool.create({ :name => name, :user_id => 1, :is_public => false, :description => "hoge" }.merge(params))
   end
 
   def create_post(params = {})
-    Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg")}.merge(params))
+    Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg") }.merge(params))
   end
 
   def update_post(post, params = {})
-    post.update_attributes({:updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
+    post.update_attributes({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
   end
 
   def create_comment(post, params = {})
-    post.comments.create({:user_id => 1, :ip_addr => "127.0.0.1", :is_spam => false}.merge(params))
+    post.comments.create({ :user_id => 1, :ip_addr => "127.0.0.1", :is_spam => false }.merge(params))
   end
 
   def test_api
     post = create_post
-    assert_nothing_raised {post.to_json}
-    assert_nothing_raised {post.to_xml}
+    assert_nothing_raised { post.to_json }
+    assert_nothing_raised { post.to_xml }
   end
 
   if CONFIG["enable_caching"]
@@ -494,7 +494,7 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def test_search_negated_tags
-    Post.find(:all).each {|x| x.delete_from_database}
+    Post.find(:all).each { |x| x.delete_from_database }
 
     p1 = create_post(:tags => "tag1 tag2 tag3")
     p2 = create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))

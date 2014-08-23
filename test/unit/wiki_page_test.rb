@@ -8,7 +8,7 @@ class WikiPageTest < ActiveSupport::TestCase
   end
 
   def create_wiki(params = {})
-    WikiPage.create({:title => "hoge", :user_id => 1, :body => "hoge", :ip_addr => "127.0.0.1", :is_locked => false}.merge(params))
+    WikiPage.create({ :title => "hoge", :user_id => 1, :body => "hoge", :ip_addr => "127.0.0.1", :is_locked => false }.merge(params))
   end
 
   def update_wiki(w1, params = {})

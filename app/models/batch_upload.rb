@@ -22,7 +22,7 @@ class BatchUpload < ActiveRecord::Base
     self.active = true
     self.save!
 
-    @post = Post.create({:source => self.url, :tags => self.tags, :updater_user_id => self.user_id, :updater_ip_addr => self.ip, :user_id => self.user_id, :ip_addr => self.ip, :status => "active"})
+    @post = Post.create({ :source => self.url, :tags => self.tags, :updater_user_id => self.user_id, :updater_ip_addr => self.ip, :user_id => self.user_id, :ip_addr => self.ip, :status => "active" })
 
     if @post.errors.empty?
       if CONFIG["dupe_check_on_upload"] && @post.image? && @post.parent_id.nil?

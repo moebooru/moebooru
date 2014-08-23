@@ -81,9 +81,9 @@ class ApplicationController < ActionController::Base
       previous_url = params[:url] || request.fullpath
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Access denied"; redirect_to(user_login_path :url => previous_url)}
-        fmt.xml {render :xml => {:success => false, :reason => "access denied"}.to_xml(:root => "response"), :status => 403}
-        fmt.json {render :json => {:success => false, :reason => "access denied"}.to_json, :status => 403}
+        fmt.html { flash[:notice] = "Access denied"; redirect_to(user_login_path :url => previous_url) }
+        fmt.xml { render :xml => { :success => false, :reason => "access denied" }.to_xml(:root => "response"), :status => 403 }
+        fmt.json { render :json => { :success => false, :reason => "access denied" }.to_json, :status => 403 }
       end
     end
 
@@ -180,9 +180,9 @@ class ApplicationController < ActionController::Base
       extra_api_params = options[:api] || {}
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = notice ; redirect_to(redirect_to_params)}
-        fmt.json {render :json => extra_api_params.merge(:success => true).to_json}
-        fmt.xml {render :xml => extra_api_params.merge(:success => true).to_xml(:root => "response")}
+        fmt.html { flash[:notice] = notice; redirect_to(redirect_to_params) }
+        fmt.json { render :json => extra_api_params.merge(:success => true).to_json }
+        fmt.xml { render :xml => extra_api_params.merge(:success => true).to_xml(:root => "response") }
       end
     end
 
@@ -213,9 +213,9 @@ class ApplicationController < ActionController::Base
       end
 
       respond_to do |fmt|
-        fmt.html {flash[:notice] = "Error: #{obj}" ; redirect_to(redirect_to_params)}
-        fmt.json {render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => status}
-        fmt.xml {render :xml => extra_api_params.merge(:success => false, :reason => obj).to_xml(:root => "response"), :status => status}
+        fmt.html { flash[:notice] = "Error: #{obj}"; redirect_to(redirect_to_params) }
+        fmt.json { render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => status }
+        fmt.xml { render :xml => extra_api_params.merge(:success => false, :reason => obj).to_xml(:root => "response"), :status => status }
       end
     end
 
@@ -225,8 +225,8 @@ class ApplicationController < ActionController::Base
       respond_to do |fmt|
         fmt.html
         fmt.atom if formats[:atom]
-        fmt.json {render :json => inst_var.to_json}
-        fmt.xml {render :xml => inst_var.to_xml(:root => inst_var_name)}
+        fmt.json { render :json => inst_var.to_json }
+        fmt.xml { render :xml => inst_var.to_xml(:root => inst_var_name) }
       end
     end
 

@@ -37,7 +37,7 @@ class AdminController < ApplicationController
             UserMailer.new_password(@user, new_password).deliver
           rescue Net::SMTPSyntaxError, Net::SMTPFatalError
             respond_to_success("Specified user's email address was invalid",
-              {:action => :reset_password }, :api => {:result => "invalid-email"})
+              { :action => :reset_password }, :api => { :result => "invalid-email" })
             return
           end
         end
@@ -64,7 +64,7 @@ class AdminController < ApplicationController
       keys << "stats/page/level=#{level}&page=20+"
     end
 
-    @post_stats = keys.inject({}) {|h, k| h[k] = Rails.cache.read(k); h}
+    @post_stats = keys.inject({}) { |h, k| h[k] = Rails.cache.read(k); h }
   end
 
   def reset_post_stats

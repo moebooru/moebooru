@@ -1,7 +1,7 @@
 module Mirrors
   class MirrorError < Exception; end
 
-  def ssh_open_pipe(mirror, command, timeout=30)
+  def ssh_open_pipe(mirror, command, timeout = 30)
     remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
     ret = nil
     IO.popen("/usr/bin/ssh -o ServerAliveInterval=30 -o Compression=no -o BatchMode=yes -o ConnectTimeout=#{timeout} #{remote_user_host} '#{command}'") do |f|
@@ -28,7 +28,7 @@ module Mirrors
   end
   module_function :filter_mirror_list
 
-  def create_mirror_paths(dirs, options={})
+  def create_mirror_paths(dirs, options = {})
     dirs = dirs.uniq
 
     target_mirrors = filter_mirror_list(options)
@@ -56,16 +56,16 @@ module Mirrors
   # Because we have no mechanism for indicating that a file is only available on
   # certain mirrors, if any mirror fails to upload, MirrorError will be thrown
   # and the file should be treated as completely unwarehoused.
-  def copy_file_to_mirrors(file, options={})
+  def copy_file_to_mirrors(file, options = {})
     # CONFIG[:data_dir] is equivalent to our local_base.
     local_base = "#{Rails.root}/public/data/"
     options = { :timeout => 30 }.merge(options)
 
-    if file[0,local_base.length] != local_base then
+    if file[0, local_base.length] != local_base then
       raise "Invalid filename to mirror: \"%s" % file
     end
 
-    expected_md5 = File.open(file, "rb") {|fp| Digest::MD5.hexdigest(fp.read)}
+    expected_md5 = File.open(file, "rb") { |fp| Digest::MD5.hexdigest(fp.read) }
 
     target_mirrors = filter_mirror_list(options)
     target_mirrors.each { |mirror|
@@ -80,7 +80,7 @@ module Mirrors
         # Linux needs md5sum; FreeBSD needs md5 -q.
         actual_md5 = Mirrors.ssh_open_pipe(mirror,
                 "if [ -f #{remote_filename} ]; then (which md5sum >/dev/null) && md5sum #{remote_filename} || md5 -q #{remote_filename}; fi",
-                timeout=options[:timeout]) do |f| f.gets end
+                timeout = options[:timeout]) do |f| f.gets end
         if actual_md5 =~ /^[0-9a-f]{32}/
           actual_md5 = actual_md5.slice(0, 32)
           if expected_md5 == actual_md5
@@ -138,7 +138,7 @@ module Mirrors
     end
 
     mirrors = CONFIG["image_servers"]
-    if(options[:preview]) then
+    if (options[:preview]) then
       mirrors =  mirrors.select { |mirror|
         mirror[:nopreview] != true
       }
@@ -150,7 +150,7 @@ module Mirrors
       }
     end
 
-    if(options[:zipfile]) then
+    if (options[:zipfile]) then
       mirrors =  mirrors.select { |mirror|
         mirror[:nozipfile] != true
       }

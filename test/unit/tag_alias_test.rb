@@ -11,11 +11,11 @@ class TagAliasTest < ActiveSupport::TestCase
   end
 
   def create_tag(params = {})
-    Tag.create({:post_count => 0, :cached_related => "", :cached_related_expires_on => Time.now, :tag_type => 0, :is_ambiguous => false}.merge(params))
+    Tag.create({ :post_count => 0, :cached_related => "", :cached_related_expires_on => Time.now, :tag_type => 0, :is_ambiguous => false }.merge(params))
   end
 
   def create_post(tags, params = {})
-    post = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    post = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
     @test_number += 1
     post
   end
@@ -75,7 +75,7 @@ class TagAliasTest < ActiveSupport::TestCase
   end
 
   def test_api
-    assert_nothing_raised {@alias.to_json}
-    assert_nothing_raised {@alias.to_xml}
+    assert_nothing_raised { @alias.to_json }
+    assert_nothing_raised { @alias.to_xml }
   end
 end

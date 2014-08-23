@@ -12,7 +12,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def create_user(name, params = {})
-    user = User.new({:password => "zugzug1", :password_confirmation => "zugzug1", :email => "a@b.net"}.merge(params))
+    user = User.new({ :password => "zugzug1", :password_confirmation => "zugzug1", :email => "a@b.net" }.merge(params))
     user.name = name
     user.level = CONFIG["user_levels"]["Member"]
     user.save
@@ -20,7 +20,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def create_post(tags, user_id = 1, params = {})
-    post = Post.create({:user_id => user_id, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@post_number}.jpg")}.merge(params))
+    post = Post.create({ :user_id => user_id, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@post_number}.jpg") }.merge(params))
     @post_number += 1
     post
   end
@@ -87,8 +87,8 @@ class UserTest < ActiveSupport::TestCase
 
   def test_api
     user = create_user("bob")
-    assert_nothing_raised {user.to_json}
-    assert_nothing_raised {user.to_xml}
+    assert_nothing_raised { user.to_json }
+    assert_nothing_raised { user.to_xml }
   end
 
   def test_uploaded_tags
@@ -96,7 +96,7 @@ class UserTest < ActiveSupport::TestCase
     create_post("tag1")
     create_post("tag2")
     create_post("tag1", 2)
-    results = User.find(1).uploaded_tags.sort {|a, b| a["tag"] <=> b["tag"]}
+    results = User.find(1).uploaded_tags.sort { |a, b| a["tag"] <=> b["tag"] }
     assert_equal(2, results.size)
     assert_equal("tag1", results[0]["tag"])
     assert_equal("2", results[0]["count"])

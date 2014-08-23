@@ -205,14 +205,14 @@ class Pool < ActiveRecord::Base
   end
 
   module ZipMethods
-    def get_zip_filename(options={})
+    def get_zip_filename(options = {})
       filename = pretty_name.gsub(/\?/, "")
       filename += " (JPG)" if options[:jpeg]
       "#{filename}.zip"
     end
 
     # Return true if any posts in this pool have a generated JPEG version.
-    def has_jpeg_zip?(options={})
+    def has_jpeg_zip?(options = {})
       pool_posts.each do |pool_post|
         post = pool_post.post
         return true if post.has_jpeg?
@@ -221,7 +221,7 @@ class Pool < ActiveRecord::Base
     end
 
     # Estimate the size of the ZIP.
-    def get_zip_size(options={})
+    def get_zip_size(options = {})
       sum = 0
       pool_posts.each do |pool_post|
         post = pool_post.post
@@ -233,7 +233,7 @@ class Pool < ActiveRecord::Base
     end
 
     #nginx version
-    def get_zip_data(options={})
+    def get_zip_data(options = {})
       return "" if pool_posts.empty?
 
       jpeg = options[:jpeg] || false
@@ -309,7 +309,7 @@ class Pool < ActiveRecord::Base
     end
 
     # Generate a mod_zipfile control file for this pool.
-    def get_zip_control_file(options={})
+    def get_zip_control_file(options = {})
       return "" if pool_posts.empty?
 
       jpeg = options[:jpeg] || false

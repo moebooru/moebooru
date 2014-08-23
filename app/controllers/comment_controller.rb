@@ -14,7 +14,7 @@ class CommentController < ApplicationController
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
       comment.update_attributes(params[:comment])
-      respond_to_success("Comment updated", {:action => "index"})
+      respond_to_success("Comment updated", { :action => "index" })
     else
       access_denied()
     end
@@ -33,7 +33,7 @@ class CommentController < ApplicationController
   def create
     if @current_user.is_member_or_lower? && params[:commit] == "Post" && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
       # TODO: move this to the model
-      respond_to_error("Hourly limit exceeded", {:action => "index"}, :status => 421)
+      respond_to_error("Hourly limit exceeded", { :action => "index" }, :status => 421)
       return
     end
 
@@ -67,12 +67,12 @@ class CommentController < ApplicationController
       comments = []
       @posts.each { |post| comments.push(*post.recent_comments) }
 
-      newest_comment = comments.max {|a,b| a.created_at <=> b.created_at }
+      newest_comment = comments.max { |a, b| a.created_at <=> b.created_at }
       if !@current_user.is_anonymous? && newest_comment && @current_user.last_comment_read_at < newest_comment.created_at
         @current_user.update_attribute(:last_comment_read_at, newest_comment.created_at)
       end
 
-      @posts = @posts.delete_if {|x| !x.can_be_seen_by?(@current_user, {:show_deleted => true})}
+      @posts = @posts.delete_if { |x| !x.can_be_seen_by?(@current_user, { :show_deleted => true }) }
     end
   end
 

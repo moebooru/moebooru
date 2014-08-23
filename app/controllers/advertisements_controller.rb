@@ -40,7 +40,7 @@ class AdvertisementsController < ApplicationController
 
   def update_multiple
     if params[:advertisement_ids]
-      ids = params[:advertisement_ids].map{ |a| a.to_i }
+      ids = params[:advertisement_ids].map { |a| a.to_i }
     else
       flash[:notice] = "No advertisement selected"
       redirect_to advertisements_path and return

@@ -67,7 +67,7 @@ module Tag::TypeMethods
       split_tags = tags.split(/ /)
 
       # Put long tags first, so we don't remove every tag because of one very long one.
-      split_tags.sort! do |a,b| b.length <=> a.length end
+      split_tags.sort! do |a, b| b.length <=> a.length end
 
       # Tag types that we're allowed to remove:
       length = tags.length
@@ -103,7 +103,7 @@ module Tag::TypeMethods
     m.versioning_group_by :action => "edit"
 
     # This maps ids to names
-    m.type_map = CONFIG["tag_types"].keys.select {|x| x =~ /^[A-Z]/}.inject({}) {|all, x| all[CONFIG["tag_types"][x]] = x.downcase; all}
+    m.type_map = CONFIG["tag_types"].keys.select { |x| x =~ /^[A-Z]/ }.inject({}) { |all, x| all[CONFIG["tag_types"][x]] = x.downcase; all }
   end
 
   def type_name

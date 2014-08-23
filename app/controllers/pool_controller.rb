@@ -226,7 +226,7 @@ class PoolController < ApplicationController
         @pool.add_post(params[:post_id], :sequence => sequence, :user => @current_user)
         respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
       rescue Pool::PostAlreadyExistsError
-        respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => params[:post_id]}, :status => 423)
+        respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => params[:post_id] }, :status => 423)
       rescue Pool::AccessDeniedError
         access_denied()
       rescue Exception => x
@@ -258,7 +258,7 @@ class PoolController < ApplicationController
       api_data = Post.batch_api_data([post])
 
       response.headers["X-Post-Id"] = params[:post_id]
-      respond_to_success("Post removed", {:controller => "post", :action => "show", :id => params[:post_id]}, :api => api_data)
+      respond_to_success("Post removed", { :controller => "post", :action => "show", :id => params[:post_id] }, :api => api_data)
     else
       @pool = Pool.find(params[:pool_id])
       @post = Post.find(params[:post_id])
@@ -300,7 +300,7 @@ class PoolController < ApplicationController
 
     if request.post?
       if params[:posts].is_a?(Hash)
-        ordered_posts = params[:posts].sort { |a,b| a[1]<=>b[1] }.map { |a| a[0] }
+        ordered_posts = params[:posts].sort { |a, b| a[1] <=> b[1] }.map { |a| a[0] }
 
         PoolPost.transaction do
           ordered_posts.each do |post_id|
@@ -320,7 +320,7 @@ class PoolController < ApplicationController
         fmt.html
         fmt.js do
           @posts = Post.find_by_tags(params[:query], :limit => 500)
-          @posts = @posts.select {|x| x.can_be_seen_by?(@current_user)}
+          @posts = @posts.select { |x| x.can_be_seen_by?(@current_user) }
         end
       end
     end
@@ -390,7 +390,7 @@ class PoolController < ApplicationController
       end
 
       if from.is_shown_in_index != to.is_shown_in_index then
-        tags << (from.is_shown_in_index ? "show":"hide")
+        tags << (from.is_shown_in_index ? "show" : "hide")
       end
 
       if from.parent_id != to.id then

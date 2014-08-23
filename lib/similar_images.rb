@@ -15,7 +15,7 @@ module SimilarImages
     return services
   end
 
-  def similar_images(options={})
+  def similar_images(options = {})
     errors = {};
 
     local_service = CONFIG["local_image_service"]
@@ -26,7 +26,7 @@ module SimilarImages
     services.each { |service|
       server = CONFIG["image_service_list"][service]
       if !server
-        errors[""] = { :services=>[service], :message=>"%s is an unknown service" % service }
+        errors[""] = { :services => [service], :message => "%s is an unknown service" % service }
         next
       end
       services_by_server[server] = [] unless services_by_server[server]
@@ -56,22 +56,22 @@ module SimilarImages
         params = []
         if search_url
           params += [{
-            :name=>"url",
-            :data=>search_url,
+            :name => "url",
+            :data => search_url,
           }]
         else
           params += [{
-            :name=>"file",
-            :binary=>true,
-            :data=>source_file,
-            :filename=>File.basename(source_filename),
+            :name => "file",
+            :binary => true,
+            :data => source_file,
+            :filename => File.basename(source_filename),
           }]
         end
 
         services_list.each { |s|
-          params += [{:name=>"service[]", :data=>s}]
+          params += [{ :name => "service[]", :data => s }]
         }
-        params += [{:name=>"forcegray", :data=>"on"}] if options[:forcegray] == "1"
+        params += [{ :name => "forcegray", :data => "on" }] if options[:forcegray] == "1"
 
         begin
           Timeout::timeout(10) {
@@ -86,9 +86,9 @@ module SimilarImages
             end
           }
         rescue SocketError, SystemCallError => e
-          errors[server] = { :message=>e }
+          errors[server] = { :message => e }
         rescue Timeout::Error => e
-          errors[server] = { :message=>"Timed out" }
+          errors[server] = { :message => "Timed out" }
         end
       }
     end
@@ -103,7 +103,7 @@ module SimilarImages
       doc = begin
         Nokogiri::XML xml.to_valid_utf8
       rescue Exception => e
-        errors[server] = { :message=>"parse error" }
+        errors[server] = { :message => "parse error" }
         next
       end
 
@@ -112,8 +112,8 @@ module SimilarImages
         next
       end
 
-      if doc.root.name=="error"
-        errors[server] = { :message=>doc.root[:message] }
+      if doc.root.name == "error"
+        errors[server] = { :message => doc.root[:message] }
         next
       end
 
@@ -163,7 +163,7 @@ module SimilarImages
     posts = posts.sort { |a, b| similarity[b] <=> similarity[a] }
     posts_external = posts_external.sort { |a, b| similarity[b] <=> similarity[a] }
 
-    errors.map { |server,error|
+    errors.map { |server, error|
       if !error[:services]
         error[:services] = services_by_server[server] rescue server
       end
@@ -226,14 +226,14 @@ module SimilarImages
       ret = {}
       ret[:original_width] = imgsize.width
       ret[:original_height] = imgsize.height
-      size = Moebooru::Resizer.reduce_to({:width => ret[:original_width], :height => ret[:original_height]}, {:width => 150, :height => 150})
+      size = Moebooru::Resizer.reduce_to({ :width => ret[:original_width], :height => ret[:original_height] }, { :width => 150, :height => 150 })
       ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
 
       tempfile_path_resize = "#{tempfile_path}.2"
       Moebooru::Resizer.resize(ext, tempfile_path, tempfile_path_resize, size, 95)
       FileUtils.mv(tempfile_path_resize, tempfile_path)
 
-      md5 = File.open(tempfile_path, "rb") {|fp| Digest::MD5.hexdigest(fp.read)}
+      md5 = File.open(tempfile_path, "rb") { |fp| Digest::MD5.hexdigest(fp.read) }
       id = "#{md5}.#{ext}"
       file_path = "#{SEARCH_CACHE_DIR}/#{id}"
 
@@ -277,8 +277,8 @@ module SimilarImages
 
       file = "#{SEARCH_CACHE_DIR}/#{path}"
       mtime = File.mtime(file)
-      age = Time.now-mtime
-      if age > 60*60*24 then
+      age = Time.now - mtime
+      if age > 60 * 60 * 24 then
         FileUtils.rm_f(file)
       end
     }

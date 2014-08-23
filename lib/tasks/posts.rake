@@ -1,5 +1,5 @@
 def get_metatags(tags)
-  metatags, tags = tags.scan(/\S+/).partition {|x| x=~ /^(?:rating):/}
+  metatags, tags = tags.scan(/\S+/).partition { |x| x =~ /^(?:rating):/ }
   ret = {}
   metatags.each do |metatag|
     case metatag

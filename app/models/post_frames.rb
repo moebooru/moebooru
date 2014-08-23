@@ -39,19 +39,19 @@ class PostFrames < ActiveRecord::Base
   end
 
   def self.frame_image_dimensions(frame)
-    size = {:width=>frame[:source_width], :height=>frame[:source_height]}
+    size = { :width => frame[:source_width], :height => frame[:source_height] }
 
     if !CONFIG["sample_width"].nil?
-      size = Moebooru::Resizer.reduce_to(size, {:width=>CONFIG["sample_width"], :height=>CONFIG["sample_height"]}, CONFIG["sample_ratio"])
+      size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_width"], :height => CONFIG["sample_height"] }, CONFIG["sample_ratio"])
     end
-    size = Moebooru::Resizer.reduce_to(size, {:width => CONFIG["sample_max"], :height => CONFIG["sample_min"]}, 1, false, true)
+    size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_max"], :height => CONFIG["sample_min"] }, 1, false, true)
 
     return size
   end
 
   def self.frame_preview_dimensions(frame)
-    return Moebooru::Resizer.reduce_to({:width=>frame[:source_width], :height=>frame[:source_height]},
-                              {:width=>300, :height=>300})
+    return Moebooru::Resizer.reduce_to({ :width => frame[:source_width], :height => frame[:source_height] },
+                              { :width => 300, :height => 300 })
   end
 
   # Clamp frames to the size of the actual post, and remove any empty frames.
@@ -59,14 +59,14 @@ class PostFrames < ActiveRecord::Base
     frames.each do |frame|
       frame[:source_left] = [frame[:source_left], post.width].min
       frame[:source_top] = [frame[:source_top], post.height].min
-      frame[:source_width] = [frame[:source_width], post.width-frame[:source_left]].min
-      frame[:source_height] = [frame[:source_height], post.height-frame[:source_top]].min
+      frame[:source_width] = [frame[:source_width], post.width - frame[:source_left]].min
+      frame[:source_height] = [frame[:source_height], post.height - frame[:source_top]].min
     end
     frames.delete_if { |frame| frame[:source_width] == 0 or frame[:source_height] == 0 }
   end
 
   # Look for post frames that need work, and do some processing.
-  def self.process_frames(update_status=nil)
+  def self.process_frames(update_status = nil)
     # Find a post with out-of-date frames.  This SQL is designed to use the
     # post_frames_out_of_date index.
     post = Post.find_by("frames <> frames_pending AND (frames <> '' OR frames_pending <> '')")
@@ -135,7 +135,7 @@ class PostFrames < ActiveRecord::Base
   end
 
   # Warehouse frames.  Only frames which are created and finalized will be warehoused.
-  def self.warehouse_frames(update_status=nil)
+  def self.warehouse_frames(update_status = nil)
     # Find a post with frames that need warehousing.
     post = Post.find_by("frames = frames_pending AND frames <> '' AND NOT frames_warehoused")
     return false if post.nil?
@@ -156,7 +156,7 @@ class PostFrames < ActiveRecord::Base
   end
 
   # Posts that are neither active nor target are no longer needed.  Incrementally them up and delete them.
-  def self.purge_frames(update_status=nil)
+  def self.purge_frames(update_status = nil)
     if update_status then
       update_status.call("Cleaning up old post frames")
     end

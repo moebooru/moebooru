@@ -12,8 +12,8 @@ class UserController < ApplicationController
 
   protected
   def save_cookies(user)
-    cookies[:login] = {:value => user.name, :expires => 1.year.from_now}
-    cookies[:pass_hash] = {:value => user.password_hash, :expires => 1.year.from_now, :httponly => true}
+    cookies[:login] = { :value => user.name, :expires => 1.year.from_now }
+    cookies[:pass_hash] = { :value => user.password_hash, :expires => 1.year.from_now, :httponly => true }
     session[:user_id] = user.id
   end
 
@@ -111,7 +111,7 @@ class UserController < ApplicationController
     save_cookies(@current_user)
 
     if params[:url].blank?
-      path = {:action => "home"}
+      path = { :action => "home" }
     else
       path = params[:url]
     end
@@ -126,7 +126,7 @@ class UserController < ApplicationController
       ret[:name] = params[:username]
 
       if !user
-        respond_to_success("User does not exist", {}, :api => {:response => "unknown-user"}.merge(ret))
+        respond_to_success("User does not exist", {}, :api => { :response => "unknown-user" }.merge(ret))
         return
       end
 
@@ -139,13 +139,13 @@ class UserController < ApplicationController
 
       user = User.authenticate(params[:username], params[:password] || "")
       if !user
-        respond_to_success("Wrong password", {}, :api => {:response => "wrong-password"}.merge(ret))
+        respond_to_success("Wrong password", {}, :api => { :response => "wrong-password" }.merge(ret))
         return
       end
 
       ret[:pass_hash] = user.password_hash
       ret[:user_info] = user.user_info_cookie
-      respond_to_success("Successful", {}, :api => {:response => "success"}.merge(ret))
+      respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
     else
       redirect_to root_path
     end
@@ -167,10 +167,10 @@ class UserController < ApplicationController
       ret[:pass_hash] = user.password_hash
       ret[:user_info] = user.user_info_cookie
 
-      respond_to_success("New account created", {:action => "home"}, :api => {:response => "success"}.merge(ret))
+      respond_to_success("New account created", { :action => "home" }, :api => { :response => "success" }.merge(ret))
     else
       error = user.errors.full_messages.join(", ")
-      respond_to_success("Error: " + error, {:action => "signup"}, :api => {:response => "error", :errors => user.errors.full_messages})
+      respond_to_success("Error: " + error, { :action => "signup" }, :api => { :response => "error", :errors => user.errors.full_messages })
     end
   end
 
@@ -217,7 +217,7 @@ class UserController < ApplicationController
     tags -= removed_tags
 
     if @current_user.update_attribute(:blacklisted_tags, tags.join("\n"))
-      respond_to_success("Tag blacklist updated", {:action => "home"}, :api => {:result => @current_user.blacklisted_tags_array})
+      respond_to_success("Tag blacklist updated", { :action => "home" }, :api => { :result => @current_user.blacklisted_tags_array })
     else
       respond_to_error(@current_user, :action => "edit")
     end
@@ -236,19 +236,19 @@ class UserController < ApplicationController
       @user = User.find_by_name(params[:user][:name])
 
       if @user.nil?
-        respond_to_error("That account does not exist", {:action => "reset_password"}, :api => {:result => "unknown-user"})
+        respond_to_error("That account does not exist", { :action => "reset_password" }, :api => { :result => "unknown-user" })
         return
       end
 
       if @user.email.blank?
         respond_to_error("You never supplied an email address, therefore you cannot have your password automatically reset",
-                         {:action => "login"}, :api => {:result => "no-email"})
+                         { :action => "login" }, :api => { :result => "no-email" })
         return
       end
 
       if @user.email != params[:user][:email]
         respond_to_error("That is not the email address you supplied",
-                         {:action => "login"}, :api => {:result => "wrong-email"})
+                         { :action => "login" }, :api => { :result => "wrong-email" })
         return
       end
 
@@ -258,12 +258,12 @@ class UserController < ApplicationController
           new_password = @user.reset_password
           UserMailer.new_password(@user, new_password).deliver
           respond_to_success("Password reset. Check your email in a few minutes.",
-                           {:action => "login"}, :api => {:result => "success"})
+                           { :action => "login" }, :api => { :result => "success" })
           return
         end
       rescue Net::SMTPSyntaxError, Net::SMTPFatalError
         respond_to_success("Your email address was invalid",
-                         {:action => "login"}, :api => {:result => "invalid-email"})
+                         { :action => "login" }, :api => { :result => "invalid-email" })
         return
       end
     else
@@ -378,7 +378,7 @@ class UserController < ApplicationController
       f.write(report.to_s + "\n\n\n-------------------------------------------\n\n\n")
     end
 
-    render :json => {:success => true}
+    render :json => { :success => true }
   end
 
   private

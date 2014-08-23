@@ -17,8 +17,8 @@ class PostController < ApplicationController
 
   def activate
     ids = params[:post_ids].map { |id| id.to_i }
-    changed = Post.batch_activate(@current_user.is_mod_or_higher? ? nil: @current_user.id, ids)
-    respond_to_success("Posts activated", {:action => "moderate"}, :api => {:count => changed})
+    changed = Post.batch_activate(@current_user.is_mod_or_higher? ? nil : @current_user.id, ids)
+    respond_to_success("Posts activated", { :action => "moderate" }, :api => { :count => changed })
   end
 
   def upload_problem
@@ -37,7 +37,7 @@ class PostController < ApplicationController
 
   def create
     if @current_user.is_member_or_lower? && Post.count(:conditions => ["user_id = ? AND created_at > ? ", @current_user.id, 1.day.ago]) >= CONFIG["member_post_limit"]
-      respond_to_error("Daily limit exceeded", {:action => "error"}, :status => 421)
+      respond_to_error("Daily limit exceeded", { :action => "error" }, :status => 421)
       return
     end
 
@@ -63,9 +63,9 @@ class PostController < ApplicationController
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
         @post.destroy
-        respond_to_error("MD5 mismatch", {:action => "error"}, :status => 420)
+        respond_to_error("MD5 mismatch", { :action => "error" }, :status => 420)
       else
-        api_data = {:post_id => @post.id, :location => url_for(:controller => "post", :action => "show", :id => @post.id)}
+        api_data = { :post_id => @post.id, :location => url_for(:controller => "post", :action => "show", :id => @post.id) }
         if CONFIG["dupe_check_on_upload"] && @post.image? && @post.parent_id.nil?
           if params[:format] == "xml" || params[:format] == "json"
             options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
@@ -79,9 +79,9 @@ class PostController < ApplicationController
           end
 
           api_data[:similar_location] = url_for(:controller => "post", :action => "similar", :id => @post.id, :initial => 1)
-          respond_to_success("Post uploaded", {:controller => "post", :action => "similar", :id => @post.id, :initial => 1}, :api => api_data)
+          respond_to_success("Post uploaded", { :controller => "post", :action => "similar", :id => @post.id, :initial => 1 }, :api => api_data)
         else
-          respond_to_success("Post uploaded", {:controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => api_data)
+          respond_to_success("Post uploaded", { :controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title }, :api => api_data)
         end
       end
     elsif @post.errors[:md5].any?
@@ -95,7 +95,7 @@ class PostController < ApplicationController
         :location => url_for(:controller => "post", :action => "show", :id => p.id),
         :post_id => p.id
       }
-      respond_to_error("Post already exists", {:controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title}, :api => api_data, :status => 423)
+      respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title }, :api => api_data, :status => 423)
     else
       respond_to_error(@post, :action => "error")
     end
@@ -128,9 +128,9 @@ class PostController < ApplicationController
       api_data = Post.batch_api_data(posts) if params[:format] == "json" || params[:format] == "xml"
 
       if params[:commit] == "Approve"
-        respond_to_success("Post approved", {:action => "moderate"}, :api => api_data)
+        respond_to_success("Post approved", { :action => "moderate" }, :api => api_data)
       elsif params[:commit] == "Delete"
-        respond_to_success("Post deleted", {:action => "moderate"}, :api => api_data)
+        respond_to_success("Post deleted", { :action => "moderate" }, :api => api_data)
       end
     else
       if params[:query]
@@ -159,7 +159,7 @@ class PostController < ApplicationController
       @post.reload
 
       api_data = @post.api_data if params[:format] == "json" || params[:format] == "xml"
-      respond_to_success("Post updated", {:action => "show", :id => @post.id, :tag_title => @post.tag_title}, :api => api_data)
+      respond_to_success("Post updated", { :action => "show", :id => @post.id, :tag_title => @post.tag_title }, :api => api_data)
     else
       respond_to_error(@post, :action => "show", :id => params[:id])
     end
@@ -210,7 +210,7 @@ class PostController < ApplicationController
     api_data = Post.batch_api_data(posts)
 
     url = params[:url]
-    url = {:action => "index"} if !url
+    url = { :action => "index" } if !url
     respond_to_success("Posts updated", url, :api => api_data)
   end
 
@@ -341,7 +341,7 @@ class PostController < ApplicationController
       end
       @preload += results[limit..-1] || []
 
-      results = results[0..limit-1]
+      results = results[0..limit - 1]
     end
 
     # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
@@ -364,7 +364,7 @@ class PostController < ApplicationController
           @tags = Tag.parse_query(tags)
         else
           @tags = Rails.cache.fetch("$poptags", :expires_in => 1.hour) do
-            {:include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25, :exclude_types => CONFIG["exclude_from_tag_sidebar"])}
+            { :include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25, :exclude_types => CONFIG["exclude_from_tag_sidebar"]) }
           end
         end
       end
@@ -427,7 +427,7 @@ class PostController < ApplicationController
     else
       @following_pool_post = PoolPost.where(:active => true, :post_id => @post.id).first
     end
-    @tags = {:include => @post.cached_tags.split(/ /)}
+    @tags = { :include => @post.cached_tags.split(/ /) }
     @include_tag_reverse_aliases = true
     respond_to do |format|
       format.html
@@ -440,7 +440,7 @@ class PostController < ApplicationController
   end
 
   def view
-    redirect_to :action=>"show", :id=>params[:id]
+    redirect_to :action => "show", :id => params[:id]
   end
 
   def popular_recent
@@ -506,8 +506,8 @@ class PostController < ApplicationController
   def vote
     if !params.key?(:score) then
       vote =  PostVote.find_by(:user_id => @current_user.id, :post_id => params[:id])
-      score = vote ? vote.score: 0
-      respond_to_success("", {}, :api => {:vote => score})
+      score = vote ? vote.score : 0
+      respond_to_success("", {}, :api => { :vote => score })
       return
     end
 
@@ -515,7 +515,7 @@ class PostController < ApplicationController
     score = params[:score].to_i
 
     if !@current_user.is_mod_or_higher? && score < 0 || score > 3
-      respond_to_error("Invalid score", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :status => 424)
+      respond_to_error("Invalid score", { :action => "show", :id => params[:id], :tag_title => p.tag_title }, :status => 424)
       return
     end
 
@@ -525,9 +525,9 @@ class PostController < ApplicationController
     api_data[:voted_by] = p.voted_by
 
     if vote_successful
-      respond_to_success("Vote saved", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => api_data)
+      respond_to_success("Vote saved", { :action => "show", :id => params[:id], :tag_title => p.tag_title }, :api => api_data)
     else
-      respond_to_error("Already voted", {:action => "show", :id => params[:id], :tag_title => p.tag_title}, :api => api_data, :status => 423)
+      respond_to_error("Already voted", { :action => "show", :id => params[:id], :tag_title => p.tag_title }, :api => api_data, :status => 423)
     end
   end
 
@@ -564,7 +564,7 @@ class PostController < ApplicationController
     post.reload
 
     api_data = Post.batch_api_data([post]) if params[:format] == "json" || params[:format] == "xml"
-    respond_to_success(message, {:action => "show", :id => params[:id]}, :api => api_data)
+    respond_to_success(message, { :action => "show", :id => params[:id] }, :api => api_data)
   end
 
   def random
@@ -667,7 +667,7 @@ class PostController < ApplicationController
             search = SimilarImages.save_search do |f|
               wrote = 0
               buf = ""
-              while params[:file].read(1024*64, buf) do
+              while params[:file].read(1024 * 64, buf) do
                 wrote += buf.length
                 f.write(buf)
               end
@@ -733,18 +733,18 @@ class PostController < ApplicationController
 
     if params[:format] == "json" || params[:format] == "xml" then
       if @errors[:error]
-        respond_to_error(@errors[:error], {:action => "index"}, :status => 503)
+        respond_to_error(@errors[:error], { :action => "index" }, :status => 503)
         return
       end
       if !@searched
-        respond_to_error("no search supplied", {:action => "index"}, :status => 503)
+        respond_to_error("no search supplied", { :action => "index" }, :status => 503)
         return
       end
     end
 
     respond_to do |fmt|
       fmt.html do
-        if @initial=="1" && @posts.empty?
+        if @initial == "1" && @posts.empty?
           flash.keep
           redirect_to :controller => "post", :action => "show", :id => params[:id], :tag_title => @compared_post.tag_title
           return
@@ -759,9 +759,9 @@ class PostController < ApplicationController
 
           # Add the original post to the start of the list.
           if res[:source]
-            @posts = [ res[:source] ] + @posts
+            @posts = [res[:source]] + @posts
           else
-            @posts = [ res[:external_source] ] + @posts
+            @posts = [res[:external_source]] + @posts
           end
         end
       end
@@ -774,14 +774,14 @@ class PostController < ApplicationController
         }
         api_data = {
           :posts => @posts + res[:posts_external],
-          :source => res[:source] ? res[:source]:res[:external_source],
+          :source => res[:source] ? res[:source] : res[:external_source],
           :search_id => @search_id
         }
 
         unless res[:errors].empty?
           api_data[:error] = []
           res[:errors].map { |server, error|
-            api_data[:error] << { :server=>server, :message=>error[:message], :services=>error[:services].join(",") }
+            api_data[:error] << { :server => server, :message => error[:message], :services => error[:services].join(",") }
           }
         end
 
@@ -794,7 +794,7 @@ class PostController < ApplicationController
         render :xml => x.posts() {
          unless res[:errors].empty?
             res[:errors].map { |server, error|
-              { :server=>server, :message=>error[:message], :services=>error[:services].join(",") }.to_xml(:root => "error", :builder => x, :skip_instruct => true)
+              { :server => server, :message => error[:message], :services => error[:services].join(",") }.to_xml(:root => "error", :builder => x, :skip_instruct => true)
             }
          end
 
@@ -809,12 +809,12 @@ class PostController < ApplicationController
           end
 
           @posts.each { |e|
-           x.similar(:similarity=>res[:similarity][e]) {
+           x.similar(:similarity => res[:similarity][e]) {
              e.to_xml(:builder => x, :skip_instruct => true)
            }
           }
           res[:posts_external].each { |e|
-           x.similar(:similarity=>res[:similarity][e]) {
+           x.similar(:similarity => res[:similarity][e]) {
              e.to_xml(:builder => x, :skip_instruct => true)
            }
           }
@@ -830,7 +830,7 @@ class PostController < ApplicationController
     affected_posts = [post]
     affected_posts << post.get_parent if post.parent_id
     api_data = Post.batch_api_data(affected_posts) if params[:format] == "json" || params[:format] == "xml"
-    respond_to_success("Post was undeleted", {:action => "show", :id => params[:id]}, :api => api_data)
+    respond_to_success("Post was undeleted", { :action => "show", :id => params[:id] }, :api => api_data)
   end
 
   def error

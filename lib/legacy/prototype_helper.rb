@@ -94,12 +94,12 @@ module ActionView
     # == Updating multiple elements
     # See JavaScriptGenerator for information on updating multiple elements
     # on the page in an Ajax response.
-    CALLBACKS    = Set.new([ :create, :uninitialized, :loading, :loaded,
-                     :interactive, :complete, :failure, :success ] +
+    CALLBACKS    = Set.new([:create, :uninitialized, :loading, :loaded,
+                     :interactive, :complete, :failure, :success] +
                      (100..599).to_a)
-    AJAX_OPTIONS = Set.new([ :before, :after, :condition, :url,
+    AJAX_OPTIONS = Set.new([:before, :after, :condition, :url,
                      :asynchronous, :method, :insertion, :position,
-                     :form, :with, :update, :script, :type ]).merge(CALLBACKS)
+                     :form, :with, :update, :script, :type]).merge(CALLBACKS)
 
     # Returns the JavaScript needed for a remote function.
     # See the link_to_remote documentation at http://github.com/rails/prototype_legacy_helper as it takes the same arguments.
@@ -230,7 +230,7 @@ module ActionView
             if ActionView::Base.debug_rjs
               source = javascript.dup
               javascript.replace "try {\n#{source}\n} catch (e) "
-              javascript << "{ alert('RJS error:\\n\\n' + e.toString()); alert('#{source.gsub('\\','\0\0').gsub(/\r\n|\n|\r/, "\\n").gsub(/["']/) { |m| "\\#{m}" }}'); throw e }"
+              javascript << "{ alert('RJS error:\\n\\n' + e.toString()); alert('#{source.gsub('\\', '\0\0').gsub(/\r\n|\n|\r/, "\\n").gsub(/["']/) { |m| "\\#{m}" }}'); throw e }"
             end
           end
         end
@@ -518,7 +518,7 @@ module ActionView
 
         private
           def loop_on_multiple_args(method, ids)
-            record(ids.size>1 ?
+            record(ids.size > 1 ?
               "#{javascript_object_for(ids)}.each(#{method})" :
               "#{method}(#{javascript_object_for(ids.first)})")
           end
@@ -801,7 +801,7 @@ module ActionView
         if ENUMERABLE_METHODS.include?(method)
           returnable = ENUMERABLE_METHODS_WITH_RETURN.include?(method)
           variable   = arguments.first if returnable
-          enumerate(method, {:variable => (arguments.first if returnable), :return => returnable, :yield_args => %w(value index)}, &block)
+          enumerate(method, { :variable => (arguments.first if returnable), :return => returnable, :yield_args => %w(value index) }, &block)
         else
           super
         end
@@ -821,7 +821,7 @@ module ActionView
         add_variable_assignment!(options[:variable]) if options[:variable]
         append_enumerable_function!("#{enumerable.to_s.camelize(:lower)}(#{method_args}function(#{yield_args}) {")
         # only yield as many params as were passed in the block
-        yield(*options[:yield_args].collect { |p| JavaScriptVariableProxy.new(@generator, p) }[0..block.arity-1])
+        yield(*options[:yield_args].collect { |p| JavaScriptVariableProxy.new(@generator, p) }[0..block.arity - 1])
         add_return_statement! if options[:return]
         @generator << "});"
       end

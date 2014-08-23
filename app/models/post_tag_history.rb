@@ -5,7 +5,7 @@ class PostTagHistory < ActiveRecord::Base
   def self.undo_user_changes(user_id)
     posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.id", :conditions => ["pth.user_id = ?", user_id])
     puts posts.size
-    p posts.map {|x| x.id}
+    p posts.map { |x| x.id }
 #    destroy_all(["user_id = ?", user_id])
 #    posts.each do |post|
 #      post.tags = post.tag_history.first.tags
@@ -47,7 +47,7 @@ class PostTagHistory < ActiveRecord::Base
   # The contents of options[:posts] must be saved by the caller.  This allows
   # undoing many tag changes across many posts; all †changes to a particular
   # post will be condensed into one change.
-  def undo(options={})
+  def undo(options = {})
     # TODO: refactor. modifying parameters is a bad habit.
     options[:posts] ||= {}
     options[:posts][post_id] ||= options[:post] = Post.find(post_id)
@@ -62,7 +62,7 @@ class PostTagHistory < ActiveRecord::Base
 
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
     options[:update_options] ||= {}
-    post.attributes = {:tags => new_tags.join(" ")}.merge(options[:update_options])
+    post.attributes = { :tags => new_tags.join(" ") }.merge(options[:update_options])
   end
 
   def author
@@ -93,10 +93,10 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   def to_xml(options = {})
-    {:id => id, :post_id => post_id, :tags => tags}.to_xml(options.reverse_merge(:root => "tag_history"))
+    { :id => id, :post_id => post_id, :tags => tags }.to_xml(options.reverse_merge(:root => "tag_history"))
   end
 
   def as_json(*args)
-    {:id => id, :post_id => post_id, :tags => tags}.as_json(*args)
+    { :id => id, :post_id => post_id, :tags => tags }.as_json(*args)
   end
 end

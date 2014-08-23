@@ -312,7 +312,7 @@ module ActiveRecord
             if !history
               #p "new history"
               options = {
-                :group_by_table=> group_by_table,
+                :group_by_table => group_by_table,
                 :group_by_id => group_by_id
               }
               options[:user_id] = item.user_id if item.respond_to?("user_id")
@@ -333,7 +333,7 @@ module ActiveRecord
               }
 
               escaped_options = {}
-              options.each { |key,value|
+              options.each { |key, value|
                 if value.nil?
                   escaped_options[key] = "NULL"
                 else
@@ -346,7 +346,7 @@ module ActiveRecord
               to_create += [escaped_options]
             }
 
-            columns = to_create.first.map { |key,value| key.to_s }
+            columns = to_create.first.map { |key, value| key.to_s }
 
             values = []
             to_create.each { |row|
@@ -375,7 +375,7 @@ module ActiveRecord
           prev = tag_history.previous
 
           tags = tag_history.tags.scan(/\S+/)
-          metatags, tags = tags.partition {|x| x=~ /^(?:rating):/}
+          metatags, tags = tags.partition { |x| x =~ /^(?:rating):/ }
           tags = tags.sort.join(" ")
 
           rating = ""
@@ -389,7 +389,7 @@ module ActiveRecord
 
           if prev
             prev_tags = prev.tags.scan(/\S+/)
-            prev_metatags, prev_tags = prev_tags.partition {|x| x=~ /^(?:-pool|pool|rating|parent):/}
+            prev_metatags, prev_tags = prev_tags.partition { |x| x =~ /^(?:-pool|pool|rating|parent):/ }
             prev_tags = prev_tags.sort.join(" ")
 
             prev_metatags.each do |metatag|
@@ -436,7 +436,7 @@ module ActiveRecord
           if ver.version == 1 then
             prev = nil
           else
-            prev = NoteVersion.find(:first, :conditions => ["post_id = ? and note_id = ? and version = ?", ver.post_id, ver.note_id, ver.version-1])
+            prev = NoteVersion.find(:first, :conditions => ["post_id = ? and note_id = ? and version = ?", ver.post_id, ver.note_id, ver.version - 1])
           end
 
           fields = []
@@ -455,7 +455,7 @@ module ActiveRecord
                             :group_by_id => ver.post_id,
                             :user_id => ver.user_id || ver.post.user_id,
                             :created_at => ver.created_at,
-                            :aux => {:note_body => prev ? prev.body : ver.body})
+                            :aux => { :note_body => prev ? prev.body : ver.body })
             h.save!
 
             fields.each { |f|

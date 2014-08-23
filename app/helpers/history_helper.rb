@@ -50,7 +50,7 @@ module HistoryHelper
           :cached_tags => { :primary_order => 2 }, # show tag changes after other things
           :source => { :primary_order => 3 },
         },
-        :never_obsolete => {:cached_tags=>true} # tags handle obsolete themselves per-tag
+        :never_obsolete => { :cached_tags => true } # tags handle obsolete themselves per-tag
       },
 
       :Pool => {
@@ -59,7 +59,7 @@ module HistoryHelper
         :fields => {
           :description => { :primary_order => 5 } # we don't handle commas correctly if this isn't last
         },
-        :never_obsolete => {:description=>true} # changes to description aren't obsolete just because the text has changed again
+        :never_obsolete => { :description => true } # changes to description aren't obsolete just because the text has changed again
       },
 
       :PoolPost => {
@@ -70,7 +70,7 @@ module HistoryHelper
             :suppress_fields => [:sequence], # changing active usually changes sequence; this isn't interesting
             :primary_order => 2, # show pool post changes after other things
           },
-          :cached_tags => {  },
+          :cached_tags => {},
         },
       },
 
@@ -98,7 +98,7 @@ module HistoryHelper
     return @att_options
   end
 
-  def format_changes(history, options={})
+  def format_changes(history, options = {})
     html = ""
 
     changes = history.history_changes
@@ -138,7 +138,7 @@ module HistoryHelper
           max = field_options[:max_to_display]
           if max && group.length > max
             hidden += group.length - max
-            group = group[0,max] || []
+            group = group[0, max] || []
           end
         end
 
@@ -157,7 +157,7 @@ module HistoryHelper
       end
     end
 
-    parts.sort! { |a,b|
+    parts.sort! { |a, b|
       comp = 0
       [:primary_order, :field, :sort_key].each { |field|
         comp = a[field] <=> b[field]
@@ -168,8 +168,8 @@ module HistoryHelper
 
     parts.each_index { |idx|
       next if idx == 0
-      next if parts[idx][:field] == parts[idx-1][:field]
-      parts[idx-1][:html] << ", "
+      next if parts[idx][:field] == parts[idx - 1][:field]
+      parts[idx - 1][:html] << ", "
     }
 
     html = ""
@@ -255,7 +255,7 @@ module HistoryHelper
         end
 
       when "frames_pending"
-        html << "frames changed: #{h(change.value.empty? ? "(none)":change.value)}"
+        html << "frames changed: #{h(change.value.empty? ? "(none)" : change.value)}"
 
       when "is_rating_locked"
         html << (change.value.trueish? ? added : removed)
@@ -276,7 +276,7 @@ module HistoryHelper
 
         list = []
         list << tag_list(changes[:added_tags], :obsolete => changes[:obsolete_added_tags], :prefix => "+", :class => "added")
-        list << tag_list(changes[:removed_tags], :obsolete => changes[:obsolete_removed_tags], :prefix=>"-", :class => "removed")
+        list << tag_list(changes[:removed_tags], :obsolete => changes[:obsolete_removed_tags], :prefix => "-", :class => "removed")
 
         if options[:show_all_tags]
           list << tag_list(changes[:unchanged_tags], :prefix => "", :class => "unchanged")

@@ -5,7 +5,7 @@ require "cgi"
 module Translate
   class ServerError < Exception; end
 
-  def post(path, params, options={})
+  def post(path, params, options = {})
     server = "http://ajax.googleapis.com"
 
     begin
@@ -51,18 +51,18 @@ module Translate
   #
   # Not all languages may successfully translate.  If the translation API can't figure out the language,
   # no translations will be returned and the detected language will be "".
-  def translate(s, options={})
+  def translate(s, options = {})
     languages = options[:languages]
 
     params = []
-    params += [{:name=>"v", :data=>"1.0"}]
-    params += [{:name=>"format", :data=>"html"}]
-    params += [{:name=>"q", :data=>s}]
+    params += [{ :name => "v", :data => "1.0" }]
+    params += [{ :name => "format", :data => "html" }]
+    params += [{ :name => "q", :data => s }]
 
     server = "http://ajax.googleapis.com"
     path = "/ajax/services/language/translate"
     languages.each { |lang|
-      params += [{:name=>"langpair", :data=>"|%s" % lang}]
+      params += [{ :name => "langpair", :data => "|%s" % lang }]
     }
 
     #resp = Translate.request(path)

@@ -12,13 +12,13 @@ class PostTagHistoryTest < ActiveSupport::TestCase
   end
 
   def create_post(params = {})
-    p = Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg")}.merge(params))
+    p = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
     @test_number += 1
     p
   end
 
   def update_post(post, params = {})
-    post.update_attributes({:updater_user_id => 1, :updater_ip_addr => "127.0.0.1"}.merge(params))
+    post.update_attributes({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
   end
 
   def test_simple
@@ -45,17 +45,17 @@ class PostTagHistoryTest < ActiveSupport::TestCase
 
   def test_api
     p1 = create_post
-    assert_nothing_raised {p1.tag_history[0].to_json}
-    assert_nothing_raised {p1.tag_history[0].to_xml}
+    assert_nothing_raised { p1.tag_history[0].to_json }
+    assert_nothing_raised { p1.tag_history[0].to_xml }
   end
 
   def test_undo
     p1 = create_post(:tags => "a")
     update_post(p1, :tags => "a b")
 
-    options = {:update_options => {:updater_ip_addr => "127.0.0.1", :updater_user_id => 3}}
+    options = { :update_options => { :updater_ip_addr => "127.0.0.1", :updater_user_id => 3 } }
     p1.tag_history[0].undo(options)
-    options[:posts].each_value {|x| x.save}
+    options[:posts].each_value { |x| x.save }
     p1.reload
     assert_equal("a", p1.cached_tags)
   end

@@ -2,7 +2,7 @@ require "net/http"
 require "mime/types"
 
 class Net::HTTP::Post
-  def multipart=(params=[])
+  def multipart=(params = [])
     boundary_token = "--multipart-boundary"
     self.content_type = "multipart/form-data; boundary=#{boundary_token}"
 

@@ -40,7 +40,7 @@ class History < ActiveRecord::Base
   end
 
   # Undo all changes in the array changes.
-  def self.undo(changes, user, redo_change=false, errors={})
+  def self.undo(changes, user, redo_change = false, errors = {})
     # Save parent objects after child objects, so changes to the children are
     # committed when we save the parents.
     objects = {}

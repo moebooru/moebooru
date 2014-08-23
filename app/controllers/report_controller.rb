@@ -6,28 +6,28 @@ class ReportController < ApplicationController
   def tag_updates
     @users = Report.tag_updates(@start_date, @end_date, @limit, @level)
     @report_title = "Tag Updates"
-    @change_params = lambda {|user_id| { :controller => "history", :action => "index", :search => "type:post user:#{User.find(user_id).name}" } }
+    @change_params = lambda { |user_id| { :controller => "history", :action => "index", :search => "type:post user:#{User.find(user_id).name}" } }
     render :action => "common"
   end
 
   def note_updates
     @users = Report.note_updates(@start_date, @end_date, @limit, @level)
     @report_title = "Note Updates"
-    @change_params = lambda {|user_id| {:controller => "note", :action => "history", :user_id => user_id}}
+    @change_params = lambda { |user_id| { :controller => "note", :action => "history", :user_id => user_id } }
     render :action => "common"
   end
 
   def wiki_updates
     @users = Report.wiki_updates(@start_date, @end_date, @limit, @level)
     @report_title = "Wiki Updates"
-    @change_params = lambda {|user_id| {:controller => "wiki", :action => "recent_changes", :user_id => user_id}}
+    @change_params = lambda { |user_id| { :controller => "wiki", :action => "recent_changes", :user_id => user_id } }
     render :action => "common"
   end
 
   def post_uploads
     @users = Report.post_uploads(@start_date, @end_date, @limit, @level)
     @report_title = "Post Uploads"
-    @change_params = lambda {|user_id| {:controller => "post", :action => "index", :tags => "user:#{User.find_name(user_id)}"}}
+    @change_params = lambda { |user_id| { :controller => "post", :action => "index", :tags => "user:#{User.find_name(user_id)}" } }
     render :action => "common"
   end
 
@@ -46,7 +46,7 @@ class ReportController < ApplicationController
       else
         # "Other":
         conds << "user_id NOT IN (?)"
-        params << @users.select {|x| x["id"]}.map {|x| x["id"]}
+        params << @users.select { |x| x["id"] }.map { |x| x["id"] }
       end
 
       votes = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array(["SELECT COUNT(score) AS sum, score FROM post_votes WHERE #{conds.join(" AND ")} GROUP BY score", *params]))

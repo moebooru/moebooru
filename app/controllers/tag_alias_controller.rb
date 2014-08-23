@@ -35,8 +35,8 @@ class TagAliasController < ApplicationController
 
     case params[:commit]
     when "Delete"
-      if @current_user.is_mod_or_higher? || ids.all? {|x| ta = TagAlias.find(x) ; ta.is_pending? && ta.creator_id == @current_user.id}
-        ids.each {|x| TagAlias.find(x).destroy_and_notify(@current_user, params[:reason])}
+      if @current_user.is_mod_or_higher? || ids.all? { |x| ta = TagAlias.find(x); ta.is_pending? && ta.creator_id == @current_user.id }
+        ids.each { |x| TagAlias.find(x).destroy_and_notify(@current_user, params[:reason]) }
 
         flash[:notice] = "Tag aliases deleted"
         redirect_to :action => "index"
@@ -48,7 +48,7 @@ class TagAliasController < ApplicationController
       if @current_user.is_mod_or_higher?
         ids.each do |x|
           if CONFIG["enable_asynchronous_tasks"]
-            JobTask.create(:task_type => "approve_tag_alias", :status => "pending", :data => {"id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip})
+            JobTask.create(:task_type => "approve_tag_alias", :status => "pending", :data => { "id" => x, "updater_id" => @current_user.id, "updater_ip_addr" => request.remote_ip })
           else
             TagAlias.find(x).approve(@current_user.id, request.remote_ip)
           end

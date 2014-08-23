@@ -21,8 +21,8 @@ class NoteController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml {render :xml => @posts.map {|x| x.notes}.flatten.to_xml(:root => "notes")}
-      fmt.json {render :json => @posts.map {|x| x.notes}.flatten.to_json}
+      fmt.xml { render :xml => @posts.map { |x| x.notes }.flatten.to_xml(:root => "notes") }
+      fmt.json { render :json => @posts.map { |x| x.notes }.flatten.to_json }
     end
   end
 
@@ -44,7 +44,7 @@ class NoteController < ApplicationController
     note = Note.find(params[:id])
 
     if note.is_locked?
-      respond_to_error("Post is locked", {:action => "history", :id => note.id}, :status => 422)
+      respond_to_error("Post is locked", { :action => "history", :id => note.id }, :status => 422)
       return
     end
 
@@ -67,7 +67,7 @@ class NoteController < ApplicationController
     end
 
     if note.is_locked?
-      respond_to_error("Post is locked", {:controller => "post", :action => "show", :id => note.post_id}, :status => 422)
+      respond_to_error("Post is locked", { :controller => "post", :action => "show", :id => note.post_id }, :status => 422)
       return
     end
 
@@ -76,7 +76,7 @@ class NoteController < ApplicationController
     note.ip_addr = request.remote_ip
 
     if note.save
-      respond_to_success("Note updated", {:action => "index"}, :api => {:new_id => note.id, :old_id => params[:id].to_i, :formatted_body => ActionController::Base.helpers.sanitize(note.formatted_body)})
+      respond_to_success("Note updated", { :action => "index" }, :api => { :new_id => note.id, :old_id => params[:id].to_i, :formatted_body => ActionController::Base.helpers.sanitize(note.formatted_body) })
     else
       respond_to_error(note, :controller => "post", :action => "show", :id => note.post_id)
     end

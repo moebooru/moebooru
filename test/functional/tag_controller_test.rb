@@ -4,7 +4,7 @@ class TagControllerTest < ActionController::TestCase
   fixtures :users
 
   def create_post(tags, post_number = 1, params = {})
-    Post.create({:user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{post_number}.jpg")}.merge(params))
+    Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{post_number}.jpg") }.merge(params))
   end
 
   def test_cloud
@@ -28,7 +28,7 @@ class TagControllerTest < ActionController::TestCase
   end
 
   def test_mass_edit
-    get :mass_edit, {}, {:user_id => 2}
+    get :mass_edit, {}, { :user_id => 2 }
     assert_response :success
 
     # Can't easily test the mass_edit action. The daemon process does the actual work.
@@ -43,17 +43,17 @@ class TagControllerTest < ActionController::TestCase
     p2 = create_post("hoge moge", 2)
     p3 = create_post("lodge", 3)
 
-    get :edit_preview, {:tags => "hoge"}, {:user_id => 2}
+    get :edit_preview, { :tags => "hoge" }, { :user_id => 2 }
     assert_response :success
   end
 
   def test_update
     p1 = create_post("hoge", 1)
 
-    get :edit, {:name => "hoge"}, {:user_id => 3}
+    get :edit, { :name => "hoge" }, { :user_id => 3 }
     assert_response :success
 
-    post :update, {:tag => {:name => "hoge", :tag_type => CONFIG["tag_types"]["Artist"]}}, {:user_id => 3}
+    post :update, { :tag => { :name => "hoge", :tag_type => CONFIG["tag_types"]["Artist"] } }, { :user_id => 3 }
     assert_equal(CONFIG["tag_types"]["Artist"], Tag.find_by_name("hoge").tag_type)
   end
 
@@ -62,7 +62,7 @@ class TagControllerTest < ActionController::TestCase
     p2 = create_post("hoge moge", 2)
     p3 = create_post("lodge", 3)
 
-    get :related, {:tags => "hoge", :format => "json"}, {}
+    get :related, { :tags => "hoge", :format => "json" }, {}
     assert_response :success
   end
 

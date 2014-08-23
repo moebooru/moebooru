@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
     end
 
     def blacklisted_tags_array
-      user_blacklisted_tags.map {|x| x.tags}
+      user_blacklisted_tags.map { |x| x.tags }
     end
 
     def commit_blacklists
@@ -96,7 +96,7 @@ class User < ActiveRecord::Base
 
     def self.included(m)
       m.before_save :encrypt_password
-      m.validates_length_of :password, :minimum => 5, :if => lambda {|rec| rec.password}
+      m.validates_length_of :password, :minimum => 5, :if => lambda { |rec| rec.password }
       m.validates_confirmation_of :password
       # Changing password requires current password.
       m.validate :validate_current_password
@@ -184,11 +184,11 @@ class User < ActiveRecord::Base
     end
 
     def as_json(*args)
-      {:name => name, :blacklisted_tags => blacklisted_tags_array, :id => id}.as_json(*args)
+      { :name => name, :blacklisted_tags => blacklisted_tags_array, :id => id }.as_json(*args)
     end
 
     def user_info_cookie
-      [id, level, use_browser ? "1":"0"].join(";");
+      [id, level, use_browser ? "1" : "0"].join(";");
     end
   end
 
@@ -409,8 +409,8 @@ class User < ActiveRecord::Base
   end
 
   module UserInviteMethods
-    class NoInvites < Exception ; end
-    class HasNegativeRecord < Exception ; end
+    class NoInvites < Exception; end
+    class HasNegativeRecord < Exception; end
 
     def invite!(name, level)
       if invite_count <= 0
@@ -499,7 +499,7 @@ class User < ActiveRecord::Base
         cropped_image_width = image_width * (params[:right].to_f - params[:left].to_f)
         cropped_image_height = image_height * (params[:bottom].to_f - params[:top].to_f)
 
-        size = Moebooru::Resizer.reduce_to({:width=>cropped_image_width, :height=>cropped_image_height}, {:width=>CONFIG["avatar_max_width"], :height=>CONFIG["avatar_max_height"]}, 1, true)
+        size = Moebooru::Resizer.reduce_to({ :width => cropped_image_width, :height => cropped_image_height }, { :width => CONFIG["avatar_max_width"], :height => CONFIG["avatar_max_height"] }, 1, true)
         size[:crop_top] = image_height * params[:top].to_f
         size[:crop_bottom] = image_height * params[:bottom].to_f
         size[:crop_left] = image_width * params[:left].to_f
@@ -603,7 +603,7 @@ class User < ActiveRecord::Base
   end
 
   validates_presence_of :email, :on => :create if CONFIG["enable_account_email_activation"]
-  validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda {|rec| !rec.email.empty?}
+  validates_uniqueness_of :email, :case_sensitive => false, :on => :create, :if => lambda { |rec| !rec.email.empty? }
   before_create :set_show_samples if CONFIG["show_samples"]
   has_one :ban
 

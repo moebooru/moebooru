@@ -75,7 +75,7 @@ module PostHelper
     div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
 
     if post.use_jpeg?(@current_user) and !options[:disable_jpeg_direct_links] then
-        if(post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
+        if (post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
           dl_width = post.jpeg_width.to_i
           dl_height = post.jpeg_height.to_i
           dl_url = post.sample_url
@@ -85,7 +85,7 @@ module PostHelper
           dl_url = post.jpeg_url
         end
     else
-        if(post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
+        if (post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?)
           dl_width = post.width.to_i
           dl_height = post.height.to_i
           dl_url = post.sample_url
@@ -98,9 +98,7 @@ module PostHelper
 
     directlink_info =
     %{<span class="directlink-info">} +
-        %{<img class="directlink-icon directlink-icon-large" src="#{image_path "ddl_large.gif"}" alt="">}+
-        %{<img class="directlink-icon directlink-icon-small" src="#{image_path "ddl.gif"}" alt="">}+
-        %{<img class="parent-display" src="#{image_path "post-star-parent.gif"}" alt="">} +
+        %{<img class="directlink-icon directlink-icon-large" src="#{image_path "ddl_large.gif"}" alt="">} +         %{<img class="directlink-icon directlink-icon-small" src="#{image_path "ddl.gif"}" alt="">} +         %{<img class="parent-display" src="#{image_path "post-star-parent.gif"}" alt="">} +
         %{<img class="child-display" src="#{image_path "post-star-child.gif"}" alt="">} +
         %{<img class="flagged-display" src="#{image_path "post-star-flagged.gif"}" alt="">} +
         %{<img class="pending-display" src="#{image_path "post-star-pending.gif"}" alt="">} +
@@ -108,7 +106,7 @@ module PostHelper
     li_class = ""
 
     ddl_class = "directlink"
-    ddl_class += (post.width.to_i > 1500 or post.height.to_i > 1500)?  " largeimg":" smallimg"
+    ddl_class += (post.width.to_i > 1500 or post.height.to_i > 1500) ? " largeimg" : " smallimg"
 
     if options[:similarity]
       icon = %{<img src="#{post.service_icon}" alt="#{post.service}" class="service-icon" id="source">}
@@ -139,7 +137,7 @@ module PostHelper
     li_class += " pending" if post.is_pending?
     li_class += " mode-browse" if options[:display] == :large
     # We need to specify a width on the <li>, since IE7 won't figure it out on its own.
-    item = %{<li style="width: #{block_size[0]+10}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>}
+    item = %{<li style="width: #{block_size[0] + 10}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>}
     return item.html_safe
   end
 
@@ -158,7 +156,7 @@ module PostHelper
     similarity_class = "similar"
     similarity_class += " similar-match" if options[:similarity].to_f >= 90 rescue false
     similarity_class += " similar-original" if options[:similarity].to_s == "Original"
-    similarity_text = options[:similarity].to_s == "Original"?  "Image":%{#{options[:similarity].to_i}%}
+    similarity_text = options[:similarity].to_s == "Original" ? "Image" : %{#{options[:similarity].to_i}%}
     similarity = %{<a class="#{similarity_class}" href="#{post.url}"><span>#{icon}#{similarity_text}#{size}</span></a>}
     li_class = ""
     item = %{<li id="p#{post.id}" class="#{li_class}">#{div}#{similarity}</li>}
@@ -169,7 +167,7 @@ module PostHelper
     '<span class="vote-desc"></span>'.html_safe
   end
 
-  def vote_widget(user, className="standard-vote-widget")
+  def vote_widget(user, className = "standard-vote-widget")
     html = ""
 
     html << %{<span class="stars #{className}">}

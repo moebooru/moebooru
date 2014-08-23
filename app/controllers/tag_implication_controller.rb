@@ -19,7 +19,7 @@ class TagImplicationController < ApplicationController
 
     case params[:commit]
     when "Delete"
-      if @current_user.is_mod_or_higher? || ids.all? { |x| ti = TagImplication.find(x); ti.is_pending? && ti.creator_id == @current_user.id }
+      if @current_user.is_mod_or_higher? || TagImplication.where(:id => ids, :is_pending => true, :creator_id => @current_user).count == ids.count
         ids.each { |x| TagImplication.find(x).destroy_and_notify(@current_user, params[:reason]) }
 
         flash[:notice] = "Tag implications deleted"

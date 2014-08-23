@@ -78,8 +78,7 @@ class HistoryChange < ActiveRecord::Base
   end
 
   def set_previous
-    self.previous = HistoryChange.find(:first, :order => "id DESC",
-                                               :conditions => ["table_name = ? AND remote_id = ? AND id < ? AND column_name = ?", table_name, remote_id, id, column_name])
+    self.previous = self.class.order(:id => :desc).find_by(:table_name => table_name, :remote_id => remote_id, :column_name => column_name)
     self.save!
   end
 end

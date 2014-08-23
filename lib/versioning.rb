@@ -400,7 +400,6 @@ module ActiveRecord
             end
           end
 
-          changed = false
           if tags != prev_tags || rating != prev_rating then
             h = History.new(:group_by_table => "posts",
                             :group_by_id => tag_history.post_id,

@@ -1,4 +1,4 @@
-module PostTagMethods
+module Post::TagMethods
   attr_accessor :tags, :new_tags, :old_tags, :old_cached_tags
 
   module ClassMethods

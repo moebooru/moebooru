@@ -1,4 +1,4 @@
-module TagRelatedTagMethods
+module Tag::RelatedTagMethods
   module ClassMethods
     # Returns tags (with type specified by input) related by input tag
     # In array of hashes.

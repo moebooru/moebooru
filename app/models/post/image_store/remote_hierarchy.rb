@@ -1,8 +1,6 @@
 require "mirror"
-require "erb"
-include ERB::Util
 
-module PostImageStoreMethods
+module Post::ImageStore
   module RemoteHierarchy
     def file_hierarchy
       "%s/%s" % [md5[0,2], md5[2,2]]

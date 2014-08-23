@@ -1,4 +1,4 @@
-module PostSqlMethods
+module Post::SqlMethods
   module ClassMethods
     def find_by_tag_join(tag, options = {})
       tag = tag.downcase.tr(" ", "_")

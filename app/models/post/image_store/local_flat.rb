@@ -1,4 +1,4 @@
-module PostImageStoreMethods
+module Post::ImageStore
   module LocalFlat
     def file_path
       "#{Rails.root}/public/data/#{file_name}"

@@ -1,4 +1,4 @@
-module PostChangeSequenceMethods
+module Post::ChangeSequenceMethods
   attr_accessor :increment_change_seq
 
   def self.included(m)

@@ -1,4 +1,4 @@
-module PostImageStoreMethods
+module Post::ImageStore
   module LocalFlatWithAmazonS3Backup
     def move_file
       FileUtils.mv(tempfile_path, file_path)

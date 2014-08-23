@@ -1,4 +1,4 @@
-module PostImageStoreMethods
+module Post::ImageStore
   module LocalHierarchy
     def file_hierarchy
       "%s/%s" % [md5[0,2], md5[2,2]]

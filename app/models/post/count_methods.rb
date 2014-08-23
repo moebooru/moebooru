@@ -1,4 +1,4 @@
-module PostCountMethods
+module Post::CountMethods
   module ClassMethods
     def fast_count(tags = nil)
       # A small sanitation

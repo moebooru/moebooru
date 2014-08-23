@@ -1,4 +1,4 @@
-module TagApiMethods
+module Tag::ApiMethods
   def self.included(m)
     m.extend(ClassMethods)
   end

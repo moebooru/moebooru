@@ -1,4 +1,4 @@
-module PostRatingMethods
+module Post::RatingMethods
   attr_accessor :old_rating
 
   def self.included(m)

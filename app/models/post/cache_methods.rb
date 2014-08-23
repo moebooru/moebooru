@@ -1,4 +1,4 @@
-module PostCacheMethods
+module Post::CacheMethods
   def self.included(m)
     m.after_save :expire_cache
     m.after_destroy :expire_cache

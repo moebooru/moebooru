@@ -1,9 +1,9 @@
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
-class UserMailerTest < ActiveSupport::TestCase
+class UserMailerTest < ActionMailer::TestCase
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      Rails.cache.clear
     end
 
     ActionMailer::Base.delivery_method = :test
@@ -28,16 +28,22 @@ class UserMailerTest < ActiveSupport::TestCase
 
   def test_new_password
     user = create_user("bob")
-    assert_nothing_raised { UserMailer.deliver_new_password(user, "zugzug2") }
-    assert_not_equal(0, ActionMailer::Base.deliveries.size)
-    assert_equal("From: #{CONFIG["admin_contact"]}\r\nTo: bob@danbooru.com\r\nSubject: #{CONFIG["app_name"]} - Password Reset\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Hello, bob. Your password has been reset to <code>zugzug2</code>.</p>\n\n<p>You can login to <a href=\"http://#{CONFIG["server_host"]}/user/login\">#{CONFIG["app_name"]}</a> and change your password to something else.</p>\n", ActionMailer::Base.deliveries[0].encoded)
+    assert_nothing_raised { UserMailer.new_password(user, "zugzug2").deliver }
+    assert_emails 1
+    assert_equal [CONFIG["email_from"]], ActionMailer::Base.deliveries[0].from
+    assert_equal [user.email], ActionMailer::Base.deliveries[0].to
+    assert_equal "#{CONFIG["app_name"]} - Password Reset", ActionMailer::Base.deliveries[0].subject
+    assert_match /Your password has been reset to/, ActionMailer::Base.deliveries[0].body.parts.first.decoded
   end
 
   def test_dmail
     sender = User.find(1)
     receiver = User.find(2)
-    assert_nothing_raised { UserMailer.deliver_dmail(sender, receiver, "test title", "test body") }
-    assert_not_equal(0, ActionMailer::Base.deliveries.size)
-    assert_equal("From: #{CONFIG["admin_contact"]}\r\nTo: admin@danbooru.com\r\nSubject: Dev - Message received from mod\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>mod said:</p>\n\n<div>\n  <p>test body</p>\n</div>\n", ActionMailer::Base.deliveries[0].encoded)
+    assert_nothing_raised { UserMailer.dmail(receiver, sender, "test title", "test body").deliver }
+    assert_emails 1
+    assert_equal [CONFIG["email_from"]], ActionMailer::Base.deliveries[0].from
+    assert_equal [receiver.email], ActionMailer::Base.deliveries[0].to
+    assert_equal "#{CONFIG["app_name"]} - Message received from admin", ActionMailer::Base.deliveries[0].subject
+    assert_match /admin said:/, ActionMailer::Base.deliveries[0].body.decoded
   end
 end

@@ -13,7 +13,7 @@ gem "sass-rails", "~> 4.0.2" # Rails default version
 
 gem "non-stupid-digest-assets"
 
-gem "pg", :platforms => [:ruby, :mingw, :x64_mingw]
+gem "pg", :platforms => [:ruby, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", "~> 1.3.0.rc1", :platforms => :jruby
 
 ### FIXME: remove this

@@ -246,7 +246,7 @@ class ApplicationController < ActionController::Base
   include RespondToHelpers
   include CacheHelper
   include SessionsHelper
-  #local_addresses.clear
+  # local_addresses.clear
 
   before_action :set_current_user
   before_action :mini_profiler_check if Rails.env.development?

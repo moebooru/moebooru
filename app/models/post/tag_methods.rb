@@ -262,7 +262,7 @@ module Post::TagMethods
       # another process inserts rows before our INSERT, it'll return the rows that it
       # inserted and we'll avoid duplicating them.
       tag_set = new_tags.map { |x| ("(#{id}, #{x.id})") }.join(", ")
-      #execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + tag_set)
+      # execute_sql("INSERT INTO posts_tags (post_id, tag_id) VALUES " + tag_set)
       sql = <<-EOS
         INSERT INTO posts_tags (post_id, tag_id)
         SELECT t.post_id, t.tag_id

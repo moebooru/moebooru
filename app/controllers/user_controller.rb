@@ -299,7 +299,7 @@ class UserController < ApplicationController
   end
 
   def show_blocked_users
-    #@users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
+    # @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
     @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :order => "expires_at ASC")
     @ip_bans = IpBans.find(:all)
   end

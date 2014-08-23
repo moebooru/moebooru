@@ -46,7 +46,7 @@ module Post::ImageStore
     end
 
     def file_url
-      #"http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/#{file_name}"
+      # "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/#{file_name}"
       CONFIG["url_base"] + "/data/#{file_name}"
     end
 

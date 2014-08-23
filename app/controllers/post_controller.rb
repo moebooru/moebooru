@@ -1,7 +1,7 @@
 require "download"
 
 class PostController < ApplicationController
-  #ignore upload/similar/create since they're user controlled and not worth measuring in newrelic
+  # ignore upload/similar/create since they're user controlled and not worth measuring in newrelic
   newrelic_ignore :only => [:upload, :similar, :create]
 
   layout "default"

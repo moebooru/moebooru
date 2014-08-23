@@ -76,6 +76,5 @@ module ActionView
         orig_button_to_function name, *args, &block
       end
     end
-
   end
 end

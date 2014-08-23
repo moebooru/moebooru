@@ -646,7 +646,6 @@ module ActionView
 
   # Converts chained method calls on DOM proxy elements into JavaScript chains
   class JavaScriptProxy < ActiveSupport::BasicObject #:nodoc:
-
     def initialize(generator, root = nil)
       @generator = generator
       @generator << root if root
@@ -716,7 +715,6 @@ module ActionView
     def reload(options_for_replace = {})
       replace(options_for_replace.merge({ :partial => @id.to_s }))
     end
-
   end
 
   class JavaScriptVariableProxy < JavaScriptProxy #:nodoc:

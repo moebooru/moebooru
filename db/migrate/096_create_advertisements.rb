@@ -18,7 +18,6 @@ class CreateAdvertisements < ActiveRecord::Migration
     execute "insert into advertisements (image_url, referral_url, ad_type, status, hit_count, width, height) values ('/images/728x90_2.jpg', 'http://affiliates.jlist.com/click/2253?url=http://www.jlist.com/index.html', 'horizontal', 'active', 0, 728, 90)"
     execute "insert into advertisements (image_url, referral_url, ad_type, status, hit_count, width, height) values ('/images/728x90_3.jpg', 'http://affiliates.jlist.com/click/2253?url=http://www.jlist.com/index.html', 'horizontal', 'active', 0, 728, 90)"
     execute "insert into advertisements (image_url, referral_url, ad_type, status, hit_count, width, height) values ('/images/728x90_4.jpg', 'http://affiliates.jlist.com/click/2253?url=http://www.jlist.com/index.html', 'horizontal', 'active', 0, 728, 90)"
-
   end
 
   def self.down

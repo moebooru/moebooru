@@ -7,5 +7,4 @@ class BannedController < ApplicationController
         return
       end
   end
-
 end

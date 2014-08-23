@@ -381,7 +381,6 @@ class Pool < ActiveRecord::Base
 
       buf
     end
-
   end
 
   include PostMethods

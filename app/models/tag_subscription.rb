@@ -26,7 +26,7 @@ class TagSubscription < ActiveRecord::Base
   end
 
   def self.process_all
-    find(:all).each do |tag_subscription|
+    find_each do |tag_subscription|
       if tag_subscription.user.is_privileged_or_higher?
         suppress Exception do
           TagSubscription.transaction do

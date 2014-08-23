@@ -99,8 +99,6 @@ module HistoryHelper
   end
 
   def format_changes(history, options = {})
-    html = ""
-
     changes = history.history_changes
 
     # Group the changes by class and field.
@@ -208,7 +206,6 @@ module HistoryHelper
     removed = %{<span class="removed">-</span>}
 
     sort_key = change.remote_id
-    primary_order = 1
     case change.table_name
     when"posts"
       case change.column_name
@@ -226,7 +223,7 @@ module HistoryHelper
           begin
             new = Post.find(change.value.to_i)
             html << link_to("%i" % new.id, :controller => "post", :action => "show", :id => new.id)
-          rescue ActiveRecord::RecordNotFound => e
+          rescue ActiveRecord::RecordNotFound
             html << "%i" % change.value.to_i
           end
         else
@@ -239,7 +236,7 @@ module HistoryHelper
             begin
               old = Post.find(change.previous.value.to_i)
               html << link_to("%i" % old.id, :controller => "post", :action => "show", :id => old.id)
-            rescue ActiveRecord::RecordNotFound => e
+            rescue ActiveRecord::RecordNotFound
               html << "%i" % change.previous.value.to_i
             end
           else
@@ -285,8 +282,6 @@ module HistoryHelper
         html.strip!
       end
     when "pools"
-      primary_order = 0
-
       case change.column_name
       when "name"
         if change.previous

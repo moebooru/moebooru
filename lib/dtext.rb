@@ -88,10 +88,7 @@ module DText
 
   def parselist(str, state)
     html = ""
-    if not state.last =~ /\d/
-      state.push "1"
-      html << "<ul>"
-    else
+    if state.last =~ /\d/
       n = ((str =~ /^\*+\s+/ && str.split()[0]) || "").count("*")
       if n < state.last.to_i
         html << "</ul>" * (state.last.to_i - n)
@@ -100,10 +97,13 @@ module DText
         html << "<ul>"
         state[-1] = (state.last.to_i + 1).to_s
       end
-      if not str =~ /^\*+\s+/
+      unless str =~ /^\*+\s+/
         state.pop
         return html + parseline(str, state)
       end
+    else
+      state.push "1"
+      html << "<ul>"
     end
     html << str.gsub(/\*+\s+(.+)\n*/, '<li>\1')
   end

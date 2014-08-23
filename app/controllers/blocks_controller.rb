@@ -8,11 +8,9 @@ class BlocksController < ApplicationController
     begin
       IpBans.transaction do
         ban = IpBans.create(params[:ban].merge(:banned_by => @current_user.id))
-        if IpBans.find(:first, :conditions => ["id = ? and inet ? <<= ip_addr", ban.id, request.remote_ip]) then
-          raise CanNotBanSelf
-        end
+        raise CanNotBanSelf if IpBans.where(:id => ban.id).where("? <<= ip_addr", request.remote_ip).exists?
       end
-    rescue CanNotBanSelf => e
+    rescue CanNotBanSelf
       flash[:notice] = "You can not ban yourself"
     end
     redirect_to :controller => "user", :action => "show_blocked_users"

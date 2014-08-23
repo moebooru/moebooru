@@ -403,15 +403,13 @@ class ApplicationController < ActionController::Base
   end
 
   def set_query_date
-    begin
-      @query_date ||= if params[:year] && params[:month]
-                        Time.local params[:year], params[:month], (params[:day] || 1)
-                      else
-                        Time.current
-                      end
-    rescue ArgumentError
-      head :bad_request
-    end
+    @query_date ||= if params[:year] && params[:month]
+                      Time.local params[:year], params[:month], (params[:day] || 1)
+                    else
+                      Time.current
+                    end
+  rescue ArgumentError
+    head :bad_request
   end
 
   def set_locale

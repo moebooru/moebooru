@@ -30,7 +30,7 @@ class ExternalPost
 
   def preview_dimensions
     dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 150, :height => 150 })
-    return [dim[:width], dim[:height]]
+    [dim[:width], dim[:height]]
   end
 
   def use_jpeg?(user)

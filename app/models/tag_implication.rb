@@ -20,11 +20,11 @@ class TagImplication < ActiveRecord::Base
   end
 
   def predicate
-    return Tag.find(self.predicate_id)
+    Tag.find(self.predicate_id)
   end
 
   def consequent
-    return Tag.find(self.consequent_id)
+    Tag.find(self.consequent_id)
   end
 
   def predicate=(name)
@@ -76,7 +76,7 @@ class TagImplication < ActiveRecord::Base
       end
     end
 
-    return all
+    all
   end
 
   def to_xml(options = {})

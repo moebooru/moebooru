@@ -25,7 +25,7 @@ module Tag::TypeMethods
     # === Parameters
     # * :tag_name<String>:: The tag name to search for
     def type_name(tag_name)
-      return Rails.cache.fetch({ :tag_type => tag_name }, :expires_in => 1.day) do
+      Rails.cache.fetch({ :tag_type => tag_name }, :expires_in => 1.day) do
         type_name_helper(tag_name.gsub(/\s/, "_"))
       end
     end
@@ -36,7 +36,7 @@ module Tag::TypeMethods
       posts.each do |post|
         post_tags += post.cached_tags.split
       end
-      return batch_get_tag_types(post_tags)
+      batch_get_tag_types(post_tags)
     end
 
     # Get all tag types for the given tags.
@@ -57,7 +57,7 @@ module Tag::TypeMethods
       (post_tags - results.keys).each do |tag|
         results[tag] = type_name(tag)
       end
-      return results
+      results
     end
 
     # Given an array of tags, remove tags to reduce the joined length to <= max_len.
@@ -79,7 +79,7 @@ module Tag::TypeMethods
 
       split_tags.compact!
       split_tags.sort!
-      return split_tags.join(" ")
+      split_tags.join(" ")
     end
 
     def tag_list_order(tag_type)

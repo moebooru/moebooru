@@ -35,7 +35,7 @@ class PostFrames < ActiveRecord::Base
     frames.each do |frame|
       result << "#{frame[:source_left]}x#{frame[:source_top]},#{frame[:source_width]}x#{frame[:source_height]}"
     end
-    return result.join(";")
+    result.join(";")
   end
 
   def self.frame_image_dimensions(frame)
@@ -46,11 +46,11 @@ class PostFrames < ActiveRecord::Base
     end
     size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_max"], :height => CONFIG["sample_min"] }, 1, false, true)
 
-    return size
+    size
   end
 
   def self.frame_preview_dimensions(frame)
-    return Moebooru::Resizer.reduce_to({ :width => frame[:source_width], :height => frame[:source_height] },
+    Moebooru::Resizer.reduce_to({ :width => frame[:source_width], :height => frame[:source_height] },
                               { :width => 300, :height => 300 })
   end
 
@@ -131,7 +131,7 @@ class PostFrames < ActiveRecord::Base
     post.update_attributes(:frames => post.frames_pending, :frames_warehoused => frames_warehoused)
 
     # Return false; there's nothing more for us to do with this post.
-    return false
+    false
   end
 
   # Warehouse frames.  Only frames which are created and finalized will be warehoused.
@@ -152,7 +152,7 @@ class PostFrames < ActiveRecord::Base
 
     # All frames are warehoused.
     post.update_attributes(:frames_warehoused => true)
-    return true
+    true
   end
 
   # Posts that are neither active nor target are no longer needed.  Incrementally them up and delete them.
@@ -241,14 +241,14 @@ class PostFrames < ActiveRecord::Base
   end
 
   def self.filename(frame)
-    return "#{frame[:post_id]}-#{frame[:source_left]}x#{frame[:source_top]}-#{frame[:source_width]}x#{frame[:source_height]}.jpg"
+    "#{frame[:post_id]}-#{frame[:source_left]}x#{frame[:source_top]}-#{frame[:source_width]}x#{frame[:source_height]}.jpg"
   end
 
   def file_path
-    return "#{Rails.root}/public/data/frame/#{PostFrames.filename(self)}"
+    "#{Rails.root}/public/data/frame/#{PostFrames.filename(self)}"
   end
 
   def preview_path
-    return "#{Rails.root}/public/data/frame-preview/#{PostFrames.filename(self)}"
+    "#{Rails.root}/public/data/frame-preview/#{PostFrames.filename(self)}"
   end
 end

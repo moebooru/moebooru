@@ -13,7 +13,7 @@ class Comment < ActiveRecord::Base
   attr_accessor :do_not_bump_post
 
   def self.generate_sql(params)
-    return Nagato::Builder.new do |builder, cond|
+    Nagato::Builder.new do |builder, cond|
       cond.add_unless_blank "post_id = ?", params[:post_id]
     end.to_hash
   end
@@ -33,29 +33,28 @@ class Comment < ActiveRecord::Base
   end
 
   def get_formatted_body
-    return format_inlines(format_text(self.body, :mode => :comment), self.id)
+    format_inlines(format_text(self.body, :mode => :comment), self.id)
   end
 
   def update_fragments
-    return
   end
 
   # Get the comment translated into the requested language.  Languages in source_langs
   # will be left untranslated.
   def get_translated_formatted_body_uncached(target_lang, source_langs)
-      return self.get_formatted_body, []
+      [self.get_formatted_body, []]
   end
 
   def get_translated_formatted_body(target_lang, source_langs)
     source_lang_list = source_langs.join(",")
     key = "comment:" + self.id.to_s + ":" + self.updated_at.to_f.to_s + ":" + target_lang + ":" + source_lang_list
-    return Rails.cache.fetch(key) {
+    Rails.cache.fetch(key) {
       get_translated_formatted_body_uncached(target_lang, source_langs)
     }
   end
 
   def author
-    return User.find_name(self.user_id)
+    User.find_name(self.user_id)
   end
 
   def pretty_author
@@ -75,7 +74,7 @@ class Comment < ActiveRecord::Base
   end
 
   def api_attributes
-    return {
+    {
       :id => id,
       :created_at => created_at,
       :post_id => post_id,
@@ -86,10 +85,10 @@ class Comment < ActiveRecord::Base
   end
 
   def to_xml(options = {})
-    return api_attributes.to_xml(options.reverse_merge(:root => "comment"))
+    api_attributes.to_xml(options.reverse_merge(:root => "comment"))
   end
 
   def as_json(*args)
-    return api_attributes.as_json(*args)
+    api_attributes.as_json(*args)
   end
 end

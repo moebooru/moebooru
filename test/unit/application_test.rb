@@ -67,7 +67,7 @@ class ApplicationTest < ActiveSupport::TestCase
       ret[search] = key
     end
 
-    return ret
+    ret
   end
 
   def test_cache_key_expiration

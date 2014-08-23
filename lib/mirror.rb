@@ -13,7 +13,7 @@ module Mirrors
     if ($? >> 8) != 0 then
       raise MirrorError, "Command \"%s\" to %s exited with status %i" % [command, mirror[:host], $? >> 8]
     end
-    return ret
+    ret
   end
   module_function :ssh_open_pipe
 
@@ -24,7 +24,7 @@ module Mirrors
       results << mirror
     }
 
-    return results
+    results
   end
   module_function :filter_mirror_list
 
@@ -125,7 +125,7 @@ module Mirrors
     return CONFIG["url_base"] if !CONFIG["image_servers"] || CONFIG["image_servers"].empty?
     raise 'CONFIG["url_base"] is set incorrectly; please see config/default_config.rb' if CONFIG["image_servers"][0].class == String
 
-    return CONFIG["image_servers"][0][:server]
+    CONFIG["image_servers"][0][:server]
   end
 
   def select_image_server(is_warehoused, seed = 0, options = {})
@@ -188,14 +188,14 @@ module Mirrors
       end
     end
 
-    return server[:server]
+    server[:server]
   end
   else
     def select_main_image_server
-      return CONFIG["url_base"]
+      CONFIG["url_base"]
     end
     def select_image_server(is_warehoused, seed = 0, options = {})
-      return CONFIG["url_base"]
+      CONFIG["url_base"]
     end
   end
   module_function :select_main_image_server

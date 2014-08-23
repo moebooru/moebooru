@@ -3,7 +3,7 @@ module Post::TagMethods
 
   module ClassMethods
     def find_by_tags(tags, options = {})
-      return find_by_sql(Post.generate_sql(tags, options))
+      find_by_sql(Post.generate_sql(tags, options))
     end
 
     def recalculate_cached_tags(id = nil)
@@ -74,12 +74,12 @@ module Post::TagMethods
   # === Parameters
   # * :tag<String>:: the tag to search for
   def has_tag?(tag)
-    return cached_tags =~ /(^|\s)#{tag}($|\s)/
+    cached_tags =~ /(^|\s)#{tag}($|\s)/
   end
 
   # Returns the tags in a URL suitable string
   def tag_title
-    return title_tags.gsub(/\W+/, "-")[0, 50]
+    title_tags.gsub(/\W+/, "-")[0, 50]
   end
 
   # Return the tags we display in URLs, page titles, etc.

@@ -11,12 +11,12 @@ class PoolPost < ActiveRecord::Base
   after_save :expire_cache
 
   def can_change_is_public?(user)
-    return user.has_permission?(pool) # only the owner can change is_public
+    user.has_permission?(pool) # only the owner can change is_public
   end
 
   def can_change?(user, attribute)
     return false if !user.is_member_or_higher?
-    return pool.is_public? || user.has_permission?(pool)
+    pool.is_public? || user.has_permission?(pool)
   end
 
   # This matches Pool.post_pretty_sequence in pool.js.
@@ -35,7 +35,7 @@ class PoolPost < ActiveRecord::Base
 
   module ApiMethods
     def api_attributes
-      return {
+      {
         :id => id,
         :pool_id => pool_id,
         :post_id => post_id,

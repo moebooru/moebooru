@@ -29,7 +29,7 @@ module Post::FileMethods
       #        and may cause confusion for some bored ones.
       system("jhead", "-purejpg", tempfile_path)
     end
-    return true
+    true
   end
 
   def ensure_tempfile_exists
@@ -145,7 +145,7 @@ module Post::FileMethods
     return false if self.jpeg_crc32 == crc32_accum
 
     self.jpeg_crc32 = crc32_accum
-    return true
+    true
   end
 
   def generate_hash
@@ -192,7 +192,7 @@ module Post::FileMethods
       FileUtils.chmod(0775, dest_path)
     end
 
-    return true
+    true
   end
 
   def generate_preview
@@ -221,7 +221,7 @@ module Post::FileMethods
       return false
     end
 
-    return true
+    true
   end
 
   # Automatically download from the source if it's a URL.
@@ -299,7 +299,7 @@ module Post::FileMethods
     return false if CONFIG["min_mpixels"].nil?
     return false if self.width.nil?
     return false if self.width * self.height >= CONFIG["min_mpixels"]
-    return true
+    true
   end
 
   def set_image_status
@@ -309,7 +309,7 @@ module Post::FileMethods
 
     self.status = "pending"
     self.status_reason = "low-res"
-    return true
+    true
   end
 
   # If this post is pending, and the user has too many pending posts, reject the upload.
@@ -323,7 +323,7 @@ module Post::FileMethods
     return if pending_posts < CONFIG["max_pending_images"]
 
     errors.add(:base, "You have too many posts pending moderation")
-    return false
+    false
   end
 
   # Returns true if the post is an image format that GD can handle.
@@ -447,7 +447,7 @@ module Post::FileMethods
     }
     self.sample_crc32 = crc32_accum
 
-    return true
+    true
   end
 
   # Returns true if the post has a sample image.
@@ -549,7 +549,7 @@ module Post::FileMethods
     }
     self.jpeg_crc32 = crc32_accum
 
-    return true
+    true
   end
 
   def has_jpeg?

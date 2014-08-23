@@ -67,7 +67,7 @@ module Post::ImageStore
         path = "/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
       end
 
-      return select_random_image_server + path
+      select_random_image_server + path
     end
 
     def store_sample_url
@@ -77,7 +77,7 @@ module Post::ImageStore
         path = "/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
 
-      return select_random_image_server + path
+      select_random_image_server + path
     end
 
     def delete_file

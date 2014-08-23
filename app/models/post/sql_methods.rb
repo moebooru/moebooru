@@ -372,7 +372,7 @@ module Post::SqlMethods
 
       params = join_params + cond_params
 
-      return Post.sanitize_sql_array([sql, *params])
+      Post.sanitize_sql_array([sql, *params])
     end
   end
 

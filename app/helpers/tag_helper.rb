@@ -80,7 +80,7 @@ module TagHelper
       end
     end
 
-    return html.html_safe
+    html.html_safe
   end
 
   def cloud_view(tags, divisor = 6)
@@ -92,7 +92,7 @@ module TagHelper
       html << link_to(tag["name"], { :controller => :post, :action => :index, :tags => tag["name"] }, { :style => "font-size: #{size}em", :title => "#{tag["post_count"]} posts" })
     end
 
-    return html.html_safe
+    html.html_safe
   end
 
   def related_tags(tags)

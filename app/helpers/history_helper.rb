@@ -95,7 +95,7 @@ module HistoryHelper
       }
     }
 
-    return @att_options
+    @att_options
   end
 
   def format_changes(history, options = {})
@@ -193,7 +193,7 @@ module HistoryHelper
     end
 
     # FIXME: more why.jpg on rbx.
-    return html.force_encoding("utf-8").html_safe
+    html.force_encoding("utf-8").html_safe
   end
 
   def format_change(history, change, options, table_options)
@@ -402,7 +402,7 @@ module HistoryHelper
     span = ""
     span << %{<span class="#{classes.join(" ")}">#{html}</span>}
 
-    return {
+    {
       :html => span,
       :field => change.column_name,
       :sort_key => sort_key,
@@ -424,6 +424,6 @@ module HistoryHelper
 
     html << tags_html.join(" ")
     html << %{</span>}
-    return [html]
+    [html]
   end
 end

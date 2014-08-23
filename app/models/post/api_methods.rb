@@ -60,15 +60,15 @@ module Post::ApiMethods
       ret[:similarity] = similarity
     end
 
-    return ret
+    ret
   end
 
   def as_json(*args)
-    return api_attributes.as_json(*args)
+    api_attributes.as_json(*args)
   end
 
   def to_xml(options = {})
-    return api_attributes.to_xml(options.reverse_merge(:root => "post"))
+    api_attributes.to_xml(options.reverse_merge(:root => "post"))
   end
 
   def api_data
@@ -119,7 +119,7 @@ module Post::ApiMethods
         result[:votes] = vote_map
       end
 
-      return result
+      result
     end
   end
 

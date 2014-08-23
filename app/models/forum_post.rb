@@ -30,7 +30,7 @@ class ForumPost < ActiveRecord::Base
         return false
       end
 
-      return true
+      true
     end
   end
 
@@ -75,7 +75,7 @@ class ForumPost < ActiveRecord::Base
     end
 
     def is_parent?
-      return parent_id.nil?
+      parent_id.nil?
     end
 
     def root
@@ -97,7 +97,7 @@ class ForumPost < ActiveRecord::Base
 
   module ApiMethods
     def api_attributes
-      return {
+      {
         :body => body,
         :creator => author,
         :creator_id => creator_id,
@@ -129,7 +129,7 @@ class ForumPost < ActiveRecord::Base
 
     newest_topic = ForumPost.find(:first, :order => "id desc", :limit => 1, :select => "created_at", :conditions => conds)
     return false if newest_topic.nil?
-    return newest_topic.created_at > user.last_forum_topic_read_at
+    newest_topic.created_at > user.last_forum_topic_read_at
   end
 
   def validate_title
@@ -145,7 +145,7 @@ class ForumPost < ActiveRecord::Base
       end
     end
 
-    return true
+    true
   end
 
   def initialize_last_updated_by

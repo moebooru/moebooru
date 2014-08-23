@@ -8,7 +8,7 @@ module ActionView
       # this action.  This is used by User.js.
       # Mirrors the one defined in ApplicationHelper
       def _moebooru_need_signup?(level)
-        return CONFIG["starting_level"] >= User.get_user_level(level)
+        CONFIG["starting_level"] >= User.get_user_level(level)
       end
       module_function :_moebooru_need_signup?
     end

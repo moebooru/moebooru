@@ -27,7 +27,7 @@ class WikiPage < ActiveRecord::Base
       joins = joins.join(" ")
       conds = [conds.join(" AND "), *params]
 
-      return joins, conds
+      [joins, conds]
     end
   end
 
@@ -44,7 +44,7 @@ class WikiPage < ActiveRecord::Base
   end
 
   def author
-    return User.find_name(user_id)
+    User.find_name(user_id)
   end
 
   def pretty_title
@@ -62,7 +62,7 @@ class WikiPage < ActiveRecord::Base
     page = find_by_title(title)
     page.revert_to(version) if version && page
 
-    return page
+    page
   end
 
   def self.find_by_title(title)

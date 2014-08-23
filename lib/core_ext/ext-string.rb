@@ -30,7 +30,7 @@ class String
       # invalid character if it"s at the end of input string.
       # Reference:
       # - http://po-ru.com/diary/fixing-invalid-utf-8-in-ruby-revisited
-      return ic.iconv(self + " ")[0..-2]
+      ic.iconv(self + " ")[0..-2]
     end
   end
 
@@ -45,17 +45,17 @@ class String
   # Escapes string to be usable in a SQL LIKE.
   # Adds backslash to \, %, and _ and replace * with % (SQL wildcard)
   def to_escaped_for_sql_like
-    return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub("*", "%")
+    self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub("*", "%")
   end
 
   # Nuke nulls and anything after it because it sucks.
   # The characters \()&|!:' and any spaces (\p{Space}) must be escaped
   # by prepending them with \ before passed to tsquery.
   def to_escaped_for_tsquery
-    return self.gsub(/\0.*/, "").gsub(/[\p{Space}\\()&|!:']/) { |x| '\\' + x }
+    self.gsub(/\0.*/, "").gsub(/[\p{Space}\\()&|!:']/) { |x| '\\' + x }
   end
 
   def to_escaped_js
-    return self.gsub(/\\/, '\0\0').gsub(/['"]/) { |m| "\\#{m}" }.gsub(/\r\n|\r|\n/, '\\n')
+    self.gsub(/\\/, '\0\0').gsub(/['"]/) { |m| "\\#{m}" }.gsub(/\r\n|\r|\n/, '\\n')
   end
 end

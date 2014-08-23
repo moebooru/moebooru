@@ -20,7 +20,7 @@ namespace :sample_images do
 
     puts "post ##{post.id}"
     post.save!
-    return true
+    true
   end
 
   desc "Create missing sample images"

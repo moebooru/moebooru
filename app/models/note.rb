@@ -22,7 +22,7 @@ class Note < ActiveRecord::Base
   def aux_callback
     # If our body has been changed and we have an old one, record it as the body;
     # otherwise if we're a new note and have no old body, record the current one.
-    return { :note_body => body_was || body }
+    { :note_body => body_was || body }
   end
 
   module LockMethods
@@ -48,7 +48,7 @@ class Note < ActiveRecord::Base
 
   module ApiMethods
     def api_attributes
-      return {
+      {
         :id => id,
         :created_at => created_at,
         :updated_at => updated_at,
@@ -69,7 +69,7 @@ class Note < ActiveRecord::Base
     end
 
     def as_json(*args)
-      return api_attributes.as_json(*args)
+      api_attributes.as_json(*args)
     end
   end
 

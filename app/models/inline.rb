@@ -68,7 +68,7 @@ class Inline < ActiveRecord::Base
   end
 
   def api_attributes
-    return {
+    {
       :id => id,
       :description => description,
       :user_id => user_id,

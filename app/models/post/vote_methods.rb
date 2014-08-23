@@ -46,6 +46,6 @@ module Post::VoteMethods
 
     recalculate_score!
 
-    return true
+    true
   end
 end

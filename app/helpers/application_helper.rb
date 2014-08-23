@@ -62,7 +62,7 @@ module ApplicationHelper
     # FIXME: for some reason rails invoked the old, useless json_escape when
     #        used here.
     script = 'InlineImage.register("%s", %s);' % [inline_id, inline.to_json.gsub("/", '\/')]
-    return block.html_safe, script.html_safe, inline_id
+    [block.html_safe, script.html_safe, inline_id]
   end
 
   def format_inlines(text, id)
@@ -141,7 +141,7 @@ module ApplicationHelper
       end
     end
 
-    return html.join("\n").html_safe
+    html.join("\n").html_safe
   end
 
   def make_menu_item(label, url_options = {}, options = {})
@@ -161,19 +161,19 @@ module ApplicationHelper
       item[:class_names] << "current-menu"
     end
 
-    return item
+    item
   end
 
   def make_main_item(*options)
     item = make_menu_item(*options)
     @top_menu_items ||= []
     @top_menu_items << item
-    return json_escape item.to_json.html_safe
+    json_escape item.to_json.html_safe
   end
 
   def make_sub_item(*options)
     item = make_menu_item(*options)
-    return json_escape item.to_json.html_safe
+    json_escape item.to_json.html_safe
   end
 
   def get_help_action_for_controller(controller)
@@ -196,7 +196,7 @@ module ApplicationHelper
     user_level = @current_user.level
     return true if user_level.to_i >= needed_level
     return true if starting_level >= needed_level
-    return false
+    false
   end
 
   # Return true if the starting level is high enough to execute
@@ -204,7 +204,7 @@ module ApplicationHelper
   def need_signup?(level)
     needed_level = User.get_user_level(level)
     starting_level = CONFIG["starting_level"]
-    return starting_level >= needed_level
+    starting_level >= needed_level
   end
 
   # Submit tag with a twist: removes name from tag form data so it doesn't add

@@ -135,7 +135,7 @@ private
     objects[:objects][table_name][id] ||= {
       :o => object
     }
-    return objects[:objects][table_name][id]
+    objects[:objects][table_name][id]
   end
 
   # Find and return the node for table_name/id in objects.  Recursively create
@@ -153,7 +153,7 @@ private
       node[:parent] = master_node
     end
 
-    return node
+    node
   end
 
   # Recursively add all nodes to stack, parents first.

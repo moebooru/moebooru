@@ -32,7 +32,7 @@ namespace :i18n do
         keys_1 = flatten_keys(yaml_1[yaml_1.keys.first])
         keys_2 = flatten_keys(yaml_2[yaml_2.keys.first])
 
-        return keys_2 - keys_1
+        keys_2 - keys_1
       end
 
       removed = compare(yaml_reference, yaml_target)

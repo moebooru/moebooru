@@ -88,7 +88,7 @@ class TagAlias < ActiveRecord::Base
   end
 
   def api_attributes
-    return {
+    {
      :id => id,
      :name => name,
      :alias_id => alias_id,
@@ -101,6 +101,6 @@ class TagAlias < ActiveRecord::Base
   end
 
   def as_json(*args)
-    return api_attributes.as_json(*args)
+    api_attributes.as_json(*args)
   end
 end

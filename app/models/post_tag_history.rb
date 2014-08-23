@@ -85,7 +85,7 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   def next
-    return PostTagHistory.find(:first, :order => "id ASC", :conditions => ["post_id = ? AND id > ?", post_id, id])
+    PostTagHistory.find(:first, :order => "id ASC", :conditions => ["post_id = ? AND id > ?", post_id, id])
   end
 
   def previous

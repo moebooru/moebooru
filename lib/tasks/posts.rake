@@ -8,7 +8,7 @@ def get_metatags(tags)
     end
   end
 
-  return ret
+  ret
 end
 
 namespace :posts do

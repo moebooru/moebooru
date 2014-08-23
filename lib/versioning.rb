@@ -4,7 +4,7 @@ require "set"
 
 module Versioned
   def get_versioned_classes
-    return [Pool, PoolPost, Post, Tag, Note]
+    [Pool, PoolPost, Post, Tag, Note]
   end
   module_function :get_versioned_classes
 
@@ -13,7 +13,7 @@ module Versioned
     get_versioned_classes.each { |cls|
       val[cls.table_name] = cls
     }
-    return val
+    val
   end
   module_function :get_versioned_classes_by_name
 end
@@ -70,7 +70,7 @@ module ActiveRecord
         Thread.current[:versioning_history] = history
       end
 
-      return history
+      history
     end
 
   public
@@ -100,7 +100,7 @@ module ActiveRecord
       # The object has been saved, so don't treat it as new if it's saved again.
       @object_is_new = false
 
-      return true
+      true
     end
 
     def versioned_master_object
@@ -171,14 +171,14 @@ module ActiveRecord
       end
 
       def get_versioning_aux_callback
-        return @versioning_aux_callback
+        @versioning_aux_callback
       end
 
       def get_versioned_default(name)
         attr = get_versioned_attributes[name]
         return nil, false if attr.nil?
         return nil, false if !attr.include?(:default)
-        return attr[:default], true
+        [attr[:default], true]
       end
 
       def get_versioning_group_by

@@ -10,6 +10,6 @@ module InlineHelper
       tag_options[:height] = image.height
     end
 
-    return image_tag(url, tag_options)
+    image_tag(url, tag_options)
   end
 end

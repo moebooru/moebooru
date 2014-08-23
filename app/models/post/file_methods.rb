@@ -387,7 +387,7 @@ module Post::FileMethods
   def generate_sample(force_regen = false)
     return true unless image?
     return true unless CONFIG["image_samples"]
-    return true unless (width && height)
+    return true unless width && height
     return true if (file_ext.downcase == "gif")
 
     # Always create samples for PNGs.
@@ -509,7 +509,7 @@ module Post::FileMethods
   def generate_jpeg(force_regen = false)
     return true unless image?
     return true unless CONFIG["jpeg_enable"]
-    return true unless (width && height)
+    return true unless width && height
     # Only generate JPEGs for PNGs.  Don't do it for files that are already JPEGs; we'll just add
     # artifacts and/or make the file bigger.  Don't do it for GIFs; they're usually animated.
     return true if (file_ext.downcase != "png")

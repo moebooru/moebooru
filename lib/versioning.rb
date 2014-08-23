@@ -37,7 +37,7 @@ module ActiveRecord
     # the same group_by_obj (that is, they'll be displayed together in the history view).
     # Only call this when you're actually going to create HistoryChanges, or this will
     # leave behind empty Histories.
-  private
+    private
     def get_current_history
       #p "get_current_history %s #%i" % [self.class.table_name, id]
       history = Thread.current[:versioning_history]
@@ -73,7 +73,7 @@ module ActiveRecord
       history
     end
 
-  public
+    public
     def save_versioned_attributes
       transaction do
         self.class.get_versioned_attributes.each do |att, options|

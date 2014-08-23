@@ -58,7 +58,7 @@ class ReportController < ApplicationController
     end
   end
 
-private
+  private
   def set_dates
     if params[:start_date]
       @start_date = Date.parse(params[:start_date])

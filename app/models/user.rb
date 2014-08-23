@@ -42,9 +42,7 @@ class User < ActiveRecord::Base
       m.has_many :user_blacklisted_tags, lambda { order "id" }, :dependent => :delete_all
     end
 
-    def blacklisted_tags=(blacklists)
-      @blacklisted_tags = blacklists
-    end
+    attr_writer :blacklisted_tags
 
     def blacklisted_tags
       blacklisted_tags_array.join("\n") + "\n"

@@ -34,9 +34,7 @@ class Artist < ActiveRecord::Base
       end
     end
 
-    def urls=(urls)
-      @urls = urls
-    end
+    attr_writer :urls
 
     def urls
       artist_urls.map { |x| x.url }.join("\n")
@@ -60,9 +58,7 @@ class Artist < ActiveRecord::Base
       wiki_page.body rescue ""
     end
 
-    def notes=(text)
-      @notes = text
-    end
+    attr_writer :notes
 
     def commit_notes
       unless @notes.blank?

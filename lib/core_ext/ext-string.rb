@@ -39,7 +39,7 @@ class String
   # true is stored as '1' instead.
   # This function allows simple modification without need to update database.
   def trueish?
-    ["1", "t"].include? self
+    %w(1 t).include? self
   end
 
   # Escapes string to be usable in a SQL LIKE.

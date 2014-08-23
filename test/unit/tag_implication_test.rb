@@ -61,7 +61,7 @@ class TagImplicationTest < ActiveSupport::TestCase
     TagImplication.create(:predicate => "tag1", :consequent => "tagz", :is_pending => false)
     TagImplication.create(:predicate => "tag1", :consequent => "tagx", :is_pending => false)
     TagImplication.create(:predicate => "tagx", :consequent => "tag9", :is_pending => false)
-    assert_equal(["tag1", "tag9", "tagx", "tagz"], TagImplication.with_implied(["tag1"]).sort)
+    assert_equal(%w(tag1 tag9 tagx tagz), TagImplication.with_implied(["tag1"]).sort)
   end
 
   def test_destroy_and_notify

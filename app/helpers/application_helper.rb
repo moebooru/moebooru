@@ -177,7 +177,7 @@ module ApplicationHelper
   end
 
   def get_help_action_for_controller(controller)
-    singular = ["forum", "wiki"]
+    singular = %w(forum wiki)
     help_action = controller.to_s
     if singular.include?(help_action)
       return help_action

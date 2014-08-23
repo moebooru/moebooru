@@ -67,7 +67,7 @@ module Tag::TypeMethods
       split_tags = tags.split(/ /)
 
       # Put long tags first, so we don't remove every tag because of one very long one.
-      split_tags.sort! do |a, b| b.length <=> a.length end
+      split_tags.sort! { |a, b| b.length <=> a.length }
 
       # Tag types that we're allowed to remove:
       length = tags.length

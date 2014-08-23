@@ -19,10 +19,10 @@ module Mirrors
 
   def filter_mirror_list(options)
     results = []
-    CONFIG["mirrors"].each { |mirror|
+    CONFIG["mirrors"].each do |mirror|
       next if options[:previews_only] != mirror[:previews_only]
       results << mirror
-    }
+    end
 
     results
   end
@@ -32,17 +32,17 @@ module Mirrors
     dirs = dirs.uniq
 
     target_mirrors = filter_mirror_list(options)
-    target_mirrors.each { |mirror|
+    target_mirrors.each do |mirror|
       remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
       remote_dirs = []
-      dirs.each { |dir|
+      dirs.each do |dir|
         remote_dirs << mirror[:data_dir] + "/" + dir
-      }
+      end
 
       # Create all directories in one go.
       system("/usr/bin/ssh", "-o", "Compression=no", "-o", "BatchMode=yes",
              remote_user_host, "mkdir -p #{remote_dirs.uniq.join(" ")}")
-    }
+    end
   end
   module_function :create_mirror_paths
 
@@ -68,7 +68,7 @@ module Mirrors
     expected_md5 = File.open(file, "rb") { |fp| Digest::MD5.hexdigest(fp.read) }
 
     target_mirrors = filter_mirror_list(options)
-    target_mirrors.each { |mirror|
+    target_mirrors.each do |mirror|
       remote_user_host = "#{mirror[:user]}@#{mirror[:host]}"
       remote_filename = "#{mirror[:data_dir]}/#{file[local_base.length, file.length]}"
 
@@ -80,7 +80,7 @@ module Mirrors
         # Linux needs md5sum; FreeBSD needs md5 -q.
         actual_md5 = Mirrors.ssh_open_pipe(mirror,
                 "if [ -f #{remote_filename} ]; then (which md5sum >/dev/null) && md5sum #{remote_filename} || md5 -q #{remote_filename}; fi",
-                timeout = options[:timeout]) do |f| f.gets end
+                timeout = options[:timeout]) { |f| f.gets }
         if actual_md5 =~ /^[0-9a-f]{32}/
           actual_md5 = actual_md5.slice(0, 32)
           if expected_md5 == actual_md5
@@ -95,7 +95,7 @@ module Mirrors
         end
 
         # Don't trust scp; verify the files.
-        actual_md5 = Mirrors.ssh_open_pipe(mirror, "if [ -f #{remote_filename} ]; then (which md5sum >/dev/null) && md5sum #{remote_filename} || md5 -q #{remote_filename}; fi") do |f| f.gets end
+        actual_md5 = Mirrors.ssh_open_pipe(mirror, "if [ -f #{remote_filename} ]; then (which md5sum >/dev/null) && md5sum #{remote_filename} || md5 -q #{remote_filename}; fi") { |f| f.gets }
         if actual_md5 !~ /^[0-9a-f]{32}/
           raise MirrorError, "Error verifying #{remote_user_host}:#{remote_filename}: #{actual_md5}"
         end
@@ -111,7 +111,7 @@ module Mirrors
 
         retry
       end
-    }
+    end
   end
   module_function :copy_file_to_mirrors
 
@@ -139,21 +139,21 @@ module Mirrors
 
     mirrors = CONFIG["image_servers"]
     if options[:preview] then
-      mirrors =  mirrors.select { |mirror|
+      mirrors =  mirrors.select do |mirror|
         mirror[:nopreview] != true
-      }
+      end
     end
 
     if !options[:preview] then
-      mirrors =  mirrors.select { |mirror|
+      mirrors =  mirrors.select do |mirror|
         mirror[:previews_only] != true
-      }
+      end
     end
 
     if options[:zipfile] then
-      mirrors =  mirrors.select { |mirror|
+      mirrors =  mirrors.select do |mirror|
         mirror[:nozipfile] != true
-      }
+      end
     end
 
     raise "No usable mirrors" if mirrors.empty?
@@ -165,7 +165,7 @@ module Mirrors
     seed %= total_weights
 
     server = nil
-    mirrors.each { |s|
+    mirrors.each do |s|
       w = s[:traffic]
       if seed < w
         server = s
@@ -173,7 +173,7 @@ module Mirrors
       end
 
       seed -= w
-    }
+    end
     server ||= mirrors[0]
 
     # If this server has aliases, and an ID has been specified, pick a random server alias

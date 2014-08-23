@@ -9,7 +9,7 @@ class HistoryController < ApplicationController
 
     q = Hash.new { |h, k| h[k] = [] }
 
-    search.split(" ").each { |s|
+    search.split(" ").each do |s|
       if s =~ /^(.+?):(.*)/
         search_type = Regexp.last_match[1]
         param = Regexp.last_match[2]
@@ -33,7 +33,7 @@ class HistoryController < ApplicationController
       else
         q[:keywords] << s
       end
-    }
+    end
 
     q[:type] = q[:type].pluralize if q.key?(:type)
     q[:inner_type] = q[:inner_type].pluralize if q.key?(:inner_type)
@@ -187,11 +187,11 @@ class HistoryController < ApplicationController
 
     histories = {}
     total_histories = 0
-    @changes.each { |change|
+    @changes.each do |change|
       next if histories[change.history_id]
       histories[change.history_id] = true
       total_histories += 1
-    }
+    end
 
     if total_histories > 1 && !@current_user.is_privileged_or_higher?
       respond_to_error("Only privileged users can undo more than one change at once", :status => 403)
@@ -204,7 +204,7 @@ class HistoryController < ApplicationController
     error_texts = []
     successful = 0
     failed = 0
-    @changes.each { |change|
+    @changes.each do |change|
       if !errors[change]
         successful += 1
         next
@@ -215,7 +215,7 @@ class HistoryController < ApplicationController
       when :denied
         error_texts << "Some changes were not made because you do not have access to make them."
       end
-    }
+    end
     error_texts.uniq!
 
     respond_to_success("Changes made.", { :action => "index" }, :api => { :successful => successful, :failed => failed, :errors => error_texts })

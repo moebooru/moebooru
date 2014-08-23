@@ -10,9 +10,9 @@ module Versioned
 
   def get_versioned_classes_by_name
     val = {}
-    get_versioned_classes.each { |cls|
+    get_versioned_classes.each do |cls|
       val[cls.table_name] = cls
-    }
+    end
     val
   end
   module_function :get_versioned_classes_by_name
@@ -76,7 +76,7 @@ module ActiveRecord
   public
     def save_versioned_attributes
       transaction do
-        self.class.get_versioned_attributes.each { |att, options|
+        self.class.get_versioned_attributes.each do |att, options|
           # Always save all properties on creation.
           #
           # Don't use _changed?; it'll be true if a field was changed and then changed back,
@@ -94,7 +94,7 @@ module ActiveRecord
                           :value => new,
                           :history_id => history.id)
           h.save!
-        }
+        end
       end
 
       # The object has been saved, so don't treat it as new if it's saved again.
@@ -275,14 +275,14 @@ module ActiveRecord
           attrs = c.get_versioned_attributes
         end
 
-        attrs.each { |att, opts|
+        attrs.each do |att, opts|
           # If any histories already exist for this attribute, assume that it's already been updated.
           next if HistoryChange.find(:first, :conditions => ["table_name = ? AND column_name = ?", table_name, att.to_s])
           attributes_to_update << att
-        }
+        end
         return if attributes_to_update.empty?
 
-        attributes_to_update = attributes_to_update.select { |att|
+        attributes_to_update = attributes_to_update.select do |att|
           column_exists = select_value_sql "SELECT 1 FROM information_schema.columns WHERE table_name = ? AND column_name = ?", table_name, att.to_s
           if column_exists
             true
@@ -293,13 +293,13 @@ module ActiveRecord
 
             false
           end
-        }
+        end
         return if attributes_to_update.empty?
 
         transaction do
           current = 1
           count = c.count(:all)
-          c.find(:all, :order => :id).each { |item|
+          c.find(:all, :order => :id).each do |item|
             p "%i/%i" % [current, count]
             current += 1
 
@@ -322,7 +322,7 @@ module ActiveRecord
             end
 
             to_create = []
-            attributes_to_update.each { |att|
+            attributes_to_update.each do |att|
               value = item.__send__(att.to_s)
               options = {
                 :column_name => att.to_s,
@@ -333,7 +333,7 @@ module ActiveRecord
               }
 
               escaped_options = {}
-              options.each { |key, value|
+              options.each do |key, value|
                 if value.nil?
                   escaped_options[key] = "NULL"
                 else
@@ -341,34 +341,34 @@ module ActiveRecord
                   quoted_value = Base.connection.quote(value, column)
                   escaped_options[key] = quoted_value
                 end
-              }
+              end
 
               to_create += [escaped_options]
-            }
+            end
 
             columns = to_create.first.map { |key, value| key.to_s }
 
             values = []
-            to_create.each { |row|
+            to_create.each do |row|
               outrow = []
-              columns.each { |col|
+              columns.each do |col|
                 val = row[col.to_sym]
                 outrow += [val]
-              }
+              end
               values += ["(#{outrow.join(",")})"]
-            }
+            end
             sql = <<-EOS
               INSERT INTO history_changes (#{columns.join(", ")}) VALUES #{values.join(",")}
             EOS
             Base.connection.execute sql
-          }
+          end
         end
       end
 
       def import_post_tag_history
         count = PostTagHistory.count(:all)
         current = 1
-        PostTagHistory.find(:all, :order => "id ASC").each { |tag_history|
+        PostTagHistory.find(:all, :order => "id ASC").each do |tag_history|
           p "%i/%i" % [current, count]
           current += 1
 
@@ -423,13 +423,13 @@ module ActiveRecord
                                      :value => rating)
             c.save!
           end
-        }
+        end
       end
 
       def import_note_history
         count = NoteVersion.count(:all)
         current = 1
-        NoteVersion.find(:all, :order => "id ASC").each { |ver|
+        NoteVersion.find(:all, :order => "id ASC").each do |ver|
           p "%i/%i" % [current, count]
           current += 1
 
@@ -440,14 +440,14 @@ module ActiveRecord
           end
 
           fields = []
-          [:is_active, :body, :x, :y, :width, :height].each { |field|
+          [:is_active, :body, :x, :y, :width, :height].each do |field|
             value = ver.send(field)
             if prev then
               prev_value = prev.send(field)
               next if value == prev_value
             end
             fields << [field.to_s, value]
-          }
+          end
 
           # Only create the History if we actually found any changes.
           if fields.any? then
@@ -458,15 +458,15 @@ module ActiveRecord
                             :aux => { :note_body => prev ? prev.body : ver.body })
             h.save!
 
-            fields.each { |f|
+            fields.each do |f|
               c = h.history_changes.new(:table_name => "notes",
                                        :remote_id => ver.note_id,
                                        :column_name => f[0],
                                        :value => f[1])
               c.save!
-            }
+            end
           end
-        }
+        end
       end
 
       # Add base history values for newly-added properties.
@@ -474,9 +474,9 @@ module ActiveRecord
       # This is only used for importing initial histories.  When adding new versioned properties,
       # call update_versioned_tables directly with the table and attributes to update.
       def update_all_versioned_tables
-        Versioned.get_versioned_classes.each { |cls|
+        Versioned.get_versioned_classes.each do |cls|
           update_versioned_tables cls, :allow_missing => true
-        }
+        end
       end
     end
   end

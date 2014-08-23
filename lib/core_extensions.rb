@@ -48,11 +48,11 @@ class Hash
     if children.empty? then
       options[:builder].tag!(root, attrs)
     else
-      options[:builder].tag!(root, attrs) {
+      options[:builder].tag!(root, attrs) do
         children.each do |key, child|
           child.to_xml(options.merge(:root => key.to_s))
         end
-      }
+      end
     end
   end
 end

@@ -26,7 +26,7 @@ class PoolController < ApplicationController
         query = params[:query].split
       end
 
-      query.each { |token|
+      query.each do |token|
         if token =~ /^(order|limit|posts):(.+)$/
           if Regexp.last_match[1] == "order"
             order = Regexp.last_match[2]
@@ -39,7 +39,7 @@ class PoolController < ApplicationController
         else
           search_tokens << token
         end
-      }
+      end
     end
 
     if !search_tokens.empty? then
@@ -60,14 +60,14 @@ class PoolController < ApplicationController
       # This also doesn't perform tokenization, so some obscure cases won't match perfectly;
       # for example, "abc def" will match "xxxabc def abc" when it probably shouldn't.  Doing
       # this more correctly requires Postgresql support that doesn't exist right now.
-      query.each { |q|
+      query.each do |q|
         # Don't do this if there are no spaces in the query, so we don't turn off tsquery
         # parsing when we don't need to.
         next if !q.include?(" ")
         conds << "(position(LOWER(?) IN LOWER(replace_underscores(name))) > 0 OR position(LOWER(?) IN LOWER(description)) > 0)"
         cond_params << q
         cond_params << q
-      }
+      end
     end
 
     options[:conditions] = [conds.join(" AND "), *cond_params]
@@ -90,11 +90,11 @@ class PoolController < ApplicationController
 
     @pools = Pool.paginate options
     @samples = {}
-    @pools.each { |p|
+    @pools.each do |p|
       post = p.get_sample
       if !post then next end
       @samples[p] = post
-    }
+    end
 
     respond_to_list("pools", :atom => true)
   end
@@ -190,9 +190,9 @@ class PoolController < ApplicationController
         return
       end
 
-      @old_pool.pool_posts.each { |pp|
+      @old_pool.pool_posts.each do |pp|
         @new_pool.add_post(pp.post_id, :sequence => pp.sequence)
-      }
+      end
 
       respond_to_success("Pool created", :action => "show", :id => @new_pool.id)
     end
@@ -372,7 +372,7 @@ class PoolController < ApplicationController
     end
 
     @posts = []
-    from_posts.each_index { |idx|
+    from_posts.each_index do |idx|
       data = {}
       from = from_posts[idx].post
       to = to_posts[idx].post
@@ -400,6 +400,6 @@ class PoolController < ApplicationController
       data[:tags] = tags.join(" ")
 
       @posts << data
-    }
+    end
   end
 end

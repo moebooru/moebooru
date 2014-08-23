@@ -82,7 +82,7 @@ class CommentController < ApplicationController
     cond_params = []
     if params[:query]
       keywords = []
-      params[:query].scan(/\S+/).each { |s|
+      params[:query].scan(/\S+/).each do |s|
         if s =~ /^(.+?):(.*)/
           search_type = Regexp.last_match[1]
           param = Regexp.last_match[2]
@@ -99,7 +99,7 @@ class CommentController < ApplicationController
         end
 
         keywords << s
-      }
+      end
 
       if keywords.any?
         conds << "text_search_index @@ to_tsquery(?)"

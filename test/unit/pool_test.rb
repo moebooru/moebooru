@@ -191,7 +191,7 @@ class PoolTest < ActiveSupport::TestCase
 
   # Check validity of all posts after each operation.
   def check_consistency
-    PoolPost.find(:all).each { |pp|
+    PoolPost.find(:all).each do |pp|
       if pp.active
         # An active post must never have a master.
         assert_equal(nil, pp.master_id)
@@ -211,7 +211,7 @@ class PoolTest < ActiveSupport::TestCase
         assert_equal(pp.slave.master_id, pp.id)
         assert_equal(pp.slave.sequence, pp.sequence)
       end
-    }
+    end
   end
 
   # Test that parenting a post that's in a pool creates the slave pool post.

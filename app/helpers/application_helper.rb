@@ -68,7 +68,7 @@ module ApplicationHelper
   def format_inlines(text, id)
     num = 0
     list = []
-    text.gsub!(/image #\d+/i) { |t|
+    text.gsub!(/image #\d+/i) do |t|
       # FIXME: for some reason, the capture variable, $1 returned null here.
       i = Inline.find(t[7..-1]) rescue nil
       if i then
@@ -79,7 +79,7 @@ module ApplicationHelper
       else
         t
       end
-    }
+    end
 
     if num > 0 then
       text << '<script language="javascript">' + list.join("\n") + "</script>"

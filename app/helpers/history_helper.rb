@@ -81,7 +81,7 @@ module HistoryHelper
       },
     }
 
-    @att_options.each_key { |classname|
+    @att_options.each_key do |classname|
       @att_options[classname] = {
         :fields => {},
         :primary_order => 1,
@@ -90,10 +90,10 @@ module HistoryHelper
       }.merge(@att_options[classname])
 
       c = @att_options[classname][:fields]
-      c.each_key { |field|
+      c.each_key do |field|
         c[field] = get_default_field_options.merge(c[field])
-      }
-    }
+      end
+    end
 
     @att_options
   end
@@ -157,20 +157,20 @@ module HistoryHelper
       end
     end
 
-    parts.sort! { |a, b|
+    parts.sort! do |a, b|
       comp = 0
-      [:primary_order, :field, :sort_key].each { |field|
+      [:primary_order, :field, :sort_key].each do |field|
         comp = a[field] <=> b[field]
         break if comp != 0
-      }
+      end
       comp
-    }
+    end
 
-    parts.each_index { |idx|
+    parts.each_index do |idx|
       next if idx == 0
       next if parts[idx][:field] == parts[idx - 1][:field]
       parts[idx - 1][:html] << ", "
-    }
+    end
 
     html = ""
 

@@ -164,9 +164,9 @@ private
     stack << node
 
     if node[:children] then
-      node[:children].each { |child|
+      node[:children].each do |child|
         stack_object_recurse(child, stack, done)
-      }
+      end
     end
   end
 end

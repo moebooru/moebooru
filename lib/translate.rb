@@ -9,7 +9,7 @@ module Translate
     server = "http://ajax.googleapis.com"
 
     begin
-      Timeout::timeout(10) {
+      Timeout::timeout(10) do
         url = URI.parse(server)
 
         response = Net::HTTP.start(url.host, url.port) do |http|
@@ -33,7 +33,7 @@ module Translate
           raise ServerError, resp["responseDetails"]
         end
         return resp
-      }
+      end
     rescue SocketError, SystemCallError => e
       raise ServerError, "Communication error"
     rescue Timeout::Error => e
@@ -61,9 +61,9 @@ module Translate
 
     server = "http://ajax.googleapis.com"
     path = "/ajax/services/language/translate"
-    languages.each { |lang|
+    languages.each do |lang|
       params += [{ :name => "langpair", :data => "|%s" % lang }]
-    }
+    end
 
     #resp = Translate.request(path)
     resp = Translate.post(path, params, :referer => options[:referer])
@@ -78,16 +78,16 @@ module Translate
     # one target language.  Handle both.
     translations = []
     if data.is_a?(Array) then
-      data.each { |d|
+      data.each do |d|
         translations << d["responseData"]
-      }
+      end
     else
         translations << data
     end
 
     result = {}
     source_lang = translations[0]["detectedSourceLanguage"]
-    languages.each_index { |i|
+    languages.each_index do |i|
       lang = languages[i]
       if lang == source_lang then
         # Guarantee that if the source and destination languages are the same, the output
@@ -96,7 +96,7 @@ module Translate
       else
         result[lang] = translations[i]["translatedText"]
       end
-    }
+    end
     [result, source_lang]
   end
 

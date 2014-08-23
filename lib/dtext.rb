@@ -34,13 +34,13 @@ module DText
   def parseinline(str)
     # Short links subtitution:
     str.gsub!(/\[\[(.+?)\]\]/) do # [[title]] or [[title|label]] ;link to wiki
-      data = $1.split("|", 2)
+      data = Regexp.last_match[1].split("|", 2)
       title = data[0]
       label = data[1].nil? ? title : data[1]
       "<a href=\"/wiki/show?title=#{CGI.escape(CGI.unescapeHTML(title.tr(" ", "_")))}\">#{label}</a>"
     end
     str.gsub!(/\{\{(.+?)\}\}/) do # {{post tags here}} ;search post with tags
-      "<a href=\"/post?tags=#{CGI.escape(CGI.unescapeHTML($1))}\">#{$1}</a>"
+      "<a href=\"/post?tags=#{CGI.escape(CGI.unescapeHTML(Regexp.last_match[1]))}\">#{Regexp.last_match[1]}</a>"
     end
 
     # Miscellaneous single line tags subtitution.
@@ -80,7 +80,7 @@ module DText
     if state.last =~ /\d/ or str =~ /^\*+\s+/
       parselist str, state
     elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
-      str = "<#{$1}>#{$2}</#{$1}>"
+      str = "<#{Regexp.last_match[1]}>#{Regexp.last_match[2]}</#{Regexp.last_match[1]}>"
     else
       str
     end

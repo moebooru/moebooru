@@ -36,8 +36,8 @@ class UserMailer < ActionMailer::Base
   def self.normalize_address(address)
     if defined?(IDN)
       address =~ /\A([^@]+)@(.+)\Z/
-      mailbox = $1
-      domain = IDN::Idna.toASCII($2)
+      mailbox = Regexp.last_match[1]
+      domain = IDN::Idna.toASCII(Regexp.last_match[2])
       "#{mailbox}@#{domain}"
     else
       address

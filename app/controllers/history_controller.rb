@@ -11,8 +11,8 @@ class HistoryController < ApplicationController
 
     search.split(" ").each { |s|
       if s =~ /^(.+?):(.*)/
-        search_type = $1
-        param = $2
+        search_type = Regexp.last_match[1]
+        param = Regexp.last_match[2]
 
         if search_type == "user"
           q[:user] = param

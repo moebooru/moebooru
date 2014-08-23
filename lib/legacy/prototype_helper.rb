@@ -658,7 +658,7 @@ module ActionView
     private
       def method_missing(method, *arguments, &block)
         if method.to_s =~ /(.*)=$/
-          assign($1, arguments.first)
+          assign(Regexp.last_match[1], arguments.first)
         else
           call("#{method.to_s.camelize(:lower)}", *arguments, &block)
         end

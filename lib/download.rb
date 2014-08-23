@@ -19,7 +19,7 @@ module Danbooru
 
     # Decode data: URLs.
     if source =~ /^data:([^;]{1,100})(;[^;]{1,100})?,(.*)$/
-      data = Base64.decode64($3)
+      data = Base64.decode64(Regexp.last_match[3])
       return yield LocalData.new(data)
     end
 
@@ -62,7 +62,7 @@ module Danbooru
 
           # Don't download the small version
           if source =~ %r!(/img/.+?/.+?)_m.+$!
-            match = $1
+            match = Regexp.last_match[1]
             source.sub!(match + "_m", match)
           end
         end

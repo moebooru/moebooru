@@ -28,13 +28,13 @@ class PoolController < ApplicationController
 
       query.each { |token|
         if token =~ /^(order|limit|posts):(.+)$/
-          if $1 == "order"
-            order = $2
-          elsif $1 == "limit"
-            options[:per_page] = $2.to_i
+          if Regexp.last_match[1] == "order"
+            order = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "limit"
+            options[:per_page] = Regexp.last_match[2].to_i
             options[:per_page] = [options[:per_page], 100].min
-          elsif $1 == "posts"
-            Post.generate_sql_range_helper(Tag.parse_helper($2), "post_count", conds, cond_params)
+          elsif Regexp.last_match[1] == "posts"
+            Post.generate_sql_range_helper(Tag.parse_helper(Regexp.last_match[2]), "post_count", conds, cond_params)
           end
         else
           search_tokens << token

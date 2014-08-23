@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class TagSubscriptionTest < ActiveSupport::TestCase
   fixtures :users
@@ -8,7 +8,7 @@ class TagSubscriptionTest < ActiveSupport::TestCase
   end
 
   def create_post(tags, params = {})
-    post = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
+    post = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_file("#{Rails.root}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
     @test_number += 1
     post
   end
@@ -25,18 +25,6 @@ class TagSubscriptionTest < ActiveSupport::TestCase
 
     ft = create_tag_subscription("tag2")
     assert_equal("#{p2.id},#{p1.id}", ft.cached_post_ids)
-  end
-
-  def test_prune
-    old = CONFIG["tag_subscription_post_limit"]
-    CONFIG["tag_subscription_post_limit"] = 3
-
-    ft = create_tag_subscription("tag1")
-    ft.update_attribute(:cached_post_ids, "6,5,4,3,2,1")
-    ft.prune!
-    assert_equal("6", ft.cached_post_ids)
-
-    CONFIG["tag_subscription_post_limit"] = old
   end
 
   def test_find_post_ids

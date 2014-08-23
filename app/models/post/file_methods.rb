@@ -122,7 +122,7 @@ module Post::FileMethods
     crc32_accum = 0
     File.open(path, "rb") do |fp|
       buf = ""
-      while fp.read(1024 * 64, buf) do
+      while fp.read(1024 * 64, buf)
         md5_obj << buf
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
@@ -138,7 +138,7 @@ module Post::FileMethods
     crc32_accum = 0
     File.open(jpeg_path, "rb") do |fp|
       buf = ""
-      while fp.read(1024 * 64, buf) do
+      while fp.read(1024 * 64, buf)
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
     end
@@ -441,7 +441,7 @@ module Post::FileMethods
     crc32_accum = 0
     File.open(tempfile_sample_path, "rb") do |fp|
       buf = ""
-      while fp.read(1024 * 64, buf) do
+      while fp.read(1024 * 64, buf)
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
     end
@@ -553,7 +553,7 @@ module Post::FileMethods
     crc32_accum = 0
     File.open(tempfile_jpeg_path, "rb") do |fp|
       buf = ""
-      while fp.read(1024 * 64, buf) do
+      while fp.read(1024 * 64, buf)
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
     end

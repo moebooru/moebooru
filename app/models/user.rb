@@ -529,7 +529,7 @@ class User < ActiveRecord::Base
 
       begin
         Moebooru::Resizer.resize(image_ext, image_path, tempfile_path, size, 95)
-      rescue Exception => x
+      rescue => x
         FileUtils.rm_f(tempfile_path)
 
         errors.add "avatar", "couldn't be generated (#{x})"

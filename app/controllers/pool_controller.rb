@@ -229,7 +229,7 @@ class PoolController < ApplicationController
         respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => params[:post_id] }, :status => 423)
       rescue Pool::AccessDeniedError
         access_denied
-      rescue Exception => x
+      rescue => x
         respond_to_error(x.class, :controller => "post", :action => "show", :id => params[:post_id])
       end
     else

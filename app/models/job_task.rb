@@ -33,7 +33,7 @@ class JobTask < ActiveRecord::Base
     rescue SystemExit => x
       update_attributes(:status => "pending")
       raise x
-    rescue Exception => x
+    rescue => x
       text = "\n\n"
       text << "Error executing job: #{task_type}\n"
       text << "    "

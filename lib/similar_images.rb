@@ -101,7 +101,7 @@ module SimilarImages
     server_responses.map do |server, xml|
       doc = begin
         Nokogiri::XML xml.to_valid_utf8
-      rescue Exception
+      rescue
         errors[server] = { :message => "parse error" }
         next
       end

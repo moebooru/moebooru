@@ -41,7 +41,7 @@ class Comment < ActiveRecord::Base
 
   # Get the comment translated into the requested language.  Languages in source_langs
   # will be left untranslated.
-  def get_translated_formatted_body_uncached(target_lang, source_langs)
+  def get_translated_formatted_body_uncached(_target_lang, _source_langs)
       [get_formatted_body, []]
   end
 

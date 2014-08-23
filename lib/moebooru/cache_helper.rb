@@ -1,6 +1,6 @@
 module Moebooru
   module CacheHelper
-    def expire(options = {})
+    def expire(_options = {})
       Rails.cache.write("$cache_version", Time.now.to_i)
     end
 

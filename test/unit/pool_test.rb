@@ -17,7 +17,7 @@ class PoolTest < ActiveSupport::TestCase
     PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post_id])
   end
 
-  def add_posts(pool, options = {})
+  def add_posts(pool, _options = {})
     pool.add_post(1)
     pool.add_post(2)
     pool.add_post(3)

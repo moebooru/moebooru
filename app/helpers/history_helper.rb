@@ -194,7 +194,7 @@ module HistoryHelper
     html.force_encoding("utf-8").html_safe
   end
 
-  def format_change(history, change, options, table_options)
+  def format_change(_history, change, options, table_options)
     html = ""
 
     classes = []

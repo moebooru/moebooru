@@ -464,7 +464,7 @@ module Post::FileMethods
     end
   end
 
-  def get_file_image(user = nil)
+  def get_file_image(_user = nil)
     {
       :url => file_url,
       :ext => file_ext,
@@ -557,7 +557,7 @@ module Post::FileMethods
   end
 
   # Returns true if the post has a JPEG version, and we're going to use it.
-  def use_jpeg?(user = nil)
+  def use_jpeg?(_user = nil)
     CONFIG["jpeg_enable"] && has_jpeg?
   end
 

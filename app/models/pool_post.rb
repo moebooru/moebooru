@@ -14,7 +14,7 @@ class PoolPost < ActiveRecord::Base
     user.has_permission?(pool) # only the owner can change is_public
   end
 
-  def can_change?(user, attribute)
+  def can_change?(user, _attribute)
     return false unless user.is_member_or_higher?
     pool.is_public? || user.has_permission?(pool)
   end

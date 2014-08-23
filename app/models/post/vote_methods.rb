@@ -30,7 +30,7 @@ module Post::VoteMethods
     reload
   end
 
-  def vote!(score, user, options = {})
+  def vote!(score, user, _options = {})
     score = CONFIG["vote_record_min"] if score < CONFIG["vote_record_min"]
     score = CONFIG["vote_record_max"] if score > CONFIG["vote_record_max"]
 

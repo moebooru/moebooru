@@ -562,7 +562,7 @@ module ActionView
             literal("function() { #{generator.to_s} }")
           end
 
-          def method_missing(method, *arguments)
+          def method_missing(method, *_arguments)
             JavaScriptProxy.new(self, method.to_s.camelize)
           end
       end
@@ -730,7 +730,7 @@ module ActionView
       true
     end
 
-    def as_json(options = nil)
+    def as_json(_options = nil)
       @variable
     end
 

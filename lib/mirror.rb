@@ -138,7 +138,7 @@ module Mirrors
     end
 
     mirrors = CONFIG["image_servers"]
-    if (options[:preview]) then
+    if options[:preview] then
       mirrors =  mirrors.select { |mirror|
         mirror[:nopreview] != true
       }
@@ -150,7 +150,7 @@ module Mirrors
       }
     end
 
-    if (options[:zipfile]) then
+    if options[:zipfile] then
       mirrors =  mirrors.select { |mirror|
         mirror[:nozipfile] != true
       }

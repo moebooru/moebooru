@@ -75,12 +75,12 @@ class WikiController < ApplicationController
   end
 
   def edit
-    if params[:title] == nil
+    if params[:title].nil?
       render :text => "no title specified"
     else
       @wiki_page = WikiPage.find_page(params[:title], params[:version])
 
-      if @wiki_page == nil
+      if @wiki_page.nil?
         redirect_to :action => "add", :title => params[:title]
       end
     end
@@ -101,7 +101,7 @@ class WikiController < ApplicationController
   end
 
   def show
-    if params[:title] == nil
+    if params[:title].nil?
       render :text => "no title specified"
       return
     end

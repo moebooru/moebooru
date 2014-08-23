@@ -98,19 +98,19 @@ class ApplicationController < ActionController::Base
         head :forbidden and return unless @current_user
       end
 
-      if @current_user == nil && session[:user_id]
+      if @current_user.nil? && session[:user_id]
         @current_user = User.find_by_id(session[:user_id])
       end
 
-      if @current_user == nil && cookies[:login] && cookies[:pass_hash]
+      if @current_user.nil? && cookies[:login] && cookies[:pass_hash]
         @current_user = User.authenticate_hash(cookies[:login], cookies[:pass_hash])
       end
 
-      if @current_user == nil && params[:login] && params[:password_hash]
+      if @current_user.nil? && params[:login] && params[:password_hash]
         @current_user = User.authenticate_hash(params[:login], params[:password_hash])
       end
 
-      if @current_user == nil && params[:user].is_a?(Hash)
+      if @current_user.nil? && params[:user].is_a?(Hash)
         @current_user = User.authenticate(params[:user][:name], params[:user][:password])
       end
 

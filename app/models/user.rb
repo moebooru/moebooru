@@ -197,7 +197,7 @@ class User < ActiveRecord::Base
       type = options[:type]
 
       uploaded_tags = Rails.cache.read("uploaded_tags/#{id}/#{type}")
-      return uploaded_tags unless uploaded_tags == nil
+      return uploaded_tags unless uploaded_tags.nil?
 
       if Rails.env == "test"
         # disable filtering in test mode to simplify tests
@@ -244,7 +244,7 @@ class User < ActiveRecord::Base
       type = options[:type]
 
       favorite_tags = Rails.cache.read("favorite_tags/#{id}/#{type}")
-      return favorite_tags unless favorite_tags == nil
+      return favorite_tags unless favorite_tags.nil?
 
       if Rails.env == "test"
         # disable filtering in test mode to simplify tests

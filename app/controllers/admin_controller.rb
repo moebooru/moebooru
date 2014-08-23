@@ -64,7 +64,7 @@ class AdminController < ApplicationController
       keys << "stats/page/level=#{level}&page=20+"
     end
 
-    @post_stats = keys.inject({}) { |h, k| h[k] = Rails.cache.read(k); h }
+    @post_stats = keys.each_with_object({}) { |i, a| a[i] = Rails.cache.read(i) }
   end
 
   def reset_post_stats

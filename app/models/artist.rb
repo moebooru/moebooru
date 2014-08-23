@@ -10,7 +10,7 @@ class Artist < ActiveRecord::Base
           artists += Artist.joins(:artist_urls).where(:alias_id => nil).where("artist_urls.normalized_url LIKE ?", u).order(:name)
 
           # Remove duplicates based on name
-          artists = artists.inject({}) { |all, artist| all[artist.name] = artist; all }.values
+          artists = artists.each_with_object({}) { |i, a| a[i.name] = i }.values
           url = File.dirname(url)
         end
 

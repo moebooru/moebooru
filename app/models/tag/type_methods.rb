@@ -103,7 +103,7 @@ module Tag::TypeMethods
     m.versioning_group_by :action => "edit"
 
     # This maps ids to names
-    m.type_map = CONFIG["tag_types"].keys.select { |x| x =~ /^[A-Z]/ }.inject({}) { |all, x| all[CONFIG["tag_types"][x]] = x.downcase; all }
+    m.type_map = CONFIG["tag_types"].keys.select { |x| x =~ /^[A-Z]/ }.each_with_object({}) { |i, a| a[CONFIG["tag_types"][i]] = i.downcase }
   end
 
   def type_name

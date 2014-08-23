@@ -173,7 +173,7 @@ Moebooru::Application.routes.draw do
 
   # Settings
   namespace :settings do
-    resource :api, only: [:show, :update]
+    resource :api, :only => [:show, :update]
   end
 
   # Static

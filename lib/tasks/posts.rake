@@ -87,18 +87,18 @@ namespace :posts do
 
   desc "Upload posts to mirrors"
   task :mirror => :environment do
-    Post.find(:all, :conditions => ["NOT is_warehoused AND status <> 'deleted'"], :order => "id DESC").each { |post|
+    Post.find(:all, :conditions => ["NOT is_warehoused AND status <> 'deleted'"], :order => "id DESC").each do |post|
       p "Mirroring ##{post.id}..."
       post.upload_to_mirrors
-    }
+    end
   end
 
   desc "Recalculate pool post counts"
   task :recalc_pools => :environment do
-    Pool.find(:all).each { |pool|
+    Pool.find(:all).each do |pool|
       pool.recalculate_post_count
       pool.save!
-    }
+    end
   end
 
   desc "Regenerate post previews"

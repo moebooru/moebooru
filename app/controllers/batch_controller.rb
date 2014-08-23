@@ -45,41 +45,41 @@ class BatchController < ApplicationController
 
     if params[:do] == "pause" then
       conds.push("status = 'pending'")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
+      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.update_attributes(:status => "paused")
         count += 1
-      }
+      end
       flash[:notice] = "Paused %i uploads." % count
     elsif params[:do] == "unpause" then
       conds.push("status = 'paused'")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
+      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.update_attributes(:status => "pending")
         count += 1
-      }
+      end
       flash[:notice] = "Resumed %i uploads." % count
     elsif params[:do] == "retry" then
       conds.push("status = 'error'")
 
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
+      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.update_attributes(:status => "pending")
         count += 1
-      }
+      end
 
       flash[:notice] = "Retrying %i uploads." % count
     elsif params[:do] == "clear_finished" then
       conds.push("(status = 'finished' or status = 'error')")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
+      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.destroy
         count += 1
-      }
+      end
 
       flash[:notice] = "Cleared %i finished uploads." % count
     elsif params[:do] == "abort_all" then
       conds.push("(status = 'pending' or status = 'paused')")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each { |item|
+      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.destroy
         count += 1
-      }
+      end
 
       flash[:notice] = "Cancelled %i uploads." % count
     end

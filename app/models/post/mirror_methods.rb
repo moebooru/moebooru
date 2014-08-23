@@ -19,9 +19,9 @@ module Post::MirrorMethods
     local_base = "#{Rails.root}/public/data/"
 
     dirs = []
-    files_to_copy.each { |file|
+    files_to_copy.each do |file|
         dirs << File.dirname(file[local_base.length, file.length])
-    }
+    end
 
     options = {}
     if mode == :previews_only then
@@ -29,9 +29,9 @@ module Post::MirrorMethods
     end
 
     Mirrors.create_mirror_paths(dirs, options)
-    files_to_copy.each { |file|
+    files_to_copy.each do |file|
       Mirrors.copy_file_to_mirrors(file, options)
-    }
+    end
   end
 
   def upload_to_mirrors

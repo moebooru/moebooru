@@ -51,10 +51,10 @@ class ReportController < ApplicationController
 
       votes = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array(["SELECT COUNT(score) AS sum, score FROM post_votes WHERE #{conds.join(" AND ")} GROUP BY score", *params]))
       user["votes"] = {}
-      votes.each { |vote|
+      votes.each do |vote|
         score = vote["score"].to_i
         user["votes"][score] = vote["sum"]
-      }
+      end
     end
   end
 

@@ -112,9 +112,9 @@ module Post::ApiMethods
         vote_map = {}
         if !posts.empty? then
           votes = PostVote.where(:user_id => user.id, :post_id => posts)
-          votes.each { |v|
+          votes.each do |v|
             vote_map[v.post_id] = v.score
-          }
+          end
         end
         result[:votes] = vote_map
       end

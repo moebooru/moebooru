@@ -371,7 +371,7 @@ class PostController < ApplicationController
       fmt.xml do
         render :layout => false
       end
-      fmt.json {
+      fmt.json do
         if params[:api_version] != "2" then
           render :json => @posts.to_json
           return
@@ -384,7 +384,7 @@ class PostController < ApplicationController
         )
 
         render :json => api_data.to_json
-      }
+      end
       fmt.atom
     end
   end
@@ -766,12 +766,12 @@ class PostController < ApplicationController
         end
       end
       fmt.json do
-        @posts.each { |post|
+        @posts.each do |post|
           post.similarity = res[:similarity][post]
-        }
-        res[:posts_external].each { |post|
+        end
+        res[:posts_external].each do |post|
           post.similarity = res[:similarity][post]
-        }
+        end
         api_data = {
           :posts => @posts + res[:posts_external],
           :source => res[:source] ? res[:source] : res[:external_source],
@@ -780,9 +780,9 @@ class PostController < ApplicationController
 
         unless res[:errors].empty?
           api_data[:error] = []
-          res[:errors].map { |server, error|
+          res[:errors].map do |server, error|
             api_data[:error] << { :server => server, :message => error[:message], :services => error[:services].join(",") }
-          }
+          end
         end
 
         respond_to_success("", {}, :api => api_data)
@@ -791,34 +791,34 @@ class PostController < ApplicationController
       fmt.xml do
         x = Builder::XmlMarkup.new(:indent => 2)
         x.instruct!
-        render :xml => x.posts {
+        render :xml => x.posts do
          unless res[:errors].empty?
-            res[:errors].map { |server, error|
+            res[:errors].map do |server, error|
               { :server => server, :message => error[:message], :services => error[:services].join(",") }.to_xml(:root => "error", :builder => x, :skip_instruct => true)
-            }
+            end
          end
 
           if res[:source]
-           x.source {
+           x.source do
              res[:source].to_xml(:builder => x, :skip_instruct => true)
-           }
+           end
           else
-           x.source {
+           x.source do
              res[:external_source].to_xml(:builder => x, :skip_instruct => true)
-           }
+           end
           end
 
-          @posts.each { |e|
-           x.similar(:similarity => res[:similarity][e]) {
+          @posts.each do |e|
+           x.similar(:similarity => res[:similarity][e]) do
              e.to_xml(:builder => x, :skip_instruct => true)
-           }
-          }
-          res[:posts_external].each { |e|
-           x.similar(:similarity => res[:similarity][e]) {
+           end
+          end
+          res[:posts_external].each do |e|
+           x.similar(:similarity => res[:similarity][e]) do
              e.to_xml(:builder => x, :skip_instruct => true)
-           }
-          }
-        }
+           end
+          end
+        end
       end
     end
   end

@@ -232,10 +232,10 @@ class InlineImage < ActiveRecord::Base
 
   def generate_hash(path)
     md5_obj = Digest::MD5.new
-    File.open(path, "rb") { |fp|
+    File.open(path, "rb") do |fp|
       buf = ""
       while fp.read(1024 * 64, buf) do md5_obj << buf end
-    }
+    end
 
     self.md5 = md5_obj.hexdigest
   end

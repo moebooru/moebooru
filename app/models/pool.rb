@@ -110,9 +110,9 @@ class Pool < ActiveRecord::Base
       # the index.
       PoolPost.find(:all, :order => "posts.is_shown_in_index DESC, nat_sort(pools_posts.sequence), pools_posts.post_id",
                     :joins => "JOIN posts ON posts.id = pools_posts.post_id",
-                    :conditions => ["pool_id = ? AND posts.status = 'active' AND pools_posts.active", id]).each { |pool_post|
+                    :conditions => ["pool_id = ? AND posts.status = 'active' AND pools_posts.active", id]).each do |pool_post|
         return pool_post.post if pool_post.post.can_be_seen_by?(Thread.current["danbooru-user"])
-      }
+      end
       return rescue nil
     end
 
@@ -138,9 +138,9 @@ class Pool < ActiveRecord::Base
 
     def next_sequence
       seq = 0
-      pool_posts.find(:all, :select => "sequence", :order => "sequence DESC").each { |pp|
+      pool_posts.find(:all, :select => "sequence", :order => "sequence DESC").each do |pp|
         seq = [seq, pp.sequence.to_i].max
-      }
+      end
 
       seq + 1
     end
@@ -248,9 +248,9 @@ class Pool < ActiveRecord::Base
       max_sequence_digits = 3
       pool_posts.each do |pool_post|
         filtered_sequence = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)?)?.*/, '\1') # 45a -> 45
-        filtered_sequence.split(/-/).each { |p|
+        filtered_sequence.split(/-/).each do |p|
           max_sequence_digits = [p.length, max_sequence_digits].max
-        }
+        end
       end
 
       filename_count = {}
@@ -270,17 +270,17 @@ class Pool < ActiveRecord::Base
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
-        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) { |m|
+        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) do |m|
           if Regexp.last_match[1] != ""
             suffix = Regexp.last_match[3]
-            numbers = Regexp.last_match[1].split(/-/).map { |p|
+            numbers = Regexp.last_match[1].split(/-/).map do |p|
               "%0*i" % [max_sequence_digits, p.to_i]
-            }.join("-")
+            end.join("-")
             "%s%s" % [numbers, suffix]
           else
             "%s" % [Regexp.last_match[3]]
           end
-        }
+        end
 
         #filename = "%0*i" % [max_sequence_digits, pool_post.sequence]
 
@@ -324,9 +324,9 @@ class Pool < ActiveRecord::Base
       max_sequence_digits = 3
       pool_posts.each do |pool_post|
         filtered_sequence = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)?)?.*/, '\1') # 45a -> 45
-        filtered_sequence.split(/-/).each { |p|
+        filtered_sequence.split(/-/).each do |p|
           max_sequence_digits = [p.length, max_sequence_digits].max
-        }
+        end
       end
 
       filename_count = {}
@@ -346,17 +346,17 @@ class Pool < ActiveRecord::Base
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
-        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) { |m|
+        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) do |m|
           if Regexp.last_match[1] != ""
             suffix = Regexp.last_match[3]
-            numbers = Regexp.last_match[1].split(/-/).map { |p|
+            numbers = Regexp.last_match[1].split(/-/).map do |p|
               "%0*i" % [max_sequence_digits, p.to_i]
-            }.join("-")
+            end.join("-")
             "%s%s" % [numbers, suffix]
           else
             "%s" % [Regexp.last_match[3]]
           end
-        }
+        end
 
         #filename = "%0*i" % [max_sequence_digits, pool_post.sequence]
 

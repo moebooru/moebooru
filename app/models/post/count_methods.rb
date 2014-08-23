@@ -6,9 +6,9 @@ module Post::CountMethods
       cache_version = Rails.cache.read("$cache_version").to_i
       key = { :post_count => tags, :v => cache_version }
 
-      count = Rails.cache.fetch(key) {
+      count = Rails.cache.fetch(key) do
         Post.count_by_sql(Post.generate_sql(tags, :count => true))
-      }.to_i
+      end.to_i
 
       count
 

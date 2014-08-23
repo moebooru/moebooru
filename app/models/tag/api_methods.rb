@@ -53,7 +53,7 @@ module Tag::ApiMethods
       tags_with_type = []
       current_tag = ""
       last_tag_id = nil
-      tags.each { |tag|
+      tags.each do |tag|
         id = tag["id"]
         if id != last_tag_id then
           if !last_tag_id.nil? then
@@ -67,7 +67,7 @@ module Tag::ApiMethods
         if !tag["alias"].nil? then
           current_tag << tag["alias"] + "`"
         end
-      }
+      end
       if !last_tag_id.nil? then
         tags_with_type << current_tag
       end
@@ -78,7 +78,7 @@ module Tag::ApiMethods
 
     # Return the cache version of the summary.
     def get_summary_version
-      Rails.cache.fetch("$tag_version") do 0 end
+      Rails.cache.fetch("$tag_version") { 0 }
     end
   end
 end

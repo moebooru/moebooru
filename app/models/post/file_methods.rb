@@ -120,13 +120,13 @@ module Post::FileMethods
     # Compute both hashes in one pass.
     md5_obj = Digest::MD5.new
     crc32_accum = 0
-    File.open(path, "rb") { |fp|
+    File.open(path, "rb") do |fp|
       buf = ""
       while fp.read(1024 * 64, buf) do
         md5_obj << buf
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
-    }
+    end
 
     self.md5 = md5_obj.hexdigest
     self.crc32 = crc32_accum
@@ -136,12 +136,12 @@ module Post::FileMethods
     return false if !has_jpeg?
 
     crc32_accum = 0
-    File.open(jpeg_path, "rb") { |fp|
+    File.open(jpeg_path, "rb") do |fp|
       buf = ""
       while fp.read(1024 * 64, buf) do
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
-    }
+    end
     return false if jpeg_crc32 == crc32_accum
 
     self.jpeg_crc32 = crc32_accum
@@ -439,12 +439,12 @@ module Post::FileMethods
     self.sample_size = File.size(tempfile_sample_path)
 
     crc32_accum = 0
-    File.open(tempfile_sample_path, "rb") { |fp|
+    File.open(tempfile_sample_path, "rb") do |fp|
       buf = ""
       while fp.read(1024 * 64, buf) do
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
-    }
+    end
     self.sample_crc32 = crc32_accum
 
     true
@@ -541,12 +541,12 @@ module Post::FileMethods
     self.jpeg_size = File.size(tempfile_jpeg_path)
 
     crc32_accum = 0
-    File.open(tempfile_jpeg_path, "rb") { |fp|
+    File.open(tempfile_jpeg_path, "rb") do |fp|
       buf = ""
       while fp.read(1024 * 64, buf) do
         crc32_accum = Zlib.crc32(buf, crc32_accum)
       end
-    }
+    end
     self.jpeg_crc32 = crc32_accum
 
     true

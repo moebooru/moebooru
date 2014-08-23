@@ -34,9 +34,9 @@ class Tag < ActiveRecord::Base
   end
 
   def self.tag_type_indexes
-    CONFIG["tag_types"].keys.select { |x| x =~ /^[A-Z]/ }.reduce([]) { |all, x|
+    CONFIG["tag_types"].keys.select { |x| x =~ /^[A-Z]/ }.reduce([]) do |all, x|
       all << CONFIG["tag_types"][x]
-    }.sort
+    end.sort
   end
 
   def pretty_name

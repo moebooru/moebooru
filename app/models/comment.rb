@@ -48,9 +48,9 @@ class Comment < ActiveRecord::Base
   def get_translated_formatted_body(target_lang, source_langs)
     source_lang_list = source_langs.join(",")
     key = "comment:" + id.to_s + ":" + updated_at.to_f.to_s + ":" + target_lang + ":" + source_lang_list
-    Rails.cache.fetch(key) {
+    Rails.cache.fetch(key) do
       get_translated_formatted_body_uncached(target_lang, source_langs)
-    }
+    end
   end
 
   def author

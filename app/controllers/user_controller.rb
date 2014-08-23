@@ -209,9 +209,9 @@ class UserController < ApplicationController
     removed_tags = params[:remove] || []
 
     tags = @current_user.blacklisted_tags_array
-    added_tags.each { |tag|
+    added_tags.each do |tag|
       tags << tag if !tags.include?(tag)
-    }
+    end
 
     tags -= removed_tags
 

@@ -6,7 +6,7 @@ module SimilarImages
     services = services
     services ||= "local"
     if services == "all"
-      services = CONFIG["image_service_list"].map do |a, b| a end
+      services = CONFIG["image_service_list"].map { |a, b| a }
     else
       services = services.split(/,/)
     end
@@ -23,7 +23,7 @@ module SimilarImages
     services = options[:services]
 
     services_by_server = {}
-    services.each { |service|
+    services.each do |service|
       server = CONFIG["image_service_list"][service]
       if !server
         errors[""] = { :services => [service], :message => "%s is an unknown service" % service }
@@ -31,11 +31,11 @@ module SimilarImages
       end
       services_by_server[server] = [] unless services_by_server[server]
       services_by_server[server] += [service]
-    }
+    end
 
     # If the source is a local post, read the preview and send it with the request.
     if options[:type] == :post then
-      source_file = File.open(options[:source].preview_path, "rb") do |file| file.read end
+      source_file = File.open(options[:source].preview_path, "rb") { |file| file.read }
       source_filename = options[:source].preview_path
     elsif options[:type] == :file then
       source_file = options[:source].read
@@ -68,13 +68,13 @@ module SimilarImages
           }]
         end
 
-        services_list.each { |s|
+        services_list.each do |s|
           params += [{ :name => "service[]", :data => s }]
-        }
+        end
         params += [{ :name => "forcegray", :data => "on" }] if options[:forcegray] == "1"
 
         begin
-          Timeout::timeout(10) {
+          Timeout::timeout(10) do
             url = URI.parse(server)
             Net::HTTP.start(url.host, url.port) do |http|
               http.read_timeout = 10
@@ -84,7 +84,7 @@ module SimilarImages
               response = http.request(request)
               server_responses[server] = response.body
             end
-          }
+          end
         rescue SocketError, SystemCallError => e
           errors[server] = { :message => e }
         rescue Timeout::Error => e
@@ -163,11 +163,11 @@ module SimilarImages
     posts = posts.sort { |a, b| similarity[b] <=> similarity[a] }
     posts_external = posts_external.sort { |a, b| similarity[b] <=> similarity[a] }
 
-    errors.map { |server, error|
+    errors.map do |server, error|
       if !error[:services]
         error[:services] = services_by_server[server] rescue server
       end
-    }
+    end
     ret = { :posts => posts, :posts_external => posts_external, :similarity => similarity, :services => services, :errors => errors }
     if options[:type] == :post
       ret[:source] = options[:source]
@@ -272,7 +272,7 @@ module SimilarImages
 
   # Delete old searches.
   def cull_old_searches
-    Dir.foreach(SEARCH_CACHE_DIR) { |path|
+    Dir.foreach(SEARCH_CACHE_DIR) do |path|
       next if !valid_saved_search(path)
 
       file = "#{SEARCH_CACHE_DIR}/#{path}"
@@ -281,7 +281,7 @@ module SimilarImages
       if age > 60 * 60 * 24 then
         FileUtils.rm_f(file)
       end
-    }
+    end
   end
 
   module_function :similar_images, :get_services, :find_saved_search, :cull_old_searches, :save_search, :valid_saved_search

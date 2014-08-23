@@ -7,11 +7,11 @@ module Mirrors
     IO.popen("/usr/bin/ssh -o ServerAliveInterval=30 -o Compression=no -o BatchMode=yes -o ConnectTimeout=#{timeout} #{remote_user_host} '#{command}'") do |f|
       ret = yield(f)
     end
-    if ($? & 0xFF) != 0 then
-      raise MirrorError, "Command \"%s\" to %s exited with signal %i" % [command, mirror[:host], $? & 0xFF]
+    if ($CHILD_STATUS & 0xFF) != 0 then
+      raise MirrorError, "Command \"%s\" to %s exited with signal %i" % [command, mirror[:host], $CHILD_STATUS & 0xFF]
     end
-    if ($? >> 8) != 0 then
-      raise MirrorError, "Command \"%s\" to %s exited with status %i" % [command, mirror[:host], $? >> 8]
+    if ($CHILD_STATUS >> 8) != 0 then
+      raise MirrorError, "Command \"%s\" to %s exited with status %i" % [command, mirror[:host], $CHILD_STATUS >> 8]
     end
     ret
   end

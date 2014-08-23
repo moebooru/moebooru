@@ -227,7 +227,7 @@ module ActionView
       # <tt>\<script></tt> tag.
       module GeneratorMethods
         def to_s #:nodoc:
-          (@lines * $/).tap do |javascript|
+          (@lines * $INPUT_RECORD_SEPARATOR).tap do |javascript|
             if ActionView::Base.debug_rjs
               source = javascript.dup
               javascript.replace "try {\n#{source}\n} catch (e) "

@@ -1,9 +1,9 @@
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class TagTest < ActiveSupport::TestCase
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      Rails.cache.clear
     end
 
     @test_number = 1
@@ -14,7 +14,7 @@ class TagTest < ActiveSupport::TestCase
   end
 
   def create_post(tags, params = {})
-    post = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
+    post = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_file("#{Rails.root}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
     @test_number += 1
     post
   end
@@ -31,13 +31,13 @@ class TagTest < ActiveSupport::TestCase
     create_post("tag1 tag2")
 
     results = Tag.count_by_period(3.days.ago, Time.now).sort { |a, b| a["name"] <=> b["name"] }
-    assert_equal("2", results[0]["post_count"])
+    assert_equal(2, results[0]["post_count"])
     assert_equal("tag1", results[0]["name"])
-    assert_equal("1", results[1]["post_count"])
+    assert_equal(1, results[1]["post_count"])
     assert_equal("tag2", results[1]["name"])
 
     results = Tag.count_by_period(20.days.ago, 5.days.ago).sort { |a, b| a["name"] <=> b["name"] }
-    assert_equal("1", results[0]["post_count"])
+    assert_equal(1, results[0]["post_count"])
     assert_equal("tag1", results[0]["name"])
   end
 
@@ -73,7 +73,7 @@ class TagTest < ActiveSupport::TestCase
   if CONFIG["enable_caching"]
     def test_cache
       Tag.find_or_create_by_name("artist:a1")
-      assert_equal("artist", Cache.get("tag_type:a1"))
+      assert_equal("artist", Rails.cache.read(:tag_type => "a1"))
     end
   end
 
@@ -147,8 +147,9 @@ class TagTest < ActiveSupport::TestCase
     assert_equal(%w(tag2 2), related[1])
     assert_equal(%w(tag3 1), related[2])
 
-    # Make sure related tags are properly updated with the cache is expired
-    t.update_attributes(:cached_related_expires_on => 5.days.ago)
+    # Make sure related tags are properly updated
+    t.update(:cached_related_expires_on => 5.days.ago)
+    Rails.cache.clear
     t.reload
     related = t.related.sort { |a, b| a[0] <=> b[0] }
     assert_equal(4, related.size)
@@ -165,9 +166,9 @@ class TagTest < ActiveSupport::TestCase
     related = Tag.calculate_related_by_type("tag1", CONFIG["tag_types"]["Artist"]).sort { |a, b| a["name"] <=> b["name"] }
     assert_equal(2, related.size)
     assert_equal("tag2", related[0]["name"])
-    assert_equal("2", related[0]["post_count"])
+    assert_equal(2, related[0]["post_count"])
     assert_equal("tag3", related[1]["name"])
-    assert_equal("1", related[1]["post_count"])
+    assert_equal(1, related[1]["post_count"])
   end
 
   def test_types

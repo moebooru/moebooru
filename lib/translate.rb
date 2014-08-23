@@ -34,9 +34,9 @@ module Translate
         end
         return resp
       end
-    rescue SocketError, SystemCallError => e
+    rescue SocketError, SystemCallError
       raise ServerError, "Communication error"
-    rescue Timeout::Error => e
+    rescue Timeout::Error
       raise ServerError, "Timed out"
     end
   end
@@ -59,7 +59,6 @@ module Translate
     params += [{ :name => "format", :data => "html" }]
     params += [{ :name => "q", :data => s }]
 
-    server = "http://ajax.googleapis.com"
     path = "/ajax/services/language/translate"
     languages.each do |lang|
       params += [{ :name => "langpair", :data => "|%s" % lang }]

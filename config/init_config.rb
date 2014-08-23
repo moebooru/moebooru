@@ -219,7 +219,7 @@ CONFIG["tag_order"] = %w(artist copyright character general)
 CONFIG["exclude_from_tag_sidebar"] = [0]
 
 # Determine who can see a post. Note that since this is a block, return won't work. Use break.
-CONFIG["can_see_post"] = lambda do |user, post|
+CONFIG["can_see_post"] = lambda do |_user, _post|
   # By default, no posts are hidden.
   true
 
@@ -273,7 +273,7 @@ CONFIG["max_tag_subscriptions"] = 5
 
 # Languages that we're aware of.  This is what we show in "Secondary languages", to let users
 # select which languages they understand and that shouldn't be translated.
-CONFIG["known_languages"] = CONFIG["language_names"].map { |key, lang| key }.sort
+CONFIG["known_languages"] = CONFIG["language_names"].map { |key, _lang| key }.sort
 
 # The number of posts a privileged_or_lower can have pending at one time.  Any
 # further posts will be rejected.

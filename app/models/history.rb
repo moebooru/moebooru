@@ -70,8 +70,8 @@ class History < ActiveRecord::Base
     # list, so we can always save child nodes before parent nodes.
     done = {}
     stack = []
-    objects[:objects].each do |table_name, rhs|
-      rhs.each do |id, node|
+    objects[:objects].each do |_table_name, rhs|
+      rhs.each do |_id, node|
         # Start adding from the node at the top of the tree.
         while node[:parent] do
           node = node[:parent]

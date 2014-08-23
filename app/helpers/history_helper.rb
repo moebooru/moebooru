@@ -114,7 +114,7 @@ module HistoryHelper
     # Number of changes hidden (not including suppressions):
     hidden = 0
     parts = []
-    change_groups.each do |table_name, fields|
+    change_groups.each do |_table_name, fields|
       # Apply supressions.
       to_suppress = []
       fields.each do |field, group|

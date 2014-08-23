@@ -270,7 +270,7 @@ class Pool < ActiveRecord::Base
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
-        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) do |m|
+        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) do |_m|
           if Regexp.last_match[1] != ""
             suffix = Regexp.last_match[3]
             numbers = Regexp.last_match[1].split(/-/).map do |p|
@@ -346,7 +346,7 @@ class Pool < ActiveRecord::Base
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
-        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) do |m|
+        filename = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)*)(.*)$/) do |_m|
           if Regexp.last_match[1] != ""
             suffix = Regexp.last_match[3]
             numbers = Regexp.last_match[1].split(/-/).map do |p|

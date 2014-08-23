@@ -319,10 +319,10 @@ class ApplicationController < ActionController::Base
 
     jsdata = {}
     jsdata[:forum_post_last_read_at] = if @current_user.is_anonymous?
-      Time.now
-    else
-      @current_user.last_forum_topic_read_at || Time.at(0)
-    end
+                                         Time.now
+                                       else
+                                         @current_user.last_forum_topic_read_at || Time.at(0)
+                                       end
     jsdata.each { |name, data| cookies[name] = data.to_json }
 
     cookies["country"] = @current_user_country
@@ -414,55 +414,55 @@ class ApplicationController < ActionController::Base
     end
   end
 
-    def set_locale
-      if params[:locale] && CONFIG["available_locales"].include?(params[:locale])
-        cookies["locale"] = { :value => params[:locale], :expires => 1.year.from_now }
-        I18n.locale = params[:locale].to_sym
-      elsif cookies["locale"] && CONFIG["available_locales"].include?(cookies["locale"])
-        I18n.locale = cookies["locale"].to_sym
-      else
-        I18n.locale = CONFIG["default_locale"]
-      end
+  def set_locale
+    if params[:locale] && CONFIG["available_locales"].include?(params[:locale])
+      cookies["locale"] = { :value => params[:locale], :expires => 1.year.from_now }
+      I18n.locale = params[:locale].to_sym
+    elsif cookies["locale"] && CONFIG["available_locales"].include?(cookies["locale"])
+      I18n.locale = cookies["locale"].to_sym
+    else
+      I18n.locale = CONFIG["default_locale"]
     end
+  end
 
-    def sanitize_params
-      if params[:page]
-        params[:page] = params[:page].to_i
-        params.delete(:page) if params[:page] <= 1
-      end
+  def sanitize_params
+    if params[:page]
+      params[:page] = params[:page].to_i
+      params.delete(:page) if params[:page] <= 1
     end
+  end
 
-    def admin_only
-      access_denied unless @current_user.is_admin?
-    end
+  def admin_only
+    access_denied unless @current_user.is_admin?
+  end
 
-    def member_only
-      access_denied unless @current_user.is_member_or_higher?
-    end
+  def member_only
+    access_denied unless @current_user.is_member_or_higher?
+  end
 
-    def post_privileged_only
-      access_denied unless @current_user.is_privileged_or_higher?
-    end
+  def post_privileged_only
+    access_denied unless @current_user.is_privileged_or_higher?
+  end
 
-    def post_member_only
-      access_denied unless @current_user.is_member_or_higher?
-    end
+  def post_member_only
+    access_denied unless @current_user.is_member_or_higher?
+  end
 
-    def no_anonymous
-      access_denied if @current_user.is_anonymous?
-    end
+  def no_anonymous
+    access_denied if @current_user.is_anonymous?
+  end
 
-    def sanitize_id
-      params[:id] = params[:id].to_i
-    end
+  def sanitize_id
+    params[:id] = params[:id].to_i
+  end
 
-    def mini_profiler_check
-      if @current_user.is_admin_or_higher?
-        Rack::MiniProfiler.authorize_request
-      end
+  def mini_profiler_check
+    if @current_user.is_admin_or_higher?
+      Rack::MiniProfiler.authorize_request
     end
+  end
 
-    def filter_spam
-      head :ok if params[:url1].present?
-    end
+  def filter_spam
+    head :ok if params[:url1].present?
+  end
 end

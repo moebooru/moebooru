@@ -81,7 +81,7 @@ module Translate
         translations << d["responseData"]
       end
     else
-        translations << data
+      translations << data
     end
 
     result = {}

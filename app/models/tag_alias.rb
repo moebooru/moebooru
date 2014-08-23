@@ -89,10 +89,10 @@ class TagAlias < ActiveRecord::Base
 
   def api_attributes
     {
-     :id => id,
-     :name => name,
-     :alias_id => alias_id,
-     :pending => is_pending
+      :id => id,
+      :name => name,
+      :alias_id => alias_id,
+      :pending => is_pending
     }
   end
 

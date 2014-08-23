@@ -792,31 +792,31 @@ class PostController < ApplicationController
         x = Builder::XmlMarkup.new(:indent => 2)
         x.instruct!
         render :xml => x.posts do
-         unless res[:errors].empty?
+          unless res[:errors].empty?
             res[:errors].map do |server, error|
               { :server => server, :message => error[:message], :services => error[:services].join(",") }.to_xml(:root => "error", :builder => x, :skip_instruct => true)
             end
-         end
+          end
 
           if res[:source]
-           x.source do
-             res[:source].to_xml(:builder => x, :skip_instruct => true)
-           end
+            x.source do
+              res[:source].to_xml(:builder => x, :skip_instruct => true)
+            end
           else
-           x.source do
-             res[:external_source].to_xml(:builder => x, :skip_instruct => true)
-           end
+            x.source do
+              res[:external_source].to_xml(:builder => x, :skip_instruct => true)
+            end
           end
 
           @posts.each do |e|
-           x.similar(:similarity => res[:similarity][e]) do
-             e.to_xml(:builder => x, :skip_instruct => true)
-           end
+            x.similar(:similarity => res[:similarity][e]) do
+              e.to_xml(:builder => x, :skip_instruct => true)
+            end
           end
           res[:posts_external].each do |e|
-           x.similar(:similarity => res[:similarity][e]) do
-             e.to_xml(:builder => x, :skip_instruct => true)
-           end
+            x.similar(:similarity => res[:similarity][e]) do
+              e.to_xml(:builder => x, :skip_instruct => true)
+            end
           end
         end
       end

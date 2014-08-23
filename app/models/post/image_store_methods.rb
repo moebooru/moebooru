@@ -20,7 +20,7 @@ module Post::ImageStoreMethods
 
   private
 
-    def url_encode(*args)
-      ERB::Util.url_encode *args
-    end
+  def url_encode(*args)
+    ERB::Util.url_encode *args
+  end
 end

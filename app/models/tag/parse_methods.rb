@@ -132,7 +132,7 @@ module Tag::ParseMethods
             if Regexp.last_match[2] == "true"
               q[:show_deleted_only] = true
             else Regexp.last_match[2] == "all"
-              q[:show_deleted_only] = false # all posts, deleted or not
+                 q[:show_deleted_only] = false # all posts, deleted or not
             end
           elsif Regexp.last_match[1] == "ext"
             q[:ext] = Regexp.last_match[2]

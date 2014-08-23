@@ -66,7 +66,7 @@ class WikiPage < ActiveRecord::Base
   end
 
   def self.find_by_title(title)
-    find(:first, :conditions => ["lower(title) = lower(?)", title.tr(" ", "_")])
+    find_by "LOWER(title) = LOWER(?)", title.tr(" ", "_")
   end
 
   # FIXME: history shouldn't be changed on lock/unlock.

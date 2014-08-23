@@ -157,7 +157,7 @@ module Post::SqlMethods
       if q.key?(:pool)
         conds << "pools_posts.active = true"
 
-        if !q.key?(:order)
+        unless q.key?(:order)
           pool_ordering = " ORDER BY pools_posts.pool_id ASC, nat_sort(pools_posts.sequence), pools_posts.post_id"
         end
 
@@ -246,7 +246,7 @@ module Post::SqlMethods
         end
       else
         # Hide held posts by default only when not using the API.
-        if !options[:from_api] then
+        unless options[:from_api] then
           conds << "NOT p.is_held"
         end
       end

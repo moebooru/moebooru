@@ -40,7 +40,7 @@ class FlaggedPostDetail < ActiveRecord::Base
       :created_at => created_at,
     }
 
-    if !hide_user then
+    unless hide_user then
       ret[:user_id] = user_id
       ret[:flagged_by] = flagged_by
     end

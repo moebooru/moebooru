@@ -40,7 +40,7 @@ class Hash
     end
 
     options.reverse_merge!(:builder => Builder::XmlMarkup.new(:indent => options[:indent]))
-    if !options[:skip_instruct]
+    unless options[:skip_instruct]
       options[:skip_instruct] = true
       options[:builder].instruct!
     end
@@ -63,7 +63,7 @@ class Array
   def to_xml(options = {})
     options[:builder] ||= Builder::XmlMarkup.new
 
-    if !options[:skip_instruct]
+    unless options[:skip_instruct]
       options[:skip_instruct] = true
       options[:builder].instruct!
     end

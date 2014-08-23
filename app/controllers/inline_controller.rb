@@ -11,7 +11,7 @@ class InlineController < ApplicationController
 
   def index
     order = []
-    if !@current_user.is_anonymous?
+    unless @current_user.is_anonymous?
       order << ["user_id = #{@current_user.id} DESC"]
     end
     order << ["created_at desc"]
@@ -58,7 +58,7 @@ class InlineController < ApplicationController
 
     if request.post?
       new_image = InlineImage.create(params[:image].merge(:inline_id => @inline.id))
-      if !new_image.errors.empty?
+      unless new_image.errors.empty?
         respond_to_error(new_image, :action => "edit", :id => @inline.id)
         return
       end

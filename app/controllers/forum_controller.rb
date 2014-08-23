@@ -81,7 +81,7 @@ class ForumController < ApplicationController
   def edit
     @forum_post = ForumPost.find(params[:id])
 
-    if !@current_user.has_permission?(@forum_post, :creator_id)
+    unless @current_user.has_permission?(@forum_post, :creator_id)
       access_denied
     end
   end
@@ -89,7 +89,7 @@ class ForumController < ApplicationController
   def update
     @forum_post = ForumPost.find(params[:id])
 
-    if !@current_user.has_permission?(@forum_post, :creator_id)
+    unless @current_user.has_permission?(@forum_post, :creator_id)
       access_denied
       return
     end

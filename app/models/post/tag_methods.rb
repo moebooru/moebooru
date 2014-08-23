@@ -195,7 +195,7 @@ module Post::TagMethods
           if cmd == "parent" then
             # If we have a parent, remove ourself from the pool and add our parent in
             # our place.  If we have no parent, do nothing and leave us in the pool.
-            if !parent_id.nil?
+            unless parent_id.nil?
               pool.transfer_post_to_parent(id, parent_id)
             end
             next
@@ -235,7 +235,7 @@ module Post::TagMethods
       self.new_tags = new_tags.map { |x| Tag.find_or_create_by_name(x) }.uniq
 
       # If any tags are newly active, expire the tag cache.
-      if !new_tags.empty? then
+      unless new_tags.empty? then
         any_new_tags = false
         previous_tags = cached_tags.split(" ")
         new_tags.each do |tag|

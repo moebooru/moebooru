@@ -88,7 +88,7 @@ module Mirrors
           end
         end
 
-        if !system("/usr/bin/scp", "-pq", "-o", "Compression no", "-o", "BatchMode=yes",
+        unless system("/usr/bin/scp", "-pq", "-o", "Compression no", "-o", "BatchMode=yes",
                      "-o", "ConnectTimeout=%i" % timeout,
                      file, "#{remote_user_host}:#{remote_filename}") then
           raise MirrorError, "Error copying #{file} to #{remote_user_host}:#{remote_filename}"
@@ -132,7 +132,7 @@ module Mirrors
     return CONFIG["url_base"] if !CONFIG["image_servers"] || CONFIG["image_servers"].empty?
     raise 'CONFIG["url_base"] is set incorrectly; please see config/default_config.rb' if CONFIG["image_servers"][0].class == String
 
-    if !is_warehoused
+    unless is_warehoused
       # return CONFIG["url_base"]
       return CONFIG["image_servers"][0][:server]
     end
@@ -144,7 +144,7 @@ module Mirrors
       end
     end
 
-    if !options[:preview] then
+    unless options[:preview] then
       mirrors =  mirrors.select do |mirror|
         mirror[:previews_only] != true
       end

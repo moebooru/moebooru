@@ -56,7 +56,7 @@ module Post::ApiMethods
     end
 
     # For post/similar results:
-    if !similarity.nil?
+    unless similarity.nil?
       ret[:similarity] = similarity
     end
 
@@ -87,14 +87,14 @@ module Post::ApiMethods
 
     def batch_api_data(posts, options = {})
       result = { :posts => posts }
-      if !options[:exclude_pools] then
+      unless options[:exclude_pools] then
         pool_posts = Pool.get_pool_posts_from_posts(posts)
         pools = Pool.get_pools_from_pool_posts(pool_posts)
         result[:pools] = pools
         result[:pool_posts] = pool_posts
       end
 
-      if !options[:exclude_tags] then
+      unless options[:exclude_tags] then
         result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
       end
 
@@ -108,9 +108,9 @@ module Post::ApiMethods
       #
       # The post data is cachable and vote data isn't, so keep this data separate from the
       # main post data to make it easier to cache API output later.
-      if !options[:exclude_votes] then
+      unless options[:exclude_votes] then
         vote_map = {}
-        if !posts.empty? then
+        unless posts.empty? then
           votes = PostVote.where(:user_id => user.id, :post_id => posts)
           votes.each do |v|
             vote_map[v.post_id] = v.score

@@ -41,7 +41,7 @@ class WikiController < ApplicationController
       :page => page_number
     }
 
-    if !query.empty?
+    unless query.empty?
       if query =~ /^title:/
         search_params[:conditions] = ["title ilike ?", "%" + query[6..-1].to_escaped_for_sql_like + "%"]
       else

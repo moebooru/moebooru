@@ -124,7 +124,7 @@ class UserController < ApplicationController
       ret = { :exists => false }
       ret[:name] = params[:username]
 
-      if !user
+      unless user
         respond_to_success("User does not exist", {}, :api => { :response => "unknown-user" }.merge(ret))
         return
       end
@@ -137,7 +137,7 @@ class UserController < ApplicationController
       ret[:no_email] = user.email.blank?
 
       user = User.authenticate(params[:username], params[:password] || "")
-      if !user
+      unless user
         respond_to_success("Wrong password", {}, :api => { :response => "wrong-password" }.merge(ret))
         return
       end
@@ -210,7 +210,7 @@ class UserController < ApplicationController
 
     tags = @current_user.blacklisted_tags_array
     added_tags.each do |tag|
-      tags << tag if !tags.include?(tag)
+      tags << tag unless tags.include?(tag)
     end
 
     tags -= removed_tags

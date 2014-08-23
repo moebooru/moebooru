@@ -75,7 +75,7 @@ module TagHelper
       # find it.
       id_list = tags.map { |t| t[3] }
       alternate_tags = TagAlias.where(:alias_id => id_list).pluck(:name)
-      if !alternate_tags.empty?
+      unless alternate_tags.empty?
         html << %{<span style="display: none;">#{alternate_tags.map { |t| t.tr("_", " ") }.join(" ")}</span>}
       end
     end

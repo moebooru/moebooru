@@ -9,7 +9,7 @@ module PoolHelper
       html << pools.map { |p| link_to(h(p.pretty_name), :controller => "pool", :action => "show", :id => p.id) }.join(", ")
     end
 
-    return html
+    html
   end
 
   def link_to_pool_zip(text, pool, zip_params, options = {})

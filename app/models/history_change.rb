@@ -15,7 +15,7 @@ class HistoryChange < ActiveRecord::Base
       end
       return opts
     end
-    return master_class.get_versioned_attribute_options(column_name) || {}
+    master_class.get_versioned_attribute_options(column_name) || {}
   end
 
   def master_class
@@ -38,12 +38,12 @@ class HistoryChange < ActiveRecord::Base
     column = master_class.columns_hash[column_name]
     typecasted_value = column.type_cast(value)
 
-    return typecasted_value == get_default
+    typecasted_value == get_default
   end
 
   def is_obsolete?
     latest_change = latest
-    return self.value != latest_change.value
+    self.value != latest_change.value
   end
 
   def has_default?

@@ -138,7 +138,7 @@ module ActionView
       function = "if (#{options[:condition]}) { #{function}; }" if options[:condition]
       function = "if (confirm('#{escape_javascript(options[:confirm])}')) { #{function}; }" if options[:confirm]
 
-      return function.html_safe
+      function.html_safe
     end
 
     # All the methods were moved to GeneratorMethods so that

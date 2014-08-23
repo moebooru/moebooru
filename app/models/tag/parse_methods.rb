@@ -178,7 +178,7 @@ module Tag::ParseMethods
         q[:related] = TagAlias.to_aliased(q[:related]) if q.key?(:related)
       end
 
-      return q
+      q
     end
   end
 

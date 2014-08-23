@@ -257,7 +257,7 @@ class ApplicationController < ActionController::Base
   def get_ip_ban()
     ban = IpBans.where("? <<= ip_addr", request.remote_ip).first
     if !ban then return nil end
-    return ban
+    ban
   end
 
   protected

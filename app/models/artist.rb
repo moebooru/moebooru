@@ -14,7 +14,7 @@ class Artist < ActiveRecord::Base
           url = File.dirname(url)
         end
 
-        return artists[0, 20]
+        artists[0, 20]
       end
     end
 
@@ -118,7 +118,7 @@ class Artist < ActiveRecord::Base
         end
       end
 
-      return nil
+      nil
     end
 
     def alias_name=(name)
@@ -185,7 +185,7 @@ class Artist < ActiveRecord::Base
 
   module ApiMethods
     def api_attributes
-      return {
+      {
         :id => id,
         :name => name,
         :alias_id => alias_id,
@@ -201,7 +201,7 @@ class Artist < ActiveRecord::Base
     end
 
     def as_json(*args)
-      return api_attributes.as_json(*args)
+      api_attributes.as_json(*args)
     end
   end
 
@@ -222,7 +222,7 @@ class Artist < ActiveRecord::Base
   end
 
   def to_s
-    return name
+    name
   end
 
   def self.generate_sql(name)
@@ -236,6 +236,6 @@ class Artist < ActiveRecord::Base
       end
     end
 
-    return b.to_hash
+    b.to_hash
   end
 end

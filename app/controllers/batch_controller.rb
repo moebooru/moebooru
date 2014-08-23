@@ -85,7 +85,6 @@ class BatchController < ApplicationController
     end
 
     redirect_to :action => "index"
-    return
   end
 
   def create

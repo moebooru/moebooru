@@ -71,7 +71,7 @@ class Post < ActiveRecord::Base
 
   def self.destroy_with_reason(id, reason, current_user)
     post = Post.find(id)
-    return post.destroy_with_reason(reason, current_user)
+    post.destroy_with_reason(reason, current_user)
   end
 
   def delete
@@ -96,7 +96,7 @@ class Post < ActiveRecord::Base
       return false
     end
 
-    return true
+    true
   end
 
   def clear_avatars
@@ -161,15 +161,15 @@ class Post < ActiveRecord::Base
       end
     end
 
-    return @voted_by
+    @voted_by
   end
 
   def favorited_by
-    return voted_by[3]
+    voted_by[3]
   end
 
   def author
-    return User.find_name(user_id)
+    User.find_name(user_id)
   end
 
   def delete_from_database
@@ -200,7 +200,7 @@ class Post < ActiveRecord::Base
 
     newest_topic = ForumPost.find(:first, :order => "id desc", :limit => 1, :select => "created_at", :conditions => conds)
     return false if newest_topic.nil?
-    return newest_topic.created_at > user.last_forum_topic_read_at
+    newest_topic.created_at > user.last_forum_topic_read_at
   end
 
   def normalized_source

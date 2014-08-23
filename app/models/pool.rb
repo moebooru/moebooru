@@ -31,7 +31,7 @@ class Pool < ActiveRecord::Base
         return [] if post_ids.empty?
 
         sql = "SELECT pp.* FROM pools_posts pp WHERE pp.active AND pp.post_id IN (%s)" % post_ids.join(",")
-        return PoolPost.find_by_sql(sql)
+        PoolPost.find_by_sql(sql)
       end
 
       def get_pools_from_pool_posts(pool_posts)
@@ -39,7 +39,7 @@ class Pool < ActiveRecord::Base
         return [] if pool_ids.empty?
 
         sql = "SELECT p.* FROM pools p WHERE p.id IN (%s)" % pool_ids.join(",")
-        return Pool.find_by_sql(sql)
+        Pool.find_by_sql(sql)
       end
     end
 
@@ -122,7 +122,7 @@ class Pool < ActiveRecord::Base
 
     def can_change?(user, attribute)
       return false if !user.is_member_or_higher?
-      return is_public? || user.has_permission?(self)
+      is_public? || user.has_permission?(self)
     end
 
     def update_pool_links
@@ -142,7 +142,7 @@ class Pool < ActiveRecord::Base
         seq = [seq, pp.sequence.to_i].max
       }
 
-      return seq + 1
+      seq + 1
     end
 
     def expire_cache
@@ -152,7 +152,7 @@ class Pool < ActiveRecord::Base
 
   module ApiMethods
     def api_attributes
-      return {
+      {
         :id => id,
         :name => name,
         :created_at => created_at,
@@ -217,7 +217,7 @@ class Pool < ActiveRecord::Base
         post = pool_post.post
         return true if post.has_jpeg?
       end
-      return false
+      false
     end
 
     # Estimate the size of the ZIP.
@@ -229,7 +229,7 @@ class Pool < ActiveRecord::Base
         sum += options[:jpeg] && post.has_jpeg? ? post.jpeg_size : post.file_size
       end
 
-      return sum
+      sum
     end
 
     #nginx version
@@ -305,7 +305,7 @@ class Pool < ActiveRecord::Base
         buf += [{ :filename => filename, :path => path, :file_size => file_size, :crc32 => crc32 }]
       end
 
-      return buf
+      buf
     end
 
     # Generate a mod_zipfile control file for this pool.
@@ -379,7 +379,7 @@ class Pool < ActiveRecord::Base
         end
       end
 
-      return buf
+      buf
     end
 
   end

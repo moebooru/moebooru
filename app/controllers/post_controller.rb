@@ -710,7 +710,7 @@ class PostController < ApplicationController
         SimilarImages.cull_old_searches
       end
 
-      return SimilarImages.similar_images(options)
+      SimilarImages.similar_images(options)
     end
 
     unless params[:url].nil? and params[:id].nil? and params[:file].nil? and params[:search_id].nil? then

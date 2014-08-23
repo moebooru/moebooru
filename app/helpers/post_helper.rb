@@ -138,7 +138,7 @@ module PostHelper
     li_class += " mode-browse" if options[:display] == :large
     # We need to specify a width on the <li>, since IE7 won't figure it out on its own.
     item = %{<li style="width: #{block_size[0] + 10}px;" id="p#{post.id}" class="#{li_class}">#{div}#{directlink}</li>}
-    return item.html_safe
+    item.html_safe
   end
 
   def print_ext_similarity_preview(post, options = {})
@@ -160,7 +160,7 @@ module PostHelper
     similarity = %{<a class="#{similarity_class}" href="#{post.url}"><span>#{icon}#{similarity_text}#{size}</span></a>}
     li_class = ""
     item = %{<li id="p#{post.id}" class="#{li_class}">#{div}#{similarity}</li>}
-    return item
+    item
   end
 
   def vote_tooltip_widget
@@ -181,7 +181,7 @@ module PostHelper
     end
 
     html << %{</span>}
-    return html.html_safe
+    html.html_safe
   end
 
   def get_service_icon(service)

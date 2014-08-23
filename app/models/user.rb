@@ -130,7 +130,7 @@ class User < ActiveRecord::Base
 
       pass << rand(100).to_s
       execute_sql("UPDATE users SET password_hash = ? WHERE id = ?", User.sha1(pass), self.id)
-      return pass
+      pass
     end
   end
 
@@ -237,7 +237,7 @@ class User < ActiveRecord::Base
 
       Rails.cache.write("uploaded_tags/#{id}/#{type}", uploaded_tags, :expires_in => 1.day)
 
-      return uploaded_tags
+      uploaded_tags
     end
 
     def voted_tags(options = {})
@@ -284,7 +284,7 @@ class User < ActiveRecord::Base
 
       Rails.cache.write("favorite_tags/#{id}/#{type}", favorite_tags, :expires_in => 1.day)
 
-      return favorite_tags
+      favorite_tags
     end
   end
 
@@ -324,7 +324,7 @@ class User < ActiveRecord::Base
     end
 
     def pretty_level
-      return CONFIG["user_levels"].invert[self.level]
+      CONFIG["user_levels"].invert[self.level]
     end
 
     def set_role
@@ -468,7 +468,7 @@ class User < ActiveRecord::Base
     end
 
     def has_avatar?
-      return (!self.avatar_post_id.nil?)
+      (!self.avatar_post_id.nil?)
     end
 
     def avatar_path
@@ -588,7 +588,7 @@ class User < ActiveRecord::Base
 
     def secondary_language_array
       return @secondary_languages if @secondary_languages
-      return self.secondary_languages.split(",")
+      self.secondary_languages.split(",")
     end
 
     def commit_secondary_languages
@@ -656,7 +656,7 @@ class User < ActiveRecord::Base
       LIMIT 6
     EOS
 
-    return select_all_sql(sql)
+    select_all_sql(sql)
   end
 
   def set_show_samples
@@ -664,7 +664,7 @@ class User < ActiveRecord::Base
   end
 
   def self.generate_sql(params)
-    return Nagato::Builder.new do |builder, cond|
+    Nagato::Builder.new do |builder, cond|
       if params[:name]
         cond.add "name ILIKE ? ESCAPE E'\\\\'", "%" + params[:name].tr(" ", "_").to_escaped_for_sql_like + "%"
       end

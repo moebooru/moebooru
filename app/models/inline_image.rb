@@ -123,7 +123,7 @@ class InlineImage < ActiveRecord::Base
       return false
     end
 
-    return true
+    true
   end
 
   def set_image_dimensions
@@ -132,11 +132,11 @@ class InlineImage < ActiveRecord::Base
     self.width = imgsize.width
     self.height = imgsize.height
 
-    return true
+    true
   end
 
   def preview_dimensions
-    return Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 150, :height => 150 })
+    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 150, :height => 150 })
   end
 
   def thumb_size
@@ -178,7 +178,7 @@ class InlineImage < ActiveRecord::Base
 
     self.sample_width = sample_size[:width]
     self.sample_height = sample_size[:height]
-    return true
+    true
   end
 
   def generate_preview
@@ -202,7 +202,7 @@ class InlineImage < ActiveRecord::Base
       errors.add "preview", "couldn't be generated (#{x})"
       return false
     end
-    return true
+    true
   end
 
   def move_file
@@ -219,7 +219,7 @@ class InlineImage < ActiveRecord::Base
       FileUtils.mv(tempfile_sample_path, sample_path)
     end
     self.file_needs_move = false
-    return true
+    true
   end
 
   def set_default_sequence
@@ -241,7 +241,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def has_sample?
-    return (!self.sample_height.nil?)
+    (!self.sample_height.nil?)
   end
 
   def file_name
@@ -304,11 +304,11 @@ class InlineImage < ActiveRecord::Base
         return false
       end
     end
-    return true
+    true
   end
 
   def api_attributes
-    return {
+    {
       :id => id,
       :sequence => sequence,
       :md5 => md5,

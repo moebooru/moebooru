@@ -38,7 +38,7 @@ module Post::ImageStore
         AWS::S3::S3Object.store("jpeg/#{md5}.jpg", open(self.jpeg_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
       end
 
-      return true
+      true
     end
 
     def file_path

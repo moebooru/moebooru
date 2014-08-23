@@ -38,7 +38,7 @@ module Tag::RelatedTagMethods
         end
       end
 
-      return []
+      []
     end
   end
 
@@ -56,6 +56,6 @@ module Tag::RelatedTagMethods
       reload
     end
 
-    return cached_related.split(/,/).in_groups_of(2)
+    cached_related.split(/,/).in_groups_of(2)
   end
 end

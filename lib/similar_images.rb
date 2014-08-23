@@ -12,7 +12,7 @@ module SimilarImages
     end
 
     services.each_index { |i| if services[i] == "local" then services[i] = CONFIG["local_image_service"] end }
-    return services
+    services
   end
 
   def similar_images(options = {})
@@ -204,7 +204,7 @@ module SimilarImages
       ret[:similarity][post] = "Original"
     end
 
-    return ret
+    ret
   end
 
   SEARCH_CACHE_DIR = "#{Rails.root}/public/data/search"
@@ -249,7 +249,7 @@ module SimilarImages
 
     ret[:file_path] = file_path
     ret[:search_id] = id
-    return ret
+    ret
   end
 
   def valid_saved_search(id)
@@ -267,7 +267,7 @@ module SimilarImages
 
     # Touch the file to delay its deletion.
     File.open(file_path, "a")
-    return file_path
+    file_path
   end
 
   # Delete old searches.

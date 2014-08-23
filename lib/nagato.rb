@@ -12,7 +12,7 @@ module Nagato
 
     # Returns true if the subquery is empty.
     def empty?
-      return @conditions.empty?
+      @conditions.empty?
     end
 
     # Returns an array of 1 or more elements, the first being a SQL fragment and the rest being placeholder parameters.
@@ -156,12 +156,12 @@ module Nagato
 
     # Return the conditions (as an array suitable for usage with ActiveRecord)
     def conditions
-      return @subquery.conditions
+      @subquery.conditions
     end
 
     # Returns the joins (as an array suitable for usage with ActiveRecord)
     def joins
-      return @joins.join(" ")
+      @joins.join(" ")
     end
 
     # Converts the SQL fragment as a hash (suitable for usage with ActiveRecord)
@@ -173,12 +173,12 @@ module Nagato
       hash[:limit] = @limit if @limit
       hash[:offset] = @offset if @offset
       hash[:select] = @select if @select.any?
-      return hash
+      hash
     end
   end
 
   def find(model, &block)
-    return model.find(:all, Builder.new(&block).to_hash)
+    model.find(:all, Builder.new(&block).to_hash)
   end
 
   module_function :find

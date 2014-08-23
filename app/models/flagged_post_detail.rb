@@ -16,7 +16,7 @@ class FlaggedPostDetail < ActiveRecord::Base
   def self.new_deleted_posts(user)
     return 0 if user.is_anonymous?
 
-    return Rails.cache.fetch("deleted_posts:#{user.id}:#{user.last_deleted_post_seen_at.to_i}", :expires_in => 1.minute) do
+    Rails.cache.fetch("deleted_posts:#{user.id}:#{user.last_deleted_post_seen_at.to_i}", :expires_in => 1.minute) do
       select_value_sql(
         "SELECT COUNT(*) FROM flagged_post_details fpd JOIN posts p ON (p.id = fpd.post_id) " +
         "WHERE p.status = 'deleted' AND p.user_id = ? AND fpd.user_id <> ? AND fpd.created_at > ?",
@@ -45,14 +45,14 @@ class FlaggedPostDetail < ActiveRecord::Base
       ret[:flagged_by] = flagged_by
     end
 
-    return ret
+    ret
   end
 
   def as_json(*args)
-    return api_attributes.as_json(*args)
+    api_attributes.as_json(*args)
   end
 
   def to_xml(options = {})
-    return api_attributes.to_xml(options.reverse_merge(:root => "flagged_post_detail"))
+    api_attributes.to_xml(options.reverse_merge(:root => "flagged_post_detail"))
   end
 end

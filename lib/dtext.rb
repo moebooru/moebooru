@@ -123,7 +123,7 @@ module DText
 
     # Fix ttp(s) scheme
     str.gsub! /<a href="ttp/, '<a href="http'
-    return str
+    str
   end
 
   module_function :parse, :parseline, :parseinline, :parselist, :parseurl

@@ -4,7 +4,7 @@ module Tag::ApiMethods
   end
 
   def api_attributes
-    return {
+    {
       :id => id,
       :name => name,
       :count => post_count,
@@ -38,7 +38,7 @@ module Tag::ApiMethods
         data.to_json
       end
 
-      return data
+      data
     end
 
     def get_json_summary_no_cache
@@ -73,12 +73,12 @@ module Tag::ApiMethods
       end
 
       tags_string = tags_with_type.join(" ") + " "
-      return { :version => version, :data => tags_string }
+      { :version => version, :data => tags_string }
     end
 
     # Return the cache version of the summary.
     def get_summary_version
-      return Rails.cache.fetch("$tag_version") do 0 end
+      Rails.cache.fetch("$tag_version") do 0 end
     end
   end
 end

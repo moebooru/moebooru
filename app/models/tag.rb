@@ -79,7 +79,7 @@ class Tag < ActiveRecord::Base
 
   def self.select_ambiguous(tags)
     return [] if tags.blank?
-    return select_values_sql("SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags)
+    select_values_sql("SELECT name FROM tags WHERE name IN (?) AND is_ambiguous = TRUE ORDER BY name", tags)
   end
 
   def self.purge_tags

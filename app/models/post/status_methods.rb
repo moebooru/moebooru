@@ -65,7 +65,7 @@ module Post::StatusMethods
 
       Moebooru::CacheHelper.expire if count > 0
 
-      return count
+      count
     end
   end
 
@@ -74,7 +74,7 @@ module Post::StatusMethods
     execute_sql("UPDATE posts SET status = ? WHERE id = ?", "deleted", id)
     Post.update_has_children(parent_id) if parent_id
     flag_detail.update_attributes(:is_resolved => true) if flag_detail
-    return false
+    false
   end
 
   def self.included(m)

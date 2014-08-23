@@ -28,7 +28,7 @@ module Report
       end
     end
 
-    return add_sum(users)
+    add_sum(users)
   end
 
   def tag_updates(start, stop, limit, level)

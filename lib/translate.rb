@@ -97,7 +97,7 @@ module Translate
         result[lang] = translations[i]["translatedText"]
       end
     }
-    return result, source_lang
+    [result, source_lang]
   end
 
 #  def request(path, options={})

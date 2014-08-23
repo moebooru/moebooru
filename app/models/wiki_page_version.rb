@@ -1,6 +1,6 @@
 class WikiPageVersion < ActiveRecord::Base
   def author
-    return User.find_name(self.user_id)
+    User.find_name(self.user_id)
   end
 
   def diff(target)
@@ -13,7 +13,7 @@ class WikiPageVersion < ActiveRecord::Base
     if self.version == 1
       what += [:initial]
     end
-    return what
+    what
   end
 
   def prev

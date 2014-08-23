@@ -10,7 +10,7 @@ module Post::CountMethods
         Post.count_by_sql(Post.generate_sql(tags, :count => true))
       }.to_i
 
-      return count
+      count
 
       # This is just too brittle, and hard to make work with other features that may
       # hide posts from the index.

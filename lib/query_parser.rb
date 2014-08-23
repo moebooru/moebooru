@@ -4,7 +4,7 @@ module QueryParser
   # === Parameters
   # * :query_string<String>: the query to parse
   def parse(query_string)
-    return query_string.to_s.downcase.scan(/\S+/)
+    query_string.to_s.downcase.scan(/\S+/)
   end
 
   # Extracts the metatokens (tokens matching \S+:\S+). Returns a two element array: the first element contains plain tokens, and the second element contains metatokens.
@@ -22,7 +22,7 @@ module QueryParser
       end
     end
 
-    return hoge
+    hoge
   end
 
   # Given an array of keywords to search for, return an array of strings for to_tsquery.
@@ -39,7 +39,7 @@ module QueryParser
     if keywords.any? then
       query << "(" + keywords.join(" & ") + ")"
     end
-    return query
+    query
   end
 
   # Escape an SQL string.  This is used only for escaping nested strings, within things like

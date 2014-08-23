@@ -79,8 +79,8 @@ module Mirrors
         # Check if the file is already mirrored before we spend time uploading it.
         # Linux needs md5sum; FreeBSD needs md5 -q.
         actual_md5 = Mirrors.ssh_open_pipe(mirror,
-                "if [ -f #{remote_filename} ]; then (which md5sum >/dev/null) && md5sum #{remote_filename} || md5 -q #{remote_filename}; fi",
-                timeout = options[:timeout]) { |f| f.gets }
+                                           "if [ -f #{remote_filename} ]; then (which md5sum >/dev/null) && md5sum #{remote_filename} || md5 -q #{remote_filename}; fi",
+                                           timeout = options[:timeout]) { |f| f.gets }
         if actual_md5 =~ /^[0-9a-f]{32}/
           actual_md5 = actual_md5.slice(0, 32)
           if expected_md5 == actual_md5
@@ -89,8 +89,8 @@ module Mirrors
         end
 
         unless system("/usr/bin/scp", "-pq", "-o", "Compression no", "-o", "BatchMode=yes",
-                     "-o", "ConnectTimeout=%i" % timeout,
-                     file, "#{remote_user_host}:#{remote_filename}") then
+                      "-o", "ConnectTimeout=%i" % timeout,
+                      file, "#{remote_user_host}:#{remote_filename}") then
           raise MirrorError, "Error copying #{file} to #{remote_user_host}:#{remote_filename}"
         end
 

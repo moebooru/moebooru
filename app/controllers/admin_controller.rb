@@ -37,7 +37,7 @@ class AdminController < ApplicationController
             UserMailer.new_password(@user, new_password).deliver
           rescue Net::SMTPSyntaxError, Net::SMTPFatalError
             respond_to_success("Specified user's email address was invalid",
-              { :action => :reset_password }, :api => { :result => "invalid-email" })
+                               { :action => :reset_password }, :api => { :result => "invalid-email" })
             return
           end
         end

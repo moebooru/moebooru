@@ -35,7 +35,7 @@ module Post::ParentMethods
     m.set_callback :delete, :after, :give_favorites_to_parent
     m.versioned :parent_id, :default => nil
     m.has_many :children, lambda { where("status <> ?", "deleted").order("id") },
-      :class_name => "Post", :foreign_key => :parent_id
+               :class_name => "Post", :foreign_key => :parent_id
   end
 
   def validate_parent

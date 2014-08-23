@@ -105,7 +105,7 @@ module Mirrors
         if expected_md5 != actual_md5
           raise MirrorError, "Verifying #{remote_user_host}:#{remote_filename} failed: got #{actual_md5}, expected #{expected_md5}"
         end
-      rescue MirrorError => e
+      rescue MirrorError
         retry_count += 1
         raise if retry_count == 3
 

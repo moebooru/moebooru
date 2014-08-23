@@ -155,10 +155,9 @@ class HistoryController < ApplicationController
 
     @options[:show_name] = false
     if @type != "all"
-      begin
+      suppress NameError do
         obj = Object.const_get(@type.classify)
         @options[:show_name] = obj.method_defined?("pretty_name")
-      rescue NameError => e
       end
     end
 

@@ -13,7 +13,7 @@ module AvatarHelper
       link_to(img,
               { :controller => "post", :action => "show", :id => user.avatar_post.id.to_s },
               :class => "ca" + user.avatar_post.id.to_s,
-              :onclick => %{return Post.check_avatar_blacklist(#{user.avatar_post.id.to_s}, #{id});})
+              :onclick => %{return Post.check_avatar_blacklist(#{user.avatar_post.id}, #{id});})
     #end
   end
 

@@ -23,7 +23,7 @@ class Net::HTTP::Post
 
         self.body += "Content-Type: #{mime_type}\r\n"
       end
-      self.body += "\r\n#{p[:data].to_s}\r\n"
+      self.body += "\r\n#{p[:data]}\r\n"
     end
     self.body += "--#{boundary_token}--\r\n"
   end

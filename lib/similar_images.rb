@@ -213,7 +213,7 @@ module SimilarImages
     begin
       FileUtils.mkdir_p(SEARCH_CACHE_DIR, :mode => 0775)
 
-      tempfile_path = "#{SEARCH_CACHE_DIR}/#{SecureRandom.random_number(2**32).to_s}.upload"
+      tempfile_path = "#{SEARCH_CACHE_DIR}/#{SecureRandom.random_number(2**32)}.upload"
       File.open(tempfile_path, "wb") { |f| yield f }
 
       # Use the resizer to validate the file and convert it to a thumbnail-size JPEG.

@@ -12,31 +12,18 @@ class Tag < ActiveRecord::Base
     TYPE_ORDER[type] = index
   end
 
+  TAG_TYPE_INDEXES = CONFIG["tag_types"].values.uniq.sort.freeze
+
   def self.count_by_period(start, stop, options = {})
     options[:limit] ||= 50
     options[:exclude_types] ||= []
-    sql = <<-SQL
-      SELECT
-        COUNT(pt.tag_id) AS post_count,
-        (SELECT name FROM tags WHERE id = pt.tag_id) AS name
-      FROM posts p, posts_tags pt, tags t
-      WHERE p.created_at BETWEEN ? AND ? AND
-            p.id = pt.post_id AND
-            pt.tag_id = t.id AND
-            t.tag_type IN (?)
-      GROUP BY pt.tag_id
-      ORDER BY post_count DESC
-      LIMIT ?
-    SQL
 
-    tag_types_to_show = Tag.tag_type_indexes - options[:exclude_types]
-    counts = select_all_sql(sql, start, stop, tag_types_to_show, options[:limit])
-  end
-
-  def self.tag_type_indexes
-    CONFIG["tag_types"].keys.select { |x| x =~ /^[A-Z]/ }.reduce([]) do |all, x|
-      all << CONFIG["tag_types"][x]
-    end.sort
+    tag_types_to_show = TAG_TYPE_INDEXES - options[:exclude_types]
+    Tag.group(:name).joins(:_posts)
+      .where(:posts => { :created_at => start..stop }, :tag_type => tag_types_to_show)
+      .order('count_all DESC').limit(options[:limit])
+      .count
+      .map { |name, count| { 'post_count' => count, 'name' => name } }
   end
 
   def pretty_name

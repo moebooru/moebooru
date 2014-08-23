@@ -107,7 +107,7 @@ class InlineImage < ActiveRecord::Base
   def determine_content_type
     return true if file_ext
 
-    if !File.exist?(tempfile_image_path)
+    unless File.exist?(tempfile_image_path)
       errors.add(:base, "No file received")
       return false
     end
@@ -206,7 +206,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def move_file
-    return true if !file_needs_move
+    return true unless file_needs_move
     FileUtils.mkdir_p(File.dirname(file_path))
     FileUtils.mv(tempfile_image_path, file_path)
 
@@ -223,7 +223,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def set_default_sequence
-    return if !sequence.nil?
+    return unless sequence.nil?
     siblings = inline.inline_images
     max_sequence = siblings.map { |image| image.sequence }.max
     max_sequence ||= 0
@@ -284,7 +284,7 @@ class InlineImage < ActiveRecord::Base
     # If several inlines use the same image, they'll share the same file via the MD5.  Only
     # delete the file if this is the last one using it.
     exists = InlineImage.find(:first, :conditions => ["id <> ? AND md5 = ?", id, md5])
-    return if !exists.nil?
+    return unless exists.nil?
 
     FileUtils.rm_f(file_path)
     FileUtils.rm_f(preview_path)

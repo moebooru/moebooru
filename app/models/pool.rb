@@ -98,7 +98,7 @@ class Pool < ActiveRecord::Base
     def transfer_post_to_parent(post_id, parent_id)
       pool_post = pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
       parent_pool_post = pool_posts.find(:first, :conditions => ["post_id = ?", parent_id])
-      return if !parent_pool_post.nil?
+      return unless parent_pool_post.nil?
 
       sequence = pool_post.sequence
       remove_post(post_id)
@@ -121,7 +121,7 @@ class Pool < ActiveRecord::Base
     end
 
     def can_change?(user, attribute)
-      return false if !user.is_member_or_higher?
+      return false unless user.is_member_or_higher?
       is_public? || user.has_permission?(self)
     end
 

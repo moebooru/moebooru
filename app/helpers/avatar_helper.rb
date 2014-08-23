@@ -18,7 +18,7 @@ module AvatarHelper
   end
 
   def avatar_init
-    return "" if !defined?(@posts_to_send)
+    return "" unless defined?(@posts_to_send)
     ret = ""
     @posts_to_send.uniq.each do |post|
       ret << %{Post.register(#{ json_escape post.to_json.html_safe })\n}

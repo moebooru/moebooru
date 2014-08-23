@@ -25,7 +25,7 @@ module SimilarImages
     services_by_server = {}
     services.each do |service|
       server = CONFIG["image_service_list"][service]
-      if !server
+      unless server
         errors[""] = { :services => [service], :message => "%s is an unknown service" % service }
         next
       end
@@ -107,7 +107,7 @@ module SimilarImages
         next
       end
 
-      if !doc.root
+      unless doc.root
         errors[server] = { :message => "invalid response" }
         next
       end
@@ -164,7 +164,7 @@ module SimilarImages
     posts_external = posts_external.sort { |a, b| similarity[b] <=> similarity[a] }
 
     errors.map do |server, error|
-      if !error[:services]
+      unless error[:services]
         error[:services] = services_by_server[server] rescue server
       end
     end
@@ -258,10 +258,10 @@ module SimilarImages
 
   # Find a saved file.
   def find_saved_search(id)
-    if !valid_saved_search(id) then return nil end
+    unless valid_saved_search(id) then return nil end
 
     file_path = "#{SEARCH_CACHE_DIR}/#{id}"
-    if !File.exist?(file_path)
+    unless File.exist?(file_path)
       return nil
     end
 
@@ -273,7 +273,7 @@ module SimilarImages
   # Delete old searches.
   def cull_old_searches
     Dir.foreach(SEARCH_CACHE_DIR) do |path|
-      next if !valid_saved_search(path)
+      next unless valid_saved_search(path)
 
       file = "#{SEARCH_CACHE_DIR}/#{path}"
       mtime = File.mtime(file)

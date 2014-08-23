@@ -88,7 +88,7 @@ class Post < ActiveRecord::Base
   end
 
   def can_user_delete?(user)
-    if !user.has_permission?(self)
+    unless user.has_permission?(self)
       return false
     end
 
@@ -129,7 +129,7 @@ class Post < ActiveRecord::Base
   # If the flag_post metatag was used and the current user has access, flag the post.
   def commit_flag
     return if metatag_flagged.nil?
-    return if !Thread.current["danbooru-user"].is_mod_or_higher?
+    return unless Thread.current["danbooru-user"].is_mod_or_higher?
     return if status != "active"
 
     self.flag!(metatag_flagged, Thread.current["danbooru-user"].id)

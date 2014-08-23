@@ -70,7 +70,7 @@ module PostHelper
     end
 
     link_class = "thumb"
-    link_class += " no-browser-link" if !is_post
+    link_class += " no-browser-link" unless is_post
     link = %{<a class="#{link_class}" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>}
     div = %{<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>}
 
@@ -172,7 +172,7 @@ module PostHelper
 
     html << %{<span class="stars #{className}">}
 
-    if !user.is_anonymous?
+    unless user.is_anonymous?
       (0..3).each do |vote|
         html << %{<a href="#" class="star star-#{vote} star-off"></a>}
       end

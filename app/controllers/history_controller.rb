@@ -205,7 +205,7 @@ class HistoryController < ApplicationController
     successful = 0
     failed = 0
     @changes.each do |change|
-      if !errors[change]
+      unless errors[change]
         successful += 1
         next
       end

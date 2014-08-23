@@ -71,7 +71,7 @@ class PostController < ApplicationController
             options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
 
             res = SimilarImages.similar_images(options)
-            if !res[:posts].empty?
+            unless res[:posts].empty?
               @post.tags = @post.tags + " possible_duplicate"
               @post.save!
               api_data[:has_similar_hits] = true
@@ -116,7 +116,7 @@ class PostController < ApplicationController
 
               # Include post data for the parent: deleted posts aren't counted as children, so
               # their has_children attribute may change.
-              posts << post.get_parent if !post.parent_id.nil?
+              posts << post.get_parent unless post.parent_id.nil?
             end
             post.reload
             posts << post
@@ -210,7 +210,7 @@ class PostController < ApplicationController
     api_data = Post.batch_api_data(posts)
 
     url = params[:url]
-    url = { :action => "index" } if !url
+    url = { :action => "index" } unless url
     respond_to_success("Posts updated", url, :api => api_data)
   end
 
@@ -266,7 +266,7 @@ class PostController < ApplicationController
   end
 
   def acknowledge_new_deleted_posts
-    @current_user.update_attribute(:last_deleted_post_seen_at, Time.now) if !@current_user.is_anonymous?
+    @current_user.update_attribute(:last_deleted_post_seen_at, Time.now) unless @current_user.is_anonymous?
     respond_to_success("Success", {})
   end
 
@@ -316,7 +316,7 @@ class PostController < ApplicationController
     offset = @posts.offset
     posts_to_load = @posts.per_page
 
-    if !from_api then
+    unless from_api then
       # For forward preloading:
       posts_to_load += @posts.per_page
 
@@ -334,7 +334,7 @@ class PostController < ApplicationController
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
 
     @preload = []
-    if !from_api then
+    unless from_api then
       if page && page > 1 then
         @preload = results[0, limit] || []
         results = results[limit..-1] || []
@@ -504,7 +504,7 @@ class PostController < ApplicationController
   end
 
   def vote
-    if !params.key?(:score) then
+    unless params.key?(:score) then
       vote =  PostVote.find_by(:user_id => @current_user.id, :post_id => params[:id])
       score = vote ? vote.score : 0
       respond_to_success("", {}, :api => { :vote => score })
@@ -593,7 +593,7 @@ class PostController < ApplicationController
     if params[:threshold].blank? then params.delete(:threshold) end
     if params[:forcegray].blank? || params[:forcegray] == "0" then params.delete(:forcegray) end
     if params[:initial] == "0" then params.delete(:initial) end
-    if !SimilarImages.valid_saved_search(params[:search_id]) then params.delete(:search_id) end
+    unless SimilarImages.valid_saved_search(params[:search_id]) then params.delete(:search_id) end
     params[:width] = params[:width].to_i if params[:width]
     params[:height] = params[:height].to_i if params[:height]
 
@@ -736,7 +736,7 @@ class PostController < ApplicationController
         respond_to_error(@errors[:error], { :action => "index" }, :status => 503)
         return
       end
-      if !@searched
+      unless @searched
         respond_to_error("no search supplied", { :action => "index" }, :status => 503)
         return
       end

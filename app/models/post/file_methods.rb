@@ -108,11 +108,11 @@ module Post::FileMethods
   # is a duplicate we'll notice before we spend time resizing the image.
   def regenerate_hash
     path = tempfile_path
-    if !File.exist?(path)
+    unless File.exist?(path)
       path = file_path
     end
 
-    if !File.exist?(path)
+    unless File.exist?(path)
       errors.add(:file, "not found")
       return false
     end
@@ -133,7 +133,7 @@ module Post::FileMethods
   end
 
   def regenerate_jpeg_hash
-    return false if !has_jpeg?
+    return false unless has_jpeg?
 
     crc32_accum = 0
     File.open(jpeg_path, "rb") do |fp|
@@ -149,7 +149,7 @@ module Post::FileMethods
   end
 
   def generate_hash
-    if !regenerate_hash
+    unless regenerate_hash
       return false
     end
 
@@ -168,15 +168,15 @@ module Post::FileMethods
     return true unless image?
 
     if type == :sample then
-      return false if !generate_sample(options[:force_regen])
+      return false unless generate_sample(options[:force_regen])
       temp_path = tempfile_sample_path
       dest_path = sample_path
     elsif type == :jpeg then
-      return false if !generate_jpeg(options[:force_regen])
+      return false unless generate_jpeg(options[:force_regen])
       temp_path = tempfile_jpeg_path
       dest_path = jpeg_path
     elsif type == :preview then
-      return false if !generate_preview
+      return false unless generate_preview
       temp_path = tempfile_preview_path
       dest_path = preview_path
     else
@@ -253,7 +253,7 @@ module Post::FileMethods
   end
 
   def determine_content_type
-    if !File.exist?(tempfile_path)
+    unless File.exist?(tempfile_path)
       errors.add(:base, "No file received")
       return false
     end
@@ -303,7 +303,7 @@ module Post::FileMethods
   end
 
   def set_image_status
-    return true if !image_is_too_small
+    return true unless image_is_too_small
 
     return if user.try(:is_contributor_or_higher?)
 
@@ -398,7 +398,7 @@ module Post::FileMethods
     end
 
     size = { :width => width, :height => height }
-    if !CONFIG["sample_width"].nil?
+    unless CONFIG["sample_width"].nil?
       size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_width"], :height => CONFIG["sample_height"] }, ratio)
     end
     size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_max"], :height => CONFIG["sample_min"] }, ratio, false, true)

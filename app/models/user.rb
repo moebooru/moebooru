@@ -396,7 +396,7 @@ class User < ActiveRecord::Base
 
     module ClassMethods
       def get_user_level(level)
-        if !@user_level then
+        unless @user_level then
           @user_level = {}
           CONFIG["user_levels"].each do |name, value|
             normalized_name = name.downcase.gsub(/ /, "_").to_sym
@@ -477,7 +477,7 @@ class User < ActiveRecord::Base
 
     def set_avatar(params)
       post = Post.find(params[:post_id])
-      if !post.can_be_seen_by?(self)
+      unless post.can_be_seen_by?(self)
         errors.add(:access, "denied")
         return false
       end
@@ -521,7 +521,7 @@ class User < ActiveRecord::Base
         end
       end
 
-      if !use_sample
+      unless use_sample
         image_path = post.file_path
         image_ext = post.file_ext
         size = reduce_and_crop(post.width, post.height, params)
@@ -592,7 +592,7 @@ class User < ActiveRecord::Base
     end
 
     def commit_secondary_languages
-      return if !@secondary_languages
+      return unless @secondary_languages
 
       if @secondary_languages.include?("none") then
         self.secondary_languages = ""

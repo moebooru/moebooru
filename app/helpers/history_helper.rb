@@ -134,7 +134,7 @@ module HistoryHelper
         field_options = table_options[:fields][field] || get_default_field_options
 
         # Check for entry limits.
-        if !options[:specific_history]
+        unless options[:specific_history]
           max = field_options[:max_to_display]
           if max && group.length > max
             hidden += group.length - max
@@ -149,7 +149,7 @@ module HistoryHelper
           end
 
           part = format_change(history, c, options, table_options)
-          next if !part
+          next unless part
 
           part = part.merge(:primary_order => field_options[:primary_order] || table_options[:primary_order])
           parts << part
@@ -391,7 +391,7 @@ module HistoryHelper
       when "is_active"
         if change.value.trueish? then
           # Don't show the note initially being set to active.
-          return nil if !change.previous
+          return nil unless change.previous
           html << "undeleted"
         else
           html << "deleted"

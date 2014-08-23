@@ -31,7 +31,7 @@ class HistoryChange < ActiveRecord::Base
 
   # Return true if this changes the value to the default value.
   def changes_to_default?
-    return false if !has_default?
+    return false unless has_default?
 
     # Cast our value to the actual type; if this is a boolean value, this
     # casts "f" to false.
@@ -56,7 +56,7 @@ class HistoryChange < ActiveRecord::Base
 
   # Return the default value for the field recorded by this change.
   def default_history
-    return nil if !has_default?
+    return nil unless has_default?
 
     History.new :table_name => table_name,
                     :remote_id => remote_id,

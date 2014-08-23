@@ -20,12 +20,9 @@ module Post::FrameMethods
   end
 
   def frames_api_data(data)
-    return [] if data.empty?
+    frames = PostFrames.parse_frames(data, self.id)
 
-    parsed = PostFrames.parse_frames(data, self.id)
-
-    parsed.each_index do |idx|
-      frame = parsed[idx]
+    frames.each_with_index do |frame, i|
       frame[:post_id] = self.id
 
       size = PostFrames.frame_image_dimensions(frame)
@@ -37,14 +34,14 @@ module Post::FrameMethods
       frame[:preview_height] = size[:height]
 
       filename = PostFrames.filename(frame)
-      server = Mirrors.select_image_server(self.frames_warehoused, self.created_at.to_i+idx)
+      server = Mirrors.select_image_server(self.frames_warehoused, self.created_at.to_i + i)
       frame[:url] = server + "/data/frame/#{filename}"
 
-      thumb_server = Mirrors.select_image_server(self.frames_warehoused, self.created_at.to_i+idx, :use_aliases => true)
+      thumb_server = Mirrors.select_image_server(self.frames_warehoused, self.created_at.to_i + i, :use_aliases => true)
       frame[:preview_url] = thumb_server + "/data/frame-preview/#{filename}"
     end
 
-    return parsed
+    frames
   end
 end
 

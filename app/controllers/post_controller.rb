@@ -573,7 +573,7 @@ class PostController < ApplicationController
     10.times do
       post = Post.find(:first, :conditions => ["id = ? AND status <> 'deleted'", rand(max_id) + 1])
 
-      if post != nil && post.can_be_seen_by?(@current_user)
+      if post && post.can_be_seen_by?(@current_user)
         redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title
         return
       end

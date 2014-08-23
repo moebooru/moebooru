@@ -4,7 +4,7 @@ def get_metatags(tags)
   metatags.each do |metatag|
     case metatag
     when /^rating:([qse])/
-      ret[:rating] ||= $1
+      ret[:rating] ||= Regexp.last_match[1]
     end
   end
 

@@ -16,7 +16,7 @@ module QueryParser
 
     parsed_query.each do |token|
       if token =~ /^(.+?):(.+)$/
-        hoge[1][$1] = $2
+        hoge[1][Regexp.last_match[1]] = Regexp.last_match[2]
       else
         hoge[0] << token
       end

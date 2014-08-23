@@ -27,19 +27,19 @@ module Tag::ParseMethods
       # (-?(\d+(\.\d*)?|\d*\.\d+))
       case range
       when /^(.+?)\.\.(.+)/
-        return [:between, parse_cast($1, type), parse_cast($2, type)]
+        return [:between, parse_cast(Regexp.last_match[1], type), parse_cast(Regexp.last_match[2], type)]
 
       when /^<=(.+)/, /^\.\.(.+)/
-        return [:lte, parse_cast($1, type)]
+        return [:lte, parse_cast(Regexp.last_match[1], type)]
 
       when /^<(.+)/
-        return [:lt, parse_cast($1, type)]
+        return [:lt, parse_cast(Regexp.last_match[1], type)]
 
       when /^>=(.+)/, /^(.+)\.\.$/
-        return [:gte, parse_cast($1, type)]
+        return [:gte, parse_cast(Regexp.last_match[1], type)]
 
       when /^>(.+)/
-        return [:gt, parse_cast($1, type)]
+        return [:gt, parse_cast(Regexp.last_match[1], type)]
 
       when /^(.+?),(.+)/
         items = range.split(",").map do |val|
@@ -64,100 +64,100 @@ module Tag::ParseMethods
 
       scan_query(query).each do |token|
         if token =~ /^([qse])$/
-          q[:rating] = $1
+          q[:rating] = Regexp.last_match[1]
           next
         end
 
         if token =~ /^(unlocked|deleted|ext|user|sub|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|pending|shown|limit):(.+)$/
-          if $1 == "user"
-            q[:user] = $2
-          elsif $1 == "vote"
-            vote, user = $2.split(":")
+          if Regexp.last_match[1] == "user"
+            q[:user] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "vote"
+            vote, user = Regexp.last_match[2].split(":")
             user_id = User.find_by_name(user).id rescue nil
             q[:vote] = [parse_helper(vote), user_id]
-          elsif $1 == "-vote"
-            q[:vote_negated] = User.find_by_name($2).id rescue nil
+          elsif Regexp.last_match[1] == "-vote"
+            q[:vote_negated] = User.find_by_name(Regexp.last_match[2]).id rescue nil
             q[:error] = "no user named %s" % user if q[:vote_negated].nil?
-          elsif $1 == "fav"
-            q[:fav] = $2
-          elsif $1 == "sub"
-            q[:subscriptions] = $2
-          elsif $1 == "md5"
-            q[:md5] = $2
-          elsif $1 == "-rating"
-            q[:rating_negated] = $2
-          elsif $1 == "rating"
-            q[:rating] = $2
-          elsif $1 == "id"
-            q[:post_id] = parse_helper($2)
-          elsif $1 == "width"
-            q[:width] = parse_helper($2)
-          elsif $1 == "height"
-            q[:height] = parse_helper($2)
-          elsif $1 == "mpixels"
-            q[:mpixels] = parse_helper($2, :float)
-          elsif $1 == "score"
-            q[:score] = parse_helper($2)
-          elsif $1 == "source"
-            q[:source] = $2.to_escaped_for_sql_like + "%"
-          elsif $1 == "date"
-            q[:date] = parse_helper($2, :date)
-          elsif $1 == "pool"
-            q[:pool] = $2
+          elsif Regexp.last_match[1] == "fav"
+            q[:fav] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "sub"
+            q[:subscriptions] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "md5"
+            q[:md5] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "-rating"
+            q[:rating_negated] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "rating"
+            q[:rating] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "id"
+            q[:post_id] = parse_helper(Regexp.last_match[2])
+          elsif Regexp.last_match[1] == "width"
+            q[:width] = parse_helper(Regexp.last_match[2])
+          elsif Regexp.last_match[1] == "height"
+            q[:height] = parse_helper(Regexp.last_match[2])
+          elsif Regexp.last_match[1] == "mpixels"
+            q[:mpixels] = parse_helper(Regexp.last_match[2], :float)
+          elsif Regexp.last_match[1] == "score"
+            q[:score] = parse_helper(Regexp.last_match[2])
+          elsif Regexp.last_match[1] == "source"
+            q[:source] = Regexp.last_match[2].to_escaped_for_sql_like + "%"
+          elsif Regexp.last_match[1] == "date"
+            q[:date] = parse_helper(Regexp.last_match[2], :date)
+          elsif Regexp.last_match[1] == "pool"
+            q[:pool] = Regexp.last_match[2]
             if q[:pool] =~ /^(\d+)$/
               q[:pool] = q[:pool].to_i
             end
-          elsif $1 == "-pool"
-            pool = $2
+          elsif Regexp.last_match[1] == "-pool"
+            pool = Regexp.last_match[2]
             if pool =~ /^(\d+)$/
               pool = pool.to_i
             end
             q[:exclude_pools] ||= []
             q[:exclude_pools] << pool
-          elsif $1 == "parent"
-            if $2 == "none"
+          elsif Regexp.last_match[1] == "parent"
+            if Regexp.last_match[2] == "none"
               q[:parent_id] = false
             else
-              q[:parent_id] = $2.to_i
+              q[:parent_id] = Regexp.last_match[2].to_i
             end
-          elsif $1 == "order"
-            q[:order] = $2
-          elsif $1 == "unlocked"
-            if $2 == "rating"
+          elsif Regexp.last_match[1] == "order"
+            q[:order] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "unlocked"
+            if Regexp.last_match[2] == "rating"
               q[:unlocked_rating] = true
             end
-          elsif $1 == "deleted"
+          elsif Regexp.last_match[1] == "deleted"
             # This naming is slightly odd, to retain API compatibility with Danbooru's "deleted:true"
             # search flag.
-            if $2 == "true"
+            if Regexp.last_match[2] == "true"
               q[:show_deleted_only] = true
-            else $2 == "all"
+            else Regexp.last_match[2] == "all"
               q[:show_deleted_only] = false # all posts, deleted or not
             end
-          elsif $1 == "ext"
-            q[:ext] = $2
-          elsif $1 == "change"
-            q[:change] = parse_helper($2)
-          elsif $1 == "shown"
-            q[:shown_in_index] = ($2 == "true")
-          elsif $1 == "holds"
-            if $2 == "true" or $2 == "only"
+          elsif Regexp.last_match[1] == "ext"
+            q[:ext] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "change"
+            q[:change] = parse_helper(Regexp.last_match[2])
+          elsif Regexp.last_match[1] == "shown"
+            q[:shown_in_index] = (Regexp.last_match[2] == "true")
+          elsif Regexp.last_match[1] == "holds"
+            if Regexp.last_match[2] == "true" or Regexp.last_match[2] == "only"
               q[:show_holds] = :only
-            elsif $2 == "all"
+            elsif Regexp.last_match[2] == "all"
               q[:show_holds] = :yes # all posts, held or not
-            elsif $2 == "false"
+            elsif Regexp.last_match[2] == "false"
               q[:show_holds] = :hide
             end
-          elsif $1 == "pending"
-            if $2 == "true" or $2 == "only"
+          elsif Regexp.last_match[1] == "pending"
+            if Regexp.last_match[2] == "true" or Regexp.last_match[2] == "only"
               q[:show_pending] = :only
-            elsif $2 == "all"
+            elsif Regexp.last_match[2] == "all"
               q[:show_pending] = :yes # all posts, pending or not
-            elsif $2 == "false"
+            elsif Regexp.last_match[2] == "false"
               q[:show_pending] = :hide
             end
-          elsif $1 == "limit"
-            q[:limit] = $2
+          elsif Regexp.last_match[1] == "limit"
+            q[:limit] = Regexp.last_match[2]
           end
         elsif token[0] == "-" && token.size > 1
           q[:exclude] << token[1..-1]

@@ -52,12 +52,12 @@ class Tag < ActiveRecord::Base
 
     if name =~ /^ambiguous:(.+)/
       ambiguous = true
-      name = $1
+      name = Regexp.last_match[1]
     end
 
-    if name =~ /^(.+?):(.+)$/  && CONFIG["tag_types"][$1]
-      tag_type = CONFIG["tag_types"][$1]
-      name = $2
+    if name =~ /^(.+?):(.+)$/  && CONFIG["tag_types"][Regexp.last_match[1]]
+      tag_type = CONFIG["tag_types"][Regexp.last_match[1]]
+      name = Regexp.last_match[2]
     end
 
     tag = find_by_name(name)

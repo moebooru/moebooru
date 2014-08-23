@@ -133,7 +133,7 @@ module Post::TagMethods
           # Permissions for this are checked on commit.
           self.metatag_flagged = "moderator flagged"
         when /^source:(.*)/
-          self.source = $1
+          self.source = Regexp.last_match[1]
         end
       end
     end
@@ -157,13 +157,13 @@ module Post::TagMethods
     transaction do
       metatags.each do |metatag|
         if metatag =~ /^([qse])$/
-          metatag = "rating:#{$1}"
+          metatag = "rating:#{Regexp.last_match[1]}"
         end
 
         case metatag
         when /^pool:(.+)/
           begin
-            name, seq = $1.split(":")
+            name, seq = Regexp.last_match[1].split(":")
 
             pool = Pool.find_by_name(name)
 
@@ -187,7 +187,7 @@ module Post::TagMethods
           end
 
         when /^-pool:(.+)/
-          name, cmd = $1.split(":")
+          name, cmd = Regexp.last_match[1].split(":")
 
           pool = Pool.find_by_name(name)
           next if Thread.current["danbooru-user"] && !pool.can_change?(Thread.current["danbooru-user"], nil)
@@ -204,18 +204,18 @@ module Post::TagMethods
           pool.remove_post(id) if pool
 
         when /^rating:([qse])/
-          self.rating = $1 # so we don't have to reload for history_tag_string below
-          execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
+          self.rating = Regexp.last_match[1] # so we don't have to reload for history_tag_string below
+          execute_sql("UPDATE posts SET rating = ? WHERE id = ?", Regexp.last_match[1], id)
 
         when /^parent:(\d*)/
-          self.parent_id = $1
+          self.parent_id = Regexp.last_match[1]
 
           if CONFIG["enable_parent_posts"] && (Post.exists?(parent_id) or parent_id == 0)
             Post.set_parent(id, parent_id)
           end
 
         when /^child:(\d*)/
-          child_id = $1
+          child_id = Regexp.last_match[1]
           if CONFIG["enable_parent_posts"] && Post.exists?(child_id)
             # Don't just use set_parent, or history won't be saved, since it saves directly
             # to the database.

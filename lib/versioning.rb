@@ -383,7 +383,7 @@ module ActiveRecord
           metatags.each do |metatag|
             case metatag
             when /^rating:([qse])/
-              rating = $1
+              rating = Regexp.last_match[1]
             end
           end
 
@@ -395,7 +395,7 @@ module ActiveRecord
             prev_metatags.each do |metatag|
               case metatag
               when /^rating:([qse])/
-                prev_rating = $1
+                prev_rating = Regexp.last_match[1]
               end
             end
           end

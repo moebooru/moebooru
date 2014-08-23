@@ -134,7 +134,9 @@ module Nagato
     #
     # === Parameters
     # * :sql<String>:: A SQL fragment defining the ordering
-    attr_writer :order
+    def order(sql)
+      @order = sql
+    end
 
     # Sets the limit.
     #

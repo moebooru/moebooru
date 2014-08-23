@@ -140,7 +140,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def thumb_size
-    size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 400, :height => 400 })
+    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 400, :height => 400 })
   end
 
   def generate_sample

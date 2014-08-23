@@ -28,7 +28,7 @@ class TagSubscription < ActiveRecord::Base
   def self.process_all
     find(:all).each do |tag_subscription|
       if tag_subscription.user.is_privileged_or_higher?
-        begin
+        suppress Exception do
           TagSubscription.transaction do
             tags = tag_subscription.tag_query.scan(/\S+/)
             post_ids = []
@@ -37,8 +37,6 @@ class TagSubscription < ActiveRecord::Base
             end
             tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
           end
-        rescue Exception => x
-          # fail silently
         end
         sleep 1
       end

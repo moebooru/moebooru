@@ -4,7 +4,7 @@ module Post::VoteMethods
       conds = []
       cond_params = []
 
-      sql = "UPDATE posts AS p SET score = " +
+      sql = "UPDATE posts AS p SET score = " \
         "(SELECT COALESCE(SUM(GREATEST(?, LEAST(?, score))), 0) FROM post_votes v WHERE v.post_id = p.id) "
       cond_params << CONFIG["vote_sum_min"]
       cond_params << CONFIG["vote_sum_max"]

@@ -108,7 +108,7 @@ class Post < ActiveRecord::Base
   end
 
   def set_index_timestamp!
-    self.index_timestamp = self.created_at = Time.now
+    self.index_timestamp = (self.created_at ||= Time.now)
   end
 
   def set_flag_detail(reason, creator_id)

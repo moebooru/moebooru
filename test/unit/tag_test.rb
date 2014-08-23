@@ -67,7 +67,7 @@ class TagTest < ActiveSupport::TestCase
     Tag.find_or_create_by_name("ambiguous:moge")
     Tag.find_or_create_by_name("chichi")
     assert_equal([], Tag.select_ambiguous([]))
-    assert_equal(["moge"], Tag.select_ambiguous(["moge", "chichi", "oppai"]))
+    assert_equal(["moge"], Tag.select_ambiguous(%w(moge chichi oppai)))
   end
 
   if CONFIG["enable_caching"]
@@ -79,7 +79,7 @@ class TagTest < ActiveSupport::TestCase
 
   def test_parse_query
     results = Tag.parse_query("tag1 tag2")
-    assert_equal(["tag1", "tag2"], results[:related])
+    assert_equal(%w(tag1 tag2), results[:related])
     assert_equal([], results[:include])
     assert_equal([], results[:exclude])
 
@@ -134,28 +134,28 @@ class TagTest < ActiveSupport::TestCase
 
     t = Tag.find_by_name("tag1")
     related = t.related.sort { |a, b| a[0] <=> b[0] }
-    assert_equal(["tag1", "2"], related[0])
-    assert_equal(["tag2", "2"], related[1])
-    assert_equal(["tag3", "1"], related[2])
+    assert_equal(%w(tag1 2), related[0])
+    assert_equal(%w(tag2 2), related[1])
+    assert_equal(%w(tag3 1), related[2])
 
     # Make sure the related tags are cached
     create_post("tag1 tag4")
     t.reload
     related = t.related.sort { |a, b| a[0] <=> b[0] }
     assert_equal(3, related.size)
-    assert_equal(["tag1", "2"], related[0])
-    assert_equal(["tag2", "2"], related[1])
-    assert_equal(["tag3", "1"], related[2])
+    assert_equal(%w(tag1 2), related[0])
+    assert_equal(%w(tag2 2), related[1])
+    assert_equal(%w(tag3 1), related[2])
 
     # Make sure related tags are properly updated with the cache is expired
     t.update_attributes(:cached_related_expires_on => 5.days.ago)
     t.reload
     related = t.related.sort { |a, b| a[0] <=> b[0] }
     assert_equal(4, related.size)
-    assert_equal(["tag1", "3"], related[0])
-    assert_equal(["tag2", "2"], related[1])
-    assert_equal(["tag3", "1"], related[2])
-    assert_equal(["tag4", "1"], related[3])
+    assert_equal(%w(tag1 3), related[0])
+    assert_equal(%w(tag2 2), related[1])
+    assert_equal(%w(tag3 1), related[2])
+    assert_equal(%w(tag4 1), related[3])
   end
 
   def test_related_by_type
@@ -180,6 +180,6 @@ class TagTest < ActiveSupport::TestCase
     create_post("julian")
 
     assert_equal(["julius_caesar"], Tag.find_suggestions("caesar_julius"))
-    assert_equal(["julian", "julius_caesar"], Tag.find_suggestions("juli"))
+    assert_equal(%w(julian julius_caesar), Tag.find_suggestions("juli"))
   end
 end

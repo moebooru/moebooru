@@ -15,10 +15,10 @@ class Post < ActiveRecord::Base
   has_many :avatars, :class_name => "User", :foreign_key => "avatar_post_id"
   set_callback :delete, :before, :clear_avatars
   after_save :commit_flag
-  has_and_belongs_to_many :_tags, :class_name => 'Tag'
+  has_and_belongs_to_many :_tags, :class_name => "Tag"
   scope :available, lambda { where.not :status => "deleted" }
-  scope :has_any_tags, lambda { |tags| where('posts.tags_index @@ ?', Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' | ')) }
-  scope :has_all_tags, lambda { |tags| where('posts.tags_index @@ ?', Array(tags).map { |t| t.to_escaped_for_tsquery }.join(' & ')) }
+  scope :has_any_tags, lambda { |tags| where("posts.tags_index @@ ?", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(" | ")) }
+  scope :has_all_tags, lambda { |tags| where("posts.tags_index @@ ?", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(" & ")) }
   scope :flagged, lambda { where "status = ?", "flagged" }
 
   def self.slow_has_all_tags(tags)
@@ -36,11 +36,11 @@ class Post < ActiveRecord::Base
   end
 
   def next_id
-    Post.available.where('posts.id > ?', id).minimum(:id)
+    Post.available.where("posts.id > ?", id).minimum(:id)
   end
 
   def previous_id
-    Post.available.where('posts.id < ?', id).maximum(:id)
+    Post.available.where("posts.id < ?", id).maximum(:id)
   end
 
   include Post::SqlMethods
@@ -188,7 +188,7 @@ class Post < ActiveRecord::Base
   end
 
   def can_be_seen_by?(user, options={})
-    if not options[:show_deleted] and self.status == 'deleted'
+    if not options[:show_deleted] and self.status == "deleted"
       return false
     end
     CONFIG["can_see_post"].call(user, self)

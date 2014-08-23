@@ -1,5 +1,5 @@
 class TagController < ApplicationController
-  layout 'default'
+  layout "default"
   before_filter :mod_only, :only => [:mass_edit, :edit_preview]
   before_filter :member_only, :only => [:update, :edit]
   before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
@@ -11,7 +11,7 @@ class TagController < ApplicationController
   # Generates list of tag names matching parameter term.
   # Used by jquery-ui/autocomplete.
   def autocomplete_name
-    @tags = Tag.where(['name ILIKE ?', "*#{params[:term]}*".to_escaped_for_sql_like]).pluck(:name)
+    @tags = Tag.where(["name ILIKE ?", "*#{params[:term]}*".to_escaped_for_sql_like]).pluck(:name)
     respond_to do |format|
       format.json { render :json => @tags }
     end
@@ -187,7 +187,7 @@ class TagController < ApplicationController
     begin
       name = Tag.find(params[:id], :select => :name).name
     rescue
-      raise ActionController::RoutingError.new('Not Found')
+      raise ActionController::RoutingError.new("Not Found")
     end
     redirect_to :controller => :wiki, :action => :show, :title => name
   end

@@ -1,5 +1,5 @@
-require 'net/http'
-require 'mime/types'
+require "net/http"
+require "mime/types"
 
 class Net::HTTP::Post
   def multipart=(params=[])

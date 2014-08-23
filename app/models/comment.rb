@@ -1,10 +1,10 @@
-require 'translate'
+require "translate"
 # FIXME: god, why I need this. Anyway, the required helper functions should be
 #        moved to library instead. It's not really "view" helper anymore.
 include ApplicationHelper
 
 class Comment < ActiveRecord::Base
-  validates_format_of :body, :with => /\S/, :message => 'has no content'
+  validates_format_of :body, :with => /\S/, :message => "has no content"
   belongs_to :post
   belongs_to :user
   after_save :update_last_commented_at
@@ -66,12 +66,12 @@ class Comment < ActiveRecord::Base
     begin
       user.name
     rescue
-      CONFIG['default_guest_name']
+      CONFIG["default_guest_name"]
     end
   end
 
   def pretty_author2
-    author2.tr '_', ' '
+    author2.tr "_", " "
   end
 
   def api_attributes

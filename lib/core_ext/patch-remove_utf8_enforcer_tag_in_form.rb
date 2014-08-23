@@ -6,13 +6,13 @@
 #
 # version: 3.2.6
 # source: actionpack-3.2.6/lib/action_view/helpers/form_tag_helper.rb
-require 'action_view/helpers/form_tag_helper'
+require "action_view/helpers/form_tag_helper"
 
 module ActionView
   module Helpers
     module FormTagHelper
       def utf8_enforcer_tag
-        ''.html_safe
+        "".html_safe
       end
     end
   end

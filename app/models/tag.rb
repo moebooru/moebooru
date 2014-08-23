@@ -4,11 +4,11 @@ class Tag < ActiveRecord::Base
   include Tag::RelatedTagMethods
   include Tag::ParseMethods
   include Tag::ApiMethods
-  has_and_belongs_to_many :_posts, :class_name => 'Post'
-  has_many :tag_aliases, :foreign_key => 'alias_id'
+  has_and_belongs_to_many :_posts, :class_name => "Post"
+  has_many :tag_aliases, :foreign_key => "alias_id"
 
   TYPE_ORDER = {}
-  CONFIG['tag_order'].each_with_index do |type, index|
+  CONFIG["tag_order"].each_with_index do |type, index|
     TYPE_ORDER[type] = index
   end
 

@@ -8,8 +8,8 @@ module TagSubscriptionHelper
       tags.each do |tag|
         group << link_to(tag, :controller => "post", :action => "index", :tags => tag)
       end
-      html[-1] << %{#{group.join(' ')}</span>}
+      html[-1] << %{#{group.join(" ")}</span>}
     end
-    html.join(' ').html_safe
+    html.join(" ").html_safe
   end
 end

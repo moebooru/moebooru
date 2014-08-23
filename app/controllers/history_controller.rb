@@ -1,7 +1,7 @@
-require 'versioning'
+require "versioning"
 
 class HistoryController < ApplicationController
-  layout 'default'
+  layout "default"
 #  before_filter :member_only
 
   def index
@@ -9,7 +9,7 @@ class HistoryController < ApplicationController
 
     q = Hash.new {|h, k| h[k] = []}
 
-    search.split(' ').each { |s|
+    search.split(" ").each { |s|
       if s =~ /^(.+?):(.*)/
         search_type = $1
         param = $2
@@ -100,7 +100,7 @@ class HistoryController < ApplicationController
     end
 
     if q[:keywords].any? then
-      value_index_query = '(' + Array(q[:keywords]).map { |k| k.to_escaped_for_tsquery }.join(' & ') + ')'
+      value_index_query = "(" + Array(q[:keywords]).map { |k| k.to_escaped_for_tsquery }.join(" & ") + ")"
       hc_conds << "hc.value_index @@ to_tsquery('danbooru', ?)"
       hc_cond_params << value_index_query
     end

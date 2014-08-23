@@ -1,4 +1,4 @@
-require 'activerecord.rb'
+require "activerecord.rb"
 
 class AddPostVotes < ActiveRecord::Migration
   def self.up

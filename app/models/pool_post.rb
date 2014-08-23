@@ -6,7 +6,7 @@ class PoolPost < ActiveRecord::Base
   belongs_to :prev_post, :class_name => "Post", :foreign_key => "prev_post_id"
   versioned_parent :pool
   versioning_group_by :class => :pool
-  versioned :active, :default => 'f', :allow_reverting_to_default => true
+  versioned :active, :default => "f", :allow_reverting_to_default => true
   versioned :sequence
   after_save :expire_cache
 

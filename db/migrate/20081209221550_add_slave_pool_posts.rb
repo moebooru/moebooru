@@ -1,4 +1,4 @@
-require 'pool_post'
+require "pool_post"
 
 class AddSlavePoolPosts < ActiveRecord::Migration
   def self.up

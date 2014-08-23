@@ -2,7 +2,7 @@ module Post::CountMethods
   module ClassMethods
     def fast_count(tags = nil)
       # A small sanitation
-      tags = tags.to_s.strip.gsub(/ +/, ' ')
+      tags = tags.to_s.strip.gsub(/ +/, " ")
       cache_version = Rails.cache.read("$cache_version").to_i
       key = { :post_count => tags, :v => cache_version }
 

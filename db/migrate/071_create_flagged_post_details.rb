@@ -21,7 +21,7 @@ class CreateFlaggedPostDetails < ActiveRecord::Migration
     add_foreign_key :flagged_post_details, :user_id, :users, :id
     
     Post.find(:all, :conditions => "deletion_reason <> ''", :select => "deletion_reason, id, status").each do |post|
-      FlaggedPostDetail.create(:post_id => post.id, :reason => post.deletion_reason, :user_id => 1, :is_resolved => (post.status == 'deleted'))
+      FlaggedPostDetail.create(:post_id => post.id, :reason => post.deletion_reason, :user_id => 1, :is_resolved => (post.status == "deleted"))
     end
     
     remove_column :posts, :deletion_reason

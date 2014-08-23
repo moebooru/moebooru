@@ -12,12 +12,12 @@ def get_metatags(tags)
 end
 
 namespace :posts do
-  desc 'Recalculate all post votes'
+  desc "Recalculate all post votes"
   task :recalc_votes => :environment do
     Post.recalculate_score
   end
 
-  desc 'Set missing CRC32s'
+  desc "Set missing CRC32s"
   task :set_crc32 => :environment do
     Post.find(:all, :order => "ID ASC", :conditions => "crc32 IS NULL OR (sample_width IS NOT NULL AND sample_crc32 IS NULL)").each do |post|
       p "Post #{post.id}..."
@@ -42,7 +42,7 @@ namespace :posts do
     end
   end
 
-  desc 'Add missing tag history data'
+  desc "Add missing tag history data"
   task :add_post_history => :environment do
     # Add missing metatags to post_tag_history, using the nearest data (nearby tag
     # history or the post itself).  We won't break if this is missing, but this data
@@ -85,7 +85,7 @@ namespace :posts do
     end
   end
 
-  desc 'Upload posts to mirrors'
+  desc "Upload posts to mirrors"
   task :mirror => :environment do
     Post.find(:all, :conditions => ["NOT is_warehoused AND status <> 'deleted'"], :order => "id DESC").each { |post|
       p "Mirroring ##{post.id}..."
@@ -93,7 +93,7 @@ namespace :posts do
     }
   end
 
-  desc 'Recalculate pool post counts'
+  desc "Recalculate pool post counts"
   task :recalc_pools => :environment do
     Pool.find(:all).each { |pool|
       pool.recalculate_post_count
@@ -101,7 +101,7 @@ namespace :posts do
     }
   end
 
-  desc 'Regenerate post previews'
+  desc "Regenerate post previews"
   task :regen_previews => :environment do
     ActiveRecord::Base.select_values_sql("SELECT p.id FROM posts p ORDER BY p.id DESC").each do |post_id|
       p "%i..." % post_id
@@ -111,7 +111,7 @@ namespace :posts do
     end
   end
 
-  desc 'Regenerate JPEG CRCs'
+  desc "Regenerate JPEG CRCs"
   task :regen_jpeg_crcs => :environment do
     ActiveRecord::Base.select_values_sql("SELECT p.id FROM posts p ORDER BY p.id DESC").each do |post_id|
       p "%i..." % post_id

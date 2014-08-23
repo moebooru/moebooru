@@ -1,5 +1,5 @@
 class AdvertisementsController < ApplicationController
-  layout 'default'
+  layout "default"
   before_filter :admin_only, :except => :redirect
 
   def index
@@ -17,7 +17,7 @@ class AdvertisementsController < ApplicationController
   def create
     @ad = Advertisement.new(params[:advertisement])
     if @ad.save
-      flash[:success] = 'Advertisement added'
+      flash[:success] = "Advertisement added"
       redirect_to @ad
     else
       render :new
@@ -31,7 +31,7 @@ class AdvertisementsController < ApplicationController
   def update
     @ad = Advertisement.find(params[:id])
     if @ad.update_attributes(params[:advertisement])
-      flash[:success] = 'Advertisement updated'
+      flash[:success] = "Advertisement updated"
       redirect_to @ad
     else
       render :edit
@@ -42,7 +42,7 @@ class AdvertisementsController < ApplicationController
     if params[:advertisement_ids]
       ids = params[:advertisement_ids].map{ |a| a.to_i }
     else
-      flash[:notice] = 'No advertisement selected'
+      flash[:notice] = "No advertisement selected"
       redirect_to advertisements_path and return
     end
     if params[:do_delete]
@@ -50,7 +50,7 @@ class AdvertisementsController < ApplicationController
     elsif params[:do_reset_hit_count]
       Advertisement.reset_hit_count ids
     end
-    flash[:success] = 'Advertisements updated'
+    flash[:success] = "Advertisements updated"
     redirect_to advertisements_path
   end
 

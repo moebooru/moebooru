@@ -4,7 +4,7 @@ class PostController < ApplicationController
   #ignore upload/similar/create since they're user controlled and not worth measuring in newrelic
   newrelic_ignore :only => [:upload, :similar, :create]
 
-  layout 'default'
+  layout "default"
   helper :avatar
 
   before_filter :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
@@ -47,13 +47,13 @@ class PostController < ApplicationController
       status = "pending"
     end
 
-    if params[:anonymous] == '1' and @current_user.is_contributor_or_higher?
+    if params[:anonymous] == "1" and @current_user.is_contributor_or_higher?
       user_id = nil
       # FIXME: someone track down the user of Thread evilry here and nuke
       #        it please?
-      Thread.current['danbooru-user'] = nil
-      Thread.current['danbooru-user_id'] = nil
-      Thread.current['danbooru-ip_addr'] = request.remote_ip
+      Thread.current["danbooru-user"] = nil
+      Thread.current["danbooru-user_id"] = nil
+      Thread.current["danbooru-ip_addr"] = request.remote_ip
     else
       user_id = @current_user.id
     end
@@ -146,7 +146,7 @@ class PostController < ApplicationController
   def update
     @post = Post.find(params[:id])
     if @post.is_deleted? and not @current_user.is_mod_or_higher?
-      respond_to_error('Post Locked', { :action => :show, :id => params[:id] }, { :status => 422 })
+      respond_to_error("Post Locked", { :action => :show, :id => params[:id] }, { :status => 422 })
       return
     end
     user_id = @current_user.id
@@ -169,7 +169,7 @@ class PostController < ApplicationController
     user_id = @current_user.id
 
     ids = {}
-    (params['post'] || []).each do |post|
+    (params["post"] || []).each do |post|
       if post.is_a?(Array) then
         # We prefer { :id => 1, :rating => 's' }, but accept ["123", {:rating => 's'}], since that's
         # what we'll get from HTML forms.
@@ -271,7 +271,7 @@ class PostController < ApplicationController
   end
 
   def index
-    params[:tags] = Tag.scan_query(params[:tags]).join(' ')
+    params[:tags] = Tag.scan_query(params[:tags]).join(" ")
     tags = params[:tags]
     split_tags = QueryParser.parse(tags)
     page = page_number
@@ -392,7 +392,7 @@ class PostController < ApplicationController
   def atom
     @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
     respond_to do |format|
-      format.atom { render 'index' }
+      format.atom { render "index" }
     end
   end
 
@@ -698,7 +698,7 @@ class PostController < ApplicationController
       end
 
       if params[:search_id] then
-        options[:source] = File.open(file_path, 'rb')
+        options[:source] = File.open(file_path, "rb")
         options[:source_filename] = params[:search_id]
         options[:source_thumb] = "/data/search/#{params[:search_id]}"
         options[:type] = :file
@@ -841,7 +841,7 @@ class PostController < ApplicationController
   end
 
   def download
-    require 'base64'
+    require "base64"
 
     data = params[:data]
     filename = params[:filename]

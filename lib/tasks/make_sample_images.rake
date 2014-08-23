@@ -23,9 +23,9 @@ namespace :sample_images do
     return true
   end
 
-  desc 'Create missing sample images'
+  desc "Create missing sample images"
   task :create_missing => :environment do
-    Post.order('id DESC').all.each do |post|
+    Post.order("id DESC").all.each do |post|
       regen(post)
     end
   end

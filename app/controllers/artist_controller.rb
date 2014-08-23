@@ -59,7 +59,7 @@ class ArtistController < ApplicationController
       if params[:name]
         @artist.name = params[:name]
 
-        post = Post.has_any_tags(params[:name].to_s).where('source LIKE ?', 'http*'.to_escaped_for_sql_like).available.first
+        post = Post.has_any_tags(params[:name].to_s).where("source LIKE ?", "http*".to_escaped_for_sql_like).available.first
         unless post == nil || post.source.blank?
           @artist.urls = post.source
         end

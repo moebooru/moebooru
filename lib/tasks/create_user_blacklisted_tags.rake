@@ -1,4 +1,4 @@
-require 'active_record'
+require "active_record"
 
 namespace :user_blacklisted_tags do
   def SetDefaultBlacklistedTags
@@ -11,7 +11,7 @@ namespace :user_blacklisted_tags do
     end
   end
 
-  desc 'CreateUserBlacklistedTags'
+  desc "CreateUserBlacklistedTags"
   task :add_defaults => :environment do
     SetDefaultBlacklistedTags()
   end

@@ -1,12 +1,12 @@
 begin
-  require 'idn'
+  require "idn"
 rescue LoadError
 end
 
 class UserMailer < ActionMailer::Base
   helper :application
   default_url_options["host"] = CONFIG["server_host"]
-  default :from => CONFIG['email_from']
+  default :from => CONFIG["email_from"]
 
   # def confirmation_email(user)
   #   recipients UserMailer.normalize_address(user.email)

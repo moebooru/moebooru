@@ -1,4 +1,4 @@
-require 'yaml'
+require "yaml"
 
 class RemoveYaml < ActiveRecord::Migration
   def self.up

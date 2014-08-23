@@ -1,7 +1,7 @@
 namespace :i18n do
-  desc 'Find missing translations for each locales.'
+  desc "Find missing translations for each locales."
   task :find_missing => :environment do
-    @reference = 'en'
+    @reference = "en"
 
     def print_header(text, line)
       puts text
@@ -9,7 +9,7 @@ namespace :i18n do
     end
 
     def yaml_path(locale)
-      Rails.root.join('config', 'locales', "#{locale}.yml")
+      Rails.root.join("config", "locales", "#{locale}.yml")
     end
 
     def find_changes(target)
@@ -53,9 +53,9 @@ namespace :i18n do
       end
     end
 
-    CONFIG['available_locales'].each do |l|
+    CONFIG["available_locales"].each do |l|
       next if l == @reference
-      print_header "Report for locale '#{l}'", '='
+      print_header "Report for locale '#{l}'", "="
       find_changes l
       puts
     end

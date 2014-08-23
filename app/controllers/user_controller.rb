@@ -1,4 +1,4 @@
-require 'digest/sha2'
+require "digest/sha2"
 
 class UserController < ApplicationController
   layout "default"
@@ -20,7 +20,7 @@ class UserController < ApplicationController
   public
   def autocomplete_name
     keyword = params[:term].to_s
-    @users = User.where(['name ILIKE ?', "*#{keyword}*".to_escaped_for_sql_like]).pluck(:name) if keyword.length >= 2
+    @users = User.where(["name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like]).pluck(:name) if keyword.length >= 2
     respond_to do |format|
       format.json { render :json => (@users || []) }
     end
@@ -38,22 +38,22 @@ class UserController < ApplicationController
     @user = User.find(params[:id])
     @user.avatar_post_id = nil
     if @user.save
-      flash[:notice] = 'Avatar removed'
+      flash[:notice] = "Avatar removed"
     else
-      flash[:notice] = 'Failed removing avatar'
+      flash[:notice] = "Failed removing avatar"
     end
     redirect_to :action => :show, :id => params[:id]
   end
 
   def change_password
-    @title = 'Change Password'
-    render :layout => 'settings'
+    @title = "Change Password"
+    render :layout => "settings"
   end
 
   def change_email
-    @title = 'Change Email'
+    @title = "Change Email"
     @current_user.current_email = @current_user.email
-    render :layout => 'settings'
+    render :layout => "settings"
   end
 
   def show
@@ -68,7 +68,7 @@ class UserController < ApplicationController
       redirect_to "/404"
     end
     if @current_user.is_mod_or_higher?
-      @user_ips = @user.user_logs.order('created_at DESC').pluck('ip_addr').uniq
+      @user_ips = @user.user_logs.order("created_at DESC").pluck("ip_addr").uniq
     end
     respond_to do |format|
       format.html
@@ -228,7 +228,7 @@ class UserController < ApplicationController
 
   def edit
     @user = @current_user
-    render :layout => 'settings'
+    render :layout => "settings"
   end
 
   def reset_password
@@ -268,7 +268,7 @@ class UserController < ApplicationController
       end
     else
       @user = User.new
-      redirect_to root_path if params[:format] and params[:format] != 'html'
+      redirect_to root_path if params[:format] and params[:format] != "html"
     end
   end
 
@@ -384,9 +384,9 @@ class UserController < ApplicationController
   private
   def get_view_name_for_edit(param)
     case param
-    when 'change_email'
+    when "change_email"
       :change_email
-    when 'change_password'
+    when "change_password"
       :change_password
     else
       :edit

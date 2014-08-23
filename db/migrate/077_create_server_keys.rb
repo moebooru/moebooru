@@ -1,4 +1,4 @@
-require 'digest/sha1'
+require "digest/sha1"
 
 class CreateServerKeys < ActiveRecord::Migration
   def self.up

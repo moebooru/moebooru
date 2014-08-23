@@ -76,7 +76,7 @@ class InlineImage < ActiveRecord::Base
     if f.tempfile.path
       FileUtils.cp(f.tempfile.path, tempfile_image_path)
     else
-      File.open(tempfile_image_path, 'wb') {|nf| nf.write(f.read)}
+      File.open(tempfile_image_path, "wb") {|nf| nf.write(f.read)}
     end
 
     got_file
@@ -232,7 +232,7 @@ class InlineImage < ActiveRecord::Base
 
   def generate_hash(path)
     md5_obj = Digest::MD5.new
-    File.open(path, 'rb') { |fp|
+    File.open(path, "rb") { |fp|
       buf = ""
       while fp.read(1024*64, buf) do md5_obj << buf end
     }

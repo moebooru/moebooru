@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require File.expand_path("../boot", __FILE__)
 
 # Pick the frameworks you want:
 require "active_record/railtie"
@@ -8,11 +8,11 @@ require "action_mailer/railtie"
 require "sprockets/railtie"
 require "rails/test_unit/railtie"
 
-require File.expand_path('../init_config', __FILE__)
-require File.expand_path('../local_config', __FILE__)
-require File.expand_path('../default_config', __FILE__)
+require File.expand_path("../init_config", __FILE__)
+require File.expand_path("../local_config", __FILE__)
+require File.expand_path("../default_config", __FILE__)
 
-Bundler.require(*CONFIG['bundler_groups'])
+Bundler.require(*CONFIG["bundler_groups"])
 
 module Moebooru
   class Application < Rails::Application
@@ -41,7 +41,7 @@ module Moebooru
     config.i18n.enforce_available_locales = true
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    config.i18n.default_locale = CONFIG['default_locale']
+    config.i18n.default_locale = CONFIG["default_locale"]
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
@@ -67,14 +67,14 @@ module Moebooru
     config.assets.enabled = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
+    config.assets.version = "1.0"
 
     # FIXME: can't move images to correct asset path since the javascripts
     #        haven't been updated to use asset-path.
-    config.assets.paths += [config.root.join('public', 'images')]
+    config.assets.paths += [config.root.join("public", "images")]
 
-    if (Rails.env.production? and CONFIG['enable_caching']) or ENV['MOEBOORU_CACHE'] == 'force'
-      config.cache_store = :dalli_store, CONFIG['memcache_servers'], { :namespace => CONFIG['app_name'] }
+    if (Rails.env.production? and CONFIG["enable_caching"]) or ENV["MOEBOORU_CACHE"] == "force"
+      config.cache_store = :dalli_store, CONFIG["memcache_servers"], { :namespace => CONFIG["app_name"] }
     else
       config.cache_store = :null_store
     end
@@ -83,7 +83,7 @@ module Moebooru
     config.action_dispatch.ip_spoofing_check = false
 
     # Save cache in different location to avoid collision.
-    config.action_controller.page_cache_directory = config.root.join('public', 'cache')
+    config.action_controller.page_cache_directory = config.root.join("public", "cache")
 
   end
 end

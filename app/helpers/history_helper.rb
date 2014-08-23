@@ -1,6 +1,6 @@
 # encoding: utf-8
-require 'post_helper'
-require 'diff'
+require "post_helper"
+require "diff"
 
 module HistoryHelper
   include PostHelper
@@ -193,7 +193,7 @@ module HistoryHelper
     end
 
     # FIXME: more why.jpg on rbx.
-    return html.force_encoding('utf-8').html_safe
+    return html.force_encoding("utf-8").html_safe
   end
 
   def format_change(history, change, options, table_options)
@@ -255,7 +255,7 @@ module HistoryHelper
         end
 
       when "frames_pending"
-        html << "frames changed: #{h(change.value.empty? ? '(none)':change.value)}"
+        html << "frames changed: #{h(change.value.empty? ? "(none)":change.value)}"
 
       when "is_rating_locked"
         html << (change.value.trueish? ? added : removed)

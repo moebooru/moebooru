@@ -15,20 +15,20 @@ module WikiHelper
   def page_change(a, b)
     changes = a.diff(b)
     if changes.empty?
-      'no change'
+      "no change"
     else
       changes.map do |change|
         case change
         when :initial
-          'first version'
+          "first version"
         when :body
-          'content update'
+          "content update"
         when :title
           "page rename (#{h a.title} ← #{h b.title})"
         when :is_locked
-          a.is_locked ? 'page lock' : 'page unlock'
+          a.is_locked ? "page lock" : "page unlock"
         end
-      end.join(', ')
+      end.join(", ")
     end
   end
 end

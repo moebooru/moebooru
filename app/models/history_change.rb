@@ -8,7 +8,7 @@ class HistoryChange < ActiveRecord::Base
     # Apparently the return changes between 1.8 and 1.9 -
     # this workaround were found somewhere I couldn't remember.
     # - edogawaconan
-    if RUBY_VERSION >= '1.9'
+    if RUBY_VERSION >= "1.9"
       opts = master_class.get_versioned_attribute_options(column_name) || {}
       if opts.is_a? Array then
         opts = opts.reduce({}) {|h,pairs| pairs.each {|k,v| h[k] = v}; h}

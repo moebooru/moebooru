@@ -8,7 +8,7 @@ module ActionView
       # this action.  This is used by User.js.
       # Mirrors the one defined in ApplicationHelper
       def _moebooru_need_signup?(level)
-        return CONFIG['starting_level'] >= User.get_user_level(level)
+        return CONFIG["starting_level"] >= User.get_user_level(level)
       end
       module_function :_moebooru_need_signup?
     end
@@ -16,10 +16,10 @@ module ActionView
     module TagHelper
       alias_method :orig_tag_options, :tag_options
       def tag_options(options, escape = true)
-        level = options['level']
+        level = options["level"]
         if level and MoebooruTagHelper._moebooru_need_signup?(level)
-          options.delete 'level'
-          options['onclick'] = "if(!User.run_login_onclick(event)) return false; #{options['onclick'] || 'return true;'}"
+          options.delete "level"
+          options["onclick"] = "if(!User.run_login_onclick(event)) return false; #{options["onclick"] || "return true;"}"
         end
         orig_tag_options options, escape
       end
@@ -33,9 +33,9 @@ module ActionView
       def form_tag(url_for_options = {}, options = {}, *parameters_for_url, &block)
         if options[:level]
           if MoebooruTagHelper._moebooru_need_signup?(options[:level])
-            classes = (options[:class] || '').split(' ')
-            classes += ['need-signup']
-            options[:class] = classes.join(' ')
+            classes = (options[:class] || "").split(" ")
+            classes += ["need-signup"]
+            options[:class] = classes.join(" ")
           end
           options.delete :level
         end

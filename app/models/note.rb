@@ -3,11 +3,11 @@ class Note < ActiveRecord::Base
 
   belongs_to :post
   before_save :blank_body
-  acts_as_versioned_rails3 :table_name => 'note_versions', :foreign_key => 'note_id', :order => "updated_at DESC"
+  acts_as_versioned_rails3 :table_name => "note_versions", :foreign_key => "note_id", :order => "updated_at DESC"
   after_save :update_post
 
   versioning_group_by :class => :post
-  versioned :is_active, :default => 'f', :allow_reverting_to_default => true
+  versioned :is_active, :default => "f", :allow_reverting_to_default => true
   versioned :x
   versioned :y
   versioned :width
@@ -82,7 +82,7 @@ class Note < ActiveRecord::Base
 
   # TODO: move this to a helper
   def formatted_body
-    body.gsub(/<tn>(.+?)<\/tn>/m, '<br><p class="tn">\1</p>').gsub(/\n/, '<br>')
+    body.gsub(/<tn>(.+?)<\/tn>/m, '<br><p class="tn">\1</p>').gsub(/\n/, "<br>")
   end
 
   def update_post

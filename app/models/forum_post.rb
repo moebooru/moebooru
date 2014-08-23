@@ -1,6 +1,6 @@
 class ForumPost < ActiveRecord::Base
-  belongs_to :creator, :class_name => 'User', :foreign_key => :creator_id
-  belongs_to :updater, :class_name => 'User', :foreign_key => :last_updated_by
+  belongs_to :creator, :class_name => "User", :foreign_key => :creator_id
+  belongs_to :updater, :class_name => "User", :foreign_key => :last_updated_by
   after_create :initialize_last_updated_by
   after_create :clear_cache
   before_validation :validate_title
@@ -161,7 +161,7 @@ class ForumPost < ActiveRecord::Base
   def last_updater
     updater.name
     rescue
-      CONFIG['default_guest_name']
+      CONFIG["default_guest_name"]
   end
 
   def author

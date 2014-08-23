@@ -120,7 +120,7 @@ module Post::StatusMethods
   end
 
   def undelete!
-    self.status = 'active'
+    self.status = "active"
     self.save!
     Post.update_has_children(parent_id) if parent_id
   end

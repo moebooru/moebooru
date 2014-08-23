@@ -30,7 +30,7 @@ module Post::ImageStore
 
     def preview_url
       if status == "deleted"
-        CONFIG['url_base'] + "/deleted-preview.png"
+        CONFIG["url_base"] + "/deleted-preview.png"
       elsif image?
         CONFIG["url_base"] + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
       else

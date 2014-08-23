@@ -1,4 +1,4 @@
-require 'activerecord.rb'
+require "activerecord.rb"
 
 # Upstream 085 removes post votes.  Ours doesn't.  Ours is right.  If the site was
 # migrated with our migrations, leave things alone; we're all set.  If the site was

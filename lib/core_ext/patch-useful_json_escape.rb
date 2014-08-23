@@ -5,11 +5,11 @@
 #
 # reference: http://jfire.io/blog/2012/04/30/how-to-securely-bootstrap-json-in-a-rails-view/
 #
-require 'active_support/core_ext/string/output_safety'
+require "active_support/core_ext/string/output_safety"
 class ERB
   module Util
     def json_escape(s)
-      result = s.to_s.gsub('/', '\/')
+      result = s.to_s.gsub("/", '\/')
       s.html_safe? ? result.html_safe : result
     end
   end

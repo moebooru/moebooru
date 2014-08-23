@@ -1,4 +1,4 @@
-require 'digest/sha1'
+require "digest/sha1"
 
 class User < ActiveRecord::Base
   has_many :user_logs
@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   def log(ip)
     Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
       Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_in => 1.day) do
-        UserLog.where('created_at < ?', 3.days.ago).delete_all
+        UserLog.where("created_at < ?", 3.days.ago).delete_all
       end
       begin
         log_entry = self.user_logs.find_or_initialize_by(:ip_addr => ip)
@@ -141,13 +141,13 @@ class User < ActiveRecord::Base
           begin
             find(user_id).name
           rescue ActiveRecord::RecordNotFound
-            CONFIG['default_guest_name']
+            CONFIG["default_guest_name"]
           end
         end
       end
 
       def find_by_name(name)
-        find_by('LOWER(name) = LOWER(?)', name)
+        find_by("LOWER(name) = LOWER(?)", name)
       end
     end
 
@@ -203,7 +203,7 @@ class User < ActiveRecord::Base
         # disable filtering in test mode to simplify tests
         popular_tags = ""
       else
-        popular_tags = select_values_sql("SELECT id FROM tags WHERE tag_type = #{CONFIG['tag_types']['General']} ORDER BY post_count DESC LIMIT 8").join(", ")
+        popular_tags = select_values_sql("SELECT id FROM tags WHERE tag_type = #{CONFIG["tag_types"]["General"]} ORDER BY post_count DESC LIMIT 8").join(", ")
         popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
       end
 
@@ -250,7 +250,7 @@ class User < ActiveRecord::Base
         # disable filtering in test mode to simplify tests
         popular_tags = ""
       else
-        popular_tags = select_values_sql("SELECT id FROM tags WHERE tag_type = #{CONFIG['tag_types']['General']} ORDER BY post_count DESC LIMIT 8").join(", ")
+        popular_tags = select_values_sql("SELECT id FROM tags WHERE tag_type = #{CONFIG["tag_types"]["General"]} ORDER BY post_count DESC LIMIT 8").join(", ")
         popular_tags = "AND pt.tag_id NOT IN (#{popular_tags})" unless popular_tags.blank?
       end
 
@@ -300,7 +300,7 @@ class User < ActiveRecord::Base
     end
 
     def recent_favorite_posts
-      Post.available.joins(:post_votes).where(:post_votes => { :user_id => id, :score => 3 }).order('post_votes.id DESC').limit(6)
+      Post.available.joins(:post_votes).where(:post_votes => { :user_id => id, :score => 3 }).order("post_votes.id DESC").limit(6)
     end
 
     def favorite_post_count(options = {})
@@ -308,7 +308,7 @@ class User < ActiveRecord::Base
     end
 
     def post_count
-      @post_count ||= posts.where(:status => 'active').count
+      @post_count ||= posts.where(:status => "active").count
     end
 
     def held_post_count
@@ -622,7 +622,7 @@ class User < ActiveRecord::Base
   include UserTagSubscriptionMethods
   include UserLanguageMethods
 
-  @salt = CONFIG['password_salt']
+  @salt = CONFIG["password_salt"]
 
   class << self
     attr_accessor :salt

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class DmailTest < ActiveSupport::TestCase
   fixtures :users
@@ -43,7 +43,7 @@ class DmailTest < ActiveSupport::TestCase
     assert_equal(1, msg.from_id)
     assert_equal(true, User.find(4).has_mail?)
     assert_equal(1, ActionMailer::Base.deliveries.size)
-    assert_equal("From: #{CONFIG['admin_contact']}\r\nTo: member@danbooru.com\r\nSubject: #{CONFIG['app_name']} - Message received from admin\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>admin said:</p>\n\n<div>\n  <p>hello</p>\n</div>\n", ActionMailer::Base.deliveries[0].encoded)
+    assert_equal("From: #{CONFIG["admin_contact"]}\r\nTo: member@danbooru.com\r\nSubject: #{CONFIG["app_name"]} - Message received from admin\r\nMime-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>admin said:</p>\n\n<div>\n  <p>hello</p>\n</div>\n", ActionMailer::Base.deliveries[0].encoded)
     
     response_a = Dmail.create(:to_name => "admin", :from_name => "member", :parent_id => msg.id, :title => "hello", :body => "you are wrong")
     assert_equal("Re: hello", response_a.title)

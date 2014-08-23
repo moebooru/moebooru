@@ -12,7 +12,7 @@ module CacheHelper
     end
 
     version = Rails.cache.read("$cache_version")
-    tags = tags.join(' ')
+    tags = tags.join(" ")
 
     key = {}
     key[:base] = base

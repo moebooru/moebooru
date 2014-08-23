@@ -1,12 +1,12 @@
-require 'multipart'
-require 'external_post'
-require 'cgi'
+require "multipart"
+require "external_post"
+require "cgi"
 
 module Translate
   class ServerError < Exception; end
 
   def post(path, params, options={})
-    server = 'http://ajax.googleapis.com'
+    server = "http://ajax.googleapis.com"
 
     begin
       Timeout::timeout(10) {
@@ -59,10 +59,10 @@ module Translate
     params += [{:name=>"format", :data=>"html"}]
     params += [{:name=>"q", :data=>s}]
 
-    server = 'http://ajax.googleapis.com'
-    path = '/ajax/services/language/translate'
+    server = "http://ajax.googleapis.com"
+    path = "/ajax/services/language/translate"
     languages.each { |lang|
-      params += [{:name=>"langpair", :data=>'|%s' % lang}]
+      params += [{:name=>"langpair", :data=>"|%s" % lang}]
     }
 
     #resp = Translate.request(path)

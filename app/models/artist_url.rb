@@ -13,7 +13,7 @@ class ArtistUrl < ActiveRecord::Base
       url = url.gsub(/^http:\/\/img\d+\.pixiv\.net/, "http://img.pixiv.net")
       # Pixiv 2012
       # Example URL: http://i1.pixiv.net/img55/img/kazamatuli/29701368.jpg
-      url = url.gsub(/^http:\/\/i\d+\.pixiv\.net\/img\d+/, 'http://img.pixiv.net')
+      url = url.gsub(/^http:\/\/i\d+\.pixiv\.net\/img\d+/, "http://img.pixiv.net")
       return url
     end
   end
@@ -27,7 +27,7 @@ class ArtistUrl < ActiveRecord::Base
     url = url.gsub(/^http:\/\/blog-imgs-\d+\.fc2/, "http://blog*.fc2")
     # See documentation in self.normalize for examples
     url = url.gsub(/^http:\/\/img\d+\.pixiv\.net/, "http://img*.pixiv.net")
-    url = url.gsub(/^http:\/\/i\d+\.pixiv\.net\/img\d+/, 'http://img*.pixiv.net')
+    url = url.gsub(/^http:\/\/i\d+\.pixiv\.net\/img\d+/, "http://img*.pixiv.net")
   end
 
   def normalize

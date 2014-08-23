@@ -39,20 +39,20 @@ class String
   # true is stored as '1' instead.
   # This function allows simple modification without need to update database.
   def trueish?
-    ['1', 't'].include? self
+    ["1", "t"].include? self
   end
 
   # Escapes string to be usable in a SQL LIKE.
   # Adds backslash to \, %, and _ and replace * with % (SQL wildcard)
   def to_escaped_for_sql_like
-    return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub('*', '%')
+    return self.gsub(/[\\%_]/) { |x| '\\' + x }.gsub("*", "%")
   end
 
   # Nuke nulls and anything after it because it sucks.
   # The characters \()&|!:' and any spaces (\p{Space}) must be escaped
   # by prepending them with \ before passed to tsquery.
   def to_escaped_for_tsquery
-    return self.gsub(/\0.*/, '').gsub(/[\p{Space}\\()&|!:']/) { |x| '\\' + x }
+    return self.gsub(/\0.*/, "").gsub(/[\p{Space}\\()&|!:']/) { |x| '\\' + x }
   end
 
   def to_escaped_js

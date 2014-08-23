@@ -122,7 +122,7 @@ class PostFrames < ActiveRecord::Base
     # All frames are created.  Finalize the frames, activating the target ones and deactivating the
     # old non-target ones.
     logger.info("Finished creating frames for post #{post.id}; finalizing")
-    where(:post_id => post.id).update_all('is_active = is_target')
+    where(:post_id => post.id).update_all("is_active = is_target")
 
     # Set frames_warehoused to true only if all of the new target frames are already warehoused.
     frames_warehoused = !PostFrames.exists?(["post_id = ? AND is_target AND NOT is_warehoused", post.id])

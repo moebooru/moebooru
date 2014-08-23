@@ -15,14 +15,14 @@ class BatchUpload < ActiveRecord::Base
     old_thread_user = Thread.current["danbooru-user"]
     old_thread_user_id = Thread.current["danbooru-user_id"]
     old_ip_addr = Thread.current["danbooru-ip_addr"]
-    Thread.current["danbooru-user"] = User.find_by_id(self.user_id)
-    Thread.current["danbooru-user_id"] = self.user_id
-    Thread.current["danbooru-ip_addr"] = self.ip
+    Thread.current["danbooru-user"] = User.find_by_id(user_id)
+    Thread.current["danbooru-user_id"] = user_id
+    Thread.current["danbooru-ip_addr"] = ip
 
     self.active = true
     self.save!
 
-    @post = Post.create({ :source => self.url, :tags => self.tags, :updater_user_id => self.user_id, :updater_ip_addr => self.ip, :user_id => self.user_id, :ip_addr => self.ip, :status => "active" })
+    @post = Post.create({ :source => url, :tags => tags, :updater_user_id => user_id, :updater_ip_addr => ip, :user_id => user_id, :ip_addr => ip, :status => "active" })
 
     if @post.errors.empty?
       if CONFIG["dupe_check_on_upload"] && @post.image? && @post.parent_id.nil?
@@ -47,7 +47,7 @@ class BatchUpload < ActiveRecord::Base
 
     self.active = false
 
-    if self.data["success"] then
+    if data["success"] then
       self.status = "finished"
     else
       self.status = "error"

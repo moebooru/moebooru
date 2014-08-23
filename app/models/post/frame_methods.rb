@@ -9,21 +9,21 @@ module Post::FrameMethods
 #    end
 
     # This cleans up the frames string, and fills in the final dimensions spec.
-    parsed = PostFrames.parse_frames(frames, self.id)
+    parsed = PostFrames.parse_frames(frames, id)
     PostFrames.sanitize_frames(parsed, self)
     new_frames = PostFrames.format_frames(parsed)
 
-    return if self.frames_pending == new_frames
+    return if frames_pending == new_frames
 #    self.old_rating = self.frames
     write_attribute(:frames_pending, new_frames)
     touch_change_seq!
   end
 
   def frames_api_data(data)
-    frames = PostFrames.parse_frames(data, self.id)
+    frames = PostFrames.parse_frames(data, id)
 
     frames.each_with_index do |frame, i|
-      frame[:post_id] = self.id
+      frame[:post_id] = id
 
       size = PostFrames.frame_image_dimensions(frame)
       frame[:width] = size[:width]
@@ -34,10 +34,10 @@ module Post::FrameMethods
       frame[:preview_height] = size[:height]
 
       filename = PostFrames.filename(frame)
-      server = Mirrors.select_image_server(self.frames_warehoused, self.created_at.to_i + i)
+      server = Mirrors.select_image_server(frames_warehoused, created_at.to_i + i)
       frame[:url] = server + "/data/frame/#{filename}"
 
-      thumb_server = Mirrors.select_image_server(self.frames_warehoused, self.created_at.to_i + i, :use_aliases => true)
+      thumb_server = Mirrors.select_image_server(frames_warehoused, created_at.to_i + i, :use_aliases => true)
       frame[:preview_url] = thumb_server + "/data/frame-preview/#{filename}"
     end
 

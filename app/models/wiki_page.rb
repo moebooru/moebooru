@@ -36,11 +36,11 @@ class WikiPage < ActiveRecord::Base
   end
 
   def last_version?
-    self.version == next_version.to_i - 1
+    version == next_version.to_i - 1
   end
 
   def first_version?
-    self.version == 1
+    version == 1
   end
 
   def author
@@ -53,7 +53,7 @@ class WikiPage < ActiveRecord::Base
 
   def diff(version)
     otherpage = WikiPage.find_page(title, version)
-    Danbooru.diff(self.body, otherpage.body)
+    Danbooru.diff(body, otherpage.body)
   end
 
   def self.find_page(title, version = nil)
@@ -92,8 +92,8 @@ class WikiPage < ActiveRecord::Base
 
   def rename!(new_title)
     transaction do
-      execute_sql("UPDATE wiki_pages SET title = ? WHERE id = ?", new_title, self.id)
-      execute_sql("UPDATE wiki_page_versions SET title = ? WHERE wiki_page_id = ?", new_title, self.id)
+      execute_sql("UPDATE wiki_pages SET title = ? WHERE id = ?", new_title, id)
+      execute_sql("UPDATE wiki_page_versions SET title = ? WHERE wiki_page_id = ?", new_title, id)
     end
   end
 

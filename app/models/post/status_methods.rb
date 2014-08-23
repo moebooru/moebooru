@@ -6,7 +6,7 @@ module Post::StatusMethods
   end
 
   def reset_index_timestamp
-    self.index_timestamp = self.created_at
+    self.index_timestamp = created_at
   end
 
   # Bump the post to the front of the index.
@@ -90,8 +90,8 @@ module Post::StatusMethods
   end
 
   def commit_status_reason
-    return if self.status_reason.nil?
-    self.set_flag_detail(self.status_reason, nil)
+    return if status_reason.nil?
+    set_flag_detail(status_reason, nil)
   end
 
   def is_held=(hold)
@@ -106,10 +106,10 @@ module Post::StatusMethods
     if hold
       # A post can only be held within one minute of posting (except by a moderator);
       # this is intended to be used on initial posting, before it shows up in the index.
-      return if self.created_at && self.created_at < 1.minute.ago
+      return if created_at && created_at < 1.minute.ago
     end
 
-    was_held = self.is_held
+    was_held = is_held
 
     write_attribute(:is_held, hold)
 

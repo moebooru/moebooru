@@ -29,7 +29,7 @@ class Hash
     # { :a=>1, :b=>[1] }
     attrs = {}
     children = []
-    self.each do |key, value|
+    each do |key, value|
       if value.respond_to?(:to_xml) or value.is_a?(Array) then
         # If an array child is empty, omit the node entirely.
         next if value.is_a?(Array) and value.empty?
@@ -70,7 +70,7 @@ class Array
 
     root = options.delete(:root) || "array"
     options[:builder].tag!(root) do
-      self.each do |value|
+      each do |value|
         value.to_xml(options)
       end
     end

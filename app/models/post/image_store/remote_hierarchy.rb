@@ -7,8 +7,8 @@ module Post::ImageStore
     end
 
     def select_random_image_server(options = {})
-      options[:id] = self.id
-      Mirrors.select_image_server(self.is_warehoused?, self.created_at.to_i, options)
+      options[:id] = id
+      Mirrors.select_image_server(self.is_warehoused?, created_at.to_i, options)
     end
 
     def file_path

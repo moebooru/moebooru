@@ -19,23 +19,23 @@ module Post::ImageStore
         FileUtils.chmod(0664, jpeg_path)
       end
 
-      self.delete_tempfile
+      delete_tempfile
 
-      base64_md5 = Base64.encode64(self.md5.unpack("a2" * (self.md5.size / 2)).map { |x| x.hex.chr }.join)
+      base64_md5 = Base64.encode64(md5.unpack("a2" * (md5.size / 2)).map { |x| x.hex.chr }.join)
 
       AWS::S3::Base.establish_connection!(:access_key_id => CONFIG["amazon_s3_access_key_id"], :secret_access_key => CONFIG["amazon_s3_secret_access_key"])
-      AWS::S3::S3Object.store(file_name, open(self.file_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Content-MD5" => base64_md5)
+      AWS::S3::S3Object.store(file_name, open(file_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read, "Content-MD5" => base64_md5)
 
       if image?
-        AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+        AWS::S3::S3Object.store("preview/#{md5}.jpg", open(preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
       end
 
       if File.exist?(tempfile_sample_path)
-        AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg", open(self.sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+        AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg", open(sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
       end
 
       if File.exist?(tempfile_jpeg_path)
-        AWS::S3::S3Object.store("jpeg/#{md5}.jpg", open(self.jpeg_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
+        AWS::S3::S3Object.store("jpeg/#{md5}.jpg", open(jpeg_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
       end
 
       true

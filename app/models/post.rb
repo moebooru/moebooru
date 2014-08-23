@@ -62,10 +62,10 @@ class Post < ActiveRecord::Base
   def destroy_with_reason(reason, current_user)
     Post.transaction do
       self.flag!(reason, current_user.id)
-      if self.flag_detail
-        self.flag_detail.update_attributes(:is_resolved => true)
+      if flag_detail
+        flag_detail.update_attributes(:is_resolved => true)
       end
-      self.delete
+      delete
     end
   end
 
@@ -76,14 +76,14 @@ class Post < ActiveRecord::Base
 
   def delete
     run_callbacks :delete do
-      self.update_attributes(:status => "deleted")
+      update_attributes(:status => "deleted")
     end
   end
 
   def undelete
-    return if self.status == "active"
+    return if status == "active"
     run_callbacks :undelete do
-      self.update_attributes(:status => "active")
+      update_attributes(:status => "active")
     end
   end
 
@@ -92,7 +92,7 @@ class Post < ActiveRecord::Base
       return false
     end
 
-    if !user.is_mod_or_higher? and Time.now - self.created_at > 1.day and !is_held
+    if !user.is_mod_or_higher? and Time.now - created_at > 1.day and !is_held
       return false
     end
 
@@ -100,7 +100,7 @@ class Post < ActiveRecord::Base
   end
 
   def clear_avatars
-    User.clear_avatars(self.id)
+    User.clear_avatars(id)
   end
 
   def set_random!
@@ -128,11 +128,11 @@ class Post < ActiveRecord::Base
 
   # If the flag_post metatag was used and the current user has access, flag the post.
   def commit_flag
-    return if self.metatag_flagged.nil?
+    return if metatag_flagged.nil?
     return if !Thread.current["danbooru-user"].is_mod_or_higher?
-    return if self.status != "active"
+    return if status != "active"
 
-    self.flag!(self.metatag_flagged, Thread.current["danbooru-user"].id)
+    self.flag!(metatag_flagged, Thread.current["danbooru-user"].id)
   end
 
   def approve!(approver_id)
@@ -157,7 +157,7 @@ class Post < ActiveRecord::Base
     if @voted_by.nil?
       @voted_by = {}
       (1..3).each do |v|
-        @voted_by[v] = User.select("users.name, users.id").joins(:post_votes).where(:post_votes => { :post_id => self.id, :score => v }).order("post_votes.updated_at DESC")
+        @voted_by[v] = User.select("users.name, users.id").joins(:post_votes).where(:post_votes => { :post_id => id, :score => v }).order("post_votes.updated_at DESC")
       end
     end
 
@@ -188,7 +188,7 @@ class Post < ActiveRecord::Base
   end
 
   def can_be_seen_by?(user, options = {})
-    if !options[:show_deleted] and self.status == "deleted"
+    if !options[:show_deleted] and status == "deleted"
       return false
     end
     CONFIG["can_see_post"].call(user, self)

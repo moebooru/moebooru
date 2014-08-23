@@ -3,7 +3,7 @@ class TagImplication < ActiveRecord::Base
 
   def validate_uniqueness
     if self.class.find(:first, :conditions => ["(predicate_id = ? AND consequent_id = ?) OR (predicate_id = ? AND consequent_id = ?)", predicate_id, consequent_id, consequent_id, predicate_id])
-      self.errors.add(:base, "Tag implication already exists")
+      errors.add(:base, "Tag implication already exists")
       return false
     end
   end
@@ -20,11 +20,11 @@ class TagImplication < ActiveRecord::Base
   end
 
   def predicate
-    Tag.find(self.predicate_id)
+    Tag.find(predicate_id)
   end
 
   def consequent
-    Tag.find(self.consequent_id)
+    Tag.find(consequent_id)
   end
 
   def predicate=(name)
@@ -38,9 +38,9 @@ class TagImplication < ActiveRecord::Base
   end
 
   def approve(user_id, ip_addr)
-    connection.execute("UPDATE tag_implications SET is_pending = FALSE WHERE id = #{self.id}")
+    connection.execute("UPDATE tag_implications SET is_pending = FALSE WHERE id = #{id}")
 
-    t = Tag.find(self.predicate_id)
+    t = Tag.find(predicate_id)
     implied_tags = self.class.with_implied(t.name).join(" ")
     Post.available.find(:all, :conditions => ["id IN (SELECT pt.post_id FROM posts_tags pt WHERE pt.tag_id = ?)", t.id]).each do |post|
       post.reload

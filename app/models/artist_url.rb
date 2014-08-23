@@ -31,6 +31,6 @@ class ArtistUrl < ActiveRecord::Base
   end
 
   def normalize
-    self.normalized_url = self.class.normalize(self.url)
+    self.normalized_url = self.class.normalize(url)
   end
 end

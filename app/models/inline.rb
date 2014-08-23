@@ -43,11 +43,11 @@ class Inline < ActiveRecord::Base
       size
     end
 
-    images = self.inline_images
+    images = inline_images
     for image in images do
       # Create a new image with the same properties, crop this image into the new one,
       # and delete the old one.
-      new_image = InlineImage.new(:description => image.description, :sequence => image.sequence, :inline_id => self.id, :file_ext => "jpg")
+      new_image = InlineImage.new(:description => image.description, :sequence => image.sequence, :inline_id => id, :file_ext => "jpg")
       size = reduce_and_crop(image.width, image.height, params)
 
       begin

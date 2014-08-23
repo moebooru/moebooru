@@ -1,27 +1,27 @@
 class WikiPageVersion < ActiveRecord::Base
   def author
-    User.find_name(self.user_id)
+    User.find_name(user_id)
   end
 
   def diff(target)
     what = []
     if target
-      what += [:body] if self.body != target.body
-      what += [:title] if self.title != target.title
-      what += [:is_locked] if self.is_locked != target.is_locked
+      what += [:body] if body != target.body
+      what += [:title] if title != target.title
+      what += [:is_locked] if is_locked != target.is_locked
     end
-    if self.version == 1
+    if version == 1
       what += [:initial]
     end
     what
   end
 
   def prev
-    WikiPageVersion.first(:conditions => { :wiki_page_id => self.wiki_page_id, :version => self.version - 1 })
+    WikiPageVersion.first(:conditions => { :wiki_page_id => wiki_page_id, :version => version - 1 })
   end
 
   def pretty_title
-    self.title.tr("_", " ")
+    title.tr("_", " ")
   end
 
   def to_xml(options = {})

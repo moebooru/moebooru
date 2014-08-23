@@ -44,7 +44,7 @@ module ActiveRecord
       if history
         #p "reuse? %s != %s, %i != %i" % [history.group_by_table, self.class.get_group_by_table_name, history.group_by_id, self.get_group_by_id]
         if history.group_by_table != self.class.get_group_by_table_name or
-          history.group_by_id != self.get_group_by_id then
+          history.group_by_id != get_group_by_id then
           #p "don't reuse"
           Thread.current[:versioning_history] = nil
           history = nil
@@ -56,13 +56,13 @@ module ActiveRecord
       if !history then
         options = {
           :group_by_table => self.class.get_group_by_table_name,
-          :group_by_id => self.get_group_by_id,
+          :group_by_id => get_group_by_id,
           :user_id => Thread.current["danbooru-user_id"]
         }
 
         cb = self.class.get_versioning_aux_callback
         if cb then
-          options[:aux] = self.send(cb)
+          options[:aux] = send(cb)
         end
         history = History.new(options)
         history.save!
@@ -81,15 +81,15 @@ module ActiveRecord
           #
           # Don't use _changed?; it'll be true if a field was changed and then changed back,
           # in which case we must not create a change entry.
-          old = self.__send__("%s_was" % att.to_s)
-          new = self.__send__(att.to_s)
+          old = __send__("%s_was" % att.to_s)
+          new = __send__(att.to_s)
 
 #          p "%s:  %s -> %s" % [att.to_s, old, new]
           next if old == new && !@object_is_new
 
           history = get_current_history
           h = HistoryChange.new(:table_name => self.class.table_name,
-                          :remote_id => self.id,
+                          :remote_id => id,
                           :column_name => att.to_s,
                           :value => new,
                           :history_id => history.id)
@@ -125,10 +125,10 @@ module ActiveRecord
       def versioned(att, *options)
         if !@versioned_attributes
           @versioned_attributes = {}
-          self.after_save :save_versioned_attributes
-          self.after_create :remember_new
+          after_save :save_versioned_attributes
+          after_create :remember_new
 
-          self.versioning_group_by if !@versioning_group_by
+          versioning_group_by if !@versioning_group_by
         end
 
         @versioned_attributes[att] = *options || {}
@@ -145,16 +145,16 @@ module ActiveRecord
       #   versioning_group_by :class => :pool, :foreign_key => :pool_id, :controller => Post
       def versioning_group_by(options = {})
         opt = {
-          :class => self.to_s.to_sym,
-          :controller => self.to_s,
+          :class => to_s.to_sym,
+          :controller => to_s,
           :action => "show",
         }.merge(options)
 
         if !opt[:foreign_key]
-          if opt[:class] == self.to_s.to_sym
+          if opt[:class] == to_s.to_sym
             opt[:foreign_key] = :id
           else
-            reflection = self.reflections[opt[:class]]
+            reflection = reflections[opt[:class]]
             opt[:foreign_key] = reflection.klass.base_class.to_s.foreign_key.to_sym
           end
         end
@@ -204,7 +204,7 @@ module ActiveRecord
       # be undone after changes to child tables.
       def versioned_parent(c, options = {})
         foreign_key = options[:foreign_key]
-        foreign_key ||= self.reflections[c].klass.base_class.to_s.foreign_key
+        foreign_key ||= reflections[c].klass.base_class.to_s.foreign_key
         foreign_key = foreign_key.to_sym
         @versioned_parent = {
           :class => c,

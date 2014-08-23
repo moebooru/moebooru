@@ -15,12 +15,12 @@ class User < ActiveRecord::Base
   end
 
   def log(ip)
-    Rails.cache.fetch({ :type => :user_logs, :id => self.id, :ip => ip }, :expires_in => 10.minutes) do
+    Rails.cache.fetch({ :type => :user_logs, :id => id, :ip => ip }, :expires_in => 10.minutes) do
       Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_in => 1.day) do
         UserLog.where("created_at < ?", 3.days.ago).delete_all
       end
       begin
-        log_entry = self.user_logs.find_or_initialize_by(:ip_addr => ip)
+        log_entry = user_logs.find_or_initialize_by(:ip_addr => ip)
         log_entry.created_at = Time.now
         log_entry.save
       # Once in a blue moon there will be race condition on find_or_initialize
@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
 
     def set_default_blacklisted_tags
       CONFIG["default_blacklists"].each do |b|
-        UserBlacklistedTag.create(:user_id => self.id, :tags => b)
+        UserBlacklistedTag.create(:user_id => id, :tags => b)
       end
     end
   end
@@ -106,10 +106,10 @@ class User < ActiveRecord::Base
       # First test to see if it's creating new user (no password_hash)
       # or updating user. The second is to see if the action involves
       # updating password (which requires this validation).
-      if self.password_hash and (password or (self.email_changed? or current_email))
+      if password_hash and (password or (self.email_changed? or current_email))
         if current_password.blank?
           errors.add :current_password, :blank
-        elsif User.authenticate(self.name, current_password).nil?
+        elsif User.authenticate(name, current_password).nil?
           errors.add :current_password, :invalid
         end
       end
@@ -129,7 +129,7 @@ class User < ActiveRecord::Base
       end
 
       pass << rand(100).to_s
-      execute_sql("UPDATE users SET password_hash = ? WHERE id = ?", User.sha1(pass), self.id)
+      execute_sql("UPDATE users SET password_hash = ? WHERE id = ?", User.sha1(pass), id)
       pass
     end
   end
@@ -324,7 +324,7 @@ class User < ActiveRecord::Base
     end
 
     def pretty_level
-      CONFIG["user_levels"].invert[self.level]
+      CONFIG["user_levels"].invert[level]
     end
 
     def set_role
@@ -382,15 +382,15 @@ class User < ActiveRecord::Base
     CONFIG["user_levels"].each do |name, value|
       normalized_name = name.downcase.gsub(/ /, "_")
       define_method("is_#{normalized_name}?") do
-        self.level == value
+        level == value
       end
 
       define_method("is_#{normalized_name}_or_higher?") do
-        self.level >= value
+        level >= value
       end
 
       define_method("is_#{normalized_name}_or_lower?") do
-        self.level <= value
+        level <= value
       end
     end
 
@@ -464,15 +464,15 @@ class User < ActiveRecord::Base
     end
 
     def avatar_url
-      CONFIG["url_base"] + "/data/avatars/#{self.id}.jpg"
+      CONFIG["url_base"] + "/data/avatars/#{id}.jpg"
     end
 
     def has_avatar?
-      (!self.avatar_post_id.nil?)
+      (!avatar_post_id.nil?)
     end
 
     def avatar_path
-      "#{Rails.root}/public/data/avatars/#{self.id}.jpg"
+      "#{Rails.root}/public/data/avatars/#{id}.jpg"
     end
 
     def set_avatar(params)
@@ -539,7 +539,7 @@ class User < ActiveRecord::Base
       FileUtils.mv(tempfile_path, avatar_path)
       FileUtils.chmod(0775, avatar_path)
 
-      self.update_attributes(
+      update_attributes(
         :avatar_post_id => params[:post_id],
         :avatar_top => params[:top],
         :avatar_bottom => params[:bottom],
@@ -588,7 +588,7 @@ class User < ActiveRecord::Base
 
     def secondary_language_array
       return @secondary_languages if @secondary_languages
-      self.secondary_languages.split(",")
+      secondary_languages.split(",")
     end
 
     def commit_secondary_languages

@@ -4,7 +4,6 @@ class User < ActiveRecord::Base
   has_many :user_logs
   has_many :post_votes
   attr_accessor :current_email
-  class AlreadyFavoritedError < Exception; end
 
   def set_api_key
     self.api_key = SecureRandom.urlsafe_base64

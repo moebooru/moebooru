@@ -1,7 +1,7 @@
 class PoolsCreate < ActiveRecord::Migration
   def self.up
-		ActiveRecord::Base.transaction do
-			execute <<-EOS
+		  ActiveRecord::Base.transaction do
+  			 execute <<-EOS
 				CREATE TABLE pools (
 					id SERIAL PRIMARY KEY,
 					name TEXT NOT NULL,
@@ -13,7 +13,7 @@ class PoolsCreate < ActiveRecord::Migration
 					description TEXT NOT NULL DEFAULT ''
 				)
 			EOS
-			execute <<-EOS
+  			 execute <<-EOS
 				CREATE TABLE pools_posts (
 					id SERIAL PRIMARY KEY,
 					sequence INTEGER NOT NULL DEFAULT 0,
@@ -21,7 +21,7 @@ class PoolsCreate < ActiveRecord::Migration
 					post_id INTEGER NOT NULL REFERENCES posts ON DELETE CASCADE
 				)
 			EOS
-			execute <<-EOS
+  			 execute <<-EOS
 				CREATE OR REPLACE FUNCTION pools_posts_delete_trg() RETURNS "trigger" AS $$
 				BEGIN
 					UPDATE pools SET post_count = post_count - 1 WHERE id = OLD.pool_id;
@@ -29,7 +29,7 @@ class PoolsCreate < ActiveRecord::Migration
 				END;
 				$$ LANGUAGE plpgsql;
 			EOS
-			execute <<-EOS
+  			 execute <<-EOS
 				CREATE OR REPLACE FUNCTION pools_posts_insert_trg() RETURNS "trigger" AS $$
 				BEGIN
 					UPDATE pools SET post_count = post_count + 1 WHERE id = NEW.pool_id;
@@ -37,36 +37,36 @@ class PoolsCreate < ActiveRecord::Migration
 				END;
 				$$ LANGUAGE plpgsql;
 			EOS
-			execute <<-EOS
+  			 execute <<-EOS
 				CREATE TRIGGER pools_posts_insert_trg
 				    BEFORE INSERT ON pools_posts
 				    FOR EACH ROW
 				    EXECUTE PROCEDURE pools_posts_insert_trg();
 			EOS
-			execute <<-EOS
+  			 execute <<-EOS
 				CREATE TRIGGER pools_posts_delete_trg
 				    BEFORE DELETE ON pools_posts
 				    FOR EACH ROW
 				    EXECUTE PROCEDURE pools_posts_delete_trg();
 			EOS
-			execute <<-EOS
-				CREATE INDEX pools_user_id_idx ON pools (user_id)
-			EOS
-			execute <<-EOS
-				CREATE INDEX pools_posts_pool_id_idx ON pools_posts (pool_id)
-			EOS
-			execute <<-EOS
-				CREATE INDEX pools_posts_post_id_idx ON pools_posts (post_id)
-			EOS
-		end
+  			 execute <<-EOS
+  				CREATE INDEX pools_user_id_idx ON pools (user_id)
+  			EOS
+  			 execute <<-EOS
+  				CREATE INDEX pools_posts_pool_id_idx ON pools_posts (pool_id)
+  			EOS
+  			 execute <<-EOS
+  				CREATE INDEX pools_posts_post_id_idx ON pools_posts (post_id)
+  			EOS
+  		end
   end
 
   def self.down
-		ActiveRecord::Base.transaction do
-			execute "DROP TABLE pools_posts"
-			execute "DROP TABLE pools"
-			execute "DROP FUNCTION pools_posts_insert_trg()"
-			execute "DROP FUNCTION pools_posts_delete_trg()"
-		end
+		  ActiveRecord::Base.transaction do
+  			 execute "DROP TABLE pools_posts"
+  			 execute "DROP TABLE pools"
+  			 execute "DROP FUNCTION pools_posts_insert_trg()"
+  			 execute "DROP FUNCTION pools_posts_delete_trg()"
+  		end
   end
 end

@@ -20,7 +20,7 @@ module Post::MirrorMethods
 
     dirs = []
     files_to_copy.each do |file|
-        dirs << File.dirname(file[local_base.length, file.length])
+      dirs << File.dirname(file[local_base.length, file.length])
     end
 
     options = {}

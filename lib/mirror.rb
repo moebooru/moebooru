@@ -121,75 +121,75 @@ module Mirrors
   #
   # If :zipfile is set, ignore mirrors with the :nozipfile flag.
   if CONFIG["image_store"] == :remote_hierarchy
-  def select_main_image_server
-    return CONFIG["url_base"] if !CONFIG["image_servers"] || CONFIG["image_servers"].empty?
-    raise 'CONFIG["url_base"] is set incorrectly; please see config/default_config.rb' if CONFIG["image_servers"][0].class == String
+    def select_main_image_server
+      return CONFIG["url_base"] if !CONFIG["image_servers"] || CONFIG["image_servers"].empty?
+      raise 'CONFIG["url_base"] is set incorrectly; please see config/default_config.rb' if CONFIG["image_servers"][0].class == String
 
-    CONFIG["image_servers"][0][:server]
-  end
-
-  def select_image_server(is_warehoused, seed = 0, options = {})
-    return CONFIG["url_base"] if !CONFIG["image_servers"] || CONFIG["image_servers"].empty?
-    raise 'CONFIG["url_base"] is set incorrectly; please see config/default_config.rb' if CONFIG["image_servers"][0].class == String
-
-    unless is_warehoused
-      # return CONFIG["url_base"]
-      return CONFIG["image_servers"][0][:server]
+      CONFIG["image_servers"][0][:server]
     end
 
-    mirrors = CONFIG["image_servers"]
-    if options[:preview] then
-      mirrors =  mirrors.select do |mirror|
-        mirror[:nopreview] != true
-      end
-    end
+    def select_image_server(is_warehoused, seed = 0, options = {})
+      return CONFIG["url_base"] if !CONFIG["image_servers"] || CONFIG["image_servers"].empty?
+      raise 'CONFIG["url_base"] is set incorrectly; please see config/default_config.rb' if CONFIG["image_servers"][0].class == String
 
-    unless options[:preview] then
-      mirrors =  mirrors.select do |mirror|
-        mirror[:previews_only] != true
-      end
-    end
-
-    if options[:zipfile] then
-      mirrors =  mirrors.select do |mirror|
-        mirror[:nozipfile] != true
-      end
-    end
-
-    raise "No usable mirrors" if mirrors.empty?
-
-    total_weights = 0
-    mirrors.each { |s| total_weights += s[:traffic] }
-
-    seed += Thread.current["danbooru-ip_addr_seed"] || 0
-    seed %= total_weights
-
-    server = nil
-    mirrors.each do |s|
-      w = s[:traffic]
-      if seed < w
-        server = s
-        break
+      unless is_warehoused
+        # return CONFIG["url_base"]
+        return CONFIG["image_servers"][0][:server]
       end
 
-      seed -= w
-    end
-    server ||= mirrors[0]
-
-    # If this server has aliases, and an ID has been specified, pick a random server alias
-    # with the ID as a seed so we always use the same server name for the same image.
-    if !options[:id].nil? && !server[:aliases].nil? && options[:use_aliases] then
-      server_count = server[:aliases].length + 1
-      server_index = options[:id] % server_count
-      if server_index == 0 then
-        return server[:server]
-      else
-        return server[:aliases][server_index - 1]
+      mirrors = CONFIG["image_servers"]
+      if options[:preview] then
+        mirrors =  mirrors.select do |mirror|
+          mirror[:nopreview] != true
+        end
       end
-    end
 
-    server[:server]
-  end
+      unless options[:preview] then
+        mirrors =  mirrors.select do |mirror|
+          mirror[:previews_only] != true
+        end
+      end
+
+      if options[:zipfile] then
+        mirrors =  mirrors.select do |mirror|
+          mirror[:nozipfile] != true
+        end
+      end
+
+      raise "No usable mirrors" if mirrors.empty?
+
+      total_weights = 0
+      mirrors.each { |s| total_weights += s[:traffic] }
+
+      seed += Thread.current["danbooru-ip_addr_seed"] || 0
+      seed %= total_weights
+
+      server = nil
+      mirrors.each do |s|
+        w = s[:traffic]
+        if seed < w
+          server = s
+          break
+        end
+
+        seed -= w
+      end
+      server ||= mirrors[0]
+
+      # If this server has aliases, and an ID has been specified, pick a random server alias
+      # with the ID as a seed so we always use the same server name for the same image.
+      if !options[:id].nil? && !server[:aliases].nil? && options[:use_aliases] then
+        server_count = server[:aliases].length + 1
+        server_index = options[:id] % server_count
+        if server_index == 0 then
+          return server[:server]
+        else
+          return server[:aliases][server_index - 1]
+        end
+      end
+
+      server[:server]
+    end
   else
     def select_main_image_server
       CONFIG["url_base"]

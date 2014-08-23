@@ -7,7 +7,7 @@ module TagHelper
     tag_type = Tag.type_name(name)
     obsolete_tag = ([name] & obsolete).empty? ? "" : "obsolete"
     html = if prefix.blank?
-      "".html_safe
+             "".html_safe
     else
       content_tag(:span, prefix, :class => "#{obsolete_tag}")
     end

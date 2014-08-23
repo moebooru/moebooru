@@ -1,6 +1,6 @@
 class CreateForumPost < ActiveRecord::Migration
-	def self.up
-		execute(<<-EOS)
+	 def self.up
+ 		 execute(<<-EOS)
 			CREATE TABLE forum_posts (
 				id SERIAL PRIMARY KEY,
 				created_at TIMESTAMP NOT NULL,
@@ -11,9 +11,9 @@ class CreateForumPost < ActiveRecord::Migration
 				parent_id INTEGER REFERENCES forum_posts ON DELETE CASCADE
 			)
 		EOS
-	end
+ 	end
 
-	def self.down
-		execute("DROP TABLE forum_posts")
-	end
+	 def self.down
+ 		 execute("DROP TABLE forum_posts")
+ 	end
 end

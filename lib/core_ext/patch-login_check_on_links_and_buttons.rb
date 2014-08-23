@@ -70,7 +70,7 @@ module ActionView
           if MoebooruTagHelper._moebooru_need_signup?(html_options[:level]) && args[0]
             args[0] = "User.run_login(false, function() { #{args[0]} })"
           end
-        html_options.delete :level
+          html_options.delete :level
         end
         args << html_options
         orig_button_to_function name, *args, &block

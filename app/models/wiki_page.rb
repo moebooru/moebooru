@@ -107,9 +107,9 @@ class WikiPage < ActiveRecord::Base
 
   protected
 
-    def ensure_changed
-      unless (changed & ["title", "body"]).any?
-        errors.add :base, :no_change
-      end
+  def ensure_changed
+    unless (changed & ["title", "body"]).any?
+      errors.add :base, :no_change
     end
+  end
 end

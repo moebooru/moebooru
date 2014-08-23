@@ -128,7 +128,7 @@ class JobTask < ActiveRecord::Base
   end
 
   def execute_update_post_frames
-    update_status = Proc.new do |status|
+    update_status = proc do |status|
       update_data("status" => status)
     end
 

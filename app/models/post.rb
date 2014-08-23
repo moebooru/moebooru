@@ -1,5 +1,3 @@
-Dir["#{Rails.root}/app/models/post/**/*.rb"].each {|x| require_dependency x}
-
 class Post < ActiveRecord::Base
   STATUSES = %w(active pending flagged deleted)
 
@@ -45,21 +43,21 @@ class Post < ActiveRecord::Base
     Post.available.where('posts.id < ?', id).maximum(:id)
   end
 
-  include PostSqlMethods
-  include PostCommentMethods
-  include PostImageStoreMethods
-  include PostVoteMethods
-  include PostTagMethods
-  include PostCountMethods
-  include PostCacheMethods
-  include PostParentMethods if CONFIG["enable_parent_posts"]
-  include PostFileMethods
-  include PostChangeSequenceMethods
-  include PostRatingMethods
-  include PostStatusMethods
-  include PostApiMethods
-  include PostMirrorMethods
-  include PostFrameMethods
+  include Post::SqlMethods
+  include Post::CommentMethods
+  include Post::ImageStoreMethods
+  include Post::VoteMethods
+  include Post::TagMethods
+  include Post::CountMethods
+  include Post::CacheMethods
+  include Post::ParentMethods if CONFIG["enable_parent_posts"]
+  include Post::FileMethods
+  include Post::ChangeSequenceMethods
+  include Post::RatingMethods
+  include Post::StatusMethods
+  include Post::ApiMethods
+  include Post::MirrorMethods
+  include Post::FrameMethods
 
   def destroy_with_reason(reason, current_user)
     Post.transaction do

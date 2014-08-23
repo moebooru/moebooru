@@ -1,4 +1,4 @@
-module PostCommentMethods
+module Post::CommentMethods
   def self.included(m)
     m.has_many :comments, lambda { order "id" }
   end

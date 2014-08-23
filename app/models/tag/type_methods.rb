@@ -1,4 +1,4 @@
-module TagTypeMethods
+module Tag::TypeMethods
   module ClassMethods
     attr_accessor :type_map
 

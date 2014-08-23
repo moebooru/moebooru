@@ -1,4 +1,4 @@
-module PostStatusMethods
+module Post::StatusMethods
   def status=(s)
     return if s == status
     write_attribute(:status, s)

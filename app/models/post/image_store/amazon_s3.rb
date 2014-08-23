@@ -1,4 +1,4 @@
-module PostImageStoreMethods
+module Post::ImageStore
   module AmazonS3
     def move_file
       begin

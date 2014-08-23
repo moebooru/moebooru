@@ -1,20 +1,26 @@
-module PostImageStoreMethods
+module Post::ImageStoreMethods
   def self.included(m)
     case CONFIG["image_store"]
     when :local_flat
-      m.__send__(:include, PostImageStoreMethods::LocalFlat)
+      m.__send__(:include, Post::ImageStore::LocalFlat)
 
     when :local_flat_with_amazon_s3_backup
-      m.__send__(:include, PostImageStoreMethods::LocalFlatWithAmazonS3Backup)
+      m.__send__(:include, Post::ImageStore::LocalFlatWithAmazonS3Backup)
 
     when :local_hierarchy
-      m.__send__(:include, PostImageStoreMethods::LocalHierarchy)
+      m.__send__(:include, Post::ImageStore::LocalHierarchy)
 
     when :remote_hierarchy
-      m.__send__(:include, PostImageStoreMethods::RemoteHierarchy)
+      m.__send__(:include, Post::ImageStore::RemoteHierarchy)
 
     when :amazon_s3
-      m.__send__(:include, PostImageStoreMethods::AmazonS3)
+      m.__send__(:include, Post::ImageStore::AmazonS3)
     end
   end
+
+  private
+
+    def url_encode(*args)
+      ERB::Util.url_encode *args
+    end
 end

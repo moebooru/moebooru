@@ -1,4 +1,4 @@
-module PostVoteMethods
+module Post::VoteMethods
   module ClassMethods
     def recalculate_score(id=nil)
       conds = []

@@ -1,4 +1,4 @@
-module PostApiMethods
+module Post::ApiMethods
   attr_accessor :similarity
 
   def api_attributes

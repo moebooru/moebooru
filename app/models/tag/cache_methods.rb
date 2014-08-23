@@ -1,4 +1,4 @@
-module TagCacheMethods
+module Tag::CacheMethods
   def self.included(m)
     m.after_save :update_cache
     m.after_create :update_cache_on_create

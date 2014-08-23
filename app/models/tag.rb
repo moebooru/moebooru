@@ -1,11 +1,9 @@
-Dir["#{Rails.root}/app/models/tag/**/*.rb"].each {|x| require_dependency x}
-
 class Tag < ActiveRecord::Base
-  include TagTypeMethods
-  include TagCacheMethods
-  include TagRelatedTagMethods
-  include TagParseMethods
-  include TagApiMethods
+  include Tag::TypeMethods
+  include Tag::CacheMethods
+  include Tag::RelatedTagMethods
+  include Tag::ParseMethods
+  include Tag::ApiMethods
   has_and_belongs_to_many :_posts, :class_name => 'Post'
   has_many :tag_aliases, :foreign_key => 'alias_id'
 

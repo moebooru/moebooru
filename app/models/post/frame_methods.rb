@@ -1,4 +1,4 @@
-module PostFrameMethods
+module Post::FrameMethods
   def self.included(m)
     m.versioned :frames_pending, :default => "", :allow_reverting_to_default => true
   end

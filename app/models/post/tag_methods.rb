@@ -186,7 +186,6 @@ module Post::TagMethods
           rescue Pool::AccessDeniedError
           end
 
-
         when /^-pool:(.+)/
           name, cmd = $1.split(":")
 
@@ -207,7 +206,6 @@ module Post::TagMethods
         when /^rating:([qse])/
           self.rating = $1 # so we don't have to reload for history_tag_string below
           execute_sql("UPDATE posts SET rating = ? WHERE id = ?", $1, id)
-
 
         when /^parent:(\d*)/
           self.parent_id = $1

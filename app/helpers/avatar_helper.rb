@@ -27,4 +27,3 @@ module AvatarHelper
     ret.html_safe
   end
 end
-

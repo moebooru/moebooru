@@ -28,5 +28,3 @@ class  FixFtsUnderscores < ActiveRecord::Migration
     execute "DROP FUNCTION replace_underscores"
   end
 end
-     
-

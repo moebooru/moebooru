@@ -59,4 +59,3 @@ module Tag::RelatedTagMethods
     return cached_related.split(/,/).in_groups_of(2)
   end
 end
-

@@ -483,4 +483,3 @@ module ActiveRecord
 end
 
 ActiveRecord::Base.send :include, ActiveRecord::Versioning
-

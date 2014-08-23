@@ -80,4 +80,3 @@ class Inline < ActiveRecord::Base
     api_attributes.as_json(*params)
   end
 end
-

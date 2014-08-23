@@ -8,4 +8,3 @@ class FlagDetailOptionalUserId < ActiveRecord::Migration
     execute "ALTER TABLE flagged_post_details ALTER COLUMN user_id SET NOT NULL"
   end
 end
-

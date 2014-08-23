@@ -7,4 +7,3 @@ class AddPoolsDefaultToUser < ActiveRecord::Migration
     remove_column :users, :pool_browse_mode
   end
 end
-

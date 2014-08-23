@@ -26,4 +26,3 @@ class BlocksController < ApplicationController
     redirect_to :controller => "user", :action => "show_blocked_users"
   end
 end
-

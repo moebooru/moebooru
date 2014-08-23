@@ -391,4 +391,3 @@ class Pool < ActiveRecord::Base
     include ZipMethods
   end
 end
-

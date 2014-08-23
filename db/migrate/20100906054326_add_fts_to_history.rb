@@ -93,4 +93,3 @@ class AddFtsToHistory < ActiveRecord::Migration
     execute "ALTER TABLE history_changes DROP COLUMN value_index"
   end
 end
-

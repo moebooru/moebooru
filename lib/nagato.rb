@@ -183,4 +183,3 @@ module Nagato
 
   module_function :find
 end
-

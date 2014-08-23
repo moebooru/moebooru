@@ -21,4 +21,3 @@ class AddFtsToPools < ActiveRecord::Migration
     execute "ALTER TABLE pools DROP COLUMN search_index"
   end
 end
-

@@ -9,7 +9,7 @@ module Translate
     server = "http://ajax.googleapis.com"
 
     begin
-      Timeout::timeout(10) do
+      Timeout.timeout(10) do
         url = URI.parse(server)
 
         response = Net::HTTP.start(url.host, url.port) do |http|

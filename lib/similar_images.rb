@@ -74,7 +74,7 @@ module SimilarImages
         params += [{ :name => "forcegray", :data => "on" }] if options[:forcegray] == "1"
 
         begin
-          Timeout::timeout(10) do
+          Timeout.timeout(10) do
             url = URI.parse(server)
             Net::HTTP.start(url.host, url.port) do |http|
               http.read_timeout = 10

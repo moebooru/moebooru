@@ -52,15 +52,25 @@ class ApplicationController < ActionController::Base
       false
     end
 
-    def language; ""; end
+    def language
+      ""
+    end
 
-    def secondary_languages; ""; end
+    def secondary_languages
+      ""
+    end
 
-    def secondary_language_array; []; end
+    def secondary_language_array
+      []
+    end
 
-    def pool_browse_mode; 1; end
+    def pool_browse_mode
+      1
+    end
 
-    def always_resize_images; true; end
+    def always_resize_images
+      true
+    end
 
     CONFIG["user_levels"].each do |name, _value|
       normalized_name = name.downcase.gsub(/ /, "_")

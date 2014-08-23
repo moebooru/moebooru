@@ -502,11 +502,17 @@ module Post::FileMethods
     }
   end
 
-  def sample_url(user = nil) get_file_sample(user)[:url] end
+  def sample_url(user = nil)
+    get_file_sample(user)[:url]
+  end
 
-  def get_sample_width(user = nil) get_file_sample(user)[:width] end
+  def get_sample_width(user = nil)
+    get_file_sample(user)[:width]
+  end
 
-  def get_sample_height(user = nil) get_file_sample(user)[:height] end
+  def get_sample_height(user = nil)
+    get_file_sample(user)[:height]
+  end
 
   # If the JPEG version needs to be generated (or regenerated), output it to tempfile_jpeg_path.  On
   # error, return false; on success or no-op, return true.

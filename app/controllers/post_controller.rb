@@ -654,7 +654,7 @@ class PostController < ApplicationController
         # Save the file locally.
         begin
           if params[:url] then
-            search = Timeout::timeout(30) do
+            search = Timeout.timeout(30) do
               Danbooru.http_get_streaming(params[:url]) do |res|
                 SimilarImages.save_search do |f|
                   res.read_body do |block|

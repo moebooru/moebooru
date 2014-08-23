@@ -319,7 +319,7 @@ class UserController < ApplicationController
           return
         end
 
-        UserMailer::deliver_confirmation_email(user)
+        UserMailer.deliver_confirmation_email(user)
         flash[:notice] = "Confirmation email sent"
         redirect_to :action => "home"
       end

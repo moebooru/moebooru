@@ -10,7 +10,7 @@ class AddSlavePoolPosts < ActiveRecord::Migration
       pp.copy_changes_to_slave
     end
 
-    #execute "CREATE INDEX idx_pools_posts_child_id on pools_posts (child_id) WHERE child_id IS NOT NULL"
+    # execute "CREATE INDEX idx_pools_posts_child_id on pools_posts (child_id) WHERE child_id IS NOT NULL"
   end
 
   def self.down

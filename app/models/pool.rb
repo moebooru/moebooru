@@ -232,7 +232,7 @@ class Pool < ActiveRecord::Base
       sum
     end
 
-    #nginx version
+    # nginx version
     def get_zip_data(options = {})
       return "" if pool_posts.empty?
 
@@ -282,7 +282,7 @@ class Pool < ActiveRecord::Base
           end
         end
 
-        #filename = "%0*i" % [max_sequence_digits, pool_post.sequence]
+        # filename = "%0*i" % [max_sequence_digits, pool_post.sequence]
 
         # Avoid duplicate filenames.
         filename_count[filename] ||= 0
@@ -292,8 +292,8 @@ class Pool < ActiveRecord::Base
         end
         filename << ".%s" % [file_ext]
 
-        #buf << "#{filename}\n"
-        #buf << "#{path}\n"
+        # buf << "#{filename}\n"
+        # buf << "#{path}\n"
         if jpeg && post.has_jpeg?
           file_size = post.jpeg_size
           crc32 = post.jpeg_crc32
@@ -358,7 +358,7 @@ class Pool < ActiveRecord::Base
           end
         end
 
-        #filename = "%0*i" % [max_sequence_digits, pool_post.sequence]
+        # filename = "%0*i" % [max_sequence_digits, pool_post.sequence]
 
         # Avoid duplicate filenames.
         filename_count[filename] ||= 0

@@ -16,5 +16,5 @@ config.action_controller.perform_caching             = true
 # config.action_mailer.raise_delivery_errors = false
 
 config.log_path = "#{Rails.root}/log/production_with_logging.log"
-#config.log_level = :error
+# config.log_level = :error
 config.log_level = :debug

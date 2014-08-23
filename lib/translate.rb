@@ -64,7 +64,7 @@ module Translate
       params += [{ :name => "langpair", :data => "|%s" % lang }]
     end
 
-    #resp = Translate.request(path)
+    # resp = Translate.request(path)
     resp = Translate.post(path, params, :referer => options[:referer])
     if resp.nil? then
       # We didn't get a usable response.

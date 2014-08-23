@@ -41,17 +41,17 @@ module ActiveRecord
     private
 
     def get_current_history
-      #p "get_current_history %s #%i" % [self.class.table_name, id]
+      # p "get_current_history %s #%i" % [self.class.table_name, id]
       history = Thread.current[:versioning_history]
       if history
-        #p "reuse? %s != %s, %i != %i" % [history.group_by_table, self.class.get_group_by_table_name, history.group_by_id, self.get_group_by_id]
+        # p "reuse? %s != %s, %i != %i" % [history.group_by_table, self.class.get_group_by_table_name, history.group_by_id, self.get_group_by_id]
         if history.group_by_table != self.class.get_group_by_table_name ||
           history.group_by_id != get_group_by_id then
-          #p "don't reuse"
+          # p "don't reuse"
           Thread.current[:versioning_history] = nil
           history = nil
         else
-          #p "reuse"
+          # p "reuse"
         end
       end
 
@@ -308,12 +308,12 @@ module ActiveRecord
 
             group_by_table = item.class.get_group_by_table_name
             group_by_id = item.get_group_by_id
-            #p "group %s by %s" % [item.to_s, item.class.get_group_by_table_name.to_s]
+            # p "group %s by %s" % [item.to_s, item.class.get_group_by_table_name.to_s]
             history = History.find(:first, :order => "id ASC",
                                            :conditions => ["group_by_table = ? AND group_by_id = ?", group_by_table, group_by_id])
 
             unless history
-              #p "new history"
+              # p "new history"
               options = {
                 :group_by_table => group_by_table,
                 :group_by_id => group_by_id

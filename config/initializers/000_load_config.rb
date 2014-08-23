@@ -18,7 +18,7 @@ require "external_post"
 require "extract_urls"
 require "image_size"
 # This one is already loaded by default_config.rb (and it is the only user)
-#require 'languages'
+# require 'languages'
 require "mirror"
 require "multipart"
 require "nagato"

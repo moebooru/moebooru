@@ -28,8 +28,8 @@ CONFIG["image_store"] = :local_flat
 #
 # If nozipfile is set, the mirror won't be used for ZIP mirroring.
 CONFIG["image_servers"] = [
-#	{ :server => "http://domain.com", :traffic => 0.5 },
-#	{ :server => "http://domain.com", :traffic => 0.5, :nozipfile => true },
+  #	{ :server => "http://domain.com", :traffic => 0.5 },
+  #	{ :server => "http://domain.com", :traffic => 0.5, :nozipfile => true },
 ]
 
 # Set to true to enable downloading whole pools as ZIPs.  This requires mod_zipfile
@@ -42,7 +42,7 @@ CONFIG["pool_zips"] = false
 # and should usually be listed in CONFIG["image_servers"] unless this is a backup-
 # only host.
 CONFIG["mirrors"] = [
-	# { :user => "danbooru", :host => "example.com", :data_dir => "/home/danbooru/public/data" },
+	 # { :user => "danbooru", :host => "example.com", :data_dir => "/home/danbooru/public/data" },
 ]
 
 # Enables image samples for large images. NOTE: if you enable this, you must manually create a public/data/sample directory.
@@ -243,8 +243,8 @@ end
 
 # Defines the default blacklists for new users.
 CONFIG["default_blacklists"] = [
-#  "rating:e loli",
-#  "rating:e shota",
+  #  "rating:e loli",
+  #  "rating:e shota",
 ]
 
 # Enable the artists interface.

@@ -84,7 +84,7 @@ module ActiveRecord
           old = __send__("%s_was" % att.to_s)
           new = __send__(att.to_s)
 
-#          p "%s:  %s -> %s" % [att.to_s, old, new]
+          #          p "%s:  %s -> %s" % [att.to_s, old, new]
           next if old == new && !@object_is_new
 
           history = get_current_history

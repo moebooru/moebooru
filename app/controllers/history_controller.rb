@@ -2,7 +2,7 @@ require "versioning"
 
 class HistoryController < ApplicationController
   layout "default"
-#  before_filter :member_only
+  #  before_filter :member_only
 
   def index
     search = params[:search] || ""

@@ -99,38 +99,38 @@ module Translate
     [result, source_lang]
   end
 
-#  def request(path, options={})
-#    server = 'http://ajax.googleapis.com'
-#
-#    begin
-#      Timeout::timeout(10) {
-#        url = URI.parse(server)
-#
-#        response = Net::HTTP.start(url.host, url.port) do |http|
-#          http.read_timeout = 10
-#          http.get(path)
-#        end
-#        resp = JSON.parse(response.body)
-#        if resp["responseStatus"] != 200 then
-#          raise ServerError, resp["responseDetails"]
-#        end
-#        return resp
-#      }
-#    rescue SocketError, SystemCallError => e
-#      raise ServerError, "Communication error"
-#    rescue Timeout::Error => e
-#      raise ServerError, "Timed out"
-#    end
-#  end
-#
-#  def detect(s, options={})
-#    path = '/ajax/services/language/detect?v=1.0&q=%s' % CGI::escape(s)
-#    resp = Translate.request(path)
-#
-#    data = resp["responseData"]
-#    return "??" if not data["isReliable"]
-#    return data["language"]
-#  end
+  #  def request(path, options={})
+  #    server = 'http://ajax.googleapis.com'
+  #
+  #    begin
+  #      Timeout::timeout(10) {
+  #        url = URI.parse(server)
+  #
+  #        response = Net::HTTP.start(url.host, url.port) do |http|
+  #          http.read_timeout = 10
+  #          http.get(path)
+  #        end
+  #        resp = JSON.parse(response.body)
+  #        if resp["responseStatus"] != 200 then
+  #          raise ServerError, resp["responseDetails"]
+  #        end
+  #        return resp
+  #      }
+  #    rescue SocketError, SystemCallError => e
+  #      raise ServerError, "Communication error"
+  #    rescue Timeout::Error => e
+  #      raise ServerError, "Timed out"
+  #    end
+  #  end
+  #
+  #  def detect(s, options={})
+  #    path = '/ajax/services/language/detect?v=1.0&q=%s' % CGI::escape(s)
+  #    resp = Translate.request(path)
+  #
+  #    data = resp["responseData"]
+  #    return "??" if not data["isReliable"]
+  #    return data["language"]
+  #  end
 
   module_function :post, :translate
 end

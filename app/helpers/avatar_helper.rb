@@ -5,7 +5,7 @@ module AvatarHelper
     @shown_avatars ||= {}
     @posts_to_send ||= []
 
-    #if not @shown_avatars[user] then
+      #if not @shown_avatars[user] then
       @shown_avatars[user] = true
       @posts_to_send << user.avatar_post
       img = image_tag(user.avatar_url + "?" + user.avatar_timestamp.tv_sec.to_s,

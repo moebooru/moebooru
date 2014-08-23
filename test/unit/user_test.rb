@@ -124,20 +124,20 @@ class UserTest < ActiveSupport::TestCase
     assert_equal([p1.id, p2.id], results)
   end
 
-#  def test_favorites
-#    p1 = create_post("tag1")
-#    p2 = create_post("tag2")
-#    p3 = create_post("tag3")
-#    p4 = create_post("tag4")
-#    user = User.find(1)
-#    create_favorite(user.id, p1.id)
-#    assert_not_nil(Favorite.find(:first, :conditions => ["user_id = 1 AND post_id = ?", p1.id]))
-#    assert_raise(User::AlreadyFavoritedError) {user.add_favorite(p1.id)}
-#    assert_equal(1, Favorite.count(:conditions => ["user_id = 1 AND post_id = ?", p1.id]))
-#    user.delete_favorite(p1.id)
-#    assert_nil(Favorite.find(:first, :conditions => ["user_id = 1 AND post_id = ?", p1.id]))
-#    assert_nothing_raised {user.delete_favorite(p1.id)}
-#  end
+  #  def test_favorites
+  #    p1 = create_post("tag1")
+  #    p2 = create_post("tag2")
+  #    p3 = create_post("tag3")
+  #    p4 = create_post("tag4")
+  #    user = User.find(1)
+  #    create_favorite(user.id, p1.id)
+  #    assert_not_nil(Favorite.find(:first, :conditions => ["user_id = 1 AND post_id = ?", p1.id]))
+  #    assert_raise(User::AlreadyFavoritedError) {user.add_favorite(p1.id)}
+  #    assert_equal(1, Favorite.count(:conditions => ["user_id = 1 AND post_id = ?", p1.id]))
+  #    user.delete_favorite(p1.id)
+  #    assert_nil(Favorite.find(:first, :conditions => ["user_id = 1 AND post_id = ?", p1.id]))
+  #    assert_nothing_raised {user.delete_favorite(p1.id)}
+  #  end
 
   def test_levels
     admin = User.find(1)

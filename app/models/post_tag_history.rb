@@ -6,13 +6,13 @@ class PostTagHistory < ActiveRecord::Base
     posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.id", :conditions => ["pth.user_id = ?", user_id])
     puts posts.size
     p posts.map { |x| x.id }
-#    destroy_all(["user_id = ?", user_id])
-#    posts.each do |post|
-#      post.tags = post.tag_history.first.tags
-#      post.updater_user_id = post.tag_history.first.user_id
-#      post.updater_ip_addr = post.tag_history.first.ip_addr
-#      post.save!
-#    end
+    #    destroy_all(["user_id = ?", user_id])
+    #    posts.each do |post|
+    #      post.tags = post.tag_history.first.tags
+    #      post.updater_user_id = post.tag_history.first.user_id
+    #      post.updater_ip_addr = post.tag_history.first.ip_addr
+    #      post.save!
+    #    end
   end
 
   def self.generate_sql(options = {})

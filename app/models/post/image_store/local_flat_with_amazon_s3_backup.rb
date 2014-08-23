@@ -63,11 +63,11 @@ module Post::ImageStore
     end
 
     def preview_url
-#      if self.image?
-#        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/#{md5}.jpg"
-#      else
-#        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"
-#      end
+      #      if self.image?
+      #        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/#{md5}.jpg"
+      #      else
+      #        "http://s3.amazonaws.com/" + CONFIG["amazon_s3_bucket_name"] + "/preview/download.png"
+      #      end
 
       if status == "deleted"
         CONFIG["url_base"] + "/deleted-preview.png"

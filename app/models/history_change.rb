@@ -71,8 +71,7 @@ class HistoryChange < ActiveRecord::Base
   end
 
   def latest
-    HistoryChange.find(:first, :order => "id DESC",
-                               :conditions => ["table_name = ? AND remote_id = ? AND column_name = ?", table_name, remote_id, column_name])
+    self.class.order(:id => :desc).find_by(:table_name => table_name, :remote_id => remote_id, :column_name => column_name)
   end
 
   def next

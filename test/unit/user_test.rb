@@ -5,7 +5,7 @@ class UserTest < ActiveSupport::TestCase
 
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      Rails.cache.clear
     end
 
     @post_number = 1
@@ -20,18 +20,19 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def create_post(tags, user_id = 1, params = {})
-    post = Post.create({ :user_id => user_id, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@post_number}.jpg") }.merge(params))
+    post = Post.create({ :user_id => user_id, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_file("#{Rails.root}/test/mocks/test/test#{@post_number}.jpg") }.merge(params))
     @post_number += 1
     post
   end
 
   def create_favorite(user_id, post_id)
-    PostVotes.create(:user_id => user_id, :post_id => post_id, :score => 3)
+    PostVote.create(:user_id => user_id, :post_id => post_id, :score => 3)
   end
 
   def test_blacklists
-    CONFIG["default_blacklists"] = "tag1"
+    CONFIG["default_blacklists"] = ["tag1"]
     user = create_user("bob")
+    user.password = user.password_confirmation = nil # to skip password validation check
     assert_equal("tag1\n", user.blacklisted_tags)
 
     user.update_attributes(:blacklisted_tags => "tag2\ntag3\n")
@@ -48,16 +49,18 @@ class UserTest < ActiveSupport::TestCase
 
   def test_passwords
     user = create_user("bob")
+    user.current_password = "zugzug1"
     user.password = "zugzug5"
     user.password_confirmation = "zugzug5"
     user.save
     user.reload
     assert(User.authenticate("bob", "zugzug5"), "Authentication should have succeeded")
 
+    user.current_password = "zugzug5"
     user.password = "zugzug6"
     user.password_confirmation = "zugzug5"
     user.save
-    assert_equal(["Password doesn't match confirmation"], user.errors.full_messages)
+    assert_equal(["Password confirmation doesn't match Password"], user.errors.full_messages)
 
     user.password = "x5"
     user.password_confirmation = "x5"
@@ -68,19 +71,12 @@ class UserTest < ActiveSupport::TestCase
     assert(User.authenticate("bob", new_pass), "Authentication should have succeeded")
   end
 
-  def test_counts
-    assert_equal(5, User.fast_count)
-    user = create_user("bob")
-    assert_equal(6, User.fast_count)
-    user.destroy
-    assert_equal(5, User.fast_count)
-  end
-
   def test_find_name
     user = create_user("bob")
     assert_equal(CONFIG["default_guest_name"], User.find_name(-1))
     assert_equal("bob", User.find_name(user.id))
     user.name = "max"
+    user.password = user.password_confirmation = nil # to skip password check
     user.save
     assert_equal("max", User.find_name(user.id))
   end

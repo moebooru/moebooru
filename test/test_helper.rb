@@ -9,5 +9,10 @@ class ActiveSupport::TestCase
   # -- they do not yet inherit this setting
   fixtures :all
 
-  # Add more helper methods to be used by all tests here...
+  def upload_file(path)
+    t = Tempfile.new File.basename(path)
+    FileUtils.copy_entry File.open(path, "rb"), t
+    t.rewind
+    t
+  end
 end

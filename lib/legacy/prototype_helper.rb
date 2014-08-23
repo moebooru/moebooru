@@ -95,11 +95,11 @@ module ActionView
     # See JavaScriptGenerator for information on updating multiple elements
     # on the page in an Ajax response.
     CALLBACKS    = Set.new([:create, :uninitialized, :loading, :loaded,
-                     :interactive, :complete, :failure, :success] +
+                            :interactive, :complete, :failure, :success] +
                      (100..599).to_a)
     AJAX_OPTIONS = Set.new([:before, :after, :condition, :url,
-                     :asynchronous, :method, :insertion, :position,
-                     :form, :with, :update, :script, :type]).merge(CALLBACKS)
+                            :asynchronous, :method, :insertion, :position,
+                            :form, :with, :update, :script, :type]).merge(CALLBACKS)
 
     # Returns the JavaScript needed for a remote function.
     # See the link_to_remote documentation at http://github.com/rails/prototype_legacy_helper as it takes the same arguments.

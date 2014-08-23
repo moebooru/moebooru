@@ -87,7 +87,7 @@ module SimilarImages
           end
         rescue SocketError, SystemCallError => e
           errors[server] = { :message => e }
-        rescue Timeout::Error => e
+        rescue Timeout::Error
           errors[server] = { :message => "Timed out" }
         end
       }
@@ -97,12 +97,11 @@ module SimilarImages
     posts = []
     posts_external = []
     similarity = {}
-    preview_url = ""
     next_id = 1
     server_responses.map do |server, xml|
       doc = begin
         Nokogiri::XML xml.to_valid_utf8
-      rescue Exception => e
+      rescue Exception
         errors[server] = { :message => "parse error" }
         next
       end

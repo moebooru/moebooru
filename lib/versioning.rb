@@ -334,7 +334,7 @@ module ActiveRecord
 
               escaped_options = {}
               options.each { |key,value|
-                if value == nil
+                if value.nil?
                   escaped_options[key] = "NULL"
                 else
                   column = HistoryChange.columns_hash[key]

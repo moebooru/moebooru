@@ -8,7 +8,7 @@ module Post::RatingMethods
   end
 
   def rating=(r)
-    if r == nil && !new_record?
+    if r.nil? && !new_record?
       return
     end
 

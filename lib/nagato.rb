@@ -52,7 +52,7 @@ module Nagato
     # * :sql<String>:: A SQL fragment.
     # * :param<Object>:: A placeholder parameter.
     def add_unless_blank(sql, param)
-      unless param == nil || param == ""
+      unless param.nil? || param == ""
         @conditions << sql
         @condition_params << param
       end

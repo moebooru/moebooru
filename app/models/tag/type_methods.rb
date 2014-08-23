@@ -13,7 +13,7 @@ module Tag::TypeMethods
     def type_name_helper(tag_name) # :nodoc:
       tag = Tag.where(:name => tag_name).select(:tag_type).first
 
-      if tag == nil
+      if tag.nil?
         "general"
       else
         type_map[tag.tag_type]

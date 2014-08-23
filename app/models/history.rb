@@ -127,6 +127,7 @@ class History < ActiveRecord::Base
   end
 
   private
+
   # Find and return the node for table_name/id in objects.  If the node doesn't
   # exist, create it and point it at object.
   def self.cache_object(objects, table_name, id, object)

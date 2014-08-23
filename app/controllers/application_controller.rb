@@ -53,9 +53,13 @@ class ApplicationController < ActionController::Base
     end
 
     def language; ""; end
+
     def secondary_languages; ""; end
+
     def secondary_language_array; []; end
+
     def pool_browse_mode; 1; end
+
     def always_resize_images; true; end
 
     CONFIG["user_levels"].each do |name, _value|
@@ -77,6 +81,7 @@ class ApplicationController < ActionController::Base
 
   module LoginSystem
     protected
+
     def access_denied
       previous_url = params[:url] || request.fullpath
 
@@ -176,6 +181,7 @@ class ApplicationController < ActionController::Base
 
   module RespondToHelpers
     protected
+
     def respond_to_success(notice, redirect_to_params, options = {})
       extra_api_params = options[:api] || {}
 
@@ -258,6 +264,7 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+
   def check_ip_ban
     return if params[:controller] == "banned" && params[:action] == "index"
 
@@ -377,6 +384,7 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
   def limit_api
     if @from_api && !(request.format.xml? || request.format.json? || request.format.zip?)
       request.session_options[:skip] = true
@@ -427,15 +435,19 @@ class ApplicationController < ActionController::Base
     def admin_only
       access_denied unless @current_user.is_admin?
     end
+
     def member_only
       access_denied unless @current_user.is_member_or_higher?
     end
+
     def post_privileged_only
       access_denied unless @current_user.is_privileged_or_higher?
     end
+
     def post_member_only
       access_denied unless @current_user.is_member_or_higher?
     end
+
     def no_anonymous
       access_denied if @current_user.is_anonymous?
     end
@@ -443,6 +455,7 @@ class ApplicationController < ActionController::Base
     def sanitize_id
       params[:id] = params[:id].to_i
     end
+
     def mini_profiler_check
       if @current_user.is_admin_or_higher?
         Rack::MiniProfiler.authorize_request

@@ -12,6 +12,7 @@ class FavoriteController < ApplicationController
   end
 
   protected
+
   def favorited_users_for_post(post)
     post.favorited_by.map { |x| x.name }.uniq.join(",")
   end

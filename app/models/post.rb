@@ -213,9 +213,11 @@ class Post < ActiveRecord::Base
       "http://#{source}"
     end
   end
+
   def service
     CONFIG["local_image_service"]
   end
+
   def service_icon
     "/favicon.ico"
   end

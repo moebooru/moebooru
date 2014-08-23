@@ -4,6 +4,7 @@ class Settings::BaseController < ApplicationController
   layout "settings"
 
   private
+
   def set_user
     @user = @current_user
   end

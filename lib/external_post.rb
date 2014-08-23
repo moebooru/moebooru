@@ -17,9 +17,11 @@ class ExternalPost
   def service_icon
     ExternalPost.get_service_icon(service)
   end
+
   def ext
     true
   end
+
   def cached_tags
     tags
   end
@@ -36,6 +38,7 @@ class ExternalPost
   def use_jpeg?(_user)
     false
   end
+
   def has_jpeg?
     false
   end
@@ -43,12 +46,15 @@ class ExternalPost
   def is_flagged?
     false
   end
+
   def has_children?
     false
   end
+
   def is_pending?
     false
   end
+
   def parent_id
     nil
   end

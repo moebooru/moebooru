@@ -473,6 +473,7 @@ module Post::FileMethods
       :height => height
     }
   end
+
   def get_file_jpeg(user = nil)
     if status == "deleted" || !use_jpeg?(user)
       return get_file_image(user)
@@ -486,6 +487,7 @@ module Post::FileMethods
       :height => jpeg_height
     }
   end
+
   def get_file_sample(user = nil)
     if status == "deleted" || !use_sample?(user)
       return get_file_jpeg(user)
@@ -501,7 +503,9 @@ module Post::FileMethods
   end
 
   def sample_url(user = nil) get_file_sample(user)[:url] end
+
   def get_sample_width(user = nil) get_file_sample(user)[:width] end
+
   def get_sample_height(user = nil) get_file_sample(user)[:height] end
 
   # If the JPEG version needs to be generated (or regenerated), output it to tempfile_jpeg_path.  On

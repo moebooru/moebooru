@@ -194,6 +194,7 @@ module Mirrors
     def select_main_image_server
       CONFIG["url_base"]
     end
+
     def select_image_server(_is_warehoused, _seed = 0, _options = {})
       CONFIG["url_base"]
     end

@@ -114,6 +114,7 @@ class User < ActiveRecord::Base
         end
       end
     end
+
     def encrypt_password
       self.password_hash = User.sha1(password) if password
     end

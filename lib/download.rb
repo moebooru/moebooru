@@ -13,7 +13,7 @@ end
 
 module Danbooru
   # Download the given URL, following redirects; once we have the result, yield the request.
-  def http_get_streaming(source, options = {}, &block)
+  def http_get_streaming(source, options = {}, &_block)
     max_size = options[:max_size] || CONFIG["max_image_size"]
     max_size = nil if max_size == 0 # unlimited
 

@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
       true
     end
 
-    def has_permission?(obj, foreign_key = :user_id)
+    def has_permission?(_obj, _foreign_key = :user_id)
       false
     end
 

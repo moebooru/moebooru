@@ -120,7 +120,7 @@ class Pool < ActiveRecord::Base
       user.has_permission?(self)
     end
 
-    def can_change?(user, attribute)
+    def can_change?(user, _attribute)
       return false unless user.is_member_or_higher?
       is_public? || user.has_permission?(self)
     end
@@ -212,7 +212,7 @@ class Pool < ActiveRecord::Base
     end
 
     # Return true if any posts in this pool have a generated JPEG version.
-    def has_jpeg_zip?(options = {})
+    def has_jpeg_zip?(_options = {})
       pool_posts.each do |pool_post|
         post = pool_post.post
         return true if post.has_jpeg?

@@ -31,7 +31,7 @@ module ApplicationHelper
     content_tag("li", link_to(text, options, html_options), :class => klass)
   end
 
-  def format_text(text, options = {})
+  def format_text(text, _options = {})
     # The parses is more or less html safe
     # FIXME: for some reason rbx requires force encoding here.
     DText.parse(text).force_encoding("utf-8").html_safe

@@ -32,4 +32,3 @@ class AddCommentFragments < ActiveRecord::Migration
     execute "ALTER TABLE comments DROP COLUMN updated_at"
   end
 end
-

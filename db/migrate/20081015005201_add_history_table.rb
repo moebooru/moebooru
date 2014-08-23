@@ -57,4 +57,3 @@ class AddHistoryTable < ActiveRecord::Migration
     remove_column :pools_posts, :active
   end
 end
-

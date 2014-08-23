@@ -30,4 +30,3 @@ namespace :sample_images do
     end
   end
 end
-

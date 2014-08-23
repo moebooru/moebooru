@@ -13,4 +13,3 @@ class AddJpegColumns < ActiveRecord::Migration
     remove_column :posts, :jpeg_crc32
   end
 end
-

@@ -94,4 +94,3 @@ module Danbooru
 
   module_function :http_get_streaming
 end
-

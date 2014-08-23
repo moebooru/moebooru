@@ -11,4 +11,3 @@ class CreatePostChangeSeq < ActiveRecord::Migration
     execute "ALTER TABLE posts DROP COLUMN change_seq;"
   end
 end
-

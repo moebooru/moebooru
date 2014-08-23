@@ -9,4 +9,3 @@ class DisableChangeSeqCache < ActiveRecord::Migration
     execute "ALTER TABLE posts ALTER COLUMN change_seq SET NOT NULL"
   end
 end
-

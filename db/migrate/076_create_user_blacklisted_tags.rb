@@ -32,4 +32,3 @@ class CreateUserBlacklistedTags < ActiveRecord::Migration
     add_column :users, :blacklisted_tags, :text, :null => false, :default => ""
   end
 end
-

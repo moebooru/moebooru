@@ -53,4 +53,3 @@ class PoolPost < ActiveRecord::Base
 
   include ApiMethods
 end
-

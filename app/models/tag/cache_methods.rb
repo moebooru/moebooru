@@ -18,4 +18,3 @@ module Tag::CacheMethods
     Moebooru::CacheHelper.expire_tag_version
   end
 end
-

@@ -86,4 +86,3 @@ class HistoryChange < ActiveRecord::Base
     self.save!
   end
 end
-

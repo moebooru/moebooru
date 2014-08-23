@@ -12,4 +12,3 @@ module ExtractUrls
 
   module_function :extract_image_urls
 end
-

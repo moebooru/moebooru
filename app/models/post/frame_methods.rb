@@ -44,4 +44,3 @@ module Post::FrameMethods
     frames
   end
 end
-

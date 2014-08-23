@@ -29,4 +29,3 @@ class AddBatchUploads < ActiveRecord::Migration
     JobTask.destroy_all(["task_type = 'upload_batch_posts'"])
   end
 end
-

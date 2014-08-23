@@ -11,4 +11,3 @@ class AddSampleColumns < ActiveRecord::Migration
     remove_column :users, :show_samples
   end
 end
-

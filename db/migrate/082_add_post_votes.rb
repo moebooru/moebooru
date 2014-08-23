@@ -30,4 +30,3 @@ class AddPostVotes < ActiveRecord::Migration
     remove_column :posts, :anonymous_votes
   end
 end
-

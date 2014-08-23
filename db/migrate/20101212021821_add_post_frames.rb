@@ -37,4 +37,3 @@ class AddPostFrames < ActiveRecord::Migration
     JobTask.destroy_all(["task_type = 'update_post_frames'"])
   end
 end
-

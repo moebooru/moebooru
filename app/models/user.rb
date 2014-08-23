@@ -696,4 +696,3 @@ class User < ActiveRecord::Base
     end.to_hash
   end
 end
-

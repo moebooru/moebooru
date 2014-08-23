@@ -48,4 +48,3 @@ class UpdatePoolCountTriggers < ActiveRecord::Migration
     raise IrreversibleMigration
   end
 end
-

@@ -7,4 +7,3 @@ class AddShowAdvancedEditing < ActiveRecord::Migration
     remove_column :users, :show_advanced_editing
   end
 end
-

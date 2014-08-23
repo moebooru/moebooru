@@ -60,4 +60,3 @@ class BatchUpload < ActiveRecord::Base
     Thread.current["danbooru-ip_addr"] = old_ip_addr
   end
 end
-

@@ -29,8 +29,8 @@ class PostControllerTest < ActionController::TestCase
     assert_equal("jpg", p.file_ext)
     assert_equal("s", p.rating)
     assert_equal(3, p.user_id)
-    assert_equal(true, File.exists?(p.file_path))
-    assert_equal(true, File.exists?(p.preview_path))
+    assert_equal(true, File.exist?(p.file_path))
+    assert_equal(true, File.exist?(p.preview_path))
 
     # TODO: test duplicates
     # TODO: test privileges

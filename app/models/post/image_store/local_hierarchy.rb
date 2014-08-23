@@ -76,13 +76,13 @@ module Post::ImageStore
         FileUtils.chmod(0664, preview_path)
       end
 
-      if File.exists?(tempfile_sample_path)
+      if File.exist?(tempfile_sample_path)
         FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
         FileUtils.mv(tempfile_sample_path, sample_path)
         FileUtils.chmod(0664, sample_path)
       end
 
-      if File.exists?(tempfile_jpeg_path)
+      if File.exist?(tempfile_jpeg_path)
         FileUtils.mkdir_p(File.dirname(jpeg_path), :mode => 0775)
         FileUtils.mv(tempfile_jpeg_path, jpeg_path)
         FileUtils.chmod(0664, jpeg_path)

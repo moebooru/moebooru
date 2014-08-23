@@ -181,9 +181,9 @@ class PostTest < ActiveSupport::TestCase
 
   def test_cgi_upload
     post = create_post(:tags => "tag1")
-    assert(File.exists?(post.file_path), "File not found")
-    assert(File.exists?(post.preview_path), "Preview not found")
-    assert(File.exists?(post.sample_path), "Sample not found")
+    assert(File.exist?(post.file_path), "File not found")
+    assert(File.exist?(post.preview_path), "Preview not found")
+    assert(File.exist?(post.sample_path), "Sample not found")
     assert_not_equal(0, File.size(post.file_path))
     assert_not_equal(0, File.size(post.preview_path))
     assert_not_equal(0, File.size(post.sample_path))
@@ -192,8 +192,8 @@ class PostTest < ActiveSupport::TestCase
 
   def test_download_from_source
     post = create_post(:file => nil, :source => "http://www.google.com/intl/en_ALL/images/logo.gif")
-    assert(File.exists?(post.file_path), "File not found")
-    assert(File.exists?(post.preview_path), "Preview not found")
+    assert(File.exist?(post.file_path), "File not found")
+    assert(File.exist?(post.preview_path), "Preview not found")
     assert_not_equal(0, File.size(post.file_path))
     assert_not_equal(0, File.size(post.preview_path))
     assert_equal("e80d1c59a673f560785784fb1ac10959", post.md5)

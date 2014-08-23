@@ -261,7 +261,7 @@ module SimilarImages
     if not valid_saved_search(id) then return nil end
 
     file_path = "#{SEARCH_CACHE_DIR}/#{id}"
-    if not File.exists?(file_path)
+    if not File.exist?(file_path)
       return nil
     end
 

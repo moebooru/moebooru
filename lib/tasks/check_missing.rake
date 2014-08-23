@@ -7,7 +7,7 @@ task :find_posts => :environment do
         ext = post.file_ext
         path = "#{images_path}/#{md5[0..1]}/#{md5[2..3]}"
         file_name = "#{path}/#{md5}.#{ext}"
-        puts "#{md5}.#{ext}" unless File.exists?(file_name)
+        puts "#{md5}.#{ext}" unless File.exist?(file_name)
     }
 
 end

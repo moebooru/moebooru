@@ -9,12 +9,12 @@ module Post::ImageStore
         FileUtils.chmod(0664, preview_path)
       end
 
-      if File.exists?(tempfile_sample_path)
+      if File.exist?(tempfile_sample_path)
         FileUtils.mv(tempfile_sample_path, sample_path)
         FileUtils.chmod(0664, sample_path)
       end
 
-      if File.exists?(tempfile_jpeg_path)
+      if File.exist?(tempfile_jpeg_path)
         FileUtils.mv(tempfile_jpeg_path, jpeg_path)
         FileUtils.chmod(0664, jpeg_path)
       end
@@ -30,11 +30,11 @@ module Post::ImageStore
         AWS::S3::S3Object.store("preview/#{md5}.jpg", open(self.preview_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
       end
 
-      if File.exists?(tempfile_sample_path)
+      if File.exist?(tempfile_sample_path)
         AWS::S3::S3Object.store("sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg", open(self.sample_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
       end
 
-      if File.exists?(tempfile_jpeg_path)
+      if File.exist?(tempfile_jpeg_path)
         AWS::S3::S3Object.store("jpeg/#{md5}.jpg", open(self.jpeg_path, "rb"), CONFIG["amazon_s3_bucket_name"], :access => :public_read)
       end
 

@@ -107,7 +107,7 @@ class InlineImage < ActiveRecord::Base
   def determine_content_type
     return true if self.file_ext
 
-    if not File.exists?(tempfile_image_path)
+    if not File.exist?(tempfile_image_path)
       errors.add(:base, "No file received")
       return false
     end
@@ -144,13 +144,13 @@ class InlineImage < ActiveRecord::Base
   end
 
   def generate_sample
-    return true if File.exists?(sample_path)
+    return true if File.exist?(sample_path)
 
     # We can generate the sample image during upload or offline.  Use tempfile_image_path
     # if it exists, otherwise use file_path.
     path = tempfile_image_path
-    path = file_path unless File.exists?(path)
-    unless File.exists?(path)
+    path = file_path unless File.exist?(path)
+    unless File.exist?(path)
       errors.add(:file, "not found")
       return false
     end
@@ -182,15 +182,15 @@ class InlineImage < ActiveRecord::Base
   end
 
   def generate_preview
-    return true if File.exists?(preview_path)
+    return true if File.exist?(preview_path)
 
-    unless File.exists?(tempfile_image_path)
+    unless File.exist?(tempfile_image_path)
       errors.add(:file, "not found")
       return false
     end
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
-    if File.exists?(tempfile_sample_path)
+    if File.exist?(tempfile_sample_path)
       path, ext = tempfile_sample_path, "jpg"
     else
       path, ext = tempfile_image_path, file_ext
@@ -210,11 +210,11 @@ class InlineImage < ActiveRecord::Base
     FileUtils.mkdir_p(File.dirname(file_path));
     FileUtils.mv(tempfile_image_path, file_path)
 
-    if File.exists?(tempfile_preview_path)
+    if File.exist?(tempfile_preview_path)
       FileUtils.mkdir_p(File.dirname(preview_path));
       FileUtils.mv(tempfile_preview_path, preview_path)
     end
-    if File.exists?(tempfile_sample_path)
+    if File.exist?(tempfile_sample_path)
       FileUtils.mkdir_p(File.dirname(sample_path));
       FileUtils.mv(tempfile_sample_path, sample_path)
     end

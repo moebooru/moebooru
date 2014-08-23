@@ -33,7 +33,7 @@ module Post::FileMethods
   end
 
   def ensure_tempfile_exists
-    unless File.exists?(tempfile_path)
+    unless File.exist?(tempfile_path)
       errors.add :file, "not found, try uploading again"
       return false
     end
@@ -108,11 +108,11 @@ module Post::FileMethods
   # is a duplicate we'll notice before we spend time resizing the image.
   def regenerate_hash
     path = tempfile_path
-    if not File.exists?(path)
+    if not File.exist?(path)
       path = file_path
     end
 
-    if not File.exists?(path)
+    if not File.exist?(path)
       errors.add(:file, "not found")
       return false
     end
@@ -186,7 +186,7 @@ module Post::FileMethods
     # Only move in the changed files on success.  When we return false, the caller won't
     # save us to the database; we need to only move the new files in if we're going to be
     # saved.  This is normally handled by move_file.
-    if File.exists?(temp_path)
+    if File.exist?(temp_path)
       FileUtils.mkdir_p(File.dirname(dest_path), :mode => 0775)
       FileUtils.mv(temp_path, dest_path)
       FileUtils.chmod(0775, dest_path)
@@ -201,13 +201,13 @@ module Post::FileMethods
     size = Moebooru::Resizer.reduce_to({:width=>width, :height=>height}, {:width=>300, :height=>300})
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
-    if File.exists?(tempfile_sample_path)
+    if File.exist?(tempfile_sample_path)
       path, ext = tempfile_sample_path, "jpg"
-    elsif File.exists?(sample_path)
+    elsif File.exist?(sample_path)
       path, ext = sample_path, "jpg"
-    elsif File.exists?(tempfile_path)
+    elsif File.exist?(tempfile_path)
       path, ext = tempfile_path, file_ext
-    elsif File.exists?(file_path)
+    elsif File.exist?(file_path)
       path, ext = file_path, file_ext
     else
       errors.add(:file, "not found")
@@ -253,7 +253,7 @@ module Post::FileMethods
   end
 
   def determine_content_type
-    if not File.exists?(tempfile_path)
+    if not File.exist?(tempfile_path)
       errors.add(:base, "No file received")
       return false
     end
@@ -406,8 +406,8 @@ module Post::FileMethods
     # We can generate the sample image during upload or offline.  Use tempfile_path
     # if it exists, otherwise use file_path.
     path = tempfile_path
-    path = file_path unless File.exists?(path)
-    unless File.exists?(path)
+    path = file_path unless File.exist?(path)
+    unless File.exist?(path)
       errors.add(:file, "not found")
       return false
     end
@@ -517,8 +517,8 @@ module Post::FileMethods
     # We can generate the image during upload or offline.  Use tempfile_path
     # if it exists, otherwise use file_path.
     path = tempfile_path
-    path = file_path unless File.exists?(path)
-    unless File.exists?(path)
+    path = file_path unless File.exist?(path)
+    unless File.exist?(path)
       errors.add(:file, "not found")
       return false
     end

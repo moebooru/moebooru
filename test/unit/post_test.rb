@@ -115,21 +115,21 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, post.comments.size)
     assert_equal(0, post.recent_comments.size)
 
-    comment1 = create_comment(post, :body => "comment 1")
+    create_comment(post, :body => "comment 1")
     assert_equal(1, post.comments.size)
     assert_equal(1, post.recent_comments.size)
 
-    comment2 = create_comment(post, :body => "comment 2")
+    create_comment(post, :body => "comment 2")
     assert_equal(2, post.comments.size)
     assert_equal(2, post.recent_comments.size)
     assert_equal("comment 1", post.comments[0].body)
     assert_equal("comment 2", post.comments[1].body)
 
-    comment3 = create_comment(post, :body => "comment 3")
-    comment4 = create_comment(post, :body => "comment 4")
-    comment5 = create_comment(post, :body => "comment 5")
-    comment6 = create_comment(post, :body => "comment 6")
-    comment7 = create_comment(post, :body => "comment 7")
+    create_comment(post, :body => "comment 3")
+    create_comment(post, :body => "comment 4")
+    create_comment(post, :body => "comment 5")
+    create_comment(post, :body => "comment 6")
+    create_comment(post, :body => "comment 7")
     assert_equal(7, post.comments.size)
     assert_equal(6, post.recent_comments.size)
     assert_equal("comment 2", post.recent_comments[0].body)
@@ -142,17 +142,17 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, Post.fast_count("tag1"))
     assert_equal(0, Post.fast_count("tag2"))
 
-    post1 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
+    create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
     assert_equal(6, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(0, Post.fast_count("tag2"))
 
-    post2 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
     assert_equal(7, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(1, Post.fast_count("tag2"))
 
-    post3 = create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
+    create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
     assert_equal(8, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(2, Post.fast_count("tag2"))
@@ -465,8 +465,8 @@ class PostTest < ActiveSupport::TestCase
 
   def test_search_simple
     p1 = create_post(:tags => "tag1")
-    p2 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    p3 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
     matches = search_posts("tag1")
     assert_equal(1, matches.size)
     assert_equal(p1.id, matches[0].id)
@@ -474,8 +474,8 @@ class PostTest < ActiveSupport::TestCase
 
   def test_search_intersection_with_two_tags
     p1 = create_post(:tags => "tag1 tag2")
-    p2 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    p3 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
+    create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
     matches = search_posts("tag1 tag2")
     assert_equal(1, matches.size)
     assert_equal(p1.id, matches[0].id)
@@ -483,11 +483,11 @@ class PostTest < ActiveSupport::TestCase
 
   def test_search_intersection_with_three_tags
     p1 = create_post(:tags => "tag1 tag2 tag3")
-    p2 = create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    p3 = create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
-    p4 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg"))
-    p5 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg"))
-    p6 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
+    create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
+    create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg"))
+    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg"))
+    create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
     matches = search_posts("tag1 tag2 tag3")
     assert_equal(1, matches.size)
     assert_equal(p1.id, matches[0].id)
@@ -496,12 +496,12 @@ class PostTest < ActiveSupport::TestCase
   def test_search_negated_tags
     Post.find(:all).each { |x| x.delete_from_database }
 
-    p1 = create_post(:tags => "tag1 tag2 tag3")
+    create_post(:tags => "tag1 tag2 tag3")
     p2 = create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    p3 = create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
+    create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
     p4 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg"))
     p5 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg"))
-    p6 = create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
+    create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
 
     matches = search_posts("-tag3")
     assert_equal(3, matches.size)
@@ -531,8 +531,8 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def test_search_pattern
-    p1 = create_post(:tags => "hoge nushi", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
-    p2 = create_post(:tags => "hoge", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "hoge nushi", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
+    create_post(:tags => "hoge", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
 
     matches = search_posts("*oge")
     assert_equal(2, matches.size)

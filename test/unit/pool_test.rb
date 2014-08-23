@@ -30,8 +30,8 @@ class PoolTest < ActiveSupport::TestCase
   end
 
   def test_uniqueness
-    pool1 = create_pool
-    pool2 = create_pool
+    create_pool
+    create_pool
     assert_equal(1, Pool.count(["name = 'my_pool'"]))
   end
 

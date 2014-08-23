@@ -12,7 +12,7 @@ class PoolControllerTest < ActionController::TestCase
   end
 
   def test_index
-    pool = create_pool("hoge")
+    create_pool("hoge")
 
     get :index, {}, :user_id => 1
     assert_response :success
@@ -68,7 +68,7 @@ class PoolControllerTest < ActionController::TestCase
   end
 
   def test_add_post_to_inactive_pool
-    pool = create_pool("hoge", :is_public => true, :user_id => 3, :is_active => false)
+    create_pool("hoge", :is_public => true, :user_id => 3, :is_active => false)
 
     get :add_post, :post_id => 1
     assert_equal(false, assigns(:pools).any? { |x| x.name == "hoge" })
@@ -201,8 +201,8 @@ class PoolControllerTest < ActionController::TestCase
 
   def test_import_to_private_pool
     pool = create_pool("hoge", :is_public => false, :user_id => 4)
-    p1 = create_post("tag1", 1)
-    p2 = create_post("tag2", 2)
+    create_post("tag1", 1)
+    create_post("tag2", 2)
 
     get :import, :id => pool.id
     assert_redirected_to :controller => "user", :action => "login"
@@ -231,8 +231,8 @@ class PoolControllerTest < ActionController::TestCase
 
   def test_import_to_public_pool
     pool = create_pool("hoge", :is_public => true, :user_id => 4)
-    p1 = create_post("tag1", 1)
-    p2 = create_post("tag2", 2)
+    create_post("tag1", 1)
+    create_post("tag2", 2)
 
     get :import, :id => pool.id, :format => "js"
     assert_response :success

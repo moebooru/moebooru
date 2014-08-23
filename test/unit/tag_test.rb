@@ -26,9 +26,9 @@ class TagTest < ActiveSupport::TestCase
   end
 
   def test_count_by_period
-    p1 = create_post("tag1", :created_at => 10.days.ago)
-    p2 = create_post("tag1")
-    p3 = create_post("tag1 tag2")
+    create_post("tag1", :created_at => 10.days.ago)
+    create_post("tag1")
+    create_post("tag1 tag2")
 
     results = Tag.count_by_period(3.days.ago, Time.now).sort { |a, b| a["name"] <=> b["name"] }
     assert_equal("2", results[0]["post_count"])
@@ -42,23 +42,23 @@ class TagTest < ActiveSupport::TestCase
   end
 
   def test_find_or_create_by_name
-    t = Tag.find_or_create_by_name("-ho-ge")
+    Tag.find_or_create_by_name("-ho-ge")
     assert_nil(Tag.find_by_name("-ho-ge"))
     assert_not_nil(Tag.find_by_name("ho-ge"))
     t = Tag.find_by_name("ho-ge")
     assert_equal(CONFIG["tag_types"]["General"], t.tag_type)
     assert(!t.is_ambiguous?, "Tag should not be ambiguous")
 
-    t = Tag.find_or_create_by_name("ambiguous:ho-ge")
+    Tag.find_or_create_by_name("ambiguous:ho-ge")
     t = Tag.find_by_name("ho-ge")
     assert_equal(CONFIG["tag_types"]["General"], t.tag_type)
     assert(t.is_ambiguous?, "Tag should be ambiguous")
 
-    t = Tag.find_or_create_by_name("artist:ho-ge")
+    Tag.find_or_create_by_name("artist:ho-ge")
     t = Tag.find_by_name("ho-ge")
     assert_equal(CONFIG["tag_types"]["Artist"], t.tag_type)
 
-    t = Tag.find_or_create_by_name("artist:mogemoge")
+    Tag.find_or_create_by_name("artist:mogemoge")
     t = Tag.find_by_name("mogemoge")
     assert_equal(CONFIG["tag_types"]["Artist"], t.tag_type)
   end
@@ -129,8 +129,8 @@ class TagTest < ActiveSupport::TestCase
   end
 
   def test_related
-    p1 = create_post("tag1 tag2")
-    p2 = create_post("tag1 tag2 tag3")
+    create_post("tag1 tag2")
+    create_post("tag1 tag2 tag3")
 
     t = Tag.find_by_name("tag1")
     related = t.related.sort { |a, b| a[0] <=> b[0] }
@@ -139,7 +139,7 @@ class TagTest < ActiveSupport::TestCase
     assert_equal(["tag3", "1"], related[2])
 
     # Make sure the related tags are cached
-    p3 = create_post("tag1 tag4")
+    create_post("tag1 tag4")
     t.reload
     related = t.related.sort { |a, b| a[0] <=> b[0] }
     assert_equal(3, related.size)
@@ -159,8 +159,8 @@ class TagTest < ActiveSupport::TestCase
   end
 
   def test_related_by_type
-    p1 = create_post("tag1 artist:tag2")
-    p2 = create_post("tag1 tag2 artist:tag3 copyright:tag4")
+    create_post("tag1 artist:tag2")
+    create_post("tag1 tag2 artist:tag3 copyright:tag4")
 
     related = Tag.calculate_related_by_type("tag1", CONFIG["tag_types"]["Artist"]).sort { |a, b| a["name"] <=> b["name"] }
     assert_equal(2, related.size)

@@ -65,7 +65,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   def test_authentication_failure
-    user = create_user("bob")
+    create_user("bob")
 
     get :login, {}, {}
     assert_response :success
@@ -76,7 +76,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   def test_authentication_success
-    user = create_user("bob")
+    create_user("bob")
 
     post :authenticate, { :user => { :name => "bob", :password => "zugzug1" }, :url => "http://google.com" }, {}
     assert_not_nil(assigns(:current_user))

@@ -35,8 +35,8 @@ class DmailControllerTest < ActionController::TestCase
 
   def test_show
     d1 = create_dmail(1, 2, "hey")
-    d2 = create_dmail(2, 1, "mox")
-    d3 = create_dmail(1, 3, "lox")
+    create_dmail(2, 1, "mox")
+    create_dmail(1, 3, "lox")
     d4 = create_dmail(2, 4, "hoge")
 
     get :show, { :id => d1.id }, :user_id => 1

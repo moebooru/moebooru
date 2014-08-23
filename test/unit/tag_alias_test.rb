@@ -69,7 +69,7 @@ class TagAliasTest < ActiveSupport::TestCase
   end
 
   def test_tag_types
-    sage = create_tag(:tag_type => 1, :name => "sage")
+    create_tag(:tag_type => 1, :name => "sage")
     ta = TagAlias.create(:name => "sage", :alias => "mage", :is_pending => true, :reason => "none", :creator_id => 1)
     assert_equal(1, ta.alias_tag.tag_type)
   end

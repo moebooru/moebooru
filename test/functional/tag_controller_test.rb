@@ -39,16 +39,16 @@ class TagControllerTest < ActionController::TestCase
   end
 
   def test_edit_preview
-    p1 = create_post("hoge", 1)
-    p2 = create_post("hoge moge", 2)
-    p3 = create_post("lodge", 3)
+    create_post("hoge", 1)
+    create_post("hoge moge", 2)
+    create_post("lodge", 3)
 
     get :edit_preview, { :tags => "hoge" }, :user_id => 2
     assert_response :success
   end
 
   def test_update
-    p1 = create_post("hoge", 1)
+    create_post("hoge", 1)
 
     get :edit, { :name => "hoge" }, :user_id => 3
     assert_response :success
@@ -58,18 +58,18 @@ class TagControllerTest < ActionController::TestCase
   end
 
   def test_related
-    p1 = create_post("hoge", 1)
-    p2 = create_post("hoge moge", 2)
-    p3 = create_post("lodge", 3)
+    create_post("hoge", 1)
+    create_post("hoge moge", 2)
+    create_post("lodge", 3)
 
     get :related, { :tags => "hoge", :format => "json" }, {}
     assert_response :success
   end
 
   def test_popular
-    p1 = create_post("hoge", 1)
-    p2 = create_post("hoge moge", 2)
-    p3 = create_post("lodge", 3)
+    create_post("hoge", 1)
+    create_post("hoge moge", 2)
+    create_post("lodge", 3)
 
     get :popular_by_day, {}, {}
     assert_response :success

@@ -108,7 +108,7 @@ class UserTest < ActiveSupport::TestCase
     p1 = create_post("tag1", 2)
     p2 = create_post("tag2", 2)
     p3 = create_post("tag3", 2)
-    p4 = create_post("tag4", 3)
+    create_post("tag4", 3)
     results = User.find(2).recent_uploaded_posts.map(&:id).sort
     assert_equal([p1.id, p2.id, p3.id], results)
   end
@@ -116,8 +116,8 @@ class UserTest < ActiveSupport::TestCase
   def test_favorite_posts
     p1 = create_post("tag1")
     p2 = create_post("tag2")
-    p3 = create_post("tag3")
-    p4 = create_post("tag4")
+    create_post("tag3")
+    create_post("tag4")
     create_favorite(2, p1.id)
     create_favorite(2, p2.id)
     results = User.find(2).recent_favorite_posts.map(&:id).sort

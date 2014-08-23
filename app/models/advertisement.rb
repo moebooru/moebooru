@@ -8,7 +8,7 @@ class Advertisement < ActiveRecord::Base
   end
 
   def self.reset_hit_count(ids)
-    self.update_all({ :hit_count => 0 }, { :id => ids })
+    where(:id => ids).update_all(:hit_count => 0)
   end
 
   # virtual method for resetting hit count in view

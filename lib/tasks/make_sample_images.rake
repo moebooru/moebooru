@@ -1,13 +1,13 @@
 namespace :sample_images do
   def regen(post)
-#    unless post.regenerate_images(:sample)
-#      unless post.errors.empty?
-#        error = post.errors.full_messages.join(", ")
-#        puts "Error generating sample: post ##{post.id}: #{error}"
-#      end
-#
-#      return false
-#    end
+    #    unless post.regenerate_images(:sample)
+    #      unless post.errors.empty?
+    #        error = post.errors.full_messages.join(", ")
+    #        puts "Error generating sample: post ##{post.id}: #{error}"
+    #      end
+    #
+    #      return false
+    #    end
 
     unless post.regenerate_images(:jpeg)
       unless post.errors.empty?

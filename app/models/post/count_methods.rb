@@ -14,16 +14,16 @@ module Post::CountMethods
 
       # This is just too brittle, and hard to make work with other features that may
       # hide posts from the index.
-#      if tags.blank?
-#        return select_value_sql("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
-#      else
-#        c = select_value_sql("SELECT post_count FROM tags WHERE name = ?", tags).to_i
-#        if c == 0
-#          return Post.count_by_sql(Post.generate_sql(tags, :count => true))
-#        else
-#          return c
-#        end
-#      end
+      #      if tags.blank?
+      #        return select_value_sql("SELECT row_count FROM table_data WHERE name = 'posts'").to_i
+      #      else
+      #        c = select_value_sql("SELECT post_count FROM tags WHERE name = ?", tags).to_i
+      #        if c == 0
+      #          return Post.count_by_sql(Post.generate_sql(tags, :count => true))
+      #        else
+      #          return c
+      #        end
+      #      end
     end
 
     def recalculate_row_count

@@ -155,7 +155,7 @@ class User < ActiveRecord::Base
       m.extend(ClassMethods)
       m.validates_length_of :name, :within => 2..20, :on => :create
       m.validates_format_of :name, :with => /\A[^\s;,]+\Z/, :on => :create, :message => "cannot have whitespace, commas, or semicolons"
-#      validates_format_of :name, :with => /^(Anonymous|[Aa]dministrator)/, :on => :create, :message => "this is a disallowed username"
+      #      validates_format_of :name, :with => /^(Anonymous|[Aa]dministrator)/, :on => :create, :message => "this is a disallowed username"
       m.validates_uniqueness_of :name, :case_sensitive => false, :on => :create
       m.after_save :update_cached_name
     end

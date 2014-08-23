@@ -12,5 +12,5 @@
 # These inflection rules are supported but not enabled by default:
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.uncountable %w( api )
-#   inflect.acronym 'RESTful'
+  #   inflect.acronym 'RESTful'
 end

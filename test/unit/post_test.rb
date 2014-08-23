@@ -331,21 +331,21 @@ class PostTest < ActiveSupport::TestCase
     assert_equal("tag-a tag-b", post.cached_tags)
   end
 
-#  def test_tag_history
-#    post = create_post(:tags => "tag-a")
-#    assert_equal("tag-a", post.tag_history[0].tags)
-#    assert_equal(1, post.tag_history.size)
-#
-#    update_post(post, :tags => "tag-b")
-#    post.reload
-#    assert_equal("tag-b", post.tag_history[0].tags)
-#    assert_equal(2, post.tag_history.size)
-#
-#    update_post(post, :tags => "tag-c")
-#    post.reload
-#    assert_equal("tag-c", post.tag_history[0].tags)
-#    assert_equal(3, post.tag_history.size)
-#  end
+  #  def test_tag_history
+  #    post = create_post(:tags => "tag-a")
+  #    assert_equal("tag-a", post.tag_history[0].tags)
+  #    assert_equal(1, post.tag_history.size)
+  #
+  #    update_post(post, :tags => "tag-b")
+  #    post.reload
+  #    assert_equal("tag-b", post.tag_history[0].tags)
+  #    assert_equal(2, post.tag_history.size)
+  #
+  #    update_post(post, :tags => "tag-c")
+  #    post.reload
+  #    assert_equal("tag-c", post.tag_history[0].tags)
+  #    assert_equal(3, post.tag_history.size)
+  #  end
 
   def test_metatags
     post = create_post
@@ -417,25 +417,25 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, Post.count_by_sql(Post.generate_sql("tag4", :count => true)))
   end
 
-#  def test_voting
-#    # Temporarily disable caching so that the votes aren't stored in the cache
-#    old_caching_status = CONFIG["enable_caching"]
-#    CONFIG["enable_caching"] = false
-#    post = create_post
-#    assert_nothing_raised {post.vote!(User.find(4), 1, "127.0.0.1")}
-#    post.reload
-#    assert_equal(1, post.score)
-#    assert_raise(PostVoteMethods::AlreadyVotedError) {post.vote!(User.find(4), -1, "127.0.0.1")}
-#    post.reload
-#    assert_equal(1, post.score)
-#    CONFIG["enable_caching"] = old_caching_status
-#    assert_nothing_raised {post.vote!(User.find(1), 1, "127.0.0.2")}
-#    post.reload
-#    assert_equal(2, post.score)
-#    assert_nothing_raised {post.vote!(User.find(1), -1, "127.0.0.3")}
-#    post.reload
-#    assert_equal(-3, post.score)
-#  end
+  #  def test_voting
+  #    # Temporarily disable caching so that the votes aren't stored in the cache
+  #    old_caching_status = CONFIG["enable_caching"]
+  #    CONFIG["enable_caching"] = false
+  #    post = create_post
+  #    assert_nothing_raised {post.vote!(User.find(4), 1, "127.0.0.1")}
+  #    post.reload
+  #    assert_equal(1, post.score)
+  #    assert_raise(PostVoteMethods::AlreadyVotedError) {post.vote!(User.find(4), -1, "127.0.0.1")}
+  #    post.reload
+  #    assert_equal(1, post.score)
+  #    CONFIG["enable_caching"] = old_caching_status
+  #    assert_nothing_raised {post.vote!(User.find(1), 1, "127.0.0.2")}
+  #    post.reload
+  #    assert_equal(2, post.score)
+  #    assert_nothing_raised {post.vote!(User.find(1), -1, "127.0.0.3")}
+  #    post.reload
+  #    assert_equal(-3, post.score)
+  #  end
 
   def test_destroy_with_reason
     post = create_post

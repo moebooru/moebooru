@@ -49,7 +49,7 @@ namespace :posts do
     # people are making changes that they're not.
     PostTagHistory.transaction do
       PostTagHistory.find(:all, :order => "id ASC").each do |change|
-      #:all, :order => "id ASC").each
+        #:all, :order => "id ASC").each
         post = Post.find(change.post_id)
         next_change = change.next
         if next_change

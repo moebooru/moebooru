@@ -54,11 +54,11 @@ module Tag::ParseMethods
       end
     end
 
-  # Parses a query into three sets of tags: reject, union, and intersect.
-  #
-  # === Parameters
-  # * +query+: String, array, or nil. The query to parse.
-  # * +options+: A hash of options.
+    # Parses a query into three sets of tags: reject, union, and intersect.
+    #
+    # === Parameters
+    # * +query+: String, array, or nil. The query to parse.
+    # * +options+: A hash of options.
     def parse_query(query, options = {})
       q = Hash.new { |h, k| h[k] = [] }
 

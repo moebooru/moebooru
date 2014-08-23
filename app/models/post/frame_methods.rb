@@ -4,9 +4,9 @@ module Post::FrameMethods
   end
 
   def frames_pending_string=(frames)
-#    if r == nil && !new_record?
-#      return
-#    end
+    #    if r == nil && !new_record?
+    #      return
+    #    end
 
     # This cleans up the frames string, and fills in the final dimensions spec.
     parsed = PostFrames.parse_frames(frames, id)
@@ -14,7 +14,7 @@ module Post::FrameMethods
     new_frames = PostFrames.format_frames(parsed)
 
     return if frames_pending == new_frames
-#    self.old_rating = self.frames
+    #    self.old_rating = self.frames
     write_attribute(:frames_pending, new_frames)
     touch_change_seq!
   end

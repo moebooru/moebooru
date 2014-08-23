@@ -667,7 +667,7 @@ class PostController < ApplicationController
             search = SimilarImages.save_search do |f|
               wrote = 0
               buf = ""
-              while params[:file].read(1024 * 64, buf) do
+              while params[:file].read(1024 * 64, buf)
                 wrote += buf.length
                 f.write(buf)
               end

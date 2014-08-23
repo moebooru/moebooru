@@ -73,7 +73,7 @@ class History < ActiveRecord::Base
     objects[:objects].each do |_table_name, rhs|
       rhs.each do |_id, node|
         # Start adding from the node at the top of the tree.
-        while node[:parent] do
+        while node[:parent]
           node = node[:parent]
         end
         stack_object_recurse(node, stack, done)

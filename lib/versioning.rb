@@ -89,10 +89,10 @@ module ActiveRecord
 
           history = get_current_history
           h = HistoryChange.new(:table_name => self.class.table_name,
-                          :remote_id => id,
-                          :column_name => att.to_s,
-                          :value => new,
-                          :history_id => history.id)
+                                :remote_id => id,
+                                :column_name => att.to_s,
+                                :value => new,
+                                :history_id => history.id)
           h.save!
         end
       end
@@ -307,7 +307,7 @@ module ActiveRecord
             group_by_id = item.get_group_by_id
             #p "group %s by %s" % [item.to_s, item.class.get_group_by_table_name.to_s]
             history = History.find(:first, :order => "id ASC",
-                                   :conditions => ["group_by_table = ? AND group_by_id = ?", group_by_table, group_by_id])
+                                           :conditions => ["group_by_table = ? AND group_by_id = ?", group_by_table, group_by_id])
 
             unless history
               #p "new history"
@@ -409,17 +409,17 @@ module ActiveRecord
           end
           if tags != prev_tags then
             c = h.history_changes.new(:table_name => "posts",
-                                     :remote_id => tag_history.post_id,
-                                     :column_name => "cached_tags",
-                                     :value => tags)
+                                      :remote_id => tag_history.post_id,
+                                      :column_name => "cached_tags",
+                                      :value => tags)
             c.save!
           end
 
           if rating != prev_rating then
             c = h.history_changes.new(:table_name => "posts",
-                                     :remote_id => tag_history.post_id,
-                                     :column_name => "rating",
-                                     :value => rating)
+                                      :remote_id => tag_history.post_id,
+                                      :column_name => "rating",
+                                      :value => rating)
             c.save!
           end
         end
@@ -459,9 +459,9 @@ module ActiveRecord
 
             fields.each do |f|
               c = h.history_changes.new(:table_name => "notes",
-                                       :remote_id => ver.note_id,
-                                       :column_name => f[0],
-                                       :value => f[1])
+                                        :remote_id => ver.note_id,
+                                        :column_name => f[0],
+                                        :value => f[1])
               c.save!
             end
           end

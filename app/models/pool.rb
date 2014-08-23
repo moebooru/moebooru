@@ -160,7 +160,7 @@ class Pool < ActiveRecord::Base
         :user_id => user_id,
         :is_public => is_public,
         :post_count => post_count,
-        :description => description,
+        :description => description
       }
     end
 

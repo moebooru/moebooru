@@ -10,7 +10,7 @@ module HistoryHelper
   # :show_all_tags: Show unchanged tags.
   def get_default_field_options
     @default_field_options ||= {
-      :suppress_fields => [],
+      :suppress_fields => []
     }
   end
 
@@ -48,7 +48,7 @@ module HistoryHelper
       :Post => {
         :fields => {
           :cached_tags => { :primary_order => 2 }, # show tag changes after other things
-          :source => { :primary_order => 3 },
+          :source => { :primary_order => 3 }
         },
         :never_obsolete => { :cached_tags => true } # tags handle obsolete themselves per-tag
       },
@@ -70,15 +70,15 @@ module HistoryHelper
             :suppress_fields => [:sequence], # changing active usually changes sequence; this isn't interesting
             :primary_order => 2, # show pool post changes after other things
           },
-          :cached_tags => {},
-        },
+          :cached_tags => {}
+        }
       },
 
       :Tag => {
       },
 
       :Note => {
-      },
+      }
     }
 
     @att_options.each_key do |classname|
@@ -86,7 +86,7 @@ module HistoryHelper
         :fields => {},
         :primary_order => 1,
         :never_obsolete => {},
-        :force_show_initial => {},
+        :force_show_initial => {}
       }.merge(@att_options[classname])
 
       c = @att_options[classname][:fields]
@@ -400,7 +400,7 @@ module HistoryHelper
     {
       :html => span,
       :field => change.column_name,
-      :sort_key => sort_key,
+      :sort_key => sort_key
     }
   end
 

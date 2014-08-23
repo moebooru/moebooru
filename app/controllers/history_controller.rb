@@ -150,7 +150,7 @@ class HistoryController < ApplicationController
     @options = {
       :show_all_tags => params[:show_all_tags] == "1",
       :specific_object => (q.key?(:type) && q.key?(:id)),
-      :specific_history => q.key?(:change),
+      :specific_history => q.key?(:change)
     }
 
     @options[:show_name] = false

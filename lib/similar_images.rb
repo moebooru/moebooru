@@ -57,14 +57,14 @@ module SimilarImages
         if search_url
           params += [{
             :name => "url",
-            :data => search_url,
+            :data => search_url
           }]
         else
           params += [{
             :name => "file",
             :binary => true,
             :data => source_file,
-            :filename => File.basename(source_filename),
+            :filename => File.basename(source_filename)
           }]
         end
 

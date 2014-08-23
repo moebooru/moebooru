@@ -174,7 +174,7 @@ CONFIG["local_image_service"] = ""
 CONFIG["image_service_list"] = {
 	 "danbooru.donmai.us" => "http://haruhidoujins.yi.org/multi-search.xml",
 	 "moe.imouto.org" => "http://haruhidoujins.yi.org/multi-search.xml",
-	 "konachan.com" => "http://haruhidoujins.yi.org/multi-search.xml",
+	 "konachan.com" => "http://haruhidoujins.yi.org/multi-search.xml"
 }
 
 # If true, image services receive a URL to the thumbnail for searching, which

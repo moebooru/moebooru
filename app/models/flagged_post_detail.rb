@@ -37,7 +37,7 @@ class FlaggedPostDetail < ActiveRecord::Base
     ret = {
       :post_id => post_id,
       :reason => reason,
-      :created_at => created_at,
+      :created_at => created_at
     }
 
     unless hide_user then

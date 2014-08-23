@@ -5,9 +5,9 @@ class BatchController < ApplicationController
   before_action :contributor_only, :only => [:index, :create, :enqueue, :update]
 
   def index
-    if @current_user.is_mod_or_higher? and params[:user_id] == "all" then
+    if @current_user.is_mod_or_higher? && params[:user_id] == "all" then
       user_id = nil
-    elsif @current_user.is_mod_or_higher? and params[:user_id] then
+    elsif @current_user.is_mod_or_higher? && params[:user_id] then
       user_id = params[:user_id]
     else
       user_id = @current_user.id
@@ -29,8 +29,8 @@ class BatchController < ApplicationController
     conds = []
     cond_params = []
 
-    if @current_user.is_mod_or_higher? and params[:user_id] == "all" then
-    elsif @current_user.is_mod_or_higher? and params[:user_id] then
+    if @current_user.is_mod_or_higher? && params[:user_id] == "all" then
+    elsif @current_user.is_mod_or_higher? && params[:user_id] then
       conds.push("user_id = ?")
       cond_params.push(params[:user_id])
     else
@@ -89,8 +89,8 @@ class BatchController < ApplicationController
 
   def create
     filter = {}
-    if @current_user.is_mod_or_higher? and params[:user_id] == "all" then
-    elsif @current_user.is_mod_or_higher? and params[:user_id] then
+    if @current_user.is_mod_or_higher? && params[:user_id] == "all" then
+    elsif @current_user.is_mod_or_higher? && params[:user_id] then
       filter[:user_id] = params[:user_id]
     else
       filter[:user_id] = @current_user.id

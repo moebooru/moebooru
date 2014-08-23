@@ -43,7 +43,7 @@ module ActiveRecord
       history = Thread.current[:versioning_history]
       if history
         #p "reuse? %s != %s, %i != %i" % [history.group_by_table, self.class.get_group_by_table_name, history.group_by_id, self.get_group_by_id]
-        if history.group_by_table != self.class.get_group_by_table_name or
+        if history.group_by_table != self.class.get_group_by_table_name ||
           history.group_by_id != get_group_by_id then
           #p "don't reuse"
           Thread.current[:versioning_history] = nil
@@ -401,7 +401,7 @@ module ActiveRecord
           end
 
           changed = false
-          if tags != prev_tags or rating != prev_rating then
+          if tags != prev_tags || rating != prev_rating then
             h = History.new(:group_by_table => "posts",
                             :group_by_id => tag_history.post_id,
                             :user_id => tag_history.user_id || tag_history.post.user_id,

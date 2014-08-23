@@ -29,7 +29,7 @@ module Danbooru
       url = Addressable::URI.parse(source)
       url.host = url.normalized_host
 
-      unless url.scheme == "http" or url.scheme == "https"
+      unless url.scheme == "http" || url.scheme == "https"
         raise SocketError, "URL must be HTTP or HTTPS"
       end
 

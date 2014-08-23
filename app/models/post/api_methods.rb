@@ -47,11 +47,11 @@ module Post::ApiMethods
       ret.delete(:file_url)
     end
 
-    if status == "flagged" or status == "deleted" or status == "pending"
+    if status == "flagged" || status == "deleted" || status == "pending"
       ret[:flag_detail] = flag_detail
 
       if flag_detail then
-        flag_detail.hide_user = (status == "deleted" and !Thread.current["danbooru-user"].is_mod_or_higher?)
+        flag_detail.hide_user = (status == "deleted" && !Thread.current["danbooru-user"].is_mod_or_higher?)
       end
     end
 

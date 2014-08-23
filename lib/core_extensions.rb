@@ -30,9 +30,9 @@ class Hash
     attrs = {}
     children = []
     each do |key, value|
-      if value.respond_to?(:to_xml) or value.is_a?(Array) then
+      if value.respond_to?(:to_xml) || value.is_a?(Array) then
         # If an array child is empty, omit the node entirely.
-        next if value.is_a?(Array) and value.empty?
+        next if value.is_a?(Array) && value.empty?
         children << [key, value]
       else
         attrs[key] = value

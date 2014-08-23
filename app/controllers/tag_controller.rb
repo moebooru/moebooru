@@ -110,10 +110,11 @@ class TagController < ApplicationController
 
   def edit
     if params[:id]
-      @tag = Tag.find(params[:id]) or Tag.new
+      @tag = Tag.find(params[:id])
     else
-      @tag = Tag.find_by_name(params[:name]) or Tag.new
+      @tag = Tag.find_by_name(params[:name])
     end
+    @tag ||= Tag.new
   end
 
   def update

@@ -239,7 +239,7 @@ module Post::FileMethods
         end
       end
 
-      if source.to_s =~ /^http/ and source.to_s !~ /pixiv\.net/ then
+      if source.to_s =~ /^http/ && source.to_s !~ /pixiv\.net/ then
         #self.source = "Image board"
         self.source = ""
       end
@@ -282,7 +282,7 @@ module Post::FileMethods
   end
 
   def set_image_dimensions
-    if image? or flash?
+    if image? || flash?
       imgsize = ImageSize.path(tempfile_path)
       self.width = imgsize.width
       self.height = imgsize.height
@@ -474,7 +474,7 @@ module Post::FileMethods
     }
   end
   def get_file_jpeg(user = nil)
-    if status == "deleted" or !use_jpeg?(user)
+    if status == "deleted" || !use_jpeg?(user)
       return get_file_image(user)
     end
 
@@ -487,7 +487,7 @@ module Post::FileMethods
     }
   end
   def get_file_sample(user = nil)
-    if status == "deleted" or !use_sample?(user)
+    if status == "deleted" || !use_sample?(user)
       return get_file_jpeg(user)
     end
 

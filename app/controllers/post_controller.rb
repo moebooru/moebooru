@@ -47,7 +47,7 @@ class PostController < ApplicationController
       status = "pending"
     end
 
-    if params[:anonymous] == "1" and @current_user.is_contributor_or_higher?
+    if params[:anonymous] == "1" && @current_user.is_contributor_or_higher?
       user_id = nil
       # FIXME: someone track down the user of Thread evilry here and nuke
       #        it please?
@@ -145,7 +145,7 @@ class PostController < ApplicationController
 
   def update
     @post = Post.find(params[:id])
-    if @post.is_deleted? and !@current_user.is_mod_or_higher?
+    if @post.is_deleted? && !@current_user.is_mod_or_higher?
       respond_to_error("Post Locked", { :action => :show, :id => params[:id] }, :status => 422)
       return
     end
@@ -306,7 +306,7 @@ class PostController < ApplicationController
     end
 
     @ambiguous_tags = Tag.select_ambiguous(split_tags)
-    if q.key?(:pool) and q[:pool].is_a?(Integer) then
+    if q.key?(:pool) && q[:pool].is_a?(Integer) then
       @searching_pool = Pool.find_by_id(q[:pool])
     end
 
@@ -324,7 +324,7 @@ class PostController < ApplicationController
       # the previous page when the user is scanning forward should be free, since it'll already
       # be in cache, so this makes scanning the index from back to front as responsive as from
       # front to back.
-      if page and page > 1 then
+      if page && page > 1 then
         offset -= @posts.per_page
         posts_to_load += @posts.per_page
       end
@@ -346,12 +346,12 @@ class PostController < ApplicationController
 
     # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
     # can be enabled by specifying filter=1.
-    if !from_api or params[:filter] == "1" then
+    if !from_api || params[:filter] == "1" then
       results = results.delete_if { |post| !post.can_be_seen_by?(@current_user, :show_deleted => true) }
       @preload = @preload.delete_if { |post| !post.can_be_seen_by?(@current_user) }
     end
 
-    if from_api and params[:api_version] == "2" and params[:format] != "json" then
+    if from_api && params[:api_version] == "2" && params[:format] != "json" then
       respond_to_error("V2 API is JSON-only", {}, :status => 424)
       return
     end
@@ -543,7 +543,7 @@ class PostController < ApplicationController
         return
       end
 
-      if !@current_user.is_mod_or_higher? and @current_user.id != post.flag_detail.user_id then
+      if !@current_user.is_mod_or_higher? && @current_user.id != post.flag_detail.user_id then
         access_denied
         return
       end
@@ -713,7 +713,7 @@ class PostController < ApplicationController
       SimilarImages.similar_images(options)
     end
 
-    unless params[:url].nil? and params[:id].nil? and params[:file].nil? and params[:search_id].nil? then
+    unless params[:url].nil? && params[:id].nil? && params[:file].nil? && params[:search_id].nil? then
       res = search(params)
 
       @errors = res[:errors]

@@ -42,7 +42,7 @@ class HistoryController < ApplicationController
     # rather than the grouping table in histories.  We don't expose this in general.
     # Searching based on hc.table_name without specifying an ID is slow, and the
     # details here shouldn't be visible anyway.
-    if q.key?(:type) and q.key?(:id) and q[:type] == "notes" then
+    if q.key?(:type) && q.key?(:id) && q[:type] == "notes" then
       q[:inner_type] = q[:type]
       q[:remote_id] = q[:id]
 
@@ -105,7 +105,7 @@ class HistoryController < ApplicationController
       hc_cond_params << value_index_query
     end
 
-    if q.key?(:field) and q.key?(:type)
+    if q.key?(:field) && q.key?(:type)
       # Look up a particular field change, eg. "type:posts field:rating".
       # XXX: The WHERE id IN (SELECT id...) used to implement this is slow when we don't have
       # anything else filtering the results.
@@ -138,7 +138,7 @@ class HistoryController < ApplicationController
       cond_params += hc_cond_params
     end
 
-    if q.key?(:type) and !q.key?(:change) then
+    if q.key?(:type) && !q.key?(:change) then
       @type = q[:type]
     else
       @type = "all"
@@ -149,7 +149,7 @@ class HistoryController < ApplicationController
     # :show_all_tags => don't omit post tags that didn't change
     @options = {
       :show_all_tags => params[:show_all_tags] == "1",
-      :specific_object => (q.key?(:type) and q.key?(:id)),
+      :specific_object => (q.key?(:type) && q.key?(:id)),
       :specific_history => q.key?(:change),
     }
 

@@ -254,9 +254,7 @@ class ApplicationController < ActionController::Base
   protected :get_cache_key
 
   def get_ip_ban
-    ban = IpBans.where("? <<= ip_addr", request.remote_ip).first
-    if !ban then return nil end
-    ban
+    IpBans.find_by("? <<= ip_addr", request.remote_ip)
   end
 
   protected

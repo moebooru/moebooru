@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
       previous_url = params[:url] || request.fullpath
 
       respond_to do |fmt|
-        fmt.html { flash[:notice] = "Access denied"; redirect_to(user_login_path :url => previous_url) }
+        fmt.html { redirect_to user_login_path(:url => previous_url), :notice => "Access denied" }
         fmt.xml { render :xml => { :success => false, :reason => "access denied" }.to_xml(:root => "response"), :status => 403 }
         fmt.json { render :json => { :success => false, :reason => "access denied" }.to_json, :status => 403 }
       end
@@ -180,7 +180,7 @@ class ApplicationController < ActionController::Base
       extra_api_params = options[:api] || {}
 
       respond_to do |fmt|
-        fmt.html { flash[:notice] = notice; redirect_to(redirect_to_params) }
+        fmt.html { redirect_to redirect_to_params, :notice => notice }
         fmt.json { render :json => extra_api_params.merge(:success => true).to_json }
         fmt.xml { render :xml => extra_api_params.merge(:success => true).to_xml(:root => "response") }
       end
@@ -213,7 +213,7 @@ class ApplicationController < ActionController::Base
       end
 
       respond_to do |fmt|
-        fmt.html { flash[:notice] = "Error: #{obj}"; redirect_to(redirect_to_params) }
+        fmt.html { redirect_to redirect_to_params, :notice => "Error: #{obj}" }
         fmt.json { render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => status }
         fmt.xml { render :xml => extra_api_params.merge(:success => false, :reason => obj).to_xml(:root => "response"), :status => status }
       end

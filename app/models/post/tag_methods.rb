@@ -174,7 +174,7 @@ module Post::TagMethods
               options[:sequence] = seq
             end
 
-            if pool.nil? and name !~ /^\d+$/
+            if pool.nil? && name !~ /^\d+$/
               pool = Pool.create(:name => name, :is_public => false, :user_id => updater_user_id)
             end
 
@@ -210,7 +210,7 @@ module Post::TagMethods
         when /^parent:(\d*)/
           self.parent_id = Regexp.last_match[1]
 
-          if CONFIG["enable_parent_posts"] && (Post.exists?(parent_id) or parent_id == 0)
+          if CONFIG["enable_parent_posts"] && (Post.exists?(parent_id) || parent_id == 0)
             Post.set_parent(id, parent_id)
           end
 
@@ -243,7 +243,7 @@ module Post::TagMethods
           # in the above DELETE, so it's not really a newly activated tag.  (This isn't
           # self.old_tags; that's the tags the user saw before he edited, not the data
           # we're replacing.)
-          if tag.post_count == 0 and !previous_tags.include?(tag.name) then
+          if tag.post_count == 0 && !previous_tags.include?(tag.name) then
             any_new_tags = true
           end
         end
@@ -284,7 +284,7 @@ module Post::TagMethods
 
   def save_post_history
     new_cached_tags = cached_tags_versioned
-    if tag_history.empty? or tag_history.first.tags != new_cached_tags
+    if tag_history.empty? || tag_history.first.tags != new_cached_tags
       PostTagHistory.create(:post_id => id, :tags => new_cached_tags,
                             :user_id => Thread.current["danbooru-user_id"],
                             :ip_addr => Thread.current["danbooru-ip_addr"] || "127.0.0.1")

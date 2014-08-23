@@ -17,7 +17,7 @@ module ActionView
       alias_method :orig_tag_options, :tag_options
       def tag_options(options, escape = true)
         level = options["level"]
-        if level and MoebooruTagHelper._moebooru_need_signup?(level)
+        if level && MoebooruTagHelper._moebooru_need_signup?(level)
           options.delete "level"
           options["onclick"] = "if(!User.run_login_onclick(event)) return false; #{options["onclick"] || "return true;"}"
         end

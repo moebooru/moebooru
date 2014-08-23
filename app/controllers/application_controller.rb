@@ -88,14 +88,14 @@ class ApplicationController < ActionController::Base
     end
 
     def set_current_user
-      if Rails.env.test? and session[:user_id]
+      if Rails.env.test? && session[:user_id]
         @current_user = User.find(session[:user_id])
       end
 
-      if !@current_user and params[:api_key] and params[:username]
+      if !@current_user && params[:api_key] && params[:username]
         @from_api = true
         @current_user = User.authenticate_with_api_key(params[:username], params[:api_key])
-        head :forbidden and return unless @current_user
+        return head(:forbidden) unless @current_user
       end
 
       if @current_user.nil? && session[:user_id]
@@ -261,7 +261,7 @@ class ApplicationController < ActionController::Base
 
   protected
   def check_ip_ban
-    if request.parameters[:controller] == "banned" and request.parameters[:action] == "index" then
+    if request.parameters[:controller] == "banned" && request.parameters[:action] == "index" then
       return
     end
 
@@ -413,10 +413,10 @@ class ApplicationController < ActionController::Base
   end
 
     def set_locale
-      if params[:locale] and CONFIG["available_locales"].include?(params[:locale])
+      if params[:locale] && CONFIG["available_locales"].include?(params[:locale])
         cookies["locale"] = { :value => params[:locale], :expires => 1.year.from_now }
         I18n.locale = params[:locale].to_sym
-      elsif cookies["locale"] and CONFIG["available_locales"].include?(cookies["locale"])
+      elsif cookies["locale"] && CONFIG["available_locales"].include?(cookies["locale"])
         I18n.locale = cookies["locale"].to_sym
       else
         I18n.locale = CONFIG["default_locale"]

@@ -37,7 +37,7 @@ namespace :i18n do
 
       removed = compare(yaml_reference, yaml_target)
       added = compare(yaml_target, yaml_reference)
-      if added.any? or removed.any?
+      if added.any? || removed.any?
         if added.any?
           puts "Missing translations for #{target}:"
           added.each { |key| puts "  + #{key}" }

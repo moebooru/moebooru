@@ -31,7 +31,7 @@ class UserController < ApplicationController
   #        planned for 3.2 branch (at least 3.2.1).
   def remove_avatar
     # When removing other user's avatar, ensure current user is mod or higher.
-    if @current_user.id != params[:id] and !@current_user.is_mod_or_higher?
+    if @current_user.id != params[:id] && !@current_user.is_mod_or_higher?
       access_denied
       return
     end
@@ -196,7 +196,7 @@ class UserController < ApplicationController
     if @current_user.update_attributes(params[:user])
       respond_to_success("Account settings saved", :action => "edit")
     else
-      if params[:render] and params[:render][:view]
+      if params[:render] && params[:render][:view]
         render get_view_name_for_edit(params[:render][:view])
       else
         respond_to_error(@current_user, :action => "edit")
@@ -267,7 +267,7 @@ class UserController < ApplicationController
       end
     else
       @user = User.new
-      redirect_to root_path if params[:format] and params[:format] != "html"
+      redirect_to root_path if params[:format] && params[:format] != "html"
     end
   end
 

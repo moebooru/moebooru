@@ -62,7 +62,7 @@ class PostFrames < ActiveRecord::Base
       frame[:source_width] = [frame[:source_width], post.width - frame[:source_left]].min
       frame[:source_height] = [frame[:source_height], post.height - frame[:source_top]].min
     end
-    frames.delete_if { |frame| frame[:source_width] == 0 or frame[:source_height] == 0 }
+    frames.delete_if { |frame| frame[:source_width] == 0 || frame[:source_height] == 0 }
   end
 
   # Look for post frames that need work, and do some processing.

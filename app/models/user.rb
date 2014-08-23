@@ -106,7 +106,7 @@ class User < ActiveRecord::Base
       # First test to see if it's creating new user (no password_hash)
       # or updating user. The second is to see if the action involves
       # updating password (which requires this validation).
-      if password_hash and (password or (self.email_changed? or current_email))
+      if password_hash && (password || (self.email_changed? || current_email))
         if current_password.blank?
           errors.add :current_password, :blank
         elsif User.authenticate(name, current_password).nil?
@@ -482,11 +482,11 @@ class User < ActiveRecord::Base
         return false
       end
 
-      if params[:top].to_f < 0 or params[:top].to_f > 1 or
-        params[:bottom].to_f < 0 or params[:bottom].to_f > 1 or
-        params[:left].to_f < 0 or params[:left].to_f > 1 or
-        params[:right].to_f < 0 or params[:right].to_f > 1 or
-        params[:top] >= params[:bottom] or
+      if params[:top].to_f < 0 || params[:top].to_f > 1 ||
+        params[:bottom].to_f < 0 || params[:bottom].to_f > 1 ||
+        params[:left].to_f < 0 || params[:left].to_f > 1 ||
+        params[:right].to_f < 0 || params[:right].to_f > 1 ||
+        params[:top] >= params[:bottom] ||
         params[:left] >= params[:right]
       then
         errors.add(:parameter, "error")
@@ -515,7 +515,7 @@ class User < ActiveRecord::Base
 
         # If we're cropping from a very small region in the sample, use the full
         # image instead, to get a higher quality image.
-        if size[:crop_bottom] - size[:crop_top] < CONFIG["avatar_max_height"] or
+        if size[:crop_bottom] - size[:crop_top] < CONFIG["avatar_max_height"] ||
           size[:crop_right] - size[:crop_left] < CONFIG["avatar_max_width"] then
           use_sample = false
         end

@@ -181,7 +181,7 @@ class JobTask < ActiveRecord::Base
       if status == "processing" then
         data["step"]
       elsif status != "error" then
-        next_run = (data["next_run"] or 0) - Time.now.to_i
+        next_run = (data["next_run"] || 0) - Time.now.to_i
         next_run_in_minutes = next_run.to_i / 60
         if next_run_in_minutes > 0
           eta = "next run in #{(next_run_in_minutes.to_f / 60.0).round} hours"

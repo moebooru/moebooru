@@ -77,7 +77,7 @@ module DText
   end
 
   def parseline(str, state)
-    if state.last =~ /\d/ or str =~ /^\*+\s+/
+    if state.last =~ /\d/ || str =~ /^\*+\s+/
       parselist str, state
     elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
       str = "<#{Regexp.last_match[1]}>#{Regexp.last_match[2]}</#{Regexp.last_match[1]}>"

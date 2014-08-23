@@ -119,7 +119,7 @@ class InlineImage < ActiveRecord::Base
     end
 
     unless %w(jpg png gif).include?(file_ext.downcase)
-      errors.add(:file, "is an invalid content type: " + (file_ext.downcase or "unknown"))
+      errors.add(:file, "is an invalid content type: " + (file_ext.downcase || "unknown"))
       return false
     end
 
@@ -127,7 +127,7 @@ class InlineImage < ActiveRecord::Base
   end
 
   def set_image_dimensions
-    return true if width and height
+    return true if width && height
     imgsize = ImageSize.path(tempfile_image_path)
     self.width = imgsize.width
     self.height = imgsize.height

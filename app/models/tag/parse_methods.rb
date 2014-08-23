@@ -141,7 +141,7 @@ module Tag::ParseMethods
           elsif Regexp.last_match[1] == "shown"
             q[:shown_in_index] = (Regexp.last_match[2] == "true")
           elsif Regexp.last_match[1] == "holds"
-            if Regexp.last_match[2] == "true" or Regexp.last_match[2] == "only"
+            if Regexp.last_match[2] == "true" || Regexp.last_match[2] == "only"
               q[:show_holds] = :only
             elsif Regexp.last_match[2] == "all"
               q[:show_holds] = :yes # all posts, held or not
@@ -149,7 +149,7 @@ module Tag::ParseMethods
               q[:show_holds] = :hide
             end
           elsif Regexp.last_match[1] == "pending"
-            if Regexp.last_match[2] == "true" or Regexp.last_match[2] == "only"
+            if Regexp.last_match[2] == "true" || Regexp.last_match[2] == "only"
               q[:show_pending] = :only
             elsif Regexp.last_match[2] == "all"
               q[:show_pending] = :yes # all posts, pending or not

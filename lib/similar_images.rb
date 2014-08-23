@@ -120,7 +120,7 @@ module SimilarImages
       threshold = (options[:threshold] || doc.root[:threshold]).to_f
 
       doc.search("matches/match").each do |element|
-        if element[:sim].to_f >= threshold and element[:sim].to_f > 0
+        if element[:sim].to_f >= threshold && element[:sim].to_f > 0
           service = element[:service]
           image = element.search("[id]").first
 

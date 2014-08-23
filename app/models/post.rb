@@ -92,7 +92,7 @@ class Post < ActiveRecord::Base
       return false
     end
 
-    if !user.is_mod_or_higher? and Time.now - created_at > 1.day and !is_held
+    if !user.is_mod_or_higher? && Time.now - created_at > 1.day && !is_held
       return false
     end
 
@@ -145,7 +145,7 @@ class Post < ActiveRecord::Base
     update_attributes(:status => "active", :approver_id => approver_id)
 
     # Don't bump posts if the status wasn't "pending"; it might be "flagged".
-    if old_status == "pending" and CONFIG["hide_pending_posts"] then
+    if old_status == "pending" && CONFIG["hide_pending_posts"] then
       touch_index_timestamp
     end
     # Always try to save to trigger history logging.
@@ -188,7 +188,7 @@ class Post < ActiveRecord::Base
   end
 
   def can_be_seen_by?(user, options = {})
-    if !options[:show_deleted] and status == "deleted"
+    if !options[:show_deleted] && status == "deleted"
       return false
     end
     CONFIG["can_see_post"].call(user, self)

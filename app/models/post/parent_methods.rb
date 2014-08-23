@@ -39,7 +39,7 @@ module Post::ParentMethods
   end
 
   def validate_parent
-    errors.add("parent_id") unless parent_id.nil? or Post.exists?(parent_id)
+    errors.add("parent_id") unless parent_id.nil? || Post.exists?(parent_id)
   end
 
   def update_parent

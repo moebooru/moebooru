@@ -2,7 +2,7 @@ class IpBans < ActiveRecord::Base
   belongs_to :user, :foreign_key => :banned_by
 
   def duration=(dur)
-    if !dur or dur == "" then
+    if !dur || dur == "" then
       self.expires_at = nil
       @duration = nil
     else

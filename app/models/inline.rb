@@ -18,11 +18,11 @@ class Inline < ActiveRecord::Base
   end
 
   def crop(params)
-    if params[:top].to_f < 0 or params[:top].to_f > 1 or
-      params[:bottom].to_f < 0 or params[:bottom].to_f > 1 or
-      params[:left].to_f < 0 or params[:left].to_f > 1 or
-      params[:right].to_f < 0 or params[:right].to_f > 1 or
-      params[:top] >= params[:bottom] or
+    if params[:top].to_f < 0 || params[:top].to_f > 1 ||
+      params[:bottom].to_f < 0 || params[:bottom].to_f > 1 ||
+      params[:left].to_f < 0 || params[:left].to_f > 1 ||
+      params[:right].to_f < 0 || params[:right].to_f > 1 ||
+      params[:top] >= params[:bottom] ||
       params[:left] >= params[:right]
     then
       errors.add(:parameter, "error")

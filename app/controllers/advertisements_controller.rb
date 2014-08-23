@@ -42,8 +42,7 @@ class AdvertisementsController < ApplicationController
     if params[:advertisement_ids]
       ids = params[:advertisement_ids].map { |a| a.to_i }
     else
-      flash[:notice] = "No advertisement selected"
-      redirect_to advertisements_path and return
+      return redirect_to advertisements_path, :notice => "No advertisement selected"
     end
     if params[:do_delete]
       Advertisement.destroy_all :id => ids

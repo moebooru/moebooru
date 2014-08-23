@@ -329,7 +329,7 @@ module HistoryHelper
             display = "<div class='initial-diff text-block'>#{text}</div>"
           end
 
-          if multiple_lines and !show_in_detail then
+          if multiple_lines && !show_in_detail then
             html << "<a onclick='$(this).hide(); $(this).next().show()' href='#'>(show changes)</a><div style='display: none;'>#{display}</div>"
           else
             html << display

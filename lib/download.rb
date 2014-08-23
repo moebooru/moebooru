@@ -6,6 +6,7 @@ class LocalData
   def initialize(data)
     @data = data
   end
+
   def read_body
     yield @data
   end

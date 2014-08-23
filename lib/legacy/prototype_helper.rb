@@ -153,6 +153,7 @@ module ActionView
       end
 
       private
+
         def include_helpers_from_context
           extend @context.helpers if @context.respond_to?(:helpers)
           extend GeneratorMethods
@@ -517,6 +518,7 @@ module ActionView
         end
 
         private
+
           def loop_on_multiple_args(method, ids)
             record(ids.size > 1 ?
               "#{javascript_object_for(ids)}.each(#{method})" :
@@ -592,6 +594,7 @@ module ActionView
     end
 
     protected
+
       def options_for_javascript(options)
         if options.empty?
           "{}"
@@ -656,6 +659,7 @@ module ActionView
     end
 
     private
+
       def method_missing(method, *arguments, &block)
         if method.to_s =~ /(.*)=$/
           assign(Regexp.last_match[1], arguments.first)
@@ -735,6 +739,7 @@ module ActionView
     end
 
     private
+
       def append_to_function_chain!(call)
         @generator << @variable if @empty
         @empty = false
@@ -795,6 +800,7 @@ module ActionView
     end
 
     private
+
       def method_missing(method, *arguments, &block)
         if ENUMERABLE_METHODS.include?(method)
           returnable = ENUMERABLE_METHODS_WITH_RETURN.include?(method)

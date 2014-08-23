@@ -11,6 +11,7 @@ class UserController < ApplicationController
   helper :avatar
 
   protected
+
   def save_cookies(user)
     cookies[:login] = { :value => user.name, :expires => 1.year.from_now }
     cookies[:pass_hash] = { :value => user.password_hash, :expires => 1.year.from_now, :httponly => true }
@@ -18,6 +19,7 @@ class UserController < ApplicationController
   end
 
   public
+
   def autocomplete_name
     keyword = params[:term].to_s
     @users = User.where(["name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like]).pluck(:name) if keyword.length >= 2
@@ -381,6 +383,7 @@ class UserController < ApplicationController
   end
 
   private
+
   def get_view_name_for_edit(param)
     case param
     when "change_email"

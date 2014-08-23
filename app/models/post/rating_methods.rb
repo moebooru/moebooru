@@ -46,9 +46,11 @@ module Post::RatingMethods
   def can_change_is_note_locked?(user)
     user.has_permission?(pool)
   end
+
   def can_change_rating_locked?(user)
     user.has_permission?(pool)
   end
+
   def can_change_rating?(user)
     user.is_member_or_higher? && (!is_rating_locked? || user.has_permission?(self))
   end

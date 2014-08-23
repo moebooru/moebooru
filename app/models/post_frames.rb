@@ -3,7 +3,7 @@ class PostFrames < ActiveRecord::Base
   belongs_to :post
 
   # Parse a frame specifier.
-  def self.parse_frames(s, post_id=nil)
+  def self.parse_frames(data_string, post_id = nil)
     # Parse a frames string.  This is a semicolon-separated string of frames.  Each frame is
     # of the format:
     #
@@ -14,22 +14,19 @@ class PostFrames < ActiveRecord::Base
     #
     # AxB: top-left corner of the source image
     # CxD: size of the image inside the source image
-    result = []
-    s.split(";").each { |frame|
-      if frame =~ /^(\d{1,5})x(\d{1,5}),(\d{1,5})x(\d{1,5})(,(\d{1,5})x(\d{1,5}))?$/ then
-        p = {
-          :source_left => $1.to_i,
-          :source_top => $2.to_i,
-          :source_width => $3.to_i,
-          :source_height => $4.to_i,
-        }
-        if not post_id.nil?
-          p[:post_id] = post_id
-        end
-        result << p
-      end
-    }
-    return result
+    frames = []
+    data_string.split(";").each do |frame_data|
+      split_data = frame_data.split(",").map { |f| f.split("x").map(&:to_i) }
+      p = {
+        :source_left => split_data[0][0],
+        :source_top => split_data[0][1],
+        :source_width => split_data[1][0],
+        :source_height => split_data[1][1]
+      }
+      p[:post_id] = post_id if post_id
+      frames << p
+    end
+    frames
   end
 
   # Generate a frame specifier, from an array of either a PostFrames or parse_frames output.

@@ -259,17 +259,13 @@ class ApplicationController < ActionController::Base
 
   protected
   def check_ip_ban
-    if request.parameters[:controller] == "banned" && request.parameters[:action] == "index" then
-      return
-    end
+    return if params[:controller] == "banned" && params[:action] == "index"
 
     ban = get_ip_ban
-    if !ban then
-      return
-    end
+    return unless ban
 
-    if ban.expires_at && ban.expires_at < Time.now then
-      IpBans.destroy_all("ip_addr = '#{request.remote_ip}'")
+    if ban.expires_at && ban.expires_at < Time.now
+      IpBans.destroy_all(:ip_addr => request.remote_ip)
       return
     end
 

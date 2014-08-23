@@ -40,7 +40,7 @@ module Post::ImageStore
 
     def store_jpeg_url
       if CONFIG["use_pretty_image_urls"] then
-        CONFIG["url_base"] + "/jpeg/#{md5}/#{url_encode(pretty_file_name({ :type => :jpeg }))}.jpg"
+        CONFIG["url_base"] + "/jpeg/#{md5}/#{url_encode(pretty_file_name(:type => :jpeg))}.jpg"
       else
         CONFIG["url_base"] + "/data/jpeg/#{md5}.jpg"
       end
@@ -48,7 +48,7 @@ module Post::ImageStore
 
     def store_sample_url
       if CONFIG["use_pretty_image_urls"] then
-        path = "/sample/#{md5}/#{url_encode(pretty_file_name({ :type => :sample }))}.jpg"
+        path = "/sample/#{md5}/#{url_encode(pretty_file_name(:type => :sample))}.jpg"
       else
         path = "/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end

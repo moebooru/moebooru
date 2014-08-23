@@ -217,7 +217,7 @@ class PoolTest < ActiveSupport::TestCase
   # Test that parenting a post that's in a pool creates the slave pool post.
   def test_master_parenting_existing
     pool = create_pool
-    pool.add_post(1, { :sequence => 100 })
+    pool.add_post(1, :sequence => 100)
     post1 = find_post(pool, 1)
     check_consistency
 
@@ -298,7 +298,7 @@ class PoolTest < ActiveSupport::TestCase
     Post.find(1).update_attributes(:parent_id => 2)
 
     pool = create_pool
-    pool.add_post(1, { :sequence => 100 })
+    pool.add_post(1, :sequence => 100)
     post1 = find_post(pool, 1)
     post2 = find_post(pool, 2)
     assert_equal(post2.id, post1.slave_id)
@@ -307,13 +307,13 @@ class PoolTest < ActiveSupport::TestCase
 
   def test_master_ineligible
     pool = create_pool
-    pool.add_post(1, { :sequence => 100 })
+    pool.add_post(1, :sequence => 100)
     post1 = find_post(pool, 1)
     check_consistency
 
     # Add post #2 explicitly.
     Post.find(1).update_attributes(:parent_id => nil)
-    pool.add_post(2, { :sequence => 200 })
+    pool.add_post(2, :sequence => 200)
     post2 = find_post(pool, 2)
     check_consistency
 
@@ -332,8 +332,8 @@ class PoolTest < ActiveSupport::TestCase
   def test_master_multiple_parents
     # Set both posts 1 and 2 in the pool to the same parent.
     pool = create_pool
-    pool.add_post(1, { :sequence => 100 })
-    pool.add_post(2, { :sequence => 200 })
+    pool.add_post(1, :sequence => 100)
+    pool.add_post(2, :sequence => 200)
 
     Post.find(1).update_attributes(:parent_id => 3)
     Post.find(2).update_attributes(:parent_id => 3)

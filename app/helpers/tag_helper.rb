@@ -89,7 +89,7 @@ module TagHelper
     tags.sort { |a, b| a["name"] <=> b["name"] }.each do |tag|
       size = Math.log(tag["post_count"].to_i) / divisor
       size = size < 0.8 ? "0.8" : "%.1f" % size
-      html << link_to(tag["name"], { :controller => :post, :action => :index, :tags => tag["name"] }, { :style => "font-size: #{size}em", :title => "#{tag["post_count"]} posts" })
+      html << link_to(tag["name"], { :controller => :post, :action => :index, :tags => tag["name"] }, :style => "font-size: #{size}em", :title => "#{tag["post_count"]} posts")
     end
 
     html.html_safe

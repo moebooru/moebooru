@@ -76,7 +76,7 @@ class ApplicationTest < ActiveSupport::TestCase
     # Aggressive caching allows stale cache pages to be used; test with it disabled.
     CONFIG["enable_aggressive_caching"] = false
 
-    pool_id = Pool.create({ :name => "dummy", :user_id => 1 }).id
+    pool_id = Pool.create(:name => "dummy", :user_id => 1).id
 
     tests = [
       {
@@ -144,8 +144,8 @@ class ApplicationTest < ActiveSupport::TestCase
   def test_cache_key_limit
     assert_equal(true, CONFIG["enable_caching"], "Can't test caching with caching disabled")
 
-    limit1 = get_cache_key("post", "index", { :tags => "", :limit => "100" })[0]
-    limit2 = get_cache_key("post", "index", { :tags => "", :limit => "" })[0]
+    limit1 = get_cache_key("post", "index", :tags => "", :limit => "100")[0]
+    limit2 = get_cache_key("post", "index", :tags => "", :limit => "")[0]
     assert_not_equal(limit1, limit2)
   end
 end

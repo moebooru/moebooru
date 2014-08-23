@@ -7,11 +7,11 @@ class PostController < ApplicationController
   layout "default"
   helper :avatar
 
-  before_filter :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
-  before_filter :post_member_only, :only => [:update, :upload, :flag]
-  before_filter :janitor_only, :only => [:moderate, :undelete]
+  before_action :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
+  before_action :post_member_only, :only => [:update, :upload, :flag]
+  before_action :janitor_only, :only => [:moderate, :undelete]
   before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
-  after_filter :save_tags_to_cookie, :only => [:update, :create]
+  after_action :save_tags_to_cookie, :only => [:update, :create]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
 

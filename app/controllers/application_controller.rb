@@ -4,8 +4,8 @@ require "digest/md5"
 class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::StatementInvalid, :with => :rescue_pg_invalid_query
   before_action :filter_spam
-  before_filter :set_locale
-  before_filter :sanitize_params
+  before_action :set_locale
+  before_action :sanitize_params
 
   # This is a proxy class to make various nil checks unnecessary
   class AnonymousUser
@@ -243,12 +243,12 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   #local_addresses.clear
 
-  before_filter :set_current_user
-  before_filter :mini_profiler_check if Rails.env.development?
-  before_filter :limit_api
-  before_filter :set_country
-  before_filter :check_ip_ban
-  after_filter :init_cookies
+  before_action :set_current_user
+  before_action :mini_profiler_check if Rails.env.development?
+  before_action :limit_api
+  before_action :set_country
+  before_action :check_ip_ban
+  after_action :init_cookies
   protect_from_forgery
 
   protected :build_cache_key

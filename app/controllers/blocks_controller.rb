@@ -2,7 +2,7 @@ class CanNotBanSelf < Exception
 end
 
 class BlocksController < ApplicationController
-  before_filter :mod_only, :only => [:block_ip, :unblock_ip]
+  before_action :mod_only, :only => [:block_ip, :unblock_ip]
 
   def block_ip
     begin

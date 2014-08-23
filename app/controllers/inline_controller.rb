@@ -36,7 +36,7 @@ class InlineController < ApplicationController
     end
 
     unless @current_user.has_permission?(@inline)
-      access_denied()
+      access_denied
       return
     end
 
@@ -52,7 +52,7 @@ class InlineController < ApplicationController
     end
 
     unless @current_user.has_permission?(@inline)
-      access_denied()
+      access_denied
       return
     end
 
@@ -77,7 +77,7 @@ class InlineController < ApplicationController
 
     inline = image.inline
     unless @current_user.has_permission?(inline)
-      access_denied()
+      access_denied
       return
     end
 
@@ -92,7 +92,7 @@ class InlineController < ApplicationController
       return
     end
     unless @current_user.has_permission?(inline)
-      access_denied()
+      access_denied
       return
     end
 

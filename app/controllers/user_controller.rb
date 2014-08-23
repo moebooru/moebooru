@@ -349,7 +349,7 @@ class UserController < ApplicationController
     end
 
     if !@user.is_anonymous? && !@current_user.has_permission?(@user, :id)
-      access_denied()
+      access_denied
       return
     end
 

@@ -152,7 +152,7 @@ class PoolController < ApplicationController
     @pool = Pool.find(params[:id])
 
     unless @pool.can_be_updated_by?(@current_user)
-      access_denied()
+      access_denied
       return
     end
 
@@ -206,7 +206,7 @@ class PoolController < ApplicationController
         @pool.destroy
         respond_to_success("Pool deleted", :action => "index")
       else
-        access_denied()
+        access_denied
       end
     end
   end
@@ -228,7 +228,7 @@ class PoolController < ApplicationController
       rescue Pool::PostAlreadyExistsError
         respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => params[:post_id] }, :status => 423)
       rescue Pool::AccessDeniedError
-        access_denied()
+        access_denied
       rescue Exception => x
         respond_to_error(x.class, :controller => "post", :action => "show", :id => params[:post_id])
       end
@@ -251,7 +251,7 @@ class PoolController < ApplicationController
       begin
         @pool.remove_post(params[:post_id], :user => @current_user)
       rescue Pool::AccessDeniedError
-        access_denied()
+        access_denied
         return
       end
 
@@ -269,7 +269,7 @@ class PoolController < ApplicationController
     @pool = Pool.find(params[:id])
 
     unless @pool.can_be_updated_by?(@current_user)
-      access_denied()
+      access_denied
       return
     end
 
@@ -294,7 +294,7 @@ class PoolController < ApplicationController
     @pool = Pool.find(params[:id])
 
     unless @pool.can_be_updated_by?(@current_user)
-      access_denied()
+      access_denied
       return
     end
 

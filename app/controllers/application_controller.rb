@@ -155,7 +155,7 @@ class ApplicationController < ActionController::Base
         if @current_user.__send__("is_#{normalized_name}_or_higher?")
           return true
         else
-          access_denied()
+          access_denied
         end
       end
 
@@ -168,7 +168,7 @@ class ApplicationController < ActionController::Base
         if @current_user.__send__("is_#{normalized_name}_or_higher?")
           return true
         else
-          access_denied()
+          access_denied
         end
       end
     end
@@ -265,7 +265,7 @@ class ApplicationController < ActionController::Base
       return
     end
 
-    ban = get_ip_ban()
+    ban = get_ip_ban
     if !ban then
       return
     end

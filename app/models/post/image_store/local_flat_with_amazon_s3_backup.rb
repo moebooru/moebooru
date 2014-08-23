@@ -19,7 +19,7 @@ module Post::ImageStore
         FileUtils.chmod(0664, jpeg_path)
       end
 
-      self.delete_tempfile()
+      self.delete_tempfile
 
       base64_md5 = Base64.encode64(self.md5.unpack("a2" * (self.md5.size / 2)).map { |x| x.hex.chr }.join)
 

@@ -16,7 +16,7 @@ class CommentController < ApplicationController
       comment.update_attributes(params[:comment])
       respond_to_success("Comment updated", { :action => "index" })
     else
-      access_denied()
+      access_denied
     end
   end
 
@@ -26,7 +26,7 @@ class CommentController < ApplicationController
       comment.destroy
       respond_to_success("Comment deleted", :controller => "post", :action => "show", :id => comment.post_id)
     else
-      access_denied()
+      access_denied
     end
   end
 

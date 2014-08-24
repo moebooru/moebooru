@@ -100,9 +100,8 @@ module Post::SqlMethods
       end
 
       if q[:subscriptions].is_a?(String)
-        q[:subscriptions] =~ /^(.+?):(.+)$/
-        username = Regexp.last_match[1] || q[:subscriptions]
-        subscription_name = Regexp.last_match[2]
+        /^(?<username>.+?):(?<subscription_name>.+)$/ =~ q[:subscriptions]
+        username ||= q[:subscriptions]
         user = User.find_by_name(username)
 
         if user

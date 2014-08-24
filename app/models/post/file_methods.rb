@@ -317,6 +317,7 @@ module Post::FileMethods
   def check_pending_count
     return if CONFIG["max_pending_images"].nil?
     return if status != "pending"
+    return if user.nil? # implies anonymous upload
     return if user.is_contributor_or_higher?
 
     pending_posts = Post.count(:conditions => ["user_id = ? AND status = 'pending'", user_id])

@@ -73,9 +73,9 @@ class TagAlias < ActiveRecord::Base
   end
 
   def approve(user_id, ip_addr)
-    execute_sql("UPDATE tag_aliases SET is_pending = FALSE WHERE id = ?", id)
+    update_columns :is_pending => false
 
-    Post.available.find(:all, :conditions => ["tags_index @@ to_tsquery('danbooru', ?)", QueryParser.generate_sql_escape(name)]).each do |post|
+    Post.available.has_all_tags(name).find_each do |post|
       post.reload
       post.update_attributes(:tags => post.cached_tags, :updater_user_id => user_id, :updater_ip_addr => ip_addr)
     end

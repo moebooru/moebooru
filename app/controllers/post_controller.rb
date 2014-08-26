@@ -508,7 +508,7 @@ class PostController < ApplicationController
       return
     end
 
-    p = Post.find(params[:id])
+    p = Post.find(params.permit(:id)[:id])
     score = params[:score].to_i
 
     if !@current_user.is_mod_or_higher? && score < 0 || score > 3

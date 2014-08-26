@@ -182,9 +182,9 @@ class PostTest < ActiveSupport::TestCase
     PostVote.create(:post_id => c2.id, :user_id => 1, :score => 3)
     c2.delete
     p1.reload
-    assert_match false, PostVote.exists?(:post_id => c2.id, :user_id => 1)
+    assert_equal false, PostVote.exists?(:post_id => c2.id, :user_id => 1)
     assert(PostVote.find(:first, :conditions => ["post_id = ? AND user_id =?", p1.id, 1]).score == 3)
-    assert_match 3, PostVote.find_by(:post_id => p1.id, :user_id => 1).score
+    assert_equal 3, PostVote.find_by(:post_id => p1.id, :user_id => 1).score
     assert(p1.has_children?, "Parent should still have children")
 
     # Test to make sure has_children is updated when post is updated

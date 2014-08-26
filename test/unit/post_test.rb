@@ -92,16 +92,19 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, Post.fast_count("tag2"))
 
     create_post(:tags => "tag1", :file => upload_file("#{Rails.root}/test/mocks/test/test1.jpg"))
+    sleep 1
     assert_equal(6, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(0, Post.fast_count("tag2"))
 
     create_post(:tags => "tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
+    sleep 1
     assert_equal(7, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(1, Post.fast_count("tag2"))
 
     create_post(:tags => "tag2 tag3", :file => upload_file("#{Rails.root}/test/mocks/test/test3.jpg"))
+    sleep 1
     assert_equal(8, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(2, Post.fast_count("tag2"))

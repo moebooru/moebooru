@@ -196,7 +196,7 @@ class PostTest < ActiveSupport::TestCase
     assert(p2.has_children?, "Parent should have children")
 
     # Parent should be updated when all children are deleted
-    c1.destroy
+    c1.delete
     p2.reload
     assert(!p2.has_children?, "Parent should not have children")
 

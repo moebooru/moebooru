@@ -1,58 +1,11 @@
-class AddFullTextIndexOnPostTags < ActiveRecord::Migration
-  def self.up
-    execute "SET statement_timeout = 0"
-    execute "SET search_path = public"
-
-    execute "CREATE OR REPLACE FUNCTION testprs_start(internal, int4)
-    RETURNS internal
-    AS '$libdir/test_parser'
-    LANGUAGE C STRICT"
-
-    execute "CREATE OR REPLACE FUNCTION testprs_getlexeme(internal, internal, internal)
-    RETURNS internal
-    AS '$libdir/test_parser'
-    LANGUAGE C STRICT"
-
-    execute "CREATE OR REPLACE FUNCTION testprs_end(internal)
-    RETURNS void
-    AS '$libdir/test_parser'
-    LANGUAGE C STRICT"
-
-    execute "CREATE OR REPLACE FUNCTION testprs_lextype(internal)
-    RETURNS internal
-    AS '$libdir/test_parser'
-    LANGUAGE C STRICT"
-
-    execute "CREATE TEXT SEARCH PARSER testparser (
-        START    = testprs_start,
-        GETTOKEN = testprs_getlexeme,
-        END      = testprs_end,
-        HEADLINE = pg_catalog.prsd_headline,
-        LEXTYPES = testprs_lextype
-    )"
-
-    execute "create text search configuration public.danbooru (PARSER = public.testparser)"
-    execute "alter text search configuration public.danbooru add mapping for word with simple"
-    execute "set default_text_search_config = 'public.danbooru'"
-
-    execute "alter table posts add column tags_index tsvector"
-    execute "update posts set tags_index = to_tsvector('danbooru', cached_tags)"
-    execute "create index index_posts_on_tags_index on posts using gin(tags_index)"
-
-    execute "create trigger trg_posts_tags_index_update before insert or update on posts for each row execute procedure tsvector_update_trigger(tags_index, 'public.danbooru', cached_tags)"
-  end
-
-  def self.down
-  end
-end
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class PostTest < ActiveSupport::TestCase
-  fixtures :users, :posts, :table_data
+  #fixtures :users, :posts, :table_data
 
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      Rails.cache.clear
     end
 
     # TODO: revert these after testing in teardown
@@ -71,7 +24,7 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def create_post(params = {})
-    Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg") }.merge(params))
+    Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1 tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test1.jpg") }.merge(params))
   end
 
   def update_post(post, params = {})
@@ -90,13 +43,9 @@ class PostTest < ActiveSupport::TestCase
 
   if CONFIG["enable_caching"]
     def test_cache
-      cache_version = Cache.get("$cache_version").to_i
-      tag1_version = Cache.get("tag:tag1").to_i
-      tag2_version = Cache.get("tag:tag2").to_i
+      cache_version = Rails.cache.read("$cache_version").to_i
       create_post
-      assert_greater(Cache.get("$cache_version").to_i, cache_version)
-      assert_greater(Cache.get("tag:tag1").to_i, tag1_version)
-      assert_greater(Cache.get("tag:tag2").to_i, tag2_version)
+      assert Rails.cache.read("$cache_version").to_i > cache_version
     end
   end
 
@@ -142,17 +91,17 @@ class PostTest < ActiveSupport::TestCase
     assert_equal(0, Post.fast_count("tag1"))
     assert_equal(0, Post.fast_count("tag2"))
 
-    create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
+    create_post(:tags => "tag1", :file => upload_file("#{Rails.root}/test/mocks/test/test1.jpg"))
     assert_equal(6, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(0, Post.fast_count("tag2"))
 
-    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
     assert_equal(7, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(1, Post.fast_count("tag2"))
 
-    create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
+    create_post(:tags => "tag2 tag3", :file => upload_file("#{Rails.root}/test/mocks/test/test3.jpg"))
     assert_equal(8, Post.fast_count)
     assert_equal(1, Post.fast_count("tag1"))
     assert_equal(2, Post.fast_count("tag2"))
@@ -204,38 +153,39 @@ class PostTest < ActiveSupport::TestCase
     create_post(:tags => "tag1")
     assert_equal(original_count + 1, Post.count)
     post = create_post(:tags => "tag1")
-    assert(post.errors.invalid?(:md5), "No error raised on duplicate MD5")
+    assert(post.errors.include?(:md5), "Detects duplicate md5")
     assert_equal(original_count + 1, Post.count)
   end
 
   def test_non_image_upload
     post = create_post(:file => nil, :tags => "tag1", :source => "http://www.google.com/index.html")
-    assert(post.errors.invalid?(:file), "Invalid content type was not rejected")
+    assert(post.errors.include?(:file), "Invalid content type was not rejected")
   end
 
   def test_parents
     # Test for nonexistent parent
     post = create_post(:parent_id => 1_000_000)
-    assert(post.errors.invalid?(:parent_id), "Parent not validated")
+    assert(post.errors.include?(:parent_id), "Invalid parent")
 
     # Test to see if the has_children field is updated correctly
     p1 = create_post
     assert(!p1.has_children?, "Parent should not have any children")
-    c1 = create_post(:file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"), :parent_id => p1.id)
+    c1 = create_post(:file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"), :parent_id => p1.id)
     p1.reload
     assert(p1.has_children?, "Parent not updated after child was added")
 
     # Test to make sure favorites are assigned to a parent when a post is deleted
-    c2 = create_post(:file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"), :parent_id => p1.id)
-    PostVotes.create(:post_id => c2.id, :user_id => 1, :score => 3)
+    c2 = create_post(:file => upload_file("#{Rails.root}/test/mocks/test/test3.jpg"), :parent_id => p1.id)
+    PostVote.create(:post_id => c2.id, :user_id => 1, :score => 3)
     c2.delete
     p1.reload
-    assert(PostVotes.find(:first, :conditions => ["post_id = ? AND user_id = ?", c2.id, 1]).score == 0)
-    assert(PostVotes.find(:first, :conditions => ["post_id = ? AND user_id =?", p1.id, 1]).score == 3)
+    assert_match false, PostVote.exists?(:post_id => c2.id, :user_id => 1)
+    assert(PostVote.find(:first, :conditions => ["post_id = ? AND user_id =?", p1.id, 1]).score == 3)
+    assert_match 3, PostVote.find_by(:post_id => p1.id, :user_id => 1).score
     assert(p1.has_children?, "Parent should still have children")
 
     # Test to make sure has_children is updated when post is updated
-    p2 = create_post(:file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg"))
+    p2 = create_post(:file => upload_file("#{Rails.root}/test/mocks/test/test4.jpg"))
     update_post(c1, :parent_id => p2.id)
     p1.reload
     p2.reload
@@ -359,7 +309,7 @@ class PostTest < ActiveSupport::TestCase
     assert_not_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post.id]))
 
     # Test adding to an existing pool and case insensitivity
-    post2 = create_post(:tags => "tag3 pool:NEW_POOL", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    post2 = create_post(:tags => "tag3 pool:NEW_POOL", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
     assert_not_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post2.id]))
 
     # Test removing a post from a pool
@@ -465,8 +415,8 @@ class PostTest < ActiveSupport::TestCase
 
   def test_search_simple
     p1 = create_post(:tags => "tag1")
-    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag3", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
     matches = search_posts("tag1")
     assert_equal(1, matches.size)
     assert_equal(p1.id, matches[0].id)
@@ -474,8 +424,8 @@ class PostTest < ActiveSupport::TestCase
 
   def test_search_intersection_with_two_tags
     p1 = create_post(:tags => "tag1 tag2")
-    create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
+    create_post(:tags => "tag1", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test3.jpg"))
     matches = search_posts("tag1 tag2")
     assert_equal(1, matches.size)
     assert_equal(p1.id, matches[0].id)
@@ -483,11 +433,11 @@ class PostTest < ActiveSupport::TestCase
 
   def test_search_intersection_with_three_tags
     p1 = create_post(:tags => "tag1 tag2 tag3")
-    create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
-    create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg"))
-    create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg"))
-    create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
+    create_post(:tags => "tag1 tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2 tag3", :file => upload_file("#{Rails.root}/test/mocks/test/test3.jpg"))
+    create_post(:tags => "tag1", :file => upload_file("#{Rails.root}/test/mocks/test/test4.jpg"))
+    create_post(:tags => "tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test5.jpg"))
+    create_post(:tags => "tag3", :file => upload_file("#{Rails.root}/test/mocks/test/test6.jpg"))
     matches = search_posts("tag1 tag2 tag3")
     assert_equal(1, matches.size)
     assert_equal(p1.id, matches[0].id)
@@ -497,11 +447,11 @@ class PostTest < ActiveSupport::TestCase
     Post.find(:all).each { |x| x.delete_from_database }
 
     create_post(:tags => "tag1 tag2 tag3")
-    p2 = create_post(:tags => "tag1 tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
-    create_post(:tags => "tag2 tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test3.jpg"))
-    p4 = create_post(:tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test4.jpg"))
-    p5 = create_post(:tags => "tag2", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test5.jpg"))
-    create_post(:tags => "tag3", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test6.jpg"))
+    p2 = create_post(:tags => "tag1 tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "tag2 tag3", :file => upload_file("#{Rails.root}/test/mocks/test/test3.jpg"))
+    p4 = create_post(:tags => "tag1", :file => upload_file("#{Rails.root}/test/mocks/test/test4.jpg"))
+    p5 = create_post(:tags => "tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test5.jpg"))
+    create_post(:tags => "tag3", :file => upload_file("#{Rails.root}/test/mocks/test/test6.jpg"))
 
     matches = search_posts("-tag3")
     assert_equal(3, matches.size)
@@ -531,8 +481,8 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def test_search_pattern
-    create_post(:tags => "hoge nushi", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test1.jpg"))
-    create_post(:tags => "hoge", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test2.jpg"))
+    create_post(:tags => "hoge nushi", :file => upload_file("#{Rails.root}/test/mocks/test/test1.jpg"))
+    create_post(:tags => "hoge", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
 
     matches = search_posts("*oge")
     assert_equal(2, matches.size)

@@ -1,6 +1,5 @@
 <div>
   <h4>
-    <%= link_to_function t('.edit'), "$('comments').hide(); $('edit').show(); $('post_tags').focus(); Cookie.put('show_defaults_to_edit', 1);" %> |
-    <%= link_to_function t('.respond'), "$('edit').hide(); $('comments').show(); Cookie.put('show_defaults_to_edit', 0);" %>
+    <%= link_to t(".edit"), "#", :class => "js-posts-show-edit-tab" %> | <%= link_to t(".respond"), "#", :class => "js-posts-show-comments-tab" %>
   </h4>
 </div>

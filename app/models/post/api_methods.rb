@@ -88,8 +88,8 @@ module Post::ApiMethods
     def batch_api_data(posts, options = {})
       result = { :posts => posts }
       unless options[:exclude_pools] then
-        pool_posts = Pool.get_pool_posts_from_posts(posts)
-        pools = Pool.get_pools_from_pool_posts(pool_posts)
+        pool_posts = PoolPost.active.where(:post_id => posts).includes(:pool)
+        pools = pool_posts.to_a.map(&:pool)
         result[:pools] = pools
         result[:pool_posts] = pool_posts
       end

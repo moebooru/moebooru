@@ -418,11 +418,11 @@ class PostController < ApplicationController
       return
     end
 
-    @pools = Pool.select(%w(pools.name pools.id)).joins(:pool_posts).where(:pools_posts => { :post_id => @post.id, :active => true }).order(:name)
+    @pool_posts = PoolPost.where(:post_id => @post.id).includes(:pool).references(:pool).order("pools.name")
     if params.key?(:pool_id) then
-      @following_pool_post = PoolPost.where(:active => true, :pool_id => params[:pool_id], :post_id => @post.id).first
+      @following_pool_post = @pool_posts.to_a.select { |pp| pp.pool_id == params[:pool_id] }
     else
-      @following_pool_post = PoolPost.where(:active => true, :post_id => @post.id).first
+      @following_pool_post = @pool_posts.to_a.first
     end
     @tags = { :include => @post.cached_tags.split(/ /) }
     @include_tag_reverse_aliases = true

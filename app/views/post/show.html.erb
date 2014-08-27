@@ -47,15 +47,6 @@
           Post.resize_image()
         }
 
-        var anchored_to_comment = window.location.hash == "#comments";
-        if(window.location.hash.match(/^#c[0-9]+$/))
-          anchored_to_comment = true;
-
-        if (Cookie.get('show_defaults_to_edit') == '1' && !anchored_to_comment) {
-          $('comments').hide();
-          $('edit').show();
-        }
-
         <% browser_url = "/post/browse##{@post.id}" %>
         <% browser_url += "/pool:#{@following_pool_post.pool_id}" if not @following_pool_post.nil? %>
         OnKey(66, { AlwaysAllowOpera: true }, function(e) { window.location.href = <%= json_escape browser_url.to_json.html_safe %>; });

@@ -1,7 +1,7 @@
 <div>
   <h5><%= t('.title') %></h5>
   <ul>
-    <li><%= link_to_function t('buttons.edit'), "$('comments').hide(); $('edit').show().scrollTo(); $('post_tags').focus(); Cookie.put('show_defaults_to_edit', 1);" %></li>
+    <li><%= link_to t('buttons.edit'), "#", :class => "js-posts-show-edit-tab" %></li>
     <!-- <% if !@post.is_deleted? && @post.image? && @post.width && @post.width > 700 %>
       <li><%= link_to_function t('.resize'), "Post.resize_image()" %></li>
     <% end %> -->

@@ -80,6 +80,16 @@ module Post::ImageStore
       select_random_image_server + path
     end
 
+    def frame_url(filename, frame_number)
+      frame_server = Mirrors.select_image_server(frames_warehoused, created_at.to_i + frame_number)
+      "#{frame_server}/data/frame/#{filename}"
+    end
+
+    def frame_preview_url(filename, frame_number)
+      frame_preview_server ||= Mirrors.select_image_server(frames_warehoused, created_at.to_i + frame_number, :use_aliases => true)
+      "#{frame_preview_server}/data/frame-preview/#{filename}"
+    end
+
     def delete_file
       FileUtils.rm_f(file_path)
       FileUtils.rm_f(preview_path) if image?

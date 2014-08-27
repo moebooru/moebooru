@@ -56,6 +56,14 @@ module Post::ImageStore
       CONFIG["url_base"] + path
     end
 
+    def frame_url(filename, _frame_number)
+      "#{CONFIG["url_base"]}/data/frame/#{filename}"
+    end
+
+    def frame_preview_url(filename, _frame_number)
+      "#{CONFIG["url_base"]}/data/frame-preview/#{filename}"
+    end
+
     def delete_file
       FileUtils.rm_f(file_path)
       FileUtils.rm_f(preview_path) if image?

@@ -34,11 +34,8 @@ module Post::FrameMethods
       frame[:preview_height] = size[:height]
 
       filename = PostFrames.filename(frame)
-      server = Mirrors.select_image_server(frames_warehoused, created_at.to_i + i)
-      frame[:url] = server + "/data/frame/#{filename}"
-
-      thumb_server = Mirrors.select_image_server(frames_warehoused, created_at.to_i + i, :use_aliases => true)
-      frame[:preview_url] = thumb_server + "/data/frame-preview/#{filename}"
+      frame[:url] = frame_url(filename, i)
+      frame[:preview_url] = frame_preview_url(filename, i)
     end
 
     frames

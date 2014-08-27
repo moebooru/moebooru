@@ -51,4 +51,4 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 # CONFIG['tag_order'] = %w(artist copyright character general)
 
 # Servers for static files (assets and uploaded files)
-# CONFIG[:file_hosts] = { :files => "files.moe.booru", :assets => "assets.moe.booru", :previews => "previews.moe.booru", :jpeg => "jpeg.moe.booru", :samples => "samples.moe.booru" }
+# CONFIG[:file_hosts] = { :files => "files.moe.booru", :assets => "assets.moe.booru", :previews => "previews.moe.booru" }

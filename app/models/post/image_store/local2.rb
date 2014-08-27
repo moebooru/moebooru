@@ -33,9 +33,9 @@ module Post::ImageStore::Local2
 
   def file_url
     if CONFIG["use_pretty_image_urls"] then
-      "#{base_url :files}/image/#{md5}/#{pretty_file_name}.#{file_ext}"
+      "#{base_url}/image/#{md5}/#{pretty_file_name}.#{file_ext}"
     else
-      "#{base_url :files}/data/image/#{file_hierarchy}/#{file_name}"
+      "#{base_url}/data/image/#{file_hierarchy}/#{file_name}"
     end
   end
 
@@ -51,26 +51,26 @@ module Post::ImageStore::Local2
 
   def store_jpeg_url
     if CONFIG["use_pretty_image_urls"] then
-      "#{base_url :jpeg}/jpeg/#{md5}/#{pretty_file_name(:type => :jpeg)}.jpg"
+      "#{base_url}/jpeg/#{md5}/#{pretty_file_name(:type => :jpeg)}.jpg"
     else
-      "#{base_url :jpeg}/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
+      "#{base_url}/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
     end
   end
 
   def store_sample_url
     if CONFIG["use_pretty_image_urls"] then
-      "#{base_url :samples}/sample/#{md5}/#{pretty_file_name(:type => :sample)}.jpg"
+      "#{base_url}/sample/#{md5}/#{pretty_file_name(:type => :sample)}.jpg"
     else
-      "#{base_url :samples}/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
+      "#{base_url}/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
     end
   end
 
   def frame_url(filename, _frame_number)
-    "#{base_url :samples}/data/frame/#{filename}"
+    "#{base_url}/data/frame/#{filename}"
   end
 
   def frame_preview_url(filename, _frame_number)
-    "#{base_url :previews}/data/frame-preview/#{filename}"
+    "#{base_url}/data/frame-preview/#{filename}"
   end
 
   def delete_file

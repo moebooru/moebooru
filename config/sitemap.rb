@@ -1,7 +1,5 @@
 # Set the host name for URL creation
 SitemapGenerator::Sitemap.default_host = "https://yande.re"
-SitemapGenerator::Sitemap.create_index = true
-SitemapGenerator::Sitemap.namer = SitemapGenerator::SimpleNamer.new(:sitemap, :zero => "_index")
 
 SitemapGenerator::Sitemap.create do
   # Put links creation logic here.

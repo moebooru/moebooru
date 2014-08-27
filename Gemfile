@@ -60,3 +60,5 @@ gem "jbuilder", "~> 1.2"
 
 # Must be last.
 gem "rack-mini-profiler", :group => :development
+
+gem "pry"

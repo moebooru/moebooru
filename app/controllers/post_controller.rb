@@ -420,7 +420,7 @@ class PostController < ApplicationController
 
     @pool_posts = PoolPost.where(:post_id => @post.id).includes(:pool).references(:pool).order("pools.name")
     if params[:pool_id] then
-      @following_pool_post = @pool_posts.to_a.select { |pp| pp.pool_id == params[:pool_id] }
+      @following_pool_post = @pool_posts.to_a.find { |pp| pp.pool_id == params[:pool_id] }
     else
       @following_pool_post = @pool_posts.to_a.first
     end

@@ -31,6 +31,6 @@ SitemapGenerator::Sitemap.create do
   end
 
   Tag.pluck(:name).each do |tag_name|
-    add "/post?#{{ :tag => tag_name }.to_param}", :changefreq => "daily"
+    add url_for(:controller => :post, :action => :index, :tags => tag_name, :only_path => true), :changefreq => "daily"
   end
 end

@@ -1,18 +1,18 @@
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class PostTagHistoryTest < ActiveSupport::TestCase
   fixtures :users
 
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      Rails.cache.clear
     end
 
     @test_number = 1
   end
 
   def create_post(params = {})
-    p = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1", :file => upload_jpeg("#{RAILS_ROOT}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
+    p = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :status => "active", :tags => "tag1", :file => upload_file("#{Rails.root}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
     @test_number += 1
     p
   end

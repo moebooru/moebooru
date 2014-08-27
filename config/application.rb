@@ -84,5 +84,7 @@ module Moebooru
 
     # Save cache in different location to avoid collision.
     config.action_controller.page_cache_directory = config.root.join("public", "cache")
+
+    config.action_controller.asset_host = CONFIG[:file_hosts][:assets] if CONFIG[:file_hosts]
   end
 end

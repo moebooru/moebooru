@@ -92,9 +92,7 @@ class Pool < ActiveRecord::Base
       PoolPost.joins(:post)
         .where(:pool_id => id, :active => true, :posts => { :status => "active" })
         .order("posts.is_shown_in_index DESC, NAT_SORT(pools_posts.sequence), pools_posts.post_id")
-        .each do |pool_post|
-          return pool_post.post if pool_post.post.can_be_seen_by?(Thread.current["danbooru-user"])
-      end
+        .to_a.find { |pool_post| pool_post.post if pool_post.post.can_be_seen_by?(Thread.current["danbooru-user"]) }
     end
 
     def can_change_is_public?(user)

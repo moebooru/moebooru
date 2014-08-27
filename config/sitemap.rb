@@ -27,7 +27,7 @@ SitemapGenerator::Sitemap.create do
   #     add article_path(article), :lastmod => article.updated_at
   #   end
   Post.available.pluck(:id).each do |post_id|
-    add "/post/show/#{post_id}", :changefreq => "daily"
+    add url_for(:controller => :post, :action => :show, :id => post_id, :only_path => true), :changefreq => "daily"
   end
 
   Tag.pluck(:name).each do |tag_name|

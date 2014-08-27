@@ -71,6 +71,6 @@
   <% end %>
 <% end %>
 
-<% @pools.each do |pool| %>
-  <%= render :partial => "post/show_partials/pool", :locals => {:pool => pool, :pool_post => PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, @post.id])} %>
+<% @pool_posts.each do |pool_post| %>
+  <%= render :partial => "post/show_partials/pool", :locals => { :pool => pool_post.pool, :pool_post => pool_post } %>
 <% end %>

@@ -10,6 +10,8 @@ class PoolPost < ActiveRecord::Base
   versioned :sequence
   after_save :expire_cache
 
+  scope :active, lambda { where :active => true }
+
   def can_change_is_public?(user)
     user.has_permission?(pool) # only the owner can change is_public
   end

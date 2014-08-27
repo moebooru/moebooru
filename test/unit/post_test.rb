@@ -1,7 +1,7 @@
 require "test_helper"
 
 class PostTest < ActiveSupport::TestCase
-  #fixtures :users, :posts, :table_data
+  # fixtures :users, :posts, :table_data
 
   def setup
     if CONFIG["enable_caching"]

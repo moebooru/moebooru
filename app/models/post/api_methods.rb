@@ -87,12 +87,12 @@ module Post::ApiMethods
 
     def batch_api_data(posts, options = {})
       result = { :posts => posts }
-      unless options[:exclude_pools] then
+      unless options[:exclude_pools]
         result[:pool_posts] = PoolPost.active.where(:post_id => posts).includes(:pool)
         result[:pools] = result[:pool_posts].to_a.map(&:pool)
       end
 
-      unless options[:exclude_tags] then
+      unless options[:exclude_tags]
         result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
       end
 

@@ -96,11 +96,7 @@ module Post::ApiMethods
         result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
       end
 
-      if options.include?(:user)
-        user = options[:user]
-      else
-        user = Thread.current["danbooru-user"]
-      end
+      user = options[:user] || Thread.current["danbooru-user"]
 
       # Allow loading votes along with the posts.
       #

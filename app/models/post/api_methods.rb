@@ -96,13 +96,13 @@ module Post::ApiMethods
         result[:tags] = Tag.batch_get_tag_types_for_posts(posts)
       end
 
-      user = options[:user] || Thread.current["danbooru-user"]
-
       # Allow loading votes along with the posts.
       #
       # The post data is cachable and vote data isn't, so keep this data separate from the
       # main post data to make it easier to cache API output later.
       unless options[:exclude_votes]
+        user = options[:user] || Thread.current["danbooru-user"]
+
         result[:votes] = PostVote.where(:user_id => user.id, :post_id => posts)
                            .pluck(:post_id, :score)
                            .each_with_object({}) { |e, a| a[e[0]] = e[1] }

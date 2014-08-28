@@ -102,9 +102,9 @@ module Post::ApiMethods
       #
       # The post data is cachable and vote data isn't, so keep this data separate from the
       # main post data to make it easier to cache API output later.
-      unless options[:exclude_votes] then
+      unless options[:exclude_votes]
         vote_map = {}
-        unless posts.empty? then
+        unless posts.empty?
           votes = PostVote.where(:user_id => user.id, :post_id => posts)
           votes.each do |v|
             vote_map[v.post_id] = v.score

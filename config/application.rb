@@ -69,10 +69,6 @@ module Moebooru
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = "1.0"
 
-    # FIXME: can't move images to correct asset path since the javascripts
-    #        haven't been updated to use asset-path.
-    config.assets.paths += [config.root.join("public", "images")]
-
     if CONFIG["enable_caching"]
       config.cache_store = :dalli_store, CONFIG["memcache_servers"], { :namespace => CONFIG["app_name"] }
     else

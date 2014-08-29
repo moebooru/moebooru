@@ -2,7 +2,6 @@
 
 require "daemons"
 
-ENV["NEWRELIC_ENABLE"] = "false"
 job_script = File.expand_path("../job_task_processor.rb", __FILE__)
 job_options = {
   :dir_mode => :normal,

@@ -1,5 +1,5 @@
 <% provide :title, '/' + params[:tags].to_s.tr('_', ' ') %>
-<% @canonical_url = url_for(:controller => "/post", :action => :index, :tags => params[:tags]) %>
+<% @canonical_url = url_for(:controller => "/post", :action => :index, :tags => params[:tags], :only_path => false) %>
 <%= render 'shared/twitter_card/gallery', posts: @posts %>
 <div id="post-list">
   <% if @tag_suggestions && @tag_suggestions.any? %>

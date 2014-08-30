@@ -583,7 +583,7 @@ en:
         name: Name
         posts: Posts
         updated: Updated
-      title: 'Pools search result for %{q}'
+      title: ! 'Pools search result for "%{q}"'
       title_main: Pools
     order:
       auto_order: Auto Order

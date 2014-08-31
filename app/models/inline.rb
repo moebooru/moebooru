@@ -1,6 +1,6 @@
 class Inline < ActiveRecord::Base
   belongs_to :user
-  has_many :inline_images, :dependent => :destroy, :order => "sequence"
+  has_many :inline_images, -> { order :sequence }, :dependent => :destroy
 
   # Sequence numbers must start at 1 and increase monotonically, to keep the UI simple.
   # If we've been given sequences with gaps or duplicates, sanitize them.

@@ -3218,6 +3218,14 @@ ALTER TABLE ONLY posts
 
 
 --
+-- Name: posts_tags_post_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY posts_tags
+    ADD CONSTRAINT posts_tags_post_id_fk FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: tag_aliases_creator_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3448,6 +3456,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140309152432');
 INSERT INTO schema_migrations (version) VALUES ('20140427041839');
 
 INSERT INTO schema_migrations (version) VALUES ('20140429125422');
+
+INSERT INTO schema_migrations (version) VALUES ('20140905023318');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

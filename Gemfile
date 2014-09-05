@@ -15,6 +15,7 @@ gem "non-stupid-digest-assets"
 
 gem "pg", :platforms => [:ruby, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", "~> 1.3.0.rc1", :platforms => :jruby
+gem "foreigner"
 
 ### FIXME: remove this
 gem "actionpack-page_caching"

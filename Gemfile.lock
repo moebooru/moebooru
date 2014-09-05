@@ -57,6 +57,8 @@ GEM
       actionmailer (>= 3.0.4)
       activesupport (>= 3.0.4)
     execjs (2.2.1)
+    foreigner (1.6.1)
+      activerecord (>= 3.0.0)
     gctools (0.2.3)
     geoip (1.4.0)
     hike (1.2.3)
@@ -186,6 +188,7 @@ DEPENDENCIES
   dalli
   diff-lcs
   exception_notification
+  foreigner
   gctools
   geoip
   hooves

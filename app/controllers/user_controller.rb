@@ -49,13 +49,13 @@ class UserController < ApplicationController
 
   def change_password
     @title = "Change Password"
-    render :layout => "settings"
+    respond_to { |format| format.html { render :layout => "settings" } }
   end
 
   def change_email
     @title = "Change Email"
     @current_user.current_email = @current_user.email
-    render :layout => "settings"
+    respond_to { |format| format.html { render :layout => "settings" } }
   end
 
   def show

@@ -480,10 +480,12 @@ class User < ActiveRecord::Base
         return false
       end
 
-      if params[:top].to_f < 0 || params[:top].to_f > 1 ||
-        params[:bottom].to_f < 0 || params[:bottom].to_f > 1 ||
-        params[:left].to_f < 0 || params[:left].to_f > 1 ||
-        params[:right].to_f < 0 || params[:right].to_f > 1 ||
+      [:top, :bottom, :left, :right].each { |d| params[d] = params[d].to_f }
+
+      if params[:top] < 0 || params[:top] > 1 ||
+        params[:bottom] < 0 || params[:bottom] > 1 ||
+        params[:left] < 0 || params[:left] > 1 ||
+        params[:right] < 0 || params[:right] > 1 ||
         params[:top] >= params[:bottom] ||
         params[:left] >= params[:right]
       then
@@ -494,14 +496,14 @@ class User < ActiveRecord::Base
       tempfile_path = "#{Rails.root}/public/data/#{SecureRandom.random_number(2**32)}.avatar.jpg"
 
       def reduce_and_crop(image_width, image_height, params)
-        cropped_image_width = image_width * (params[:right].to_f - params[:left].to_f)
-        cropped_image_height = image_height * (params[:bottom].to_f - params[:top].to_f)
+        cropped_image_width = image_width * (params[:right] - params[:left])
+        cropped_image_height = image_height * (params[:bottom] - params[:top])
 
         size = Moebooru::Resizer.reduce_to({ :width => cropped_image_width, :height => cropped_image_height }, { :width => CONFIG["avatar_max_width"], :height => CONFIG["avatar_max_height"] }, 1, true)
-        size[:crop_top] = image_height * params[:top].to_f
-        size[:crop_bottom] = image_height * params[:bottom].to_f
-        size[:crop_left] = image_width * params[:left].to_f
-        size[:crop_right] = image_width * params[:right].to_f
+        size[:crop_top] = image_height * params[:top]
+        size[:crop_bottom] = image_height * params[:bottom]
+        size[:crop_left] = image_width * params[:left]
+        size[:crop_right] = image_width * params[:right]
         size
       end
 

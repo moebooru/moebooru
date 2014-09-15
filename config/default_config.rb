@@ -16,3 +16,5 @@ CONFIG["bundler_groups"] ||= [:default, Rails.env]
 CONFIG["bundler_groups"] << "standalone" if CONFIG["standalone"]
 
 CONFIG["bgcolor"] ||= "gray"
+
+CONFIG["threads"] ||= (ENV["MB_THREADS"] || 1).to_i

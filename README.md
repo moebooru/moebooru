@@ -88,6 +88,13 @@ using these commands:
 * Run `bundle exec rake db:migrate`
 * Start the server (`bundle exec unicorn` or `bundle exec puma` if using JRuby/Rubinius)
 
+Configuration
+-------------
+
+See `config/local_config.rb.example`. Additionally, as I move to ENV-based configuration, here's the list of currently supported ENV variables:
+
+- `MB_THREADS`: sets number of threads this application is running. Currently used to determine number of connection pool for `memcached`. Defaults to 1 if unset.
+
 Plans
 -----
 

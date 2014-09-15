@@ -49,6 +49,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.8.0)
+    connection_pool (2.0.0)
     daemons (1.1.9)
     dalli (2.7.2)
     diff-lcs (1.2.5)
@@ -179,6 +180,7 @@ DEPENDENCIES
   cache_digests
   coffee-rails (~> 4.0.0)
   coffee-rails-source-maps
+  connection_pool
   daemons
   dalli
   diff-lcs

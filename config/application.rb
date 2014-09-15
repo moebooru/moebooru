@@ -70,7 +70,7 @@ module Moebooru
     config.assets.version = "1.0"
 
     if CONFIG["enable_caching"]
-      config.cache_store = :dalli_store, CONFIG["memcache_servers"], { :namespace => CONFIG["app_name"] }
+      config.cache_store = :dalli_store, CONFIG["memcache_servers"], { :namespace => CONFIG["app_name"], :pool_size => CONFIG["threads"] }
     else
       config.cache_store = :null_store
     end

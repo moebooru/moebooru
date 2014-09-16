@@ -5,7 +5,6 @@ end
 
 class UserMailer < ActionMailer::Base
   helper :application
-  default_url_options["host"] = CONFIG["server_host"]
   default :from => CONFIG["email_from"]
 
   # def confirmation_email(user)

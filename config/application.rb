@@ -82,5 +82,6 @@ module Moebooru
     config.action_controller.page_cache_directory = config.root.join("public", "cache")
 
     config.action_controller.asset_host = CONFIG[:file_hosts][:assets] if CONFIG[:file_hosts]
+    config.action_mailer.default_url_options = { :host => CONFIG["server_host"] }
   end
 end

@@ -5,7 +5,7 @@ class NoteTest < ActiveSupport::TestCase
 
   def setup
     if CONFIG["enable_caching"]
-      CACHE.flush_all
+      Rails.cache.clear
     end
   end
 

@@ -247,7 +247,7 @@ class Pool < ActiveRecord::Base
           path = post.file_path
           file_ext = post.file_ext
         end
-        path = path[Rails.root.join("public").to_s.length .. path.length]
+        path = path[Rails.root.join("public").to_s.length..path.length]
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".
@@ -323,7 +323,7 @@ class Pool < ActiveRecord::Base
           path = post.file_path
           file_ext = post.file_ext
         end
-        path = path[Rails.root.join("public").to_s.length .. path.length]
+        path = path[Rails.root.join("public").to_s.length..path.length]
 
         # For padding filenames, break numbers apart on hyphens and pad each part.  For
         # example, if max_sequence_digits is 3, and we have "88-89", pad it to "088-089".

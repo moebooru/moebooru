@@ -92,7 +92,7 @@ module SimilarImages
         end
       }
     end
-    server_threads.each { |t| t.join }
+    server_threads.each(&:join)
 
     posts = []
     posts_external = []

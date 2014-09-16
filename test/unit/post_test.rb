@@ -447,7 +447,7 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def test_search_negated_tags
-    Post.find(:all).each { |x| x.delete_from_database }
+    Post.find(:all).each(&:delete_from_database)
 
     create_post(:tags => "tag1 tag2 tag3")
     p2 = create_post(:tags => "tag1 tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))

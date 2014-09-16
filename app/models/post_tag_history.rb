@@ -5,7 +5,7 @@ class PostTagHistory < ActiveRecord::Base
   def self.undo_user_changes(user_id)
     posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.id", :conditions => ["pth.user_id = ?", user_id])
     puts posts.size
-    p posts.map { |x| x.id }
+    p posts.map(&:id)
     #    destroy_all(["user_id = ?", user_id])
     #    posts.each do |post|
     #      post.tags = post.tag_history.first.tags

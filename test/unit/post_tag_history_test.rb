@@ -55,7 +55,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
 
     options = { :update_options => { :updater_ip_addr => "127.0.0.1", :updater_user_id => 3 } }
     p1.tag_history[0].undo(options)
-    options[:posts].each_value { |x| x.save }
+    options[:posts].each_value(&:save)
     p1.reload
     assert_equal("a", p1.cached_tags)
   end

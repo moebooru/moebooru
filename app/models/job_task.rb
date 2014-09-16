@@ -221,7 +221,7 @@ class JobTask < ActiveRecord::Base
       task.update_attributes(:status => "pending")
     end
 
-    while true
+    loop do
       execute_once
       sleep 10
     end

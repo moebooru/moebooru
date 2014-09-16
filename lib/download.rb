@@ -26,7 +26,7 @@ module Danbooru
 
     limit = 4
 
-    while true
+    loop do
       url = Addressable::URI.parse(source)
       url.host = url.normalized_host
 

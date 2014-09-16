@@ -21,8 +21,8 @@ class NoteController < ApplicationController
 
     respond_to do |fmt|
       fmt.html
-      fmt.xml { render :xml => @posts.map { |x| x.notes }.flatten.to_xml(:root => "notes") }
-      fmt.json { render :json => @posts.map { |x| x.notes }.flatten.to_json }
+      fmt.xml { render :xml => @posts.map(&:notes).flatten.to_xml(:root => "notes") }
+      fmt.json { render :json => @posts.map(&:notes).flatten.to_json }
     end
   end
 

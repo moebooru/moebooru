@@ -17,8 +17,8 @@ class Post < ActiveRecord::Base
   after_save :commit_flag
   has_and_belongs_to_many :_tags, :class_name => "Tag"
   scope :available, lambda { where.not :status => "deleted" }
-  scope :has_any_tags, lambda { |tags| where("posts.tags_index @@ ?", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(" | ")) }
-  scope :has_all_tags, lambda { |tags| where("posts.tags_index @@ ?", Array(tags).map { |t| t.to_escaped_for_tsquery }.join(" & ")) }
+  scope :has_any_tags, lambda { |tags| where("posts.tags_index @@ ?", Array(tags).map(&:to_escaped_for_tsquery).join(" | ")) }
+  scope :has_all_tags, lambda { |tags| where("posts.tags_index @@ ?", Array(tags).map(&:to_escaped_for_tsquery).join(" & ")) }
   scope :flagged, lambda { where "status = ?", "flagged" }
 
   def self.slow_has_all_tags(tags)
@@ -178,7 +178,7 @@ class Post < ActiveRecord::Base
   end
 
   def active_notes
-    notes.select { |x| x.is_active? }
+    notes.select(&:is_active?)
   end
 
   STATUSES.each do |x|

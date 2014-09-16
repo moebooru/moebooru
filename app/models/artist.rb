@@ -37,7 +37,7 @@ class Artist < ActiveRecord::Base
     attr_writer :urls
 
     def urls
-      artist_urls.map { |x| x.url }.join("\n")
+      artist_urls.map(&:url).join("\n")
     end
   end
 
@@ -186,7 +186,7 @@ class Artist < ActiveRecord::Base
         :name => name,
         :alias_id => alias_id,
         :group_id => group_id,
-        :urls => artist_urls.map { |x| x.url }
+        :urls => artist_urls.map(&:url)
       }
     end
 
@@ -225,7 +225,7 @@ class Artist < ActiveRecord::Base
     b = Nagato::Builder.new do |_builder, cond|
       case name
       when /^http/
-        cond.add "id IN (?)", find_all_by_url(name).map { |x| x.id }
+        cond.add "id IN (?)", find_all_by_url(name).map(&:id)
 
       else
         cond.add "name LIKE ? ESCAPE E'\\\\'", name.to_escaped_for_sql_like + "%"

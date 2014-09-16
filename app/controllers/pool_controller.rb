@@ -43,7 +43,7 @@ class PoolController < ApplicationController
     end
 
     unless search_tokens.empty? then
-      value_index_query = "(" + Array(search_tokens).map { |t| t.to_escaped_for_tsquery }.join(" & ") + ")"
+      value_index_query = "(" + Array(search_tokens).map(&:to_escaped_for_tsquery).join(" & ") + ")"
       conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
       cond_params << value_index_query
 

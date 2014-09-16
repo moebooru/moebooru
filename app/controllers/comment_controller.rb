@@ -103,7 +103,7 @@ class CommentController < ApplicationController
 
       if keywords.any?
         conds << "text_search_index @@ to_tsquery(?)"
-        cond_params << keywords.map { |k| k.to_escaped_for_tsquery }.join(" & ")
+        cond_params << keywords.map(&:to_escaped_for_tsquery).join(" & ")
       end
 
       options[:conditions] = [conds.join(" AND "), *cond_params]
@@ -121,9 +121,7 @@ class CommentController < ApplicationController
       coms = Comment.find(:all, :conditions => ["id IN (?)", ids])
 
       if params["commit"] == "Delete"
-        coms.each do |c|
-          c.destroy
-        end
+        coms.each(&:destroy)
       elsif params["commit"] == "Approve"
         coms.each do |c|
           c.update_attribute(:is_spam, false)

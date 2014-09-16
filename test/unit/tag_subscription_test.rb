@@ -36,9 +36,9 @@ class TagSubscriptionTest < ActiveSupport::TestCase
     create_tag_subscription("tag2")
     create_tag_subscription("tag3", :name => "Special")
 
-    assert_equal([p3.id, p2.id, p1.id], TagSubscription.find_post_ids(1).sort.reverse.map { |x| x.to_i })
-    assert_equal([p3.id, p1.id], TagSubscription.find_post_ids(1, "Special").sort.reverse.map { |x| x.to_i })
-    assert_equal([p3.id], TagSubscription.find_post_ids(1, nil, 1).map { |x| x.to_i })
+    assert_equal([p3.id, p2.id, p1.id], TagSubscription.find_post_ids(1).sort.reverse.map(&:to_i))
+    assert_equal([p3.id, p1.id], TagSubscription.find_post_ids(1, "Special").sort.reverse.map(&:to_i))
+    assert_equal([p3.id], TagSubscription.find_post_ids(1, nil, 1).map(&:to_i))
   end
 
   def test_process_all

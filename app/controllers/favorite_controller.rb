@@ -14,6 +14,6 @@ class FavoriteController < ApplicationController
   protected
 
   def favorited_users_for_post(post)
-    post.favorited_by.map { |x| x.name }.uniq.join(",")
+    post.favorited_by.map(&:name).uniq.join(",")
   end
 end

@@ -225,7 +225,7 @@ class InlineImage < ActiveRecord::Base
   def set_default_sequence
     return unless sequence.nil?
     siblings = inline.inline_images
-    max_sequence = siblings.map { |image| image.sequence }.max
+    max_sequence = siblings.map(&:sequence).max
     max_sequence ||= 0
     self.sequence = max_sequence + 1
   end

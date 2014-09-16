@@ -80,7 +80,7 @@ module DText
     if state.last =~ /\d/ || str =~ /^\*+\s+/
       parselist str, state
     elsif str =~ /^(h[1-6])\.\s*(.+)\n*/
-      str = "<#{Regexp.last_match[1]}>#{Regexp.last_match[2]}</#{Regexp.last_match[1]}>"
+      "<#{Regexp.last_match[1]}>#{Regexp.last_match[2]}</#{Regexp.last_match[1]}>"
     else
       str
     end

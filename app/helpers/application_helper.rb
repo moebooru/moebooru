@@ -111,13 +111,11 @@ module ApplicationHelper
     end
   end
 
-  def content_for_prefix(name, &block)
-    content_prefix = capture(&block) if block_given?
+  def content_for_prefix(name)
     content_current = content_for(name)
-    if content_prefix
-      @view_flow.set(name, content_prefix)
-      content_for(name, content_current)
-    end
+
+    content_for(name, :flush => true) { yield }
+    content_for(name, content_current)
   end
 
   def navigation_links(post)

@@ -176,7 +176,7 @@ class PostFrames < ActiveRecord::Base
 
     # Find a file that needs to be deleted.  Only do this after unwarehousing the image, so we don't
     # end up in a confusing state where a file is on a mirror and not the master.
-    frame = PostFrames.find_by(:is_active => false, :is_target => false, :is_create => true, :is_warehoused => false)
+    frame = PostFrames.find_by(:is_active => false, :is_target => false, :is_created => true, :is_warehoused => false)
     unless frame.nil? then
       logger.info("Deleting #{frame.id}")
       FileUtils.rm_f(frame.file_path)

@@ -16,8 +16,8 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 # CONFIG['ga-tracking-id'] = 'UA-XXXXX-X'
 
 # Use this config to enable Piwik Analytics. Fill in the Site ID and FQDN (no protocol prefix)
-CONFIG['piwik_host'] ||= ENV["MB_PIWIK_HOST"]
-CONFIG['piwik_site_id'] ||= ENV["MB_PIWIK_ID"]
+# CONFIG["piwik_host"] = "stats.moe.booru"
+# CONFIG["piwik_site_id"] = 1
 
 # Use this config to enable AddThis social sharing buttons. Fill in the Profile ID.
 # CONFIG['addthis-id'] = 'ra-...'

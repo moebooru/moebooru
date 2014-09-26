@@ -56,6 +56,6 @@
   <% end %>
   <%= yield(:post_cookie_javascripts) %>
   <%= render 'layouts/ga' if CONFIG['ga-tracking-id'] -%>
-  <%= render 'layouts/piwik' if CONFIG['piwik-site-id'] -%>
+  <%= render 'layouts/piwik' if CONFIG['piwik-site-id'] and CONFIG['piwik-host'] -%>
 </body>
 </html>

@@ -6,7 +6,7 @@
 <% end %>
 
 <div id="forum" class="response-list">
-  <% unless page_number.to_i > 1 %>
+  <% unless page_number > 1 %>
     <%= render :partial => "post", :locals => {:post => @forum_post} %>
   <% end %>
 

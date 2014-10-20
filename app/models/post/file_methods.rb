@@ -63,7 +63,7 @@ module Post::FileMethods
 
     tags = Tag.compact_tags(cached_tags, 150)
     if options[:type] == :sample then
-      tags = "sample"
+      tags = "sample #{tags}"
     end
 
     # Filter characters.

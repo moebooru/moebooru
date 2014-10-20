@@ -5,7 +5,6 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::StatementInvalid, :with => :rescue_pg_invalid_query
   before_action :filter_spam
   before_action :set_locale
-  before_action :sanitize_params
 
   module LoginSystem
     protected
@@ -348,13 +347,6 @@ class ApplicationController < ActionController::Base
       I18n.locale = cookies["locale"].to_sym
     else
       I18n.locale = CONFIG["default_locale"]
-    end
-  end
-
-  def sanitize_params
-    if params[:page]
-      params[:page] = params[:page].to_i
-      params.delete(:page) if params[:page] <= 1
     end
   end
 

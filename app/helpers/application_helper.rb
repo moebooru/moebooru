@@ -70,7 +70,7 @@ module ApplicationHelper
     list = []
     text.gsub!(/image #\d+/i) do |t|
       i = Inline.find_by(:id => t[7..-1])
-      if i then
+      if i
         block, script = format_inline(i, num, id)
         list << script
         num += 1

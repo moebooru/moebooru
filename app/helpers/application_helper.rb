@@ -69,8 +69,7 @@ module ApplicationHelper
     num = 0
     list = []
     text.gsub!(/image #\d+/i) do |t|
-      # FIXME: for some reason, the capture variable, $1 returned null here.
-      i = Inline.find(t[7..-1]) rescue nil
+      i = Inline.find_by(:id => t[7..-1])
       if i then
         block, script = format_inline(i, num, id)
         list << script

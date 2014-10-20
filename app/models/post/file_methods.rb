@@ -78,7 +78,7 @@ module Post::FileMethods
   end
 
   def file_name
-    md5 + "." + file_ext
+    "#{md5}.#{file_ext}"
   end
 
   def delete_tempfile

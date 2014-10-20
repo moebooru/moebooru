@@ -1,4 +1,4 @@
-cache [@posts.map(&:id), params[:page]], :expires => 1.hour do
+cache [@posts.map(&:id), page_number], :expires => 1.hour do
   xml.instruct!
   xml.rss :version => '2.0', :'xmlns:media' => 'http://search.yahoo.com/mrss/', :'xmlns:atom' => 'http://www.w3.org/2005/Atom' do
     xml.channel do

@@ -1,5 +1,5 @@
 <% @canonical_url = url_for(:controller => '/post', :action => :show, :id => @post.id, :only_path => false) %>
-<% provide :title, @post.title_tags.tr('_', ' ') %>
+<% provide :title, "#{@post.title_tags.tr('_', ' ')} (##{@post.id})" %>
 <%- content_for :html_header do -%>
   <%= render 'social_meta' -%>
 <%- end -%>

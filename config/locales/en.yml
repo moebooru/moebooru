@@ -741,6 +741,7 @@ en:
         script: Apply tag script
         view: View posts
       pool_view_html: Viewing pool %{pool}.
+      title: /%{tags} (Page %{current_page})
     moderate:
       down: down
       flagged: Flagged

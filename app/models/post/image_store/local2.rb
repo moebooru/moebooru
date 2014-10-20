@@ -75,33 +75,20 @@ module Post::ImageStore::Local2
 
   def delete_file
     FileUtils.rm_f(file_path)
-    FileUtils.rm_f(preview_path) if image?
-    FileUtils.rm_f(sample_path) if image?
-    FileUtils.rm_f(jpeg_path) if image?
+    FileUtils.rm_f([preview_path, sample_path, jpeg_path]) if image?
+  end
+
+  def move_one_file(src_path, target_path)
+    FileUtils.mkdir_p(File.dirname(target_path), :mode => 0775)
+    FileUtils.mv(src_path, target_path)
+    FileUtils.chmod(0664, target_path)
   end
 
   def move_file
-    FileUtils.mkdir_p(File.dirname(file_path), :mode => 0775)
-    FileUtils.mv(tempfile_path, file_path)
-    FileUtils.chmod(0664, file_path)
-
-    if image?
-      FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
-      FileUtils.mv(tempfile_preview_path, preview_path)
-      FileUtils.chmod(0664, preview_path)
-    end
-
-    if File.exist?(tempfile_sample_path)
-      FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
-      FileUtils.mv(tempfile_sample_path, sample_path)
-      FileUtils.chmod(0664, sample_path)
-    end
-
-    if File.exist?(tempfile_jpeg_path)
-      FileUtils.mkdir_p(File.dirname(jpeg_path), :mode => 0775)
-      FileUtils.mv(tempfile_jpeg_path, jpeg_path)
-      FileUtils.chmod(0664, jpeg_path)
-    end
+    move_one_file(tempfile_path, file_path)
+    move_one_file(tempfile_preview_path, preview_path) if image?
+    move_one_file(tempfile_sample_path, sample_path) if File.exist?(tempfile_sample_path)
+    move_one_file(tempfile_jpeg_path, jpeg_path) if File.exist?(tempfile_jpeg_path)
 
     delete_tempfile
   end

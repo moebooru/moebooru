@@ -122,6 +122,8 @@ en:
       all: Select All
       invert: Invert Selection
     update: Update
+  basic:
+    page: Page %{page}
   c:
     pool:
       not_found: "Can't find pool with id %{id}"
@@ -741,7 +743,7 @@ en:
         script: Apply tag script
         view: View posts
       pool_view_html: Viewing pool %{pool}.
-      title: /%{tags} (Page %{current_page})
+      title: ! /%{tags}
     moderate:
       down: down
       flagged: Flagged

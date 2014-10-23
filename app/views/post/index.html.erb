@@ -1,4 +1,5 @@
-<% provide :title, t(".title", :tags => params[:tags].to_s.tr("_", " "), :current_page => page_number) %>
+<% provide :title, t(".title", :tags => params[:tags].to_s.tr("_", " ")) %>
+<% provide :title, " | #{t("basic.page", :page => page_number)}" if page_number > 1 %>
 <% @canonical_url = url_for(:controller => "/post", :action => :index, :tags => params[:tags], :page => params[:page], :only_path => false) %>
 <%= render 'shared/twitter_card/gallery', posts: @posts %>
 <div id="post-list">

@@ -1,5 +1,5 @@
 local_cache [@posts.map(&:id), params[:verbose]], expires: 1.hour do
-  atom_feed :root_url => url_for(:controller => :post, :action => :index, :only_path => false) do |feed|
+  atom_feed :root_url => url_for(:controller => :post, :action => :index, :tags => params[:tags], :only_path => false) do |feed|
     feed.title CONFIG['app_name']
     feed.updated @posts[0].created_at if @posts.length > 0
     @posts.each do |post|

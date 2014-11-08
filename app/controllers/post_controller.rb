@@ -710,7 +710,11 @@ class PostController < ApplicationController
       SimilarImages.similar_images(options)
     end
 
-    unless params[:url].nil? && params[:id].nil? && params[:file].nil? && params[:search_id].nil?
+    if params[:url].nil? && params[:id].nil? && params[:file].nil? && params[:search_id].nil?
+      res = {}
+      @errors = {}
+      @searched = false
+    else
       res = search(params)
 
       @errors = res[:errors]
@@ -719,10 +723,6 @@ class PostController < ApplicationController
 
       # Never pass :file on through generated URLs.
       params.delete(:file)
-    else
-      res = {}
-      @errors = {}
-      @searched = false
     end
 
     @posts = res[:posts]

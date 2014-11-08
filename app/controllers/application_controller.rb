@@ -252,7 +252,10 @@ class ApplicationController < ActionController::Base
 
     cookies["country"] = @current_user_country
 
-    unless @current_user.is_anonymous?
+    if @current_user.is_anonymous?
+      cookies.delete :user_info
+      cookies["blacklisted_tags"] = CONFIG["default_blacklists"].to_json
+    else
       cookies["user_id"] = @current_user.id.to_s
 
       cookies["user_info"] = @current_user.user_info_cookie
@@ -298,9 +301,6 @@ class ApplicationController < ActionController::Base
       cookies["my_tags"] = @current_user.my_tags
       cookies["blacklisted_tags"] = @current_user.blacklisted_tags_array.to_json
       cookies["held_post_count"] = @current_user.held_post_count.to_s
-    else
-      cookies.delete :user_info
-      cookies["blacklisted_tags"] = CONFIG["default_blacklists"].to_json
     end
 
     if flash[:notice]

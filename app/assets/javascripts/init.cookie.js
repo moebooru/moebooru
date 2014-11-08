@@ -16,7 +16,7 @@ jQuery(document).ready(function($) {
   };
 
   // Check if there's any pending post moderation queue.
-  if (parseInt($.cookie('mod_pending')) > 0) {
+  if ($.cookie('mod_pending', Number) > 0) {
     $('#moderate').addClass('mod-pending');
   };
 });

@@ -104,8 +104,8 @@ module Post::ApiMethods
         user = options[:user] || Thread.current["danbooru-user"]
 
         result[:votes] = PostVote.where(:user_id => user.id, :post_id => posts)
-                           .pluck(:post_id, :score)
-                           .each_with_object({}) { |e, a| a[e[0]] = e[1] }
+          .pluck(:post_id, :score)
+          .each_with_object({}) { |e, a| a[e[0]] = e[1] }
       end
 
       result

@@ -59,8 +59,8 @@ class TagImplicationController < ApplicationController
     if params[:query]
       tag_ids = Tag.where("name ILIKE ?", "*#{params[:query]}*".to_escaped_for_sql_like).select(:id)
       @implications = @implications
-        .where("predicate_id IN (?) OR consequent_id IN (?)", tag_ids, tag_ids)
-        .order(:is_pending => :desc, :consequent_id => :asc)
+                      .where("predicate_id IN (?) OR consequent_id IN (?)", tag_ids, tag_ids)
+                      .order(:is_pending => :desc, :consequent_id => :asc)
     end
 
     @implications = @implications.paginate :page => page_number, :per_page => 20

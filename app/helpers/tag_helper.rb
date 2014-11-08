@@ -8,8 +8,8 @@ module TagHelper
     obsolete_tag = ([name] & obsolete).empty? ? "" : "obsolete"
     html = if prefix.blank?
              "".html_safe
-    else
-      content_tag(:span, prefix, :class => "#{obsolete_tag}")
+           else
+             content_tag(:span, prefix, :class => "#{obsolete_tag}")
     end
     html << content_tag(:span, :class => "tag-type-#{tag_type} #{obsolete_tag}") do
       link_to(name, :controller => :post, :action => :index, :tags => name)

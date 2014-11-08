@@ -79,10 +79,10 @@ class HistoryChange < ActiveRecord::Base
 
   def set_previous
     self.previous = self.class
-                      .where(:table_name => table_name, :remote_id => remote_id, :column_name => column_name)
-                      .where("id < ?", id)
-                      .order(:id => :desc)
-                      .take
+      .where(:table_name => table_name, :remote_id => remote_id, :column_name => column_name)
+      .where("id < ?", id)
+      .order(:id => :desc)
+      .take
     self.save!
   end
 end

@@ -244,13 +244,11 @@ class ApplicationController < ActionController::Base
   def init_cookies
     return if params[:format] == "xml" || params[:format] == "json"
 
-    jsdata = {}
-    jsdata[:forum_post_last_read_at] = if @current_user.is_anonymous?
-                                         Time.now
-                                       else
-                                         @current_user.last_forum_topic_read_at || Time.at(0)
-                                       end
-    jsdata.each { |name, data| cookies[name] = data.to_json }
+    cookies["forum_post_last_read_at"] = if @current_user.is_anonymous?
+                                           Time.now
+                                         else
+                                           @current_user.last_forum_topic_read_at || Time.at(0)
+                                         end
 
     cookies["country"] = @current_user_country
 

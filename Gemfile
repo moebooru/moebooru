@@ -1,4 +1,5 @@
 source "https://rubygems.org"
+source "https://rails-assets.org"
 
 gem "rails", "~> 4.0.0"
 gem "rails-observers"
@@ -10,6 +11,9 @@ gem "jquery-ui-rails"
 gem "uglifier", ">= 1.3.0" # Rails default version
 
 gem "sass-rails", "~> 4.0.2" # Rails default version
+
+gem "rails-assets-jquery-cookie"
+gem "rails-assets-mousetrap"
 
 gem "non-stupid-digest-assets"
 

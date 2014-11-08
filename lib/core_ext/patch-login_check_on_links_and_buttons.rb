@@ -3,21 +3,11 @@
 # example: :level => :member
 module ActionView
   module Helpers
-    module MoebooruTagHelper
-      # Return true if the starting level is high enough to execute
-      # this action.  This is used by User.js.
-      # Mirrors the one defined in ApplicationHelper
-      def _moebooru_need_signup?(level)
-        CONFIG["starting_level"] >= User.get_user_level(level)
-      end
-      module_function :_moebooru_need_signup?
-    end
-
     module TagHelper
       alias_method :orig_tag_options, :tag_options
       def tag_options(options, escape = true)
         level = options["level"]
-        if level && MoebooruTagHelper._moebooru_need_signup?(level)
+        if level && ApplicationHelper.need_signup?(level)
           options.delete "level"
           options["onclick"] = "if(!User.run_login_onclick(event)) return false; #{options["onclick"] || "return true;"}"
         end
@@ -32,7 +22,7 @@ module ActionView
       alias_method :orig_form_tag, :form_tag
       def form_tag(url_for_options = {}, options = {}, *parameters_for_url, &block)
         if options[:level]
-          if MoebooruTagHelper._moebooru_need_signup?(options[:level])
+          if ApplicationHelper.need_signup?(options[:level])
             classes = (options[:class] || "").split(" ")
             classes += ["need-signup"]
             options[:class] = classes.join(" ")
@@ -51,7 +41,7 @@ module ActionView
       def link_to_function(name, *args, &block)
         html_options = args.extract_options!
         if html_options[:level]
-          if MoebooruTagHelper._moebooru_need_signup?(html_options[:level]) && args[0]
+          if ApplicationHelper.need_signup?(html_options[:level]) && args[0]
             args[0] = "User.run_login(false, function() { #{args[0]} })"
           end
           html_options.delete :level
@@ -67,7 +57,7 @@ module ActionView
       def button_to_function(name, *args, &block)
         html_options = args.extract_options!
         if html_options[:level]
-          if MoebooruTagHelper._moebooru_need_signup?(html_options[:level]) && args[0]
+          if ApplicationHelper.need_signup?(html_options[:level]) && args[0]
             args[0] = "User.run_login(false, function() { #{args[0]} })"
           end
           html_options.delete :level

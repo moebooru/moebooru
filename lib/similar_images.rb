@@ -135,7 +135,7 @@ module SimilarImages
           elsif service
             post = ExternalPost.new
             post.id = "#{next_id}"
-            next_id = next_id + 1
+            next_id += 1
             post.md5 = md5
             post.preview_url = element[:preview]
             if service == "gelbooru.com" # hack

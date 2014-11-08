@@ -18,8 +18,8 @@ module Post::ParentMethods
 
     def recalculate_has_children
       transaction do
-        execute_sql("UPDATE posts SET has_children = false WHERE has_children = true")
-        execute_sql("UPDATE posts SET has_children = true WHERE id IN (SELECT parent_id FROM posts WHERE parent_id IS NOT NULL AND status <> 'deleted')")
+        where(:has_children => true).update_all(:has_children => false)
+        where(:id => available.where.not(:parent_id => nil).select(:parent_id)).update_all(:has_children => true)
       end
     end
 

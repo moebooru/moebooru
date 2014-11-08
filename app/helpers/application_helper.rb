@@ -199,9 +199,7 @@ module ApplicationHelper
   # Return true if the starting level is high enough to execute
   # this action.  This is used by User.js.
   def need_signup?(level)
-    needed_level = User.get_user_level(level)
-    starting_level = CONFIG["starting_level"]
-    starting_level >= needed_level
+    CONFIG["starting_level"] >= User.get_user_level(level)
   end
 
   # Submit tag with a twist: removes name from tag form data so it doesn't add

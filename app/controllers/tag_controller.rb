@@ -18,11 +18,11 @@ class TagController < ApplicationController
   end
 
   def summary
-    if params[:version] then
+    if params[:version]
       # HTTP caching is unreliable for XHR.  If a version is supplied, and the version
       # hasn't changed since then, return an empty response.
       version = Tag.get_summary_version
-      if params[:version].to_i == version then
+      if params[:version].to_i == version
         render :json => { :version => version, :unchanged => true }
         return
       end

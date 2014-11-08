@@ -34,10 +34,10 @@ module SimilarImages
     end
 
     # If the source is a local post, read the preview and send it with the request.
-    if options[:type] == :post then
+    if options[:type] == :post
       source_file = File.open(options[:source].preview_path, "rb") { |file| file.read }
       source_filename = options[:source].preview_path
-    elsif options[:type] == :file then
+    elsif options[:type] == :file
       source_file = options[:source].read
       source_filename = options[:source_filename]
     end
@@ -138,9 +138,9 @@ module SimilarImages
             next_id = next_id + 1
             post.md5 = md5
             post.preview_url = element[:preview]
-            if service == "gelbooru.com" then # hack
+            if service == "gelbooru.com" # hack
               post.url = "http://" + service + "/index.php?page=post&s=view&id=" + id
-            elsif service == "e-shuushuu.net" then # hack
+            elsif service == "e-shuushuu.net" # hack
               post.url = "http://" + service + "/image/" + id + "/"
             else
               post.url = "http://" + service + "/post/show/" + id
@@ -184,7 +184,7 @@ module SimilarImages
       ret[:search_id] = "source"
 
       # Don't include the source URL if it's a data: url; it can be very large and isn't useful.
-      if post.url.slice(0, 5) == "data:" then
+      if post.url.slice(0, 5) == "data:"
         post.url = ""
       end
 
@@ -277,7 +277,7 @@ module SimilarImages
       file = "#{SEARCH_CACHE_DIR}/#{path}"
       mtime = File.mtime(file)
       age = Time.now - mtime
-      if age > 60 * 60 * 24 then
+      if age > 60 * 60 * 24
         FileUtils.rm_f(file)
       end
     end

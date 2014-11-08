@@ -170,7 +170,7 @@ module Post::TagMethods
             # Set :ignore_already_exists, so pool:1:2 can be used to change the sequence number
             # of a post that already exists in the pool.
             options = { :user => User.find(updater_user_id), :ignore_already_exists => true }
-            if defined?(seq) then
+            if defined?(seq)
               options[:sequence] = seq
             end
 
@@ -192,7 +192,7 @@ module Post::TagMethods
           pool = Pool.find_by_name(name)
           next if Thread.current["danbooru-user"] && !pool.can_change?(Thread.current["danbooru-user"], nil)
 
-          if cmd == "parent" then
+          if cmd == "parent"
             # If we have a parent, remove ourself from the pool and add our parent in
             # our place.  If we have no parent, do nothing and leave us in the pool.
             unless parent_id.nil?
@@ -235,7 +235,7 @@ module Post::TagMethods
       self.new_tags = new_tags.map { |x| Tag.find_or_create_by_name(x) }.uniq
 
       # If any tags are newly active, expire the tag cache.
-      unless new_tags.empty? then
+      unless new_tags.empty?
         any_new_tags = false
         previous_tags = cached_tags.split(" ")
         new_tags.each do |tag|
@@ -243,12 +243,12 @@ module Post::TagMethods
           # in the above DELETE, so it's not really a newly activated tag.  (This isn't
           # self.old_tags; that's the tags the user saw before he edited, not the data
           # we're replacing.)
-          if tag.post_count == 0 && !previous_tags.include?(tag.name) then
+          if tag.post_count == 0 && !previous_tags.include?(tag.name)
             any_new_tags = true
           end
         end
 
-        if any_new_tags then
+        if any_new_tags
           Moebooru::CacheHelper.expire_tag_version
         end
       end

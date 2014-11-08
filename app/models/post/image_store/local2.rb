@@ -32,7 +32,7 @@ module Post::ImageStore::Local2
   end
 
   def file_url
-    if CONFIG["use_pretty_image_urls"] then
+    if CONFIG["use_pretty_image_urls"]
       "#{base_url}/image/#{md5}/#{url_encode pretty_file_name}.#{file_ext}"
     else
       "#{base_url}/data/image/#{file_hierarchy}/#{file_name}"
@@ -50,7 +50,7 @@ module Post::ImageStore::Local2
   end
 
   def store_jpeg_url
-    if CONFIG["use_pretty_image_urls"] then
+    if CONFIG["use_pretty_image_urls"]
       "#{base_url}/jpeg/#{md5}/#{url_encode pretty_file_name(:type => :jpeg)}.jpg"
     else
       "#{base_url}/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
@@ -58,7 +58,7 @@ module Post::ImageStore::Local2
   end
 
   def store_sample_url
-    if CONFIG["use_pretty_image_urls"] then
+    if CONFIG["use_pretty_image_urls"]
       "#{base_url}/sample/#{md5}/#{url_encode pretty_file_name(:type => :sample)}.jpg"
     else
       "#{base_url}/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"

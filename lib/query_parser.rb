@@ -36,7 +36,7 @@ module QueryParser
       "'" + escaped_token + "'"
     end.compact
     query = []
-    if keywords.any? then
+    if keywords.any?
       query << "(" + keywords.join(" & ") + ")"
     end
     query

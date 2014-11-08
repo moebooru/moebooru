@@ -23,7 +23,7 @@ module Post::FileMethods
   include Moebooru::TempfilePrefix
 
   def strip_exif
-    if file_ext.downcase == "jpg" then
+    if file_ext.downcase == "jpg"
       # FIXME: awesome way to strip EXIF.
       #        This will silently fail on systems without jhead in their PATH
       #        and may cause confusion for some bored ones.
@@ -62,7 +62,7 @@ module Post::FileMethods
     # - remove character tags first;
 
     tags = Tag.compact_tags(cached_tags, 150)
-    if options[:type] == :sample then
+    if options[:type] == :sample
       tags = "sample #{tags}"
     end
 
@@ -167,15 +167,15 @@ module Post::FileMethods
   def regenerate_images(type, options = {})
     return true unless image?
 
-    if type == :sample then
+    if type == :sample
       return false unless generate_sample(options[:force_regen])
       temp_path = tempfile_sample_path
       dest_path = sample_path
-    elsif type == :jpeg then
+    elsif type == :jpeg
       return false unless generate_jpeg(options[:force_regen])
       temp_path = tempfile_jpeg_path
       dest_path = jpeg_path
-    elsif type == :preview then
+    elsif type == :preview
       return false unless generate_preview
       temp_path = tempfile_preview_path
       dest_path = preview_path
@@ -239,7 +239,7 @@ module Post::FileMethods
         end
       end
 
-      if source.to_s =~ /^http/ && source.to_s !~ /pixiv\.net/ then
+      if source.to_s =~ /^http/ && source.to_s !~ /pixiv\.net/
         # self.source = "Image board"
         self.source = ""
       end
@@ -392,7 +392,7 @@ module Post::FileMethods
     return true if (file_ext.downcase == "gif")
 
     # Always create samples for PNGs.
-    if file_ext.downcase == "png" then
+    if file_ext.downcase == "png"
       ratio = 1
     else
       ratio = CONFIG["sample_ratio"]

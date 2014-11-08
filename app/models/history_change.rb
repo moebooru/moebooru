@@ -10,7 +10,7 @@ class HistoryChange < ActiveRecord::Base
     # - edogawaconan
     if RUBY_VERSION >= "1.9"
       opts = master_class.get_versioned_attribute_options(column_name) || {}
-      if opts.is_a? Array then
+      if opts.is_a? Array
         opts = opts.each_with_object({}) { |i, a| i.each { |k, v| a[k] = v } }
       end
       return opts

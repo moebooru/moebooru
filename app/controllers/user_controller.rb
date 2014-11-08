@@ -345,7 +345,7 @@ class UserController < ApplicationController
 
   def set_avatar
     @user = @current_user
-    if params[:user_id] then
+    if params[:user_id]
       @user = User.find(params[:user_id])
       respond_to_error("Not found", :action => "index", :status => 404) unless @user
     end
@@ -356,14 +356,14 @@ class UserController < ApplicationController
     end
 
     if request.post?
-      if @user.set_avatar(params) then
+      if @user.set_avatar(params)
         redirect_to :action => "show", :id => @user.id
       else
         respond_to_error(@user, :action => "home")
       end
     end
 
-    if !@user.is_anonymous? && params[:id] == @user.avatar_post_id then
+    if !@user.is_anonymous? && params[:id] == @user.avatar_post_id
       @old = params
     end
 

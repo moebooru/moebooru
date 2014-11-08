@@ -394,7 +394,7 @@ class User < ActiveRecord::Base
 
     module ClassMethods
       def get_user_level(level)
-        unless @user_level then
+        unless @user_level
           @user_level = {}
           CONFIG["user_levels"].each do |name, value|
             normalized_name = name.downcase.gsub(/ /, "_").to_sym
@@ -488,7 +488,7 @@ class User < ActiveRecord::Base
          params[:right] < 0 || params[:right] > 1 ||
          params[:top] >= params[:bottom] ||
          params[:left] >= params[:right]
-      then
+
         errors.add(:parameter, "error")
         return false
       end
@@ -516,7 +516,7 @@ class User < ActiveRecord::Base
         # If we're cropping from a very small region in the sample, use the full
         # image instead, to get a higher quality image.
         if size[:crop_bottom] - size[:crop_top] < CONFIG["avatar_max_height"] ||
-           size[:crop_right] - size[:crop_left] < CONFIG["avatar_max_width"] then
+           size[:crop_right] - size[:crop_left] < CONFIG["avatar_max_width"]
           use_sample = false
         end
       end
@@ -591,7 +591,7 @@ class User < ActiveRecord::Base
     def commit_secondary_languages
       return unless secondary_language_array
 
-      if secondary_language_array.include?("none") then
+      if secondary_language_array.include?("none")
         self.secondary_languages = ""
       else
         self.secondary_languages = secondary_language_array.join(",")

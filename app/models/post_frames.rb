@@ -71,7 +71,7 @@ class PostFrames < ActiveRecord::Base
     # post_frames_out_of_date index.
     post = Post.find_by("frames <> frames_pending AND (frames <> '' OR frames_pending <> '')")
     unless post.nil?
-      if update_status then
+      if update_status
         update_status.call("Creating frames for post #{post.id}")
       end
       return PostFrames.process_post(post)
@@ -114,7 +114,7 @@ class PostFrames < ActiveRecord::Base
     #
     # Try to find a post that needs to be created.
     frame = PostFrames.find_by(:post_id => post.id, :is_target => true, :is_created => false)
-    if frame then
+    if frame
       frame.create_file
       return true
     end
@@ -142,8 +142,8 @@ class PostFrames < ActiveRecord::Base
 
     # Try to find a frame that needs to be warehoused.
     frame = PostFrames.find_by(:post_id => post.id, :is_active => true, :is_warehoused => false)
-    if frame then
-      if update_status then
+    if frame
+      if update_status
         update_status.call("Warehousing frames for post #{frame.post_id}")
       end
       frame.warehouse_frame
@@ -157,14 +157,14 @@ class PostFrames < ActiveRecord::Base
 
   # Posts that are neither active nor target are no longer needed.  Incrementally them up and delete them.
   def self.purge_frames(update_status = nil)
-    if update_status then
+    if update_status
       update_status.call("Cleaning up old post frames")
     end
 
     # Find a file that needs to be unwarehoused.
     frame = PostFrames.find_by(:is_target => false, :is_active => false, :is_warehoused => true)
-    unless frame.nil? then
-      if update_status then
+    unless frame.nil?
+      if update_status
         update_status.call("Unwarehousing old frames for post #{frame.post_id}")
       end
 
@@ -177,7 +177,7 @@ class PostFrames < ActiveRecord::Base
     # Find a file that needs to be deleted.  Only do this after unwarehousing the image, so we don't
     # end up in a confusing state where a file is on a mirror and not the master.
     frame = PostFrames.find_by(:is_active => false, :is_target => false, :is_created => true, :is_warehoused => false)
-    unless frame.nil? then
+    unless frame.nil?
       logger.info("Deleting #{frame.id}")
       FileUtils.rm_f(frame.file_path)
       frame.update_attributes(:is_created => false)

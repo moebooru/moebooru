@@ -40,7 +40,7 @@ class ReportController < ApplicationController
       params << @start_date
       params << @end_date
 
-      if user["user"] then
+      if user["user"]
         conds << "user_id = ?"
         params << user["id"]
       else

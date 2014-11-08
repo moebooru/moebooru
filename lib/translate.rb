@@ -25,11 +25,11 @@ module Translate
         resp = JSON.parse(response.body)
 
         # Undocumented: the API returns 404 if all translations return "could not reliably detect source language".
-        if resp["responseStatus"] == 404 then
+        if resp["responseStatus"] == 404
           return nil
         end
 
-        if resp["responseStatus"] != 200 then
+        if resp["responseStatus"] != 200
           raise ServerError, resp["responseDetails"]
         end
         return resp
@@ -66,7 +66,7 @@ module Translate
 
     # resp = Translate.request(path)
     resp = Translate.post(path, params, :referer => options[:referer])
-    if resp.nil? then
+    if resp.nil?
       # We didn't get a usable response.
       return {}, ""
     end
@@ -76,7 +76,7 @@ module Translate
     # The translate API is a bit inconsistent: it returns an array only when there's more than
     # one target language.  Handle both.
     translations = []
-    if data.is_a?(Array) then
+    if data.is_a?(Array)
       data.each do |d|
         translations << d["responseData"]
       end
@@ -88,7 +88,7 @@ module Translate
     source_lang = translations[0]["detectedSourceLanguage"]
     languages.each_index do |i|
       lang = languages[i]
-      if lang == source_lang then
+      if lang == source_lang
         # Guarantee that if the source and destination languages are the same, the output
         # is identical to the input.
         result[lang] = s

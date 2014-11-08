@@ -145,7 +145,7 @@ class InlineController < ApplicationController
     return access_denied unless @current_user.has_permission? @inline
 
     if request.post?
-      if @inline.crop(params) then
+      if @inline.crop(params)
         redirect_to :action => "edit", :id => @inline.id
       else
         respond_to_error(@inline, :action => "edit", :id => @inline.id)

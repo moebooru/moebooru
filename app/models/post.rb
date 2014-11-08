@@ -145,7 +145,7 @@ class Post < ActiveRecord::Base
     update_attributes(:status => "active", :approver_id => approver_id)
 
     # Don't bump posts if the status wasn't "pending"; it might be "flagged".
-    if old_status == "pending" && CONFIG["hide_pending_posts"] then
+    if old_status == "pending" && CONFIG["hide_pending_posts"]
       touch_index_timestamp
     end
     # Always try to save to trigger history logging.

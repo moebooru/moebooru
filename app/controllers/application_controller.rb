@@ -269,7 +269,7 @@ class ApplicationController < ActionController::Base
         cookies["comments_updated"] = "0"
       end
 
-      if @current_user.is_janitor_or_higher? then
+      if @current_user.is_janitor_or_higher?
         mod_pending = Post.where("status IN (?)", %w(flagged pending)).count
         cookies["mod_pending"] = mod_pending.to_s
       end
@@ -303,7 +303,7 @@ class ApplicationController < ActionController::Base
       cookies["blacklisted_tags"] = CONFIG["default_blacklists"].to_json
     end
 
-    if flash[:notice] then
+    if flash[:notice]
       cookies["notice"] = flash[:notice]
     end
   end

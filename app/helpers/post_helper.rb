@@ -31,7 +31,7 @@ module PostHelper
     image_class = "preview"
     image_id = options[:image_id]
     image_id = %(id="#{h(image_id)}") if image_id
-    if is_post then
+    if is_post
       image_title = h("Rating: #{post.pretty_rating} Score: #{post.score} Tags: #{post.cached_tags} User: #{post.author}")
     else
       image_title = ""
@@ -41,14 +41,14 @@ module PostHelper
     link_onmouseover = %(onmouseover="#{options[:onmouseover]}") if options[:onmouseover]
     link_onmouseout = %(onmouseout="#{options[:onmouseout]}") if options[:onmouseout]
 
-    if options[:display] == :block then
+    if options[:display] == :block
       # Show the thumbnail at its actual resolution, and crop it with northern orientation
       # to a smaller size.
       width, height = post.raw_preview_dimensions
       block_size = [200, 200]
       visible_width = [block_size[0], width].min
       crop_left = (width - visible_width) / 2
-    elsif options[:display] == :large then
+    elsif options[:display] == :large
       width, height = post.raw_preview_dimensions
       block_size = [width, height]
       crop_left = 0
@@ -61,7 +61,7 @@ module PostHelper
     end
 
     image = %(<img src="#{post.preview_url}" style="margin-left: #{-crop_left}px;" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">)
-    if is_post then
+    if is_post
       plid = %(<span class="plid">#pl #{request.protocol}#{h CONFIG["server_host"]}/post/show/#{post.id}</span>)
       target_url = %(/post/show/#{post.id}/#{u(post.tag_title)}#{options[:url_params] || ""})
     else
@@ -74,7 +74,7 @@ module PostHelper
     link = %(<a class="#{link_class}" href="#{target_url}" #{link_onclick}#{link_onmouseover}#{link_onmouseout}>#{image}#{plid}</a>)
     div = %(<div class="inner" style="width: #{block_size[0]}px; height: #{block_size[1]}px;">#{link}</div>)
 
-    if post.use_jpeg?(@current_user) && !options[:disable_jpeg_direct_links] then
+    if post.use_jpeg?(@current_user) && !options[:disable_jpeg_direct_links]
       if post.tags.include?("dakimakura") && !@current_user.is_contributor_or_higher?
         dl_width = post.jpeg_width.to_i
         dl_height = post.jpeg_height.to_i

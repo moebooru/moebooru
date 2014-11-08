@@ -60,7 +60,7 @@ module TagHelper
       end
 
       tag_link_options = {}
-      if options[:with_hover_highlight] then
+      if options[:with_hover_highlight]
         tag_link_options[:mouseover] = "Post.highlight_posts_with_tag('#{escape_javascript(name)}')"
         tag_link_options[:mouseout] = "Post.highlight_posts_with_tag(null)"
       end
@@ -69,7 +69,7 @@ module TagHelper
       html << "</li>"
     end
 
-    if options[:with_aliases] then
+    if options[:with_aliases]
       # Map tags to aliases to the tag, and include the original tag so search engines can
       # find it.
       id_list = tags.map { |t| t[3] }

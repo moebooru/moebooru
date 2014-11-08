@@ -198,7 +198,7 @@ module HistoryHelper
     html = ""
 
     classes = []
-    if !table_options[:never_obsolete][change.column_name.to_sym] && change.is_obsolete? then
+    if !table_options[:never_obsolete][change.column_name.to_sym] && change.is_obsolete?
       classes << ["obsolete"]
     end
 
@@ -212,7 +212,7 @@ module HistoryHelper
       when "rating"
         html << %(<span class="changed-post-rating">rating:)
         html << change.value
-        if change.previous then
+        if change.previous
           html << %(←)
           html << change.previous.value
         end
@@ -291,12 +291,12 @@ module HistoryHelper
         end
 
       when "description"
-        if change.value == "" then
+        if change.value == ""
           html << "description removed"
         else
-          if !change.previous then
+          if !change.previous
             html << "description: "
-          elsif change.previous.value == "" then
+          elsif change.previous.value == ""
             html << "description added: "
           else
             html << "description changed: "
@@ -316,15 +316,15 @@ module HistoryHelper
           multiple_lines = text.include?("<br>")
 
           show_in_detail = options[:specific_history] || options[:specific_object]
-          if !multiple_lines then
+          if !multiple_lines
             display = text
-          elsif show_diff then
+          elsif show_diff
             display = "<div class='diff text-block'>#{text}</div>"
           else
             display = "<div class='initial-diff text-block'>#{text}</div>"
           end
 
-          if multiple_lines && !show_in_detail then
+          if multiple_lines && !show_in_detail
             html << "<a onclick='$(this).hide(); $(this).next().show()' href='#'>(show changes)</a><div style='display: none;'>#{display}</div>"
           else
             html << display
@@ -348,7 +348,7 @@ module HistoryHelper
 
       when "sequence"
         seq = "order:%i:%s" % [change.obj.post_id, change.value]
-        if change.previous then
+        if change.previous
           seq << %(←#{change.previous.value})
         end
         html << link_to("%s" % seq, :controller => "post", :action => "show", :id => change.obj.post_id)
@@ -359,7 +359,7 @@ module HistoryHelper
         html << "type:"
         tag_type = Tag.type_name_from_value(change.value.to_i)
         html << %(<span class="tag-type-#{tag_type}">#{tag_type}</span>)
-        if change.previous then
+        if change.previous
           tag_type = Tag.type_name_from_value(change.previous.value.to_i)
           html << %(←<span class="tag-type-#{tag_type}">#{tag_type}</span>)
         end
@@ -384,7 +384,7 @@ module HistoryHelper
       when "width"
         html << "width:#{h(change.value)}"
       when "is_active"
-        if change.value.trueish? then
+        if change.value.trueish?
           # Don't show the note initially being set to active.
           return nil unless change.previous
           html << "undeleted"

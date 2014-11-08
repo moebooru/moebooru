@@ -62,7 +62,7 @@ class Pool < ActiveRecord::Base
         end
 
         pool_post = all_pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
-        if pool_post then
+        if pool_post
           pool_post.active = false
           pool_post.save!
 

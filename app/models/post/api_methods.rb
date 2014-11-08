@@ -50,7 +50,7 @@ module Post::ApiMethods
     if status == "flagged" || status == "deleted" || status == "pending"
       ret[:flag_detail] = flag_detail
 
-      if flag_detail then
+      if flag_detail
         flag_detail.hide_user = (status == "deleted" && !Thread.current["danbooru-user"].is_mod_or_higher?)
       end
     end

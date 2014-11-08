@@ -30,7 +30,7 @@ class Hash
     attrs = {}
     children = []
     each do |key, value|
-      if value.respond_to?(:to_xml) || value.is_a?(Array) then
+      if value.respond_to?(:to_xml) || value.is_a?(Array)
         # If an array child is empty, omit the node entirely.
         next if value.is_a?(Array) && value.empty?
         children << [key, value]
@@ -45,7 +45,7 @@ class Hash
       options[:builder].instruct!
     end
 
-    if children.empty? then
+    if children.empty?
       options[:builder].tag!(root, attrs)
     else
       options[:builder].tag!(root, attrs) do

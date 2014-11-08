@@ -79,7 +79,7 @@ module Danbooru
             return yield(res)
 
           when Net::HTTPRedirection then
-            if limit == 0 then
+            if limit == 0
               raise SocketError, "Too many redirects"
             end
             source = res["location"]

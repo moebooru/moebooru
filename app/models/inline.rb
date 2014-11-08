@@ -24,7 +24,7 @@ class Inline < ActiveRecord::Base
        params[:right].to_f < 0 || params[:right].to_f > 1 ||
        params[:top] >= params[:bottom] ||
        params[:left] >= params[:right]
-    then
+
       errors.add(:parameter, "error")
       return false
     end

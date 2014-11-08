@@ -42,7 +42,7 @@ class HistoryController < ApplicationController
     # rather than the grouping table in histories.  We don't expose this in general.
     # Searching based on hc.table_name without specifying an ID is slow, and the
     # details here shouldn't be visible anyway.
-    if q.key?(:type) && q.key?(:id) && q[:type] == "notes" then
+    if q.key?(:type) && q.key?(:id) && q[:type] == "notes"
       q[:inner_type] = q[:type]
       q[:remote_id] = q[:id]
 
@@ -66,12 +66,12 @@ class HistoryController < ApplicationController
       end
     end
 
-    if q.key?(:id) then
+    if q.key?(:id)
       conds << "group_by_id = ?"
       cond_params << q[:id]
     end
 
-    if q.key?(:type) then
+    if q.key?(:type)
 
       conds << "group_by_table = ?"
       cond_params << q[:type]
@@ -99,7 +99,7 @@ class HistoryController < ApplicationController
       hc_cond_params << q[:remote_id]
     end
 
-    if q[:keywords].any? then
+    if q[:keywords].any?
       value_index_query = "(" + Array(q[:keywords]).map(&:to_escaped_for_tsquery).join(" & ") + ")"
       hc_conds << "hc.value_index @@ to_tsquery('danbooru', ?)"
       hc_cond_params << value_index_query
@@ -117,7 +117,7 @@ class HistoryController < ApplicationController
 
       # Look up the named class.
       cls = Versioned.get_versioned_classes_by_name[table]
-      if cls.nil? then
+      if cls.nil?
         conds << "false"
       else
         hc_conds << "hc.column_name = ?"
@@ -126,7 +126,7 @@ class HistoryController < ApplicationController
         # A changes that has no previous value is the initial value for that object.  Don't show
         # these changes unless they're different from the default for that field.
         default_value, has_default = cls.get_versioned_default(field.to_sym)
-        if has_default then
+        if has_default
           hc_conds << "(hc.previous_id IS NOT NULL OR value <> ?)"
           hc_cond_params << default_value
         end
@@ -138,7 +138,7 @@ class HistoryController < ApplicationController
       cond_params += hc_cond_params
     end
 
-    if q.key?(:type) && !q.key?(:change) then
+    if q.key?(:type) && !q.key?(:change)
       @type = q[:type]
     else
       @type = "all"

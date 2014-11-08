@@ -8,7 +8,7 @@ class History < ActiveRecord::Base
   end
 
   def aux=(o)
-    if o.empty? then
+    if o.empty?
       self.aux_as_json = nil
     else
       self.aux_as_json = o.to_json
@@ -53,7 +53,7 @@ class History < ActiveRecord::Base
         next
       end
 
-      unless user.can_change?(change.obj, change.column_name.to_sym) then
+      unless user.can_change?(change.obj, change.column_name.to_sym)
         errors[change] = :denied
         next
       end
@@ -88,14 +88,14 @@ class History < ActiveRecord::Base
           changes.each do |change|
             if redo_change
               redo_func = ("%s_redo" % change.column_name).to_sym
-              if object.respond_to?(redo_func) then
+              if object.respond_to?(redo_func)
                 object.send(redo_func, change)
               else
                 object.attributes = { change.column_name.to_sym => change.value }
               end
             else
               undo_func = ("%s_undo" % change.column_name).to_sym
-              if object.respond_to?(undo_func) then
+              if object.respond_to?(undo_func)
                 object.send(undo_func, change)
               else
                 if change.previous
@@ -164,7 +164,7 @@ class History < ActiveRecord::Base
 
     stack << node
 
-    if node[:children] then
+    if node[:children]
       node[:children].each do |child|
         stack_object_recurse(child, stack, done)
       end

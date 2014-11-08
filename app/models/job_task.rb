@@ -178,9 +178,9 @@ class JobTask < ActiveRecord::Base
       ret
 
     when "periodic_maintenance"
-      if status == "processing" then
+      if status == "processing"
         data["step"]
-      elsif status != "error" then
+      elsif status != "error"
         next_run = (data["next_run"] || 0) - Time.now.to_i
         next_run_in_minutes = next_run.to_i / 60
         if next_run_in_minutes > 0
@@ -192,16 +192,16 @@ class JobTask < ActiveRecord::Base
       end
 
     when "upload_batch_posts"
-      if status == "pending" then
+      if status == "pending"
         return "idle"
-      elsif status == "processing" then
+      elsif status == "processing"
         user = User.find_name(data["user_id"])
         return "uploading #{data["url"]} for #{user}"
       end
     when "update_post_frames"
-      if status == "pending" then
+      if status == "pending"
         return "idle"
-      elsif status == "processing" then
+      elsif status == "processing"
         return data["status"]
       end
     end

@@ -167,7 +167,7 @@ module Post::SqlMethods
         end
 
         if q[:pool].is_a?(String)
-          if q[:pool] == "*" then
+          if q[:pool] == "*"
             joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
           else
             joins << "JOIN pools_posts ON pools_posts.post_id = p.id JOIN pools ON pools_posts.pool_id = pools.id"
@@ -245,7 +245,7 @@ module Post::SqlMethods
         end
       else
         # Hide held posts by default only when not using the API.
-        unless options[:from_api] then
+        unless options[:from_api]
           conds << "NOT p.is_held"
         end
       end
@@ -259,7 +259,7 @@ module Post::SqlMethods
         end
       else
         # Hide pending posts by default only when not using the API.
-        if CONFIG["hide_pending_posts"] && !options[:from_api] then
+        if CONFIG["hide_pending_posts"] && !options[:from_api]
           conds << "p.status <> 'pending'"
         end
       end
@@ -318,7 +318,7 @@ module Post::SqlMethods
 
         when "portrait_pool"
           # We can only do this if we're searching for a pool.
-          if q.key?(:pool) then
+          if q.key?(:pool)
             sql << " ORDER BY 1.0*width / GREATEST(1, height), nat_sort(pools_posts.sequence), pools_posts.post_id"
           end
 
@@ -348,11 +348,11 @@ module Post::SqlMethods
         use_default_order = true
       end
 
-      if use_default_order && !options[:count] then
+      if use_default_order && !options[:count]
         if pool_ordering
           sql << pool_ordering
         else
-          if options[:from_api] then
+          if options[:from_api]
             # When using the API, default to sorting by ID.
             sql << " ORDER BY p.id DESC"
           else

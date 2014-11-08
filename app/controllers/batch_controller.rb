@@ -5,9 +5,9 @@ class BatchController < ApplicationController
   before_action :contributor_only, :only => [:index, :create, :enqueue, :update]
 
   def index
-    if @current_user.is_mod_or_higher? && params[:user_id] == "all" then
+    if @current_user.is_mod_or_higher? && params[:user_id] == "all"
       user_id = nil
-    elsif @current_user.is_mod_or_higher? && params[:user_id] then
+    elsif @current_user.is_mod_or_higher? && params[:user_id]
       user_id = params[:user_id]
     else
       user_id = @current_user.id
@@ -16,7 +16,7 @@ class BatchController < ApplicationController
     p = { :per_page => 25, :order => "created_at ASC, id ASC", :page => page_number }
     conds = []
     cond_params = []
-    unless user_id.nil? then
+    unless user_id.nil?
       conds.push("user_id = ?")
       cond_params.push(user_id)
     end
@@ -29,8 +29,8 @@ class BatchController < ApplicationController
     conds = []
     cond_params = []
 
-    if @current_user.is_mod_or_higher? && params[:user_id] == "all" then
-    elsif @current_user.is_mod_or_higher? && params[:user_id] then
+    if @current_user.is_mod_or_higher? && params[:user_id] == "all"
+    elsif @current_user.is_mod_or_higher? && params[:user_id]
       conds.push("user_id = ?")
       cond_params.push(params[:user_id])
     else
@@ -43,21 +43,21 @@ class BatchController < ApplicationController
 
     count = 0
 
-    if params[:do] == "pause" then
+    if params[:do] == "pause"
       conds.push("status = 'pending'")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.update_attributes(:status => "paused")
         count += 1
       end
       flash[:notice] = "Paused %i uploads." % count
-    elsif params[:do] == "unpause" then
+    elsif params[:do] == "unpause"
       conds.push("status = 'paused'")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.update_attributes(:status => "pending")
         count += 1
       end
       flash[:notice] = "Resumed %i uploads." % count
-    elsif params[:do] == "retry" then
+    elsif params[:do] == "retry"
       conds.push("status = 'error'")
 
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
@@ -66,7 +66,7 @@ class BatchController < ApplicationController
       end
 
       flash[:notice] = "Retrying %i uploads." % count
-    elsif params[:do] == "clear_finished" then
+    elsif params[:do] == "clear_finished"
       conds.push("(status = 'finished' or status = 'error')")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.destroy
@@ -74,7 +74,7 @@ class BatchController < ApplicationController
       end
 
       flash[:notice] = "Cleared %i finished uploads." % count
-    elsif params[:do] == "abort_all" then
+    elsif params[:do] == "abort_all"
       conds.push("(status = 'pending' or status = 'paused')")
       BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
         item.destroy
@@ -89,14 +89,14 @@ class BatchController < ApplicationController
 
   def create
     filter = {}
-    if @current_user.is_mod_or_higher? && params[:user_id] == "all" then
-    elsif @current_user.is_mod_or_higher? && params[:user_id] then
+    if @current_user.is_mod_or_higher? && params[:user_id] == "all"
+    elsif @current_user.is_mod_or_higher? && params[:user_id]
       filter[:user_id] = params[:user_id]
     else
       filter[:user_id] = @current_user.id
     end
 
-    if params[:url] then
+    if params[:url]
       @source = params[:url]
 
       text = ""
@@ -116,7 +116,7 @@ class BatchController < ApplicationController
     params[:files].each do |url|
       tags = params[:post][:tags] || ""
       tags = tags.split(/ /)
-      if params[:post][:rating] then
+      if params[:post][:rating]
         # Add this to the beginning, so any rating: metatags in the tags will
         # override it.
         tags = ["rating:" + params[:post][:rating]] + tags

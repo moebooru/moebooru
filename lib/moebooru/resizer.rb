@@ -80,8 +80,8 @@ module Moebooru
     def reduce_to(size, max_size, ratio = 1, allow_enlarge = false, min_max = false)
       ret = size.dup
 
-      if min_max then
-        if max_size[:width] < max_size[:height] != size[:width] < size[:height] then
+      if min_max
+        if max_size[:width] < max_size[:height] != size[:width] < size[:height]
           max_size[:width], max_size[:height] = max_size[:height], max_size[:width]
         end
       end

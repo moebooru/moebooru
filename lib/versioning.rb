@@ -46,7 +46,7 @@ module ActiveRecord
       if history
         # p "reuse? %s != %s, %i != %i" % [history.group_by_table, self.class.get_group_by_table_name, history.group_by_id, self.get_group_by_id]
         if history.group_by_table != self.class.get_group_by_table_name ||
-           history.group_by_id != get_group_by_id then
+           history.group_by_id != get_group_by_id
           # p "don't reuse"
           Thread.current[:versioning_history] = nil
           history = nil
@@ -55,7 +55,7 @@ module ActiveRecord
         end
       end
 
-      unless history then
+      unless history
         options = {
           :group_by_table => self.class.get_group_by_table_name,
           :group_by_id => get_group_by_id,
@@ -63,7 +63,7 @@ module ActiveRecord
         }
 
         cb = self.class.versioning_aux_callback
-        if cb then
+        if cb
           options[:aux] = send(cb)
         end
         history = History.new(options)
@@ -397,14 +397,14 @@ module ActiveRecord
             end
           end
 
-          if tags != prev_tags || rating != prev_rating then
+          if tags != prev_tags || rating != prev_rating
             h = History.new(:group_by_table => "posts",
                             :group_by_id => tag_history.post_id,
                             :user_id => tag_history.user_id || tag_history.post.user_id,
                             :created_at => tag_history.created_at)
             h.save!
           end
-          if tags != prev_tags then
+          if tags != prev_tags
             c = h.history_changes.new(:table_name => "posts",
                                       :remote_id => tag_history.post_id,
                                       :column_name => "cached_tags",
@@ -412,7 +412,7 @@ module ActiveRecord
             c.save!
           end
 
-          if rating != prev_rating then
+          if rating != prev_rating
             c = h.history_changes.new(:table_name => "posts",
                                       :remote_id => tag_history.post_id,
                                       :column_name => "rating",
@@ -429,7 +429,7 @@ module ActiveRecord
           p "%i/%i" % [current, count]
           current += 1
 
-          if ver.version == 1 then
+          if ver.version == 1
             prev = nil
           else
             prev = NoteVersion.find(:first, :conditions => ["post_id = ? and note_id = ? and version = ?", ver.post_id, ver.note_id, ver.version - 1])
@@ -438,7 +438,7 @@ module ActiveRecord
           fields = []
           [:is_active, :body, :x, :y, :width, :height].each do |field|
             value = ver.send(field)
-            if prev then
+            if prev
               prev_value = prev.send(field)
               next if value == prev_value
             end
@@ -446,7 +446,7 @@ module ActiveRecord
           end
 
           # Only create the History if we actually found any changes.
-          if fields.any? then
+          if fields.any?
             h = History.new(:group_by_table => "posts",
                             :group_by_id => ver.post_id,
                             :user_id => ver.user_id || ver.post.user_id,

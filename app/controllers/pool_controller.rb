@@ -42,7 +42,7 @@ class PoolController < ApplicationController
       end
     end
 
-    unless search_tokens.empty? then
+    unless search_tokens.empty?
       value_index_query = "(" + Array(search_tokens).map(&:to_escaped_for_tsquery).join(" & ") + ")"
       conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
       cond_params << value_index_query
@@ -72,7 +72,7 @@ class PoolController < ApplicationController
 
     options[:conditions] = [conds.join(" AND "), *cond_params]
 
-    if order.nil? then
+    if order.nil?
       if search_tokens.empty?
         order = "date"
       else
@@ -115,7 +115,7 @@ class PoolController < ApplicationController
     q = Tag.parse_query("")
     q[:pool] = params[:id].to_i
     q[:show_deleted_only] = false
-    if @browse_mode == 1 then
+    if @browse_mode == 1
       q[:limit] = 1000
     else
       q[:limit] = 24
@@ -184,7 +184,7 @@ class PoolController < ApplicationController
     if request.post?
       @new_pool.save
 
-      unless @new_pool.errors.empty? then
+      unless @new_pool.errors.empty?
         respond_to_error(@new_pool, :action => "index")
         return
       end
@@ -351,7 +351,7 @@ class PoolController < ApplicationController
   def transfer_metadata
     @to = Pool.find(params[:to])
 
-    unless params[:from] then
+    unless params[:from]
       @from = nil
       return
     end
@@ -361,7 +361,7 @@ class PoolController < ApplicationController
     from_posts = @from.pool_posts
     to_posts = @to.pool_posts
 
-    if from_posts.length == to_posts.length then
+    if from_posts.length == to_posts.length
       @truncated = false
     else
       @truncated = true
@@ -380,15 +380,15 @@ class PoolController < ApplicationController
 
       tags = from.tags.split(" ")
 
-      if from.rating != to.rating then
+      if from.rating != to.rating
         tags << "rating:%s" % to.rating
       end
 
-      if from.is_shown_in_index != to.is_shown_in_index then
+      if from.is_shown_in_index != to.is_shown_in_index
         tags << (from.is_shown_in_index ? "show" : "hide")
       end
 
-      if from.parent_id != to.id then
+      if from.parent_id != to.id
         tags << "child:%i" % from.id
       end
 

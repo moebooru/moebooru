@@ -38,7 +38,7 @@ module ApplicationHelper
   end
 
   def format_inline(inline, num, id, preview_html = nil)
-    if inline.inline_images.empty? then
+    if inline.inline_images.empty?
       return ""
     end
 
@@ -80,7 +80,7 @@ module ApplicationHelper
       end
     end
 
-    if num > 0 then
+    if num > 0
       text << '<script language="javascript">' + list.join("\n") + "</script>"
     end
 
@@ -150,7 +150,7 @@ module ApplicationHelper
     item[:html_id] = options[:html_id] if options[:html_id]
     item[:name] = options[:name] if options[:name]
 
-    if options[:level] && need_signup?(options[:level]) then
+    if options[:level] && need_signup?(options[:level])
       item[:login] = true
     end
 

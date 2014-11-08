@@ -167,7 +167,7 @@ class PostController < ApplicationController
 
     ids = {}
     (params["post"] || []).each do |post|
-      if post.is_a?(Array) then
+      if post.is_a?(Array)
         # We prefer { :id => 1, :rating => 's' }, but accept ["123", {:rating => 's'}], since that's
         # what we'll get from HTML forms.
         post_id = post[0]
@@ -303,7 +303,7 @@ class PostController < ApplicationController
     end
 
     @ambiguous_tags = Tag.select_ambiguous(split_tags)
-    if q.key?(:pool) && q[:pool].is_a?(Integer) then
+    if q.key?(:pool) && q[:pool].is_a?(Integer)
       @searching_pool = Pool.find_by_id(q[:pool])
     end
 
@@ -313,7 +313,7 @@ class PostController < ApplicationController
     offset = @posts.offset
     posts_to_load = @posts.per_page
 
-    unless from_api then
+    unless from_api
       # For forward preloading:
       posts_to_load += @posts.per_page
 
@@ -321,7 +321,7 @@ class PostController < ApplicationController
       # the previous page when the user is scanning forward should be free, since it'll already
       # be in cache, so this makes scanning the index from back to front as responsive as from
       # front to back.
-      if page && page > 1 then
+      if page && page > 1
         offset -= @posts.per_page
         posts_to_load += @posts.per_page
       end
@@ -331,8 +331,8 @@ class PostController < ApplicationController
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
 
     @preload = []
-    unless from_api then
-      if page && page > 1 then
+    unless from_api
+      if page && page > 1
         @preload = results[0, limit] || []
         results = results[limit..-1] || []
       end
@@ -343,12 +343,12 @@ class PostController < ApplicationController
 
     # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
     # can be enabled by specifying filter=1.
-    if !from_api || params[:filter] == "1" then
+    if !from_api || params[:filter] == "1"
       results = results.delete_if { |post| !post.can_be_seen_by?(@current_user, :show_deleted => true) }
       @preload = @preload.delete_if { |post| !post.can_be_seen_by?(@current_user) }
     end
 
-    if from_api && params[:api_version] == "2" && params[:format] != "json" then
+    if from_api && params[:api_version] == "2" && params[:format] != "json"
       respond_to_error("V2 API is JSON-only", {}, :status => 424)
       return
     end
@@ -369,7 +369,7 @@ class PostController < ApplicationController
         render :layout => false
       end
       fmt.json do
-        if params[:api_version] != "2" then
+        if params[:api_version] != "2"
           render :json => @posts.to_json
           return
         end
@@ -419,7 +419,7 @@ class PostController < ApplicationController
     end
 
     @pool_posts = PoolPost.where(:post_id => @post.id, :active => true).includes(:pool).references(:pool).order("pools.name")
-    if params[:pool_id] then
+    if params[:pool_id]
       @following_pool_post = @pool_posts.to_a.find { |pp| pp.pool_id == params[:pool_id] }
     else
       @following_pool_post = @pool_posts.to_a.first
@@ -501,7 +501,7 @@ class PostController < ApplicationController
   end
 
   def vote
-    unless params.key?(:score) then
+    unless params.key?(:score)
       vote =  PostVote.find_by(:user_id => @current_user.id, :post_id => params[:id])
       score = vote ? vote.score : 0
       respond_to_success("", {}, :api => { :vote => score })
@@ -530,17 +530,17 @@ class PostController < ApplicationController
 
   def flag
     post = Post.find(params[:id])
-    if params[:unflag] == "1" then
+    if params[:unflag] == "1"
       # Allow the user who flagged a post to unflag it.
       #
       # posts
       # "approve" is used both to mean "unflag post" and "approve pending post".
-      if post.status != "flagged" then
+      if post.status != "flagged"
         respond_to_error("Can only unflag flagged posts", :action => "show", :id => params[:id])
         return
       end
 
-      if !@current_user.is_mod_or_higher? && @current_user.id != post.flag_detail.user_id then
+      if !@current_user.is_mod_or_higher? && @current_user.id != post.flag_detail.user_id
         access_denied
         return
       end
@@ -639,7 +639,7 @@ class PostController < ApplicationController
 
       # Check search_id first, so options links that include it will use it.  If the
       # user searches with the actual form, search_id will be cleared on submission.
-      if params[:search_id] then
+      if params[:search_id]
         file_path = SimilarImages.find_saved_search(params[:search_id])
         if file_path.nil?
           # The file was probably purged.  Delete :search_id before redirecting, so the
@@ -647,10 +647,10 @@ class PostController < ApplicationController
           params.delete(:search_id)
           return { :errors => { :error => "Search expired" } }
         end
-      elsif params[:url] || params[:file] then
+      elsif params[:url] || params[:file]
         # Save the file locally.
         begin
-          if params[:url] then
+          if params[:url]
             search = Timeout.timeout(30) do
               Danbooru.http_get_streaming(params[:url]) do |res|
                 SimilarImages.save_search do |f|
@@ -669,7 +669,7 @@ class PostController < ApplicationController
                 f.write(buf)
               end
 
-              if wrote == 0 then
+              if wrote == 0
                 return { :errors => { :error => "No file received" } }
               end
             end
@@ -689,12 +689,12 @@ class PostController < ApplicationController
         # in the results.  The user can specify them; if not specified, fill it in.
         params[:width] ||= search[:original_width]
         params[:height] ||= search[:original_height]
-      elsif params[:id] then
+      elsif params[:id]
         options[:source] = @compared_post
         options[:type] = :post
       end
 
-      if params[:search_id] then
+      if params[:search_id]
         options[:source] = File.open(file_path, "rb")
         options[:source_filename] = params[:search_id]
         options[:source_thumb] = "/data/search/#{params[:search_id]}"
@@ -710,7 +710,7 @@ class PostController < ApplicationController
       SimilarImages.similar_images(options)
     end
 
-    unless params[:url].nil? && params[:id].nil? && params[:file].nil? && params[:search_id].nil? then
+    unless params[:url].nil? && params[:id].nil? && params[:file].nil? && params[:search_id].nil?
       res = search(params)
 
       @errors = res[:errors]
@@ -728,7 +728,7 @@ class PostController < ApplicationController
     @posts = res[:posts]
     @similar = res
 
-    if params[:format] == "json" || params[:format] == "xml" then
+    if params[:format] == "json" || params[:format] == "xml"
       if @errors[:error]
         respond_to_error(@errors[:error], { :action => "index" }, :status => 503)
         return
@@ -750,7 +750,7 @@ class PostController < ApplicationController
           flash[:notice] = @errors[:error]
         end
 
-        if @posts then
+        if @posts
           @posts = res[:posts_external] + @posts
           @posts = @posts.sort { |a, b| res[:similarity][b] <=> res[:similarity][a] }
 

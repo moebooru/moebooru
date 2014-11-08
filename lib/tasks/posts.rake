@@ -115,7 +115,7 @@ namespace :posts do
     ActiveRecord::Base.select_values_sql("SELECT p.id FROM posts p ORDER BY p.id DESC").each do |post_id|
       p "%i..." % post_id
       post = Post.find_by_id(post_id)
-      if post.regenerate_jpeg_hash then
+      if post.regenerate_jpeg_hash
         post.save!
       end
     end

@@ -7,10 +7,10 @@ module Mirrors
     IO.popen("/usr/bin/ssh -o ServerAliveInterval=30 -o Compression=no -o BatchMode=yes -o ConnectTimeout=#{timeout} #{remote_user_host} '#{command}'") do |f|
       ret = yield(f)
     end
-    if ($CHILD_STATUS & 0xFF) != 0 then
+    if ($CHILD_STATUS & 0xFF) != 0
       raise MirrorError, "Command \"%s\" to %s exited with signal %i" % [command, mirror[:host], $CHILD_STATUS & 0xFF]
     end
-    if ($CHILD_STATUS >> 8) != 0 then
+    if ($CHILD_STATUS >> 8) != 0
       raise MirrorError, "Command \"%s\" to %s exited with status %i" % [command, mirror[:host], $CHILD_STATUS >> 8]
     end
     ret
@@ -61,7 +61,7 @@ module Mirrors
     local_base = "#{Rails.root}/public/data/"
     options = { :timeout => 30 }.merge(options)
 
-    if file[0, local_base.length] != local_base then
+    if file[0, local_base.length] != local_base
       raise "Invalid filename to mirror: \"%s" % file
     end
 
@@ -90,7 +90,7 @@ module Mirrors
 
         unless system("/usr/bin/scp", "-pq", "-o", "Compression no", "-o", "BatchMode=yes",
                       "-o", "ConnectTimeout=%i" % timeout,
-                      file, "#{remote_user_host}:#{remote_filename}") then
+                      file, "#{remote_user_host}:#{remote_filename}")
           raise MirrorError, "Error copying #{file} to #{remote_user_host}:#{remote_filename}"
         end
 
@@ -138,19 +138,19 @@ module Mirrors
       end
 
       mirrors = CONFIG["image_servers"]
-      if options[:preview] then
+      if options[:preview]
         mirrors =  mirrors.select do |mirror|
           mirror[:nopreview] != true
         end
       end
 
-      unless options[:preview] then
+      unless options[:preview]
         mirrors =  mirrors.select do |mirror|
           mirror[:previews_only] != true
         end
       end
 
-      if options[:zipfile] then
+      if options[:zipfile]
         mirrors =  mirrors.select do |mirror|
           mirror[:nozipfile] != true
         end
@@ -178,10 +178,10 @@ module Mirrors
 
       # If this server has aliases, and an ID has been specified, pick a random server alias
       # with the ID as a seed so we always use the same server name for the same image.
-      if !options[:id].nil? && !server[:aliases].nil? && options[:use_aliases] then
+      if !options[:id].nil? && !server[:aliases].nil? && options[:use_aliases]
         server_count = server[:aliases].length + 1
         server_index = options[:id] % server_count
-        if server_index == 0 then
+        if server_index == 0
           return server[:server]
         else
           return server[:aliases][server_index - 1]

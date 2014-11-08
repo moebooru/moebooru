@@ -47,7 +47,7 @@ class BatchUpload < ActiveRecord::Base
 
     self.active = false
 
-    if data["success"] then
+    if data["success"]
       self.status = "finished"
     else
       self.status = "error"

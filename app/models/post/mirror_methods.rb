@@ -7,7 +7,7 @@ module Post::MirrorMethods
   # On :previews_only, upload previews to previews_only mirrors.
   def upload_to_mirrors_internal(mode = :normal)
     files_to_copy = []
-    if mode != :previews_only then
+    if mode != :previews_only
       files_to_copy << file_path
       files_to_copy << sample_path if self.has_sample?
       files_to_copy << jpeg_path if self.has_jpeg?
@@ -24,7 +24,7 @@ module Post::MirrorMethods
     end
 
     options = {}
-    if mode == :previews_only then
+    if mode == :previews_only
       options[:previews_only] = true
     end
 

@@ -12,7 +12,7 @@ class Net::HTTP::Post
       self.body += "Content-Disposition: form-data; name=#{p[:name]}"
       self.body += "; filename=#{p[:filename]}" if p[:filename]
       self.body += "\r\n"
-      if p[:binary] then
+      if p[:binary]
         self.body += "Content-Transfer-Encoding: binary\r\n"
 
         mime_type = "application/octet-stream"

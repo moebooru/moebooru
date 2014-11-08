@@ -248,7 +248,7 @@ class ApplicationController < ActionController::Base
                                            Time.now
                                          else
                                            @current_user.last_forum_topic_read_at || Time.at(0)
-                                         end
+                                         end.iso8601
 
     cookies["country"] = @current_user_country
 

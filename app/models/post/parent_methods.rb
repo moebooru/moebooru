@@ -1,4 +1,15 @@
 module Post::ParentMethods
+  extend ActiveSupport::Concern
+
+  included do
+    after_save :update_parent
+    validate :validate_parent
+    set_callback :delete, :after, :give_favorites_to_parent
+    versioned :parent_id, :default => nil
+    has_many :children, lambda { where("status <> ?", "deleted").order("id") },
+               :class_name => "Post", :foreign_key => :parent_id
+  end
+
   module ClassMethods
     def update_has_children(post_id)
       has_children = Post.exists?(["parent_id = ? AND status <> 'deleted'", post_id])
@@ -26,16 +37,6 @@ module Post::ParentMethods
       update_has_children(old_parent_id)
       update_has_children(parent_id)
     end
-  end
-
-  def self.included(m)
-    m.extend(ClassMethods)
-    m.after_save :update_parent
-    m.validate :validate_parent
-    m.set_callback :delete, :after, :give_favorites_to_parent
-    m.versioned :parent_id, :default => nil
-    m.has_many :children, lambda { where("status <> ?", "deleted").order("id") },
-               :class_name => "Post", :foreign_key => :parent_id
   end
 
   def validate_parent

@@ -1,7 +1,7 @@
 class CreateNewsUpdates < ActiveRecord::Migration
   def self.up
     execute <<-EOS
-			CREATE TABLE news_updates (
+      CREATE TABLE news_updates (
         id SERIAL PRIMARY KEY,
         created_at TIMESTAMP NOT NULL DEFAULT now(),
         updated_at TIMESTAMP NOT NULL DEFAULT now(),

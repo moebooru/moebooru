@@ -2,11 +2,11 @@ class ConstrainUserLogs < ActiveRecord::Migration
   def self.up
     execute <<-EOS
       CREATE TEMPORARY TABLE user_logs_new (
-	id SERIAL PRIMARY KEY,
-	user_id integer NOT NULL,
-	created_at timestamp NOT NULL DEFAULT now(),
-	ip_addr inet NOT NULL,
-	CONSTRAINT user_logs_new_user_ip UNIQUE (user_id, ip_addr)
+        id SERIAL PRIMARY KEY,
+        user_id integer NOT NULL,
+        created_at timestamp NOT NULL DEFAULT now(),
+        ip_addr inet NOT NULL,
+        CONSTRAINT user_logs_new_user_ip UNIQUE (user_id, ip_addr)
       )
     EOS
 
@@ -30,19 +30,19 @@ class ConstrainUserLogs < ActiveRecord::Migration
     execute <<-EOS
       CREATE OR REPLACE FUNCTION user_logs_touch(new_user_id integer, new_ip inet) RETURNS VOID AS $$
       BEGIN
-	FOR i IN 1..3 LOOP
-	  UPDATE user_logs SET created_at = now() where user_id = new_user_id and ip_addr = new_ip;
-	  IF found THEN
-	    RETURN;
-	  END IF;
+        FOR i IN 1..3 LOOP
+          UPDATE user_logs SET created_at = now() where user_id = new_user_id and ip_addr = new_ip;
+          IF found THEN
+            RETURN;
+          END IF;
 
-	  BEGIN
-	    INSERT INTO user_logs (user_id, ip_addr) VALUES (new_user_id, new_ip);
-	    RETURN;
-	  EXCEPTION WHEN unique_violation THEN
-	    -- Try again.
-	  END;
-	END LOOP;
+          BEGIN
+            INSERT INTO user_logs (user_id, ip_addr) VALUES (new_user_id, new_ip);
+            RETURN;
+          EXCEPTION WHEN unique_violation THEN
+            -- Try again.
+          END;
+        END LOOP;
       END;
       $$ LANGUAGE plpgsql;
     EOS

@@ -14,7 +14,7 @@ class ConvertFavoritesToVotes < ActiveRecord::Migration
             "  (SELECT pv.id FROM post_votes pv JOIN favorites f ON (pv.user_id = f.user_id AND pv.post_id = f.post_id))"
     execute "INSERT INTO post_votes (user_id, post_id, score, updated_at) " \
             " SELECT f.user_id, f.post_id, 3, f.created_at FROM favorites f"
-	   p Post
+    p Post
     debugger
     Post.recalculate_score
   end

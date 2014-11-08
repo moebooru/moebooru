@@ -34,7 +34,7 @@ CONFIG["pool_zips"] = false
 # and should usually be listed in CONFIG["image_servers"] unless this is a backup-
 # only host.
 CONFIG["mirrors"] = [
-	 # { :user => "danbooru", :host => "example.com", :data_dir => "/home/danbooru/public/data" },
+  # { :user => "danbooru", :host => "example.com", :data_dir => "/home/danbooru/public/data" },
 ]
 
 # Enables image samples for large images. NOTE: if you enable this, you must manually create a public/data/sample directory.
@@ -164,9 +164,9 @@ CONFIG["local_image_service"] = ""
 
 # List of image services available for similar image searching.
 CONFIG["image_service_list"] = {
-	 "danbooru.donmai.us" => "http://haruhidoujins.yi.org/multi-search.xml",
-	 "moe.imouto.org" => "http://haruhidoujins.yi.org/multi-search.xml",
-	 "konachan.com" => "http://haruhidoujins.yi.org/multi-search.xml"
+  "danbooru.donmai.us" => "http://haruhidoujins.yi.org/multi-search.xml",
+  "moe.imouto.org" => "http://haruhidoujins.yi.org/multi-search.xml",
+  "konachan.com" => "http://haruhidoujins.yi.org/multi-search.xml"
 }
 
 # If true, image services receive a URL to the thumbnail for searching, which

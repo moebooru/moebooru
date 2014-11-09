@@ -596,7 +596,7 @@ Post = {
       bl_entries = Post.current_blacklists;
     else
     {
-      bl_entries = jQuery.parseJSON(jQuery.cookie('blacklisted_tags')) || [];
+      bl_entries = jQuery.cookie('blacklisted_tags', jQuery.parseJSON) || [];
     }
 
     Post.blacklists = [];

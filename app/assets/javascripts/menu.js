@@ -11,21 +11,6 @@
   Menu = {
     menu: null,
 
-    toggle: function(e) {
-      target = $(e.target);
-      if (target.hasClass('submenu-button')) {
-        var submenu = target.siblings('.submenu'),
-          submenu_hid = (submenu.css('display') == 'none');
-        $('.submenu').hide();
-        if (submenu_hid) {
-          submenu.show();
-        }
-        return false;
-      } else if (target.parents('.submenu').length == 0 || e.which != '2') {
-        $('.submenu').hide();
-      }
-    },
-
     // Set link to moderate when there's something in moderation queue.
     set_post_moderate_count: function() {
       var mod_pending = $.cookie('mod_pending');

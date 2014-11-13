@@ -17,3 +17,5 @@
 //= require forum
 //= require user_record
 //= require_tree .
+
+//= require main_menu_dropdown

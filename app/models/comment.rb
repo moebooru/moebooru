@@ -26,9 +26,9 @@ class Comment < ActiveRecord::Base
   def update_last_commented_at
     # return if self.do_not_bump_post
 
-    comment_count = connection.select_value("SELECT COUNT(*) FROM comments WHERE post_id = #{post_id}").to_i
+    comment_count = self.class.where(:post_id => post_id).count
     if comment_count <= CONFIG["comment_threshold"]
-      connection.execute("UPDATE posts SET last_commented_at = (SELECT created_at FROM comments WHERE post_id = #{post_id} ORDER BY created_at DESC LIMIT 1) WHERE posts.id = #{post_id}")
+      Post.where(:id => post_id).update_all("last_commented_at = (SELECT created_at FROM comments WHERE post_id = #{post_id} ORDER BY created_at DESC LIMIT 1)")
     end
   end
 

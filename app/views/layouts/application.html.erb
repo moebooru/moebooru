@@ -27,11 +27,9 @@
   <%= auto_discovery_link_tag :atom, controller: '/post', :action => "atom", :tags => params[:tags] %>
   <%= stylesheet_link_tag :application %>
 
-  <%= javascript_tag do %>
-    <%= render :partial => "layouts/locale.js", :formats => :coffee %>
-  <% end %>
   <%= javascript_include_tag :application %>
   <%= javascript_include_tag 'moe-legacy/application' %>
+  <%= render 'layouts/locale' %>
   <!--[if lt IE 8]>
   <script src="/IE8.js" type="text/javascript"></script>
   <![endif]-->

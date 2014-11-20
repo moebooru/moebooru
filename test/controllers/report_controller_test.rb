@@ -4,6 +4,7 @@ class ReportControllerTest < ActionController::TestCase
   fixtures :users
 
   def create_post(tags, post_number = 1, params = {})
+    Thread.current["danbooru-user_id"] = 1
     Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_file("#{Rails.root}/test/mocks/test/test#{post_number}.jpg") }.merge(params))
   end
 
@@ -19,27 +20,27 @@ class ReportControllerTest < ActionController::TestCase
     WikiPage.create({ :title => "hoge", :user_id => 1, :body => "hoge", :ip_addr => "127.0.0.1", :is_locked => false }.merge(params))
   end
 
-  def test_tag_changes
+  def test_tag_updates
     p1 = create_post("hoge", 1)
     update_post(p1, :tags => "moge")
 
-    get :tag_changes, {}, {}
+    get :tag_updates, {}, {}
     assert_response :success
   end
 
-  def test_note_changes
+  def test_note_updates
     n1 = create_note(:body => "hoge")
     n1.update_attributes(:body => "moge")
 
-    get :note_changes, {}, {}
+    get :note_updates, {}, {}
     assert_response :success
   end
 
-  def test_wiki_changes
+  def test_wiki_updates
     w1 = create_wiki
     w1.update_attributes(:body => "moge")
 
-    get :wiki_changes, {}, {}
+    get :wiki_updates, {}, {}
     assert_response :success
   end
 end

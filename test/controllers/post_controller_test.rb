@@ -23,8 +23,8 @@ class PostControllerTest < ActionController::TestCase
     get :upload, {}, :user_id => 3
     assert_response :success
 
-    post :create, :post => { :source => "", :file => upload_file("#{Rails.root}/test/mocks/test/test1.jpg"), :tags => "hoge", :rating => "Safe" }
-    p = Post.find(:first, :order => "id DESC")
+    post :create, :post => { :source => "", :file => fixture_file_upload("../mocks/test/test1.jpg"), :tags => "hoge", :rating => "Safe" }
+    p = Post.last
     assert_equal("hoge", p.cached_tags)
     assert_equal("jpg", p.file_ext)
     assert_equal("s", p.rating)
@@ -77,12 +77,12 @@ class PostControllerTest < ActionController::TestCase
     assert_response :success
 
     post :destroy, { :id => p1.id, :reason => "sage" }, :user_id => 4
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/post/delete/#{p1.id}"
     p1.reload
     assert_equal("active", p1.status)
 
-    post :destroy, { :id => p1.id, :reason => "sage" }, :user_id => 3
-    assert_redirected_to :controller => "user", :action => "login"
+    post :destroy, { :id => p1.id, :reason => "sage" }, :user_id => 4
+    assert_redirected_to :controller => "user", :action => "login", :url => "/post/delete/#{p1.id}"
     p1.reload
     assert_equal("active", p1.status)
 
@@ -92,7 +92,7 @@ class PostControllerTest < ActionController::TestCase
     assert_not_nil(p1.flag_detail)
     assert_equal("sage", p1.flag_detail.reason)
 
-    post :destroy, { :id => p1.id, :reason => "sage" }, :user_id => 1
+    post :destroy, { :id => p1.id, :reason => "sage", :destroy => 1 }, :user_id => 1
     assert_nil(Post.find_by_id(p1.id))
   end
 
@@ -123,20 +123,20 @@ class PostControllerTest < ActionController::TestCase
   def test_atom
     create_default_posts
 
-    get :atom, {}, :user_id => 3
+    get :atom, { :format => :atom }, :user_id => 3
     assert_response :success
 
-    get :atom, { :tags => "tag1" }, :user_id => 3
+    get :atom, { :format => :atom, :tags => "tag1" }, :user_id => 3
     assert_response :success
   end
 
   def test_piclens
     create_default_posts
 
-    get :piclens, {}, :user_id => 3
+    get :piclens, { :format => :rss }, :user_id => 3
     assert_response :success
 
-    get :piclens, { :tags => "tag1" }, :user_id => 3
+    get :piclens, { :format => :rss, :tags => "tag1" }, :user_id => 3
     assert_response :success
   end
 

@@ -134,8 +134,8 @@ class PostController < ApplicationController
         @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
         @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query], :flagged => true, :order => "id desc"))
       else
-        @pending_posts = Post.find(:all, :conditions => "status = 'pending'", :order => "id desc")
-        @flagged_posts = Post.find(:all, :conditions => "status = 'flagged'", :order => "id desc")
+        @pending_posts = Post.where(:status => "pending").order(:id => :desc)
+        @flagged_posts = Post.where(:status => "flagged").order(:id => :desc)
       end
     end
   end
@@ -253,13 +253,13 @@ class PostController < ApplicationController
       @current_user.update_attribute(:last_deleted_post_seen_at, Time.now)
     end
 
-    page = page_number
-    if params[:user_id]
-      params[:user_id] = params[:user_id].to_i
-      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted' AND posts.user_id = ? ", params[:user_id]], :page => page)
-    else
-      @posts = Post.paginate(:per_page => 25, :order => "flagged_post_details.created_at DESC", :joins => "JOIN flagged_post_details ON flagged_post_details.post_id = posts.id", :select => "flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id", :conditions => ["posts.status = 'deleted'"], :page => page)
-    end
+    @posts = Post
+      .where(:status => "deleted")
+      .select("flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id")
+      .joins("JOIN flagged_post_details ON flagged_post_details.post_id = posts.id")
+      .order("flagged_post_details.created_at DESC")
+    @posts = @posts.where(:user_id => params[:user_id]) if params[:user_id]
+    @posts = @posts.paginate(:per_page => 25, :page => page_number)
   end
 
   def acknowledge_new_deleted_posts
@@ -568,7 +568,7 @@ class PostController < ApplicationController
     max_id = Post.maximum(:id)
 
     10.times do
-      post = Post.find(:first, :conditions => ["id = ? AND status <> 'deleted'", rand(max_id) + 1])
+      post = Post.available.find_by(:id => rand(1..max_id))
 
       if post && post.can_be_seen_by?(@current_user)
         redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title

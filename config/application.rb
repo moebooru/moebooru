@@ -1,5 +1,8 @@
 require File.expand_path("../boot", __FILE__)
 
+# To allow setting environment variable ZP_DATABASE_URL instead of DATABASE_URL.
+ENV["DATABASE_URL"] = ENV["MB_DATABASE_URL"] if ENV["MB_DATABASE_URL"]
+
 # Pick the frameworks you want:
 require "active_record/railtie"
 require "action_controller/railtie"

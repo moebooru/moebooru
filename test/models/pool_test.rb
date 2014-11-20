@@ -12,7 +12,7 @@ class PoolTest < ActiveSupport::TestCase
   end
 
   def find_post(pool, post_id)
-    PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post_id])
+    PoolPost.find_by(:pool_id => pool.id, :post_id => post_id)
   end
 
   def add_posts(pool, _options = {})
@@ -181,8 +181,8 @@ class PoolTest < ActiveSupport::TestCase
     pool.add_post(1)
     pool.add_post(2)
     pool.destroy
-    assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, 1]))
-    assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, 2]))
+    assert_nil find_post(pool, 1)
+    assert_nil find_post(pool, 2)
   end
 
   def test_access

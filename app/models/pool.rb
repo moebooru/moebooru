@@ -118,12 +118,7 @@ class Pool < ActiveRecord::Base
     end
 
     def next_sequence
-      seq = 0
-      pool_posts.find(:all, :select => "sequence", :order => "sequence DESC").each do |pp|
-        seq = [seq, pp.sequence.to_i].max
-      end
-
-      seq + 1
+      (pool_posts.pluck(:sequence).map(&:to_i).max || 0) + 1
     end
 
     def expire_cache

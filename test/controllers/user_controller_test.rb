@@ -105,16 +105,6 @@ class UserControllerTest < ActionController::TestCase
     assert_equal(true, user.receive_dmails?)
   end
 
-  def test_update_favorite_tags
-    post :update, { :user => { :favorite_tags_text => "a b c" } }, :user_id => 4
-    user = User.find(4)
-    assert_equal("a b c", user.favorite_tags_text)
-
-    post :update, { :user => { :favorite_tags_text => "c d e" } }, :user_id => 4
-    user.reload
-    assert_equal("c d e", user.favorite_tags_text)
-  end
-
   def test_reset_password
     setup_action_mailer
 

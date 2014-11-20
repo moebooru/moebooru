@@ -3,7 +3,6 @@
 --
 
 SET statement_timeout = 0;
-SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -2690,48 +2689,28 @@ CREATE INDEX wiki_pages_search_idx ON wiki_pages USING gin (text_search_index);
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS
-    ON DELETE TO pools DO ( DELETE FROM history_changes
-  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools'::text));
- DELETE FROM histories
-  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools'::text));
-);
+CREATE RULE delete_histories AS ON DELETE TO pools DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools'::text)); );
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS
-    ON DELETE TO pools_posts DO ( DELETE FROM history_changes
-  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools_posts'::text));
- DELETE FROM histories
-  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools_posts'::text));
-);
+CREATE RULE delete_histories AS ON DELETE TO pools_posts DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools_posts'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools_posts'::text)); );
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS
-    ON DELETE TO posts DO ( DELETE FROM history_changes
-  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'posts'::text));
- DELETE FROM histories
-  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'posts'::text));
-);
+CREATE RULE delete_histories AS ON DELETE TO posts DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'posts'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'posts'::text)); );
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS
-    ON DELETE TO tags DO ( DELETE FROM history_changes
-  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'tags'::text));
- DELETE FROM histories
-  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'tags'::text));
-);
+CREATE RULE delete_histories AS ON DELETE TO tags DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'tags'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'tags'::text)); );
 
 
 --

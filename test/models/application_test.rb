@@ -3,7 +3,7 @@ require "test_helper"
 class ApplicationTest < ActiveSupport::TestCase
   fixtures :users, :posts
   include CacheHelper
-  include SessionHelper
+  include SessionsHelper
   include ApplicationHelper
 
   def update_post(post, params = {})

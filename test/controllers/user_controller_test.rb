@@ -18,7 +18,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   def test_show
-    get :show, :id => 1
+    get :show, { :id => 1 }, :user_id => 1
     assert_response :success
   end
 
@@ -99,10 +99,10 @@ class UserControllerTest < ActionController::TestCase
     get :edit, {}, :user_id => 4
     assert_response :success
 
-    post :update, { :user => { :invite_count => 10, :receive_dmails => true } }, :user_id => 4
-    user = User.find(4)
-    assert_equal(0, user.invite_count)
-    assert_equal(true, user.receive_dmails?)
+    assert_raises(ActiveModel::MassAssignmentSecurity::Error) { post :update, { :user => { :invite_count => 10 } }, :user_id => 4 }
+
+    post :update, { :user => { :receive_dmails => true } }, :user_id => 4
+    assert_equal(true, User.find(4).receive_dmails?)
   end
 
   def test_reset_password
@@ -113,10 +113,10 @@ class UserControllerTest < ActionController::TestCase
     get :reset_password
     assert_response :success
 
-    post :reset_password, :user => { :name => "admin", :email => "wrong@danbooru.com" }
+    post :reset_password, { :user => { :name => "admin", :email => "wrong@danbooru.com" } }, :user_id => nil
     assert_equal(old_password_hash, User.find(1).password_hash)
 
-    post :reset_password, :user => { :name => "admin", :email => "admin@danbooru.com" }
+    post :reset_password, { :user => { :name => "admin", :email => "admin@danbooru.com" } }, :user_id => nil
     assert_not_equal(old_password_hash, User.find(1).password_hash)
   end
 
@@ -130,11 +130,15 @@ class UserControllerTest < ActionController::TestCase
     banned = User.find(4)
     assert_equal(CONFIG["user_levels"]["Blocked"], banned.level)
 
-    get :show_blocked_users, {}, :user_id => 1
-    assert_response :success
-
     post :unblock, { :user => { "4" => "1" } }, :user_id => 1
     banned.reload
     assert_equal(CONFIG["user_levels"]["Member"], banned.level)
+  end
+
+  def test_show_blocked_users
+    setup_action_mailer
+
+    get :show_blocked_users, {}, :user_id => 1
+    assert_response :success
   end
 end

@@ -431,7 +431,7 @@ class User < ActiveRecord::Base
 
       transaction do
         if level == CONFIG["user_levels"]["Contributor"]
-          Post.find(:all, :conditions => ["user_id = ? AND status = 'pending'", id]).each do |post|
+          Post.where(:status => "pending", :user_id => id).find_each do |post|
             post.approve!(id)
           end
         end
@@ -660,6 +660,26 @@ class User < ActiveRecord::Base
     self.show_samples = true
   end
 
+  def self.with_params(params)
+    res = all
+
+    res = res.where("name ILIKE ?", "*#{params[:name].tr(" ", "_")}*".to_escaped_for_sql_like) if params[:name]
+    res = res.where(:level => params[:level]) if params[:level] && params[:level] != "any"
+    res = res.where(:id => params[:id]) if params[:id]
+
+    order =
+      case params[:order]
+      when "name" then "LOWER(name)"
+      when "posts" then "(SELECT count(*) FROM posts WHERE user_id = users.id) DESC"
+      when "favorites" then "(SELECT count(*) FROM favorites WHERE user_id = users.id) DESC"
+      when "notes" then "(SELECT count(*) FROM note_versions WHERE user_id = users.id) DESC"
+      else "id DESC"
+      end
+
+    res.order(order)
+  end
+
+  # FIXME: ensure not used and then nuke
   def self.generate_sql(params)
     Nagato::Builder.new do |builder, cond|
       if params[:name]

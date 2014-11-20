@@ -104,7 +104,7 @@ class UserController < ApplicationController
   end
 
   def index
-    @users = User.paginate(User.generate_sql(params).merge(:per_page => 20, :page => page_number))
+    @users = User.with_params(params).paginate(:per_page => 20, :page => page_number)
     respond_to_list("users")
   end
 

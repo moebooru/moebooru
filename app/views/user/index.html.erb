@@ -48,15 +48,15 @@
           <% end %>
         </td>
         <td><%= link_to user.post_count, :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
-        <td><%= Post.count(:conditions => "user_id = #{user.id} and status = 'deleted'") %></td>
+        <td><%= Post.where(:user_id => user.id, :status => "deleted").count %></td>
         <% if user.post_count > 100 %>
-          <td><%= number_to_percentage(100 * Post.count(:conditions => ["user_id = #{user.id} and status = 'active' and score > 1"]).to_f / user.post_count, :precision => 0) %></td>
-          <td><%= number_to_percentage(100 * Post.count(:conditions => ["user_id = #{user.id} and status = 'active' and score < -1"]).to_f / user.post_count, :precision => 0) %></td>
+          <td><%= number_to_percentage(100 * Post.where(:user_id => user.id, :status => "active").where("score > 1").count.to_f / user.post_count, :precision => 0) %></td>
+          <td><%= number_to_percentage(100 * Post.where(:user_id => user.id, :status => "active").where("score < -1").count.to_f / user.post_count, :precision => 0) %></td>
         <% else %>
           <td></td>
           <td></td>
         <% end %>
-        <td><%= link_to NoteVersion.count(:conditions => "user_id = #{user.id}"), :controller => "note", :action => "history", :user_id => user.id %></td>
+        <td><%= link_to NoteVersion.where(:user_id => user.id).count, :controller => "note", :action => "history", :user_id => user.id %></td>
         <td><%= user.pretty_level %></td>
         <td><span title="<%= user.created_at %>"><%= t('time.x_ago', :t => time_ago_in_words(user.created_at)) %></span></td>
       </tr>

@@ -2,9 +2,7 @@ require "test_helper"
 
 class TagImplicationTest < ActiveSupport::TestCase
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
 
     @test_number = 1
     @impl = TagImplication.create(:predicate => "taga", :consequent => "tagb", :creator_id => 1, :is_pending => false)

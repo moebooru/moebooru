@@ -2,9 +2,7 @@ require "test_helper"
 
 class TagTest < ActiveSupport::TestCase
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
 
     @test_number = 1
   end
@@ -70,11 +68,9 @@ class TagTest < ActiveSupport::TestCase
     assert_equal(["moge"], Tag.select_ambiguous(%w(moge chichi oppai)))
   end
 
-  if CONFIG["enable_caching"]
-    def test_cache
-      Tag.find_or_create_by_name("artist:a1")
-      assert_equal("artist", Rails.cache.read(:tag_type => "a1"))
-    end
+  def test_cache
+    Tag.find_or_create_by_name("artist:a1")
+    assert_equal("artist", Rails.cache.read(:tag_type => "a1"))
   end
 
   def test_parse_query

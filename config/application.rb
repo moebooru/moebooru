@@ -72,10 +72,8 @@ module Moebooru
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = "1.0"
 
-    if CONFIG["enable_caching"]
+    if CONFIG["memcache_servers"]
       config.cache_store = :dalli_store, CONFIG["memcache_servers"], { :namespace => CONFIG["app_name"], :pool_size => CONFIG["threads"] }
-    else
-      config.cache_store = :null_store
     end
 
     # This one is never reliable because there's no standard controlling this.

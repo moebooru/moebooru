@@ -2,9 +2,7 @@ require "test_helper"
 
 class UserMailerTest < ActionMailer::TestCase
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
 
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true

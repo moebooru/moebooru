@@ -106,16 +106,10 @@ CONFIG["amazon_s3_access_key_id"] = ""
 CONFIG["amazon_s3_secret_access_key"] = ""
 CONFIG["amazon_s3_bucket_name"] = ""
 
-# This enables various caching mechanisms. You must have memcache (and the memcache-client ruby gem) installed in order for caching to work.
-CONFIG["enable_caching"] = false
-
 # Enabling this will cause Danbooru to cache things longer:
 # - On post/index, any page after the first 10 will be cached for 3-7 days.
 # - post/show is cached
 CONFIG["enable_aggressive_caching"] = false
-
-# The server and port where the memcache client can be accessed. Only relevant if you enable caching.
-CONFIG["memcache_servers"] = ["localhost:11211"]
 
 # Any post rated safe or questionable that has one of the following tags will automatically be rated explicit.
 CONFIG["explicit_tags"] = %w(pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape asshole footjob handjob blowjob cunnilingus anal_sex)

@@ -21,3 +21,5 @@ CONFIG["threads"] ||= (ENV["MB_THREADS"] || 1).to_i
 
 CONFIG["piwik_host"] ||= ENV["MB_PIWIK_HOST"]
 CONFIG["piwik_site_id"] ||= ENV["MB_PIWIK_ID"]
+
+CONFIG["memcache_servers"] = ENV["MB_MEMCACHE_SERVERS"].split(",") if ENV["MB_MEMCACHE_SERVERS"]

@@ -4,9 +4,7 @@ class ArtistTest < ActiveSupport::TestCase
   fixtures :users
 
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
   end
 
   def create_artist(params)

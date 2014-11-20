@@ -4,9 +4,7 @@ class PostTest < ActiveSupport::TestCase
   # fixtures :users, :posts, :table_data
 
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
 
     # TODO: revert these after testing in teardown
     CONFIG["image_samples"] = true
@@ -41,12 +39,10 @@ class PostTest < ActiveSupport::TestCase
     assert_nothing_raised { post.to_xml }
   end
 
-  if CONFIG["enable_caching"]
-    def test_cache
-      cache_version = Rails.cache.read("$cache_version").to_i
-      create_post
-      assert Rails.cache.read("$cache_version").to_i > cache_version
-    end
+  def test_cache
+    cache_version = Rails.cache.read("$cache_version").to_i
+    create_post
+    assert Rails.cache.read("$cache_version").to_i > cache_version
   end
 
   def test_change_sequence

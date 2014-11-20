@@ -4,9 +4,7 @@ class UserTest < ActiveSupport::TestCase
   fixtures :users
 
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
 
     @post_number = 1
   end

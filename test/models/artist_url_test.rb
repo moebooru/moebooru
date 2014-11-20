@@ -4,9 +4,7 @@ class ArtistUrlTest < ActiveSupport::TestCase
   fixtures :users, :artists
 
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
   end
 
   def test_normalize

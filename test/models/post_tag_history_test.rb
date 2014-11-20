@@ -4,9 +4,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
   fixtures :users
 
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
 
     @test_number = 1
   end

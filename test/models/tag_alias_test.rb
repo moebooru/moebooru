@@ -2,9 +2,7 @@ require "test_helper"
 
 class TagAliasTest < ActiveSupport::TestCase
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
 
     @alias = TagAlias.create(:name => "tag2", :alias => "tag1", :is_pending => false, :reason => "none", :creator_id => 1)
     @test_number = 1

@@ -4,9 +4,7 @@ class PoolTest < ActiveSupport::TestCase
   fixtures :users, :posts
 
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
   end
 
   def create_pool(params = {})

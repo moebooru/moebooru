@@ -2,9 +2,7 @@ require "test_helper"
 
 class UserRecordTest < ActiveSupport::TestCase
   def setup
-    if CONFIG["enable_caching"]
-      Rails.cache.clear
-    end
+    Rails.cache.clear
   end
 
   def create_user(name, params = {})

@@ -9,7 +9,7 @@ require "sprockets/railtie"
 require "rails/test_unit/railtie"
 
 require File.expand_path("../init_config", __FILE__)
-require File.expand_path("../local_config", __FILE__)
+suppress(LoadError) { require File.expand_path("../local_config", __FILE__) }
 require File.expand_path("../default_config", __FILE__)
 
 Bundler.require(*CONFIG["bundler_groups"])

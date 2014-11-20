@@ -5,7 +5,7 @@ class TagController < ApplicationController
   before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
 
   def cloud
-    @tags = Tag.find(:all, :conditions => "post_count > 0", :order => "post_count DESC", :limit => 100).sort { |a, b| a.name <=> b.name }
+    @tags = Tag.where("post_count > 0").order(:post_count => :desc).limit(100).sort { |a, b| a.name <=> b.name }
   end
 
   # Generates list of tag names matching parameter term.
@@ -75,7 +75,7 @@ class TagController < ApplicationController
     end
 
     @tags = if limit
-              @tags.paginate :per_page => limit, :page => page_number, :order => order
+              @tags.order(order).paginate :per_page => limit, :page => page_number
             else
               @tags.order order
             end

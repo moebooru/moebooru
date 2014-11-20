@@ -9,7 +9,7 @@ module Moebooru
 
     # Meaning of sRGB and RGB flipped at 6.7.5.
     # Reference: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=20501
-    TARGET_COLORSPACE = MiniMagick.image_magick_version >= Gem::Version.create("6.7.5") ?
+    TARGET_COLORSPACE = Gem::Version.create(MiniMagick.cli_version[/\d+\.\d+\.\d+/]) >= Gem::Version.create("6.7.5") ?
                         "sRGB" : "RGB"
 
     def resize(file_ext, read_path, write_path, output_size, output_quality)

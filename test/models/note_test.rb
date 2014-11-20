@@ -5,6 +5,7 @@ class NoteTest < ActiveSupport::TestCase
 
   def setup
     Rails.cache.clear
+    Thread.current[:versioning_history] = nil
   end
 
   def create_note(params)
@@ -24,12 +25,12 @@ class NoteTest < ActiveSupport::TestCase
   def test_versioning
     note = create_note(:body => "hello")
 
-    note_v1 = NoteVersion.find(:first, :conditions => ["note_id = ? AND version = 1", note.id])
+    note_v1 = NoteVersion.find_by(:note_id => note.id, :version => 1)
     assert_not_nil(note_v1)
     assert_equal("hello", note_v1.body)
 
     note.update_attributes(:body => "hello v2")
-    note_v2 = NoteVersion.find(:first, :conditions => ["note_id = ? AND version = 2", note.id])
+    note_v2 = NoteVersion.find_by(:note_id => note.id, :version => 2)
     assert_not_nil(note_v2)
     assert_equal("hello v2", note_v2.body)
 
@@ -53,16 +54,17 @@ class NoteTest < ActiveSupport::TestCase
     note.update_attributes(:body => "hello v2")
     assert_equal(true, note.errors.any?)
     assert_equal(1, Note.count("post_id = 1"))
-    assert_equal("hello", Note.find(:first, :conditions => "post_id = 1").body)
+    assert_equal("hello", Note.find_by(:post_id => 1).body)
   end
 
   def test_last_noted_at
     assert_nil(Post.find(1).last_noted_at)
     note_a = create_note(:body => "hello")
-    assert_equal(note_a.updated_at, Post.find(1).last_noted_at)
+    # FIXME: .to_i currently used to take care of rounding of time (float).
+    assert_equal(note_a.updated_at.to_i, Post.find(1).last_noted_at.to_i)
 
-    sleep 1
+    sleep 2
     note_b = create_note(:body => "hello 2")
-    assert_equal(note_b.updated_at, Post.find(1).last_noted_at)
+    assert_equal(note_b.updated_at.to_i, Post.find(1).last_noted_at.to_i)
   end
 end

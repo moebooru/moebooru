@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class FavoriteControllerTest < ActionController::TestCase
   fixtures :users, :posts

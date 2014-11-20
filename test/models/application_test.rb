@@ -45,7 +45,7 @@ class AddFullTextIndexOnPostTags < ActiveRecord::Migration
   def self.down
   end
 end
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class ApplicationTest < ActiveSupport::TestCase
   fixtures :users, :posts

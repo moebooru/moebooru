@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 # There's a bug where setup isn't called in functional tests
 ActionMailer::Base.delivery_method = :test

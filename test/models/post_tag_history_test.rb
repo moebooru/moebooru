@@ -25,9 +25,9 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     update_post(p1, :tags => "tag3")
     p1.reload
     assert_equal(3, p1.tag_history.size)
-    assert_equal("tag3", p1.tag_history[0].tags)
-    assert_equal("tag2", p1.tag_history[1].tags)
-    assert_equal("tag1", p1.tag_history[2].tags)
+    assert_equal("rating:s tag3", p1.tag_history[0].tags)
+    assert_equal("rating:s tag2", p1.tag_history[1].tags)
+    assert_equal("rating:s tag1", p1.tag_history[2].tags)
   end
 
   def test_rating
@@ -36,9 +36,9 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     update_post(p1, :rating => "q", :tags => "tag2")
     p1.reload
     assert_equal(3, p1.tag_history.size)
-    assert_equal("q", p1.tag_history[0].rating)
-    assert_equal("e", p1.tag_history[1].rating)
-    assert_equal("s", p1.tag_history[2].rating)
+    assert_includes(p1.tag_history[0].tags.split, "rating:q")
+    assert_includes(p1.tag_history[1].tags.split, "rating:e")
+    assert_includes(p1.tag_history[2].tags.split, "rating:s")
   end
 
   def test_api
@@ -64,7 +64,7 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     p1.reload
     assert_equal(["tag2"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:added_tags])
     assert_equal([], p1.tag_history[0].tag_changes(p1.tag_history[1])[:removed_tags])
-    assert_equal(["tag1"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
+    assert_equal(["rating:s", "tag1"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
   end
 
   def test_changes_after_removing_tags
@@ -73,6 +73,6 @@ class PostTagHistoryTest < ActiveSupport::TestCase
     p1.reload
     assert_equal(["tag2"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:added_tags])
     assert_equal(["tag1"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:removed_tags])
-    assert_equal([], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
+    assert_equal(["rating:s"], p1.tag_history[0].tag_changes(p1.tag_history[1])[:unchanged_tags])
   end
 end

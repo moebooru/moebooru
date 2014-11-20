@@ -1,3 +1,4 @@
+# TODO: this isn't used anymore from what I can tell.
 class PostTagHistory < ActiveRecord::Base
   belongs_to :user
   belongs_to :post
@@ -85,11 +86,11 @@ class PostTagHistory < ActiveRecord::Base
   end
 
   def next
-    PostTagHistory.find(:first, :order => "id ASC", :conditions => ["post_id = ? AND id > ?", post_id, id])
+    self.class.where(:post_id => post_id).where("id > ?", id).order(:id => :asc).first
   end
 
   def previous
-    PostTagHistory.find(:first, :order => "id DESC", :conditions => ["post_id = ? AND id < ?", post_id, id])
+    self.class.where(:post_id => post_id).where("id < ?", id).order(:id => :desc).first
   end
 
   def to_xml(options = {})

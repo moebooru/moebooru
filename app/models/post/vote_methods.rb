@@ -26,7 +26,6 @@ module Post::VoteMethods
   def recalculate_score!
     save!
     Post.recalculate_score(id)
-    connection.clear_query_cache
     reload
   end
 

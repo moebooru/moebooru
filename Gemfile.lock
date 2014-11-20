@@ -67,8 +67,8 @@ GEM
     hooves (0.7)
       unicorn (> 0)
     i18n (0.6.11)
-    i18n-js (2.1.2)
-      i18n
+    i18n-js (3.0.0.rc7)
+      i18n (~> 0.6)
     image_size (1.4.1)
     jbuilder (1.5.3)
       activesupport (>= 3.0.0)
@@ -192,7 +192,7 @@ DEPENDENCIES
   gctools
   geoip
   hooves
-  i18n-js
+  i18n-js (>= 3.0.0.rc7)
   image_size
   jbuilder (~> 1.2)
   jquery-rails

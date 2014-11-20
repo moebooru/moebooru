@@ -1,4 +1,5 @@
 /.bundle
+/app/assets/javascripts/i18n/translations.js
 /config/database.yml
 /config/local_config.rb
 /config/newrelic.yml

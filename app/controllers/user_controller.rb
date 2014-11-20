@@ -299,9 +299,8 @@ class UserController < ApplicationController
   end
 
   def show_blocked_users
-    # @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :conditions => ["bans.banned_by = ?", @current_user.id])
-    @users = User.find(:all, :select => "users.*", :joins => "JOIN bans ON bans.user_id = users.id", :order => "expires_at ASC")
-    @ip_bans = IpBans.find(:all)
+    @users = User.includes(:ban).joins(:ban).order("bans.expires_at ASC")
+    @ip_bans = IpBans.all
   end
 
   if CONFIG["enable_account_email_activation"]

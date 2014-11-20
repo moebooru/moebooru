@@ -36,7 +36,7 @@ class Pool < ActiveRecord::Base
 
         seq = options[:sequence] || next_sequence
 
-        pool_post = all_pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
+        pool_post = all_pool_posts.where(:post_id => post_id).first
         if pool_post
           # If :ignore_already_exists, we won't raise PostAlreadyExistsError; this allows
           # he sequence to be changed if the post already exists.
@@ -61,7 +61,7 @@ class Pool < ActiveRecord::Base
           raise AccessDeniedError
         end
 
-        pool_post = all_pool_posts.find(:first, :conditions => ["post_id = ?", post_id])
+        pool_post = all_pool_posts.where(:post_id => post_id).first
         if pool_post
           pool_post.active = false
           pool_post.save!
@@ -158,9 +158,9 @@ class Pool < ActiveRecord::Base
     module ClassMethods
       def find_by_name(name)
         if name =~ /^\d+$/
-          find_by_id(name)
+          find_by(:id => name)
         else
-          find(:first, :conditions => ["lower(name) = lower(?)", name])
+          find_by("LOWER(name) = LOWER(?)", name)
         end
       end
     end

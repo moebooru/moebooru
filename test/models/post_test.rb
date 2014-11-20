@@ -179,7 +179,6 @@ class PostTest < ActiveSupport::TestCase
     c2.delete
     p1.reload
     assert_equal false, PostVote.exists?(:post_id => c2.id, :user_id => 1)
-    assert(PostVote.find(:first, :conditions => ["post_id = ? AND user_id =?", p1.id, 1]).score == 3)
     assert_equal 3, PostVote.find_by(:post_id => p1.id, :user_id => 1).score
     assert(p1.has_children?, "Parent should still have children")
 
@@ -305,17 +304,17 @@ class PostTest < ActiveSupport::TestCase
     assert_equal("tag1 tag2", post.cached_tags)
     pool = Pool.find_by_name("new_pool")
     assert_not_nil(pool)
-    assert_not_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post.id]))
+    assert_not_nil PoolPost.where(:pool_id => pool.id, :post_id => post.id).first
 
     # Test adding to an existing pool and case insensitivity
     post2 = create_post(:tags => "tag3 pool:NEW_POOL", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))
-    assert_not_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post2.id]))
+    assert_not_nil PoolPost.where(:pool_id => pool.id, :post_id => post2.id).first
 
     # Test removing a post from a pool
     update_post(post, :tags => "tag1 tag2 -pool:new_pool")
     post.reload
     assert_equal("tag1 tag2", post.cached_tags)
-    pool_post = PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post.id])
+    pool_post = PoolPost.where(:pool_id => pool.id, :post_id => post.id).first
     assert(!pool_post.active)
 
     # Test setting the rating
@@ -338,7 +337,7 @@ class PostTest < ActiveSupport::TestCase
     # Test access checks for existing pool
     pool = create_pool("hoge")
     update_post(post, :tags => "pool:hoge", :updater_user_id => 4)
-    assert_nil(PoolPost.find(:first, :conditions => ["pool_id = ? AND post_id = ?", pool.id, post.id]))
+    assert_nil PoolPost.find_by(:pool_id => pool.id, :post_id => post.id)
   end
 
   def test_tagging
@@ -443,7 +442,7 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def test_search_negated_tags
-    Post.find(:all).each(&:delete_from_database)
+    Post.find_each(&:delete_from_database)
 
     create_post(:tags => "tag1 tag2 tag3")
     p2 = create_post(:tags => "tag1 tag2", :file => upload_file("#{Rails.root}/test/mocks/test/test2.jpg"))

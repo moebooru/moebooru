@@ -235,7 +235,7 @@ class PoolControllerTest < ActionController::TestCase
     create_post("tag1", 1)
     create_post("tag2", 2)
 
-    get :import, { :id => pool.id, :format => "js" }, :user_id => 3
+    xhr :get, :import, { :id => pool.id, :format => "js" }, :user_id => 3
     assert_response :success
 
     post :import, { :id => pool.id, :posts => { "1" => "1", "2" => "2" } }, :user_id => 3

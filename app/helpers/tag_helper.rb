@@ -101,9 +101,9 @@ module TagHelper
 
     all = []
     pattern, related = tags.split(/\s+/).partition { |i| i.include?("*") }
-    pattern.each { |i| all += Tag.find(:all, :conditions => ["name LIKE ?", i.tr("*", "%")]).map(&:name) }
+    pattern.each { |i| all += Tag.where("name LIKE ?", i.to_escaped_for_sql_like).pluck(:name) }
     if related.any?
-      Tag.find(:all, :conditions => ["name IN (?)", TagAlias.to_aliased(related)]).each { |i| all += i.related.map { |j| j[0] } }
+      Tag.where(:name => TagAlias.to_aliased(related)).find_each { |i| all += i.related.map { |j| j[0] } }
     end
     all.join(" ")
   end

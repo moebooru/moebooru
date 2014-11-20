@@ -1,16 +1,16 @@
 source "https://rubygems.org"
 source "https://rails-assets.org"
 
-gem "rails", "~> 4.0.0"
+gem "rails", "~> 4.2.0"
 gem "rails-observers"
 
-gem "coffee-rails", "~> 4.0.0" # Rails default version
+gem "coffee-rails", "~> 4.1.0" # Rails 4.2 default
 gem "coffee-rails-source-maps", :group => :development
 gem "jquery-rails"
 gem "jquery-ui-rails"
-gem "uglifier", ">= 1.3.0" # Rails default version
+gem "uglifier", ">= 1.3.0" # Rails 4.2 default
 
-gem "sass-rails", "~> 4.0.2" # Rails default version
+gem "sass-rails", "~> 5.0" # Rails 4.2 default
 
 gem "rails-assets-jquery-cookie"
 gem "rails-assets-mousetrap"
@@ -48,7 +48,6 @@ gem "i18n-js", ">= 3.0.0.rc7"
 
 group :development do
   gem "quiet_assets"
-  gem "hooves", :platforms => :mri, :require => "hooves/default"
 end
 
 group :standalone do
@@ -62,7 +61,7 @@ end
 
 gem "oj", :platforms => :mri
 gem "multi_json"
-gem "jbuilder", "~> 1.2"
+gem "jbuilder", "~> 2.0" # Rails default (4.1)
 
 # Must be last.
 gem "rack-mini-profiler", :group => :development

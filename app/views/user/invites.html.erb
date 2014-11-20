@@ -42,7 +42,7 @@
       <% @invited_users.each do |user| %>
         <tr>
           <td><%= link_to h(user.pretty_name), :controller => "user", :action => "show", :id => user.id %></td>
-          <td><%= link_to Post.count(:conditions => "user_id = #{user.id}"), :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
+          <td><%= link_to Post.where(:user_id => user.id).count, :controller => "post", :action => "index", :tags => "user:#{user.name}" %></td>
           <td><%= link_to user.post_votes.where(:score => 3).count, :controller => '/post', :action => :index, :tags => "vote:3:#{user.name} order:vote" %></td>
         </tr>
       <% end %>

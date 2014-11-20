@@ -127,7 +127,7 @@ module SimilarImages
           md5 = element[:md5]
 
           if service == local_service
-            post = Post.find(:first, :conditions => ["id = ?", id])
+            post = Post.find_by(:id => id)
             unless post.nil? || post == options[:source]
               posts += [post]
               similarity[post] = element[:sim].to_f
@@ -225,7 +225,7 @@ module SimilarImages
       ret = {}
       ret[:original_width] = imgsize.width
       ret[:original_height] = imgsize.height
-      size = Moebooru::Resizer.reduce_to({ :width => ret[:original_width], :height => ret[:original_height] }, { :width => 150, :height => 150 })
+      size = Moebooru::Resizer.reduce_to({ :width => ret[:original_width], :height => ret[:original_height] }, :width => 150, :height => 150)
       ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
 
       tempfile_path_resize = "#{tempfile_path}.2"

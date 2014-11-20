@@ -198,7 +198,7 @@ module Post::FileMethods
   def generate_preview
     return true unless image? && width && height
 
-    size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 300, :height => 300 })
+    size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 300, :height => 300)
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
     if File.exist?(tempfile_sample_path)
@@ -320,7 +320,7 @@ module Post::FileMethods
     return if user.nil? # implies anonymous upload
     return if user.is_contributor_or_higher?
 
-    pending_posts = Post.count(:conditions => ["user_id = ? AND status = 'pending'", user_id])
+    pending_posts = Post.where(:user_id => user_id, :status => "pending").count
     return if pending_posts < CONFIG["max_pending_images"]
 
     errors.add(:base, "You have too many posts pending moderation")
@@ -362,14 +362,12 @@ module Post::FileMethods
     when "application/x-shockwave-flash"
       return "swf"
 
-    else
-      nil
     end
   end
 
   def raw_preview_dimensions
     if image?
-      dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 300, :height => 300 })
+      dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 300, :height => 300)
       return [dim[:width], dim[:height]]
     else
       return [300, 300]
@@ -378,7 +376,7 @@ module Post::FileMethods
 
   def preview_dimensions
     if image?
-      dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 150, :height => 150 })
+      dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 150, :height => 150)
       return [dim[:width], dim[:height]]
     else
       return [150, 150]

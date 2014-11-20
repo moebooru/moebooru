@@ -7,7 +7,11 @@ class DmailController < ApplicationController
   end
 
   def show_previous_messages
-    @dmails = Dmail.find(:all, :conditions => ["(to_id = ? or from_id = ?) and parent_id = ? and id < ?", @current_user.id, @current_user.id, params[:parent_id], params[:id]], :order => "id asc")
+    @dmails = Dmail
+              .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
+              .where(:parent_id => params[:parent_id])
+              .where("id < ?", params[:id])
+              .order(:id => :asc)
     render :layout => false
   end
 
@@ -33,7 +37,10 @@ class DmailController < ApplicationController
   end
 
   def inbox
-    @dmails = Dmail.paginate :conditions => ["to_id = ? or from_id = ?", @current_user.id, @current_user.id], :order => "created_at desc", :per_page => 25, :page => page_number
+    @dmails = Dmail
+              .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
+              .order(:created_at => :desc)
+              .paginate(:per_page => 25, :page => page_number)
   end
 
   def show
@@ -55,7 +62,7 @@ class DmailController < ApplicationController
 
   def mark_all_read
     if params[:commit] == "Yes"
-      Dmail.find(:all, :conditions => ["to_id = ? and has_seen = false", @current_user.id]).each do |dmail|
+      Dmail.where(:has_seen => false, :to_id => @current_user.id).find_each do |dmail|
         dmail.update_attribute(:has_seen, true)
       end
 

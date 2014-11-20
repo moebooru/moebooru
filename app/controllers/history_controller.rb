@@ -161,11 +161,11 @@ class HistoryController < ApplicationController
       end
     end
 
-    @changes = History.paginate(History.generate_sql(params).merge(
-      :order => "histories.id DESC", :per_page => 20, :select => "*", :page => page_number,
-      :conditions => [conds.join(" AND "), *cond_params],
-      :include => [:history_changes]
-    ))
+    @changes = History
+               .includes(:history_changes)
+               .where(conds.join(" AND "), *cond_params)
+               .order(:id => :desc)
+               .paginate(:per_page => 20, :page => page_number)
 
     # If we're searching for a specific change, force the display to the
     # type of the change we found.
@@ -181,7 +181,7 @@ class HistoryController < ApplicationController
 
     @changes = []
     ids.each do |id|
-      @changes += HistoryChange.find(:all, :conditions => ["id = ?", id])
+      @changes += HistoryChange.where(:id => id)
     end
 
     histories = {}

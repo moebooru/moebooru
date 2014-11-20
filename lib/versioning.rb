@@ -50,8 +50,6 @@ module ActiveRecord
           # p "don't reuse"
           Thread.current[:versioning_history] = nil
           history = nil
-        else
-          # p "reuse"
         end
       end
 
@@ -148,13 +146,13 @@ module ActiveRecord
       #   versioning_group_by :class => :pool, :foreign_key => :pool_id, :controller => Post
       def versioning_group_by(options = {})
         opt = {
-          :class => to_s.to_sym,
+          :class => to_s,
           :controller => to_s,
           :action => "show"
         }.merge(options)
 
         unless opt[:foreign_key]
-          if opt[:class] == to_s.to_sym
+          if opt[:class] == to_s
             opt[:foreign_key] = :id
           else
             reflection = reflections[opt[:class]]

@@ -62,7 +62,7 @@ class CommentController < ApplicationController
       @comments = Comment.paginate(Comment.generate_sql(params).merge(:per_page => 25, :page => page_number, :order => "id DESC"))
       respond_to_list("comments")
     else
-      @posts = Post.paginate :order => "last_commented_at DESC", :conditions => "last_commented_at IS NOT NULL", :per_page => 10, :page => page_number
+      @posts = Post.where.not(:last_commented_at => nil).order(:last_commented_at => :desc).paginate(:per_page => 10, :page => page_number).to_a
 
       comments = []
       @posts.each { |post| comments.push(*post.recent_comments) }
@@ -118,7 +118,7 @@ class CommentController < ApplicationController
   def moderate
     if request.post?
       ids = params["c"].keys
-      coms = Comment.find(:all, :conditions => ["id IN (?)", ids])
+      coms = Comment.where(:id => ids)
 
       if params["commit"] == "Delete"
         coms.each(&:destroy)
@@ -130,7 +130,7 @@ class CommentController < ApplicationController
 
       redirect_to :action => "moderate"
     else
-      @comments = Comment.find(:all, :conditions => "is_spam = TRUE", :order => "id DESC")
+      @comments = Comment.where(:is_spam => true).order(:id => :desc)
     end
   end
 

@@ -3,15 +3,13 @@ class UserRecordController < ApplicationController
   before_action :privileged_only, :only => [:create, :destroy]
 
   def index
+    @user_records = UserRecord.order :created_at => :desc
     if params[:user_id]
-      params[:user_id] = params[:user_id].to_i
-      # Use .where to ignore error when invalid user_id entered.
-      # .first because .where returns array.
-      @user = User.where(:id => params[:user_id]).first
-      @user_records = UserRecord.paginate :per_page => 20, :order => "created_at desc", :conditions => ["user_id = ?", params[:user_id]], :page => page_number
-    else
-      @user_records = UserRecord.paginate :per_page => 20, :order => "created_at desc", :page => page_number
+      @user = User.find_by(:id => params[:user_id])
+      @user_records = @user_records.where :user_id => params[:user_id]
     end
+
+    @user_records = @user_records.paginate :per_page => 20, :page => page_number
   end
 
   def create

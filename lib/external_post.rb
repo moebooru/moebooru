@@ -31,7 +31,7 @@ class ExternalPost
   end
 
   def preview_dimensions
-    dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 150, :height => 150 })
+    dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 150, :height => 150)
     [dim[:width], dim[:height]]
   end
 

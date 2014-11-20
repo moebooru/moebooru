@@ -21,10 +21,10 @@ class TagAliasController < ApplicationController
     end
 
     if params[:query]
-      name = "%" + params[:query].to_escaped_for_sql_like + "%"
-      @aliases = TagAlias.paginate :order => "is_pending DESC, name", :per_page => 20, :conditions => ["name LIKE ? ESCAPE E'\\\\' OR alias_id IN (SELECT id FROM tags WHERE name ILIKE ? ESCAPE E'\\\\')", name, name], :page => page_number
+      name = "%#{params[:query].to_escaped_for_sql_like}%"
+      @aliases = TagAlias.where("name LIKE ? OR alias_id IN (SELECT id FROM tags WHERE name ILIKE ?)", name, name).paginate :per_page => 20, :page => page_number
     else
-      @aliases = TagAlias.paginate :order => "is_pending DESC, name", :per_page => 20, :page => page_number
+      @aliases = TagAlias.order(:is_pending => :desc).paginate :per_page => 20, :page => page_number
     end
 
     respond_to_list("aliases")

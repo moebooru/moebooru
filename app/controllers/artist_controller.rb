@@ -73,19 +73,18 @@ class ArtistController < ApplicationController
   end
 
   def index
-    if params[:order] == "date"
-      order = "updated_at DESC"
+    @artists = Artist.order(params[:order] == "date" ? { :updated_at => :desc } : :name)
+
+    per_page = 50
+    if params[:name]
+      @artists = @artists.where "name LIKE ?", "#{params[:name].to_escaped_for_sql_like}%"
+    elsif params[:url]
+      @artists = @artists.where :id => Artist.find_all_by_url(params[:url]).map(&:id)
     else
-      order = "name"
+      per_page = 25
     end
 
-    if params[:name]
-      @artists = Artist.paginate Artist.generate_sql(params[:name]).merge(:per_page => 50, :page => page_number, :order => order)
-    elsif params[:url]
-      @artists = Artist.paginate Artist.generate_sql(params[:url]).merge(:per_page => 50, :page => page_number, :order => order)
-    else
-      @artists = Artist.paginate :order => order, :per_page => 25, :page => page_number
-    end
+    @artists = @artists.paginate :per_page => per_page, :page => page_number
 
     respond_to_list("artists")
   end

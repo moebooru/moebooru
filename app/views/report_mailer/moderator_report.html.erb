@@ -13,14 +13,14 @@
     </tr>
   </thead>
   <tbody>
-    <% User.find(:all, :conditions => ["level >= ?", CONFIG["user_levels"]["Janitor"]], :order => "level, name").each do |user| %>
+    <% User.where("level >= ?", CONFIG["user_levels"]["Janitor"]).order("level, name").find_each do |user| %>
       <tr>
         <td><%= h user.name %></td>
         <td><%= h user.pretty_level %></td>
-        <td style="text-align: right;"><%= Post.count(:conditions => ["created_at >= ? AND approver_id = ?", 7.days.ago, user.id]) %>/<%= Post.count(:conditions => ["created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 7.days.ago]) %></td>
-        <td style="text-align: right;"><%= Post.count(:conditions => ["created_at >= ? AND approver_id = ?", 14.days.ago, user.id]) %>/<%= Post.count(:conditions => ["created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 14.days.ago]) %></td>
-        <td style="text-align: right;"><%= Comment.count(:conditions => ["created_at >= ? AND user_id = ?", 7.days.ago, user.id]) %></td>
-        <td style="text-align: right;"><%= ForumPost.count(:conditions => ["created_at >= ? AND creator_id = ?", 7.days.ago, user.id]) %></td>
+        <td style="text-align: right;"><%= Post.where(:approver_id => user.id).where("created_at >= ?", 7.days.ago).count %>/<%= Post.where("created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 7.days.ago).count %></td>
+        <td style="text-align: right;"><%= Post.where(:approver_id => user.id).where("created_at >= ?", 14.days.ago).count %>/<%= Post.where("created_at >= ? AND (approver_id IS NOT NULL OR status = 'pending')", 14.days.ago).count %></td>
+        <td style="text-align: right;"><%= Comment.where(:user_id => user.id).where("created_at >= ?", 7.days.ago).count %></td>
+        <td style="text-align: right;"><%= ForumPost.where(:creator_id => user.id).where("created_at >= ?", 7.days.ago).count %></td>
         <td></td>
       </tr>
     <% end %>

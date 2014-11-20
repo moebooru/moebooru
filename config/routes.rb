@@ -1,6 +1,7 @@
 Moebooru::Application.routes.draw do
   # Admin
-  get "admin(/index)" => "admin#index"
+  get "admin" => "admin#index"
+  get "admin/index" => "admin#index" # FIXME: remove this
   match "admin/edit_user", :via => [:post, :get]
   match "admin/reset_password", :via => [:post, :get]
 
@@ -15,7 +16,8 @@ Moebooru::Application.routes.draw do
   end
 
   # Artist
-  match "artist(/index)(.:format)" => "artist#index", :via => [:post, :get]
+  match "artist(.:format)" => "artist#index", :via => [:post, :get]
+  match "artist/index(.:format)" => "artist#index", :via => [:post, :get] # FIXME: remove this
   match "artist/create(.:format)", :via => [:post, :get]
   match "artist/destroy(.:format)(/:id)" => "artist#destroy", :via => [:post, :get]
   match "artist/preview", :via => [:post, :get]
@@ -23,10 +25,12 @@ Moebooru::Application.routes.draw do
   match "artist/update(.:format)(/:id)" => "artist#update", :via => [:post, :get]
 
   # Banned
-  match "banned(/index)" => "banned#index", :via => [:post, :get]
+  match "banned" => "banned#index", :via => [:post, :get]
+  match "banned/index" => "banned#index", :via => [:post, :get] # FIXME: remove this
 
   # Batch
-  match "batch(/index)" => "batch#index", :via => [:post, :get]
+  match "batch" => "batch#index", :via => [:post, :get]
+  match "batch/index" => "batch#index", :via => [:post, :get] # FIXME: remove this
   match "batch/create", :via => [:post, :get]
   post "batch/enqueue"
   post "batch/update"
@@ -36,7 +40,8 @@ Moebooru::Application.routes.draw do
   post "blocks/unblock_ip"
 
   # Comment
-  match "comment(/index)" => "comment#index", :via => [:post, :get]
+  match "comment" => "comment#index", :via => [:post, :get]
+  match "comment/index" => "comment#index", :via => [:post, :get] # FIXME: remove this
   match "comment/edit(/:id)" => "comment#edit", :via => [:post, :get]
   match "comment/moderate", :via => [:post, :get]
   match "comment/search", :via => [:post, :get]
@@ -60,7 +65,8 @@ Moebooru::Application.routes.draw do
   match "favorite/list_users(.:format)", :via => [:post, :get]
 
   # Forum
-  match "forum(/index)(.:format)" => "forum#index", :via => [:post, :get]
+  match "forum(.:format)" => "forum#index", :via => [:post, :get]
+  match "forum/index(.:format)" => "forum#index", :via => [:post, :get] # FIXME: remove this
   match "forum/preview", :via => [:post, :get]
   match "forum/new", :via => [:post, :get]
   match "forum/add", :via => [:post, :get]
@@ -77,15 +83,18 @@ Moebooru::Application.routes.draw do
   post "forum/create"
 
   # Help
-  match "help(/index)" => "help#index", :via => [:post, :get]
+  match "help" => "help#index", :via => [:post, :get]
+  match "help/index" => "help#index", :via => [:post, :get] # FIXME: remove this
   match "help/:action" => "help#:action", :via => [:post, :get]
 
   # History
-  match "history(/index)" => "history#index", :via => [:post, :get]
+  match "history" => "history#index", :via => [:post, :get]
+  match "history/index" => "history#index", :via => [:post, :get] # FIXME: remove this
   post "history/undo"
 
   # Inline
-  match "inline(/index)" => "inline#index", :via => [:post, :get]
+  match "inline" => "inline#index", :via => [:post, :get]
+  match "inline/index" => "inline#index", :via => [:post, :get] # FIXME: remove this
   match "inline/add_image(/:id)" => "inline#add_image", :via => [:post, :get]
   match "inline/create", :via => [:post, :get]
   match "inline/crop(/:id)" => "inline#crop", :via => [:post, :get]
@@ -96,20 +105,23 @@ Moebooru::Application.routes.draw do
   match "inline/delete_image(/:id)" => "inline#delete_image", :via => [:post, :delete]
 
   # JobTask
-  match "job_task(/index)" => "job_task#index", :via => [:post, :get]
+  match "job_task" => "job_task#index", :via => [:post, :get]
+  match "job_task/index" => "job_task#index", :via => [:post, :get] # FIXME: remove this
   match "job_task/destroy(/:id)" => "job_task#destroy", :via => [:post, :get]
   match "job_task/restart(/:id)" => "job_task#restart", :via => [:post, :get]
   match "job_task/show(/:id)" => "job_task#show", :via => [:post, :get]
 
   # Note
-  match "note(/index)(.:format)" => "note#index", :via => [:post, :get]
+  match "note(.:format)" => "note#index", :via => [:post, :get]
+  match "note/index(.:format)" => "note#index", :via => [:post, :get] # FIXME: remove this
   match "note/history(.:format)(/:id)" => "note#history", :via => [:post, :get]
   match "note/search(.:format)", :via => [:post, :get]
   match "note/revert(.:format)(/:id)" => "note#revert", :via => [:post, :put]
   match "note/update(.:format)(/:id)" => "note#update", :via => [:post, :put]
 
   # Pool
-  match "pool(/index)(.:format)" => "pool#index", :via => [:post, :get]
+  match "pool(.:format)" => "pool#index", :via => [:post, :get]
+  match "pool/index(.:format)" => "pool#index", :via => [:post, :get] # FIXME: remove this
   match "pool/add_post(.:format)" => "pool#add_post", :via => [:post, :get]
   match "pool/copy(/:id)" => "pool#copy", :via => [:post, :get]
   match "pool/create(.:format)" => "pool#create", :via => [:post, :get]
@@ -124,7 +136,8 @@ Moebooru::Application.routes.draw do
   match "pool/zip/:id/:filename" => "pool#zip", :constraints => { :filename => /.*/ }, :via => [:post, :get]
 
   # Post
-  match "post(/index)(.:format)" => "post#index", :via => [:post, :get]
+  match "post(.:format)" => "post#index", :via => [:post, :get]
+  match "post/index(.:format)" => "post#index", :via => [:post, :get] # FIXME: remove this
   match "post/acknowledge_new_deleted_posts", :via => [:post, :get]
   match "post/activate", :via => [:post, :get]
   match "post/atom(.:format)" => "post#atom", :defaults => { :format => :atom }, :via => [:post, :get]
@@ -180,12 +193,14 @@ Moebooru::Application.routes.draw do
   match "/opensearch" => "static#opensearch", :via => [:post, :get]
 
   # TagAlias
-  match "tag_alias(/index)" => "tag_alias#index", :via => [:post, :get]
+  match "tag_alias" => "tag_alias#index", :via => [:post, :get]
+  match "tag_alias/index" => "tag_alias#index", :via => [:post, :get] # FIXME: remove this
   match "tag_alias/update", :via => [:post, :put]
   post "tag_alias/create"
 
   # Tag
-  match "tag(/index)(.:format)" => "tag#index", :via => [:post, :get]
+  match "tag(.:format)" => "tag#index", :via => [:post, :get]
+  match "tag/index(.:format)" => "tag#index", :via => [:post, :get] # FIXME: remove this
   get "tag/autocomplete_name", :as => :ac_tag_name
   match "tag/cloud", :via => [:post, :get]
   match "tag/edit(/:id)" => "tag#edit", :via => [:post, :get]
@@ -200,19 +215,22 @@ Moebooru::Application.routes.draw do
   match "tag/update(.:format)" => "tag#update", :via => [:post, :get]
 
   # TagImplication
-  match "tag_implication(/index)" => "tag_implication#index", :via => [:post, :get]
+  match "tag_implication" => "tag_implication#index", :via => [:post, :get]
+  match "tag_implication/index" => "tag_implication#index", :via => [:post, :get] # FIXME: remove this
   match "tag_implication/update", :via => [:post, :put]
   post "tag_implication/create"
 
   # TagSubscription
-  match "tag_subscription(/index)" => "tag_subscription#index", :via => [:post, :get]
+  match "tag_subscription" => "tag_subscription#index", :via => [:post, :get]
+  match "tag_subscription/index" => "tag_subscription#index", :via => [:post, :get] # FIXME: remove this
   match "tag_subscription/create", :via => [:post, :get]
   match "tag_subscription/update", :via => [:post, :get]
   match "tag_subscription/destroy(/:id)" => "tag_subscription#destroy", :via => [:post, :get]
 
   # User
   get "user/autocomplete_name", :as => :ac_user_name
-  match "user(/index)(.:format)" => "user#index", :via => [:post, :get]
+  match "user(.:format)" => "user#index", :via => [:post, :get]
+  match "user/index(.:format)" => "user#index", :via => [:post, :get] # FIXME: remove this
   match "user/activate_user", :via => [:post, :get]
   match "user/block(/:id)" => "user#block", :via => [:post, :get]
   match "user/change_email", :via => [:post, :get]
@@ -239,12 +257,14 @@ Moebooru::Application.routes.draw do
   post "user/remove_avatar/:id" => "user#remove_avatar"
 
   # UserRecord
-  match "user_record(/index)" => "user_record#index", :via => [:post, :get]
+  match "user_record" => "user_record#index", :via => [:post, :get]
+  match "user_record/index" => "user_record#index", :via => [:post, :get] # FIXME: remove this
   match "user_record/create(/:id)" => "user_record#create", :via => [:post, :get]
   match "user_record/destroy(/:id)" => "user_record#destroy", :via => [:post, :delete]
 
   # Wiki
-  match "wiki(/index)(.:format)" => "wiki#index", :via => [:post, :get]
+  match "wiki(.:format)" => "wiki#index", :via => [:post, :get]
+  match "wiki/index(.:format)" => "wiki#index", :via => [:post, :get] # FIXME: remove this
   match "wiki/add", :via => [:post, :get]
   match "wiki/diff", :via => [:post, :get]
   match "wiki/edit", :via => [:post, :get]

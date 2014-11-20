@@ -9,5 +9,4 @@ task :find_posts => :environment do
     file_name = "#{path}/#{md5}.#{ext}"
     puts "#{md5}.#{ext}" unless File.exist?(file_name)
   end
-
 end

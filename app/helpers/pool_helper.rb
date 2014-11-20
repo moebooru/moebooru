@@ -1,7 +1,10 @@
 module PoolHelper
   def pool_list(post)
     html = ""
-    pools = Pool.find(:all, :joins => "JOIN pools_posts ON pools_posts.pool_id = pools.id", :conditions => "pools_posts.post_id = #{post.id}", :order => "pools.name", :select => "pools.name, pools.id")
+    pools = Pool
+            .joins("JOIN pools_posts ON pools_posts.pool_id = pools.id")
+            .where(:pools_posts => { :post_id => post.id })
+            .order(:name).select(:name, :id)
 
     if pools.empty?
       html << "none"

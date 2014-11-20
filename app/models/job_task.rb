@@ -100,10 +100,10 @@ class JobTask < ActiveRecord::Base
     # then give other jobs a chance to run.
     data = {}
     (1..10).each do
-      post = Post.find(:first, :conditions => ["NOT is_warehoused AND status <> 'deleted'"], :order => "is_held ASC, index_timestamp DESC")
+      post = Post.where.not(:is_warehoused => true, :status => "deleted").order(:is_held => :asc, :index_timestamp => :desc).take
       break unless post
 
-      data["left"] = Post.count(:conditions => ["NOT is_warehoused AND status <> 'deleted'"])
+      data["left"] = Post.where.not(:is_warehoused => true, :status => "deleted").count
       data["post_id"] = post.id
       update_attributes(:data => data)
 
@@ -114,13 +114,13 @@ class JobTask < ActiveRecord::Base
         update_attributes(:data => data)
       end
 
-      data["left"] = Post.count(:conditions => ["NOT is_warehoused AND status <> 'deleted'"])
+      data["left"] = Post.where.not(:is_warehoused => true, :status => "deleted").count
       update_attributes(:data => data)
     end
   end
 
   def execute_upload_batch_posts
-    upload = BatchUpload.find(:first, :conditions => ["status = 'pending'"], :order => "id ASC")
+    upload = BatchUpload.where(:status => "pending").order(:id => :asc).take
     if upload.nil? then return end
 
     update_attributes(:data => { :id => upload.id, :user_id => upload.user_id, :url => upload.url })
@@ -208,7 +208,7 @@ class JobTask < ActiveRecord::Base
   end
 
   def self.execute_once
-    find(:all, :conditions => ["status = ?", "pending"], :order => "id desc").each do |task|
+    where(:status => "pending").order(:id => :desc).find_each do |task|
       task.execute!
       sleep 1
     end
@@ -217,7 +217,7 @@ class JobTask < ActiveRecord::Base
   def self.execute_all
     # If we were interrupted without finishing a task, it may be left in processing; reset
     # thos tasks to pending.
-    find(:all, :conditions => ["status = ?", "processing"]).each do |task|
+    where(:status => "processing").find_each do |task|
       task.update_attributes(:status => "pending")
     end
 

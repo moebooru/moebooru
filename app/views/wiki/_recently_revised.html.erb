@@ -1,8 +1,8 @@
 <div style="margin-bottom: 1em;">
   <h6>Recent Changes (<%= link_to "all", :action => "index", :order => "date" %>)</h6>
   <ul>
-    <%- WikiPage.find(:all, :limit => 25, :order => "updated_at desc").each do |page| -%>
+    <% WikiPage.limit(25).order(:updated_at => :desc).each do |page| %>
       <li><%= link_to h(page.pretty_title), :controller => "wiki", :action => "show", :title => page.title %></li>
-    <%- end -%>
+    <% end %>
   </ul>
 </div>

@@ -13,11 +13,15 @@ class NoteController < ApplicationController
   end
 
   def index
+    @posts = Post.order :last_noted_at => :desc
     if params[:post_id]
-      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => ["id = ?", params[:post_id]], :per_page => 100, :page => page_number
+      @posts = @posts.where :id => params[:post_id]
+      per_page = 100
     else
-      @posts = Post.paginate :order => "last_noted_at DESC", :conditions => "last_noted_at IS NOT NULL", :per_page => 16, :page => page_number
+      @posts = @posts.where.not :last_noted_at => nil
+      per_page = 16
     end
+    @posts = @posts.paginate :per_page => per_page, :page => page_number
 
     respond_to do |fmt|
       fmt.html
@@ -27,15 +31,19 @@ class NoteController < ApplicationController
   end
 
   def history
+    @notes = NoteVersion.order :id => :desc
+
+    per_page = 25
     if params[:id]
-      @notes = NoteVersion.paginate(:page => page_number, :per_page => 25, :order => "id DESC", :conditions => ["note_id = ?", params[:id].to_i])
+      @notes = @notes.where(:note_id => params[:id])
     elsif params[:post_id]
-      @notes = NoteVersion.paginate(:page => page_number, :per_page => 50, :order => "id DESC", :conditions => ["post_id = ?", params[:post_id].to_i])
+      per_page = 50
+      @notes = @notes.where(:post_id => params[:post_id])
     elsif params[:user_id]
-      @notes = NoteVersion.paginate(:page => page_number, :per_page => 50, :order => "id DESC", :conditions => ["user_id = ?", params[:user_id].to_i])
-    else
-      @notes = NoteVersion.paginate(:page => page_number, :per_page => 25, :order => "id DESC")
+      per_page = 50
+      @notes = @notes.where(:user_id => params[:user_id])
     end
+    @notes = @notes.paginate :page => page_number, :per_page => per_page
 
     respond_to_list("notes")
   end

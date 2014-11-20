@@ -81,9 +81,9 @@ class Artist < ActiveRecord::Base
     def commit_aliases
       if @alias_names
         transaction do
-          connection.execute("UPDATE artists SET alias_id = NULL WHERE alias_id = #{id}")
+          self.class.where(:alias_id => id).update_all(:alias_id => nil)
           @alias_names.each do |name|
-            a = Artist.find_or_create_by_name(name)
+            a = Artist.find_or_create_by(:name => name)
             a.update_attributes(:alias_id => id, :updater_id => updater_id)
           end
         end
@@ -100,9 +100,9 @@ class Artist < ActiveRecord::Base
 
     def aliases
       if new_record?
-        return []
+        self.class.none
       else
-        return Artist.find(:all, :conditions => "alias_id = #{id}", :order => "name")
+        self.class.where(:alias_id => id).order(:name)
       end
     end
 
@@ -121,7 +121,7 @@ class Artist < ActiveRecord::Base
       if name.blank?
         self.alias_id = nil
       else
-        artist = Artist.find_or_create_by_name(name)
+        artist = Artist.find_or_create_by(:name => name)
         self.alias_id = artist.id
       end
     end
@@ -134,11 +134,11 @@ class Artist < ActiveRecord::Base
 
     def commit_members
       transaction do
-        connection.execute("UPDATE artists SET group_id = NULL WHERE group_id = #{id}")
+        self.class.where(:group_id => id).update_all(:group_id => nil)
 
         if @member_names
           @member_names.each do |name|
-            a = Artist.find_or_create_by_name(name)
+            a = Artist.find_or_create_by(:name => name)
             a.update_attributes(:group_id => id, :updater_id => updater_id)
           end
         end
@@ -146,18 +146,16 @@ class Artist < ActiveRecord::Base
     end
 
     def group_name
-      if group_id
-        return Artist.find(group_id).name
-      else
-        nil
-      end
+      return unless group_id
+
+      Artist.find(group_id).name
     end
 
     def members
       if new_record?
-        return []
+        self.class.none
       else
-        Artist.find(:all, :conditions => "group_id = #{id}", :order => "name")
+        self.class.where(:group_id => id).order(:name)
       end
     end
 
@@ -173,7 +171,7 @@ class Artist < ActiveRecord::Base
       if name.blank?
         self.group_id = nil
       else
-        artist = Artist.find_or_create_by_name(name)
+        artist = Artist.find_or_create_by(:name => name)
         self.group_id = artist.id
       end
     end
@@ -219,19 +217,5 @@ class Artist < ActiveRecord::Base
 
   def to_s
     name
-  end
-
-  def self.generate_sql(name)
-    b = Nagato::Builder.new do |_builder, cond|
-      case name
-      when /^http/
-        cond.add "id IN (?)", find_all_by_url(name).map(&:id)
-
-      else
-        cond.add "name LIKE ? ESCAPE E'\\\\'", name.to_escaped_for_sql_like + "%"
-      end
-    end
-
-    b.to_hash
   end
 end

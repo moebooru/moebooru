@@ -34,7 +34,7 @@ module Report
   def tag_updates(start, stop, limit, level)
     users = usage_by_user("post_tag_histories", start, stop, limit, level)
     users.each do |user|
-      user["change_count"] = user["change_count"] - Post.count(:all, :conditions => ["created_at BETWEEN ? AND ? AND user_id =?", start, stop, user["user_id"]])
+      user["change_count"] = user["change_count"] - Post.where(:user_id => user["user_id"]).where("created_at BETWEEN ? AND ?", start, stop).count
     end
     bottom = users.pop
     users.sort! { |a, b| b["change_count"] <=> a["change_count"] }

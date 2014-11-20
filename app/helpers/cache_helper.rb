@@ -28,15 +28,10 @@ module CacheHelper
     case "#{controller_name}/#{action_name}"
     when "post/index"
       build_cache_key("p/i", params[:tags], page_number, params[:limit], options)
-
     when "post/atom"
       build_cache_key("p/a", params[:tags], 1, "", options)
-
     when "post/piclens"
       build_cache_key("p/p", params[:tags], page_number, params[:limit], options)
-
-    else
-      nil
     end
   end
 end

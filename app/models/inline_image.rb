@@ -136,11 +136,11 @@ class InlineImage < ActiveRecord::Base
   end
 
   def preview_dimensions
-    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 150, :height => 150 })
+    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 150, :height => 150)
   end
 
   def thumb_size
-    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => 400, :height => 400 })
+    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 400, :height => 400)
   end
 
   def generate_sample
@@ -158,7 +158,7 @@ class InlineImage < ActiveRecord::Base
     # If we're not reducing the resolution for the sample image, only reencode if the
     # source image is above the reencode threshold.  Anything smaller won't be reduced
     # enough by the reencode to bother, so don't reencode it and save disk space.
-    sample_size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => CONFIG["inline_sample_width"], :height => CONFIG["inline_sample_height"] })
+    sample_size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => CONFIG["inline_sample_width"], :height => CONFIG["inline_sample_height"])
     if sample_size[:width] == width && sample_size[:height] == height && File.size?(path) < CONFIG["sample_always_generate_size"]
       return true
     end
@@ -283,7 +283,7 @@ class InlineImage < ActiveRecord::Base
   def delete_file
     # If several inlines use the same image, they'll share the same file via the MD5.  Only
     # delete the file if this is the last one using it.
-    exists = InlineImage.find(:first, :conditions => ["id <> ? AND md5 = ?", id, md5])
+    exists = InlineImage.where.not(:id => id).where(:md5 => md5)
     return unless exists.nil?
 
     FileUtils.rm_f(file_path)

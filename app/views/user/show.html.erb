@@ -95,16 +95,16 @@
     <% if CONFIG["starting_level"] < 30 %>
     <tr>
       <td><strong><%=t :user_rec_invites %></strong></td>
-      <td><%= User.find(:all, :conditions => ["invited_by = ?", @user.id], :order => "id desc", :select => "name, id", :limit => 5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ").html_safe %></td>
+      <td><%= User.where(:invited_by => @user.id).order(:id => :desc).select(:name, :id).limit(5).map {|x| link_to(h(x.pretty_name), :action => "show", :id => x.id)}.join(", ").html_safe %></td>
     </tr>
     <% end %>
     <tr>
       <td><strong><%=t :user_record %></strong></td>
       <td>
-        <% if !UserRecord.exists?(["user_id = ?", @user.id]) %>
-          <%=t :user_record_none %>
+        <% if UserRecord.where(:user_id => @user.id).any? %>
+          <%= UserRecord.where(:user_id => @user.id, :is_positive => true).count - UserRecord.where(:user_id => @user.id, :is_positive => false).count %>
         <% else %>
-          <%= UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = true", @user.id]) - UserRecord.count(:all, :conditions => ["user_id = ? AND is_positive = false", @user.id]) %>
+          <%=t :user_record_none %>
         <% end %>
         (<%= link_to t(:user_record_add), :controller => "user_record", :action => "index", :user_id => @user.id %>)
       </td>

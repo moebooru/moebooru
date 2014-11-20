@@ -5,6 +5,6 @@ class UserRecord < ActiveRecord::Base
   validates_presence_of :reported_by
 
   def user=(name)
-    self.user_id = User.find_by_name(name).id rescue nil
+    self.user_id = User.find_by(:name => name).try(:id)
   end
 end

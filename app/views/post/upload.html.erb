@@ -28,7 +28,7 @@
         <li><%= link_to t('.guidelines.group'), :controller => "help", :action => "post_relationships" %></li>
         <li><%= t('.guidelines.more_html', :more_link =>  link_to(t('.guidelines.more_link'), :controller => '/help', :action => :tags)) %></li>
       </ul>
-      <p><%= t('.guidelines.limit', :n =>  pluralize(CONFIG["member_post_limit"] - Post.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.day.ago]), "post")) %></p>
+      <p><%= t('.guidelines.limit', :n =>  pluralize(CONFIG["member_post_limit"] - Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count, "post")) %></p>
     </div>
   <% end %>
 

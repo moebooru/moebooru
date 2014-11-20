@@ -36,7 +36,7 @@ class HistoryChange < ActiveRecord::Base
     # Cast our value to the actual type; if this is a boolean value, this
     # casts "f" to false.
     column = master_class.columns_hash[column_name]
-    typecasted_value = column.type_cast(value)
+    typecasted_value = column.type_cast_from_database(value)
 
     typecasted_value == get_default
   end

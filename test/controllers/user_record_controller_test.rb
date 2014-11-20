@@ -24,7 +24,7 @@ class UserRecordControllerTest < ActionController::TestCase
     get :index, {}, :user_id => 3
     assert_response :success
 
-    ur = UserRecord.find(:first)
+    ur = UserRecord.first
 
     post :destroy, { :id => ur.id }, :user_id => 4
     assert_equal(1, UserRecord.count)
@@ -33,7 +33,7 @@ class UserRecordControllerTest < ActionController::TestCase
     assert_equal(0, UserRecord.count)
 
     post :create, { :user_id => 1, :user_record => { :is_positive => false, :body => "hella" } }, :user_id => 3
-    ur = UserRecord.find(:first)
+    ur = UserRecord.first
     post :destroy, { :id => ur.id }, :user_id => 1
     assert_equal(0, UserRecord.count)
   end

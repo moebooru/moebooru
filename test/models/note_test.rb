@@ -38,17 +38,17 @@ class NoteTest < ActiveSupport::TestCase
     Post.update(1, :is_note_locked => true)
     note = create_note(:body => "hello")
     assert_equal(true, note.errors.any?)
-    assert_equal(0, Note.count("post_id = 1"))
+    assert_equal(0, Note.where(:post_id => 1).count)
 
     Post.update(1, :is_note_locked => false)
     note = create_note(:body => "hello")
     assert_equal(false, note.errors.any?)
-    assert_equal(1, Note.count("post_id = 1"))
+    assert_equal(1, Note.where(:post_id => 1).count)
 
     Post.update(1, :is_note_locked => true)
     note.update_attributes(:body => "hello v2")
     assert_equal(true, note.errors.any?)
-    assert_equal(1, Note.count("post_id = 1"))
+    assert_equal(1, Note.where(:post_id => 1).count)
     assert_equal("hello", Note.find_by(:post_id => 1).body)
   end
 

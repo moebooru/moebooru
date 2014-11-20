@@ -96,7 +96,7 @@ class UserController < ApplicationController
 
       redirect_to :action => "invites"
     else
-      @invited_users = User.find(:all, :conditions => ["invited_by = ?", @current_user.id], :order => "lower(name)")
+      @invited_users = User.where(:invited_by => @current_user.id).order("LOWER(name)")
     end
   end
 
@@ -329,7 +329,7 @@ class UserController < ApplicationController
     def activate_user
       flash[:notice] = "Invalid confirmation code"
 
-      users = User.find(:all, :conditions => ["level = ?", CONFIG["user_levels"]["Unactivated"]])
+      users = User.where(:level => CONFIG["user_levels"]["Unactivated"])
       users.each do |user|
         if User.confirmation_hash(user.name) == params["hash"]
           user.update_attribute(:level, CONFIG["starting_level"])

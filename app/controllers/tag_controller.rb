@@ -141,7 +141,7 @@ class TagController < ApplicationController
         all
       end
       @patterns.each do |x|
-        @tags[x] = Tag.find(:all, :conditions => ["name LIKE ? ESCAPE E'\\\\'", x.to_escaped_for_sql_like]).map { |y| [y.name, y.post_count] }
+        @tags[x] = Tag.where("name LIKE ?", x.to_escaped_for_sql_like).pluck(:name, :post_count)
       end
     end
 

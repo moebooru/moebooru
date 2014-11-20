@@ -45,14 +45,14 @@ class BatchController < ApplicationController
 
     if params[:do] == "pause"
       conds.push("status = 'pending'")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
+      BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
         item.update_attributes(:status => "paused")
         count += 1
       end
       flash[:notice] = "Paused %i uploads." % count
     elsif params[:do] == "unpause"
       conds.push("status = 'paused'")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
+      BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
         item.update_attributes(:status => "pending")
         count += 1
       end
@@ -60,7 +60,7 @@ class BatchController < ApplicationController
     elsif params[:do] == "retry"
       conds.push("status = 'error'")
 
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
+      BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
         item.update_attributes(:status => "pending")
         count += 1
       end
@@ -68,7 +68,7 @@ class BatchController < ApplicationController
       flash[:notice] = "Retrying %i uploads." % count
     elsif params[:do] == "clear_finished"
       conds.push("(status = 'finished' or status = 'error')")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
+      BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
         item.destroy
         count += 1
       end
@@ -76,7 +76,7 @@ class BatchController < ApplicationController
       flash[:notice] = "Cleared %i finished uploads." % count
     elsif params[:do] == "abort_all"
       conds.push("(status = 'pending' or status = 'paused')")
-      BatchUpload.find(:all, :conditions => [conds.join(" AND "), *cond_params]).each do |item|
+      BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
         item.destroy
         count += 1
       end

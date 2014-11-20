@@ -25,32 +25,32 @@ class WikiController < ApplicationController
   end
 
   def index
-    @params = params
-    if params[:order] == "date"
-      order = "updated_at DESC"
-    else
-      order = "lower(title)"
-    end
+    @params = params # FIXME: what the hell is this
+
+    @wiki_pages = WikiPage.all
+
+    order =
+      if params[:order] == "date"
+        { :updated_at => :desc }
+      else
+        "LOWER(title)"
+      end
 
     limit = params[:limit] || 25
-    query = params[:query] || ""
+    query = params[:query]
 
-    search_params = {
-      :order => order,
-      :per_page => limit,
-      :page => page_number
-    }
-
-    unless query.empty?
-      if query =~ /^title:/
-        search_params[:conditions] = ["title ilike ?", "%" + query[6..-1].to_escaped_for_sql_like + "%"]
-      else
-        query = query.scan(/\S+/)
-        search_params[:conditions] = ["text_search_index @@ plainto_tsquery(?)", query.join(" & ")]
-      end
+    if query.present?
+      cond = \
+        if query =~ /\Atitle:/
+          ["title ILIKE ?", "%#{query[6..-1].to_escaped_for_sql_like}%"]
+        else
+          query = query.scan(/\S+/)
+          ["text_search_index @@ PLAINTO_TSQUERY(?)", query.join(" & ")]
+        end
+      @wiki_pages = @wiki_pages.where cond
     end
 
-    @wiki_pages = WikiPage.paginate(search_params)
+    @wiki_pages = @wiki_pages.order(order).paginate :per_page => limit, :page => page_number
 
     respond_to_list("wiki_pages")
   end
@@ -132,12 +132,14 @@ class WikiController < ApplicationController
   end
 
   def recent_changes
+    @wiki_pages = WikiPage.order(:updated_at => :desc)
+
     if params[:user_id]
-      params[:user_id] = params[:user_id].to_i
-      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => page_number, :conditions => ["user_id = ?", params[:user_id]]
-    else
-      @wiki_pages = WikiPage.paginate :order => "updated_at DESC", :per_page => (params[:per_page] || 25), :page => page_number
+      @wiki_pages = @wiki_pages.where(:user_id => params[:user_id])
     end
+
+    @wiki_pages = @wiki_pages.paginate :per_page => (params[:per_page] || 25), :page => page_number
+
     respond_to_list("wiki_pages")
   end
 
@@ -148,7 +150,7 @@ class WikiController < ApplicationController
     elsif params[:id]
       wiki_id = params[:id]
     end
-    @wiki_pages = WikiPageVersion.all(:conditions => { :wiki_page_id => wiki_id }, :order => "version DESC")
+    @wiki_pages = WikiPageVersion.where(:wiki_page_id => wiki_id).order(:version => :desc)
 
     respond_to_list("wiki_pages")
   end

@@ -4,7 +4,7 @@ class InlineController < ApplicationController
 
   def create
     # If this user already has an inline with no images, use it.
-    inline = Inline.find(:first, :conditions => ["(SELECT count(*) FROM inline_images WHERE inline_images.inline_id = inlines.id) = 0 AND user_id = ?", @current_user.id])
+    inline = Inline.where("(SELECT count(*) FROM inline_images WHERE inline_images.inline_id = inlines.id) = 0").where(:user_id => @current_user.id).take
     inline ||= Inline.create(:user_id => @current_user.id)
     redirect_to :action => "edit", :id => inline.id
   end
@@ -14,16 +14,9 @@ class InlineController < ApplicationController
     unless @current_user.is_anonymous?
       order << ["user_id = #{@current_user.id} DESC"]
     end
-    order << ["created_at desc"]
+    order << ["created_at DESC"]
 
-    options = {
-      :per_page => 20,
-      :page => page_number,
-      # Mods can view all inlines; sort the user's own inlines first.
-      :order => order.join(", ")
-    }
-
-    @inlines = Inline.paginate options
+    @inlines = Inline.order(order.join(", ")).paginate :per_page => 20, :page => page_number
 
     respond_to_list("inlines")
   end
@@ -99,7 +92,7 @@ class InlineController < ApplicationController
     inline.update_attributes(params[:inline])
     params[:image] ||= []
     params[:image].each do |id, p|
-      image = InlineImage.find(:first, :conditions => ["id = ? AND inline_id = ?", id, inline.id])
+      image = InlineImage.find_by(:id => id, :inline_id => inline.id)
       image.update_attributes(:description => p[:description]) if p[:description]
       image.update_attributes(:sequence => p[:sequence]) if p[:sequence]
     end

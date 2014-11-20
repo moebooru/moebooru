@@ -198,7 +198,7 @@ class Post < ActiveRecord::Base
     conds = []
     conds += ["creator_id <> %d" % [user.id]] unless user.is_anonymous?
 
-    newest_topic = ForumPost.find(:first, :order => "id desc", :limit => 1, :select => "created_at", :conditions => conds)
+    newest_topic = ForumPost.where(conds).order(:id => :desc).select(:created_at).take
     return false if newest_topic.nil?
     newest_topic.created_at > user.last_forum_topic_read_at
   end

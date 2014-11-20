@@ -6,7 +6,7 @@ CONFIG["email_from"] ||= CONFIG["admin_contact"]
 CONFIG["default_locale"] ||= "en"
 
 # Set default url_base if not set in local config.
-CONFIG["url_base"] ||= "http://" + CONFIG["server_host"]
+CONFIG["url_base"] ||= "http://#{CONFIG["server_host"] || "localhost"}"
 
 # Set secure to false by default due to ssl requirement
 CONFIG["secure"] = false if CONFIG["secure"].nil?

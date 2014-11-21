@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 
     def set_current_user
       if Rails.env.test? && session[:user_id]
-        @current_user = User.find_by(id: session[:user_id])
+        @current_user = User.find_by(:id => session[:user_id])
       end
 
       if !@current_user && params[:api_key] && params[:username]

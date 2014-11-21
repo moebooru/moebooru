@@ -6,15 +6,13 @@ class PoolController < ApplicationController
   helper :post
 
   def index
+    @pools = Pool.all
     options = {
       :per_page => 20,
       :page => page_number
     }
 
     order = params[:order]
-
-    conds = []
-    cond_params = []
 
     search_tokens = []
     if params[:query]
@@ -34,7 +32,7 @@ class PoolController < ApplicationController
             options[:per_page] = Regexp.last_match[2].to_i
             options[:per_page] = [options[:per_page], 100].min
           elsif Regexp.last_match[1] == "posts"
-            Post.generate_sql_range_helper(Tag.parse_helper(Regexp.last_match[2]), "post_count", conds, cond_params)
+            @pools = @pools.where(*Post.sql_range_for_where(Tag.parse_helper(Regexp.last_match[2]), "post_count"))
           end
         else
           search_tokens << token
@@ -42,10 +40,9 @@ class PoolController < ApplicationController
       end
     end
 
-    unless search_tokens.empty?
-      value_index_query = "(" + Array(search_tokens).map(&:to_escaped_for_tsquery).join(" & ") + ")"
-      conds << "search_index @@ to_tsquery('pg_catalog.english', ?)"
-      cond_params << value_index_query
+    if search_tokens.any?
+      value_index_query = "(#{Array.wrap(search_tokens).map(&:to_escaped_for_tsquery).join(" & ")})"
+      @pools = @pools.where("search_index @@ to_tsquery('pg_catalog.english', ?)", value_index_query)
 
       # If a search keyword contains spaces, then it was quoted in the search query
       # and we should only match adjacent words.  tsquery won't do this for us; we need
@@ -64,13 +61,9 @@ class PoolController < ApplicationController
         # Don't do this if there are no spaces in the query, so we don't turn off tsquery
         # parsing when we don't need to.
         next unless q.include?(" ")
-        conds << "(position(LOWER(?) IN LOWER(replace_underscores(name))) > 0 OR position(LOWER(?) IN LOWER(description)) > 0)"
-        cond_params << q
-        cond_params << q
+        @pools = @pools.where("position(LOWER(?) IN LOWER(replace_underscores(name))) > 0 OR position(LOWER(?) IN LOWER(description)) > 0", q, q)
       end
     end
-
-    options[:conditions] = [conds.join(" AND "), *cond_params]
 
     if order.nil?
       if search_tokens.empty?
@@ -80,15 +73,15 @@ class PoolController < ApplicationController
       end
     end
 
-    case order
-      when "name" then options[:order] = "nat_sort(name) asc"
-      when "date" then options[:order] = "created_at desc"
-      when "updated" then options[:order] = "updated_at desc"
-      when "id" then options[:order] = "id desc"
-      else options[:order] = "created_at desc"
-    end
+    order = case order
+              when "name" then "nat_sort(name) ASC"
+              when "date" then "created_at DESC"
+              when "updated" then "updated_at DESC"
+              when "id" then "id DESC"
+              else "created_at DESC"
+            end
 
-    @pools = Pool.paginate options
+    @pools = @pools.order(order).paginate options
     @samples = {}
     @pools.each do |p|
       post = p.get_sample
@@ -103,7 +96,7 @@ class PoolController < ApplicationController
     if params[:samples] == "0" then params.delete(:samples) end
 
     begin
-      @pool = Pool.find(params[:id].to_i, :include => [:pool_posts => :post])
+      @pool = Pool.includes(:pool_posts => :post).find(params[:id])
     rescue
       flash[:notice] = t("c.pool.not_found", :id => params[:id].to_i)
       redirect_to :action => :index
@@ -232,11 +225,13 @@ class PoolController < ApplicationController
         respond_to_error(x.class, :controller => "post", :action => "show", :id => params[:post_id])
       end
     else
+      @pools = Pool.where(:is_active => true)
       if @current_user.is_anonymous?
-        @pools = Pool.find(:all, :order => "name", :conditions => "is_active = TRUE AND is_public = TRUE")
+        @pools = @pools.where(:is_public => true)
       else
-        @pools = Pool.find(:all, :order => "name", :conditions => ["is_active = TRUE AND (is_public = TRUE OR user_id = ?)", @current_user.id])
+        @pools = @pools.where("is_public = TRUE OR user_id = ?", @current_user.id)
       end
+      @pools = @pools.order(:name)
 
       @post = Post.find(params[:post_id])
     end
@@ -327,11 +322,13 @@ class PoolController < ApplicationController
 
   def select
     @post_id = params[:post_id].to_i
+    @pools = Pool.where(:is_active => true)
     if @current_user.is_anonymous?
-      @pools = Pool.find(:all, :order => "name", :conditions => "is_active = TRUE AND is_public = TRUE")
+      @pools = @pools.where(:is_public => true)
     else
-      @pools = Pool.find(:all, :order => "name", :conditions => ["is_active = TRUE AND (is_public = TRUE OR user_id = ?)", @current_user.id])
+      @pools = @pools.where("is_public = TRUE OR user_id = ?", @current_user.id)
     end
+    @pools = @pools.order(:name)
 
     render :layout => false
   end

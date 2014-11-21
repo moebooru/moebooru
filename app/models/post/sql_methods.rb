@@ -5,6 +5,13 @@ module Post::SqlMethods
       find(:all, :conditions => ["tags.name = ?", tag], :select => "posts.*", :joins => "JOIN posts_tags ON posts_tags.post_id = posts.id JOIN tags ON tags.id = posts_tags.tag_id", :limit => options[:limit], :offset => options[:offset], :order => (options[:order] || "posts.id DESC"))
     end
 
+    def sql_range_for_where(parsed_query, field)
+      conds = []
+      params = []
+      generate_sql_range_helper(parsed_query, field, conds, params)
+      [*conds, *params]
+    end
+
     def generate_sql_range_helper(arr, field, c, p)
       case arr[0]
       when :eq

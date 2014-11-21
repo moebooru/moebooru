@@ -1,6 +1,6 @@
 require "test_helper"
 
-class ApplicationTest < ActiveSupport::TestCase
+class CacheHelperTest < ActionView::TestCase
   fixtures :users, :posts
   include CacheHelper
   include SessionsHelper
@@ -87,6 +87,8 @@ class ApplicationTest < ActiveSupport::TestCase
           assert_not_equal(val, after[key], "Ran <#{change[:tags]}>")
         end
 
+        # FIXME: caching mechanism currently can't handle expiring change within second.
+        sleep 1
         before = after
       end
     end

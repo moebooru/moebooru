@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
         fmt.html { redirect_to user_login_path(:url => previous_url), :notice => "Access denied" }
         fmt.xml { render :xml => { :success => false, :reason => "access denied" }.to_xml(:root => "response"), :status => 403 }
         fmt.json { render :json => { :success => false, :reason => "access denied" }.to_json, :status => 403 }
+        fmt.js { head :forbidden }
       end
     end
 

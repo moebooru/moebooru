@@ -8,6 +8,7 @@ class PoolControllerTest < ActionController::TestCase
   end
 
   def create_post(tags, post_number, params = {})
+    Thread.current["danbooru-user_id"] = 1
     Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_file("#{Rails.root}/test/mocks/test/test#{post_number}.jpg") }.merge(params))
   end
 
@@ -70,7 +71,7 @@ class PoolControllerTest < ActionController::TestCase
   def test_add_post_to_inactive_pool
     create_pool("hoge", :is_public => true, :user_id => 3, :is_active => false)
 
-    get :add_post, :post_id => 1
+    get :add_post, { :post_id => 1 }, :user_id => 4
     assert_equal(false, assigns(:pools).any? { |x| x.name == "hoge" })
   end
 
@@ -79,7 +80,7 @@ class PoolControllerTest < ActionController::TestCase
 
     # Test as anonymous
     get :add_post, :post_id => 1
-    assert_response :success
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/add_post?post_id=1"
 
     get :add_post, { :post_id => 1 }, :user_id => 4
     assert_response :success
@@ -98,18 +99,18 @@ class PoolControllerTest < ActionController::TestCase
 
     # Test as anonymous
     get :add_post, :post_id => 1
-    assert_response :success
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/add_post?post_id=1"
 
     get :add_post, { :post_id => 1 }, :user_id => 4
     assert_response :success
 
     post :add_post, { :post_id => 1, :pool_id => pool.id, :pool => {} }, :user_id => 4
-    assert_redirected_to :controller => "user", :action => "login"
-    assert_equal(0, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/add_post?post_id=1"
+    assert_equal(0, PoolPost.where(:active => true, :post_id => 1, :pool_id => pool.id).count)
 
     post :add_post, { :post_id => 1, :pool_id => pool.id, :pool => {} }, :user_id => 3
     assert_redirected_to :controller => "post", :action => "show", :id => 1
-    assert_equal(1, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))
+    assert_equal(1, PoolPost.where(:active => true, :post_id => 1, :pool_id => pool.id).count)
   end
 
   def test_remove_post_from_public_pool
@@ -119,7 +120,7 @@ class PoolControllerTest < ActionController::TestCase
     # Don't have an HTML page for this
     post :remove_post, { :format => "json", :post_id => 1, :pool_id => pool.id }, :user_id => 4
     assert_response :success
-    assert_equal(0, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))
+    assert_equal(0, PoolPost.where(:active => true, :post_id => 1, :pool_id => pool.id).count)
   end
 
   def test_remove_post_from_private_pool
@@ -128,12 +129,12 @@ class PoolControllerTest < ActionController::TestCase
 
     # Don't have an HTML page for this
     post :remove_post, { :format => "json", :post_id => 1, :pool_id => pool.id }, :user_id => 4
-    assert_response 403
-    assert_equal(1, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))
+    assert_response :forbidden
+    assert_equal(1, PoolPost.where(:active => true, :post_id => 1, :pool_id => pool.id).count)
 
     post :remove_post, { :format => "json", :post_id => 1, :pool_id => pool.id }, :user_id => 3
     assert_response :success
-    assert_equal(0, PoolPost.count(:conditions => ["post_id = ? AND pool_id = ?", 1, pool.id]))
+    assert_equal(0, PoolPost.where(:active => true, :post_id => 1, :pool_id => pool.id).count)
   end
 
   def test_order_public_pool
@@ -150,20 +151,20 @@ class PoolControllerTest < ActionController::TestCase
     get :order, { :id => pool.id, :query => "tag1" }, :user_id => 4
     assert_response :success
 
-    pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
-    pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
+    pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
+    pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     post :order, { :id => pool.id, :pool_post_sequence => { pp1.id => "10", pp2.id => "20" }, :posts => { "1" => "1", "2" => "1" } }, :user_id => 4
     assert_redirected_to :action => "show", :id => pool.id
-    pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
-    pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
+    pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
+    pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     assert_not_nil(pp1)
     assert_not_nil(pp2)
     assert_nil(pp1.prev_post_id)
     assert_equal(2, pp1.next_post_id)
     assert_equal(1, pp2.prev_post_id)
     assert_nil(pp2.next_post_id)
-    assert_equal(10, pp1.sequence)
-    assert_equal(20, pp2.sequence)
+    assert_equal("10", pp1.sequence)
+    assert_equal("20", pp2.sequence)
   end
 
   def test_order_private_pool
@@ -172,31 +173,31 @@ class PoolControllerTest < ActionController::TestCase
     pool.add_post(2)
 
     get :order, :id => pool.id
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
 
     get :order, { :id => pool.id }, :user_id => 4
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
 
     get :order, { :id => pool.id, :query => "tag1" }, :user_id => 4
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
 
-    pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
-    pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
+    pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
+    pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     post :order, { :id => pool.id, :pool_post_sequence => { pp1.id => "10", pp2.id => "20" }, :posts => { "1" => "1", "2" => "1" } }, :user_id => 4
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
 
     post :order, { :id => pool.id, :pool_post_sequence => { pp1.id => "10", pp2.id => "20" }, :posts => { "1" => "1", "2" => "1" } }, :user_id => 3
     assert_redirected_to :action => "show", :id => pool.id
-    pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
-    pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
+    pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
+    pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     assert_not_nil(pp1)
     assert_not_nil(pp2)
     assert_nil(pp1.prev_post_id)
     assert_equal(2, pp1.next_post_id)
     assert_equal(1, pp2.prev_post_id)
     assert_nil(pp2.next_post_id)
-    assert_equal(10, pp1.sequence)
-    assert_equal(20, pp2.sequence)
+    assert_equal("10", pp1.sequence)
+    assert_equal("20", pp2.sequence)
   end
 
   def test_import_to_private_pool
@@ -205,22 +206,22 @@ class PoolControllerTest < ActionController::TestCase
     create_post("tag2", 2)
 
     get :import, :id => pool.id
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/import/#{pool.id}"
 
     get :import, { :id => pool.id }, :user_id => 3
-    assert_redirected_to :controller => "user", :action => "login"
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/import/#{pool.id}"
 
     post :import, { :id => pool.id, :posts => { "1" => "1", "2" => "2" } }, :user_id => 3
-    assert_redirected_to :controller => "user", :action => "login"
-    pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
-    pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
+    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/import/#{pool.id}"
+    pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
+    pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     assert_nil(pp1)
     assert_nil(pp2)
 
     post :import, { :id => pool.id, :posts => { "1" => "1", "2" => "2" } }, :user_id => 4
     assert_redirected_to :action => "show", :id => pool.id
-    pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
-    pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
+    pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
+    pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     assert_not_nil(pp1)
     assert_not_nil(pp2)
     assert_nil(pp1.prev_post_id)
@@ -234,16 +235,13 @@ class PoolControllerTest < ActionController::TestCase
     create_post("tag1", 1)
     create_post("tag2", 2)
 
-    get :import, :id => pool.id, :format => "js"
-    assert_response :success
-
     get :import, { :id => pool.id, :format => "js" }, :user_id => 3
     assert_response :success
 
     post :import, { :id => pool.id, :posts => { "1" => "1", "2" => "2" } }, :user_id => 3
     assert_redirected_to :action => "show", :id => pool.id
-    pp1 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 1, pool.id])
-    pp2 = PoolPost.find(:first, :conditions => ["post_id = ? AND pool_id = ?", 2, pool.id])
+    pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
+    pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     assert_not_nil(pp1)
     assert_not_nil(pp2)
     assert_nil(pp1.prev_post_id)

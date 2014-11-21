@@ -160,9 +160,6 @@ Moebooru::Application.routes.draw do
   match "download" => "post#download", :via => [:post, :get]
   match "histogram" => "post#histogram", :via => [:post, :get]
 
-  # PostTagHistory
-  match "post_tag_history(/index)" => "post_tag_history#index", :via => [:post, :get]
-
   # Report
   match "report/tag_updates", :via => [:post, :get]
   match "report/note_updates", :via => [:post, :get]

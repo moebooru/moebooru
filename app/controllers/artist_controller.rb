@@ -13,13 +13,14 @@ class ArtistController < ApplicationController
 
   def destroy
     @artist = Artist.find(params[:id])
+    page_number # fix params[:page]
 
     if request.post?
       if params[:commit] == "Yes"
         @artist.destroy
-        respond_to_success("Artist deleted", :action => "index", :page => page_number)
+        respond_to_success("Artist deleted", :action => "index", :page => params[:page])
       else
-        redirect_to :action => "index", :page => page_number
+        redirect_to :action => "index", :page => params[:page]
       end
     end
   end

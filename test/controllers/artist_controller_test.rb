@@ -64,7 +64,7 @@ class ArtistControllerTest < ActionController::TestCase
   def test_show
     monet = create_artist("monet")
     get :show, :id => monet.id
-    assert_response :success
+    assert_redirected_to :controller => "wiki", :action => "show", :title => monet.name
   end
 
   def test_index

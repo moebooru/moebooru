@@ -11,4 +11,8 @@ describe DText do
       assert_equal h(match), p(r(t))
     end
   end
+
+  it "does not explode on nil" do
+    assert_equal "", p(nil)
+  end
 end

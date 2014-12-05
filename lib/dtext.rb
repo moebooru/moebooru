@@ -4,6 +4,8 @@ require "nokogiri"
 
 module DText
   def parse(str)
+    return "" unless str
+
     state = ["newline"]
     result = ""
 

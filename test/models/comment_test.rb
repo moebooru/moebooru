@@ -11,7 +11,7 @@ class CommentTest < ActiveSupport::TestCase
     comment = Comment.create(:post_id => 1, :user_id => 1, :body => "hello world", :ip_addr => "127.0.0.1")
     assert_equal("admin", comment.author)
     assert_equal("hello world", comment.body)
-    assert_equal(comment.created_at, Post.find(1).last_commented_at)
+    assert_equal(comment.created_at.to_i, Post.find(1).last_commented_at.to_i)
   end
 
   #  def test_no_bump

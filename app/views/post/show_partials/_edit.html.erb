@@ -28,12 +28,10 @@
             <% end %>
           </td>
         </tr>
-        <% if CONFIG["enable_parent_posts"] %>
-          <tr>
-            <th><label><%= t('.parent') %></label></th>
-            <td><%= text_field "post", "parent_id", :size => 10, :tabindex => 4 %></td>
-          </tr>
-        <% end %>
+        <tr>
+          <th><label><%= t('.parent') %></label></th>
+          <td><%= text_field "post", "parent_id", :size => 10, :tabindex => 4 %></td>
+        </tr>
           <tr>
             <th><label class="block" for="post_is_shown_in_index"><%= t('.shown_in_index') %></label></th>
             <td><%= check_box "post", "is_shown_in_index", :tabindex => 7 %></td>

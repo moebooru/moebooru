@@ -50,7 +50,7 @@ class Post < ActiveRecord::Base
   include Post::TagMethods
   include Post::CountMethods
   include Post::CacheMethods
-  include Post::ParentMethods if CONFIG["enable_parent_posts"]
+  include Post::ParentMethods
   include Post::FileMethods
   include Post::ChangeSequenceMethods
   include Post::RatingMethods

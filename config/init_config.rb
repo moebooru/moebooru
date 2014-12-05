@@ -139,9 +139,6 @@ CONFIG["vote_descriptions"] = {
 # The maximum image size that will be downloaded by a URL.
 CONFIG["max_image_size"] = 1024 * 1024 * 256
 
-# This allows posts to have parent-child relationships. However, this requires manually updating the post counts stored in table_data by periodically running the script/maintenance script.
-CONFIG["enable_parent_posts"] = false
-
 # Show only the first page of post/index to visitors.
 CONFIG["show_only_first_page"] = false
 

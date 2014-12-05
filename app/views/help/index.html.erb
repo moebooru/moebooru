@@ -22,9 +22,7 @@
     <li><%= link_to t('.notes'), :controller => 'help', :action => 'notes' %></li>
     <li><%= link_to t('.pools'), :controller => 'help', :action => 'pools' %></li>
     <li><%= link_to t('.posts'), :controller => 'help', :action => 'posts' %></li>
-    <%- if CONFIG["enable_parent_posts"] -%>
-      <li><%= link_to t('.post_relationships'), :controller => 'help', :action => 'post_relationships' %></li>
-    <%- end -%>
+    <li><%= link_to t('.post_relationships'), :controller => 'help', :action => 'post_relationships' %></li>
     <li><%= link_to t('.ratings'), :controller => 'help', :action => 'ratings' %></li>
     <li><%= link_to t('.source'), :controller => 'help', :action => 'source_code' %></li>
     <li><%= link_to t('.tag_scripts'), :controller => 'help', :action => 'tag_scripts' %></li>

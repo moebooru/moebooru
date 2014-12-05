@@ -101,12 +101,10 @@
               <%= link_to t(".form.find_related.circles"), "#", :data => { :toggle => "related-tags", :type => "circle" } %>
             </td>
           </tr>
-          <% if CONFIG["enable_parent_posts"] %>
-            <tr>
-              <th><label for="post_parent_id"><%= t('.form.parent') %></label></th>
-              <td><%= text_field "post", "parent_id", :value => params["parent"], :size => 5, :tabindex => 4 %></td>
-            </tr>
-          <% end %>
+          <tr>
+            <th><label for="post_parent_id"><%= t('.form.parent') %></label></th>
+            <td><%= text_field "post", "parent_id", :value => params["parent"], :size => 5, :tabindex => 4 %></td>
+          </tr>
           <tr>
             <th>
               <label for="post_rating_questionable"><%= t('.form.rating._') %></label>

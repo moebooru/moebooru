@@ -210,13 +210,13 @@ module Post::TagMethods
         when /^parent:(\d*)/
           self.parent_id = Regexp.last_match[1]
 
-          if CONFIG["enable_parent_posts"] && (Post.exists?(parent_id) || parent_id == 0)
+          if Post.exists?(parent_id) || parent_id == 0
             Post.set_parent(id, parent_id)
           end
 
         when /^child:(\d*)/
           child_id = Regexp.last_match[1]
-          if CONFIG["enable_parent_posts"] && Post.exists?(child_id)
+          if Post.exists?(child_id)
             # Don't just use set_parent, or history won't be saved, since it saves directly
             # to the database.
             p = Post.find(child_id)

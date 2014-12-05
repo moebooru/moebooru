@@ -100,13 +100,11 @@
       <dt>order:vote</dt>
       <dd>Order by when the post was voted (only valid when doing a vote search)</dd>
 
-      <% if CONFIG["enable_parent_posts"] %>
-        <dt>parent:1234</dt>
-        <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
+      <dt>parent:1234</dt>
+      <dd>Search for posts that have 1234 as a parent (and include post 1234).</dd>
 
-        <dt>parent:none</dt>
-        <dd>Search for posts that have no parent.</dd>
-      <% end %>
+      <dt>parent:none</dt>
+      <dd>Search for posts that have no parent.</dd>
 
       <dt class="bad">gun* dress</dt>
       <dd>Pattern searches do not work well with other tags.</dd>
@@ -156,10 +154,8 @@
       <dt>rating:questionable</dt>
       <dd>Rates a post as questionable. This tag is discarded after the rating is changed.</dd>
 
-      <% if CONFIG["enable_parent_posts"] %>
-        <dt>parent:1234</dt>
-        <dd>Sets the post's parent id to 1234. This tag is discarded after the parent id is changed. If the parent id is the same as the post id, then the parent id will be cleared.</dd>
-      <% end %>
+      <dt>parent:1234</dt>
+      <dd>Sets the post's parent id to 1234. This tag is discarded after the parent id is changed. If the parent id is the same as the post id, then the parent id will be cleared.</dd>
 
       <dt>pool:maria-sama_ga_miteru_manga</dt>
       <dd>Adds the post to the "Maria-sama ga Miteru Manga" pool. This tag is discarded after the post is added to the pool. Make sure to replace spaces with underscores. If the pool with the given name doesn't exist, it will be automatically created.</dd>

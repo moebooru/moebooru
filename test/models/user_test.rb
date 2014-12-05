@@ -4,8 +4,6 @@ class UserTest < ActiveSupport::TestCase
   fixtures :users
 
   def setup
-    Rails.cache.clear
-
     @post_number = 1
   end
 

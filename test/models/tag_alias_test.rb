@@ -2,8 +2,6 @@ require "test_helper"
 
 class TagAliasTest < ActiveSupport::TestCase
   def setup
-    Rails.cache.clear
-
     @alias = TagAlias.create(:name => "tag2", :alias => "tag1", :is_pending => false, :reason => "none", :creator_id => 1)
     @test_number = 1
   end

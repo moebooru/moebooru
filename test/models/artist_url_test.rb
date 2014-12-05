@@ -3,10 +3,6 @@ require "test_helper"
 class ArtistUrlTest < ActiveSupport::TestCase
   fixtures :users, :artists
 
-  def setup
-    Rails.cache.clear
-  end
-
   def test_normalize
     artist = Artist.create(:name => "yukie")
     url = ArtistUrl.create(:artist_id => artist.id, :url => nil)

@@ -4,8 +4,6 @@ class BanTest < ActiveSupport::TestCase
   fixtures :users
 
   def setup
-    Rails.cache.clear
-
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []

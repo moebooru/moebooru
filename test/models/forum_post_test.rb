@@ -3,10 +3,6 @@ require "test_helper"
 class ForumPostTest < ActiveSupport::TestCase
   fixtures :users
 
-  def setup
-    Rails.cache.clear
-  end
-
   def create_post(msg, parent_id = nil, params = {})
     ForumPost.create({ :creator_id => 1, :body => msg, :title => msg, :is_sticky => false, :is_locked => false, :parent_id => parent_id }.merge(params))
   end

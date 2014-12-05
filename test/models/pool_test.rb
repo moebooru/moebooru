@@ -3,10 +3,6 @@ require "test_helper"
 class PoolTest < ActiveSupport::TestCase
   fixtures :users, :posts
 
-  def setup
-    Rails.cache.clear
-  end
-
   def create_pool(params = {})
     Pool.create({ :user_id => 1, :name => "my pool", :post_count => 0, :is_public => false, :description => "pools" }.merge(params))
   end

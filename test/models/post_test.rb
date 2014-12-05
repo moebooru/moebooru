@@ -4,8 +4,6 @@ class PostTest < ActiveSupport::TestCase
   # fixtures :users, :posts, :table_data
 
   def setup
-    Rails.cache.clear
-
     # TODO: revert these after testing in teardown
     CONFIG["image_samples"] = true
     CONFIG["sample_width"] = 100

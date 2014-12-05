@@ -4,7 +4,6 @@ class NoteTest < ActiveSupport::TestCase
   fixtures :users, :posts
 
   def setup
-    Rails.cache.clear
     Thread.current[:versioning_history] = nil
   end
 

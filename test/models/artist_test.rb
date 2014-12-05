@@ -3,10 +3,6 @@ require "test_helper"
 class ArtistTest < ActiveSupport::TestCase
   fixtures :users
 
-  def setup
-    Rails.cache.clear
-  end
-
   def create_artist(params)
     Artist.create({ :updater_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
   end

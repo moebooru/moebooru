@@ -2,8 +2,6 @@ require "test_helper"
 
 class TagTest < ActiveSupport::TestCase
   def setup
-    Rails.cache.clear
-
     @test_number = 1
   end
 

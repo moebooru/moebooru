@@ -1,10 +1,6 @@
 require "test_helper"
 
 class UserRecordTest < ActiveSupport::TestCase
-  def setup
-    Rails.cache.clear
-  end
-
   def create_user(name, params = {})
     user = User.new({ :password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com" }.merge(params))
     user.name = name

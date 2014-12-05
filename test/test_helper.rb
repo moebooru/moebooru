@@ -16,9 +16,14 @@ class ActiveSupport::TestCase
     t
   end
 
+  setup :clear_cache
   setup :reset_thread_variables
 
   private
+
+  def clear_cache
+    Rails.cache.clear
+  end
 
   def reset_thread_variables
     %w(danbooru-user danbooru-user_id).each do |x|

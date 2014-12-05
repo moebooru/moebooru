@@ -3,10 +3,6 @@ require "test_helper"
 class CommentTest < ActiveSupport::TestCase
   fixtures :users, :posts
 
-  def setup
-    Rails.cache.clear
-  end
-
   def test_simple
     comment = Comment.create(:post_id => 1, :user_id => 1, :body => "hello world", :ip_addr => "127.0.0.1")
     assert_equal("admin", comment.author)

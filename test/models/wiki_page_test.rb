@@ -1,10 +1,6 @@
 require "test_helper"
 
 class WikiPageTest < ActiveSupport::TestCase
-  def setup
-    Rails.cache.clear
-  end
-
   def create_wiki(params = {})
     WikiPage.create({ :title => "hoge", :user_id => 1, :body => "hoge", :ip_addr => "127.0.0.1", :is_locked => false }.merge(params))
   end

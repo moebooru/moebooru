@@ -15,4 +15,14 @@ class ActiveSupport::TestCase
     t.rewind
     t
   end
+
+  setup :reset_thread_variables
+
+  private
+
+  def reset_thread_variables
+    %w(danbooru-user danbooru-user_id).each do |x|
+      Thread.current[x] = nil
+    end
+  end
 end

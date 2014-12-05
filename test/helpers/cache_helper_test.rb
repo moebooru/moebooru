@@ -88,7 +88,7 @@ class CacheHelperTest < ActionView::TestCase
         end
 
         # FIXME: caching mechanism currently can't handle expiring change within second.
-        sleep 1
+        sleep 2
         before = after
       end
     end

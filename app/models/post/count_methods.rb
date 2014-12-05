@@ -3,7 +3,7 @@ module Post::CountMethods
     def fast_count(tags = nil)
       # A small sanitation
       tags = tags.to_s.strip.gsub(/ +/, " ")
-      cache_version = Rails.cache.read("$cache_version")
+      cache_version = Moebooru::CacheHelper.get_version
       key = { :post_count => tags, :v => cache_version }
 
       count = Rails.cache.fetch(key) do

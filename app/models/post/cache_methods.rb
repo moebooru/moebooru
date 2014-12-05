@@ -5,8 +5,8 @@ module Post::CacheMethods
   end
 
   def expire_cache
-    # Have to call this twice in order to expire tags that may have been removed
-    Moebooru::CacheHelper.expire(:tags => old_cached_tags) if old_cached_tags
-    Moebooru::CacheHelper.expire(:tags => cached_tags)
+    # FIXME: this removes too many caches.
+    # Reference: https://github.com/moebooru/moebooru/commit/896dbff
+    Moebooru::CacheHelper.increment_version
   end
 end

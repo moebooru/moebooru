@@ -63,7 +63,7 @@ module Post::StatusMethods
         execute_sql(sql, *cond_params)
       end
 
-      Moebooru::CacheHelper.expire if count > 0
+      Moebooru::CacheHelper.increment_version if count > 0
 
       count
     end

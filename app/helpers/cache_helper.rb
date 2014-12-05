@@ -11,7 +11,7 @@ module CacheHelper
       user_level = "?"
     end
 
-    version = Rails.cache.read("$cache_version")
+    version = Moebooru::CacheHelper.get_version
     tags = tags.join(" ")
 
     key = {}

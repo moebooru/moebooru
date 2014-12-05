@@ -9,12 +9,12 @@ module Tag::CacheMethods
 
     # Expire the tag cache if a tag's type changes.
     if tag_type != tag_type_was
-      Moebooru::CacheHelper.expire_tag_version
+      Moebooru::CacheHelper.increment_version("tag")
     end
   end
 
   # Expire the tag cache when a new tag is created.
   def update_cache_on_create
-    Moebooru::CacheHelper.expire_tag_version
+    Moebooru::CacheHelper.increment_version("tag")
   end
 end

@@ -249,7 +249,7 @@ module Post::TagMethods
         end
 
         if any_new_tags
-          Moebooru::CacheHelper.expire_tag_version
+          Moebooru::CacheHelper.increment_version("tag")
         end
       end
 

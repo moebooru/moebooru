@@ -1,15 +1,13 @@
 module Moebooru
   module CacheHelper
-    def expire(_options = {})
-      Rails.cache.write("$cache_version", Time.now.to_f)
+    def increment_version(type = "post")
+      Rails.cache.increment("#{type}_version")
     end
 
-    def expire_tag_version
-      # $tag_version is bumped when the type of a tag is changed in Tags, if
-      # a new tag is created, or if a tag's post_count becomes nonzero.
-      Rails.cache.write("$tag_version", Time.now.to_f)
+    def get_version(type = "post")
+      Rails.cache.read("#{type}_version").to_i
     end
 
-    module_function :expire, :expire_tag_version
+    module_function :increment_version, :get_version
   end
 end

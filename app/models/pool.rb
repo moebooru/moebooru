@@ -122,7 +122,7 @@ class Pool < ActiveRecord::Base
     end
 
     def expire_cache
-      Moebooru::CacheHelper.expire
+      Moebooru::CacheHelper.increment_version
     end
   end
 

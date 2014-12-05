@@ -38,9 +38,9 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def test_cache
-    cache_version = Rails.cache.read("$cache_version").to_i
+    cache_version = Moebooru::CacheHelper.get_version
     create_post
-    assert Rails.cache.read("$cache_version").to_i > cache_version
+    assert Moebooru::CacheHelper.get_version > cache_version
   end
 
   def test_change_sequence

@@ -32,7 +32,7 @@ class PoolPost < ActiveRecord::Base
 
   # Changing pool orderings affects pool sorting in the index.
   def expire_cache
-    Moebooru::CacheHelper.expire
+    Moebooru::CacheHelper.increment_version
   end
 
   module ApiMethods

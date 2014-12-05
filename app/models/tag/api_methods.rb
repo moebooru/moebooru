@@ -78,7 +78,7 @@ module Tag::ApiMethods
 
     # Return the cache version of the summary.
     def get_summary_version
-      Rails.cache.fetch("$tag_version") { 0 }
+      Moebooru::CacheHelper.get_version("tag")
     end
   end
 end

@@ -231,23 +231,23 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def test_tag_merging_a
-    post = create_post(:tags => "tag1 tag2")
+    post = create_post(:tags => "tag_1 tag_2")
     p1 = Post.find(post.id)
-    update_post(p1, :tags => "tag1 tag2 tag-a", :old_tags => "tag1 tag2")
+    update_post(p1, :tags => "tag_1 tag_2 tag_a", :old_tags => "tag_1 tag_2")
     p2 = Post.find(post.id)
-    update_post(p2, :tags => "tag1 tag2 tag-b", :old_tags => "tag1 tag2")
+    update_post(p2, :tags => "tag_1 tag_2 tag_b", :old_tags => "tag_1 tag_2")
     post.reload
-    assert_equal("tag-a tag-b tag1 tag2", post.cached_tags)
+    assert_equal("tag_1 tag_2 tag_a tag_b", post.cached_tags)
   end
 
   def test_tag_merging_b
-    post = create_post(:tags => "tag1 tag2")
+    post = create_post(:tags => "tag_1 tag_2")
     p1 = Post.find(post.id)
-    update_post(p1, :tags => "tag1", :old_tags => "tag1 tag2")
+    update_post(p1, :tags => "tag_1", :old_tags => "tag_1 tag_2")
     p2 = Post.find(post.id)
-    update_post(p2, :tags => "tag1 tag2 tag-a", :old_tags => "tag1 tag2")
+    update_post(p2, :tags => "tag_1 tag_2 tag_a", :old_tags => "tag_1 tag_2")
     post.reload
-    assert_equal("tag-a tag1", post.cached_tags)
+    assert_equal("tag_1 tag_a", post.cached_tags)
   end
 
   def test_tag_merging_c

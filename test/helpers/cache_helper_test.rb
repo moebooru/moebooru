@@ -87,8 +87,6 @@ class CacheHelperTest < ActionView::TestCase
           assert_not_equal(val, after[key], "Ran <#{change[:tags]}>")
         end
 
-        # FIXME: caching mechanism currently can't handle expiring change within second.
-        sleep 2
         before = after
       end
     end

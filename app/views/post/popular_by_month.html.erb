@@ -3,7 +3,7 @@
   <h3>
     <%= link_to '«', :controller => "post", :action => "popular_by_month", :year => 1.month.ago(@start).year, :month => 1.month.ago(@start).month %>
     <%= @start.strftime("%B %Y") %>
-    <%= link_to_unless @start >= Time.now, '»', :controller => "post", :action => "popular_by_month", :year => @end.year, :month => @end.month %>
+    <%= link_to_unless @start >= Time.now, '»', :controller => "post", :action => "popular_by_month", :year => @start.next_month.year, :month => @start.next_month.month %>
   </h3>
 
   <%= render :partial => "posts", :locals => {:posts => @posts} %>

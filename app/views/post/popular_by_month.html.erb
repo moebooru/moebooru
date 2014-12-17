@@ -1,7 +1,7 @@
 <% provide :title, t('.title', :year => @start.year, :month => @start.month) %>
 <div id="post-popular">
   <h3>
-    <%= link_to '«', :controller => "post", :action => "popular_by_month", :year => 1.month.ago(@start).year, :month => 1.month.ago(@start).month %>
+    <%= link_to '«', :controller => "post", :action => "popular_by_month", :year => @start.prev_month.year, :month => @start.prev_month.month %>
     <%= @start.strftime("%B %Y") %>
     <%= link_to_unless @start >= Time.now, '»', :controller => "post", :action => "popular_by_month", :year => @start.next_month.year, :month => @start.next_month.month %>
   </h3>

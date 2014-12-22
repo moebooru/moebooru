@@ -69,6 +69,7 @@
       var self = this
       $.get(Moebooru.path('/forum.json'),
         { latest: 1 }, function(resp) {
+          var
             last_read = $.cookie("forum_post_last_read_at"),
             forum_menu_items = resp,
             forum_submenu = $("li.forum ul.submenu", self.menu),

@@ -84,6 +84,7 @@
                   })
               })
             }
+
           // Reset latest topics.
           forum_items_start.nextAll().remove();
           if (forum_menu_items.length > 0) {
@@ -91,16 +92,16 @@
               forum_submenu.append(create_forum_item(post_data))
               forum_items_start.show();
             })
-          }
 
-          // Set correct class based on read/unread.
-          if (forum_menu_items.first().updated_at > last_read) {
-            $('#forum-link').addClass('forum-update');
-            $('#forum-mark-all-read').show();
-          } else {
-            $('#forum-link').removeClass('forum-update');
-            $('#forum-mark-all-read').hide();
-          };
+            // Set correct class based on read/unread.
+            if (forum_menu_items.first().updated_at > last_read) {
+              $('#forum-link').addClass('forum-update');
+              $('#forum-mark-all-read').show();
+            } else {
+              $('#forum-link').removeClass('forum-update');
+              $('#forum-mark-all-read').hide();
+            }
+          }
         }
       )
     },

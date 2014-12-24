@@ -61,7 +61,7 @@ end
 
 gem "oj", :platforms => :mri
 gem "multi_json"
-gem "jbuilder", "~> 2.0" # Rails default (4.1)
+gem "jbuilder", "~> 2.0" # Rails 4.2 default
 
 # Must be last.
 gem "rack-mini-profiler", :group => :development

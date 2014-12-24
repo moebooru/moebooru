@@ -119,7 +119,7 @@ class ForumController < ApplicationController
     if params[:parent_id]
       @forum_posts = @forum_posts.where(:parent_id => params[:parent_id]).paginate :per_page => 100, :page => page_number
     elsif params[:latest]
-      @forum_posts = @forum_posts.where(:parent_id => nil).order(:updated_at => :desc).paginate(:page => 1, :per_page => 10)
+      @forum_posts = @forum_posts.where(:parent_id => nil).reorder(:updated_at => :desc).paginate(:page => 1, :per_page => 10)
     else
       @forum_posts = @forum_posts.where(:parent_id => nil).paginate :per_page => 30, :page => page_number
     end

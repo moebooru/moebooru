@@ -59,7 +59,7 @@ class CommentController < ApplicationController
 
   def index
     if params[:format] == "json" || params[:format] == "xml"
-      @comments = Comment.paginate(Comment.generate_sql(params).merge(:per_page => 25, :page => page_number, :order => "id DESC"))
+      @comments = Comment.where(Comment.generate_sql(params)[:conditions]).order(:id => :desc).paginate(:per_page => 25, :page => page_number)
       respond_to_list("comments")
     else
       @posts = Post.where.not(:last_commented_at => nil).order(:last_commented_at => :desc).paginate(:per_page => 10, :page => page_number).to_a

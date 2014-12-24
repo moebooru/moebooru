@@ -77,7 +77,7 @@ class CommentController < ApplicationController
   end
 
   def search
-    options = { :order => "id desc", :per_page => 30, :page => page_number }
+    @comments = Comment.order(:id => :desc)
     conds = []
     cond_params = []
     if params[:query]
@@ -89,10 +89,9 @@ class CommentController < ApplicationController
           if search_type == "user"
             user = User.find_by_name(param)
             if user
-              conds << "user_id = ?"
-              cond_params << user.id
+              @comments = @comments.where(:user_id => user.id)
             else
-              conds << "false"
+              @comments = @comments.none
             end
             next
           end
@@ -102,15 +101,13 @@ class CommentController < ApplicationController
       end
 
       if keywords.any?
-        conds << "text_search_index @@ to_tsquery(?)"
-        cond_params << keywords.map(&:to_escaped_for_tsquery).join(" & ")
+        @comments = @comments.where("text_search_index @@ TO_TSQUERY(?)", keywords.map(&:to_escaped_for_tsquery).join(" & "))
       end
-
-      options[:conditions] = [conds.join(" AND "), *cond_params]
     else
-      options[:conditions] = ["false"]
+      @comments = @comments.none
     end
-    @comments = Comment.paginate options
+
+    @comments = @comments.paginate(:per_page => 30, :page => page_number)
 
     respond_to_list("comments")
   end

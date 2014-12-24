@@ -13,16 +13,9 @@ class BatchController < ApplicationController
       user_id = @current_user.id
     end
 
-    p = { :per_page => 25, :order => "created_at ASC, id ASC", :page => page_number }
-    conds = []
-    cond_params = []
-    unless user_id.nil?
-      conds.push("user_id = ?")
-      cond_params.push(user_id)
-    end
-    # conds.push("batch_uploads.status = 'deleted'")
-    p[:conditions] = [conds.join(" AND "), *cond_params]
-    @items = BatchUpload.paginate(p)
+    @items = BatchUpload.order(:created_at => :asc, :id => :asc)
+    @items = @items.where(:user_id => user_id) if user_id.present?
+    @items = @items.paginate(:per_page => 25, :page => page_number)
   end
 
   def update
@@ -124,7 +117,7 @@ class BatchController < ApplicationController
       tags.push("hold")
       tags = tags.uniq.join(" ")
 
-      b = BatchUpload.find_or_initialize_by_url_and_user_id(:user_id => @current_user.id, :url => url)
+      b = BatchUpload.find_or_initialize_by(:user_id => @current_user.id, :url => url)
       b.tags = tags
       b.ip = request.remote_ip
       b.save!

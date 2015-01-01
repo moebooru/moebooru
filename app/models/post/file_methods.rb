@@ -153,7 +153,7 @@ module Post::FileMethods
       return false
     end
 
-    if Post.exists?(["md5 = ?", md5])
+    if Post.exists? :md5 => md5
       delete_tempfile
       errors.add "md5", "already exists"
       return false

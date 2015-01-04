@@ -1,5 +1,4 @@
 CONFIG = {}
-require File.expand_path "../../lib/languages", __FILE__
 # The version of this Moebooru.
 CONFIG["version"] = "4.2.0-rc.1"
 
@@ -253,10 +252,6 @@ CONFIG["tag_subscription_post_limit"] = 200
 
 # Max number of fav tags per user
 CONFIG["max_tag_subscriptions"] = 5
-
-# Languages that we're aware of.  This is what we show in "Secondary languages", to let users
-# select which languages they understand and that shouldn't be translated.
-CONFIG["known_languages"] = CONFIG["language_names"].map { |key, _lang| key }.sort
 
 # The number of posts a privileged_or_lower can have pending at one time.  Any
 # further posts will be rejected.

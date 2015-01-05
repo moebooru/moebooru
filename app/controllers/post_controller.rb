@@ -82,12 +82,12 @@ class PostController < ApplicationController
         end
       end
     elsif @post.errors[:md5].any?
-      duplicate_post
+      handle_duplicate
     else
       respond_to_error(@post, :action => "error")
     end
   rescue ActiveRecord::RecordNotUnique
-    duplicate_post
+    handle_duplicate
   end
 
   def moderate
@@ -849,17 +849,20 @@ class PostController < ApplicationController
 
   private
 
-  def duplicate_post
-    p = Post.find_by_md5(@post.md5)
+  def handle_duplicate
+    p = Post.find_by(:md5 => @post.md5)
 
-    update = { :tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip }
-    update[:source] = @post.source if p.source.blank? && !@post.source.blank?
-    p.update_attributes(update)
+    p.tags = "#{p.cached_tags} #{params[:post][:tags]}"
+    p.updater_user_id = @current_user.id
+    p.updater_ip_addr = request.remote_ip
+    p.source ||= @post.source.presence
+    p.save
 
     api_data = {
       :location => url_for(:controller => "post", :action => "show", :id => p.id),
       :post_id => p.id
     }
+
     respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title }, :api => api_data, :status => 423)
   end
 end

@@ -55,7 +55,11 @@ class PostController < ApplicationController
       user_id = @current_user.id
     end
 
-    @post = Post.create((params[:post] || {}).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
+    begin
+      @post = Post.create((params[:post] || {}).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
+    rescue ActiveRecord::RecordNotUnique
+      return handle_duplicate
+    end
 
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
@@ -86,8 +90,6 @@ class PostController < ApplicationController
     else
       respond_to_error(@post, :action => "error")
     end
-  rescue ActiveRecord::RecordNotUnique
-    handle_duplicate
   end
 
   def moderate

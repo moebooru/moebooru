@@ -24,7 +24,7 @@ class UserMailerTest < ActionMailer::TestCase
 
   def test_new_password
     user = create_user("bob")
-    assert_nothing_raised { UserMailer.new_password(user, "zugzug2").deliver }
+    assert_nothing_raised { UserMailer.new_password(user, "zugzug2").deliver_now }
     assert_emails 1
     assert_equal [CONFIG["email_from"]], ActionMailer::Base.deliveries[0].from
     assert_equal [user.email], ActionMailer::Base.deliveries[0].to
@@ -35,7 +35,7 @@ class UserMailerTest < ActionMailer::TestCase
   def test_dmail
     sender = User.find(1)
     receiver = User.find(2)
-    assert_nothing_raised { UserMailer.dmail(receiver, sender, "test title", "test body").deliver }
+    assert_nothing_raised { UserMailer.dmail(receiver, sender, "test title", "test body").deliver_now }
     assert_emails 1
     assert_equal [CONFIG["email_from"]], ActionMailer::Base.deliveries[0].from
     assert_equal [receiver.email], ActionMailer::Base.deliveries[0].to

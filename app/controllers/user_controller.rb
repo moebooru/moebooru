@@ -257,7 +257,7 @@ class UserController < ApplicationController
         User.transaction do
           # If the email is invalid, abort the password reset
           new_password = @user.reset_password
-          UserMailer.new_password(@user, new_password).deliver
+          UserMailer.new_password(@user, new_password).deliver_now
           respond_to_success("Password reset. Check your email in a few minutes.",
                              { :action => "login" }, :api => { :result => "success" })
           return
@@ -320,7 +320,7 @@ class UserController < ApplicationController
           return
         end
 
-        UserMailer.deliver_confirmation_email(user)
+        UserMailer.confirmation_email(user).deliver_now
         flash[:notice] = "Confirmation email sent"
         redirect_to :action => "home"
       end

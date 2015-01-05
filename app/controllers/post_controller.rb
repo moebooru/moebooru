@@ -82,20 +82,12 @@ class PostController < ApplicationController
         end
       end
     elsif @post.errors[:md5].any?
-      p = Post.find_by_md5(@post.md5)
-
-      update = { :tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip }
-      update[:source] = @post.source if p.source.blank? && !@post.source.blank?
-      p.update_attributes(update)
-
-      api_data = {
-        :location => url_for(:controller => "post", :action => "show", :id => p.id),
-        :post_id => p.id
-      }
-      respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title }, :api => api_data, :status => 423)
+      duplicate_post
     else
       respond_to_error(@post, :action => "error")
     end
+  rescue ActiveRecord::RecordNotUnique
+    duplicate_post
   end
 
   def moderate
@@ -853,5 +845,21 @@ class PostController < ApplicationController
     data = Base64.decode64(data)
 
     send_data data, :filename => filename, :disposition => "attachment", :type => type
+  end
+
+  private
+
+  def duplicate_post
+    p = Post.find_by_md5(@post.md5)
+
+    update = { :tags => p.cached_tags + " " + params[:post][:tags], :updater_user_id => session[:user_id], :updater_ip_addr => request.remote_ip }
+    update[:source] = @post.source if p.source.blank? && !@post.source.blank?
+    p.update_attributes(update)
+
+    api_data = {
+      :location => url_for(:controller => "post", :action => "show", :id => p.id),
+      :post_id => p.id
+    }
+    respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title }, :api => api_data, :status => 423)
   end
 end

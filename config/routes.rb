@@ -212,7 +212,7 @@ Moebooru::Application.routes.draw do
   match "tag/related(.:format)" => "tag#related", :via => [:post, :get]
   match "tag/show(/:id)" => "tag#show", :via => [:post, :get]
   match "tag/summary", :via => [:post, :get]
-  match "tag/update(.:format)" => "tag#update", :via => [:post, :get]
+  post "tag/update(.:format)" => "tag#update"
 
   # TagImplication
   match "tag_implication" => "tag_implication#index", :via => [:post, :get]

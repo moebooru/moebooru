@@ -118,8 +118,8 @@ class TagController < ApplicationController
   end
 
   def update
-    tag = Tag.find_by_name(params[:tag][:name])
-    tag.update_attributes(params[:tag]) if tag
+    tag = Tag.find_by!(:name => params[:tag][:name])
+    tag.update(params[:tag])
 
     respond_to_success("Tag updated", :action => "index")
   end

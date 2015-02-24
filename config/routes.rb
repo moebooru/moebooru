@@ -145,7 +145,7 @@ Moebooru::Application.routes.draw do
   match "post/delete(/:id)" => "post#delete", :via => [:post, :get]
   match "post/deleted_index", :via => [:post, :get]
   match "post/download", :via => [:post, :get]
-  match "post/error", :via => [:post, :get]
+  get "post/error"
   match "post/exception", :via => [:post, :get]
   match "post/histogram", :via => [:post, :get]
   match "post/moderate", :via => [:post, :get]

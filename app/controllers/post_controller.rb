@@ -828,10 +828,6 @@ class PostController < ApplicationController
   def error
   end
 
-  def exception
-    raise "error"
-  end
-
   def download
     require "base64"
 

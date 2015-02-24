@@ -146,7 +146,6 @@ Moebooru::Application.routes.draw do
   match "post/deleted_index", :via => [:post, :get]
   match "post/download", :via => [:post, :get]
   get "post/error"
-  match "post/exception", :via => [:post, :get]
   match "post/histogram", :via => [:post, :get]
   match "post/moderate", :via => [:post, :get]
   match "post/piclens", :defaults => { :format => :rss }, :via => [:post, :get]

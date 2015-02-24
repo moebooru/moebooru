@@ -78,8 +78,7 @@ class CommentController < ApplicationController
 
   def search
     @comments = Comment.order(:id => :desc)
-    conds = []
-    cond_params = []
+
     if params[:query]
       keywords = []
       params[:query].scan(/\S+/).each do |s|

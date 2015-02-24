@@ -1,7 +1,7 @@
 (function($) {
-  $(document).on('click', '#login-link', function() {
-    User.run_login(false, {});
-    return false;
+  $(document).on('click', '#login-link', function(e) {
+    e.preventDefault()
+    User.run_login(false, function() { window.location = window.location })
   });
   $(document).on('click', '#forum-mark-all-read', function() {
     Forum.mark_all_read();

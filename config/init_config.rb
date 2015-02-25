@@ -254,8 +254,7 @@ CONFIG["max_tag_subscriptions"] = 5
 # further posts will be rejected.
 CONFIG["max_pending_images"] = nil
 
-# If set, posts by privileged_or_lower accounts below this size will be set to
-# pending.
+# If set, posts below this size will be set to pending.
 CONFIG["min_mpixels"] = nil
 
 # If true, pending posts act like hidden posts: they're hidden from the index unless

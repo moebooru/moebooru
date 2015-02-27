@@ -189,4 +189,10 @@ module PostHelper
   def get_service_icon(service)
     ExternalPost.get_service_icon(service)
   end
+
+  def size_mpix(post)
+    mpix = (post.width * post.height).to_f / 1_000_000
+
+    format("%.2f MP", mpix)
+  end
 end

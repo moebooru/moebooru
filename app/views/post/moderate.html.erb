@@ -54,7 +54,7 @@
                   <%= t('.reason') %>: <%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
                 </li>
                 <% end %>
-                <li><%= t('.size') %>: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
+                <li><%= t('.size') %>: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %> (<%= size_mpix(p) %>)</li>
               </ul>
             </td>
           </tr>
@@ -99,7 +99,7 @@
                   <%= t('.reason') %>: <%= h p.flag_detail.reason %> (<%- if p.flag_detail.user_id.nil? -%>automatic flag<% else %><%= link_to h(p.flag_detail.author), :controller => "user", :action => "show", :id => p.flag_detail.user_id %><% end %>)
                 </li>
                 <% end %>
-                <li><%= t('.size') %>: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %></li>
+                <li><%= t('.size') %>: <%= number_to_human_size(p.file_size) %>, <%= p.width %>x<%= p.height %> (<%= size_mpix(p) %>)</li>
               </ul>
             </td>
           </tr>

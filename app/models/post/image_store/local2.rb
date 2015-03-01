@@ -43,7 +43,7 @@ module Post::ImageStore::Local2
     if status == "deleted"
       "#{base_url :assets}/deleted-preview.png"
     elsif image?
-      "#{base_url :previews}/data/preview/#{file_hierarchy}/#{md5}.jpg"
+      "#{base_url :assets}/data/preview/#{file_hierarchy}/#{md5}.jpg"
     else
       "#{base_url :assets}/download-preview.png"
     end

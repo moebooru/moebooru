@@ -70,6 +70,14 @@ class PostControllerTest < ActionController::TestCase
     assert_equal("e", p1.rating)
   end
 
+  test "update with empty params" do
+    p1 = create_post("hoge", 1)
+
+    post :update, { :id => p1.id, :format => :json }, :user_id => 3
+
+    assert_response :unprocessable_entity
+  end
+
   def test_destroy
     p1 = create_post("hoge", 1, :user_id => 3)
 

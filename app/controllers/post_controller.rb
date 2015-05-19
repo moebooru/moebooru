@@ -141,6 +141,9 @@ class PostController < ApplicationController
       respond_to_error("Post Locked", { :action => :show, :id => params[:id] }, :status => 422)
       return
     end
+
+    return head :unprocessable_entity unless params[:post]
+
     user_id = @current_user.id
 
     Post.filter_api_changes(params[:post])

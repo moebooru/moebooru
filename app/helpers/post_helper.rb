@@ -63,7 +63,7 @@ module PostHelper
     image = %(<img src="#{post.preview_url}" style="margin-left: #{-crop_left}px;" alt="#{image_title}" class="#{image_class}" title="#{image_title}" #{image_id} width="#{width}" height="#{height}">)
     if is_post
       plid = %(<span class="plid">#pl #{request.protocol}#{h CONFIG["server_host"]}/post/show/#{post.id}</span>)
-      target_url = %(/post/show/#{post.id}/#{u(post.tag_title)})
+      target_url = %(/post/show/#{post.id})
     else
       plid = ""
       target_url = post.url

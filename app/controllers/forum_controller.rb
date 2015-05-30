@@ -153,6 +153,6 @@ class ForumController < ApplicationController
 
   def mark_all_read
     @current_user.update_attribute(:last_forum_topic_read_at, Time.now)
-    render :nothing => true
+    head :no_content
   end
 end

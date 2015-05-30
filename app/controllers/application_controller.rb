@@ -314,7 +314,7 @@ class ApplicationController < ActionController::Base
   def limit_api
     if @from_api && !(request.format.xml? || request.format.json? || request.format.zip?)
       request.session_options[:skip] = true
-      render :nothing => true, :status => 404
+      head :not_found
     end
   end
 

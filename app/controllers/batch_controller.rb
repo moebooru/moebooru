@@ -89,7 +89,7 @@ class BatchController < ApplicationController
       filter[:user_id] = @current_user.id
     end
 
-    if params[:url]
+    if params[:url].present?
       @source = params[:url]
 
       text = ""

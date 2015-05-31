@@ -179,20 +179,10 @@ class HistoryController < ApplicationController
   def undo
     ids = params[:id].split(/,/)
 
-    @changes = []
-    ids.each do |id|
-      @changes += HistoryChange.where(:id => id)
-    end
+    @changes = HistoryChange.where(:id => ids)
+    histories = @changes.map(&:history_id).uniq
 
-    histories = {}
-    total_histories = 0
-    @changes.each do |change|
-      next if histories[change.history_id]
-      histories[change.history_id] = true
-      total_histories += 1
-    end
-
-    if total_histories > 1 && !@current_user.is_privileged_or_higher?
+    if histories.count > 1 && !@current_user.is_privileged_or_higher?
       respond_to_error("Only privileged users can undo more than one change at once", :status => 403)
       return
     end
@@ -201,21 +191,16 @@ class HistoryController < ApplicationController
     History.undo(@changes, @current_user, params[:redo] == "1", errors)
 
     error_texts = []
-    successful = 0
-    failed = 0
-    @changes.each do |change|
-      unless errors[change]
-        successful += 1
-        next
-      end
-      failed += 1
-
-      case errors[change]
+    errors.each do |error|
+      case error
       when :denied
         error_texts << "Some changes were not made because you do not have access to make them."
       end
     end
     error_texts.uniq!
+
+    failed = errors.count
+    successful = @changes.count - failed
 
     respond_to_success("Changes made.", { :action => "index" }, :api => { :successful => successful, :failed => failed, :errors => error_texts })
   end

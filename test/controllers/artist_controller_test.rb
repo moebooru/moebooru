@@ -76,4 +76,9 @@ class ArtistControllerTest < ActionController::TestCase
 
     # TODO: add additional cases
   end
+
+  test "preview for artist notes, blank parameter" do
+    post :preview
+    assert_response :success
+  end
 end

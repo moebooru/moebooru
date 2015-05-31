@@ -8,7 +8,10 @@ class ArtistController < ApplicationController
   helper :post, :wiki
 
   def preview
-    render :inline => "<h4>Preview</h4><%= format_text(params[:artist][:notes]) %>"
+    @notes = params.fetch(:artist, {})[:notes]
+    respond_to do |format|
+      format.html { render :layout => false }
+    end
   end
 
   def destroy

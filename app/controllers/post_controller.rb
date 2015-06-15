@@ -13,6 +13,8 @@ class PostController < ApplicationController
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
 
   def activate
+    return head :no_content unless params[:post_ids].is_a?(Array)
+
     ids = params[:post_ids].map(&:to_i)
     changed = Post.batch_activate(@current_user.is_mod_or_higher? ? nil : @current_user.id, ids)
     respond_to_success("Posts activated", { :action => "moderate" }, :api => { :count => changed })

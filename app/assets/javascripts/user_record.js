@@ -1,5 +1,5 @@
 (function($) {
-  UserRecord = {
+  window.UserRecord = {
     destroy: function(id) {
       notice('Deleting record #' + id)
 

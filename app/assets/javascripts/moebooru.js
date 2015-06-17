@@ -1,6 +1,6 @@
 (function ($) {
-  Moebooru = {};
-  Moe = $(Moebooru);
+  window.Moebooru = {};
+  window.Moe = $(Moebooru);
 
   Moebooru.path = function (url) {
     return PREFIX === '/' ? url : PREFIX + url;
@@ -36,9 +36,9 @@
 
 
     function current(x, y) {
-      var off = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,
+      var windowOffset = [window.pageXOffset || document.documentElement.scrollLeft||document.body.scrollLeft,
                  window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop],
-          offset = [off[0] + (prevPos[0] - x), off[1] + (prevPos[1] - y)];
+          offset = [windowOffset[0] + (prevPos[0] - x), windowOffset[1] + (prevPos[1] - y)];
       prevPos[0] = x; prevPos[1] = y;
       return offset;
     }

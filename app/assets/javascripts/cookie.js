@@ -3,7 +3,7 @@
 (function($) {
   $.cookie.defaults['path'] = PREFIX;
   $.cookie.defaults['expires'] = 365;
-  Cookie = {
+  window.Cookie = {
     put: function(name, value, days) {
       var options = null;
       if (days) {

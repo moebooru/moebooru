@@ -1,5 +1,5 @@
 (function($, t) {
-  Comment = {
+  window.Comment = {
     spoiler: function(obj) {
       var text = $(obj).next('.spoilertext');
       var warning = $(obj).children('.spoilerwarning');
@@ -23,7 +23,7 @@
       }).done(function(resp) {
         notice(t('.flag_notice'));
       }).fail(function(resp) {
-        var resp = $.parseJSON(resp.responseText)
+        resp = $.parseJSON(resp.responseText)
         notice(t('js.error') + resp.reason);
       })
     },
@@ -61,7 +61,7 @@
       }).done(function(resp) {
         document.location.reload()
       }).fail(function(resp) {
-        var resp = $.parseJSON(resp.responseText)
+        resp = $.parseJSON(resp.responseText)
         notice(t('.delete_error') + resp.reason)
       });
     },

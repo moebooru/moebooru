@@ -8,7 +8,7 @@
     return false;
   });
 
-  Menu = {
+  window.Menu = {
     menu: null,
 
     // Set link to moderate when there's something in moderation queue.
@@ -48,7 +48,7 @@
           search_box.addClass('is_modal');
           search_text_box.addClass('mousetrap').focus();
           var document_click_event = function(e) {
-            if ($(e.target).parents('.is_modal').length == 0 && !$(e.target).hasClass('is_modal')) {
+            if ($(e.target).parents('.is_modal').length === 0 && !$(e.target).hasClass('is_modal')) {
               hide(e);
               $(document).off('mousedown', '*', document_click_event);
             };
@@ -73,7 +73,7 @@
             last_read = $.cookie("forum_post_last_read_at", JSON.parse),
             forum_menu_items = resp,
             forum_submenu = $("li.forum ul.submenu", self.menu),
-            forum_items_start = forum_submenu.find('.forum-items-start').show();
+            forum_items_start = forum_submenu.find('.forum-items-start').show(),
             create_forum_item = function(post_data) {
               return $("<li/>", {
                 html: $("<a/>", {

@@ -1,9 +1,9 @@
 (function($) {
-  Favorite = {
+  window.Favorite = {
     link_to_users: function(users) {
       var html = ""
 
-      if (users.size() == 0) {
+      if (users.size() === 0) {
         return I18n.t('js.noone');
       } else {
         html = users.slice(0, 6).map(function(x) {return '<a href="/user/show/' + x.id + '">' + x.name + '</a>'}).join(", ")

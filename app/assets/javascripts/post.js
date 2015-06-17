@@ -6,7 +6,7 @@
   Post.prototype = {
     registerPosts: function (posts) {
       var th = this;
-      if (posts.length == 1) {
+      if (posts.length === 1) {
         this.current = posts[0];
       }
       posts.forEach(function(p, idx, arr) {
@@ -50,7 +50,7 @@
     });
 
     $('#post_tags').on('keydown', function (e) {
-      if (e.which == 13) {
+      if (e.which === 13) {
         e.preventDefault();
         $('#edit-form').submit();
       }

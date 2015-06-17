@@ -1,5 +1,5 @@
 (function($, t) {
-  Dmail = {
+  window.Dmail = {
     respond: function(to) {
       $('#dmail_to_name').val(to);
       var stripped_body = $('#dmail_body').val().replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, "");

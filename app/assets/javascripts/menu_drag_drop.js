@@ -1,5 +1,5 @@
 (function($) {
-MenuDragDrop = {
+window.MenuDragDrop = {
   menu_links: null,
   submenus: null,
   submenu_links: null,
@@ -51,9 +51,9 @@ MenuDragDrop = {
     var target = $(e.target);
     // only trigger click if it's submenu link and the button didn't change.
     // A different, normal click will be triggered if it's different button.
-    if (this.submenus.find(target).length > 0 && this.which == e.which) {
+    if (this.submenus.find(target).length > 0 && this.which === e.which) {
       // if started with middle click, open the target in a new window.
-      if (this.which == '2') {
+      if (this.which === 2) {
         target.attr('target', '_blank');
       };
       target[0].click();
@@ -62,7 +62,7 @@ MenuDragDrop = {
   },
   mousedown: function(e) {
     this.which = e.which;
-    if (this.which != '1' && this.which != '2') {
+    if (this.which !== 1 && this.which !== 2) {
       return;
     };
     this.drag_start_target = $(e.currentTarget);

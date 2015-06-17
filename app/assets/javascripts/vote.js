@@ -62,7 +62,7 @@
             star.removeClass('star-hovered-upto');
             star.addClass('star-hovered-after');
           }
-          if (i != score) {
+          if (i !== score) {
             star.removeClass('star-hovered');
             star.addClass('star-unhovered');
           } else {

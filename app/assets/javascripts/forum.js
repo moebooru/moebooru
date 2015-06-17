@@ -1,5 +1,5 @@
 (function($, t) {
-  Forum = {
+  window.Forum = {
     mark_all_read: function() {
       $.ajax({
         url: Moebooru.path('/forum/mark_all_read'),

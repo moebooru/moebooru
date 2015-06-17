@@ -208,4 +208,10 @@ class PostControllerTest < ActionController::TestCase
     p1.reload
     assert_equal("active", p1.status)
   end
+
+  test "accessing #activate without parameter doesn't fail" do
+    post :activate, {}, :user_id => 2
+
+    assert_response :success
+  end
 end

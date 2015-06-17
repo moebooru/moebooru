@@ -234,8 +234,8 @@ DEPENDENCIES
   quiet_assets
   rack-mini-profiler
   rails (~> 4.2.0)
-  rails-assets-jquery-cookie
-  rails-assets-mousetrap
+  rails-assets-jquery-cookie!
+  rails-assets-mousetrap!
   rails-i18n
   rails-observers
   sass-rails (~> 5.0)

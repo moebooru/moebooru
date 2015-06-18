@@ -22,7 +22,6 @@ window.Favorite = link_to_users: (users) ->
 
   html = usersLinks users.slice(0, 6)
 
-  window.x = users
   if users.length > 6
     html += "<span id='remaining-favs' style='display: none;'>, #{usersLinks users.slice(6)}</span>"
     html += " <span id='remaining-favs-link'>(<a href='#'>#{users.length - 6} more</a>)</span>"

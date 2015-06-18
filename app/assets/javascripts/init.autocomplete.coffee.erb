@@ -1,0 +1,13 @@
+<% url = Rails.application.routes.url_helpers %>
+jQuery(document).ready ($) ->
+  $('input.ac-user-name').autocomplete
+    source: '<%= url.ac_user_name_path %>'
+    minLength: 2
+  $('input.ac-tag-name').autocomplete
+    source: '<%= url.ac_tag_name_path %>'
+    minLength: 2
+  if $('#edit-form').length and $('textarea.ac-tags').length
+    new TagCompletionBox($('textarea.ac-tags')[0])
+    if TagCompletion
+      TagCompletion.observe_tag_changes_on_submit $('#edit-form')[0], $('input.ac-tags')[0], null
+  return

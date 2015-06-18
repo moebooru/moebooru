@@ -1,16 +1,30 @@
-(($) ->
-  window.Favorite = link_to_users: (users) ->
-    html = ''
-    if users.size() == 0
-      I18n.t 'js.noone'
-    else
-      html = users.slice(0, 6).map((x) ->
-        '<a href="/user/show/' + x.id + '">' + x.name + '</a>'
-      ).join(', ')
-      if users.size() > 6
-        html += '<span id="remaining-favs" style="display: none;">' + users.slice(6, -1).map((x) ->
-          '<a href="/user/show/' + x.id + '">' + x.name + '</a>'
-        ).join(', ') + '</span> <span id="remaining-favs-link">(<a href="#" onclick="$(\'remaining-favs\').show(); $(\'remaining-favs-link\').hide(); return false;">' + users.size() - 6 + ' more</a>)</span>'
-      html
-  return
-) jQuery
+$ = jQuery
+
+usersLinks = (users) ->
+  users.map (user) ->
+    userLink(user.id, user.name)
+  .join(", ")
+
+
+userLink = (id, name) ->
+  "<a href='#{Moebooru.path("/user/show/#{id}")}'>#{name}</a>"
+
+
+$(document).on "click", "#remaining-favs-link a", (e) ->
+  e.preventDefault()
+
+  $(e.target).closest("span").hide()
+  $("#remaining-favs").show()
+
+
+window.Favorite = link_to_users: (users) ->
+  return I18n.t "js.noone" if users.length == 0
+
+  html = usersLinks users.slice(0, 6)
+
+  window.x = users
+  if users.length > 6
+    html += "<span id='remaining-favs' style='display: none;'>, #{usersLinks users.slice(6)}</span>"
+    html += " <span id='remaining-favs-link'>(<a href='#'>#{users.length - 6} more</a>)</span>"
+
+  html

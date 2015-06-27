@@ -49,9 +49,6 @@ GEM
     addressable (2.3.8)
     arel (6.0.0)
     builder (3.2.2)
-    cache_digests (0.3.1)
-      actionpack (>= 3.2)
-      thread_safe
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
@@ -205,7 +202,6 @@ DEPENDENCIES
   activerecord-jdbcpostgresql-adapter (~> 1.3.0.rc1)
   acts_as_versioned_rails3
   addressable
-  cache_digests
   coffee-rails (~> 4.1.0)
   coffee-rails-source-maps
   connection_pool

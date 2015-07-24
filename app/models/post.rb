@@ -88,13 +88,9 @@ class Post < ActiveRecord::Base
   end
 
   def can_user_delete?(user)
-    unless user.has_permission?(self)
-      return false
-    end
+    return false unless user.has_permission?(self)
 
-    if !user.is_mod_or_higher? && Time.now - created_at > 1.day && !is_held
-      return false
-    end
+    return false if !user.is_mod_or_higher? && !is_held && created_at < 1.day.ago
 
     true
   end

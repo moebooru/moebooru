@@ -64,7 +64,7 @@ class Post < ActiveRecord::Base
       flag!(reason, current_user.id)
 
       if flag_detail
-        flag_detail.update_attributes(:is_resolved => true)
+        flag_detail.update(:is_resolved => true)
       end
 
       delete
@@ -78,14 +78,14 @@ class Post < ActiveRecord::Base
 
   def delete
     run_callbacks :delete do
-      update_attributes(:status => "deleted")
+      update(:status => "deleted")
     end
   end
 
   def undelete
     return if status == "active"
     run_callbacks :undelete do
-      update_attributes(:status => "active")
+      update(:status => "active")
     end
   end
 
@@ -111,7 +111,7 @@ class Post < ActiveRecord::Base
 
   def set_flag_detail(reason, creator_id)
     if flag_detail
-      flag_detail.update_attributes(:reason => reason, :user_id => creator_id, :created_at => Time.now)
+      flag_detail.update(:reason => reason, :user_id => creator_id, :created_at => Time.now)
     else
       create_flag_detail!(:reason => reason, :user_id => creator_id, :is_resolved => false)
     end
@@ -119,7 +119,7 @@ class Post < ActiveRecord::Base
 
   def flag!(reason, creator_id)
     transaction do
-      update_attributes(:status => "flagged")
+      update(:status => "flagged")
       set_flag_detail(reason, creator_id)
     end
   end
@@ -137,10 +137,10 @@ class Post < ActiveRecord::Base
     old_status = status
 
     if flag_detail
-      flag_detail.update_attributes(:is_resolved => true)
+      flag_detail.update(:is_resolved => true)
     end
 
-    update_attributes(:status => "active", :approver_id => approver_id)
+    update(:status => "active", :approver_id => approver_id)
 
     # Don't bump posts if the status wasn't "pending"; it might be "flagged".
     if old_status == "pending" && CONFIG["hide_pending_posts"]

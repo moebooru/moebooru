@@ -162,7 +162,7 @@ class Post < ActiveRecord::Base
   end
 
   def favorited_by
-    voted_by[3]
+    voted_by[3] || []
   end
 
   def author

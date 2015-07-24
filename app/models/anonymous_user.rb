@@ -9,12 +9,10 @@ class AnonymousUser
   end
 
   def name
-    "Anonymous"
+    CONFIG["default_guest_name"]
   end
 
-  def pretty_name
-    "Anonymous"
-  end
+  alias_method :pretty_name, :name
 
   def is_anonymous?
     true

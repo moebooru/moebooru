@@ -166,7 +166,7 @@ class Post < ActiveRecord::Base
   end
 
   def author
-    User.find_name(user_id)
+    (user || AnonymousUser.new).name
   end
 
   def delete_from_database

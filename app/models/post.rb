@@ -60,11 +60,13 @@ class Post < ActiveRecord::Base
   include Post::FrameMethods
 
   def destroy_with_reason(reason, current_user)
-    Post.transaction do
-      self.flag!(reason, current_user.id)
+    transaction do
+      flag!(reason, current_user.id)
+
       if flag_detail
         flag_detail.update_attributes(:is_resolved => true)
       end
+
       delete
     end
   end

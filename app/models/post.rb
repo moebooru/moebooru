@@ -113,7 +113,7 @@ class Post < ActiveRecord::Base
     if flag_detail
       flag_detail.update_attributes(:reason => reason, :user_id => creator_id, :created_at => Time.now)
     else
-      FlaggedPostDetail.create!(:post_id => id, :reason => reason, :user_id => creator_id, :is_resolved => false)
+      create_flag_detail!(:reason => reason, :user_id => creator_id, :is_resolved => false)
     end
   end
 

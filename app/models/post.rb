@@ -151,15 +151,14 @@ class Post < ActiveRecord::Base
   end
 
   def voted_by
-    # Cache results
-    if @voted_by.nil?
-      @voted_by = {}
-      (1..3).each do |v|
-        @voted_by[v] = User.select("users.name, users.id").joins(:post_votes).where(:post_votes => { :post_id => id, :score => v }).order("post_votes.updated_at DESC")
-      end
-    end
-
-    @voted_by
+    # FIXME: shouldn't include user_blacklist_tags at all (used by API return).
+    @voted_by ||=
+      User.select(:name, :id, "post_votes.score AS vote_score")
+      .joins(:post_votes)
+      .includes(:user_blacklisted_tags)
+      .where(:post_votes => { :post_id => id })
+      .order("post_votes.updated_at DESC")
+      .group_by { |u| u.vote_score }
   end
 
   def favorited_by

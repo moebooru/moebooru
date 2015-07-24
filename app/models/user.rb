@@ -48,7 +48,11 @@ class User < ActiveRecord::Base
     end
 
     def blacklisted_tags_array
-      user_blacklisted_tags.map(&:tags)
+      if user_blacklisted_tags.loaded?
+        user_blacklisted_tags.map(&:tags)
+      else
+        user_blacklisted_tags.pluck(:tags)
+      end
     end
 
     def commit_blacklists

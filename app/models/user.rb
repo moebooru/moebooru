@@ -139,13 +139,7 @@ class User < ActiveRecord::Base
   module UserNameMethods
     module ClassMethods
       def find_name(user_id)
-        Rails.cache.fetch("user_name:#{user_id}") do
-          begin
-            find(user_id).name
-          rescue ActiveRecord::RecordNotFound
-            CONFIG["default_guest_name"]
-          end
-        end
+        (select(:name).find_by(:id => user_id) || AnonymousUser.new).name
       end
 
       def find_by_name(name)

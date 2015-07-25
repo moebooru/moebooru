@@ -3,7 +3,7 @@ class TagImplicationController < ApplicationController
   before_action :member_only, :only => [:create]
 
   def create
-    ti = TagImplication.new(params[:tag_implication].merge(:is_pending => true))
+    ti = TagImplication.new(tag_implication_params.merge(:is_pending => true, :creator_id => @current_user.id))
 
     if ti.save
       flash[:notice] = "Tag implication created"
@@ -66,5 +66,11 @@ class TagImplicationController < ApplicationController
     @implications = @implications.paginate :page => page_number, :per_page => 20
 
     respond_to_list("implications")
+  end
+
+  private
+
+  def tag_implication_params
+    params.require(:tag_implication).permit(:predicate, :consequent, :reason)
   end
 end

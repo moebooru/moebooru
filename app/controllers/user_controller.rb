@@ -157,7 +157,7 @@ class UserController < ApplicationController
   end
 
   def create
-    user = User.create(params[:user])
+    user = User.create(user_params_for_create)
 
     if user.errors.empty?
       save_cookies(user)
@@ -195,7 +195,7 @@ class UserController < ApplicationController
       return
     end
 
-    if @current_user.update_attributes(params[:user])
+    if @current_user.update_attributes(user_params_for_update)
       respond_to_success("Account settings saved", :action => "edit")
     else
       if params[:render] && params[:render][:view]
@@ -283,7 +283,7 @@ class UserController < ApplicationController
         return
       end
 
-      Ban.create(params[:ban].merge(:banned_by => @current_user.id, :user_id => params[:id]))
+      Ban.create(ban_params.merge(:banned_by => @current_user.id, :user_id => params[:id]))
       redirect_to :action => "show_blocked_users"
     else
       @ban = Ban.new(:user_id => @user.id, :duration => "1")
@@ -392,5 +392,17 @@ class UserController < ApplicationController
     else
       :edit
     end
+  end
+
+  def ban_params
+    params.require(:ban).permit(:reason, :duration)
+  end
+
+  def user_params_for_create
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :blacklisted_tags, :always_resize_images, :receive_dmails, :show_samples, :use_browser, :show_advanced_editing)
+  end
+
+  def user_params_for_update
+    params.require(:user).permit(:email, :current_password, :password, :password_confirmation, :blacklisted_tags, :always_resize_images, :receive_dmails, :show_samples, :use_browser, :show_advanced_editing)
   end
 end

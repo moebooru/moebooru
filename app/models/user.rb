@@ -315,7 +315,6 @@ class User < ActiveRecord::Base
   module UserLevelMethods
     def self.included(m)
       m.extend(ClassMethods)
-      m.attr_protected :level
       m.before_create :set_role
     end
 
@@ -438,10 +437,6 @@ class User < ActiveRecord::Base
         invitee.save
         decrement! :invite_count
       end
-    end
-
-    def self.included(m)
-      m.attr_protected :invite_count
     end
   end
 

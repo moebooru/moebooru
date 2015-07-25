@@ -55,10 +55,6 @@
     <h4><%= t('.add_new.title') %></h4>
     <p><%= t('.add_new.info') %></p>
 
-    <% unless @current_user.is_anonymous? %>
-      <%= hidden_field_tag "tag_alias[creator_id]", @current_user.id %>
-    <% end %>
-
     <table>
       <tr>
         <th><label for="tag_alias_name"><%= t('.add_new.name') %></label></th>

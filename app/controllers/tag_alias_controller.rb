@@ -3,7 +3,7 @@ class TagAliasController < ApplicationController
   before_action :member_only, :only => [:create]
 
   def create
-    ta = TagAlias.new(params[:tag_alias].merge(:is_pending => true))
+    ta = TagAlias.new(tag_alias_params.merge(:is_pending => true, :creator_id => @current_user.id))
 
     if ta.save
       flash[:notice] = "Tag alias created"
@@ -62,5 +62,11 @@ class TagAliasController < ApplicationController
     else
       head :bad_request
     end
+  end
+
+  private
+
+  def tag_alias_params
+    params.require(:tag_alias).permit(:name, :alias, :reason)
   end
 end

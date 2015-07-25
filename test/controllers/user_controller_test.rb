@@ -99,7 +99,9 @@ class UserControllerTest < ActionController::TestCase
     get :edit, {}, :user_id => 4
     assert_response :success
 
-    assert_raises(ActiveModel::MassAssignmentSecurity::Error) { post :update, { :user => { :invite_count => 10 } }, :user_id => 4 }
+    original_invite_count = User.find(4).invite_count
+    post :update, { :user => { :invite_count => original_invite_count + 2 } }, :user_id => 4
+    assert_equal(original_invite_count, User.find(4).invite_count)
 
     post :update, { :user => { :receive_dmails => true } }, :user_id => 4
     assert_equal(true, User.find(4).receive_dmails?)

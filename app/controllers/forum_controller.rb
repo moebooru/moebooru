@@ -21,7 +21,7 @@ class ForumController < ApplicationController
   def preview
     if params[:forum_post]
       @preview = true
-      forum_post = ForumPost.new(params[:forum_post].merge(:creator_id => session[:user_id]))
+      forum_post = ForumPost.new(forum_post_params.merge(:creator_id => @current_user.id))
       forum_post.created_at = Time.now
       render :partial => "post", :locals => { :post => forum_post }
     else
@@ -42,7 +42,7 @@ class ForumController < ApplicationController
   end
 
   def create
-    @forum_post = ForumPost.create(params[:forum_post].merge(:creator_id => session[:user_id]))
+    @forum_post = ForumPost.create(forum_post_params.merge(:creator_id => @current_user.id))
 
     if @forum_post.errors.empty?
       if params[:forum_post][:parent_id].to_i == 0
@@ -94,7 +94,7 @@ class ForumController < ApplicationController
       return
     end
 
-    @forum_post.attributes = params[:forum_post]
+    @forum_post.attributes = forum_post_params
     if @forum_post.save
       flash[:notice] = "Post updated"
       redirect_to :action => "show", :id => @forum_post.root_id, :page => (@forum_post.root.response_count / 30.0).ceil
@@ -154,5 +154,11 @@ class ForumController < ApplicationController
   def mark_all_read
     @current_user.update_attribute(:last_forum_topic_read_at, Time.now)
     head :no_content
+  end
+
+  private
+
+  def forum_post_params
+    params.require(:forum_post).permit(:parent_id, :title, :body)
   end
 end

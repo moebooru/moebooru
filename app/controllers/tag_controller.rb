@@ -119,7 +119,7 @@ class TagController < ApplicationController
 
   def update
     tag = Tag.find_by!(:name => params[:tag][:name])
-    tag.update(params[:tag])
+    tag.update(tag_params)
 
     respond_to_success("Tag updated", :action => "index")
   end
@@ -191,5 +191,11 @@ class TagController < ApplicationController
       raise ActionController::RoutingError.new("Not Found")
     end
     redirect_to :controller => :wiki, :action => :show, :title => name
+  end
+
+  private
+
+  def tag_params
+    params.require(:tag).permit(:name, :tag_type, :is_ambiguous)
   end
 end

@@ -47,7 +47,7 @@ Post = {
       },
 
       onSuccess: function(resp) {
-        var resp = resp.responseJSON
+        resp = resp.responseJSON
         Post.register_resp(resp);
 
         /* Fire posts:update, to allow observers to update their display on change. */
@@ -196,7 +196,7 @@ Post = {
       parameters: params,
 
       onComplete: function(resp) {
-        var resp = resp.responseJSON
+        resp = resp.responseJSON
 
         if (resp.success) {
           notice('Post updated')
@@ -235,7 +235,7 @@ Post = {
       parameters: params,
 
       onComplete: function(resp) {
-        var resp = resp.responseJSON
+        resp = resp.responseJSON
 
         if (resp.success) {
           if(finished)
@@ -997,7 +997,7 @@ Post = {
   acknowledge_new_deleted_posts: function(post_id) {
     new Ajax.Request("/post/acknowledge_new_deleted_posts.json", {
       onComplete: function(resp) {
-        var resp = resp.responseJSON
+        resp = resp.responseJSON
 
         if (resp.success)
 	{
@@ -1225,7 +1225,7 @@ Post = {
       parameters: { tags: "parent:" + old_parent_id },
 
       onComplete: function(resp) {
-        var resp = resp.responseJSON
+        resp = resp.responseJSON
 	for(var i = 0; i < resp.length; ++i)
 	{
           var post = resp[i];

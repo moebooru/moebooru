@@ -13,7 +13,7 @@ class CommentController < ApplicationController
   def update
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
-      comment.update_attributes(params[:comment])
+      comment.update_attributes(comment_params)
       respond_to_success("Comment updated", :action => "index")
     else
       access_denied
@@ -39,7 +39,7 @@ class CommentController < ApplicationController
 
     user_id = session[:user_id]
 
-    comment = Comment.new(params[:comment].merge(:ip_addr => request.remote_ip, :user_id => user_id))
+    comment = Comment.new(comment_params.merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if params[:commit] == "Post without bumping"
       comment.do_not_bump_post = true
     end
@@ -134,5 +134,11 @@ class CommentController < ApplicationController
     @comment = Comment.find(params[:id])
     @comment.update_attributes(:is_spam => true)
     respond_to_success("Comment marked as spam", :action => "index")
+  end
+
+  private
+
+  def comment_params
+    params.require(:comment).permit(:body, :post_id)
   end
 end

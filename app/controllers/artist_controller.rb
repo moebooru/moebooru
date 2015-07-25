@@ -36,7 +36,7 @@ class ArtistController < ApplicationController
       end
 
       artist = Artist.find(params[:id])
-      artist.update_attributes(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
+      artist.update_attributes(artist_params.merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
 
       if artist.errors.empty?
         respond_to_success("Artist updated", :action => "show", :id => artist.id)
@@ -50,7 +50,7 @@ class ArtistController < ApplicationController
 
   def create
     if request.post?
-      artist = Artist.create(params[:artist].merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
+      artist = Artist.create(artist_params.merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
 
       if artist.errors.empty?
         respond_to_success("Artist created", :action => "show", :id => artist.id)
@@ -104,5 +104,11 @@ class ArtistController < ApplicationController
     else
       redirect_to :controller => "wiki", :action => "show", :title => @artist.name
     end
+  end
+
+  private
+
+  def artist_params
+    params.require(:artist).permit(:name, :alias_name, :alias_names, :member_names, :urls, :notes)
   end
 end

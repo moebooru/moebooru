@@ -79,7 +79,7 @@ class NoteController < ApplicationController
       return
     end
 
-    note.attributes = params[:note]
+    note.attributes = note_params
     note.user_id = @current_user.id
     note.ip_addr = request.remote_ip
 
@@ -88,5 +88,11 @@ class NoteController < ApplicationController
     else
       respond_to_error(note, :controller => "post", :action => "show", :id => note.post_id)
     end
+  end
+
+  private
+
+  def note_params
+    params.require(:note).permit(:post_id, :x, :y, :width, :height, :body)
   end
 end

@@ -57,7 +57,7 @@ class PostController < ApplicationController
       user_id = @current_user.id
     end
 
-    @post = Post.new((params[:post] || {}).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
+    @post = Post.new(post_params_for_create.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
     begin
       @post.save
     rescue ActiveRecord::RecordNotUnique
@@ -148,9 +148,7 @@ class PostController < ApplicationController
 
     user_id = @current_user.id
 
-    Post.filter_api_changes(params[:post])
-
-    if @post.update_attributes(params[:post].merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+    if @post.update_attributes(post_params_for_update.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
       @post.reload
@@ -187,9 +185,7 @@ class PostController < ApplicationController
 
       old_parent_id = @post.parent_id
 
-      Post.filter_api_changes(post)
-
-      if @post.update_attributes(post.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+      if @post.update_attributes(post_params_for_update_single(post).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
         # Reload the post to send the new status back; not all changes will be reflected in
         # @post due to after_save changes.
         @post.reload
@@ -868,5 +864,17 @@ class PostController < ApplicationController
     }
 
     respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title }, :api => api_data, :status => 423)
+  end
+
+  def post_params_for_create
+    params.require(:post).permit(:file, :source, :parent_id, :rating, :tags)
+  end
+
+  def post_params_for_update
+    post_params_for_update_single(params.require(:post))
+  end
+
+  def post_params_for_update_single(p)
+    p.permit(:source, :parent_id, :rating, :tags)
   end
 end

@@ -149,14 +149,14 @@ class PoolController < ApplicationController
     end
 
     if request.post?
-      @pool.update_attributes(params[:pool])
+      @pool.update_attributes(pool_params)
       respond_to_success("Pool updated", :action => "show", :id => params[:id])
     end
   end
 
   def create
     if request.post?
-      @pool = Pool.create(params[:pool].merge(:user_id => @current_user.id))
+      @pool = Pool.create(pool_params.merge(:user_id => @current_user.id))
 
       if @pool.errors.empty?
         respond_to_success("Pool created", :action => "show", :id => @pool.id)
@@ -393,5 +393,11 @@ class PoolController < ApplicationController
 
       @posts << data
     end
+  end
+
+  private
+
+  def pool_params
+    params.require(:pool).permit(:name, :description, :is_public, :is_active)
   end
 end

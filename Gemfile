@@ -24,7 +24,6 @@ gem "foreigner"
 
 ### FIXME: remove this
 gem "actionpack-page_caching"
-gem "protected_attributes"
 ### FIXME: remove this
 
 gem "diff-lcs"

@@ -25,7 +25,7 @@ class DmailController < ApplicationController
       redirect_to :action => :inbox
       return
     end
-    @dmail = Dmail.create(params[:dmail].merge(:from_id => @current_user.id))
+    @dmail = Dmail.create(dmail_params.merge(:from_id => @current_user.id))
 
     if @dmail.errors.empty?
       flash[:notice] = "Message sent to #{params[:dmail][:to_name]}"
@@ -71,5 +71,11 @@ class DmailController < ApplicationController
     else
       redirect_to :action => "inbox"
     end
+  end
+
+  private
+
+  def dmail_params
+    params.require(:dmail).permit(:to_name, :title, :body, :parent_id)
   end
 end

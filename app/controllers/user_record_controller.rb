@@ -19,7 +19,7 @@ class UserRecordController < ApplicationController
       if @user.id == @current_user.id
         flash[:notice] = "You cannot create a record for yourself"
       else
-        @user_record = UserRecord.create(params[:user_record].merge(:user_id => params[:user_id], :reported_by => @current_user.id))
+        @user_record = UserRecord.create(user_record_params.merge(:user_id => params[:user_id], :reported_by => @current_user.id))
         flash[:notice] = "Record updated"
       end
       redirect_to :action => "index", :user_id => @user.id
@@ -35,5 +35,11 @@ class UserRecordController < ApplicationController
     else
       access_denied
     end
+  end
+
+  private
+
+  def user_record_params
+    params.require(:user_record).permit(:is_positive, :body)
   end
 end

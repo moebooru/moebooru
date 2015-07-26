@@ -16,10 +16,10 @@ class TagSubscriptionController < ApplicationController
   def update
     if request.post?
       if params[:tag_subscription]
-        params[:tag_subscription].each_key do |tag_subscription_id|
-          tag_subscription = TagSubscription.find(tag_subscription_id)
+        params[:tag_subscription].each do |id, params|
+          tag_subscription = TagSubscription.find(id)
           if tag_subscription.user_id == @current_user.id
-            tag_subscription.update_attributes(params[:tag_subscription][tag_subscription_id])
+            tag_subscription.update_attributes(tag_subscription_params(params))
           end
         end
       end
@@ -41,5 +41,11 @@ class TagSubscriptionController < ApplicationController
         @tag_subscription.destroy
       end
     end
+  end
+
+  private
+
+  def tag_subscription_params(p)
+    p.permit(:name, :tag_query, :is_visible_on_profile)
   end
 end

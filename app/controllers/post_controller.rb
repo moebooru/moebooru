@@ -875,6 +875,6 @@ class PostController < ApplicationController
   end
 
   def post_params_for_update_single(p)
-    p.permit(:source, :parent_id, :rating, :tags)
+    p.permit(:source, :parent_id, :rating, :tags, :old_tags)
   end
 end

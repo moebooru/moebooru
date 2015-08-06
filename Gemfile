@@ -58,6 +58,10 @@ group :standalone do
   gem "puma", :platforms => [:jruby, :rbx, :mswin]
 end
 
+group :test do
+  gem "m"
+end
+
 gem "oj", :platforms => :mri
 gem "multi_json"
 gem "jbuilder", "~> 2.0" # Rails 4.2 default

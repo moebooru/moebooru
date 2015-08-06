@@ -36,13 +36,12 @@ class Tag < ActiveRecord::Base
         .select([:name, :post_count, :id, :tag_type])
         .map { |t| [type_name_from_value(t.tag_type), t.name, t.post_count, t.id] }
     else
-      tags =
-        case tags[0]
-        when Hash
-          tags.map { |x| [x["name"], x["post_count"], nil] }
-        when self
-          tags.map { |x| [x.name, x.post_count, x.id] }
-        end
+      case tags[0]
+      when Hash
+        tags.map! { |x| [x["name"], x["post_count"], nil] }
+      when self
+        tags.map! { |x| [x.name, x.post_count, x.id] }
+      end
 
       tags_type = batch_get_tag_types(tags.map { |data| data[0] })
       tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }

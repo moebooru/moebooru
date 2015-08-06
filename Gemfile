@@ -4,7 +4,6 @@ gem "rails", "~> 4.2.0"
 gem "rails-observers"
 
 gem "coffee-rails", "~> 4.1.0" # Rails 4.2 default
-gem "coffee-rails-source-maps", :group => :development
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "uglifier", ">= 1.3.0" # Rails 4.2 default
@@ -46,6 +45,7 @@ gem "image_size"
 gem "i18n-js", ">= 3.0.0.rc7"
 
 group :development do
+  gem "coffee-rails-source-maps"
   gem "quiet_assets"
 end
 

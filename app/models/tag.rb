@@ -26,6 +26,29 @@ class Tag < ActiveRecord::Base
       .map { |name, count| { "post_count" => count, "name" => name } }
   end
 
+  def self.sort_by_type(tags, count_sorting = false)
+    case tags[0]
+    when String
+      tags = where(:name => tags).select([:name, :post_count, :id, :tag_type]).map { |t| [type_name_from_value(t.tag_type), t.name, t.post_count, t.id] }
+
+    when Hash, self, Array
+      case tags[0]
+      when Hash
+        tags = tags.map { |x| [x["name"], x["post_count"], nil] }
+      when self
+        tags = tags.map { |x| [x.name, x.post_count, x.id] }
+      end
+      tags_type = batch_get_tag_types(tags.map { |data| data[0] })
+      tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
+    end
+
+    if count_sorting
+      tags.sort_by { |a| [TYPE_ORDER[a[0]], -a[2].to_i, a[1]] }
+    else
+      tags.sort_by { |a| [TYPE_ORDER[a[0]], a[1]] }
+    end
+  end
+
   def pretty_name
     name
   end

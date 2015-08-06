@@ -84,9 +84,10 @@ module Post::TagMethods
 
   # Return the tags we display in URLs, page titles, etc.
   def title_tags
-    ret = ""
-    ret << cached_tags
-    ret
+    Tag
+      .sort_by_type(cached_tags)
+      .map { |t| t[1] }
+      .join(" ")
   end
 
   def tags

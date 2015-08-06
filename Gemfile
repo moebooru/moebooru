@@ -62,6 +62,8 @@ group :test do
   gem "m"
 end
 
+gem "pry", :group => [:development, :test]
+
 gem "oj", :platforms => :mri
 gem "multi_json"
 gem "jbuilder", "~> 2.0" # Rails 4.2 default

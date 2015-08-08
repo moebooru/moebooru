@@ -27,6 +27,13 @@
   <%= auto_discovery_link_tag :atom, controller: '/post', :action => "atom", :tags => params[:tags] %>
   <%= stylesheet_link_tag :application %>
 
+  <script id="user-blacklisted-tags" type="application/json">
+    <% if @current_user.is_anonymous? %>
+      <%= json_escape CONFIG["default_blacklists"].to_json.html_safe %>
+    <% else %>
+      <%= json_escape @current_user.blacklisted_tags_array.to_json %>
+    <% end %>
+  </script>
   <%= javascript_include_tag :application %>
   <%= javascript_include_tag 'moe-legacy/application' %>
   <%= render 'layouts/locale' %>

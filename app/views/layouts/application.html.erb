@@ -31,7 +31,7 @@
     <% if @current_user.is_anonymous? %>
       <%= json_escape CONFIG["default_blacklists"].to_json.html_safe %>
     <% else %>
-      <%= json_escape @current_user.blacklisted_tags_array.to_json %>
+      <%= json_escape @current_user.blacklisted_tags_array.to_json.html_safe %>
     <% end %>
   </script>
   <%= javascript_include_tag :application %>

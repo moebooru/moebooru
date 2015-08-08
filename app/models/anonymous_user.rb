@@ -76,4 +76,8 @@ class AnonymousUser
       true
     end
   end
+
+  def blacklisted_tags_array
+    CONFIG["default_blacklists"]
+  end
 end

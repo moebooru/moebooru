@@ -867,7 +867,7 @@ class PostController < ApplicationController
   end
 
   def post_params_for_create
-    params.require(:post).permit(:file, :source, :parent_id, :rating, :tags)
+    params.require(:post).permit(:file, :source, :parent_id, :rating, :tags, :is_held)
   end
 
   def post_params_for_update
@@ -875,6 +875,6 @@ class PostController < ApplicationController
   end
 
   def post_params_for_update_single(p)
-    p.permit(:source, :parent_id, :rating, :tags, :old_tags)
+    p.permit(:source, :parent_id, :rating, :tags, :old_tags, :is_held)
   end
 end

@@ -92,11 +92,3 @@ window.Menu =
     @set_post_moderate_count()
     @sync_forum_menu()
     @hide_help_items()
-
-    ###
-    # Shows #cn
-    # FIXME: I have no idea what this is for.
-    ###
-
-    $('#cn').show()
-    return

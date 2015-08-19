@@ -11,7 +11,7 @@ gem "uglifier", ">= 1.3.0" # Rails 4.2 default
 gem "sass-rails", "~> 5.0" # Rails 4.2 default
 
 source "https://rails-assets.org" do
-  gem "rails-assets-jquery-cookie"
+  gem "rails-assets-js-cookie"
   gem "rails-assets-mousetrap"
 end
 

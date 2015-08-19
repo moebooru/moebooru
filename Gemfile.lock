@@ -150,9 +150,7 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.2.3)
       sprockets-rails
-    rails-assets-jquery (2.1.4)
-    rails-assets-jquery-cookie (1.4.1)
-      rails-assets-jquery (>= 1.2)
+    rails-assets-js-cookie (2.0.3)
     rails-assets-mousetrap (1.5.3)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
@@ -251,7 +249,7 @@ DEPENDENCIES
   quiet_assets
   rack-mini-profiler
   rails (~> 4.2.0)
-  rails-assets-jquery-cookie!
+  rails-assets-js-cookie!
   rails-assets-mousetrap!
   rails-i18n
   rails-observers

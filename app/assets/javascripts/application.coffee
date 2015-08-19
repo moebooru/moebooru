@@ -16,5 +16,8 @@
 #= require favorite
 #= require forum
 #= require user_record
+
+#= require notice
+
 #= require_tree .
 #= require main_menu_dropdown

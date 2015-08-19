@@ -5,13 +5,13 @@
 #= require jquery
 #= require jquery_ujs
 #= require js-cookie
+#= require cookie
 #= require jquery-ui/autocomplete
 #= require compat.jquery
 #= require mousetrap
 #= require i18n
 #= require i18n/translations
 #= require i18n_scopify
-#= require cookie
 #= require dmail
 #= require favorite
 #= require forum

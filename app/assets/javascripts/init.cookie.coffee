@@ -10,6 +10,6 @@ jQuery(document).ready ($) ->
   if Cookies('block_reason') and Cookies('block_reason') != ''
     $('#block-reason').text(Cookies('block_reason')).show()
   # Check if there's any pending post moderation queue.
-  if Cookies('mod_pending', Number) > 0
+  if parseInt(Cookies('mod_pending')) > 0
     $('#moderate').addClass 'mod-pending'
   return

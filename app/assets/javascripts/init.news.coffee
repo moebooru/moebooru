@@ -11,4 +11,4 @@ $(document).on "ready page:load", ->
   $newsTicker.find(".close-link").click (e) ->
     e.preventDefault()
     $newsTicker.hide()
-    Cookies cookieKey, newsDate, expires: 7
+    Cookies cookieKey, newsDate, expires: 365

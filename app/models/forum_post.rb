@@ -105,7 +105,7 @@ class ForumPost < ActiveRecord::Base
         :parent_id => parent_id,
         :title => title,
         :updated_at => updated_at,
-        :pages => ((response_count == 0 ? 1 : response_count) / 30.0).ceil
+        :pages => pages
       }
     end
 
@@ -166,5 +166,13 @@ class ForumPost < ActiveRecord::Base
 
   def author
     creator.name
+  end
+
+  def pages
+    ((response_count == 0 ? 1 : response_count) / 30.0).ceil
+  end
+
+  def self.latest
+    where(:parent_id => nil).reorder(:updated_at => :desc).paginate(:page => 1, :per_page => 10)
   end
 end

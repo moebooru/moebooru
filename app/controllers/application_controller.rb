@@ -273,8 +273,8 @@ class ApplicationController < ActionController::Base
       end
 
       if @current_user.is_janitor_or_higher?
-        mod_pending = Post.where("status IN (?)", %w(flagged pending)).count
-        cookies["mod_pending"] = mod_pending.to_s
+        mod_pending = Post.where("status" => %w(flagged pending)).count
+        cookies["mod_pending"] = mod_pending
       end
 
       if @current_user.is_blocked?

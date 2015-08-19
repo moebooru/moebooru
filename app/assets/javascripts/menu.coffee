@@ -12,7 +12,7 @@ $(document).on 'click', '#forum-mark-all-read', ->
 window.Menu =
   menu: null
   set_post_moderate_count: ->
-    mod_pending = Cookies('mod_pending')
+    mod_pending = parseInt(Cookies('mod_pending'))
     if mod_pending > 0
       mod_link = @menu.find('.moderate')
       mod_link.text(mod_link.text() + ' (' + mod_pending + ')').addClass 'bolded'

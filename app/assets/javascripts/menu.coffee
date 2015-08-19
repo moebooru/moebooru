@@ -14,12 +14,17 @@ $(document).on 'click', '#forum-mark-all-read', (e) ->
 
 window.Menu =
   menu: null
-  set_post_moderate_count: ->
-    mod_pending = parseInt(Cookies('mod_pending'))
-    if mod_pending > 0
-      mod_link = @menu.find('.moderate')
-      mod_link.text(mod_link.text() + ' (' + mod_pending + ')').addClass 'bolded'
-    return
+
+  setPostModerateCount: ->
+    pending = parseInt Cookies("mod_pending")
+    return unless pending > 0
+
+    link = @menu.find(".moderate")
+    link
+      .text("#{link.text()} (#{pending})")
+      .addClass "bolded"
+
+
   set_highlight: ->
     hl_menu_class = '.' + @menu.data('controller')
     @menu.find(hl_menu_class).addClass 'current-menu'
@@ -92,6 +97,6 @@ window.Menu =
   init: ->
     @menu = $('#main-menu')
     @set_highlight()
-    @set_post_moderate_count()
+    @setPostModerateCount()
     @sync_forum_menu()
     @hide_help_items()

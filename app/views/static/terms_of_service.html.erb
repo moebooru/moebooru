@@ -48,7 +48,7 @@
   <div>
     <h4>Agreement</h4>
     <p>By clicking on the "I Agree" link, you have read all the terms and have agreed to them.</p>
-    <p><%= link_to("I Agree", params[:url] || "/", :onclick => "jQuery.cookie('tos', '1');") %> | <%= link_to("Cancel", "/") %></p>
+    <p><%= link_to("I Agree", params[:url] || "/", :onclick => "Cookies('tos', '1');") %> | <%= link_to("Cancel", "/") %></p>
   </div>
 </div>
 

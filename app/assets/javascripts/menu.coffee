@@ -11,7 +11,7 @@
   window.Menu =
     menu: null
     set_post_moderate_count: ->
-      mod_pending = $.cookie('mod_pending')
+      mod_pending = Cookies('mod_pending')
       if mod_pending > 0
         mod_link = @menu.find('.moderate')
         mod_link.text(mod_link.text() + ' (' + mod_pending + ')').addClass 'bolded'
@@ -57,7 +57,7 @@
     sync_forum_menu: ->
       self = this
       $.get Moebooru.path('/forum.json'), { latest: 1 }, (resp) ->
-        last_read = $.cookie('forum_post_last_read_at', JSON.parse)
+        last_read = Cookies.getJSON('forum_post_last_read_at')
         forum_menu_items = resp
         forum_submenu = $('li.forum ul.submenu', self.menu)
         forum_items_start = forum_submenu.find('.forum-items-start').show()

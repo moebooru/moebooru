@@ -3,8 +3,8 @@
 
 jQuery(document).ready ($) ->
   window.Moebooru.relatedTags =
-    recentTags: -> ($.cookie("recent_tags") || "").match(/\S+/g) || []
-    myTags: -> ($.cookie("my_tags") || "").match(/\S+/g) || []
+    recentTags: -> (Cookies("recent_tags") || "").match(/\S+/g) || []
+    myTags: -> (Cookies("my_tags") || "").match(/\S+/g) || []
     artistSource: -> $("#post_source").val()
     source: -> $ "#post_tags"
     target: -> $ "#related"

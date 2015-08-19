@@ -31,11 +31,12 @@ window.Menu =
       .addClass "current-menu"
 
 
-  hide_help_items: ->
-    nohide_menu_class = '.help-item.' + @menu.data('controller')
-    @menu.find('.help-item').hide()
-    @menu.find(nohide_menu_class).show()
-    return
+  showHelpItem: ->
+    @menu
+      .find(".help-item.#{@menu.data("controller")}")
+      .show()
+
+
   show_search_box: (elem) ->
     submenu = $(elem).parents('.submenu')
     search_box = submenu.siblings('.search-box')
@@ -101,4 +102,4 @@ window.Menu =
     @setHighlight()
     @setPostModerateCount()
     @sync_forum_menu()
-    @hide_help_items()
+    @showHelpItem()

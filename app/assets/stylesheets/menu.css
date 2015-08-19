@@ -84,3 +84,7 @@ div#main-menu .forum-items-start {
 div#main-menu #has-mail-notice {
   display: none;
 }
+
+div#main-menu ul li ul.submenu li a.help-item {
+  display: none;
+}

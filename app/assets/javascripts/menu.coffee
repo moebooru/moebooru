@@ -4,11 +4,14 @@ $(document).on 'click', '#login-link', (e) ->
   e.preventDefault()
   User.run_login false, ->
     window.location = window.location
-    return
-  return
-$(document).on 'click', '#forum-mark-all-read', ->
+
+
+$(document).on 'click', '#forum-mark-all-read', (e) ->
+  e.preventDefault()
   Forum.mark_all_read()
-  false
+
+
+
 window.Menu =
   menu: null
   set_post_moderate_count: ->

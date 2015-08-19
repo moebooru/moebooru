@@ -25,10 +25,12 @@ window.Menu =
       .addClass "bolded"
 
 
-  set_highlight: ->
-    hl_menu_class = '.' + @menu.data('controller')
-    @menu.find(hl_menu_class).addClass 'current-menu'
-    return
+  setHighlight: ->
+    @menu
+      .find(".#{@menu.data "controller"}")
+      .addClass "current-menu"
+
+
   hide_help_items: ->
     nohide_menu_class = '.help-item.' + @menu.data('controller')
     @menu.find('.help-item').hide()
@@ -96,7 +98,7 @@ window.Menu =
     return
   init: ->
     @menu = $('#main-menu')
-    @set_highlight()
+    @setHighlight()
     @setPostModerateCount()
     @sync_forum_menu()
     @hide_help_items()

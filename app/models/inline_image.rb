@@ -191,9 +191,11 @@ class InlineImage < ActiveRecord::Base
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
     if File.exist?(tempfile_sample_path)
-      path, ext = tempfile_sample_path, "jpg"
+      path = tempfile_sample_path
+      ext = "jpg"
     else
-      path, ext = tempfile_image_path, file_ext
+      path = tempfile_image_path
+      ext = file_ext
     end
 
     begin

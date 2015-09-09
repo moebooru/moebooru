@@ -70,7 +70,7 @@ class Tag < ActiveRecord::Base
       name = Regexp.last_match[1]
     end
 
-    if name =~ /^(.+?):(.+)$/  && CONFIG["tag_types"][Regexp.last_match[1]]
+    if name =~ /^(.+?):(.+)$/ && CONFIG["tag_types"][Regexp.last_match[1]]
       tag_type = CONFIG["tag_types"][Regexp.last_match[1]]
       name = Regexp.last_match[2]
     end

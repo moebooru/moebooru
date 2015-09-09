@@ -476,11 +476,11 @@ class User < ActiveRecord::Base
       [:top, :bottom, :left, :right].each { |d| params[d] = params[d].to_f }
 
       if params[:top] < 0 || params[:top] > 1 ||
-         params[:bottom] < 0 || params[:bottom] > 1 ||
-         params[:left] < 0 || params[:left] > 1 ||
-         params[:right] < 0 || params[:right] > 1 ||
-         params[:top] >= params[:bottom] ||
-         params[:left] >= params[:right]
+          params[:bottom] < 0 || params[:bottom] > 1 ||
+          params[:left] < 0 || params[:left] > 1 ||
+          params[:right] < 0 || params[:right] > 1 ||
+          params[:top] >= params[:bottom] ||
+          params[:left] >= params[:right]
 
         errors.add(:parameter, "error")
         return false
@@ -509,7 +509,7 @@ class User < ActiveRecord::Base
         # If we're cropping from a very small region in the sample, use the full
         # image instead, to get a higher quality image.
         if size[:crop_bottom] - size[:crop_top] < CONFIG["avatar_max_height"] ||
-           size[:crop_right] - size[:crop_left] < CONFIG["avatar_max_width"]
+            size[:crop_right] - size[:crop_left] < CONFIG["avatar_max_width"]
           use_sample = false
         end
       end

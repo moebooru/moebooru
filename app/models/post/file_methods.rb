@@ -202,13 +202,17 @@ module Post::FileMethods
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
     if File.exist?(tempfile_sample_path)
-      path, ext = tempfile_sample_path, "jpg"
+      path = tempfile_sample_path
+      ext = "jpg"
     elsif File.exist?(sample_path)
-      path, ext = sample_path, "jpg"
+      path = sample_path
+      ext = "jpg"
     elsif File.exist?(tempfile_path)
-      path, ext = tempfile_path, file_ext
+      path = tempfile_path
+      ext = file_ext
     elsif File.exist?(file_path)
-      path, ext = file_path, file_ext
+      path = file_path
+      ext = file_ext
     else
       errors.add(:file, "not found")
       return false

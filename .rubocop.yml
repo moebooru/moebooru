@@ -3,6 +3,8 @@ inherit_from: .rubocop_todo.yml
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
 
+Style/MultilineOperationIndentation:
+  EnforcedStyle: indented
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 

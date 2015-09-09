@@ -8,10 +8,10 @@ class DmailController < ApplicationController
 
   def show_previous_messages
     @dmails = Dmail
-              .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
-              .where(:parent_id => params[:parent_id])
-              .where("id < ?", params[:id])
-              .order(:id => :asc)
+      .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
+      .where(:parent_id => params[:parent_id])
+      .where("id < ?", params[:id])
+      .order(:id => :asc)
     render :layout => false
   end
 
@@ -38,9 +38,9 @@ class DmailController < ApplicationController
 
   def inbox
     @dmails = Dmail
-              .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
-              .order(:created_at => :desc)
-              .paginate(:per_page => 25, :page => page_number)
+      .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
+      .order(:created_at => :desc)
+      .paginate(:per_page => 25, :page => page_number)
   end
 
   def show

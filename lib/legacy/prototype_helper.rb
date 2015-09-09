@@ -145,7 +145,8 @@ module ActionView
     # #include_helpers_from_context has nothing to overwrite.
     class JavaScriptGenerator #:nodoc:
       def initialize(context, &block) #:nodoc:
-        @context, @lines = context, []
+        @context = context
+        @lines = []
         include_helpers_from_context
         @context.with_output_buffer(@lines) do
           @context.instance_exec(self, &block)
@@ -817,7 +818,7 @@ module ActionView
     #   * return - true if the enumeration should return the last statement
     def enumerate(enumerable, options = {}, &block)
       options[:method_args] ||= []
-      options[:yield_args]  ||= []
+      options[:yield_args] ||= []
       yield_args  = options[:yield_args] * ", "
       method_args = arguments_for_call options[:method_args] # foo, bar, function
       method_args << ", " unless method_args.blank?

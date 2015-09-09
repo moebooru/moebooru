@@ -98,13 +98,13 @@ module PostHelper
 
     directlink_info =
       %(<span class="directlink-info">) +
-      %(<img class="directlink-icon directlink-icon-large" src="#{image_path "ddl_large.gif"}" alt="">) +
-      %(<img class="directlink-icon directlink-icon-small" src="#{image_path "ddl.gif"}" alt="">) +
-      %(<img class="parent-display" src="#{image_path "post-star-parent.gif"}" alt="">) +
-      %(<img class="child-display" src="#{image_path "post-star-child.gif"}" alt="">) +
-      %(<img class="flagged-display" src="#{image_path "post-star-flagged.gif"}" alt="">) +
-      %(<img class="pending-display" src="#{image_path "post-star-pending.gif"}" alt="">) +
-      %(</span>)
+        %(<img class="directlink-icon directlink-icon-large" src="#{image_path "ddl_large.gif"}" alt="">) +
+        %(<img class="directlink-icon directlink-icon-small" src="#{image_path "ddl.gif"}" alt="">) +
+        %(<img class="parent-display" src="#{image_path "post-star-parent.gif"}" alt="">) +
+        %(<img class="child-display" src="#{image_path "post-star-child.gif"}" alt="">) +
+        %(<img class="flagged-display" src="#{image_path "post-star-flagged.gif"}" alt="">) +
+        %(<img class="pending-display" src="#{image_path "post-star-pending.gif"}" alt="">) +
+        %(</span>)
     li_class = ""
 
     ddl_class = "directlink"

@@ -217,7 +217,7 @@ module PrototypeHelper
     options[:html] ||= {}
     options[:html][:onsubmit] =
       (options[:html][:onsubmit] ? options[:html][:onsubmit] + "; " : "") +
-      "#{remote_function(options)}; return false;"
+        "#{remote_function(options)}; return false;"
 
     form_tag(options[:html].delete(:action) || url_for(options[:url]), options[:html], &block)
   end

@@ -250,10 +250,10 @@ class PostController < ApplicationController
     end
 
     @posts = Post
-             .where(:status => "deleted")
-             .select("flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id")
-             .joins("JOIN flagged_post_details ON flagged_post_details.post_id = posts.id")
-             .order("flagged_post_details.created_at DESC")
+      .where(:status => "deleted")
+      .select("flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id")
+      .joins("JOIN flagged_post_details ON flagged_post_details.post_id = posts.id")
+      .order("flagged_post_details.created_at DESC")
     @posts = @posts.where(:user_id => params[:user_id]) if params[:user_id]
     @posts = @posts.paginate(:per_page => 25, :page => page_number)
   end
@@ -374,7 +374,7 @@ class PostController < ApplicationController
                                        :exclude_tags => params[:include_tags] != "1",
                                        :exclude_votes => params[:include_votes] != "1",
                                        :exclude_pools => params[:include_pools] != "1"
-        )
+                                      )
 
         render :json => api_data.to_json
       end

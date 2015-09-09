@@ -162,10 +162,10 @@ class HistoryController < ApplicationController
     end
 
     @changes = History
-               .includes(:history_changes)
-               .where(conds.join(" AND "), *cond_params)
-               .order(:id => :desc)
-               .paginate(:per_page => 20, :page => page_number)
+      .includes(:history_changes)
+      .where(conds.join(" AND "), *cond_params)
+      .order(:id => :desc)
+      .paginate(:per_page => 20, :page => page_number)
 
     # If we're searching for a specific change, force the display to the
     # type of the change we found.

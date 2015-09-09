@@ -46,7 +46,7 @@ module ActiveRecord
       if history
         # p "reuse? %s != %s, %i != %i" % [history.group_by_table, self.class.get_group_by_table_name, history.group_by_id, self.get_group_by_id]
         if history.group_by_table != self.class.get_group_by_table_name ||
-           history.group_by_id != get_group_by_id
+            history.group_by_id != get_group_by_id
           # p "don't reuse"
           Thread.current[:versioning_history] = nil
           history = nil

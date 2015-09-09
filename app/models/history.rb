@@ -80,7 +80,7 @@ class History < ActiveRecord::Base
       end
     end
 
-    stack.reverse.each do |node|
+    stack.reverse_each do |node|
       object = node[:o]
       object.run_callbacks :undo do
         changes = node[:changes]

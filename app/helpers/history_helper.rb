@@ -331,7 +331,7 @@ module HistoryHelper
           end
         end
       when "is_public"
-        html << (change.value.trueish?  ? added : removed)
+        html << (change.value.trueish? ? added : removed)
         html << "public"
       when "is_active"
         html << (change.value.trueish? ? added : removed)
@@ -408,7 +408,7 @@ module HistoryHelper
     return [] if tags.blank?
 
     html = ""
-    html << %(<span class="#{ options[:class] }">)
+    html << %(<span class="#{options[:class]}">)
 
     tags_html = []
     tags.each do |name|

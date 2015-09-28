@@ -53,8 +53,6 @@ GEM
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
-    coffee-rails-source-maps (1.4.0)
-      coffee-script-source (>= 1.6.1)
     coffee-script (2.4.1)
       coffee-script-source
       execjs
@@ -221,7 +219,6 @@ DEPENDENCIES
   acts_as_versioned_rails3
   addressable
   coffee-rails (~> 4.1.0)
-  coffee-rails-source-maps
   connection_pool
   daemons
   dalli

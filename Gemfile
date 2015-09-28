@@ -45,7 +45,6 @@ gem "image_size"
 gem "i18n-js", ">= 3.0.0.rc7"
 
 group :development do
-  gem "coffee-rails-source-maps"
   gem "quiet_assets"
 end
 

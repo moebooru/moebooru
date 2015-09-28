@@ -81,7 +81,7 @@
             <td>
               <%= text_field "post", "source", :value => (params["url"] || params["ref"]), :size => 50, :tabindex => 2 %>
               <% if CONFIG["enable_artists"] %>
-                <%= link_to t(".form.find_artist"), "#", :data => { :toggle => "related-tags", :type => "artist-url" } %>
+                <%= link_to t(".form.find_artist"), "#", :class => "js-related-tags--autoload", :data => { :toggle => "related-tags", :type => "artist-url" } %>
               <% end %>
             </td>
           </tr>

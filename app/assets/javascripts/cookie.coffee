@@ -1,11 +1,11 @@
-Cookies.defaults['path'] = PREFIX
-Cookies.defaults['expires'] = 365
-
 # welp
 # Reference: https://github.com/js-cookie/js-cookie/issues/70
 oldCookies = Cookies.noConflict()
 window.Cookies = oldCookies.withConverter (value) ->
   decodeURIComponent value.replace(/\+/g, ' ')
+
+Cookies.defaults['path'] = PREFIX
+Cookies.defaults['expires'] = 365
 
 window.Cookie =
   put: (name, value, days) ->

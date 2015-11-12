@@ -19,5 +19,6 @@
 
 #= require notice
 
+#= require moebooru
 #= require_tree .
 #= require main_menu_dropdown

@@ -399,10 +399,10 @@ class UserController < ApplicationController
   end
 
   def user_params_for_create
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :blacklisted_tags, :always_resize_images, :receive_dmails, :show_samples, :use_browser, :show_advanced_editing)
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :blacklisted_tags, :always_resize_images, :receive_dmails, :show_samples, :use_browser, :show_advanced_editing, :pool_browse_mode)
   end
 
   def user_params_for_update
-    params.require(:user).permit(:email, :current_password, :password, :password_confirmation, :blacklisted_tags, :always_resize_images, :receive_dmails, :show_samples, :use_browser, :show_advanced_editing)
+    params.require(:user).permit(:email, :current_password, :password, :password_confirmation, :blacklisted_tags, :always_resize_images, :receive_dmails, :show_samples, :use_browser, :show_advanced_editing, :pool_browse_mode)
   end
 end

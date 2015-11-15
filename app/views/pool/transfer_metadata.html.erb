@@ -1,8 +1,8 @@
 <% if @from.nil? then %>
   <%= form_tag({:controller => "pool", :action => "transfer_metadata"}, :method => "get") do %>
-  <%= hidden_field_tag t('.from.to'), @to.id %>
+  <%= hidden_field_tag :to, @to.id %>
   <%= t('.from.from_number') %>
-  <%= text_field_tag t('.from.from'), "", :class => "fp", :size => 5, :tabindex => 1 %>
+  <%= text_field_tag :from, "", :class => "fp", :size => 5, :tabindex => 1 %>
   <br>
   <%= submit_tag t('.from.transfer'), :tabindex => 2 %>
   <%= button_to_function t('buttons.cancel'), "history.back()", :tabindex => 2 %>

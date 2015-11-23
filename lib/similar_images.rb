@@ -76,7 +76,15 @@ module SimilarImages
         begin
           Timeout.timeout(10) do
             url = URI.parse(server)
-            Net::HTTP.start(url.host, url.port) do |http|
+
+            options = {}
+
+            if url.scheme == "https"
+              options[:use_ssl] = true
+              options[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
+            end
+
+            Net::HTTP.start(url.host, url.port, nil, nil, nil, nil, options) do |http|
               http.read_timeout = 10
 
               request = Net::HTTP::Post.new(server)

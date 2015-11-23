@@ -266,7 +266,7 @@ module Post::SqlMethods
         end
       else
         # Hide pending posts by default only when not using the API.
-        if CONFIG["hide_pending_posts"] && !options[:from_api]
+        if CONFIG["hide_pending_posts"] && !options[:from_api] && !options[:pending]
           conds << "p.status <> 'pending'"
         end
       end

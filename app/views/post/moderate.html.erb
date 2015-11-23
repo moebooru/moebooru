@@ -1,6 +1,6 @@
 <% provide :title, t('.title') %>
 <form method="get" action="/post/moderate">
-  <%= text_field_tag "query", "", :size => 40 %>
+  <%= text_field_tag "query", params[:query], :size => 40 %>
   <%= submit_tag t('buttons.search') %>
 </form>
 

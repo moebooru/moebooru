@@ -26,6 +26,8 @@ class TagSubscription < ActiveRecord::Base
   end
 
   def self.process_all
+    post_ids_cache = {}
+
     find_each do |tag_subscription|
       if tag_subscription.user.is_privileged_or_higher?
         suppress Exception do
@@ -33,7 +35,8 @@ class TagSubscription < ActiveRecord::Base
             tags = tag_subscription.tag_query.scan(/\S+/)
             post_ids = []
             tags.each do |tag|
-              post_ids += Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
+              post_ids_cache[tag] ||= Post.find_by_tags(tag, :limit => CONFIG["tag_subscription_post_limit"] / 3, :select => "p.id", :order => "p.id desc").map(&:id)
+              post_ids += post_ids_cache[tag]
             end
             tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
           end

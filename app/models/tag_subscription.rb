@@ -38,7 +38,6 @@ class TagSubscription < ActiveRecord::Base
             tag_subscription.update_attribute(:cached_post_ids, post_ids.sort.reverse.slice(0, CONFIG["tag_subscription_post_limit"]).join(","))
           end
         end
-        sleep 1
       end
     end
   end

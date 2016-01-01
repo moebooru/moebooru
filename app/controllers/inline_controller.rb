@@ -74,7 +74,7 @@ class InlineController < ApplicationController
       return
     end
 
-    inline.update_attributes(params[:inline])
+    inline.update(inline_params)
     params[:image] ||= []
     params[:image].each do |id, p|
       image = InlineImage.find_by(:id => id, :inline_id => inline.id)
@@ -127,5 +127,11 @@ class InlineController < ApplicationController
     end
 
     @params = params
+  end
+
+  private
+
+  def inline_params
+    params.require(:inline).permit(:description)
   end
 end

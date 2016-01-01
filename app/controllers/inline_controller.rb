@@ -22,11 +22,7 @@ class InlineController < ApplicationController
   end
 
   def delete
-    @inline = Inline.find_by_id(params[:id])
-    if @inline.nil?
-      redirect_to "/404"
-      return
-    end
+    @inline = Inline.find(params[:id])
 
     unless @current_user.has_permission?(@inline)
       access_denied
@@ -38,11 +34,7 @@ class InlineController < ApplicationController
   end
 
   def add_image
-    @inline = Inline.find_by_id(params[:id])
-    if @inline.nil?
-      redirect_to "/404"
-      return
-    end
+    @inline = Inline.find(params[:id])
 
     unless @current_user.has_permission?(@inline)
       access_denied
@@ -62,11 +54,7 @@ class InlineController < ApplicationController
   end
 
   def delete_image
-    image = InlineImage.find_by_id(params[:id])
-    if image.nil?
-      redirect_to "/404"
-      return
-    end
+    image = InlineImage.find(params[:id])
 
     inline = image.inline
     unless @current_user.has_permission?(inline)
@@ -79,11 +67,8 @@ class InlineController < ApplicationController
   end
 
   def update
-    inline = Inline.find_by_id(params[:id].to_i)
-    if inline.nil?
-      redirect_to "/404"
-      return
-    end
+    inline = Inline.find(params[:id])
+
     unless @current_user.has_permission?(inline)
       access_denied
       return
@@ -107,11 +92,7 @@ class InlineController < ApplicationController
   # Create a copy of an inline image and all of its images.  Allow copying from images
   # owned by someone else.
   def copy
-    inline = Inline.find_by_id(params[:id])
-    if inline.nil?
-      redirect_to "/404"
-      return
-    end
+    inline = Inline.find(params[:id])
 
     new_inline = Inline.create(:user_id => @current_user.id)
     new_inline.update_attributes(:description => inline.description)

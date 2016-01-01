@@ -42,7 +42,8 @@ class InlineController < ApplicationController
     end
 
     if request.post?
-      new_image = InlineImage.create(params[:image].merge(:inline_id => @inline.id))
+      new_image = @inline.inline_images.create(inline_image_params)
+
       unless new_image.errors.empty?
         respond_to_error(new_image, :action => "edit", :id => @inline.id)
         return
@@ -75,11 +76,11 @@ class InlineController < ApplicationController
     end
 
     inline.update(inline_params)
-    params[:image] ||= []
-    params[:image].each do |id, p|
-      image = InlineImage.find_by(:id => id, :inline_id => inline.id)
-      image.update_attributes(:description => p[:description]) if p[:description]
-      image.update_attributes(:sequence => p[:sequence]) if p[:sequence]
+
+    (params[:image] || []).each do |id, p|
+      image = inline.inline_images.find(id)
+
+      image.update(p.permit(:description, :sequence))
     end
 
     inline.reload
@@ -133,5 +134,9 @@ class InlineController < ApplicationController
 
   def inline_params
     params.require(:inline).permit(:description)
+  end
+
+  def inline_image_params
+    params.require(:image).permit(:file, :source)
   end
 end

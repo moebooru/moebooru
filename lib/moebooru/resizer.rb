@@ -12,61 +12,71 @@ module Moebooru
     TARGET_COLORSPACE = Gem::Version.create(MiniMagick.cli_version[/\d+\.\d+\.\d+/]) >= Gem::Version.create("6.7.5") ?
                         "sRGB" : "RGB"
 
-    def resize(file_ext, read_path, write_path, output_size, output_quality)
-      image = MiniMagick::Image.open(read_path)
-      from_cmyk = image[:colorspace].end_with? "CMYK"
+    def resize(file_ext, input_path, output_path, output_size, output_quality)
+      input_image = MiniMagick::Image.new(input_path)
+
+      from_cmyk = input_image[:colorspace].end_with? "CMYK"
+
       if output_size[:width] && output_size[:height].nil?
-        output_size[:height] = image[:height] * output_size[:width] / image[:width]
+        output_size[:height] = input_image[:height] * output_size[:width] / input_image[:width]
       elsif output_size[:height] && output_size[:width].nil?
-        output_size[:width] = image[:width] * output_size[:height] / image[:height]
+        output_size[:width] = input_image[:width] * output_size[:height] / input_image[:height]
       else
-        output_size[:width] ||= image[:width]
-        output_size[:height] ||= image[:height]
+        output_size[:width] ||= input_image[:width]
+        output_size[:height] ||= input_image[:height]
       end
+
       output_size[:crop_top] ||= 0
-      output_size[:crop_bottom] ||= image[:height]
+      output_size[:crop_bottom] ||= input_image[:height]
       output_size[:crop_left] ||= 0
-      output_size[:crop_right] ||= image[:width]
+      output_size[:crop_right] ||= input_image[:width]
       output_size[:crop_width] ||= output_size[:crop_right] - output_size[:crop_left]
       output_size[:crop_height] ||= output_size[:crop_bottom] - output_size[:crop_top]
+
       # The '!' is required to force the size, otherwise ImageMagick will try
       # to outsmart the previously calculated size which isn't exactly smart.
       # Example: 1253x1770 -> 212x300. In ImageMagick it becomes 212x299.
       write_size = "#{output_size[:width]}x#{output_size[:height]}!"
+
       write_crop = "#{output_size[:crop_width]}x#{output_size[:crop_height]}+#{output_size[:crop_left]}+#{output_size[:crop_top]}"
-      write_format = write_path.split(".")[-1]
+
+      write_format = output_path.split(".")[-1]
       if write_format =~ /\A(jpe?g|gif|png)\z/i
         write_format = write_format.downcase
       else
         write_format = file_ext
       end
-      image.format write_format do |f|
-        f.background BGCOLOR
-        f.flatten
-        f.crop write_crop
-        f.resize write_size
-        f.repage.+
+
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << input_path
+        convert.background BGCOLOR
+        convert.flatten
+        convert.crop write_crop
+        convert.resize write_size
+        convert.repage.+
+
         if write_format =~ /\Ajpe?g\z/
-          f.sampling_factor "2x2,1x1,1x1"
+          convert.sampling_factor "2x2,1x1,1x1"
         end
+
         # Explicitly convert CMYK images
         if from_cmyk
-          f.profile "#{ICC_DIR}/ISOcoated_v2_bas.ICC"
-          f.profile "#{ICC_DIR}/sRGB.icc"
+          convert.profile "#{ICC_DIR}/ISOcoated_v2_bas.ICC"
+          convert.profile "#{ICC_DIR}/sRGB.icc"
         end
+
         # Any other colorspaces suck for storing images.
         # Since we're just resizing stuff here, actual colorspace shouldn't
         # matter much.
-        f.colorspace TARGET_COLORSPACE
-        f.quality output_quality.to_s
+        convert.colorspace TARGET_COLORSPACE
+        convert.quality output_quality.to_s
+
+        convert << output_path
       end
-      image.write write_path
     rescue IOError
       raise
     rescue => e
       raise ResizeError, e.to_s
-    ensure
-      image.destroy! if image
     end
 
     # If allow_enlarge is true, always scale to fit, even if the source area is

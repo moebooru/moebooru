@@ -82,7 +82,10 @@ module Danbooru
             if limit == 0
               raise SocketError, "Too many redirects"
             end
-            source = res["location"]
+            new_url = Addressable::URI.parse(res["location"])
+            new_url = (url + new_url) if new_url.relative?
+
+            source = new_url.to_str
             limit -= 1
 
           else

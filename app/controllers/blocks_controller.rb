@@ -7,7 +7,7 @@ class BlocksController < ApplicationController
   def block_ip
     begin
       IpBans.transaction do
-        ban = IpBans.create(params[:ban].merge(:banned_by => @current_user.id))
+        ban = IpBans.create(ban_params.merge(:banned_by => @current_user.id))
         raise CanNotBanSelf if IpBans.where(:id => ban.id).where("? <<= ip_addr", request.remote_ip).exists?
       end
     rescue CanNotBanSelf
@@ -22,5 +22,11 @@ class BlocksController < ApplicationController
     end
 
     redirect_to :controller => "user", :action => "show_blocked_users"
+  end
+
+  private
+
+  def ban_params
+    params.require(:ban).permit(:duration, :ip_addr, :reason)
   end
 end

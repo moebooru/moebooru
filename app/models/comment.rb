@@ -14,7 +14,7 @@ class Comment < ActiveRecord::Base
 
   def self.generate_sql(params)
     Nagato::Builder.new do |_builder, cond|
-      cond.add_unless_blank "post_id = ?", params[:post_id]
+      cond.add_unless_blank "post_id = ?", params[:post_id].to_i
     end.to_hash
   end
 

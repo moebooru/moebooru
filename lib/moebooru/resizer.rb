@@ -15,7 +15,7 @@ module Moebooru
     def resize(file_ext, input_path, output_path, output_size, output_quality)
       input_image = MiniMagick::Image.new(input_path)
 
-      from_cmyk = input_image[:colorspace].end_with? "CMYK"
+      colorspace = input_image["%[colorspace]"]
 
       if output_size[:width] && output_size[:height].nil?
         output_size[:height] = input_image[:height] * output_size[:width] / input_image[:width]
@@ -60,7 +60,7 @@ module Moebooru
         end
 
         # Explicitly convert CMYK images
-        if from_cmyk
+        if colorspace == "CMYK"
           convert.profile "#{ICC_DIR}/ISOcoated_v2_bas.ICC"
           convert.profile "#{ICC_DIR}/sRGB.icc"
         end
@@ -68,7 +68,8 @@ module Moebooru
         # Any other colorspaces suck for storing images.
         # Since we're just resizing stuff here, actual colorspace shouldn't
         # matter much.
-        convert.colorspace TARGET_COLORSPACE
+        # Except if it's grayscale. Just accept it as is.
+        convert.colorspace TARGET_COLORSPACE if colorspace != "Gray"
         convert.quality output_quality.to_s
 
         convert << output_path

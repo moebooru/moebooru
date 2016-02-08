@@ -22,3 +22,10 @@
 #= require moebooru
 #= require_tree .
 #= require main_menu_dropdown
+
+#= require_tree ./_classes
+
+$ = jQuery
+
+$(document).on "ready", =>
+  Moe2.checkAll ||= new Moe2.CheckAll

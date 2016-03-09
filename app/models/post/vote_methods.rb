@@ -36,9 +36,12 @@ module Post::VoteMethods
     if user.is_anonymous?
       return false
     end
+
     if score > 0
-      vote = post_votes.find_or_initialize_by :user_id => user.id
-      vote.update :score => score
+      transaction do
+        vote = post_votes.lock.find_or_initialize_by :user_id => user.id
+        vote.update :score => score
+      end
     else
       post_votes.where(:user_id => user.id).delete_all
     end

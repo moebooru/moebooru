@@ -497,14 +497,14 @@ class PostController < ApplicationController
   end
 
   def vote
-    unless params.key?(:score)
+    if params[:score].blank?
       vote =  PostVote.find_by(:user_id => @current_user.id, :post_id => params[:id])
       score = vote ? vote.score : 0
       respond_to_success("", {}, :api => { :vote => score })
       return
     end
 
-    p = Post.find(params.permit(:id)[:id])
+    p = Post.find(params[:id])
     score = params[:score].to_i
 
     if !@current_user.is_mod_or_higher? && score < 0 || score > 3

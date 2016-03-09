@@ -17,7 +17,7 @@ $(document).on "click", "#remaining-favs-link a", (e) ->
   $("#remaining-favs").show()
 
 
-window.Favorite = link_to_users: (users) ->
+window.Favorite = link_to_users: (users = []) ->
   return I18n.t "js.noone" if users.length == 0
 
   html = usersLinks users.slice(0, 6)

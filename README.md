@@ -13,7 +13,7 @@ Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application requires:
 
-* Ruby 1.9+
+* Ruby >= 2.0
 * PostgreSQL (tested with 8.4, 9.1, and 9.2)
 * Bundler gem
 * ImageMagick

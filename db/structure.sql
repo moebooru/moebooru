@@ -233,6 +233,23 @@ CREATE FUNCTION pools_search_update_trigger() RETURNS trigger
 
 
 --
+-- Name: posts_tags_array_update(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION posts_tags_array_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  IF NEW.cached_tags <> OLD.cached_tags THEN
+    NEW.tags_array := string_to_array(NEW.cached_tags, ' ');
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+
+--
 -- Name: replace_underscores(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1116,7 +1133,8 @@ CREATE TABLE posts (
     frames text DEFAULT ''::text NOT NULL,
     frames_pending text DEFAULT ''::text NOT NULL,
     frames_warehoused boolean DEFAULT false NOT NULL,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    tags_array character varying[]
 );
 
 
@@ -2539,6 +2557,13 @@ CREATE INDEX index_posts_on_source ON posts USING btree (source);
 
 
 --
+-- Name: index_posts_on_tags_array; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_posts_on_tags_array ON posts USING gin (tags_array);
+
+
+--
 -- Name: index_posts_on_tags_index; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2732,6 +2757,13 @@ CREATE TRIGGER pools_posts_insert_trg BEFORE INSERT ON pools_posts FOR EACH ROW 
 --
 
 CREATE TRIGGER pools_posts_update_trg BEFORE UPDATE ON pools_posts FOR EACH ROW EXECUTE PROCEDURE pools_posts_update_trg();
+
+
+--
+-- Name: posts_tags_array_update; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER posts_tags_array_update BEFORE INSERT OR UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE posts_tags_array_update();
 
 
 --
@@ -3439,6 +3471,10 @@ INSERT INTO schema_migrations (version) VALUES ('20140429125422');
 INSERT INTO schema_migrations (version) VALUES ('20140905023318');
 
 INSERT INTO schema_migrations (version) VALUES ('20160113112901');
+
+INSERT INTO schema_migrations (version) VALUES ('20160329065325');
+
+INSERT INTO schema_migrations (version) VALUES ('20160329065802');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

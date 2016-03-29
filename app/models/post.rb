@@ -218,4 +218,16 @@ class Post < ActiveRecord::Base
   def service_icon
     "/favicon.ico"
   end
+
+  def self.refresh_tags_array
+    max_id = maximum(:id)
+
+    (0..((max_id/1000).floor)).each do |i|
+      start_id = i * 1000 + 1
+      end_id = (i + 1) * 1000
+
+      Rails.logger.info "Updating tags array for post #{start_id}..#{end_id} of #{max_id}"
+      where('id BETWEEN ? AND ?', start_id, end_id).update_all "tags_array = string_to_array(cached_tags, ' ')"
+    end
+  end
 end

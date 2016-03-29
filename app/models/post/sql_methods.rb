@@ -184,25 +184,21 @@ module Post::SqlMethods
         end
       end
 
-      tags_index_query = []
-
       if q[:include].any?
-        tags_index_query << "(" + Array(q[:include]).map(&:to_escaped_for_tsquery).join(" | ") + ")"
+        conds << "tags_array && ARRAY[?]::varchar[]"
+        cond_params << Array(q[:include])
       end
 
       if q[:related].any?
-        raise "You cannot search for more than #{CONFIG["tag_query_limit"]} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        tags_index_query << "(" + Array(q[:related]).map(&:to_escaped_for_tsquery).join(" & ") + ")"
+        raise "You cannot search for more than #{CONFIG["tag_query_limit"]} tags at a time" if q[:related].size > CONFIG["tag_query_limit"]
+        conds << "tags_array @> ARRAY[?]::varchar[]"
+        cond_params << Array(q[:related])
       end
 
       if q[:exclude].any?
         raise "You cannot search for more than #{CONFIG["tag_query_limit"]} tags at a time" if q[:exclude].size > CONFIG["tag_query_limit"]
-        tags_index_query << "!(" + Array(q[:exclude]).map(&:to_escaped_for_tsquery).join(" | ") + ")"
-      end
-
-      if tags_index_query.any?
-        conds << "tags_index @@ to_tsquery('danbooru', ?)"
-        cond_params << tags_index_query.join(" & ")
+        conds << "NOT tags_array && ARRAY[?]::varchar[]"
+        cond_params << Array(q[:exclude])
       end
 
       if q[:rating].is_a?(String)

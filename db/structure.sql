@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -896,7 +897,7 @@ CREATE TABLE job_tasks (
     status_message text,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    data_as_json text DEFAULT '{}'::text NOT NULL,
+    data jsonb,
     repeat_count integer DEFAULT 0 NOT NULL
 );
 
@@ -3469,6 +3470,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140427041839');
 INSERT INTO schema_migrations (version) VALUES ('20140429125422');
 
 INSERT INTO schema_migrations (version) VALUES ('20140905023318');
+
+INSERT INTO schema_migrations (version) VALUES ('20151207113346');
 
 INSERT INTO schema_migrations (version) VALUES ('20160113112901');
 

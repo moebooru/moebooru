@@ -5,14 +5,6 @@ class JobTask < ActiveRecord::Base
   validates_inclusion_of :task_type, :in => TASK_TYPES
   validates_inclusion_of :status, :in => STATUSES
 
-  def data
-    JSON.parse(data_as_json)
-  end
-
-  def data=(hoge)
-    self.data_as_json = hoge.to_json
-  end
-
   def execute!
     if repeat_count > 0
       count = repeat_count - 1

@@ -465,7 +465,7 @@ CREATE TABLE batch_uploads (
     tags character varying(255) DEFAULT ''::character varying NOT NULL,
     active boolean DEFAULT false NOT NULL,
     status character varying(255) DEFAULT 'pending'::character varying NOT NULL,
-    created_at timestamp without time zone DEFAULT '2010-08-31 04:17:31.209032'::timestamp without time zone NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
     data_as_json character varying(255) DEFAULT '{}'::character varying NOT NULL
 );
 
@@ -3438,6 +3438,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140429125422');
 
 INSERT INTO schema_migrations (version) VALUES ('20140905023318');
 
+INSERT INTO schema_migrations (version) VALUES ('20160113112901');
+
 INSERT INTO schema_migrations (version) VALUES ('21');
 
 INSERT INTO schema_migrations (version) VALUES ('22');
@@ -3605,3 +3607,4 @@ INSERT INTO schema_migrations (version) VALUES ('94');
 INSERT INTO schema_migrations (version) VALUES ('95');
 
 INSERT INTO schema_migrations (version) VALUES ('96');
+

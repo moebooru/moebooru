@@ -240,7 +240,7 @@ CREATE FUNCTION posts_tags_array_update() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  IF NEW.cached_tags <> OLD.cached_tags THEN
+  IF (TG_OP = 'INSERT') OR (NEW.cached_tags <> OLD.cached_tags) THEN
     NEW.tags_array := string_to_array(NEW.cached_tags, ' ');
   END IF;
 

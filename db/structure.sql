@@ -1130,7 +1130,6 @@ CREATE TABLE posts (
     jpeg_height integer,
     jpeg_size integer DEFAULT 0 NOT NULL,
     jpeg_crc32 bigint,
-    tags_index tsvector,
     frames text DEFAULT ''::text NOT NULL,
     frames_pending text DEFAULT ''::text NOT NULL,
     frames_warehoused boolean DEFAULT false NOT NULL,
@@ -2565,13 +2564,6 @@ CREATE INDEX index_posts_on_tags_array ON posts USING gin (tags_array);
 
 
 --
--- Name: index_posts_on_tags_index; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_posts_on_tags_index ON posts USING gin (tags_index);
-
-
---
 -- Name: index_posts_on_width; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2715,28 +2707,48 @@ CREATE INDEX wiki_pages_search_idx ON wiki_pages USING gin (text_search_index);
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO pools DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO pools DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools'::text));
+);
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO pools_posts DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools_posts'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools_posts'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO pools_posts DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'pools_posts'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'pools_posts'::text));
+);
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO posts DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'posts'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'posts'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO posts DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'posts'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'posts'::text));
+);
 
 
 --
 -- Name: delete_histories; Type: RULE; Schema: public; Owner: -
 --
 
-CREATE RULE delete_histories AS ON DELETE TO tags DO (DELETE FROM history_changes WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'tags'::text)); DELETE FROM histories WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'tags'::text)); );
+CREATE RULE delete_histories AS
+    ON DELETE TO tags DO ( DELETE FROM history_changes
+  WHERE ((history_changes.remote_id = old.id) AND (history_changes.table_name = 'tags'::text));
+ DELETE FROM histories
+  WHERE ((histories.group_by_id = old.id) AND (histories.group_by_table = 'tags'::text));
+);
 
 
 --
@@ -2821,13 +2833,6 @@ CREATE TRIGGER trg_posts_tags__delete BEFORE DELETE ON posts_tags FOR EACH ROW E
 --
 
 CREATE TRIGGER trg_posts_tags__insert BEFORE INSERT ON posts_tags FOR EACH ROW EXECUTE PROCEDURE trg_posts_tags__insert();
-
-
---
--- Name: trg_posts_tags_index_update; Type: TRIGGER; Schema: public; Owner: -
---
-
-CREATE TRIGGER trg_posts_tags_index_update BEFORE INSERT OR UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('tags_index', 'public.danbooru', 'cached_tags');
 
 
 --
@@ -3478,6 +3483,10 @@ INSERT INTO schema_migrations (version) VALUES ('20160113112901');
 INSERT INTO schema_migrations (version) VALUES ('20160329065325');
 
 INSERT INTO schema_migrations (version) VALUES ('20160329065802');
+
+INSERT INTO schema_migrations (version) VALUES ('20160329154133');
+
+INSERT INTO schema_migrations (version) VALUES ('20160329160235');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

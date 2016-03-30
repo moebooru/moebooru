@@ -331,17 +331,6 @@ CREATE FUNCTION user_logs_touch(new_user_id integer, new_ip inet) RETURNS void
       $$;
 
 
---
--- Name: danbooru; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
---
-
-CREATE TEXT SEARCH CONFIGURATION danbooru (
-    PARSER = testparser );
-
-ALTER TEXT SEARCH CONFIGURATION danbooru
-    ADD MAPPING FOR word WITH simple;
-
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -3489,6 +3478,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160329154133');
 INSERT INTO schema_migrations (version) VALUES ('20160329160235');
 
 INSERT INTO schema_migrations (version) VALUES ('20160329161636');
+
+INSERT INTO schema_migrations (version) VALUES ('20160330063707');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

@@ -102,7 +102,7 @@ CREATE FUNCTION history_changes_index_trigger() RETURNS trigger
         RETURN new;
       END IF;
 
-      new.value_index := to_tsvector('public.danbooru', indexed_value);
+      new.value_array := string_to_array(indexed_value, ' ');
 
       RETURN new;
     END
@@ -750,7 +750,7 @@ CREATE TABLE history_changes (
     value text,
     history_id integer NOT NULL,
     previous_id integer,
-    value_index tsvector
+    value_array character varying[]
 );
 
 
@@ -2445,10 +2445,10 @@ CREATE INDEX index_history_changes_on_table_name ON history_changes USING btree 
 
 
 --
--- Name: index_history_changes_on_value_index; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_history_changes_on_value_array; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_history_changes_on_value_index ON history_changes USING gin (value_index);
+CREATE INDEX index_history_changes_on_value_array ON history_changes USING gin (value_array);
 
 
 --
@@ -3487,6 +3487,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160329065802');
 INSERT INTO schema_migrations (version) VALUES ('20160329154133');
 
 INSERT INTO schema_migrations (version) VALUES ('20160329160235');
+
+INSERT INTO schema_migrations (version) VALUES ('20160329161636');
 
 INSERT INTO schema_migrations (version) VALUES ('21');
 

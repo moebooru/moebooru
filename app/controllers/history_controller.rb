@@ -100,9 +100,8 @@ class HistoryController < ApplicationController
     end
 
     if q[:keywords].any?
-      value_index_query = "(" + Array(q[:keywords]).map(&:to_escaped_for_tsquery).join(" & ") + ")"
-      hc_conds << "hc.value_index @@ to_tsquery('danbooru', ?)"
-      hc_cond_params << value_index_query
+      hc_conds << "hc.value_array @> ARRAY[?]::varchar[]"
+      hc_cond_params << Array(q[:keywords])
     end
 
     if q.key?(:field) && q.key?(:type)

@@ -13,8 +13,8 @@ Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application requires:
 
-* Ruby >= 2.0
-* PostgreSQL (tested with 8.4, 9.1, and 9.2)
+* Ruby 2.0+
+* PostgreSQL 9.4+
 * Bundler gem
 * ImageMagick
 * And various other requirement for the gems (check `Gemfile` for the list)
@@ -30,20 +30,11 @@ On RHEL5 (and 6), it goes like this:
 * git
 * openssl-devel
 * pcre-devel
-* postgresql84-contrib
-* postgresql84-devel
-* postgresql84-server
+* postgresql94-devel
+* postgresql94-server
 * readline-devel
 
-Base and EPEL repositories contain all the requirements.
-
-On Ubuntu 10.04.4 LTS
-
-* `apt-get install postgresql-contrib python-software-properties postgresql libpq-dev libxml2-dev libxslt-dev mercurial jhead build-essential libgd2-noxpm-dev`
-
-* [Brightbox repo](http://blog.brightbox.co.uk/posts/next-generation-ruby-packages-for-ubuntu) would work if you're too lazy to compile ruby
-
-* add the ppa and then `apt-get install ruby1.9.3`
+Base, EPEL, and postgresql official repositories contain all the requirements.
 
 Installation
 ------------
@@ -53,24 +44,6 @@ Installation
 After initializing PostgreSQL database, create user for moebooru with `createdb` privilege:
 
     postgres# create user moebooru_user with password 'the_password' createdb;
-
-And then install the required PostgreSQL extensions:
-
-* language plpgsql
-* test_parser
-
-using these commands:
-
-    --- postgresql 9.1+
-    postgres# \c template1
-    postgres# create extension test_parser;
-
-    --- postgresql 8.3, 8.4
-    postgres# \c template1
-    postgres# create language plpgsql;
-    postgres# \q
-    --- postgresql 8.3, 8.4, 9.0 - from shell
-    # sudo -u postgres psql -d template1 -f "`pg_config --sharedir`/contrib/test_parser.sql"
 
 
 ### Rails Setup

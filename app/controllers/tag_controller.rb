@@ -186,7 +186,7 @@ class TagController < ApplicationController
 
   def show
     begin
-      name = Tag.find(params[:id], :select => :name).name
+      name = Tag.select(:name).find(params[:id]).name
     rescue
       raise ActionController::RoutingError.new("Not Found")
     end

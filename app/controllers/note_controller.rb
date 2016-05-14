@@ -8,7 +8,11 @@ class NoteController < ApplicationController
       query = params[:query].scan(/\S+/).join(" & ")
       @notes = Note.where("text_search_index @@ plainto_tsquery(?)", query).order(:id).paginate(:per_page => 25, :page => page_number)
 
-      respond_to_list("notes")
+      return respond_to_list("notes")
+    end
+
+    respond_to do |format|
+      format.html
     end
   end
 

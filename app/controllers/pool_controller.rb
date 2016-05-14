@@ -278,7 +278,7 @@ class PoolController < ApplicationController
       end
 
       flash[:notice] = "Ordering updated"
-      redirect_to :action => "show", :id => params[:id]
+      return redirect_to :action => "show", :id => params[:id]
     else
       @pool_posts = @pool.pool_posts
     end

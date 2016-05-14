@@ -145,7 +145,6 @@ Moebooru::Application.routes.draw do
   match "post/delete(/:id)" => "post#delete", :via => [:post, :get]
   match "post/deleted_index", :via => [:post, :get]
   get "post/error"
-  match "post/histogram", :via => [:post, :get]
   match "post/moderate", :via => [:post, :get]
   match "post/piclens", :defaults => { :format => :rss }, :via => [:post, :get]
   match "post/popular_by_day", :via => [:post, :get]
@@ -168,7 +167,6 @@ Moebooru::Application.routes.draw do
   post "post/create(.:format)" => "post#create"
 
   match "atom" => "post#atom", :defaults => { :format => :atom }, :via => [:post, :get]
-  match "histogram" => "post#histogram", :via => [:post, :get]
 
   # Report
   match "report/tag_updates", :via => [:post, :get]

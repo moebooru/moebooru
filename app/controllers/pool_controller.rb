@@ -282,6 +282,10 @@ class PoolController < ApplicationController
     else
       @pool_posts = @pool.pool_posts
     end
+
+    respond_to do |format|
+      format.html
+    end
   end
 
   def import

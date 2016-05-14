@@ -221,4 +221,10 @@ module ApplicationHelper
     end
     cache name, options, &block
   end
+
+  def with_host(url)
+    return url if url[0] != "/"
+
+    "#{request.protocol}#{request.host_with_port}#{url}"
+  end
 end

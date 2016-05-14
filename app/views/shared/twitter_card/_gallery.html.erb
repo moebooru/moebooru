@@ -3,24 +3,20 @@
     <%# Facebook Open Graph
       # Reference: https://developers.facebook.com/docs/opengraphprotocol/
     %>
-    <%= tag :meta, property: 'og:title', content: html_title %>
-    <%= tag :meta, property: 'og:url', content: url_for(params) %>
+    <%= tag :meta, :property => "og:title", :content => html_title %>
+    <%= tag :meta, :property => "og:url", :content => url_for(params) %>
     <% if defined? description %>
-      <%= tag :meta, property: 'og:description', content: description %>
+      <%= tag :meta, property: "og:description", content: description %>
+    <% else %>
+      <%= tag :meta, :property => "og:description", :content => html_title %>
     <% end %>
+    <%= tag :meta, :name => "og:image", :content => with_host(posts[0].rating == "e" ? image_path("stubs/explicit.png") : posts[0].sample_url) %>
+
     <%# Twitter Card
       # Other attributes are fulfilled by Open Graph.
       # Reference: https://dev.twitter.com/docs/cards
     %>
-    <%= tag :meta, name: 'twitter:card', content: 'gallery' %>
-    <%= tag :meta, name: 'twitter:site', content: "@#{CONFIG['twitter_id']}" %>
-    <% posts.first(4).each_with_index do |p, i| %>
-      <%= tag :meta, name: "twitter:image#{i}:src", content: p.rating == 'e' ? "#{request.protocol}#{request.host_with_port}#{image_path('stubs/explicit.png')}" : p.sample_url %>
-    <% end %>
-    <% if posts.count < 4 %>
-      <% posts.count.upto(3).each do |i|%>
-        <%= tag :meta, name: "twitter:image#{i}:src", content: "#{request.protocol}#{request.host_with_port}#{image_path('blank.gif')}" %>
-      <% end %>
-    <% end %>
+    <%= tag :meta, name: "twitter:card", :content => "summary_large_image" %>
+    <%= tag :meta, name: "twitter:site", :content => "@#{CONFIG["twitter_id"]}" %>
   <% end %>
 <% end %>

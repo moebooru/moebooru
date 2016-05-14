@@ -1,4 +1,4 @@
-<% sample_url = (@post.rating == 'e') ? "#{request.protocol}#{request.host_with_port}#{image_path('stubs/explicit.png')}" : @post.sample_url %>
+<% sample_url = (@post.rating == 'e') ? image_path('stubs/explicit.png', :host => "#{request.protocol}#{request.host_with_port}") : @post.sample_url %>
 <%# Facebook Open Graph
   # Reference: https://developers.facebook.com/docs/opengraphprotocol/
 %>

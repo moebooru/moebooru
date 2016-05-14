@@ -10,7 +10,11 @@
     <% else %>
       <%= tag :meta, :property => "og:description", :content => html_title %>
     <% end %>
-    <%= tag :meta, :name => "og:image", :content => with_host(posts[0].rating == "e" ? image_path("stubs/explicit.png") : posts[0].sample_url) %>
+    <% if posts.any? %>
+      <%= tag :meta, :name => "og:image", :content => with_host(posts[0].rating == "e" ? image_path("stubs/explicit.png") : posts[0].sample_url) %>
+    <% else %>
+      <%= tag :meta, :name => "og:image", :content => with_host(image_path("blank.gif")) %>
+    <% end %>
 
     <%# Twitter Card
       # Other attributes are fulfilled by Open Graph.

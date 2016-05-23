@@ -11,6 +11,6 @@ class ChangeArtistsA < ActiveRecord::Migration
   end
 
   def self.down
-    raise ActiveRecord::IrreversibleMigration.new
+    raise ActiveRecord::IrreversibleMigration
   end
 end

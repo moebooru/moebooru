@@ -152,7 +152,7 @@ Moebooru::Application.routes.draw do
   match "post/popular_by_week", :via => [:post, :get]
   match "post/popular_recent", :via => [:post, :get]
   match "post/random(/:id)" => "post#random", :via => [:post, :get]
-  match "post/show(/:id)(/*tag_title)" => "post#show", :constraints => { :id => /\d+/ }, :format => false, :via => [:post, :get]
+  get "post/show(/:id)(/*tag_title)" => "post#show", :constraints => { :id => /\d+/ }, :format => false
   match "post/similar(/:id)" => "post#similar", :via => [:post, :get]
   match "post/undelete(/:id)" => "post#undelete", :via => [:post, :get]
   match "post/update_batch", :via => [:post, :get]

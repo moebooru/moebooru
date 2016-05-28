@@ -38,9 +38,13 @@ module Post::VoteMethods
     end
 
     if score > 0
-      transaction do
-        vote = post_votes.lock.find_or_initialize_by :user_id => user.id
-        vote.update :score => score
+      begin
+        transaction do
+          vote = post_votes.lock.find_or_initialize_by :user_id => user.id
+          vote.update :score => score
+        end
+      rescue ActiveRecord::RecordNotUnique
+        retry
       end
     else
       post_votes.where(:user_id => user.id).delete_all

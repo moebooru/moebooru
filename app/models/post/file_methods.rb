@@ -243,6 +243,11 @@ module Post::FileMethods
         end
       end
 
+      if source.to_s =~ /^http/ && source.to_s !~ /pixiv\.net/
+        # self.source = "Image board"
+        self.source = ""
+      end
+
       return true
     rescue SocketError, URI::Error, Timeout::Error, SystemCallError => x
       delete_tempfile

@@ -29,10 +29,10 @@
   <% end %>
     </div>
     <div class="content" id="right-col">
-    <% if CONFIG["can_see_ads"].call(@current_user) %>
-      <%= render :partial => "horizontal" %>
-      <br />
-      <br />
+      <% if CONFIG["can_see_ads"].call(@current_user) %>
+        <%= render :partial => "horizontal" %>
+        <br />
+        <br />
       <% end %>
       <%= render :partial => "post/show_partials/image" %>
       <%= render :partial => "post/show_partials/image_footer" %>

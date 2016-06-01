@@ -6,7 +6,7 @@ class String
     def to_valid_utf8
       str = self
       str.force_encoding Encoding::UTF_8
-      str.scrub "?"
+      str.scrub("?").delete("\u0000")
     end
   elsif RUBY_VERSION > "1.9"
     def to_valid_utf8

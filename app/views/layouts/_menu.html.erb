@@ -14,7 +14,7 @@
             <li><%= link_to t('.account.favorites'), controller: '/post', :action => :index, :tags => "order:vote vote:3:#{@current_user.name}" %></li>
             <li><%= link_to t('.account.settings'), controller: '/user', :action => :edit %></li>
             <li><%= link_to t('.account.change_password'), controller: '/user', :action => :change_password %></li>
-            <li><%= link_to t('.account.logout'), { controller: '/user', :action => :logout }, :from => request.url %></li>
+            <li><%= link_to t('.account.logout'), controller: '/user', :action => :logout, :from => request.url %></li>
           <% end %>
         </ul>
       </li>

@@ -111,6 +111,10 @@ class WikiController < ApplicationController
     @posts = Post.find_by_tag_join(params[:title], :limit => 8).select { |x| x.can_be_seen_by?(@current_user) }
     @artist = Artist.find_by_name(params[:title])
     @tag = Tag.find_by_name(params[:title])
+
+    respond_to do |format|
+      format.html
+    end
   end
 
   def revert

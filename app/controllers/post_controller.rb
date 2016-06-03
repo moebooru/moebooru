@@ -497,14 +497,15 @@ class PostController < ApplicationController
   end
 
   def vote
+    p = Post.find(params[:id])
+
     if params[:score].blank?
-      vote =  PostVote.find_by(:user_id => @current_user.id, :post_id => params[:id])
+      vote =  p.post_votes.find_by(:user_id => @current_user.id)
       score = vote ? vote.score : 0
       respond_to_success("", {}, :api => { :vote => score })
       return
     end
 
-    p = Post.find(params[:id])
     score = params[:score].to_i
 
     if !@current_user.is_mod_or_higher? && score < 0 || score > 3
@@ -514,7 +515,7 @@ class PostController < ApplicationController
 
     vote_successful = p.vote!(score, @current_user)
 
-    api_data = Post.batch_api_data([p])
+    api_data = Post.batch_api_data([p.reload])
     api_data[:voted_by] = p.voted_by
 
     if vote_successful

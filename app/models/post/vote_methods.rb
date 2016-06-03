@@ -23,10 +23,8 @@ module Post::VoteMethods
     m.extend(ClassMethods)
   end
 
-  def recalculate_score!
-    save!
-    Post.recalculate_score(id)
-    reload
+  def recalculate_score
+    self.class.recalculate_score(id)
   end
 
   def vote!(score, user, _options = {})
@@ -39,10 +37,8 @@ module Post::VoteMethods
 
     if score > 0
       begin
-        transaction do
-          vote = post_votes.lock.find_or_initialize_by :user_id => user.id
-          vote.update :score => score
-        end
+        vote = post_votes.find_or_initialize_by :user_id => user.id
+        vote.update :score => score
       rescue ActiveRecord::RecordNotUnique
         retry
       end
@@ -50,7 +46,7 @@ module Post::VoteMethods
       post_votes.where(:user_id => user.id).delete_all
     end
 
-    recalculate_score!
+    recalculate_score
 
     true
   end

@@ -267,7 +267,7 @@ Moebooru::Application.routes.draw do
   match "wiki/preview", :via => [:post, :get]
   match "wiki/recent_changes", :via => [:post, :get]
   match "wiki/rename", :via => [:post, :get]
-  match "wiki/show(.:format)" => "wiki#show", :via => [:post, :get]
+  get "wiki/show(.:format)" => "wiki#show"
   match "wiki/lock(.:format)" => "wiki#lock", :via => [:post, :put]
   match "wiki/revert(.:format)" => "wiki#revert", :via => [:post, :put]
   match "wiki/unlock(.:format)" => "wiki#unlock", :via => [:post, :put]

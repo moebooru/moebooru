@@ -97,6 +97,6 @@ class NoteController < ApplicationController
   private
 
   def note_params
-    params.require(:note).permit(:post_id, :x, :y, :width, :height, :body)
+    params.require(:note).permit(:post_id, :x, :y, :width, :height, :body, :is_active)
   end
 end

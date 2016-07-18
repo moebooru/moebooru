@@ -44,7 +44,7 @@ class Tag < ActiveRecord::Base
       end
 
       tags_type = batch_get_tag_types(tags.map { |data| data[0] })
-      tags = tags.map { |arr| arr.insert 0, tags_type[arr[0]] }
+      tags.map! { |arr| arr.insert 0, tags_type[arr[0]] }
     end
 
     if count_sorting

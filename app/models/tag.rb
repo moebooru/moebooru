@@ -7,9 +7,9 @@ class Tag < ActiveRecord::Base
   has_and_belongs_to_many :_posts, :class_name => "Post"
   has_many :tag_aliases, :foreign_key => "alias_id"
 
-  TYPE_ORDER = {}
-  CONFIG["tag_order"].each_with_index do |type, index|
-    TYPE_ORDER[type] = index
+  TYPE_ORDER = CONFIG["tag_order"].each_with_index.reduce({}) do |memo, type|
+    memo[type[0]] = type[1]
+    memo
   end
 
   TAG_TYPE_INDEXES = CONFIG["tag_types"].values.uniq.sort.freeze

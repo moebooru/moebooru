@@ -1,6 +1,7 @@
+@Moe ?= {}
 $ = jQuery
 
-class Moe2.CheckAll
+class @Moe.CheckAll
   constructor: ->
     $(document).on "click", ".js-check_all", @_checkAll
 

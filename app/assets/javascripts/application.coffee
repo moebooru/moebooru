@@ -25,6 +25,4 @@
 
 #= require_tree ./_classes
 
-$ = jQuery
-
-Moe2.checkAll ?= new Moe2.CheckAll
+Moe.checkAll = new Moe.CheckAll

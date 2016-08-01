@@ -106,6 +106,8 @@ window.Menu =
 
   init: ->
     @menu = $('#main-menu')
+    return if @menu.length == 0
+
     @setHighlight()
     @setPostModerateCount()
     @sync_forum_menu()

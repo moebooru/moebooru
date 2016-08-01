@@ -27,5 +27,4 @@
 
 $ = jQuery
 
-$(document).on "ready", =>
-  Moe2.checkAll ||= new Moe2.CheckAll
+Moe2.checkAll ?= new Moe2.CheckAll

@@ -9,5 +9,5 @@ jQuery(document).ready ($) ->
   if $('#edit-form').length and $('textarea.ac-tags').length
     new TagCompletionBox($('textarea.ac-tags')[0])
     if TagCompletion
-      TagCompletion.observe_tag_changes_on_submit $('#edit-form')[0], $('input.ac-tags')[0], null
+      TagCompletion.observe_tag_changes_on_submit $('#edit-form')[0], $('textarea.ac-tags')[0], null
   return

@@ -94,15 +94,17 @@ class InlineController < ApplicationController
   # owned by someone else.
   def copy
     inline = Inline.find(params[:id])
+    new_inline = Inline.new(:user_id => @current_user.id, :description => inline.description)
 
-    new_inline = Inline.create(:user_id => @current_user.id)
-    new_inline.update_attributes(:description => inline.description)
+    new_inline.transaction do
+      new_inline.save!
 
-    for image in inline.inline_images do
-      new_attributes = image.attributes.merge(:inline_id => new_inline.id)
-      new_attributes.delete("id")
-      new_image = InlineImage.create(new_attributes)
-      new_image.save!
+      inline.inline_images.each do |image|
+        new_image = InlineImage.new(image.attributes)
+        new_image.id = nil
+        new_image.inline_id = new_inline.id
+        new_image.save!
+      end
     end
 
     respond_to_success("Image copied", :action => "edit", :id => new_inline.id)

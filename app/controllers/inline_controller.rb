@@ -100,7 +100,7 @@ class InlineController < ApplicationController
 
     for image in inline.inline_images do
       new_attributes = image.attributes.merge(:inline_id => new_inline.id)
-      new_attributes.delete(:id)
+      new_attributes.delete("id")
       new_image = InlineImage.create(new_attributes)
       new_image.save!
     end

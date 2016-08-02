@@ -144,9 +144,7 @@ TagCompletionClass::load_data = (onComplete) ->
 
 TagCompletionClass::observe_tag_changes_on_submit = (form, tags_field, old_tags_field) ->
   form.on 'submit', (e) ->
-    old_tags = if old_tags_field then old_tags_field.value else null
-    TagCompletion.add_recent_tags_from_update tags_field.value, old_tags
-    return
+    TagCompletion.add_recent_tags_from_update tags_field?.value, old_tags_field?.value
 
 ### From a tag string, eg. "1`tagme`alias`alias2`", retrieve the tag name "tagme". ###
 

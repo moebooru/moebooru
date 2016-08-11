@@ -1,7 +1,7 @@
 <% content_for :content do %>
   <%= render 'layouts/news' %>
   <div id="header">
-    <div id="title"><h2 id="site-title"><%= link_to image_tag('logo_small.png', :alt => CONFIG['app_name'], :size=> '484x75', :id => 'logo'), CONFIG['url_base'] %><span><%= tag_header(params[:tags]) %></span></h2></div>
+    <div id="title"><h2 id="site-title"><%= link_to image_tag('logo_small.png', :alt => CONFIG['app_name'], :size=> '484x75', :id => 'logo'), "/" %><span><%= tag_header(params[:tags]) %></span></h2></div>
     <%= render :partial => "layouts/menu" %>
   </div>
   <%= render :partial => "layouts/login" %>

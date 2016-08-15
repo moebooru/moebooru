@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName><%= CONFIG["app_name"] %></ShortName>
+  <Description><%= "Search images in #{CONFIG["app_name"]} image board."%></Description>
+  <Contact><%= CONFIG["admin_contact"] %></Contact>
+  <AdultContent>1</AdultContent>
+  <Url type="<%= Mime::HTML %>" template="<%= url_for(:controller => :post, :action => :index, :only_path => false) %>?tags={searchTerms}" />
+</OpenSearchDescription>

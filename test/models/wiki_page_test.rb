@@ -71,7 +71,7 @@ class WikiPageTest < ActiveSupport::TestCase
 
   def test_api
     w1 = create_wiki
-    assert_nothing_raised(Exception) { w1.to_json }
-    assert_nothing_raised(Exception) { w1.to_xml }
+    assert_nothing_raised { w1.to_json }
+    assert_nothing_raised { w1.to_xml }
   end
 end

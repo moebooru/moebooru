@@ -13,10 +13,10 @@ class DmailControllerTest < ActionController::TestCase
   end
 
   def test_create
-    get :compose, {}, :user_id => 1
+    get :compose, :session => { :user_id => 1 }
     assert_response :success
 
-    post :create, { :dmail => { :to_name => "member", :title => "max", :body => "max" } }, :user_id => 1
+    post :create, :params => { :dmail => { :to_name => "member", :title => "max", :body => "max" } }, :session => { :user_id => 1 }
     dmail = Dmail.find_by_from_id(1)
     assert_not_nil(dmail)
     assert_equal("max", dmail.title)
@@ -29,7 +29,7 @@ class DmailControllerTest < ActionController::TestCase
     create_dmail(1, 3, "lox")
     create_dmail(1, 4, "hoge")
 
-    get :inbox, {}, :user_id => 1
+    get :inbox, :session => { :user_id => 1 }
     assert_response :success
   end
 
@@ -39,10 +39,10 @@ class DmailControllerTest < ActionController::TestCase
     create_dmail(1, 3, "lox")
     d4 = create_dmail(2, 4, "hoge")
 
-    get :show, { :id => d1.id }, :user_id => 1
+    get :show, :params => { :id => d1.id }, :session => { :user_id => 1 }
     assert_response :success
 
-    get :show, { :id => d4.id }, :user_id => 1
+    get :show, :params => { :id => d4.id }, :session => { :user_id => 1 }
     assert_redirected_to :controller => "user", :action => "login"
   end
 
@@ -51,23 +51,23 @@ class DmailControllerTest < ActionController::TestCase
     d2 = create_dmail(2, 1, "re: foo", :parent_id => d1.id)
     d3 = create_dmail(1, 2, "re: re: foo", :parent_id => d1.id)
 
-    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id }, :user_id => 1
+    get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id }, :session => { :user_id => 1 }
     assert_response :success
     assert_equal [d2], assigns(:dmails)
 
-    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id }, :user_id => 2
+    get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id }, :session => { :user_id => 2 }
     assert_equal [d2], assigns(:dmails)
 
-    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id }, :user_id => 3
+    get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id }, :session => { :user_id => 3 }
     assert_equal [], assigns(:dmails)
 
-    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id + 1 }, :user_id => 2
+    get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id + 1 }, :session => { :user_id => 2 }
     assert_equal [d2, d3], assigns(:dmails)
 
-    get :show_previous_messages, { :parent_id => d1.id, :id => d3.id + 1 }, :user_id => 4
+    get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id + 1 }, :session => { :user_id => 4 }
     assert_equal [], assigns(:dmails)
 
-    get :show_previous_messages, { :parent_id => d2.id, :id => d3.id }, :user_id => 1
+    get :show_previous_messages, :params => { :parent_id => d2.id, :id => d3.id }, :session => { :user_id => 1 }
     assert_equal [], assigns(:dmails)
   end
 end

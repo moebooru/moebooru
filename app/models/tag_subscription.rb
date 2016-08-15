@@ -30,7 +30,7 @@ class TagSubscription < ActiveRecord::Base
 
     find_each do |tag_subscription|
       if tag_subscription.user.is_privileged_or_higher?
-        suppress Exception do
+        Kernel.suppress Exception do
           TagSubscription.transaction do
             tags = tag_subscription.tag_query.scan(/\S+/)
             post_ids = []

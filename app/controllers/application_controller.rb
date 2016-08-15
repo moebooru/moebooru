@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
       if @current_user
         if @current_user.is_blocked? && @current_user.ban && @current_user.ban.expires_at < Time.now
           @current_user.update_attribute(:level, CONFIG["starting_level"])
-          Ban.destroy_all("user_id = #{@current_user.id}")
+          Ban.where(:user_id => @current_user.id).destroy_all
         end
 
         session[:user_id] = @current_user.id
@@ -200,7 +200,7 @@ class ApplicationController < ActionController::Base
     return unless ban
 
     if ban.expires_at && ban.expires_at < Time.now
-      IpBans.destroy_all(:ip_addr => request.remote_ip)
+      IpBans.where(:ip_addr => request.remote_ip).destroy_all
       return
     end
 

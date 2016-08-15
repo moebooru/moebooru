@@ -297,8 +297,10 @@ class PoolController < ApplicationController
     end
 
     if request.post?
+
       if params[:posts].present?
-        ordered_posts = params[:posts].sort { |a, b| a[1] <=> b[1] }.map { |a| a[0] }
+        params.permit!
+        ordered_posts = params[:posts].to_h.sort { |a, b| a[1] <=> b[1] }.map { |a| a[0] }
 
         PoolPost.transaction do
           ordered_posts.each do |post_id|

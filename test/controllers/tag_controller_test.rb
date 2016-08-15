@@ -13,7 +13,7 @@ class TagControllerTest < ActionController::TestCase
     create_post("hoge moge", 2)
     create_post("lodge", 3)
 
-    get :cloud, {}, {}
+    get :cloud
     assert_response :success
   end
 
@@ -22,14 +22,14 @@ class TagControllerTest < ActionController::TestCase
     create_post("hoge moge", 2)
     create_post("lodge", 3)
 
-    get :index, {}, {}
+    get :index
     assert_response :success
 
     # TODO: test other params
   end
 
   def test_mass_edit
-    get :mass_edit, {}, :user_id => 2
+    get :mass_edit, :session => { :user_id => 2 }
     assert_response :success
 
     # Can't easily test the mass_edit action. The daemon process does the actual work.
@@ -44,17 +44,17 @@ class TagControllerTest < ActionController::TestCase
     create_post("hoge moge", 2)
     create_post("lodge", 3)
 
-    get :edit_preview, { :tags => "hoge" }, :user_id => 2
+    get :edit_preview, :params => { :tags => "hoge" }, :session => { :user_id => 2 }
     assert_response :success
   end
 
   def test_update
     create_post("hoge", 1)
 
-    get :edit, { :name => "hoge" }, :user_id => 3
+    get :edit, :params => { :name => "hoge" }, :session => { :user_id => 3 }
     assert_response :success
 
-    post :update, { :tag => { :name => "hoge", :tag_type => CONFIG["tag_types"]["Artist"] } }, :user_id => 3
+    post :update, :params => { :tag => { :name => "hoge", :tag_type => CONFIG["tag_types"]["Artist"] } }, :session => { :user_id => 3 }
     assert_equal(CONFIG["tag_types"]["Artist"], Tag.find_by_name("hoge").tag_type)
   end
 
@@ -63,7 +63,7 @@ class TagControllerTest < ActionController::TestCase
     create_post("hoge moge", 2)
     create_post("lodge", 3)
 
-    get :related, { :tags => "hoge", :format => "json" }, {}
+    get :related, :params => { :tags => "hoge", :format => "json" }
     assert_response :success
   end
 
@@ -72,13 +72,13 @@ class TagControllerTest < ActionController::TestCase
     create_post("hoge moge", 2)
     create_post("lodge", 3)
 
-    get :popular_by_day, {}, {}
+    get :popular_by_day
     assert_response :success
 
-    get :popular_by_week, {}, {}
+    get :popular_by_week
     assert_response :success
 
-    get :popular_by_month, {}, {}
+    get :popular_by_month
     assert_response :success
   end
 end

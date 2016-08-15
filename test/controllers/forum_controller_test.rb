@@ -10,11 +10,11 @@ class ForumControllerTest < ActionController::TestCase
   def test_stick
     p = create_post("parent")
 
-    post :stick, { :id => p.id }, :user_id => 2
+    post :stick, :params => { :id => p.id }, :session => { :user_id => 2 }
     p.reload
     assert(p.is_sticky?, "Post should be sticky")
 
-    post :unstick, { :id => p.id }, :user_id => 2
+    post :unstick, :params => { :id => p.id }, :session => { :user_id => 2 }
     p.reload
     assert(!p.is_sticky?, "Post should not be sticky")
   end
@@ -22,17 +22,17 @@ class ForumControllerTest < ActionController::TestCase
   def test_lock
     p = create_post("parent")
 
-    post :lock, { :id => p.id }, :user_id => 2
+    post :lock, :params => { :id => p.id }, :session => { :user_id => 2 }
     p.reload
     assert(p.is_locked?, "Post should be locked")
 
-    post :unlock, { :id => p.id }, :user_id => 2
+    post :unlock, :params => { :id => p.id }, :session => { :user_id => 2 }
     p.reload
     assert(!p.is_locked?, "Post should not be locked")
   end
 
   def test_create
-    post :create, { :forum_post => { :title => "hey", :body => "hey" } }, :user_id => 4
+    post :create, :params => { :forum_post => { :title => "hey", :body => "hey" } }, :session => { :user_id => 4 }
     p1 = ForumPost.find_by_title("hey")
     assert_not_nil(p1)
     assert_nil(p1.parent_id)
@@ -40,7 +40,7 @@ class ForumControllerTest < ActionController::TestCase
     assert_equal(4, p1.last_updated_by)
     assert_equal(0, p1.response_count)
 
-    post :create, { :forum_post => { :title => "hoge", :body => "hoge", :parent_id => p1.id } }, :user_id => 3
+    post :create, :params => { :forum_post => { :title => "hoge", :body => "hoge", :parent_id => p1.id } }, :session => { :user_id => 3 }
     p1.reload
     p2 = ForumPost.find_by_title("hoge")
     assert_not_nil(p2)
@@ -54,7 +54,7 @@ class ForumControllerTest < ActionController::TestCase
     p1 = create_post("hello")
     p2 = create_post("go away", p1.id)
 
-    post :destroy, { :id => p1.id }, :user_id => 1
+    post :destroy, :params => { :id => p1.id }, :session => { :user_id => 1 }
     assert_nil(ForumPost.find_by_id(p1.id))
     assert_nil(ForumPost.find_by_id(p2.id))
   end
@@ -62,17 +62,17 @@ class ForumControllerTest < ActionController::TestCase
   def test_update
     p1 = create_post("hello")
 
-    get :edit, { :id => p1.id }, :user_id => 1
+    get :edit, :params => { :id => p1.id }, :session => { :user_id => 1 }
     assert_response :success
 
-    post :update, { :id => p1.id, :forum_post => { :body => "taxes" } }, :user_id => 1
+    post :update, :params => { :id => p1.id, :forum_post => { :body => "taxes" } }, :session => { :user_id => 1 }
     p1.reload
     assert_equal("taxes", p1.body)
   end
 
   def test_show
     p1 = create_post("hello")
-    get :show, { :id => p1.id }, :user_id => 1
+    get :show, :params => { :id => p1.id }, :session => { :user_id => 1 }
     assert_response :success
   end
 
@@ -85,10 +85,10 @@ class ForumControllerTest < ActionController::TestCase
     create_post("hello", p4.id)
     create_post("hello", p4.id)
 
-    get :index, {}, :user_id => 1
+    get :index, :session => { :user_id => 1 }
     assert_response :success
 
-    get :index, { :parent_id => p4.id }, :user_id => 1
+    get :index, :params => { :parent_id => p4.id }, :session => { :user_id => 1 }
     assert_response :success
   end
 
@@ -101,10 +101,10 @@ class ForumControllerTest < ActionController::TestCase
     create_post("moon", p4.id)
     create_post("knife", p4.id)
 
-    get :search, {}, :user_id => 1
+    get :search, :session => { :user_id => 1 }
     assert_response :success
 
-    get :search, { :query => "hello" }, :user_id => 1
+    get :search, :params => { :query => "hello" }, :session => { :user_id => 1 }
     assert_response :success
   end
 
@@ -117,7 +117,7 @@ class ForumControllerTest < ActionController::TestCase
     create_post("moon", p4.id)
     create_post("knife", p4.id)
 
-    post :mark_all_read, {}, :user_id => 1
+    post :mark_all_read, :session => { :user_id => 1 }
     assert_response :success
   end
 end

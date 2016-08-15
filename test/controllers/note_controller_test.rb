@@ -23,7 +23,7 @@ class NoteControllerTest < ActionController::TestCase
     setup_test
 
     # Assume note locking is tested in the unit tests
-    post :update, { :note => { :post_id => @post1.id, :x => 100, :y => 200, :height => 300, :width => 400, :body => "moogles" } }, :user_id => 1
+    post :update, :params => { :note => { :post_id => @post1.id, :x => 100, :y => 200, :height => 300, :width => 400, :body => "moogles" } }, :session => { :user_id => 1 }
     assert_equal(1, @post1.notes.size)
     assert_equal(100, @post1.notes[0].x)
     assert_equal("moogles", @post1.notes[0].body)
@@ -36,7 +36,7 @@ class NoteControllerTest < ActionController::TestCase
     setup_test
 
     note = create_note("moogles", @post1.id)
-    post :update, { :id => note.id, :note => { :body => "hoge" } }, :user_id => 1
+    post :update, :params => { :id => note.id, :note => { :body => "hoge" } }, :session => { :user_id => 1 }
     note.reload
     assert_equal("hoge", note.body)
     # TODO: test privileges
@@ -49,11 +49,11 @@ class NoteControllerTest < ActionController::TestCase
     note.update_attributes(:body => "mark ii")
     note.update_attributes(:body => "mark iii")
 
-    post :revert, { :id => note.id, :version => 1 }, :user_id => 1
+    post :revert, :params => { :id => note.id, :version => 1 }, :session => { :user_id => 1 }
     note.reload
     assert_equal("hoge", note.body)
 
-    post :revert, { :id => note.id, :version => 3 }, :user_id => 1
+    post :revert, :params => { :id => note.id, :version => 3 }, :session => { :user_id => 1 }
     note.reload
     assert_equal("mark iii", note.body)
   end
@@ -63,16 +63,16 @@ class NoteControllerTest < ActionController::TestCase
 
     note = create_note("hoge", @post1.id)
 
-    get :history, {}, :user_id => 1
+    get :history, :session => { :user_id => 1 }
     assert_response :success
 
-    get :history, { :id => note.id }, :user_id => 1
+    get :history, :params => { :id => note.id }, :session => { :user_id => 1 }
     assert_response :success
 
-    get :history, { :post_id => @post1.id }, :user_id => 1
+    get :history, :params => { :post_id => @post1.id }, :session => { :user_id => 1 }
     assert_response :success
 
-    get :history, { :user_id => 1 }, :user_id => 1
+    get :history, :params => { :user_id => 1 }, :session => { :user_id => 1 }
     assert_response :success
   end
 
@@ -81,10 +81,10 @@ class NoteControllerTest < ActionController::TestCase
 
     create_note("hoge", @post1.id)
 
-    get :index, {}, :user_id => 1
+    get :index, :session => { :user_id => 1 }
     assert_response :success
 
-    get :index, { :post_id => @post1.id }, :user_id => 1
+    get :index, :params => { :post_id => @post1.id }, :session => { :user_id => 1 }
     assert_response :success
   end
 
@@ -93,10 +93,10 @@ class NoteControllerTest < ActionController::TestCase
 
     create_note("hoge", @post1.id)
 
-    get :search, {}, :user_id => 1
+    get :search, :session => { :user_id => 1 }
     assert_response :success
 
-    get :search, { :query => "hoge" }, :user_id => 1
+    get :search, :params => { :query => "hoge" }, :session => { :user_id => 1 }
     assert_response :success
   end
 end

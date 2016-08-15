@@ -108,11 +108,11 @@ class Pool < ActiveRecord::Base
 
     def update_pool_links
       transaction do
-        pp = pool_posts(true) # force reload
-        pp.each_index do |i|
-          pp[i].next_post_id = (i == pp.size - 1) ? nil : pp[i + 1].post_id
-          pp[i].prev_post_id = i == 0 ? nil : pp[i - 1].post_id
-          pp[i].save if pp[i].changed?
+        pp = pool_posts.reload
+        pp.each_with_index do |post, i|
+          post.next_post_id = (i == pp.size - 1) ? nil : pp[i + 1].post_id
+          post.prev_post_id = i == 0 ? nil : pp[i - 1].post_id
+          post.save if post.changed?
         end
       end
     end

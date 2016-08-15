@@ -35,14 +35,14 @@ module Post::FileMethods
   def ensure_tempfile_exists
     unless File.exist?(tempfile_path)
       errors.add :file, "not found, try uploading again"
-      return false
+      throw :abort
     end
   end
 
   def validate_content_type
     unless %w(jpg png gif swf).include?(file_ext.downcase)
       errors.add(:file, "is an invalid content type: " + file_ext.downcase)
-      return false
+      throw :abort
     end
   end
 
@@ -150,13 +150,13 @@ module Post::FileMethods
 
   def generate_hash
     unless regenerate_hash
-      return false
+      throw :abort
     end
 
     if Post.exists? :md5 => md5
       delete_tempfile
       errors.add "md5", "already exists"
-      return false
+      throw :abort
     else
       return true
     end
@@ -531,7 +531,7 @@ module Post::FileMethods
     path = file_path unless File.exist?(path)
     unless File.exist?(path)
       errors.add(:file, "not found")
-      return false
+      throw :abort
     end
 
     # If we already have the image, don't regenerate it.
@@ -544,7 +544,7 @@ module Post::FileMethods
       Moebooru::Resizer.resize(file_ext, path, tempfile_jpeg_path, size, CONFIG["jpeg_quality"])
     rescue => x
       errors.add "jpeg", "couldn't be created: #{x}"
-      return false
+      throw :abort
     end
 
     self.jpeg_width = size[:width]

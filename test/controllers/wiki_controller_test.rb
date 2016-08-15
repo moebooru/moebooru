@@ -10,18 +10,18 @@ class WikiControllerTest < ActionController::TestCase
   def test_destroy
     page = create_page("hoge")
 
-    post :destroy, { :title => "hoge" }, :user_id => 2
+    post :destroy, :params => { :title => "hoge" }, :session => { :user_id => 2 }
     assert_nil(WikiPage.find_by_id(page.id))
   end
 
   def test_lock
     page = create_page("hoge")
 
-    post :lock, { :title => "hoge" }, :user_id => 2
+    post :lock, :params => { :title => "hoge" }, :session => { :user_id => 2 }
     page.reload
     assert_equal(true, page.is_locked?)
 
-    post :unlock, { :title => "hoge" }, :user_id => 2
+    post :unlock, :params => { :title => "hoge" }, :session => { :user_id => 2 }
     page.reload
     assert_equal(false, page.is_locked?)
   end
@@ -33,20 +33,20 @@ class WikiControllerTest < ActionController::TestCase
     get :index
     assert_response :success
 
-    get :index, :query => "moge"
+    get :index, :params => { :query => "moge" }
     assert_response :success
   end
 
   def test_preview
-    get :preview, :body => "hoge moge soge"
+    get :preview, :params => { :body => "hoge moge soge" }
     assert_response :success
   end
 
   def test_create
-    get :add, { :title => "moge" }, :user_id => 4
+    get :add, :params => { :title => "moge" }, :session => { :user_id => 4 }
     assert_response :success
 
-    post :create, { :wiki_page => { :title => "hoge", :body => "hoge hoge" } }, :user_id => 4
+    post :create, :params => { :wiki_page => { :title => "hoge", :body => "hoge hoge" } }, :session => { :user_id => 4 }
     page = WikiPage.find_by_title("hoge")
     assert_not_nil(page)
     assert_equal("hoge hoge", page.body)
@@ -56,13 +56,13 @@ class WikiControllerTest < ActionController::TestCase
     page = create_page("hoge")
     page.update_attributes(:body => "moge moge")
 
-    get :edit, { :title => "hoge" }, :user_id => 4
+    get :edit, :params => { :title => "hoge" }, :session => { :user_id => 4 }
     assert_response :success
 
-    get :edit, { :title => "hoge", :version => 1 }, :user_id => 4
+    get :edit, :params => { :title => "hoge", :version => 1 }, :session => { :user_id => 4 }
     assert_response :success
 
-    post :update, { :wiki_page => { :title => "hoge", :body => "soge king" } }, :user_id => 4
+    post :update, :params => { :wiki_page => { :title => "hoge", :body => "soge king" } }, :session => { :user_id => 4 }
     page.reload
     assert_equal("soge king", page.body)
   end
@@ -71,7 +71,7 @@ class WikiControllerTest < ActionController::TestCase
     page = create_page("hoge")
     page.update_attributes(:body => "moge moge")
 
-    get :show, :title => "hoge"
+    get :show, :params => { :title => "hoge" }
     assert_response :success
   end
 
@@ -80,7 +80,7 @@ class WikiControllerTest < ActionController::TestCase
     page.update_attributes(:body => "hoge 2")
     page.update_attributes(:body => "hoge 3")
 
-    post :revert, { :title => "hoge", :version => 1 }, :user_id => 4
+    post :revert, :params => { :title => "hoge", :version => 1 }, :session => { :user_id => 4 }
     page.reload
     assert_equal("hoge", page.body)
   end
@@ -90,7 +90,7 @@ class WikiControllerTest < ActionController::TestCase
     page.update_attributes(:body => "hoge hoge")
     page.update_attributes(:body => "hoge hoge hoge")
 
-    post :revert, { :title => "hoge", :version => 2 }, :user_id => 4
+    post :revert, :params => { :title => "hoge", :version => 2 }, :session => { :user_id => 4 }
     page.reload
     assert_equal("hoge hoge hoge", page.body)
   end
@@ -110,7 +110,7 @@ class WikiControllerTest < ActionController::TestCase
     page.update_attributes(:body => "moge moge")
     page.update_attributes(:body => "moge moge moge")
 
-    get :history, :title => "moge"
+    get :history, :params => { :title => "moge" }
     assert_response :success
   end
 
@@ -119,14 +119,14 @@ class WikiControllerTest < ActionController::TestCase
     page.update_attributes(:body => "moge moge")
     page.update_attributes(:body => "moge moge moge")
 
-    get :diff, :title => "moge", :from => 1, :to => 3
+    get :diff, :params => { :title => "moge", :from => 1, :to => 3 }
     assert_response :success
   end
 
   def test_rename
     create_page("moge")
 
-    get :rename, { :title => "moge" }, :user_id => 2
+    get :rename, :params => { :title => "moge" }, :session => { :user_id => 2 }
     assert_response :success
   end
 end

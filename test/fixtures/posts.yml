@@ -1,6 +1,6 @@
 google_logo_1:
   id: 1
-  user: admin
+  user_id: 1 # admin
   score: 0
   source: http://www.google.com/intl/en_ALL/images/logo.gif
   md5: e80d1c59a673f56078578afb1ac10959
@@ -22,7 +22,7 @@ google_logo_1:
 
 google_logo_2:
   id: 2
-  user: admin
+  user_id: 1 # admin
   score: 0
   source: http://www.google.com/intl/en_ALL/images/logo.gif
   md5: e80d1c59a673f560785784fb1ac10957
@@ -44,7 +44,7 @@ google_logo_2:
 
 google_logo_3:
   id: 3
-  user: admin
+  user_id: 1 # admin
   score: 0
   source: http://www.google.com/intl/en_ALL/images/logo.gif
   md5: e80d1c59a673f560785784fb1ac10958
@@ -66,7 +66,7 @@ google_logo_3:
 
 google_logo_4:
   id: 4
-  user: admin
+  user_id: 1 # admin
   score: 0
   source: http://www.google.com/intl/en_ALL/images/logo.gif
   md5: e80d1c59a673f560785784fb1ac10956
@@ -88,7 +88,7 @@ google_logo_4:
 
 google_logo_5:
   id: 5
-  user: admin
+  user_id: 1 # admin
   score: 0
   source: http://www.google.com/intl/en_ALL/images/logo.gif
   md5: e80d1c59a673f560785784fb1ac10955

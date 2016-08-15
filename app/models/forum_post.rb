@@ -27,7 +27,7 @@ class ForumPost < ActiveRecord::Base
     def validate_lock
       if root.is_locked?
         errors.add(:base, "Thread is locked")
-        return false
+        throw :abort
       end
 
       true
@@ -136,12 +136,12 @@ class ForumPost < ActiveRecord::Base
     if is_parent?
       if title.blank?
         errors.add :title, "missing"
-        return false
+        throw :abort
       end
 
       if title !~ /\S/
         errors.add :title, "missing"
-        return false
+        throw :abort
       end
     end
 

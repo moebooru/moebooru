@@ -18,7 +18,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   def test_show
-    get :show, { :id => 1 }, :user_id => 1
+    get :show, :params => { :id => 1 }, :session => { :user_id => 1 }
     assert_response :success
   end
 
@@ -28,7 +28,7 @@ class UserControllerTest < ActionController::TestCase
     member = User.find(4)
 
     # Should fail
-    post :invites, { :member => { :name => "member", :level => 33 } }, :user_id => 2
+    post :invites, :params => { :member => { :name => "member", :level => 33 } }, :session => { :user_id => 2 }
     member.reload
     assert_equal(CONFIG["user_levels"]["Member"], member.level)
 
@@ -37,28 +37,28 @@ class UserControllerTest < ActionController::TestCase
     mod.invite_count = 10
     mod.save
     ur = UserRecord.create(:user_id => 4, :is_positive => false, :body => "bad", :reported_by => 1)
-    post :invites, { :member => { :name => "member", :level => 33 } }, :user_id => 2
+    post :invites, :params => { :member => { :name => "member", :level => 33 } }, :session => { :user_id => 2 }
     member.reload
     assert_equal(CONFIG["user_levels"]["Member"], member.level)
 
     ur.destroy
 
     # Should succeed
-    post :invites, { :member => { :name => "member", :level => 50 } }, :user_id => 2
+    post :invites, :params => { :member => { :name => "member", :level => 50 } }, :session => { :user_id => 2 }
     member.reload
     assert_equal(CONFIG["user_levels"]["Contributor"], member.level)
   end
 
   def test_home
-    get :home, {}, {}
+    get :home
     assert_response :success
 
-    get :home, {}, :user_id => 1
+    get :home, :session => { :user_id => 1 }
     assert_response :success
   end
 
   def test_index
-    get :index, {}, {}
+    get :index
     assert_response :success
 
     # TODO: more parameters
@@ -67,10 +67,10 @@ class UserControllerTest < ActionController::TestCase
   def test_authentication_failure
     create_user("bob")
 
-    get :login, {}, {}
+    get :login
     assert_response :success
 
-    post :authenticate, { :user => { :name => "bob", :password => "zugzug2" }, :url => "http://google.com" }, {}
+    post :authenticate, :params => { :user => { :name => "bob", :password => "zugzug2" }, :url => "http://google.com" }
     assert_not_nil(assigns(:current_user))
     assert_equal(true, assigns(:current_user).is_anonymous?)
   end
@@ -78,7 +78,7 @@ class UserControllerTest < ActionController::TestCase
   def test_authentication_success
     create_user("bob")
 
-    post :authenticate, { :user => { :name => "bob", :password => "zugzug1" }, :url => "http://google.com" }, {}
+    post :authenticate, :params => { :user => { :name => "bob", :password => "zugzug1" }, :url => "http://google.com" }
     assert_not_nil(assigns(:current_user))
     assert_equal(false, assigns(:current_user).is_anonymous?)
     assert_equal("bob", assigns(:current_user).name)
@@ -87,23 +87,23 @@ class UserControllerTest < ActionController::TestCase
   def test_create
     setup_action_mailer
 
-    get :signup, {}, {}
+    get :signup
     assert_response :success
 
-    post :create, :user => { :name => "mog", :email => "mog@danbooru.com", :password => "zugzug1", :password_confirmation => "zugzug1" }
+    post :create, :params => { :user => { :name => "mog", :email => "mog@danbooru.com", :password => "zugzug1", :password_confirmation => "zugzug1" } }
     mog = User.find_by_name("mog")
     assert_not_nil(mog)
   end
 
   def test_update
-    get :edit, {}, :user_id => 4
+    get :edit, :session => { :user_id => 4 }
     assert_response :success
 
     original_invite_count = User.find(4).invite_count
-    post :update, { :user => { :invite_count => original_invite_count + 2 } }, :user_id => 4
+    post :update, :params => { :user => { :invite_count => original_invite_count + 2 } }, :session => { :user_id => 4 }
     assert_equal(original_invite_count, User.find(4).invite_count)
 
-    post :update, { :user => { :receive_dmails => true } }, :user_id => 4
+    post :update, :params => { :user => { :receive_dmails => true } }, :session => { :user_id => 4 }
     assert_equal(true, User.find(4).receive_dmails?)
   end
 
@@ -115,24 +115,24 @@ class UserControllerTest < ActionController::TestCase
     get :reset_password
     assert_response :success
 
-    post :reset_password, { :user => { :name => "admin", :email => "wrong@danbooru.com" } }, :user_id => nil
+    post :reset_password, :params => { :user => { :name => "admin", :email => "wrong@danbooru.com" } }
     assert_equal(old_password_hash, User.find(1).password_hash)
 
-    post :reset_password, { :user => { :name => "admin", :email => "admin@danbooru.com" } }, :user_id => nil
+    post :reset_password, :params => { :user => { :name => "admin", :email => "admin@danbooru.com" } }
     assert_not_equal(old_password_hash, User.find(1).password_hash)
   end
 
   def test_block
     setup_action_mailer
 
-    get :block, { :id => 4 }, :user_id => 1
+    get :block, :params => { :id => 4 }, :session => { :user_id => 1 }
     assert_response :success
 
-    post :block, { :id => 4, :ban => { :reason => "bad", :duration => 5 } }, :user_id => 1
+    post :block, :params => { :id => 4, :ban => { :reason => "bad", :duration => 5 } }, :session => { :user_id => 1 }
     banned = User.find(4)
     assert_equal(CONFIG["user_levels"]["Blocked"], banned.level)
 
-    post :unblock, { :user => { "4" => "1" } }, :user_id => 1
+    post :unblock, :params => { :user => { "4" => "1" } }, :session => { :user_id => 1 }
     banned.reload
     assert_equal(CONFIG["user_levels"]["Member"], banned.level)
   end
@@ -140,7 +140,7 @@ class UserControllerTest < ActionController::TestCase
   def test_show_blocked_users
     setup_action_mailer
 
-    get :show_blocked_users, {}, :user_id => 1
+    get :show_blocked_users, :session => { :user_id => 1 }
     assert_response :success
   end
 end

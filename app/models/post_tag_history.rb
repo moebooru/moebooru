@@ -32,7 +32,7 @@ class PostTagHistory < ActiveRecord::Base
     transaction do
       posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.*", :conditions => ["pth.user_id = ?", user_id])
 
-      PostTagHistory.destroy_all(["user_id = ?", user_id])
+      PostTagHistory.where(:user_id => user_id).destroy_all
       posts.each do |post|
         first = post.tag_history.first
         if first

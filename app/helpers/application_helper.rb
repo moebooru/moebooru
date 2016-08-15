@@ -201,6 +201,7 @@ module ApplicationHelper
   def need_signup?(level)
     CONFIG["starting_level"] >= User.get_user_level(level)
   end
+  module_function :need_signup?
 
   # Submit tag with a twist: removes name from tag form data so it doesn't add
   # unnecessary query string on forms with GET method.

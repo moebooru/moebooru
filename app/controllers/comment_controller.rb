@@ -31,7 +31,7 @@ class CommentController < ApplicationController
   end
 
   def create
-    if @current_user.is_member_or_lower? && params[:commit] == "Post" && Comment.count(:conditions => ["user_id = ? AND created_at > ?", @current_user.id, 1.hour.ago]) >= CONFIG["member_comment_limit"]
+    if @current_user.is_member_or_lower? && params[:commit] == "Post" && Comment.where(:user_id => @current_user.id).where('created_at > ?', 1.hour.ago).count >= CONFIG["member_comment_limit"]
       # TODO: move this to the model
       respond_to_error("Hourly limit exceeded", { :action => "index" }, :status => 421)
       return

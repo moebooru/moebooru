@@ -18,7 +18,7 @@ class BlocksController < ApplicationController
 
   def unblock_ip
     params[:ip_ban].keys.each do |ban_id|
-      IpBans.destroy_all(["id = ?", ban_id])
+      IpBans.where(:id => ban_id).destroy_all
     end
 
     redirect_to :controller => "user", :action => "show_blocked_users"

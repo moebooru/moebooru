@@ -24,7 +24,7 @@ class ReportControllerTest < ActionController::TestCase
     p1 = create_post("hoge", 1)
     update_post(p1, :tags => "moge")
 
-    get :tag_updates, {}, {}
+    get :tag_updates
     assert_response :success
   end
 
@@ -32,7 +32,7 @@ class ReportControllerTest < ActionController::TestCase
     n1 = create_note(:body => "hoge")
     n1.update_attributes(:body => "moge")
 
-    get :note_updates, {}, {}
+    get :note_updates
     assert_response :success
   end
 
@@ -40,7 +40,7 @@ class ReportControllerTest < ActionController::TestCase
     w1 = create_wiki
     w1.update_attributes(:body => "moge")
 
-    get :wiki_updates, {}, {}
+    get :wiki_updates
     assert_response :success
   end
 end

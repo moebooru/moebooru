@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
         @current_user = User.authenticate_hash(params[:login], params[:password_hash])
       end
 
-      if @current_user.nil? && params[:user].is_a?(Hash)
+      if @current_user.nil? && params[:user].present?
         @current_user = User.authenticate(params[:user][:name], params[:user][:password])
       end
 

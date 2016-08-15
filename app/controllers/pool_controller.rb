@@ -297,7 +297,7 @@ class PoolController < ApplicationController
     end
 
     if request.post?
-      if params[:posts].is_a?(Hash)
+      if params[:posts].present?
         ordered_posts = params[:posts].sort { |a, b| a[1] <=> b[1] }.map { |a| a[0] }
 
         PoolPost.transaction do

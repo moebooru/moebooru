@@ -68,9 +68,6 @@ module Moebooru
     # This one is never reliable because there's no standard controlling this.
     config.action_dispatch.ip_spoofing_check = false
 
-    # Save cache in different location to avoid collision.
-    config.action_controller.page_cache_directory = config.root.join("public", "cache")
-
     config.action_controller.asset_host = CONFIG[:file_hosts][:assets] if CONFIG[:file_hosts]
     config.action_mailer.default_url_options = { :host => CONFIG["server_host"] }
   end

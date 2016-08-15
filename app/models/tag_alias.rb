@@ -39,17 +39,17 @@ class TagAlias < ActiveRecord::Base
   def validate_uniqueness
     if self.class.exists?(["name = ?", name])
       errors.add(:base, "#{name} is already aliased to something")
-      return false
+      throw :abort
     end
 
     if self.class.exists?(["alias_id = (select id from tags where name = ?)", name])
       errors.add(:base, "#{name} is already aliased to something")
-      return false
+      throw :abort
     end
 
     if self.class.exists?(["name = ?", alias_name])
       errors.add(:base, "#{alias_name} is already aliased to something")
-      return false
+      throw :abort
     end
   end
 

@@ -128,13 +128,13 @@ module ApplicationHelper
       posts = post
 
       unless posts.previous_page.nil?
-        html << tag("link", :href => url_for(params.merge(:page => 1)), :rel => "first", :title => "First Page")
-        html << tag("link", :href => url_for(params.merge(:page => posts.previous_page)), :rel => "prev", :title => "Previous Page")
+        html << tag("link", :href => url_for(:page => 1), :rel => "first", :title => "First Page")
+        html << tag("link", :href => url_for(:page => posts.previous_page), :rel => "prev", :title => "Previous Page")
       end
 
       unless posts.next_page.nil?
-        html << tag("link", :href => url_for(params.merge(:page => posts.next_page)), :rel => "next", :title => "Next Page")
-        html << tag("link", :href => url_for(params.merge(:page => posts.total_pages)), :rel => "last", :title => "Last Page")
+        html << tag("link", :href => url_for(:page => posts.next_page), :rel => "next", :title => "Next Page")
+        html << tag("link", :href => url_for(:page => posts.total_pages), :rel => "last", :title => "Last Page")
       end
     end
 

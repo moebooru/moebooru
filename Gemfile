@@ -1,13 +1,13 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 4.2.0"
+gem "rails", "~> 5.0.0"
 
-gem "coffee-rails", "~> 4.1.0" # Rails 4.2 default
+gem "coffee-rails", "~> 4.2.0" # Rails 5.0 default
 gem "jquery-rails"
 gem "jquery-ui-rails"
-gem "uglifier", ">= 1.3.0" # Rails 4.2 default
+gem "uglifier", ">= 1.3.0" # Rails 5.0 default
 
-gem "sass-rails", "~> 5.0" # Rails 4.2 default
+gem "sass-rails", "~> 5.0" # Rails 5.0 default
 
 source "https://rails-assets.org" do
   gem "rails-assets-js-cookie"
@@ -39,10 +39,6 @@ gem "mini_magick"
 gem "image_size"
 gem "i18n-js", ">= 3.0.0.rc7"
 
-group :development do
-  gem "quiet_assets"
-end
-
 group :standalone do
   platform :mri do
     gem "unicorn"
@@ -60,7 +56,7 @@ gem "pry", :group => [:development, :test]
 
 gem "oj", :platforms => :mri
 gem "multi_json"
-gem "jbuilder", "~> 2.0" # Rails 4.2 default
+gem "jbuilder", "~> 2.5" # Rails 5.0 default
 
 # Must be last.
 gem "rack-mini-profiler", :group => :development

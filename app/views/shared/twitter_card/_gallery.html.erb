@@ -4,7 +4,7 @@
       # Reference: https://developers.facebook.com/docs/opengraphprotocol/
     %>
     <%= tag :meta, :property => "og:title", :content => html_title %>
-    <%= tag :meta, :property => "og:url", :content => url_for(params) %>
+    <%= tag :meta, :property => "og:url", :content => url %>
     <% if defined? description %>
       <%= tag :meta, property: "og:description", content: description %>
     <% else %>

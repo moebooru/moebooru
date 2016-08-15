@@ -1,5 +1,5 @@
 <% provide :title, @pool.pretty_name %>
-<%= render 'shared/twitter_card/gallery', description: @pool.description, posts: @posts %>
+<%= render 'shared/twitter_card/gallery', :description => @pool.description, :posts => @posts, :url => url_for %>
 <div id="pool-show">
   <h4><%= t('.title', :name => @pool.pretty_name) %></h4>
   <% unless @pool.description.blank? %>

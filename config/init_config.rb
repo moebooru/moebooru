@@ -1,6 +1,6 @@
 CONFIG = {}
 # The version of this Moebooru.
-CONFIG["version"] = "4.2.0-rc.1"
+CONFIG["version"] = "5.0.0-beta.1"
 
 # The default name to use for anyone who isn't logged in.
 CONFIG["default_guest_name"] = "Anonymous"

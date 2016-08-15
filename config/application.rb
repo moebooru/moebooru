@@ -1,17 +1,11 @@
-require File.expand_path("../boot", __FILE__)
+require_relative "boot"
 
 # To allow setting environment variable ZP_DATABASE_URL instead of DATABASE_URL.
 ENV["DATABASE_URL"] = ENV["MB_DATABASE_URL"] if ENV["MB_DATABASE_URL"]
 
-# Pick the frameworks you want:
-require "active_record/railtie"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-# require "active_resource/railtie"
-require "sprockets/railtie"
-require "rails/test_unit/railtie"
+require "rails/all"
 
-require File.expand_path("../init_config", __FILE__)
+require_relative "init_config"
 
 Bundler.require(*CONFIG["bundler_groups"])
 

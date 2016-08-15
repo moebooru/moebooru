@@ -1,4 +1,4 @@
-Moebooru::Application.routes.draw do
+Rails.application.routes.draw do
   # Admin
   get "admin" => "admin#index"
   get "admin/index" => "admin#index" # FIXME: remove this
@@ -140,13 +140,13 @@ Moebooru::Application.routes.draw do
   match "post/index(.:format)" => "post#index", :via => [:post, :get] # FIXME: remove this
   match "post/acknowledge_new_deleted_posts", :via => [:post, :get]
   match "post/activate", :via => [:post, :get]
-  match "post/atom(.:format)" => "post#atom", :defaults => { :format => :atom }, :via => [:post, :get]
+  get "post/atom(.:format)" => "post#atom", :defaults => { :format => :atom }
   match "post/browse", :via => [:post, :get]
   match "post/delete(/:id)" => "post#delete", :via => [:post, :get]
   match "post/deleted_index", :via => [:post, :get]
   get "post/error"
   match "post/moderate", :via => [:post, :get]
-  match "post/piclens", :defaults => { :format => :rss }, :via => [:post, :get]
+  get "post/piclens", :defaults => { :format => :rss }
   match "post/popular_by_day", :via => [:post, :get]
   match "post/popular_by_month", :via => [:post, :get]
   match "post/popular_by_week", :via => [:post, :get]

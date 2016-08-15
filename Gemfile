@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 4.2.0"
-gem "rails-observers"
 
 gem "coffee-rails", "~> 4.1.0" # Rails 4.2 default
 gem "jquery-rails"
@@ -18,12 +17,8 @@ end
 gem "non-stupid-digest-assets"
 
 gem "pg", :platforms => [:ruby, :mingw]
-gem "activerecord-jdbcpostgresql-adapter", "~> 1.3.0.rc1", :platforms => :jruby
+gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.0", :platforms => :jruby
 gem "foreigner"
-
-### FIXME: remove this
-gem "actionpack-page_caching"
-### FIXME: remove this
 
 gem "diff-lcs"
 gem "json"

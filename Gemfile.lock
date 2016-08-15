@@ -47,6 +47,7 @@ GEM
     acts_as_versioned_rails3 (0.6.2)
       activerecord (>= 3.0.9)
     addressable (2.4.0)
+    ansi (1.5.0)
     arel (7.1.1)
     builder (3.2.2)
     coderay (1.1.1)
@@ -107,6 +108,11 @@ GEM
     mini_magick (4.5.1)
     mini_portile2 (2.1.0)
     minitest (5.9.0)
+    minitest-reporters (1.1.11)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
     multi_json (1.12.1)
     newrelic_rpm (3.16.0.318)
     nio4r (1.2.1)
@@ -154,6 +160,10 @@ GEM
       sprockets-rails (>= 2.0.0)
     rails-assets-js-cookie (2.1.2)
     rails-assets-mousetrap (1.6.0)
+    rails-controller-testing (1.0.0)
+      actionpack (~> 5.x)
+      actionview (~> 5.x)
+      activesupport (~> 5.x)
     rails-dom-testing (2.0.1)
       activesupport (>= 4.2.0, < 6.0)
       nokogiri (~> 1.6.0)
@@ -170,6 +180,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     raindrops (0.17.0)
     rake (11.2.2)
+    ruby-progressbar (1.8.1)
     sass (3.4.22)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -237,6 +248,7 @@ DEPENDENCIES
   json
   m
   mini_magick
+  minitest-reporters
   multi_json
   newrelic_rpm
   nokogiri
@@ -249,6 +261,7 @@ DEPENDENCIES
   rails (~> 5.0.0)
   rails-assets-js-cookie!
   rails-assets-mousetrap!
+  rails-controller-testing
   rails-i18n
   sass-rails (~> 5.0)
   sitemap_generator

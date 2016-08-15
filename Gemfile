@@ -50,6 +50,8 @@ end
 
 group :test do
   gem "m"
+  gem "rails-controller-testing"
+  gem "minitest-reporters"
 end
 
 gem "pry", :group => [:development, :test]

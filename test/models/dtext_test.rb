@@ -1,6 +1,3 @@
-require "minitest/spec"
-require "minitest/autorun"
-
 require File.expand_path("../dtext/helper.rb", __FILE__)
 
 describe DText do

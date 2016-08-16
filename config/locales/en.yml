@@ -642,6 +642,8 @@ en:
           info: 'Public pools allow anyone to add/remove posts.'
         name: Name
       title: Edit Pool
+    zip:
+      wait: Please wait a day before downloading zip of new pool
   post:
     blacklists:
       add: Add

@@ -133,7 +133,7 @@ Rails.application.routes.draw do
   match "pool/show(.:format)(/:id)" => "pool#show", :via => [:post, :get]
   match "pool/transfer_metadata", :via => [:post, :get]
   match "pool/update(.:format)(/:id)" => "pool#update", :via => [:post, :get]
-  match "pool/zip/:id/:filename" => "pool#zip", :constraints => { :filename => /.*/ }, :via => [:post, :get]
+  get "pool/zip/:id" => "pool#zip"
 
   # Post
   match "post(.:format)" => "post#index", :via => [:post, :get]

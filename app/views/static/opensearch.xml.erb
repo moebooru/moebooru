@@ -4,5 +4,5 @@
   <Description><%= "Search images in #{CONFIG["app_name"]} image board."%></Description>
   <Contact><%= CONFIG["admin_contact"] %></Contact>
   <AdultContent>1</AdultContent>
-  <Url type="<%= Mime::HTML %>" template="<%= url_for(:controller => :post, :action => :index, :only_path => false) %>?tags={searchTerms}" />
+  <Url type="<%= Mime[:html] %>" template="<%= url_for(:controller => :post, :action => :index, :only_path => false) %>?tags={searchTerms}" />
 </OpenSearchDescription>

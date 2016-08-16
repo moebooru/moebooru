@@ -282,7 +282,7 @@ class PostController < ApplicationController
 
     limit = params[:limit].to_i
     limit = q[:limit].to_i if q.key?(:limit)
-    limit = 16 if limit <= 0
+    limit = 40 if limit <= 0
     limit = 1000 if limit > 1000
 
     count = 0
@@ -383,7 +383,7 @@ class PostController < ApplicationController
   end
 
   def atom
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 20, :order => "p.id DESC"))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 40, :order => "p.id DESC"))
     respond_to do |format|
       format.atom { render "index" }
     end
@@ -457,7 +457,7 @@ class PostController < ApplicationController
     @start = @end - period
     @previous = @start - period
 
-    @posts = Post.available.where(:index_timestamp => @start..@end).order(:score => :desc).limit(20)
+    @posts = Post.available.where(:index_timestamp => @start..@end).order(:score => :desc).limit(40)
 
     respond_to_list("posts")
   end
@@ -465,7 +465,7 @@ class PostController < ApplicationController
   def popular_by_day
     @day = @query_date.beginning_of_day
 
-    @posts = Post.available.where(:created_at => @day.all_day).order(:score => :desc).limit(20)
+    @posts = Post.available.where(:created_at => @day.all_day).order(:score => :desc).limit(40)
 
     respond_to_list("posts")
   end
@@ -474,7 +474,7 @@ class PostController < ApplicationController
     @start = @query_date.beginning_of_week
     @end = @start.end_of_week
 
-    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(20)
+    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(40)
 
     respond_to_list("posts")
   end
@@ -483,7 +483,7 @@ class PostController < ApplicationController
     @start = @query_date.beginning_of_month
     @end = @start.end_of_month
 
-    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(20)
+    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(40)
 
     respond_to_list("posts")
   end

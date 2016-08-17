@@ -344,11 +344,6 @@ class PoolController < ApplicationController
     def zip
       pool = Pool.includes(:pool_posts => :post).find(params[:id])
 
-      if pool.created_at > 1.day.ago
-        redirect_to({ :action => :show, :id => pool.id }, :notice => t(".wait"))
-        return
-      end
-
       @pool_zip = pool.get_zip_data(params)
 
       headers["X-Archive-Files"] = "zip"

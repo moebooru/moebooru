@@ -1,0 +1,18 @@
+#!/bin/sh
+
+mkdir -p public/data
+
+cat <<EOF > config/database.yml
+test:
+  adapter: postgresql
+  username: postgres
+  database: moebooru_test
+EOF
+
+cat <<EOF > config/local_config.rb
+CONFIG["server_host"] = "localhost"
+CONFIG["admin_contact"] = "webmaster@#{CONFIG["server_host"]}"
+CONFIG["memcache_servers"] = ["127.0.0.1:11211"]
+EOF
+
+bundle exec rails db:create

@@ -2,7 +2,7 @@
 # Only works with postgresql adapter.
 login: &login
   adapter: postgresql
-  username: moe
+  username: postgres
   password: imouto
   host: 127.0.0.1
 

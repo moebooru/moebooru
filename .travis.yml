@@ -1,0 +1,15 @@
+cache: bundler
+sudo: false
+
+language: ruby
+rvm:
+- 2.3.1
+
+addons:
+  postgresql: 9.4
+
+services:
+- memcached
+
+before_script:
+- script/travis_prepare

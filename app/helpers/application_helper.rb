@@ -128,12 +128,12 @@ module ApplicationHelper
       posts = post
       new_params = params.to_unsafe_h.merge :only_path => true
 
-      unless posts.previous_page.nil?
+      if posts.previous_page.present?
         html << tag("link", :href => url_for(new_params.merge :page => 1), :rel => "first", :title => "First Page")
         html << tag("link", :href => url_for(new_params.merge :page => posts.previous_page), :rel => "prev", :title => "Previous Page")
       end
 
-      unless posts.next_page.nil?
+      if posts.next_page.present?
         html << tag("link", :href => url_for(new_params.merge :page => posts.next_page), :rel => "next", :title => "Next Page")
         html << tag("link", :href => url_for(new_params.merge :page => posts.total_pages), :rel => "last", :title => "Last Page")
       end

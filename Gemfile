@@ -21,7 +21,6 @@ gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.0", :platforms => :jruby
 gem "foreigner"
 
 gem "diff-lcs"
-gem "json"
 gem "dalli"
 gem "connection_pool"
 gem "acts_as_versioned_rails3"
@@ -54,8 +53,6 @@ end
 
 gem "pry", :group => [:development, :test]
 
-gem "oj", :platforms => :mri
-gem "multi_json"
 gem "jbuilder", "~> 2.5" # Rails 5.0 default
 
 # Must be last.

@@ -90,8 +90,6 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (5.0.5)
       railties (>= 3.2.16)
-    json (2.0.2)
-    json (2.0.2-java)
     kgio (2.10.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
@@ -117,7 +115,6 @@ GEM
       pkg-config (~> 1.1.7)
     non-stupid-digest-assets (1.0.8)
       sprockets (>= 2.0)
-    oj (2.17.2)
     pg (0.18.4)
     pg (0.18.4-x86-mingw32)
     pkg-config (1.1.7)
@@ -235,13 +232,10 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   jquery-rails
   jquery-ui-rails
-  json
   mini_magick
-  multi_json
   newrelic_rpm
   nokogiri
   non-stupid-digest-assets
-  oj
   pg
   pry
   puma
@@ -260,4 +254,4 @@ DEPENDENCIES
   will_paginate
 
 BUNDLED WITH
-   1.12.5
+   1.13.2

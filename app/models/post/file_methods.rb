@@ -10,7 +10,6 @@ module Post::FileMethods
     m.before_validation :ensure_tempfile_exists, :on => :create
     m.before_validation :determine_content_type, :on => :create
     m.before_validation :validate_content_type, :on => :create
-    m.before_validation :strip_exif, :on => :create
     m.before_validation :generate_hash, :on => :create
     m.before_validation :set_image_dimensions, :on => :create
     m.before_validation :set_image_status, :on => :create
@@ -21,16 +20,6 @@ module Post::FileMethods
     m.before_validation :move_file, :on => :create
   end
   include Moebooru::TempfilePrefix
-
-  def strip_exif
-    if file_ext.downcase == "jpg"
-      # FIXME: awesome way to strip EXIF.
-      #        This will silently fail on systems without jhead in their PATH
-      #        and may cause confusion for some bored ones.
-      system("jhead", "-purejpg", "-q", tempfile_path)
-    end
-    true
-  end
 
   def ensure_tempfile_exists
     unless File.exist?(tempfile_path)

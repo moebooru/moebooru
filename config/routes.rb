@@ -206,7 +206,7 @@ Rails.application.routes.draw do
   match "tag/popular_by_week", :via => [:post, :get]
   match "tag/related(.:format)" => "tag#related", :via => [:post, :get]
   match "tag/show(/:id)" => "tag#show", :via => [:post, :get]
-  match "tag/summary", :via => [:post, :get]
+  get "tag/summary"
   post "tag/update(.:format)" => "tag#update"
 
   # TagImplication

@@ -54,89 +54,67 @@ TagCompletionClass::init = (current_version) ->
 # If this is called multiple times before the tag load completes, the data will only be loaded
 # once, but all callbacks will be called.
 ###
-
 TagCompletionClass::load_data = (onComplete) ->
-
-  ### If we're already fully loaded, just run the callback and return. ###
-
+  # If we're already fully loaded, just run the callback and return.
   if @loaded
-    if onComplete
-      onComplete()
-    return @tag_data != null and @tag_data != undefined
+    onComplete?()
+    return @tag_data?
 
-  ### Add the callback to the list. ###
-
-  if onComplete
+  # Add the callback to the list.
+  if onComplete?
     @load_data_complete_callbacks.push onComplete
 
-  ### If we're already loading, let the existing request finish; it'll run the callback. ###
-
+  # If we're already loading, let the existing request finish; it'll run the callback.
   if @loading
-    return @tag_data != null and @tag_data != undefined
+    return @tag_data?
+
   @loading = true
-  complete = (->
+
+  complete = =>
     @loading = false
     @loaded = true
 
-    ### Now that we have the tag types loaded, update any tag types that we have loaded. ###
-
+    # Now that we have the tag types loaded, update any tag types that we have loaded.
     @update_tag_types()
+
     callbacks = @load_data_complete_callbacks
     @load_data_complete_callbacks = []
-    callbacks.each ((callback) ->
-      callback()
-      return
-    ).bind(this)
-    return
-  ).bind(this)
+    callback() for callback in callbacks
 
-  ### If we have data available, load it. ###
-
-  if localStorage.tag_data != null and localStorage.tag_data != undefined
+  # If we have data available, load it.
+  if localStorage.tag_data?
     @tag_data = localStorage.tag_data
 
-  ### If we've been told the current tag data revision and we're already on it, or if we havn't
-  # been told the revision at all, use the data we have. 
-  ###
-
-  if localStorage.tag_data != null and localStorage.tag_data != undefined
-    if @most_recent_tag_data_version == null or @most_recent_tag_data_version == undefined or localStorage.tag_data_version == @most_recent_tag_data_version
+    # If we've been told the current tag data revision and we're already on it, or if we havn't
+    # been told the revision at all, use the data we have. 
+    if !@most_recent_tag_data_version? localStorage.tag_data_version == @most_recent_tag_data_version
       # console.log("Already on most recent tag data version");
       complete()
-      return @tag_data != null and @tag_data != undefined
+      return @tag_data?
 
-  ### Request the tag data from the server.  Tell the server the data version we already
+  # Request the tag data from the server.  Tell the server the data version we already
   # have. 
-  ###
-
-  params = {}
-  if localStorage.tag_data_version != null and localStorage.tag_data_version != undefined
-    params.version = localStorage.tag_data_version
-  req = new (Ajax.Request)('/tag/summary.json',
-    parameters: params
-    onSuccess: ((resp) ->
-      json = resp.responseJSON
-
-      ### If unchanged is true, tag_data_version is already current; this means we weren't told
-      # the current data revision to start with but we're already up to date. 
-      ###
-
+  jQuery
+    .ajax
+      url: "/tag/summary.json"
+      data:
+        version: localStorage.tag_data_version
+      dataType: "json"
+    .done (json) =>
       if json.unchanged
-        # console.log("Tag data unchanged");
+        # If unchanged is true, tag_data_version is already current; this means we weren't told
+        # the current data revision to start with but we're already up to date. 
+        # console.log("Tag data unchanged")
         @tag_data = localStorage.tag_data
-        complete()
-        return
-
-      ### We've received new tag data; save it. ###
-
-      # console.log("Storing new tag data");
-      @tag_data = json.data
-      localStorage.tag_data = @tag_data
-      localStorage.tag_data_version = json.version
+      else
+        # We received new tag data; save it.
+        # console.log("Storing new tag data")
+        @tag_data = json.data
+        localStorage.tag_data = @tag_data
+        localStorage.tag_data_version = json.version
       complete()
-      return
-    ).bind(this))
-  @tag_data != null and @tag_data != undefined
+
+  @tag_data?
 
 ### When form is submitted, call add_recent_tags_from_update for the given tags and old_tags
 # fields. 

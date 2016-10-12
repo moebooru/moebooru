@@ -5,10 +5,10 @@ $(document).on "ready page:load", ->
   newsDate = $newsTicker.attr("data-date")
   cookieKey = "hide-news-ticker"
 
+  return if $newsTicker.attr("data-news-hide") == "1"
+
   if Cookies(cookieKey) != newsDate
     $newsTicker.show()
-
-  return if $newsTicker.attr("data-news-hide") == "1"
 
   $newsTicker.find(".close-link").click (e) ->
     e.preventDefault()

@@ -182,7 +182,7 @@ class ApplicationController < ActionController::Base
   before_action :set_country
   before_action :check_ip_ban
   after_action :init_cookies
-  protect_from_forgery
+  protect_from_forgery :with => :exception
 
   protected :build_cache_key
   protected :get_cache_key

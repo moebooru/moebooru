@@ -2,7 +2,7 @@
 require "digest/md5"
 
 class ApplicationController < ActionController::Base
-  protect_from_forgery :with => :exception
+  protect_from_forgery
   rescue_from ActiveRecord::StatementInvalid, :with => :rescue_pg_invalid_query
   before_action :filter_spam
   before_action :set_locale

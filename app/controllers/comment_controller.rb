@@ -37,7 +37,7 @@ class CommentController < ApplicationController
       return
     end
 
-    user_id = session[:user_id]
+    user_id = @current_user.id
 
     comment = Comment.new(comment_params.merge(:ip_addr => request.remote_ip, :user_id => user_id))
     if params[:commit] == "Post without bumping"

@@ -136,8 +136,8 @@ Rails.application.routes.draw do
   get "pool/zip/:id" => "pool#zip"
 
   # Post
-  match "post(.:format)" => "post#index", :via => [:post, :get]
-  match "post/index(.:format)" => "post#index", :via => [:post, :get] # FIXME: remove this
+  get "post(.:format)" => "post#index"
+  get "post/index(.:format)" => "post#index" # FIXME: remove this
   match "post/acknowledge_new_deleted_posts", :via => [:post, :get]
   match "post/activate", :via => [:post, :get]
   get "post/atom(.:format)" => "post#atom", :defaults => { :format => :atom }

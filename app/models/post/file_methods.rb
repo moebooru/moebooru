@@ -27,7 +27,7 @@ module Post::FileMethods
       # FIXME: awesome way to strip EXIF.
       #        This will silently fail on systems without jhead in their PATH
       #        and may cause confusion for some bored ones.
-      system("jhead", "-dc", "-di", "-dx", "-dt", "-du", "-q", tempfile_path)
+      system("jhead", "-dc", "-di", "-dx", "-dt", "-q", tempfile_path)
     end
     true
   end

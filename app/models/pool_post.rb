@@ -51,6 +51,10 @@ class PoolPost < ActiveRecord::Base
     def as_json(*params)
       api_attributes.as_json(*params)
     end
+
+    def to_xml(options = {})
+      api_attributes.to_xml({ :root => "pool_post" }.merge options)
+    end
   end
 
   include ApiMethods

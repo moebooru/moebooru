@@ -53,7 +53,7 @@ class PoolPost < ActiveRecord::Base
     end
 
     def to_xml(options = {})
-      api_attributes.to_xml({ :root => "pool_post" }.merge options)
+      api_attributes.to_xml(options.reverse_merge(:root => "pool_post"))
     end
   end
 

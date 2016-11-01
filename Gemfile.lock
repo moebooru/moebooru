@@ -47,7 +47,7 @@ GEM
     acts_as_versioned_rails3 (0.6.2)
       activerecord (>= 3.0.9)
     addressable (2.4.0)
-    arel (7.1.3)
+    arel (7.1.4)
     builder (3.2.2)
     coderay (1.1.1)
     coffee-rails (4.2.1)
@@ -103,7 +103,7 @@ GEM
     mini_portile2 (2.1.0)
     minitest (5.9.1)
     multi_json (1.12.1)
-    newrelic_rpm (3.16.3.323)
+    newrelic_rpm (3.17.0.325)
     nio4r (1.2.1)
     nio4r (1.2.1-java)
     nokogiri (1.6.8.1)
@@ -190,9 +190,9 @@ GEM
     tilt (2.0.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uglifier (3.0.2)
+    uglifier (3.0.3)
       execjs (>= 0.3.0, < 3)
-    unicorn (5.1.0)
+    unicorn (5.2.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     unicorn-worker-killer (0.4.4)
@@ -204,7 +204,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
     will-paginate-i18n (0.1.15)
-    will_paginate (3.1.3)
+    will_paginate (3.1.5)
 
 PLATFORMS
   java
@@ -251,4 +251,4 @@ DEPENDENCIES
   will_paginate
 
 BUNDLED WITH
-   1.13.2
+   1.13.6

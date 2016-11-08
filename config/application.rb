@@ -56,7 +56,11 @@ module Moebooru
     config.assets.version = "1.0"
 
     if CONFIG["memcache_servers"]
-      config.cache_store = :dalli_store, CONFIG["memcache_servers"], { :namespace => CONFIG["app_name"], :pool_size => CONFIG["threads"] }
+      config.cache_store = :dalli_store, CONFIG["memcache_servers"], {
+        :namespace => CONFIG["app_name"],
+        :pool_size => CONFIG["threads"],
+        :value_max_bytes => 2_000_000
+      }
     end
 
     # This one is never reliable because there's no standard controlling this.

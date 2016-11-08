@@ -40,11 +40,11 @@ gem "i18n-js", ">= 3.0.0.rc7"
 
 group :standalone do
   platform :mri do
-    gem "unicorn"
-    gem "unicorn-worker-killer"
+    gem "unicorn", :require => false
+    gem "unicorn-worker-killer", :require => false
     gem "gctools"
   end
-  gem "puma", :platforms => [:jruby, :rbx, :mswin]
+  gem "puma", :platforms => [:jruby, :rbx, :mswin], :require => false
 end
 
 group :test do

@@ -72,7 +72,6 @@ GEM
     ffi (1.9.14-java)
     foreigner (1.7.4)
       activerecord (>= 3.0.0)
-    gctools (0.2.4)
     geoip (1.6.2)
     get_process_mem (0.2.1)
     globalid (0.3.7)
@@ -224,7 +223,6 @@ DEPENDENCIES
   diff-lcs
   exception_notification
   foreigner
-  gctools
   geoip
   i18n-js (>= 3.0.0.rc7)
   image_size

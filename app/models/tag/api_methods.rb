@@ -34,8 +34,8 @@ module Tag::ApiMethods
       key = "tag_summary/#{summary_version}"
 
       Rails.cache.fetch(key, :expires_in => 1.hour) do
-        Tag.get_json_summary_no_cache.to_json
-      end
+        Tag.get_json_summary_no_cache
+      end.to_json
     end
 
     def get_json_summary_no_cache

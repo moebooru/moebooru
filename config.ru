@@ -1,6 +1,5 @@
 # This file is used by Rack-based servers to start the application.
 if defined? Unicorn
-  use Raindrops::Middleware
   require "unicorn/oob_gc"
   GC.disable
   use Unicorn::OobGC, 5

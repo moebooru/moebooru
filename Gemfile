@@ -42,7 +42,7 @@ group :standalone do
   platform :mri do
     gem "unicorn", :require => false
     gem "unicorn-worker-killer", :require => false
-    gem "gctools"
+    gem "gctools", :require => false
   end
   gem "puma", :platforms => [:jruby, :rbx, :mswin], :require => false
 end

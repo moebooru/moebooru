@@ -1,16 +1,21 @@
-window.Pool =
-  pools: new Hash
-  register: (pool) ->
-    Pool.pools.set pool.id, pool
-    return
-  register_pools: (pools) ->
-    if pools != null and pools != undefined
-      pools.each (pool) ->
-        Pool.register pool
-        return
-    return
-  register_pool_posts: (pool_posts, posts) ->
+$ = jQuery
 
+class @PoolClass
+  constructor: ->
+    @pools = new Hash
+
+
+  register: (pool) =>
+    @pools.set pool.id, pool
+
+
+  register_pools: (pools) =>
+    return if !pools?
+
+    @register pool for pool in pools
+
+
+  register_pool_posts: (pool_posts, posts) ->
     ###
     # pool_post is an array of individual posts in pools.  It contains only data for posts
     # listed in posts.
@@ -22,110 +27,116 @@ window.Pool =
     # by this function are always newly registered via Post.register_resp; pool_posts is
     # already empty.
     ###
-
-    pool_posts.each (pool_post) ->
+    for pool_post in pool_posts
       post = Post.posts.get(pool_post.post_id)
-      if post
-        if !post.pool_posts
-          post.pool_posts = new Hash
-        post.pool_posts.set pool_post.pool_id, pool_post
-      return
-    return
+
+      continue if !post?
+
+      post.pool_posts ?= new Hash
+      post.pool_posts.set pool_post.pool_id, pool_post
+
+
   can_edit_pool: (pool) ->
-    if !User.is_member_or_higher()
-      return false
-    pool.is_public or pool.user_id == User.get_current_user_id()
+    return false if !User.is_member_or_higher()
+
+    pool.is_public || pool.user_id == User.get_current_user_id()
+
+
   add_post: (post_id, pool_id) ->
-    notice 'Adding to pool...'
-    new (Ajax.Request)('/pool/add_post.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters:
-        'post_id': post_id
-        'pool_id': pool_id
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        if resp.success
-          notice 'Post added to pool'
-        else
-          notice 'Error: ' + resp.reason
-        return
-)
-    return
+    notice "Adding to pool..."
+
+    $.ajax "/pool/add_post.json",
+      method: "POST"
+      data:
+        post_id: post_id
+        pool_id: pool_id
+      dataType: "json"
+
+    .done (resp) ->
+      if resp.success
+        notice "Post added to pool"
+      else
+        notice "Error: #{resp.reason}"
+
+    .fail ->
+      notice "Error: unknown error"
+
+
   remove_post: (post_id, pool_id) ->
+    callback = ->
+      notice "Post removed from pool"
+      $("#p#{post_id}").addClass "deleted"
+      $("#pool#{pool_id}").remove()
 
-    complete = ->
-      notice 'Post removed from pool'
-      if $('p' + post_id)
-        $('p' + post_id).addClassName 'deleted'
-      if $('pool' + pool_id)
-        $('pool' + pool_id).remove()
-      return
+    Post.make_request "/pool/remove_post.json",
+      post_id: post_id
+      pool_id: pool_id
+      callback
 
-    Post.make_request '/pool/remove_post.json', {
-      'post_id': post_id
-      'pool_id': pool_id
-    }, complete
-    return
+
   transfer_post: (old_post_id, new_post_id, pool_id, sequence) ->
+    callback = ->
+      notice "Pool post transferred to parent"
+
+      # We might be on the parent or child, which will do different things to
+      # the pool status display.  Just reload the page.
+      document.location.reload()
+
     Post.update_batch [
       {
         id: old_post_id
-        tags: '-pool:' + pool_id
-        old_tags: ''
+        tags: "-pool:#{pool_id}"
+        old_tags: ""
       }
       {
         id: new_post_id
-        tags: 'pool:' + pool_id + ':' + sequence
-        old_tags: ''
+        tags: "pool:#{pool_id}:#{sequence}"
+        old_tags: ""
       }
-    ], ->
-      notice 'Pool post transferred to parent'
+    ], callback
 
-      ###We might be on the parent or child, which will do different things to
-      # the pool status display.  Just reload the page. 
-      ###
 
-      document.location.reload()
-      return
-    return
   detach_post: (post_id, pool_id, is_parent) ->
-    Post.update_batch [ {
-      id: post_id
-      tags: '-pool:' + pool_id
-      old_tags: ''
-    } ], ->
-      notice 'Post detached'
+    callback = ->
+      notice "Post detached"
       if is_parent
-        elem = $('pool-detach-' + pool_id + '-' + post_id)
-        if elem
-          elem.remove()
+        $("#pool-detach-#{pool_id}-#{post_id}").remove()
       else
-        if $('pool' + pool_id)
-          $('pool' + pool_id).remove()
-      return
-    return
+        $("#pool-#{pool_id}").remove()
+
+
+    Post.update_batch [{
+      id: post_id
+      tags: "-pool:#{pool_id}"
+      old_tags: ""
+    }], callback
+
+
   post_pretty_sequence: (sequence) ->
-    if sequence.match(/^[0-9]+.*/)
-      '#' + sequence
+    if sequence.match(/^\d/)
+      "##{sequence}"
     else
       '"' + sequence + '"'
-  change_sequence: (post_id, pool_id, old_sequence) ->
-    new_sequence = prompt('Please enter the new page number:', old_sequence)
-    if new_sequence == null
+
+
+  change_sequence: (post_id, pool_id, old_sequence) =>
+    new_sequence = prompt("Please enter the new page number:", old_sequence)
+
+    return if !new_sequence?
+
+    if new_sequence.indexOf(" ") != -1
+      notice "Invalid page number"
       return
-    if new_sequence.indexOf(' ') != -1
-      notice 'Invalid page number'
-      return
-    Post.update_batch [ {
+
+    callback = =>
+      notice "Post updated"
+      $("#pool-seq-#{pool_id}").text @post_pretty_sequence(new_sequence)
+
+    Post.update_batch [{
       id: post_id
-      tags: 'pool:' + pool_id + ':' + new_sequence
-      old_tags: ''
-    } ], ->
-      notice 'Post updated'
-      elem = $('pool-seq-' + pool_id)
-      if !Object.isUndefined(elem.innerText)
-        elem.innerText = Pool.post_pretty_sequence(new_sequence)
-      else
-        elem.textContent = Pool.post_pretty_sequence(new_sequence)
-      return
-    return
+      tags: "pool:#{pool_id}:#{new_sequence}"
+      old_tags: ""
+    }], callback
+
+
+@Pool = new PoolClass

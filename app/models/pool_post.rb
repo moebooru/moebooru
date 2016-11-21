@@ -23,7 +23,7 @@ class PoolPost < ActiveRecord::Base
 
   # This matches Pool.post_pretty_sequence in pool.js.
   def pretty_sequence
-    if sequence =~ /^[0-9]+.*/
+    if sequence =~ /\A\d/
       return "##{sequence}"
     else
       return "\"#{sequence}\""

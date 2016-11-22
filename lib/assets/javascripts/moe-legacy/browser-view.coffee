@@ -24,19 +24,15 @@
 #   don't pull an out-of-date page next time.  This is slower, and would require us
 #   to be careful about expiring the cache.
 ###
-
 window.BrowserView = (container) ->
   @container = container
 
-  ### The post that we currently want to display.  This will be either one of the
+  # The post that we currently want to display.  This will be either one of the
   # current html_preloads, or be the displayed_post_id. 
-  ###
-
   @wanted_post_id = null
   @wanted_post_frame = null
 
-  ### The post that's currently actually being displayed. ###
-
+  # The post that's currently actually being displayed.
   @displayed_post_id = null
   @displayed_post_frame = null
   @current_ajax_request = null
@@ -46,12 +42,10 @@ window.BrowserView = (container) ->
   @img_box = @container.down('.image-box')
   @container.down '.image-canvas'
 
-  ### In Opera 10.63, the img.complete property is not reset to false after changing the
+  # In Opera 10.63, the img.complete property is not reset to false after changing the
   # src property.  Blits from images to the canvas silently fail, with nothing being
   # blitted and no exception raised.  This causes blank canvases to be displayed, because
   # we have no way of telling whether the image is blittable or if the blit succeeded. 
-  ###
-
   if !Prototype.Browser.Opera
     @canvas = create_canvas_2d()
   if @canvas
@@ -59,8 +53,7 @@ window.BrowserView = (container) ->
     @img_box.appendChild @canvas
   @zoom_level = 0
 
-  ### True if the post UI is visible. ###
-
+  # True if the post UI is visible.
   @post_ui_visible = true
   @update_navigator = @update_navigator.bind(this)
   Event.on window, 'resize', @window_resize_event.bindAsEventListener(this)
@@ -72,15 +65,11 @@ window.BrowserView = (container) ->
   if TagCompletion
     TagCompletion.init()
 
-  ### Double-clicking the main image, or on nothing, toggles the thumb bar. ###
-
+  # Double-clicking the main image, or on nothing, toggles the thumb bar.
   @container.down('.image-container').on 'dblclick', '.image-container', ((event) ->
-
-    ### Watch out: Firefox fires dblclick events for all buttons, with the standard
+    # Watch out: Firefox fires dblclick events for all buttons, with the standard
     # button maps, but IE only fires it for left click and doesn't set button at
     # all, so event.isLeftClick won't work. 
-    ###
-
     if event.button
       return
     event.stop()
@@ -88,8 +77,7 @@ window.BrowserView = (container) ->
     return
   ).bindAsEventListener(this)
 
-  ### Image controls: ###
-
+  # Image controls:
   document.on 'viewer:view-large-toggle', ((e) ->
     @toggle_view_large_image()
     return
@@ -104,11 +92,9 @@ window.BrowserView = (container) ->
   @container.down('.post-frames').on 'click', '.post-frame-link', ((e, item) ->
     e.stop()
 
-    ### Change the displayed post frame to the one that was clicked.  Since all post frames
+    # Change the displayed post frame to the one that was clicked.  Since all post frames
     # are usually displayed in the thumbnail view, set center_thumbs to true to recenter
     # on the thumb that was clicked, so it's clearer what's happening. 
-    ###
-
     document.fire 'viewer:set-active-post',
       post_id: @displayed_post_id
       post_frame: item.post_frame
@@ -116,16 +102,12 @@ window.BrowserView = (container) ->
     return
   ).bind(this)
 
-  ### We'll receive this message from the thumbnail view when the overlay is
+  # We'll receive this message from the thumbnail view when the overlay is
   # visible on the bottom of the screen, to tell us how much space is covered up
   # by it. 
-  ###
-
   @thumb_bar_height = 0
   document.on 'viewer:thumb-bar-changed', ((e) ->
-
-    ### Update the thumb bar height and rescale the image to fit the new area. ###
-
+    # Update the thumb bar height and rescale the image to fit the new area.
     @thumb_bar_height = e.memo.height
     @update_image_window_size()
     @set_post_ui e.memo.shown
@@ -149,8 +131,7 @@ window.BrowserView = (container) ->
     }.bindAsEventListener(this));
   ###
 
-  ### Hide member-only and moderator-only controls: ###
-
+  # Hide member-only and moderator-only controls:
   $(document.body).pickClassName 'is-member', 'not-member', User.is_member_or_higher()
   $(document.body).pickClassName 'is-moderator', 'not-moderator', User.is_mod_or_higher()
   tag_span = @container.down('.post-tags')
@@ -160,10 +141,8 @@ window.BrowserView = (container) ->
     return
   ).bind(this)
 
-  ### These two links do the same thing, but one is shown to approve a pending post
+  # These two links do the same thing, but one is shown to approve a pending post
   # and the other is shown to unflag a flagged post, so they prompt differently. 
-  ###
-
   @container.down('.post-approve').on 'click', ((e) ->
     e.stop()
     if !confirm('Approve this post?')
@@ -231,7 +210,7 @@ window.BrowserView = (container) ->
       return
     post_id = @displayed_post_id
     post = Post.posts.get(post_id)
-    if post == null or post == undefined
+    if !post?
       return
     Post.reparent_post post_id, post.parent_id, false
     return
@@ -247,8 +226,7 @@ window.BrowserView = (container) ->
     return
   ).bind(this)
 
-  ### Post editing: ###
-
+  # Post editing:
   post_edit = @container.down('.post-edit')
   post_edit.down('FORM').on 'submit', ((e) ->
     e.stop()
@@ -282,11 +260,9 @@ window.BrowserView = (container) ->
   new TagCompletionBox(post_edit.down('.edit-tags'))
   @container.down('.post-edit').on 'keydown', ((e) ->
 
-    ### Don't e.stop() KEY_ESC, so we fall through and let handle_keypress unfocus the
+    # Don't e.stop() KEY_ESC, so we fall through and let handle_keypress unfocus the
     # form entry, if any.  Otherwise, Chrome gets confused and leaves the focus on the
     # hidden input, where it'll steal keystrokes. 
-    ###
-
     if e.keyCode == Event.KEY_ESC
       @edit_show false
     else if e.keyCode == Event.KEY_RETURN
@@ -295,20 +271,17 @@ window.BrowserView = (container) ->
     return
   ).bindAsEventListener(this)
 
-  ### When the edit-post hotkey is pressed (E), force the post UI open and show editing. ###
-
+  # When the edit-post hotkey is pressed (E), force the post UI open and show editing.
   document.on 'viewer:edit-post', ((e) ->
     document.fire 'viewer:set-thumb-bar', set: true
     @edit_show true
     return
   ).bindAsEventListener(this)
 
-  ### When the post that's currently being displayed is updated by an API call, update
+  # When the post that's currently being displayed is updated by an API call, update
   # the displayed info. 
-  ###
-
   document.on 'posts:update', ((e) ->
-    if e.memo.post_ids.get(@displayed_post_id) == null or e.memo.post_ids.get(@displayed_post_id) == undefined
+    if !e.memo.post_ids.get(@displayed_post_id)?
       return
     @set_post_info()
     return
@@ -340,10 +313,8 @@ window.BrowserView = (container) ->
     @create_voting_popup()
     @image_swipe = new SwipeHandler(@container.down('.image-container'))
 
-  ### Create the frame editor.  This must be created before image_dragger, since it takes priority
+  # Create the frame editor.  This must be created before image_dragger, since it takes priority
   # for drags. 
-  ###
-
   @container.down('.edit-frames-button').on 'click', ((e) ->
     e.stop()
     @show_frame_editor()
@@ -354,17 +325,15 @@ window.BrowserView = (container) ->
     return
   ).bind(this))
 
-  ### If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
+  # If we're using dragging as a swipe gesture (see SwipeHandler), don't use it for
   # dragging too. 
-  ###
-
-  if @image_swipe == null or @image_swipe == undefined
+  if !@image_swipe?
     @image_dragger = new WindowDragElementAbsolute(@img_box, @update_navigator)
   return
 
 BrowserView::create_voting_popup = ->
 
-  ### Create the low-level voting widget. ###
+  # Create the low-level voting widget.
 
   popup_vote_widget_container = @container.down('.vote-popup-container')
   popup_vote_widget_container.show()
@@ -372,22 +341,17 @@ BrowserView::create_voting_popup = ->
   @popup_vote_widget.initShortcut()
   flash = @container.down('.vote-popup-flash')
 
-  ### vote-popup-expand is the part that's always present and is clicked to display the
+  # vote-popup-expand is the part that's always present and is clicked to display the
   # voting popup.  Create a dragger on it, and pass the position down to the voting
   # popup as we drag around. 
-  ###
-
   popup_expand = @container.down('.vote-popup-expand')
   popup_expand.show()
   last_dragged_over = null
   @popup_vote_dragger = new DragElement(popup_expand,
     ondown: ((drag) ->
-
-      ### Stop the touchdown/mousedown events, so this drag takes priority over any
+      # Stop the touchdown/mousedown events, so this drag takes priority over any
       # others.  In particular, we don't want this.image_swipe to also catch this
       # as a drag. 
-      ###
-
       drag.latest_event.stop()
       flash.hide()
       flash.removeClassName 'flash-star'
@@ -397,24 +361,18 @@ BrowserView::create_voting_popup = ->
       return
     ).bind(this)
     onup: ((drag) ->
-
-      ### If we're cancelling the drag, don't activate the vote, if any. ###
-
+      # If we're cancelling the drag, don't activate the vote, if any.
       if drag.cancelling
         debug 'cancelling drag'
         last_dragged_over = null
 
-      ### Call even if star_container is null or not a star, so we clear any mouseover. ###
-
+      # Call even if star_container is null or not a star, so we clear any mouseover.
       @popup_vote_widget.set_mouseover last_dragged_over
       star = @popup_vote_widget.activate_item(last_dragged_over)
 
-      ### If a vote was made, flash the vote star. ###
-
-      if star != null and star != undefined
-
-        ### Set the star-# class to color the star. ###
-
+      # If a vote was made, flash the vote star.
+      if star?
+        # Set the star-# class to color the star.
         i = 0
         while i < 4
           flash.removeClassName 'star-' + i
@@ -422,8 +380,7 @@ BrowserView::create_voting_popup = ->
         flash.addClassName 'star-' + star
         flash.show()
 
-        ### Center the element on the screen. ###
-
+        # Center the element on the screen.
         offset = @image_window_size
         flash_x = offset.width / 2 - (flash.offsetWidth / 2)
         flash_y = offset.height / 2 - (flash.offsetHeight / 2)
@@ -443,39 +400,30 @@ BrowserView::create_voting_popup = ->
   return
 
 BrowserView::set_post_ui = (visible) ->
-
-  ### Disable the post UI by default on touchscreens; we don't have an interface
+  # Disable the post UI by default on touchscreens; we don't have an interface
   # to toggle it. 
-  ###
-
   if Prototype.BrowserFeatures.Touchscreen and window.screen.availWidth < 1024
     visible = false
 
-  ### If we don't have a post displayed, always hide the post UI even if it's currently
+  # If we don't have a post displayed, always hide the post UI even if it's currently
   # shown. 
-  ###
-
-  @container.down('.post-info').show visible and @displayed_post_id != null and @displayed_post_id != undefined
+  @container.down('.post-info').show visible and @displayed_post_id?
   if visible == @post_ui_visible
     return
   @post_ui_visible = visible
   if @navigator
     @navigator.set_autohide !visible
 
-  ### If we're hiding the post UI, cancel the post editor if it's open. ###
-
+  # If we're hiding the post UI, cancel the post editor if it's open.
   if !@post_ui_visible
     @edit_show false
   return
 
 BrowserView::image_loaded_event = (event) ->
-
-  ### Record that the image is completely available, so it can be blitted to the canvas.
+  # Record that the image is completely available, so it can be blitted to the canvas.
   # This is different than img.complete, which is true if the image has completed downloading
   # but hasn't yet been decoded, so isn't yet completely available.  This generally happens
   # if we query img.completed quickly after setting img.src and the image data is cached. 
-  ###
-
   @img.fully_loaded = true
   document.fire 'viewer:displayed-image-loaded',
     post_id: @displayed_post_id
@@ -483,23 +431,18 @@ BrowserView::image_loaded_event = (event) ->
   @update_canvas()
   return
 
-### Return true if last_preload_request includes [post_id, post_frame]. ###
-
+# Return true if last_preload_request includes [post_id, post_frame].
 BrowserView::post_frame_list_includes = (post_id_list, post_id, post_frame) ->
   found_preload = post_id_list.find((post) ->
     post[0] == post_id and post[1] == post_frame
   )
-  found_preload != null and found_preload != undefined
+  found_preload?
 
-### Begin preloading the HTML and images for the given post IDs. ###
-
+# Begin preloading the HTML and images for the given post IDs.
 BrowserView::preload = (post_ids) ->
-
-  ### We're being asked to preload post_ids.  Only do this if it seems to make sense: if
+  # We're being asked to preload post_ids.  Only do this if it seems to make sense: if
   # the user is actually traversing posts that are being preloaded.  Look at the previous
   # call to preload().  If it didn't include the current post, then skip the preload. 
-  ###
-
   last_preload_request = @last_preload_request
   @last_preload_request = post_ids
   if !@post_frame_list_includes(last_preload_request, @wanted_post_id, @wanted_post_frame)
@@ -521,12 +464,10 @@ BrowserView::preload = (post_ids) ->
       new_preload_container.preload post.sample_url
     ++i
 
-  ### If we already were preloading images, we created the new preloads before
+  # If we already were preloading images, we created the new preloads before
   # deleting the old ones.  That way, any images that are still being preloaded
   # won't be deleted and recreated, possibly causing the download to be interrupted
   # and resumed. 
-  ###
-
   if @preload_container
     @preload_container.destroy()
   @preload_container = new_preload_container
@@ -536,7 +477,7 @@ BrowserView::load_post_id_data = (post_id) ->
   debug 'load needed'
   # If we already have a request in flight, don't start another; wait for the
   # first to finish.
-  if @current_ajax_request != null and @current_ajax_request != undefined
+  if @current_ajax_request?
     return
   new (Ajax.Request)('/post.json',
     parameters:
@@ -555,10 +496,8 @@ BrowserView::load_post_id_data = (post_id) ->
       if @current_ajax_request != resp.request
         return
 
-      ### If no posts were returned, then the post ID we're looking up doesn't exist;
+      # If no posts were returned, then the post ID we're looking up doesn't exist;
       # treat this as a failure. 
-      ###
-
       resp = resp.responseJSON
       @success = resp.posts.length > 0
       if !@success
@@ -571,23 +510,18 @@ BrowserView::load_post_id_data = (post_id) ->
       if @current_ajax_request == resp.request
         @current_ajax_request = null
 
-      ### If the request failed and we were requesting wanted_post_id, don't keep trying. ###
+      # If the request failed and we were requesting wanted_post_id, don't keep trying.
 
       success = resp.request.success() and @success
       if !success and post_id == @wanted_post_id
-
-        ### As a special case, if the post we requested doesn't exist and we aren't displaying
+        # As a special case, if the post we requested doesn't exist and we aren't displaying
         # anything at all, force the thumb bar open so we don't show nothing at all. 
-        ###
-
-        if @displayed_post_id == null or @displayed_post_id == undefined
+        if !@displayed_post_id?
           document.fire 'viewer:set-thumb-bar', set: true
         return
 
-      ### This will either load the post we just finished, or request data for the
+      # This will either load the post we just finished, or request data for the
       # one we want. 
-      ###
-
       @set_post @wanted_post_id, @wanted_post_frame
       return
     ).bind(this)
@@ -600,29 +534,24 @@ BrowserView::load_post_id_data = (post_id) ->
 BrowserView::set_viewing_larger_version = (b) ->
   @viewing_larger_version = b
   post = Post.posts.get(@displayed_post_id)
-  can_zoom = post != null and post != undefined and post.jpeg_url != post.sample_url
+  can_zoom = post? and post.jpeg_url != post.sample_url
   @container.down('.zoom-icon-none').show !can_zoom
   @container.down('.zoom-icon-in').show can_zoom and !@viewing_larger_version
   @container.down('.zoom-icon-out').show can_zoom and @viewing_larger_version
 
-  ### When we're on the regular version and we're on a touchscreen, disable drag
+  # When we're on the regular version and we're on a touchscreen, disable drag
   # scrolling so we can use it to switch images instead. 
-  ###
-
   if Prototype.BrowserFeatures.Touchscreen and @image_dragger
     @image_dragger.set_disabled !b
 
-  ### Only allow dragging to create new frames when not viewing the large version,
+  # Only allow dragging to create new frames when not viewing the large version,
   # since we need to be able to drag the image. 
-  ###
-
   if @frame_editor
     @frame_editor.set_drag_to_create !b
     @frame_editor.set_show_corner_drag !b
   return
 
 BrowserView::set_main_image = (post, post_frame) ->
-
   ###
   # Clear the previous post, if any.  Don't keep the old IMG around; create a new one, or
   # we may trigger long-standing memory leaks in WebKit, eg.:
@@ -631,14 +560,13 @@ BrowserView::set_main_image = (post, post_frame) ->
   # This also helps us avoid briefly displaying the old image with the new dimensions, which
   # can otherwise take some hoop jumping to prevent.
   ###
-
-  if @img != null and @img != undefined
+  if @img?
     @img.stopObserving()
     @img.parentNode.removeChild @img
     @image_pool.release @img
     @img = null
 
-  ### If this post is blacklisted, show a message instead of displaying it. ###
+  # If this post is blacklisted, show a message instead of displaying it.
 
   hide_post = Post.is_blacklisted(post.id) and post.id != @blacklist_override_post_id
   @container.down('.blacklisted-message').show hide_post
@@ -657,7 +585,6 @@ BrowserView::set_main_image = (post, post_frame) ->
   # event.  Work around this by setting the image to pointer-events: none, so clicks on
   # the image will actually be sent to the containing box directly.
   ###
-
   @img.setStyle pointerEvents: 'none'
   @img.on 'load', @image_loaded_event.bindAsEventListener(this)
   @img.fully_loaded = false
@@ -678,11 +605,8 @@ BrowserView::set_main_image = (post, post_frame) ->
     @img_box.original_height = post.sample_height
     @img_box.show()
   else
-
-    ### Having no sample URL is an edge case, usually from deleted posts.  Keep the number
+    # Having no sample URL is an edge case, usually from deleted posts.  Keep the number
     # of code paths smaller by creating the IMG anyway, but not showing it. 
-    ###
-
     @img_box.hide()
   @container.down('.image-box').appendChild @img
   if @viewing_larger_version
@@ -705,13 +629,11 @@ BrowserView::set_main_image = (post, post_frame) ->
 # no_hash_change should also be set when loading a state as a result of hashchange,
 # for similar reasons.
 ###
-
 BrowserView::set_post = (post_id, post_frame, lazy, no_hash_change, replace_history) ->
-  if post_id == null or post_id == undefined
+  if !post_id?
     throw 'post_id must not be null'
 
-  ### If there was a lazy load pending, cancel it. ###
-
+  # If there was a lazy load pending, cancel it.
   @cancel_lazily_load()
   @wanted_post_id = post_id
   @wanted_post_frame = post_frame
@@ -720,10 +642,8 @@ BrowserView::set_post = (post_id, post_frame, lazy, no_hash_change, replace_hist
   if post_id == @displayed_post_id and post_frame == @displayed_post_frame
     return
 
-  ### If a lazy load was requested and we're not yet loading the image for this post,
+  # If a lazy load was requested and we're not yet loading the image for this post,
   # delay loading. 
-  ###
-
   is_cached = @last_preload_request_active and @post_frame_list_includes(@last_preload_request, post_id, post_frame)
   if lazy and !is_cached
     @lazy_load_timer = window.setTimeout((->
@@ -734,22 +654,19 @@ BrowserView::set_post = (post_id, post_frame, lazy, no_hash_change, replace_hist
     return
   @hide_frame_editor()
   post = Post.posts.get(post_id)
-  if post == null or post == undefined
-
-    ### The post we've been asked to display isn't loaded.  Request a load and come back. ###
-
-    if @displayed_post_id == null or @displayed_post_id == undefined
+  if !post?
+    # The post we've been asked to display isn't loaded.  Request a load and come back.
+    if !@displayed_post_id?
       @container.down('.post-info').hide()
     @load_post_id_data post_id
     return
-  if post_frame == null or post_frame == undefined
+  if !post_frame?
     # If post_frame is unspecified and we have a frame, display the first.
     post_frame = @get_default_post_frame(post_id)
     # We know what frame we actually want to display now, so update wanted_post_frame.
     @wanted_post_frame = post_frame
 
-  ### If post_frame doesn't exist, just display the main post. ###
-
+  # If post_frame doesn't exist, just display the main post.
   if post_frame != -1 and post.frames.length <= post_frame
     post_frame = -1
   @displayed_post_id = post_id
@@ -776,35 +693,33 @@ BrowserView::set_post = (post_id, post_frame, lazy, no_hash_change, replace_hist
     post_frame: post_frame
   @set_post_info()
 
-  ### Hide the editor when changing posts. ###
-
+  # Hide the editor when changing posts.
   @edit_show false
   return
 
-### Return the frame spec for the hash, eg. "-0".
+###
+# Return the frame spec for the hash, eg. "-0".
 #
 # If the post has no frames, then just omit the frame spec.  If the post has any frames,
 # then return the frame number or "-F" for the full image. 
 ###
-
 BrowserView::post_frame_hash = (post, post_frame) ->
   if post.frames.length == 0
     return ''
   '-' + (if post_frame == -1 then 'F' else post_frame)
 
-### Return the default frame to display for the given post.  If the post isn't loaded,
+###
+# Return the default frame to display for the given post.  If the post isn't loaded,
 # we don't know which frame we'll display and null will be returned.  This corresponds
 # to a hash of #1234, where no frame is specified (eg. #1234-F, #1234-0). 
 ###
-
 BrowserView::get_default_post_frame = (post_id) ->
   post = Post.posts.get(post_id)
-  if post == null or post == undefined
+  if !post?
     return null
   if post.frames.length > 0 then 0 else -1
 
 BrowserView::get_post_frame_hash = (post, post_frame) ->
-
   ###
   # Omitting the frame in the hash selects the default frame: the first frame if any,
   # otherwise the full image.  If we're setting the hash to a post_frame which would be
@@ -815,15 +730,13 @@ BrowserView::get_post_frame_hash = (post, post_frame) ->
   # This helps normalize the hash.  Otherwise, loading /#1234 will update the hash to
   # /#1234-in set_post, causing an unwanted history entry.
   ###
-
   default_frame = if post.frames.length > 0 then 0 else -1
   if post_frame == default_frame
     null
   else
     post_frame
 
-### Set the post info box for the currently displayed post. ###
-
+# Set the post info box for the currently displayed post.
 BrowserView::set_post_info = ->
   post = Post.posts.get(@displayed_post_id)
   if !post
@@ -833,8 +746,7 @@ BrowserView::set_post_info = ->
   @container.down('.posted-by').show()
   @container.down('.posted-at').setTextContent time_ago_in_words(new Date(post.created_at * 1000))
 
-  ### Fill in the pool list. ###
-
+  # Fill in the pool list.
   pool_info = @container.down('.pool-info')
   while pool_info.firstChild
     pool_info.removeChild pool_info.firstChild
@@ -859,7 +771,7 @@ BrowserView::set_post_info = ->
       pool_info.appendChild div
       return
     ).bind(this)
-  if post.creator_id != null and post.creator_id != undefined
+  if post.creator_id?
     @container.down('.posted-by').down('A').href = '/user/show/' + post.creator_id
     @container.down('.posted-by').down('A').setTextContent post.author
   else
@@ -888,19 +800,16 @@ BrowserView::set_post_info = ->
         text = text.substr(0, 20) + '...'
       url = post.source
     source_box = @container.down('.post-source')
-    source_box.down('A').show url != null and url != undefined
-    source_box.down('SPAN').show url == null or url == undefined
+    source_box.down('A').show url?
+    source_box.down('SPAN').show !url?
     if url
       source_box.down('A').href = url
       source_box.down('A').setTextContent text
     else
       source_box.down('SPAN').setTextContent text
   if post.frames.length > 0
-
-    ### Hide this with a class rather than by changing display, so show_frame_editor
+    # Hide this with a class rather than by changing display, so show_frame_editor
     # and hide_frame_editor can hide and unhide this separately. 
-    ###
-
     @container.down('.post-frames').removeClassName 'no-frames'
     frame_list = @container.down('.post-frame-list')
     while frame_list.firstChild
@@ -936,12 +845,10 @@ BrowserView::set_post_info = ->
 
   has_sample = post.sample_url != post.file_url
   has_jpeg = post.jpeg_url != post.file_url
-  has_image = post.file_url != null and post.file_url != undefined and !has_sample
+  has_image = post.file_url? and !has_sample
 
-  ### Hide the whole download-links box if there are no downloads available, usually
+  # Hide the whole download-links box if there are no downloads available, usually
   # because of a deleted post. 
-  ###
-
   @container.down('.download-links').show has_image or has_sample or has_jpeg
   @container.down('.download-image').show has_image
   if has_image
@@ -958,13 +865,11 @@ BrowserView::set_post_info = ->
     png_desc = number_to_human_size(post.file_size) + ' ' + file_extension(post.file_url.toUpperCase())
     @container.down('.download-png-desc').setTextContent png_desc
 
-  ### For links that are handled by click events, try to set the href so that copying the
+  # For links that are handled by click events, try to set the href so that copying the
   # link will give a similar effect.  For example, clicking parent-post will call set_post
   # to display it, and the href links to /post/browse#12345. 
-  ###
-
   parent_post = @container.down('.parent-post')
-  parent_post.show post.parent_id != null and post.parent_id != undefined
+  parent_post.show post.parent_id?
   if post.parent_id
     parent_post.down('A').href = '/post/browse#' + post.parent_id
   child_posts = @container.down('.child-posts')
@@ -972,8 +877,7 @@ BrowserView::set_post_info = ->
   if post.has_children
     child_posts.down('A').href = '/post/browse#/parent:' + post.id
 
-  ### Create the tag links. ###
-
+  # Create the tag links.
   tag_span = @container.down('.post-tags')
   first = true
   while tag_span.firstChild
@@ -992,12 +896,10 @@ BrowserView::set_post_info = ->
       href: '/post/browse#/' + tag
       class: 'post-tag tag-type-' + type)
 
-    ### Break tags with <wbr>, so long tags can be wrapped. ###
-
+    # Break tags with <wbr>, so long tags can be wrapped.
     a.html a.html().replace(/_/g, '_<wbr>')
 
-    ### convert back to something Prototype or whatever can understand ###
-
+    # convert back to something Prototype or whatever can understand
     a = a[0]
     a.tag_name = tag
     span.appendChild a
@@ -1012,15 +914,14 @@ BrowserView::set_post_info = ->
   flagged.show post.status == 'flagged'
   if post.status == 'flagged' and post.flag_detail
     byEl = flagged.down('.by')
-    flagged.down('.flagged-by-box').show post.flag_detail.user_id != null and post.flag_detail.user_id != undefined
-    if post.flag_detail.user_id != null and post.flag_detail.user_id != undefined
+    flagged.down('.flagged-by-box').show post.flag_detail.user_id?
+    if post.flag_detail.user_id?
       byEl.setTextContent post.flag_detail.flagged_by
       byEl.href = '/user/show/' + post.flag_detail.user_id
     reason = flagged.down('.reason')
     reason.setTextContent post.flag_detail.reason
 
-  ### Moderators can unflag images, and the person who flags an image can unflag it himself. ###
-
+  # Moderators can unflag images, and the person who flags an image can unflag it himself.
   is_flagger = post.flag_detail and post.flag_detail.user_id == User.get_current_user_id()
   can_unflag = flagged and (User.is_mod_or_higher() or is_flagger)
   flagged.down('.post-unflag').show can_unflag
@@ -1033,7 +934,7 @@ BrowserView::set_post_info = ->
   deleted.show post.status == 'deleted'
   if post.status == 'deleted'
     by_container = deleted.down('.by-container')
-    by_container.show post.flag_detail.flagged_by != null and post.flag_detail.flagged_by != undefined
+    by_container.show post.flag_detail.flagged_by?
     byEl = by_container.down('.by')
     byEl.setTextContent post.flag_detail.flagged_by
     byEl.href = '/user/show/' + post.flag_detail.user_id
@@ -1054,17 +955,13 @@ BrowserView::edit_show = (shown) ->
   @container.down('.post-tags-box').show !shown
   @container.down('.post-edit').show shown
   if !shown
-
-    ### Revert all changes. ###
-
+    # Revert all changes.
     @frame_editor.discard()
     return
   @select_edit_box '.post-edit-main'
 
-  ### This returns [tag, tag type].  We only want the tag; we call this so we sort the
+  # This returns [tag, tag type].  We only want the tag; we call this so we sort the
   # tags consistently. 
-  ###
-
   tags_by_type = Post.get_post_tags_with_type(post)
   tags = tags_by_type.pluck(0)
   tags = tags.join(' ') + ' '
@@ -1082,8 +979,7 @@ BrowserView::edit_show = (shown) ->
   @container.down('.edit-tags').focus()
   return
 
-### Set the size of the tag edit area to the size of its contents. ###
-
+# Set the size of the tag edit area to the size of its contents.
 BrowserView::edit_post_area_changed = ->
   post_edit = @container.down('.post-edit')
   element = post_edit.down('.edit-tags')
@@ -1094,16 +990,11 @@ BrowserView::edit_post_area_changed = ->
     source = null
     parent_id = null
     element.value.split(' ').each ((tag) ->
-      m = undefined
-
-      ### This mimics what the server side does; it does prevent metatags from using
+      # This mimics what the server side does; it does prevent metatags from using
       # uppercase in source: metatags. 
-      ###
-
       tag = tag.toLowerCase()
 
-      ### rating:q or just q: ###
-
+      # rating:q or just q:
       m = tag.match(/^(rating:)?([qse])$/)
       if m
         rating = m[2]
@@ -1127,16 +1018,14 @@ BrowserView::edit_save = ->
   save_completed = (->
     notice 'Post saved'
 
-    ### If we're still showing the post we saved, hide the edit area. ###
-
+    # If we're still showing the post we saved, hide the edit area.
     if @displayed_post_id == post_id
       @edit_show false
     return
   ).bind(this)
   post_id = @displayed_post_id
 
-  ### If we're in the frame editor, save it.  Don't save the hidden main editor. ###
-
+  # If we're in the frame editor, save it.  Don't save the hidden main editor.
   if @frame_editor
     if @frame_editor.is_opened()
       @frame_editor.save save_completed
@@ -1144,12 +1033,10 @@ BrowserView::edit_save = ->
   edit_tags = @container.down('.edit-tags')
   tags = edit_tags.value
 
-  ### Opera doesn't blur the field automatically, even when we hide it later. ###
-
+  # Opera doesn't blur the field automatically, even when we hide it later.
   edit_tags.blur()
 
-  ### Find which rating is selected. ###
-
+  # Find which rating is selected.
   rating_class = new Hash(
     s: '.edit-safe'
     q: '.edit-questionable'
@@ -1161,10 +1048,8 @@ BrowserView::edit_save = ->
     return
   ).bind(this)
 
-  ### update_batch will give us updates for any related posts, as well as the one we're
+  # update_batch will give us updates for any related posts, as well as the one we're
   # updating. 
-  ###
-
   Post.update_batch [ {
     id: post_id
     tags: @container.down('.edit-tags').value
@@ -1185,42 +1070,33 @@ BrowserView::window_resize_event = (e) ->
 
 BrowserView::toggle_view_large_image = ->
   post = Post.posts.get(@displayed_post_id)
-  if post == null or post == undefined
+  if !post?
     return
-  if @img == null or @img == undefined
+  if !@img?
     return
   if post.jpeg_url == post.sample_url
-
-    ### There's no larger version to display. ###
-
+    # There's no larger version to display.
     return
 
-  ### Toggle between the sample and JPEG version. ###
-
+  # Toggle between the sample and JPEG version.
   @set_viewing_larger_version !@viewing_larger_version
   @set_main_image post
   # XXX frame
   return
 
-### this.image_window_size is the size of the area where the image is visible. ###
-
+# this.image_window_size is the size of the area where the image is visible.
 BrowserView::update_image_window_size = ->
   @image_window_size = getWindowSize()
 
-  ### If the thumb bar is shown, exclude it from the window height and fit the image
+  # If the thumb bar is shown, exclude it from the window height and fit the image
   # in the remainder.  Since the bar is at the bottom, we don't need to do anything to
   # adjust the top. 
-  ###
-
   @image_window_size.height -= @thumb_bar_height
+  # clamp to 0 if there's no space
   @image_window_size.height = Math.max(@image_window_size.height, 0)
 
-  ### clamp to 0 if there's no space ###
-
-  ### When the window size changes, update the navigator since the cursor will resize to
+  # When the window size changes, update the navigator since the cursor will resize to
   # match. 
-  ###
-
   @update_navigator()
   return
 
@@ -1237,9 +1113,7 @@ BrowserView::scale_and_position_image = (resizing) ->
   window_size = @image_window_size
   ratio = 1.0
   if !@viewing_larger_version
-
-    ### Zoom the image to fit the viewport. ###
-
+    # Zoom the image to fit the viewport.
     ratio = window_size.width / original_width
     if original_height * ratio > window_size.height
       ratio = window_size.height / original_height
@@ -1252,38 +1126,31 @@ BrowserView::scale_and_position_image = (resizing) ->
   if @frame_editor
     @frame_editor.set_image_dimensions @displayed_image_width, @displayed_image_height
 
-  ### If we're resizing and showing the full-size image, don't snap the position
+  # If we're resizing and showing the full-size image, don't snap the position
   # back to the default. 
-  ###
-
   if resizing and @viewing_larger_version
     return
   x = 0.5
   y = 0.5
   if @viewing_larger_version
-
-    ### Align the image to the top of the screen. ###
-
+    # Align the image to the top of the screen.
     y = @image_window_size.height / 2
     y /= @displayed_image_height
   @center_image_on x, y
   return
 
-### x and y are [0,1]. ###
-
+# x and y are [0,1].
 BrowserView::update_navigator = ->
   if !@navigator
     return
   if !@img
     return
 
-  ### The coordinates of the image located at the top-left corner of the window: ###
-
+  # The coordinates of the image located at the top-left corner of the window:
   scroll_x = -@img_box.offsetLeft
   scroll_y = -@img_box.offsetTop
 
-  ### The coordinates at the center of the window: ###
-
+  # The coordinates at the center of the window:
   x = scroll_x + @image_window_size.width / 2
   y = scroll_y + @image_window_size.height / 2
   percent_x = x / @displayed_image_width
@@ -1316,7 +1183,6 @@ BrowserView::update_navigator = ->
 #   as necessary to paint, but that's a lot more work.
 # - Canvas won't blit partially-loaded images, so we do nothing until the image is complete.
 ###
-
 BrowserView::update_canvas = ->
   if !@img.fully_loaded
     debug 'image incomplete; can\'t render to canvas'
@@ -1324,10 +1190,8 @@ BrowserView::update_canvas = ->
   if !@canvas
     return
 
-  ### If the contents havn't changed, skip the blit.  This happens frequently when resizing
+  # If the contents havn't changed, skip the blit.  This happens frequently when resizing
   # the window when not fitting the image to the screen. 
-  ###
-
   if @canvas.rendered_url == @img.src and @canvas.width == @displayed_image_width and @canvas.height == @displayed_image_height
     # debug(this.canvas.rendered_url + ", " + this.canvas.width + ", " + this.canvas.height)
     # debug("Skipping canvas blit");
@@ -1355,13 +1219,13 @@ BrowserView::center_image_on = (percent_x, percent_y) ->
   return
 
 BrowserView::cancel_lazily_load = ->
-  if @lazy_load_timer == null or @lazy_load_timer == undefined
+  if !@lazy_load_timer?
     return
   window.clearTimeout @lazy_load_timer
   @lazy_load_timer = null
   return
 
-### Update the window title when the display changes. ###
+# Update the window title when the display changes.
 
 window.WindowTitleHandler = ->
   @searched_tags = ''
@@ -1388,7 +1252,6 @@ window.WindowTitleHandler = ->
   return
 
 WindowTitleHandler::update = ->
-  title = undefined
   post = Post.posts.get(@post_id)
   if @pool
     title = @pool.name.replace(/_/g, ' ')
@@ -1409,7 +1272,7 @@ WindowTitleHandler::update = ->
 BrowserView::parent_post_click_event = (event) ->
   event.stop()
   post = Post.posts.get(@displayed_post_id)
-  if post == null or post == undefined or post.parent_id == null or post.parent_id == undefined
+  if !post? || !post.parent_id?
     return
   @set_post post.parent_id
   return
@@ -1417,10 +1280,8 @@ BrowserView::parent_post_click_event = (event) ->
 BrowserView::child_posts_click_event = (event) ->
   event.stop()
 
-  ### Search for this post's children.  Set the results mode to center-on-current, so we
+  # Search for this post's children.  Set the results mode to center-on-current, so we
   # focus on the current item. 
-  ###
-
   document.fire 'viewer:perform-search',
     tags: 'parent:' + @displayed_post_id
     results_mode: 'center-on-current'
@@ -1436,8 +1297,7 @@ BrowserView::select_edit_box = (className) ->
 BrowserView::show_frame_editor = ->
   @select_edit_box '.frame-editor'
 
-  ### If we're displaying a frame and not the whole image, switch to the main image. ###
-
+  # If we're displaying a frame and not the whole image, switch to the main image.
   post_frame = null
   if @displayed_post_frame != -1
     post_frame = @displayed_post_frame
@@ -1447,11 +1307,9 @@ BrowserView::show_frame_editor = ->
   @frame_editor.open @displayed_post_id
   @container.down('.post-frames').hide()
 
-  ### If we were on a frame when opened, focus the frame we were on.  Otherwise,
+  # If we were on a frame when opened, focus the frame we were on.  Otherwise,
   # leave it on the default. 
-  ###
-
-  if post_frame != null and post_frame != undefined
+  if post_frame?
     @frame_editor.focus post_frame
   return
 
@@ -1518,24 +1376,18 @@ Navigator::enddrag = (e) ->
 
 Navigator::ondrag = (e) ->
   coords = @get_normalized_coords(e.x, e.y)
-  if e.latest_event.shiftKey != (@shift_lock_anchor != null and @shift_lock_anchor != undefined)
+  if e.latest_event.shiftKey != @shift_lock_anchor?
 
-    ### The shift key has been pressed or released. ###
-
+    # The shift key has been pressed or released.
     if e.latest_event.shiftKey
-
-      ### The shift key was just pressed.  Remember the position we were at when it was
+      # The shift key was just pressed.  Remember the position we were at when it was
       # pressed. 
-      ###
-
       @shift_lock_anchor = [
         coords[0]
         coords[1]
       ]
     else
-
-      ### The shift key was released. ###
-
+      # The shift key was released.
       @shift_lock_anchor = null
       @locked_to_x = null
   @center_on_position coords
@@ -1543,8 +1395,7 @@ Navigator::ondrag = (e) ->
 
 Navigator::image_position_changed = (percent_x, percent_y, height_percent, width_percent) ->
 
-  ### When the image is moved or the visible area is resized, update the cursor rectangle. ###
-
+  # When the image is moved or the visible area is resized, update the cursor rectangle.
   cursor = @container.down('.navigator-cursor')
   cursor.setStyle
     top: @img.height * (percent_y - (height_percent / 2)) + 'px'
@@ -1564,27 +1415,22 @@ Navigator::get_normalized_coords = (x, y) ->
     y
   ]
 
-### x and y are absolute window coordinates. ###
-
+# x and y are absolute window coordinates.
 Navigator::center_on_position = (coords) ->
   if @shift_lock_anchor
-    if @locked_to_x == null or @locked_to_x == undefined
+    if !@locked_to_x?
 
-      ### Only change the coordinate with the greater delta. ###
-
+      # Only change the coordinate with the greater delta.
       change_x = Math.abs(coords[0] - (@shift_lock_anchor[0]))
       change_y = Math.abs(coords[1] - (@shift_lock_anchor[1]))
 
-      ### Only lock to moving vertically or horizontally after we've moved a small distance
+      # Only lock to moving vertically or horizontally after we've moved a small distance
       # from where shift was pressed. 
-      ###
-
       if change_x > 0.1 or change_y > 0.1
         @locked_to_x = change_x > change_y
 
-    ### If we've chosen an axis to lock to, apply it. ###
-
-    if @locked_to_x != null and @locked_to_x != undefined
+    # If we've chosen an axis to lock to, apply it.
+    if @locked_to_x?
       if @locked_to_x
         coords[1] = @shift_lock_anchor[1]
       else

@@ -2,11 +2,11 @@ $ = jQuery
 
 class @PoolClass
   constructor: ->
-    @pools = new Hash
+    @pools = {}
 
 
   register: (pool) =>
-    @pools.set pool.id, pool
+    @pools[pool.id] = pool
 
 
   register_pools: (pools) =>

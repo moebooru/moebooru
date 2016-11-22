@@ -12,20 +12,28 @@
 # This doesn't clear styles or any other properties.  To avoid leaking things from
 # one type of image to another, use separate pools for each.
 ###
-ImgPoolHandlerWebKit = Class.create(
-  initialize: ->
+class ImgPoolHandlerWebKit
+  constructor: ->
     @pool = []
     @pool_waiting = []
-    @blank_image_loaded_event = @blank_image_loaded_event.bind(this)
-    return
-  get: ->
+
+
+  blank_image_loaded_event: (event) =>
+    img = event.target
+    img.stopObserving 'load', @blank_image_loaded_event
+    @pool_waiting = @pool_waiting.without(img)
+    @pool.push img
+
+
+  get: =>
     if @pool.length == 0
       # debug("No images in pool; creating blank");
       return $(document.createElement('IMG'))
     # debug("Returning image from pool");
     @pool.pop()
-  release: (img) ->
 
+
+  release: (img) =>
     ###
     # Replace the image with a blank, so when it's reused it doesn't show the previously-
     # loaded image until the new one is available.  Don't reuse the image until the blank
@@ -39,29 +47,26 @@ ImgPoolHandlerWebKit = Class.create(
     img.observe 'load', @blank_image_loaded_event
     @pool_waiting.push img
     img.src = '<%= image_path "blank.gif" %>'
-    return
-  blank_image_loaded_event: (event) ->
-    img = event.target
-    img.stopObserving 'load', @blank_image_loaded_event
-    @pool_waiting = @pool_waiting.without(img)
-    @pool.push img
-    return
-)
-ImgPoolHandlerDummy = Class.create(
+
+
+class ImgPoolHandlerDummy
   get: ->
     $ document.createElement('IMG')
+
+
   release: (img) ->
     img.src = '<%= image_path "blank.gif" %>'
-    return
-)
+
 
 # Create an image pool handler.  If the URL hash value "image-pools" is specified,
 # force image pools on or off for debugging; otherwise enable them only when needed. 
 @ImgPoolHandler = ->
   use_image_pools = Prototype.Browser.WebKit
   hash_value = UrlHash.get('image-pools')
+
   if hash_value?
     use_image_pools = hash_value != '0'
+
   if use_image_pools
     new ImgPoolHandlerWebKit(arguments)
   else

@@ -5,7 +5,9 @@ module Moebooru
     end
 
     def get_version(type = "post")
-      Rails.cache.read("#{type}_version").to_i
+      Rails.cache.fetch("#{type}_version") do
+        0
+      end.to_i
     end
 
     module_function :increment_version, :get_version

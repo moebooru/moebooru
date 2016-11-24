@@ -5,7 +5,7 @@ module Moebooru
     end
 
     def get_version(type = "post")
-      Rails.cache.fetch("#{type}_version") do
+      Rails.cache.fetch("#{type}_version", :raw => true) do
         0
       end.to_i
     end

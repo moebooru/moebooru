@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 5.0.0"
+gem "rails", "~> 5.0.1"
 
 gem "coffee-rails", "~> 4.2.0" # Rails 5.0 default
 gem "jquery-rails"

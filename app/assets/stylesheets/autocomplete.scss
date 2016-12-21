@@ -1,0 +1,21 @@
+.ui-autocomplete.ui-autocomplete {
+  background: #fff;
+  border: 1px solid #333;
+  list-style: none;
+  padding: 0;
+}
+
+.ui-menu-item {
+  margin: 0;
+}
+
+.ui-menu-item-wrapper {
+  color: #222;
+  padding: 2px 5px;
+
+  &.ui-state-active {
+    background: #ffc;
+    color: #222;
+    border-color: #555;
+  }
+}

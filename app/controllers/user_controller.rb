@@ -22,7 +22,7 @@ class UserController < ApplicationController
 
   def autocomplete_name
     keyword = params[:term].to_s
-    @users = User.where(["name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like]).pluck(:name) if keyword.length >= 2
+    @users = User.where(["name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like]).limit(20).pluck(:name) if keyword.length >= 2
     respond_to do |format|
       format.json { render :json => (@users || []) }
     end

@@ -6,7 +6,7 @@
 #= require jquery_ujs
 #= require js-cookie
 #= require cookie
-#= require jquery-ui/autocomplete
+#= require jquery-ui/widgets/autocomplete
 #= require compat.jquery
 #= require mousetrap
 #= require i18n

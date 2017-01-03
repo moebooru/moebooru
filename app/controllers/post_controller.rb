@@ -858,6 +858,6 @@ class PostController < ApplicationController
   end
 
   def post_params_for_update_single(p)
-    p.permit(:source, :parent_id, :rating, :tags, :old_tags, :is_held, :is_shown_in_index, :is_note_locked, :is_rating_locked)
+    p.permit(:source, :parent_id, :rating, :tags, :old_tags, :is_held, :is_shown_in_index, :is_note_locked, :is_rating_locked, :frames_pending_string)
   end
 end

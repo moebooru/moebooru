@@ -58,7 +58,7 @@ module Post::TagMethods
   end
 
   def cached_tags_undo(change, redo_changes = false)
-    current_tags = cached_tags.scan(/\S+/)
+    current_tags = new_tags || cached_tags.scan(/\S+/)
     prev = change.previous
 
     change, prev = prev, change if redo_changes

@@ -500,13 +500,13 @@ ThumbnailView::scroll = (left) ->
     return
   new_idx = @centered_post_idx
 
-  ### If we're not centered on the post, and we're moving towards the center,
+  ###
+  # If we're not centered on the post, and we're moving towards the center,
   # don't jump past the post. 
   ###
-
   if @centered_post_offset > 0 and left
-      else if @centered_post_offset < 0 and !left
-      else
+  else if @centered_post_offset < 0 and !left
+  else
     new_idx += if left then -1 else +1
   # Snap to the nearest post.
   @centered_post_offset = 0

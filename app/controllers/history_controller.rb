@@ -178,7 +178,7 @@ class HistoryController < ApplicationController
   def undo
     ids = params[:id].split(/,/)
 
-    @changes = HistoryChange.where(:id => ids)
+    @changes = HistoryChange.where(:id => ids).order(:id => :desc)
     histories = @changes.map(&:history_id).uniq
 
     if histories.count > 1 && !@current_user.is_privileged_or_higher?

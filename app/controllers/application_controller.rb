@@ -11,7 +11,18 @@ class ApplicationController < ActionController::Base
     protected
 
     def access_denied
-      previous_url = params[:url] || request.fullpath
+      previous_url = params[:url]
+
+      if previous_url.blank?
+        if request.method == "GET"
+          previous_url = request.fullpath
+        else
+          referrer = request.referer
+          if referrer.try(:index, CONFIG["url_base"]) == 0
+            previous_url = referrer[CONFIG["url_base"].length..-1].sub /\A\/*/, "/"
+          end
+        end
+      end
 
       respond_to do |fmt|
         fmt.html { redirect_to user_login_path(:url => previous_url), :notice => "Access denied" }

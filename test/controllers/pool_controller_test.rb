@@ -105,8 +105,7 @@ class PoolControllerTest < ActionController::TestCase
     assert_response :success
 
     post :add_post, :params => { :post_id => 1, :pool_id => pool.id, :pool => {} }, :session => { :user_id => 4 }
-    # FIXME: doesn't make sense to redirect
-    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/add_post"
+    assert_redirected_to :controller => "user", :action => "login"
     assert_equal(0, PoolPost.where(:active => true, :post_id => 1, :pool_id => pool.id).count)
 
     post :add_post, :params => { :post_id => 1, :pool_id => pool.id, :pool => {} }, :session => { :user_id => 3 }
@@ -185,7 +184,7 @@ class PoolControllerTest < ActionController::TestCase
     pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
     pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     post :order, :params => { :id => pool.id, :pool_post_sequence => { pp1.id => "10", pp2.id => "20" }, :posts => { "1" => "1", "2" => "1" } }, :session => { :user_id => 4 }
-    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/order/#{pool.id}"
+    assert_redirected_to :controller => "user", :action => "login"
 
     post :order, :params => { :id => pool.id, :pool_post_sequence => { pp1.id => "10", pp2.id => "20" }, :posts => { "1" => "1", "2" => "1" } }, :session => { :user_id => 3 }
     assert_redirected_to :action => "show", :id => pool.id
@@ -213,7 +212,7 @@ class PoolControllerTest < ActionController::TestCase
     assert_redirected_to :controller => "user", :action => "login", :url => "/pool/import/#{pool.id}"
 
     post :import, :params => { :id => pool.id, :posts => { "1" => "1", "2" => "2" } }, :session => { :user_id => 3 }
-    assert_redirected_to :controller => "user", :action => "login", :url => "/pool/import/#{pool.id}"
+    assert_redirected_to :controller => "user", :action => "login"
     pp1 = PoolPost.where(:post_id => 1, :pool_id => pool.id).first
     pp2 = PoolPost.where(:post_id => 2, :pool_id => pool.id).first
     assert_nil(pp1)

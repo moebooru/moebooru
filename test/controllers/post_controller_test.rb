@@ -90,9 +90,11 @@ class PostControllerTest < ActionController::TestCase
     assert_equal("active", p1.status)
 
     post :destroy, :params => { :id => p1.id, :reason => "sage" }, :session => { :user_id => 3 }
-    assert_redirected_to :controller => "user", :action => "login"
     p1.reload
-    assert_equal("active", p1.status)
+    assert_equal("deleted", p1.status)
+    assert_not_nil(p1.flag_detail)
+    assert_equal("sage", p1.flag_detail.reason)
+    p1.undelete
 
     post :destroy, :params => { :id => p1.id, :reason => "sage" }, :session => { :user_id => 1 }
     p1.reload

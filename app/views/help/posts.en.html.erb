@@ -13,7 +13,7 @@
     <p>In both the listing page and the show page you'll notice a list of tag links with characters next to them. Here's an explanation of what the links are:</p>
     <dl>
       <dt>?</dt>
-      <dd>This links to the wiki page for the tag. If the tag is an <a href="/help/artists">artist</a> type, then you'll be redirected to the artist page.</dd>
+      <dd>This links to the wiki page for the tag. If the tag is an <%= link_to "artist", help_path("artists") %> type, then you'll be redirected to the artist page.</dd>
 
       <dt>+</dt>
       <dd>This adds the tag to the current search.</dd>

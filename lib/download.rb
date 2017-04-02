@@ -58,7 +58,7 @@ module Danbooru
           "Referer" => source
         }
 
-        if source =~ /pixiv\.net/
+        if source =~ /(pixiv\.net|pximg\.net)/
           headers["Referer"] = "http://www.pixiv.net"
 
           # Don't download the small version

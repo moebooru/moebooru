@@ -243,7 +243,7 @@ module Post::FileMethods
         end
       end
 
-      if source.to_s =~ /^http/ && source.to_s !~ /pixiv\.net/
+      if source.to_s =~ /^http/ && source.to_s !~ /(pixiv\.net|pximg\.net)/
         # self.source = "Image board"
         self.source = ""
       end

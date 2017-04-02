@@ -785,13 +785,13 @@ BrowserView::set_post_info = ->
     # pixiv URL with artist user id info (up to 2014)
     m_old = post.source.match(/^http:\/\/.*pixiv\.net\/(img\d+\/)?img\/([-\w]+)\/(\d+)(_.+)?\.\w+$/)
     # pixiv URL without artist user id info (2014+)
-    m = post.source.match(/^https?:\/\/.*pixiv\.net\/img.*?(\d+)(_s|_m|(_big)?_p\d+)?\.\w+(\?\d+)?$/)
+    m = post.source.match(/^https?:\/\/.*(?:pixiv\.net|pximg\.net)\/img.*?(\d+)(_s|_m|(_big)?_p\d+)?\.\w+(\?\d+)?$/)
     if m_old
-      text = 'pixiv #' + m_old[3] + ' (' + m_old[2] + ')'
-      url = 'http://www.pixiv.net/member_illust.php?mode=medium&illust_id=' + m_old[3]
+      text = "pixiv ##{m_old[3]} (#{m_old[2]})"
+      url = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{m_old[3]}"
     else if m
-      text = 'pixiv #' + m[1]
-      url = 'http://www.pixiv.net/member_illust.php?mode=medium&illust_id=' + m[1]
+      text = "pixiv ##{m[1]}"
+      url = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{m[1]}"
     else if post.source.substr(0, 7) == 'http://'
       text = text.substr(7)
       if text.substr(0, 4) == 'www.'

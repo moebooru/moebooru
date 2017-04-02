@@ -2,6 +2,6 @@
   <li><%= link_to t('.list'), :action => "index" %></li>
   <li><%= link_to t('.new'), :action => "create" %></li>
   <%= yield :footer %>
-  <li><%= link_to t('.help'), :controller => "help", :action => "pools" %></li>
+  <li><%= link_to t('.help'), help_path("pools") %></li>
   <%= yield :footer_final %>
 <% end %>

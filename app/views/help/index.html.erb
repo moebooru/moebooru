@@ -1,41 +1,41 @@
 <div class="help">
   <h1><%= t('.help') %></h1>
   <ul class="link-page">
-    <li><%= link_to t('.about'), :controller => 'help', :action => 'about' %></li>
-    <li><%= link_to t('.faq'), :controller => 'help', :action => 'faq' %></li>
-    <li><%= link_to t('.starting'), :controller => 'help', :action => 'start' %></li>
-    <li><%= link_to t('.accounts'), :controller => 'help', :action => 'users' %></li>
-    <li><%= link_to t('.api'), :controller => 'help', :action => 'api' %></li>
+    <li><%= link_to t('.about'), help_path('about') %></li>
+    <li><%= link_to t('.faq'), help_path('faq') %></li>
+    <li><%= link_to t('.starting'), help_path('start') %></li>
+    <li><%= link_to t('.accounts'), help_path('users') %></li>
+    <li><%= link_to t('.api'), help_path('api') %></li>
     <%- if CONFIG["enable_artists"] -%>
-      <li><%= link_to t('.artists'), :controller => 'help', :action => 'artists' %></li>
+      <li><%= link_to t('.artists'), help_path('artists') %></li>
     <%- end -%>
-    <li><%= link_to t('.bookmarklet'), :controller => 'help', :action => 'bookmarklet' %></li>
-    <li><%= link_to t('.bugs'), :controller => 'help', :action => 'trac' %></li>
-    <li><%= link_to t('.cheat_sheet'), :controller => 'help', :action => 'cheatsheet' %></li>
-    <li><%= link_to t('.comments'), :controller => 'help', :action => 'comments' %></li>
-    <li><%= link_to t('.dtext'), :controller => 'help', :action => 'dtext' %></li>
-    <li><%= link_to t('.firefox_ext'), :controller => 'help', :action => 'extension' %></li>
+    <li><%= link_to t('.bookmarklet'), help_path('bookmarklet') %></li>
+    <li><%= link_to t('.bugs'), help_path('trac') %></li>
+    <li><%= link_to t('.cheat_sheet'), help_path('cheatsheet') %></li>
+    <li><%= link_to t('.comments'), help_path('comments') %></li>
+    <li><%= link_to t('.dtext'), help_path('dtext') %></li>
+    <li><%= link_to t('.firefox_ext'), help_path('extension') %></li>
     <%- if CONFIG["image_samples"] -%>
-      <li><%= link_to t('.image_sampling'), :controller => 'help', :action => 'image_sampling' %></li>
+      <li><%= link_to t('.image_sampling'), help_path('image_sampling') %></li>
     <%- end -%>
-    <li><%= link_to t('.irc'), :controller => 'help', :action => 'irc' %></li>
-    <li><%= link_to t('.notes'), :controller => 'help', :action => 'notes' %></li>
-    <li><%= link_to t('.pools'), :controller => 'help', :action => 'pools' %></li>
-    <li><%= link_to t('.posts'), :controller => 'help', :action => 'posts' %></li>
-    <li><%= link_to t('.post_relationships'), :controller => 'help', :action => 'post_relationships' %></li>
-    <li><%= link_to t('.ratings'), :controller => 'help', :action => 'ratings' %></li>
-    <li><%= link_to t('.source'), :controller => 'help', :action => 'source_code' %></li>
-    <li><%= link_to t('.tag_scripts'), :controller => 'help', :action => 'tag_scripts' %></li>
-    <li><%= link_to t('.tags'), :controller => 'help', :action => 'tags' %></li>
-    <li><%= link_to t('.tag_aliases'), :controller => 'help', :action => 'tag_aliases' %></li>
-    <li><%= link_to t('.tag_implications'), :controller => 'help', :action => 'tag_implications' %></li>
-    <li><%= link_to t('.mass_tag_edit'), :controller => 'help', :action => 'mass_tag_edit' %></li>
-    <li><%= link_to t('.suggestions'), :controller => 'help', :action => 'trac' %></li>
-    <li><%= link_to t('.voting'), :controller => 'help', :action => 'voting' %></li>
-    <li><%= link_to t('.wiki'), :controller => 'help', :action => 'wiki' %></li>
+    <li><%= link_to t('.irc'), help_path('irc') %></li>
+    <li><%= link_to t('.notes'), help_path('notes') %></li>
+    <li><%= link_to t('.pools'), help_path('pools') %></li>
+    <li><%= link_to t('.posts'), help_path('posts') %></li>
+    <li><%= link_to t('.post_relationships'), help_path('post_relationships') %></li>
+    <li><%= link_to t('.ratings'), help_path('ratings') %></li>
+    <li><%= link_to t('.source'), help_path('source_code') %></li>
+    <li><%= link_to t('.tag_scripts'), help_path('tag_scripts') %></li>
+    <li><%= link_to t('.tags'), help_path('tags') %></li>
+    <li><%= link_to t('.tag_aliases'), help_path('tag_aliases') %></li>
+    <li><%= link_to t('.tag_implications'), help_path('tag_implications') %></li>
+    <li><%= link_to t('.mass_tag_edit'), help_path('mass_tag_edit') %></li>
+    <li><%= link_to t('.suggestions'), help_path('trac') %></li>
+    <li><%= link_to t('.voting'), help_path('voting') %></li>
+    <li><%= link_to t('.wiki'), help_path('wiki') %></li>
   </ul>
 </div>
 
 <%- content_for :subnavbar do -%>
-  <li><%= link_to t('.help'), :action => :index %></li>
+  <li><%= link_to t('.help'), help_path %></li>
 <%- end -%>

@@ -55,10 +55,10 @@
 
   <div class="section">
     <h4>Is there an API?</h4>
-    <p>Yes. The artist controller uses the same interface as the rest of Danbooru. See the <%= link_to "API documentation", :controller => "help", :action => "api" %> for details.</p>
+    <p>Yes. The artist controller uses the same interface as the rest of Danbooru. See the <%= link_to "API documentation", help_path("api") %> for details.</p>
   </div>
 </div>
 
 <% content_for :subnavbar do %>
-  <li><%= link_to "Help", :action => "index" %></li>
+  <li><%= link_to "Help", help_path %></li>
 <% end %>

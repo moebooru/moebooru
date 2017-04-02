@@ -2,5 +2,5 @@
   <li><%= link_to t('.list'), :action => "index" %></li>
   <li><%= link_to t('.new'), :action => "add" %></li>
   <%= yield :footer %>
-  <li><%= link_to t('.help'), :controller => "help", :action => "wiki" %></li>
+  <li><%= link_to t('.help'), help_path("wiki") %></li>
 <% end %>

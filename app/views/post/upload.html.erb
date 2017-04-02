@@ -25,8 +25,8 @@
         <li>
           <%= t('.guidelines.do_not.with_html', :with => link_to(t('.guidelines.do_not.obnoxious_watermarks'), :controller => '/wiki', :action => :show, :title => 'watermark')) %>
         </li>
-        <li><%= link_to t('.guidelines.group'), :controller => "help", :action => "post_relationships" %></li>
-        <li><%= t('.guidelines.more_html', :more_link =>  link_to(t('.guidelines.more_link'), :controller => '/help', :action => :tags)) %></li>
+        <li><%= link_to t('.guidelines.group'), help_path("post_relationships") %></li>
+        <li><%= t('.guidelines.more_html', :more_link => link_to(t('.guidelines.more_link'), help_path("tags"))) %></li>
       </ul>
       <p><%= t('.guidelines.limit', :n =>  pluralize(CONFIG["member_post_limit"] - Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count, "post")) %></p>
     </div>
@@ -89,7 +89,7 @@
             <th>
               <label for="post_tags"><%= t('.form.tags._') %></label>
               <% unless @current_user.is_privileged_or_higher? %>
-                <p><%= t('.form.tags.info') %> (<%= link_to t('.form.help'), {:controller => "help", :action => "tags"}, :target => "_blank" %>)</p>
+                <p><%= t('.form.tags.info') %> (<%= link_to t('.form.help'), help_path("tags"), :target => "_blank" %>)</p>
               <% end %>
             </th>
             <td>
@@ -109,7 +109,7 @@
             <th>
               <label for="post_rating_questionable"><%= t('.form.rating._') %></label>
               <% unless @current_user.is_privileged_or_higher? %>
-                <p><%= t('.form.rating.info') %> (<%= link_to t('.form.help'), {:controller => "help", :action => "ratings"}, :target => "_blank" %>)</p>
+                <p><%= t('.form.rating.info') %> (<%= link_to t('.form.help'), help_path("ratings"), :target => "_blank" %>)</p>
               <% end %>
             </th>
             <td>

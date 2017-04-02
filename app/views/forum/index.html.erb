@@ -53,7 +53,7 @@
     <% unless @current_user.is_anonymous? %>
       <li><%= link_to_function t('.mark'), "Forum.mark_all_read()" %></li>
     <% end %>
-    <li><%= link_to t('.help'), :controller => "help", :action => "forum" %></li>
+    <li><%= link_to t('.help'), help_path("forum") %></li>
   <% end %>
 
   <div id="preview" style="display: none; margin: 1em 0;">

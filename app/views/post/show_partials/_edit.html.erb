@@ -12,7 +12,7 @@
           <th width="15%">
             <label class="block" for="post_rating_questionable"><%= t('.rating') %></label>
             <% unless @current_user.is_privileged_or_higher? %>
-              <p><%= t('.rating_info_html', :more => link_to(t('.help'), { :controller => "help", :action => "ratings" }, :target => "_blank")) %></p>
+              <p><%= t('.rating_info_html', :more => link_to(t('.help'), help_path("ratings"), :target => "_blank")) %></p>
             <% end %>
           </th>
           <td width="85%">
@@ -54,7 +54,7 @@
             <th>
               <label class="block" for="post_tags"><%= t('.tags') %></label>
               <% unless @current_user.is_privileged_or_higher? %>
-                <p><%= t('.tags_info_html', :more => link_to(t('.help'), { :controller => 'help', :action => 'tags' }, :target => '_blank')) %></p>
+                <p><%= t('.tags_info_html', :more => link_to(t('.help'), help_path('tags'), :target => '_blank')) %></p>
               <% end %>
             </th>
             <td>

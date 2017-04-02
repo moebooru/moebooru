@@ -4,5 +4,5 @@
   <% if @current_user.is_janitor_or_higher? %>
     <li><%= link_to t('.moderate'), :action => "moderate" %></li>
   <% end %>
-  <li><%= link_to t('.help'), :controller => "help", :action => "comments" %></li>
+  <li><%= link_to t('.help'), help_path("comments") %></li>
 <% end %>

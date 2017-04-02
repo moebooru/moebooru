@@ -52,5 +52,5 @@
   <% unless @forum_post.is_parent? %>
     <li><%= link_to t('.parent'), :action => "show", :id => @forum_post.parent_id %></li>
   <% end %>
-  <li><%= link_to t('.help'), :controller => "help", :action => "forum" %></li>
+  <li><%= link_to t('.help'), help_path("forum") %></li>
 <% end %>

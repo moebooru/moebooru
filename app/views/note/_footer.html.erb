@@ -3,5 +3,5 @@
   <li><%= link_to t('.search'), :action => "search" %></li>
   <li><%= link_to t('.history'), :action => "history" %></li>
   <li><%= link_to t('.requests'), :controller => "post", :action => "index", :tags => "translation_request" %></li>
-  <li><%= link_to t('.help'), :controller => "help", :action => "notes" %></li>
+  <li><%= link_to t('.help'), help_path("notes") %></li>
 <% end %>

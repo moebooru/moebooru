@@ -28,7 +28,7 @@
 
 <% content_for :subnavbar do %>
   <li><%= link_to t('.list'), :action => "index" %></li>
-  <li><%= link_to t('.help'), :controller => "help", :action => "forum" %></li>
+  <li><%= link_to t('.help'), help_path("forum") %></li>
 <% end %>
 
 <script type="text/javascript">

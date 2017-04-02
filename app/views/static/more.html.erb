@@ -3,7 +3,7 @@
   <div>
     <ul>
       <li><h4><%=t :static_t1 %></h4></li>
-      <li><%= link_to t(:static1), :controller => 'help', :action => 'posts' %></li>
+      <li><%= link_to t(:static1), help_path('posts') %></li>
       <li><%= link_to t(:static2), :controller => 'post', :action => 'atom' %></li>
       <li><%= link_to t(:static3), :controller => 'post', :action => 'index' %></li>
       <li><%= link_to t(:static4), :controller => 'post', :action => 'browse' %></li>
@@ -19,9 +19,9 @@
     </ul>
     <ul>
       <li><h4><%=t :static_t2 %></h4></li>
-      <li><%= link_to t(:static14), :controller => 'help', :action => 'bookmarklet' %></li>
+      <li><%= link_to t(:static14), help_path('bookmarklet') %></li>
       <li><%= link_to t(:static15), 'http://unbuffered.info/danbooruup' %></li>
-      <li><%= link_to t(:static16), :controller => 'help', :action => 'api' %></li>
+      <li><%= link_to t(:static16), help_path('api') %></li>
     </ul>
     <% if CONFIG['enable_reporting'] %>
       <ul>
@@ -38,7 +38,7 @@
   <div>
     <ul>
       <li><h4><%=t :static_t4 %></h4></li>
-      <li><%= link_to t(:static23), :controller => 'help', :action => 'tags' %></li>
+      <li><%= link_to t(:static23), help_path('tags') %></li>
       <li><%= link_to t(:static24), :controller => 'tag_alias', :action => 'index' %></li>
       <li><%= link_to t(:static25), :controller => 'tag_implication', :action => 'index' %></li>
       <li><%= link_to t(:static26), :controller => 'tag', :action => 'edit' %></li>
@@ -48,39 +48,39 @@
     </ul>
     <ul>
       <li><h4><%=t :static_t5 %></h4></li>
-      <li><%= link_to t(:static30), :controller => 'help', :action => 'notes' %></li>
+      <li><%= link_to t(:static30), help_path('notes') %></li>
       <li><%= link_to t(:static31), :controller => 'note', :action => 'history' %></li>
       <li><%= link_to t(:static32), :controller => 'note', :action => 'index' %></li>
     </ul>
     <% if CONFIG['enable_artists'] %>
       <ul>
         <li><h4><%=t :static_t6 %></h4></li>
-        <li><%= link_to t(:static33), :controller => 'help', :action => 'artists' %></li>
+        <li><%= link_to t(:static33), help_path('artists') %></li>
         <li><%= link_to t(:static34), :controller => 'artist', :action => 'index' %></li>
       </ul>
     <% end %>
     <ul>
       <li><h4><%=t :static_t7 %></h4></li>
-      <li><%= link_to t(:static35), :controller => 'help', :action => 'pools' %></li>
+      <li><%= link_to t(:static35), help_path('pools') %></li>
       <li><%= link_to t(:static36), :controller => 'pool', :action => 'index' %></li>
     </ul>
   </div>
   <div>
     <ul>
       <li><h4><%=t :static_t8 %></h4></li>
-      <li><%= link_to t(:static37), :controller => 'help', :action => 'comments' %></li>
+      <li><%= link_to t(:static37), help_path('comments') %></li>
       <li><%= link_to t(:static38), :controller => 'comment', :action => 'index' %></li>
       <li><%= link_to t(:static39), :controller => 'comment', :action => 'moderate' %></li>
     </ul>
     <ul>
       <li><h4><%=t :static_t9 %></h4></li>
-      <li><%= link_to t(:static40), :controller => 'help', :action => 'forum' %></li>
+      <li><%= link_to t(:static40), help_path('forum') %></li>
       <li><%= link_to t(:static41), :controller => 'forum', :action => 'index' %></li>
       <li><%= link_to t(:static42), :controller => 'inline', :action => 'index' %></li>
     </ul>
     <ul>
       <li><h4><%=t :static_t10 %></h4></li>
-      <li><%= link_to t(:static43), :controller => 'help', :action => 'wiki' %></li>
+      <li><%= link_to t(:static43), help_path('wiki') %></li>
       <li><%= link_to t(:static44), :controller => 'wiki', :action => 'index' %></li>
       <li><%= link_to t(:static45), :controller => 'wiki', :action => 'history' %></li>
     </ul>
@@ -107,7 +107,7 @@
         <li><%= link_to t(:static57), :controller => 'user', :action => 'change_password' %></li>
         <li><%= link_to t(:static58), :controller => 'user', :action => 'invites' %></li>
       <% end %>
-      <li><%= link_to t(:static59), :controller => 'help', :action => 'users' %></li>
+      <li><%= link_to t(:static59), help_path('users') %></li>
       <li><%= link_to t(:static60), :controller => 'user', :action => 'index' %></li>
       <li><%= link_to t(:static61), :controller => 'static', :action => 'terms_of_service' %></li>
     </ul>

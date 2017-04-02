@@ -14,5 +14,5 @@
     <li><%= link_to t('.mod'), {:controller => "post", :action => "moderate"}, :id => "moderate" %></li>
   <% end %>
   <%= yield :footer %>
-  <li><%= link_to t('.help'), :controller => "help", :action => "posts" %></li>
+  <li><%= link_to t('.help'), help_path("posts") %></li>
 <% end %>

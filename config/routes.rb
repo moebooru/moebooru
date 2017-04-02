@@ -83,9 +83,7 @@ Rails.application.routes.draw do
   post "forum/create"
 
   # Help
-  match "help" => "help#index", :via => [:post, :get]
-  match "help/index" => "help#index", :via => [:post, :get] # FIXME: remove this
-  match "help/:action" => "help#:action", :via => [:post, :get]
+  get "help(/:page)" => "help#show", :as => "help"
 
   # History
   match "history" => "history#index", :via => [:post, :get]

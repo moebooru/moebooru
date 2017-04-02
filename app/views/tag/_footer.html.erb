@@ -8,5 +8,5 @@
   <% end %>
   <li><%= link_to t(:tag_edit), :controller => "tag", :action => "edit" %></li>
   <%= yield :footer %>
-  <li><%= link_to t(:tag_help), :controller => "help", :action => "tags" %></li>
+  <li><%= link_to t(:tag_help), help_path("tags") %></li>
 <% end %>

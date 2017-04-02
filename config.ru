@@ -2,7 +2,7 @@
 if defined? Unicorn
   require "unicorn/worker_killer"
   use Unicorn::WorkerKiller::MaxRequests, 4096, 8192
-  use Unicorn::WorkerKiller::Oom, (256*(1024**2)), (384*(1024**2))
+  use Unicorn::WorkerKiller::Oom, (384*(1024**2)), (512*(1024**2))
 end
 
 require ::File.expand_path("../config/environment",  __FILE__)

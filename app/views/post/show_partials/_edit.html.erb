@@ -58,7 +58,7 @@
               <% end %>
             </th>
             <td>
-              <%= text_area "post", "tags", :readonly => !@post.can_be_seen_by?(@current_user), :size => "50x4", :value => @post.cached_tags, :tabindex => 10 %>
+              <%= text_area "post", "tags", :readonly => !@post.can_be_seen_by?(@current_user), :size => "50x4", :value => tag_string(@tags[:include]), :tabindex => 10 %>
             <% if @post.can_be_seen_by?(@current_user) %>
               <%= link_to t(".related.tags"), "#", :data => { :toggle => "related-tags", :type => "all" } %> |
               <%= link_to t(".related.artists"), "#", :data => { :toggle => "related-tags", :type => "artist" } %> |

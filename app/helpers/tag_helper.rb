@@ -27,7 +27,7 @@ module TagHelper
     tags.each do |tag_type, name, count, _id|
       name ||= "UNKNOWN"
 
-      html << %(<li class="tag-link tag-type-#{html_escape(tag_type)}" data-name="#{html_escape(name)}" data-type="#{html_escape(tag_type)}">)
+      html << %(<li class="tag-type-#{html_escape(tag_type)}">)
 
       if CONFIG["enable_artists"] && tag_type == "artist"
         html << %(<a href="/artist/show?name=#{u(name)}">?</a> )
@@ -61,6 +61,12 @@ module TagHelper
     end
 
     html.html_safe
+  end
+
+  def tag_string(tags)
+    Tag.sort_by_type(tags).map do |tag|
+      tag[1]
+    end.join ' '
   end
 
   def cloud_view(tags, divisor = 6)

@@ -23,7 +23,7 @@ class TagAliasTest < ActiveSupport::TestCase
 
   def test_destroy_and_notify
     @alias.destroy_and_notify(User.find(2), "hohoho")
-    assert_not_nil(Dmail.find_by_body("A tag alias you submitted (tag2 &rarr; tag1) was deleted for the following reason: hohoho."))
+    assert_not_nil(Dmail.find_by_body("A tag alias you submitted (tag2 → tag1) was deleted for the following reason: hohoho."))
     assert_nil(TagAlias.find_by_id(@alias.id))
   end
 

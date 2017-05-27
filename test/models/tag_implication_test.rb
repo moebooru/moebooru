@@ -64,7 +64,7 @@ class TagImplicationTest < ActiveSupport::TestCase
 
   def test_destroy_and_notify
     @impl.destroy_and_notify(User.find(2), "hohoho")
-    assert_not_nil(Dmail.find_by_body("A tag implication you submitted (taga &rarr; tagb) was deleted for the following reason: hohoho."))
+    assert_not_nil(Dmail.find_by_body("A tag implication you submitted (taga → tagb) was deleted for the following reason: hohoho."))
     assert_nil(TagImplication.find_by_id(@impl.id))
   end
 end

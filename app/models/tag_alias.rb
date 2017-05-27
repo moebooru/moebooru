@@ -23,7 +23,7 @@ class TagAlias < ActiveRecord::Base
   # Destroys the alias and sends a message to the alias's creator.
   def destroy_and_notify(current_user, reason)
     if creator_id && creator_id != current_user.id
-      msg = "A tag alias you submitted (#{name} &rarr; #{alias_name}) was deleted for the following reason: #{reason}."
+      msg = "A tag alias you submitted (#{name} → #{alias_name}) was deleted for the following reason: #{reason}."
       Dmail.create(:from_id => current_user.id, :to_id => creator_id, :title => "One of your tag aliases was deleted", :body => msg)
     end
 

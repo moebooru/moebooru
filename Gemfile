@@ -18,7 +18,6 @@ gem "non-stupid-digest-assets"
 
 gem "pg", :platforms => [:ruby, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.0", :platforms => :jruby
-gem "foreigner"
 
 gem "diff-lcs"
 gem "dalli"

@@ -238,7 +238,7 @@ class ApplicationController < ActionController::Base
         cached = Rails.cache.read(key)
 
         unless cached.blank?
-          render :text => cached, :layout => false
+          render :plain => cached
           return
         end
       end

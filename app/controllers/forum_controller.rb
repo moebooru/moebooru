@@ -25,7 +25,7 @@ class ForumController < ApplicationController
       forum_post.created_at = Time.now
       render :partial => "post", :locals => { :post => forum_post }
     else
-      render :text => ""
+      render :plain => ""
     end
   end
 

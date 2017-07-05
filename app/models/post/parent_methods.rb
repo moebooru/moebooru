@@ -44,8 +44,8 @@ module Post::ParentMethods
   end
 
   def update_parent
-    return if !parent_id_changed? && !status_changed?
-    self.class.set_parent(id, parent_id, parent_id_was)
+    return if !saved_change_to_parent_id? && !saved_change_to_status?
+    self.class.set_parent(id, parent_id, parent_id_before_last_save)
   end
 
   def give_favorites_to_parent

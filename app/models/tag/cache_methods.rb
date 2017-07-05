@@ -8,7 +8,7 @@ module Tag::CacheMethods
     Rails.cache.write({ :tag_type => name }, self.class.type_name_from_value(tag_type))
 
     # Expire the tag cache if a tag's type changes.
-    if tag_type != tag_type_was
+    if saved_change_to_tag_type?
       Moebooru::CacheHelper.increment_version("tag")
     end
   end

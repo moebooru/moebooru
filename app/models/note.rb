@@ -22,7 +22,7 @@ class Note < ActiveRecord::Base
   def aux_callback
     # If our body has been changed and we have an old one, record it as the body;
     # otherwise if we're a new note and have no old body, record the current one.
-    { :note_body => body_was || body }
+    { :note_body => body_before_last_save || body }
   end
 
   module LockMethods

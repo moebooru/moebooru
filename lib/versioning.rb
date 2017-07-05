@@ -82,7 +82,7 @@ module ActiveRecord
           #
           # Don't use _changed?; it'll be true if a field was changed and then changed back,
           # in which case we must not create a change entry.
-          old = __send__("%s_was" % att.to_s)
+          old = __send__("%s_before_last_save" % att.to_s)
           new = __send__(att.to_s)
 
           #          p "%s:  %s -> %s" % [att.to_s, old, new]

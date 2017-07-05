@@ -104,10 +104,9 @@
 
       <% unless @initial %>
       <%= form_tag({:controller => "post", :action => "similar"}, :multipart => true, :id => "similar-form") do %>
-        <input name="forcegray" type="hidden" value="<%= h(@params[:forcegray]) %>">
-        <input name="services" type="hidden" value="<%= h(@params[:services]) %>">
-        <input name="threshold" type="hidden" value="<%= h(@params[:threshold]) %>">
-
+        <% similar_link_params(:search_id => nil).each do |key, value| %>
+          <%= hidden_field_tag(key, value) if !value.nil? %>
+        <% end %>
 
         <table class="form">
           <tfoot>

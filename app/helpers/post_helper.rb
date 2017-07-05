@@ -190,6 +190,10 @@ module PostHelper
     ExternalPost.get_service_icon(service)
   end
 
+  def similar_link_params(new_params)
+    params.permit(:search_id, :services, :threshold, :forcegray).merge(new_params)
+  end
+
   def size_mpix(post)
     mpix = (post.width * post.height).to_f / 1_000_000
 

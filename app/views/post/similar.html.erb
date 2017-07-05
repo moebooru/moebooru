@@ -33,12 +33,12 @@
       <div>
         <h5><%= t('.services') %></h5>
         <ul>
-          <li> <%= link_to t('.use_all_services'), :services => 'all', :search_id => params[:search_id] %>
+          <li> <%= link_to t('.use_all_services'), similar_link_params(:services => 'all') %>
           <% CONFIG["image_service_list"].map do |service, server| %>
           <li>
             <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
               <%= image_tag(get_service_icon(service), :class=>"service-icon", :id=>"list") %>
-              <%= link_to service, :services => service, :search_id => params[:search_id] %>
+              <%= link_to service, similar_link_params(:services => service) %>
               <% if @errors and @errors[server] %>
                 (<%= t('.down') %>)
                 <!-- <%= @errors[server][:message] %> -->
@@ -50,9 +50,9 @@
       <div>
         <h5><%= t('.options') %></h5>
         <ul>
-          <li><%= link_to (params[:forcegray] ? t('.mode_color') : t('.mode_gray')), :forcegray => (params[:forcegray] ? 0 : 1), :search_id => params[:search_id] %>
+          <li><%= link_to (params[:forcegray] ? t('.mode_color') : t('.mode_gray')), similar_link_params(:forcegray => (params[:forcegray] ? 0 : 1)) %>
           <% unless params[:threshold] %>
-          <li><%= link_to t('.show_more'), :threshold => 0, :search_id => params[:search_id] %></li>
+          <li><%= link_to t('.show_more'), similar_link_params(:threshold => 0) %></li>
           <% end %>
           <% if params[:url] %>
           <li>

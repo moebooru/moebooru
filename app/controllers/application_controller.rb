@@ -329,7 +329,7 @@ class ApplicationController < ActionController::Base
 
   # FIXME: better error handling instead of blank 400.
   def rescue_pg_invalid_query(exception)
-    case exception.original_exception
+    case exception.cause
     when PG::DatetimeFieldOverflow, PG::NumericValueOutOfRange
       head :bad_request
     else

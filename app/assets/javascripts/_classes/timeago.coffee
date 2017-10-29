@@ -3,19 +3,36 @@ $ = jQuery
 
 class @Moe.Timeago
   constructor: ->
+    $ @initialize
+
+
+  initialize: =>
+    @run()
+    @observe()
+
+
+  run: (nodes = document.body) =>
+    $(nodes)
+      .find(".js-timeago")
+      .addBack(".js-timeago")
+      .timeago()
+      .each (_i, el) ->
+        return if el.timeagoApplied
+
+        el.title = new Date(el.dateTime).toString()
+        el.timeagoApplied = true
+
+
+  observe: =>
     @observer = new MutationObserver @onMutate
+
     config =
       childList: true
       subtree: true
+
     @observer.observe document, config
 
 
   onMutate: (mutations) =>
     for mutation in mutations
-      $(mutation.addedNodes)
-        .find(".js-timeago")
-        .addBack(".js-timeago")
-        .timeago()
-        .each (_i, el) ->
-          el.title = new Date(el.dateTime).toString()
-        .removeClass(".js-timeago")
+      @run mutation.addedNodes

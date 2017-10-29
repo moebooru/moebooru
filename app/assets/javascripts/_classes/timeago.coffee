@@ -17,10 +17,7 @@ class @Moe.Timeago
       .addBack(".js-timeago")
       .timeago()
       .each (_i, el) ->
-        return if el.timeagoApplied
-
         el.title = new Date(el.dateTime).toString()
-        el.timeagoApplied = true
 
 
   observe: =>

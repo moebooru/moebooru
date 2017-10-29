@@ -12,6 +12,8 @@ gem "sass-rails", "~> 5.0" # Rails 5.1 default
 source "https://rails-assets.org" do
   gem "rails-assets-js-cookie"
   gem "rails-assets-mousetrap"
+  gem "rails-assets-timeago"
+  gem "rails-assets-MutationObserver"
 end
 
 gem "non-stupid-digest-assets"

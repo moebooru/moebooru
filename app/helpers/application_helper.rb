@@ -31,6 +31,13 @@ module ApplicationHelper
     content_tag("li", link_to(text, options, html_options), :class => klass)
   end
 
+  def timeago(time, options = {})
+    options[:class] ||= ""
+    options[:class] << " js-timeago"
+
+    content_tag(:time, time.to_s, options.merge(datetime: time.getutc.iso8601)) if time
+  end
+
   def format_text(text, _options = {})
     # The parses is more or less html safe
     # FIXME: for some reason rbx requires force encoding here.

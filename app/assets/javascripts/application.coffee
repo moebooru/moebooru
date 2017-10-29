@@ -1,9 +1,11 @@
 # Place your application-specific JavaScript functions and classes here
 # This file is automatically included by javascript_include_tag :defaults
 #
+#= require MutationObserver
 #= require prefix
 #= require jquery
 #= require jquery_ujs
+#= require timeago
 #= require js-cookie
 #= require cookie
 #= require jquery-ui/widgets/autocomplete
@@ -26,3 +28,4 @@
 #= require_tree ./_classes
 
 Moe.checkAll = new Moe.CheckAll
+Moe.timeago = new Moe.Timeago

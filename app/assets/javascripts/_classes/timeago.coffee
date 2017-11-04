@@ -3,12 +3,8 @@ $ = jQuery
 
 class @Moe.Timeago
   constructor: ->
-    $ @initialize
-
-
-  initialize: =>
-    @run()
     @observe()
+    @run()
 
 
   run: (nodes = document.body) =>

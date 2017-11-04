@@ -37,7 +37,7 @@
           </td>
           <td><%= h fp.author %></td>
           <td><%= h fp.last_updater %></td>
-          <td><%= t('time.x_ago', :t => time_ago_in_words(fp.updated_at)) %></td>
+          <td><%= timeago fp.updated_at %></td>
           <td><%= fp.response_count %></td>
         <% end %>
       <% end %>

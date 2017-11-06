@@ -1,78 +1,80 @@
-(($) ->
-  window.MenuDragDrop =
-    menu_links: null
-    submenus: null
-    submenu_links: null
-    which: null
-    drag_start_target: null
-    drag_start_submenu: null
-    drag_started: false
-    menu_links_enter: (e) ->
-      submenu = $(e.currentTarget).siblings('.submenu')
-      @submenus.hide()
-      @drag_start_submenu.css 'opacity', ''
-      submenu.show()
-      return
-    start_submenu_enter: (e) ->
-      @drag_start_submenu.off 'mousemove', $.proxy(@start_submenu_enter, this)
-      @drag_start_submenu.css 'opacity', ''
-      return
-    submenu_links_enter: (e) ->
-      $(e.currentTarget).addClass 'hover'
-      return
-    submenu_links_leave: (e) ->
-      $(e.currentTarget).removeClass 'hover'
-      return
-    do_drag_drop: ->
-      @drag_start_target.off 'mouseleave', $.proxy(@do_drag_drop, this)
-      @submenus.hide()
-      @drag_start_submenu.css('opacity', '0.4').show()
-      @drag_start_submenu.on 'mousemove', $.proxy(@start_submenu_enter, this)
-      @menu_links.on 'mouseenter', $.proxy(@menu_links_enter, this)
-      @submenu_links.on 'mouseenter', $.proxy(@submenu_links_enter, this)
-      @submenu_links.on 'mouseleave', $.proxy(@submenu_links_leave, this)
-      @drag_started = true
-      return
-    end_drag_drop: ->
-      @submenus.css('opacity', '').hide()
-      @drag_start_submenu.off 'mousemove', $.proxy(@start_submenu_enter, this)
-      @menu_links.off 'mouseenter', $.proxy(@menu_links_enter, this)
-      @submenu_links.off 'mouseenter', $.proxy(@submenu_links_enter, this)
-      @submenu_links.off 'mouseleave', $.proxy(@submenu_links_leave, this)
-      @submenu_links.removeClass 'hover'
-      @drag_started = false
-      return
-    mouseup: (e) ->
-      $(document).off 'mouseup', $.proxy(@mouseup, this)
-      @drag_start_target.off 'mouseleave', $.proxy(@do_drag_drop, this)
-      if @drag_started
-        @end_drag_drop()
-      target = $(e.target)
-      # only trigger click if it's submenu link and the button didn't change.
-      # A different, normal click will be triggered if it's different button.
-      if @submenus.find(target).length > 0 and @which == e.which
-        # if started with middle click, open the target in a new window.
-        if @which == 2
-          target.attr 'target', '_blank'
-        target[0].click()
-        target.attr 'target', null
-      return
-    mousedown: (e) ->
-      @which = e.which
-      if @which != 1 and @which != 2
-        return
-      @drag_start_target = $(e.currentTarget)
-      @drag_start_submenu = @drag_start_target.siblings('.submenu')
-      $(document).on 'mouseup', $.proxy(@mouseup, this)
-      @drag_start_target.on 'mouseleave', $.proxy(@do_drag_drop, this)
-      return
-    init: ->
-      @menu_links = $('#main-menu > ul > li > a')
-      @submenus = @menu_links.siblings('.submenu')
-      @submenu_links = @submenus.find('a')
-      @menu_links.on 'mousedown', $.proxy(@mousedown, this)
-      @menu_links.on 'dragstart', ->
-        false
-      return
-  return
-) jQuery
+$ = jQuery
+
+class @MenuDragDrop
+  constructor: ->
+    @menuLinks = $('#main-menu > ul > li > a')
+    @submenus = @menuLinks.siblings('.submenu')
+    @submenuLinks = @submenus.find('a')
+    @which = null
+    @dragStartTarget = null
+    @dragStartSubmenu = null
+    @dragStarted = false
+
+    @menuLinks.on 'mousedown', @mousedown
+    @menuLinks.on 'dragstart', -> false
+
+
+  menuLinksEnter: (e) =>
+    submenu = $(e.currentTarget).siblings('.submenu')
+    @submenus.hide()
+    @dragStartSubmenu.css 'opacity', ''
+    submenu.show()
+
+
+  startSubmenuEnter: (e) =>
+    @dragStartSubmenu.off 'mousemove', @startSubmenuEnter
+    @dragStartSubmenu.css 'opacity', ''
+
+
+  submenuLinkEnter: (e) ->
+    $(e.currentTarget).addClass 'hover'
+
+
+  submenuLinksLeave: (e) ->
+    $(e.currentTarget).removeClass 'hover'
+
+
+  doDragDrop: =>
+    @dragStartTarget.off 'mouseleave', @doDragDrop
+    @submenus.hide()
+    @dragStartSubmenu.css('opacity', '0.4').show()
+    @dragStartSubmenu.on 'mousemove', @startSubmenuEnter
+    @menuLinks.on 'mouseenter', @menuLinksEnter
+    @submenuLinks.on 'mouseenter', @submenuLinksEnter
+    @submenuLinks.on 'mouseleave', @submenuLinksLeave
+    @dragStarted = true
+
+
+  endDragDrop: =>
+    @submenus.css('opacity', '').hide()
+    @dragStartSubmenu.off 'mousemove', @startSubmenuEnter
+    @menuLinks.off 'mouseenter', @menuLinksEnter
+    @submenuLinks.off 'mouseenter', @submenuLinksEnter
+    @submenuLinks.off 'mouseleave', @submenuLinksLeave
+    @submenuLinks.removeClass 'hover'
+    @dragStarted = false
+
+
+  mouseup: (e) =>
+    $(document).off 'mouseup', @mouseup
+    @dragStartTarget.off 'mouseleave', @doDragDrop
+    @endDragDrop() if @dragStarted
+
+    target = $(e.target)
+    # only trigger click if it's submenu link and the button didn't change.
+    # A different, normal click will be triggered if it's different button.
+    if @submenus.find(target).length > 0 && @which == e.which
+      # if started with middle click, open the target in a new window.
+      target.attr 'target', '_blank' if @which == 2
+      target[0].click()
+      target.attr 'target', null
+
+
+  mousedown: (e) =>
+    @which = e.which
+    return if @which !in [1, 2]
+
+    @dragStartTarget = $(e.currentTarget)
+    @dragStartSubmenu = @dragStartTarget.siblings('.submenu')
+    $(document).on 'mouseup', @mouseup
+    @dragStartTarget.on 'mouseleave', @doDragDrop

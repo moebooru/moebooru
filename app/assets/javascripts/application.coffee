@@ -29,3 +29,6 @@
 
 Moe.checkAll = new Moe.CheckAll
 Moe.timeago = new Moe.Timeago
+
+jQuery ->
+  window.menuDragDrop = new MenuDragDrop

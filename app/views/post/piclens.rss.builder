@@ -22,7 +22,7 @@ cache [@posts.map(&:id), page_number], :expires => 1.hour do
           end
           xml.tag! :'media:thumbnail', :url => post.preview_url
           content_url = CONFIG['image_samples'] ? post.sample_url : post.file_url
-          xml.tag! :'media:content', :url => content_url, :type => MIME::Types.type_for(content_url).first
+          xml.tag! :'media:content', :url => content_url, :type => MiniMime.lookup_by_filename(content_url)&.content_type
         end
       end
     end

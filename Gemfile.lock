@@ -240,6 +240,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   mini_magick
+  mini_mime
   newrelic_rpm
   nokogiri
   non-stupid-digest-assets
@@ -263,4 +264,4 @@ DEPENDENCIES
   will_paginate
 
 BUNDLED WITH
-   1.15.4
+   1.16.0

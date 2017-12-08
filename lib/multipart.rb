@@ -1,5 +1,4 @@
 require "net/http"
-require "mime/types"
 
 class Net::HTTP::Post
   def multipart=(params = [])
@@ -15,11 +14,8 @@ class Net::HTTP::Post
       if p[:binary]
         self.body += "Content-Transfer-Encoding: binary\r\n"
 
-        mime_type = "application/octet-stream"
-        if p[:filename]
-          mime_types = MIME::Types.of(p[:filename])
-          mime_type = mime_types.first.content_type unless mime_types.empty?
-        end
+        mime_type = MiniMime.lookup_by_filename(p[:filename].to_s).try(:content_type)
+        mime_type ||= "application/octet-stream"
 
         self.body += "Content-Type: #{mime_type}\r\n"
       end

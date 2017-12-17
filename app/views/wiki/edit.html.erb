@@ -1,39 +1,24 @@
-<%= render :partial => "sidebar" %>
-
-<div class="content" style="float: left; width: 40em;">
-  <h2 class="wiki-title"><%= h(@wiki_page.pretty_title) %> (Editing)</h2>
-  <div id="wiki-view">
+<div class="wiki-edit">
+  <div class="wiki-edit__col wiki-edit__col--sidebar">
+    <%= render :partial => "sidebar" %>
   </div>
-  <%= form_tag({:action => "update"}, :level=>:member) do %>
-    <%= hidden_field "wiki_page", "title", :value => @wiki_page.title %>
-    <%= render :partial => 'edit_buttons' %>
-  <% end %>
+
+  <div class="wiki-edit__col wiki-edit__col--content">
+    <h2 class="wiki-title"><%= h(@wiki_page.pretty_title) %> (Editing)</h2>
+    <div id="wiki-view">
+    </div>
+    <%= form_tag({:action => "update"}, :level=>:member) do %>
+      <%= hidden_field "wiki_page", "title", :value => @wiki_page.title %>
+      <%= render :partial => 'edit_buttons' %>
+    <% end %>
+  </div>
+
+  <div class="wiki-edit__col wiki-edit__col--reference">
+    <h4>Reference</h4>
+    <div class="wiki-edit__reference-example">
+      <%= render "reference" %>
+    </div>
+  </div>
 </div>
 
-<div style="float: left; margin-left: 5em; width: 15em;">
-  <h4>Reference</h4>
-  <pre>
-A paragraph.
-
-Followed by another.
-
-h4. A header
-
-* List item 1
-* List item 2
-* List item 3
-
-Linebreaks are important between lists,
-headers, and paragraphs.
-
-URLs are automatically linked: http://www.google.com
-
-A [[wiki link]] (underscores are not needed).
-
-A {{post link}}.
-
-<a href="/help/dtext">Read more</a>.
-  </pre>
-</div>
-
-<%= render :partial => "footer" %>
+<%= render "footer" %>

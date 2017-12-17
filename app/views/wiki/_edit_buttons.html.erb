@@ -1,2 +1,11 @@
-<%= text_area("wiki_page", "body", :size => "60x30") %><br>
-<%= submit_tag("Save", :name => "save") -%><%= button_to_function("Cancel", "history.back()") -%><%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki_page_body').value)})") %>
+<div class="wiki-form">
+  <%= text_area("wiki_page", "body", :class => "wiki-form__body", :rows => 30) %>
+
+  <div class="wiki-form__actions">
+    <%= submit_tag("Save", :name => "save") %>
+
+    <%= button_to_function("Cancel", "history.back()") %>
+
+    <%= button_to_function("Preview", "$('wiki-view').innerHTML = '<em>Loading preview...</em>'; new Ajax.Updater('wiki-view', '/wiki/preview', {parameters: 'body=' + encodeURIComponent($('wiki_page_body').value)})") %>
+  </div>
+</div>

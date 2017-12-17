@@ -2325,3 +2325,15 @@ div#news-ticker li {
 div#news-ticker .close-link {
   float: right;
 }
+
+.wiki-form {
+  &__actions {
+    display: flex;
+  }
+
+  &__body {
+    width: 100%;
+    margin-bottom: 1em;
+    resize: vertical;
+  }
+}

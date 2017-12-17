@@ -1,38 +1,23 @@
-<%= render :partial => "sidebar" %>
-
-<div class="content" style="float: left; width: 40em;">
-  <div id="wiki-view">
+<div class="wiki-edit">
+  <div class="wiki-edit__col wiki-edit__col--sidebar">
+    <%= render :partial => "sidebar" %>
   </div>
-  <%= form_tag({:action => "create"}, :level=>:member) do %>
-    <%= text_field "wiki_page", "title" %>
-    <%= render :partial => 'edit_buttons' %>
-  <% end %>
-</div>
 
-<div style="float: left; width: 15em;">
-  <h4>Reference</h4>
-  <pre>
-A paragraph.
+  <div class="wiki-edit__col wiki-edit__col--content">
+    <div id="wiki-view">
+    </div>
+    <%= form_tag({:action => "create"}, :level=>:member) do %>
+      <%= text_field "wiki_page", "title" %>
+      <%= render :partial => 'edit_buttons' %>
+    <% end %>
+  </div>
 
-Followed by another.
-
-h4. A header
-
-* List item 1
-* List item 2
-* List item 3
-
-Linebreaks are important between lists,
-headers, and paragraphs.
-
-A "conventional link":http://www.google.com
-
-A [[wiki link]] (underscores are not needed)
-
-An aliased [[real page|wiki link]]
-
-<a href="http://redcloth.org/hobix.com/textile/quick.html" target="_blank">Read more</a>.
-  </pre>
+  <div class="wiki-edit__col wiki-edit__col--reference">
+    <h4>Reference</h4>
+    <div class="wiki-edit__reference-example">
+      <%= render "reference" %>
+    </div>
+  </div>
 </div>
 
 <%= render :partial => "footer" %>

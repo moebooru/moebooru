@@ -164,15 +164,15 @@ class PostController < ApplicationController
     user_id = @current_user.id
 
     ids = {}
-    (params["post"] || []).each do |post|
-      if post.is_a?(Array)
-        # We prefer { :id => 1, :rating => 's' }, but accept ["123", {:rating => 's'}], since that's
+    (params["post"] || []).each do |key_or_value, value|
+      if key_or_value.is_a?(String)
+        # We prefer { :id => 1, :rating => 's' }, but accept "123" => {:rating => 's'}, since that's
         # what we'll get from HTML forms.
-        post_id = post[0]
-        post = post[1]
+        post_id = key_or_value
+        post = value
       else
-        post_id = post[:id]
-        post.delete(:id)
+        post_id = key_or_value.delete(:id)
+        post = key_or_value
       end
 
       @post = Post.find(post_id)

@@ -366,20 +366,20 @@ class PoolController < ApplicationController
     from_posts = @from.pool_posts
     to_posts = @to.pool_posts
 
+
     if from_posts.length == to_posts.length
       @truncated = false
+      n = from_posts.length
     else
       @truncated = true
-      min_posts = [from_posts.length, to_posts.length].min
-      from_posts = from_posts.slice(0, min_posts)
-      to_posts = to_posts.slice(0, min_posts)
+      n = [from_posts.length, to_posts.length].min
     end
 
     @posts = []
-    from_posts.each_index do |idx|
+    n.times do |i|
       data = {}
-      from = from_posts[idx].post
-      to = to_posts[idx].post
+      from = from_posts[i].post
+      to = to_posts[i].post
       data[:from] = from
       data[:to] = to
 

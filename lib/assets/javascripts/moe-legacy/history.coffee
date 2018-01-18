@@ -1,23 +1,29 @@
+$ = jQuery
+
 window.History =
   last_click: -1
   checked: []
   dragging: false
+
+
   init: ->
-    # Watch mousedown events on the table itself, so clicking between table rows and dragging
-    # doesn't misbehave.
-    $('history').observe 'mousedown', ((event) ->
+    # Watch mousedown events on the table itself, so clicking between table rows
+    # and dragging doesn't misbehave.
+    $('#history').on 'mousedown', (event) ->
       if !event.shiftKey
-        # Clear last_click, so dragging will extend from the next position crossed instead of
-        # the previous position clicked.
+        # Clear last_click, so dragging will extend from the next position
+        # crossed instead of the previous position clicked.
         History.last_click = -1
       History.mouse_is_down()
       event.stopPropagation()
       event.preventDefault()
-      return
-    ), true
+
     History.update()
-    return
+
+
   add_change: (change_id, group_by_type, group_by_id, ids, user_id) ->
+    row = $("#r#{change_id}")
+
     History.checked.push
       id: change_id
       ids: ids
@@ -25,160 +31,176 @@ window.History =
       group_by_id: group_by_id
       user_id: user_id
       on: false
-      row: $('r' + change_id)
-    $('r' + change_id).observe 'mousedown', (e) ->
+      row: row
+
+    row.on 'mousedown', (e) ->
       History.mousedown(change_id, e)
-      true
-      return
-    $('r' + change_id).observe 'mouseover', (e) ->
+
+    row.on 'mouseover', (e) ->
       History.mouseover(change_id, e)
-      true
-      return
-    if $('r' + change_id).down('.id')
-      $('r' + change_id).down('.id').observe 'click', (event) ->
-        History.id_click change_id
-        return
-    $('r' + change_id).down('.author').observe 'click', (event) ->
+
+    row.find('.id').on 'click', (event) ->
+      History.id_click change_id
+
+    row.find('.author').on 'click', (event) ->
       History.author_click change_id
-      return
-    $('r' + change_id).down('.change').observe 'click', (event) ->
+
+    row.find('.change').on 'click', (event) ->
       History.change_click change_id
-      return
-    return
+
+
   update: ->
     # Set selected flags on selected rows, and remove them from unselected rows.
-    i = 0
-    while i < History.checked.length
-      row = History.checked[i].row
-      if History.checked[i].on
-        row.addClassName 'selected'
+    for entry in History.checked
+      row = entry.row
+      if entry.on
+        row.addClass 'selected'
       else
-        row.removeClassName 'selected'
-      ++i
+        row.removeClass 'selected'
+
     if History.count_selected() > 0
-      $('undo').removeClassName 'footer-disabled'
-      $('redo').removeClassName 'footer-disabled'
+      $('#undo').removeClass 'footer-disabled'
+      $('#redo').removeClass 'footer-disabled'
     else
-      $('undo').addClassName 'footer-disabled'
-      $('redo').addClassName 'footer-disabled'
-    return
-  id_click: (id, event) ->
+      $('#undo').addClass 'footer-disabled'
+      $('#redo').addClass 'footer-disabled'
+
+
+
+  id_click: (id) ->
     id = History.get_row_by_id(id)
-    $('search').value = History.checked[id].group_by_type.toLowerCase() + ':' + History.checked[id].group_by_id
-    return
-  author_click: (id, event) ->
+    entry = History.checked[id]
+    $('#search').val "#{entry.group_by_type.toLowerCase()}:#{entry.group_by_id}"
+
+
+  author_click: (id) ->
     id = History.get_row_by_id(id)
-    $('search').value = 'user:' + History.checked[id].user_id
-    return
-  change_click: (id, event) ->
+    $('#search').val "user:#{History.checked[id].user_id}"
+
+
+  change_click: (id) ->
     id = History.get_row_by_id(id)
-    $('search').value = 'change:' + History.checked[id].id
-    return
+    $('#search').val "change:#{History.checked[id].id}"
+
+
   count_selected: ->
     ret = 0
-    i = 0
-    while i < History.checked.length
-      if History.checked[i].on
-        ++ret
-      ++i
+    ret++ for entry in History.checked when entry.on
+
     ret
+
+
   get_first_selected_row: ->
-    i = 0
-    while i < History.checked.length
-      if History.checked[i].on
-        return i
-      ++i
+    return i for entry, i in History.checked when entry.on
+
+    # nothing found, return null
     null
+
+
   get_row_by_id: (id) ->
-    i = 0
-    while i < History.checked.length
-      if History.checked[i].id.toString() == id.toString()
-        return i
-      ++i
+    for entry, i in History.checked
+      return i if entry.id.toString() == id.toString()
+
+    # nothing found, return -1
     -1
+
+
   set: (first, last, isOn) ->
-    i = first
-    loop
-      History.checked[i].on = isOn
-      if i.toString() == last.toString()
-        break
-      i += if last > first then +1 else -1
-    return
+    first = parseInt(first, 10)
+    last = parseInt(last, 10)
+
+    [first, last] = [last, first] if last < first
+
+    for entry in History.checked[first..last]
+      entry.on = isOn
+
+
   doc_mouseup: (event) ->
     History.dragging = false
-    document.stopObserving 'mouseup', History.doc_mouseup
-    return
+    $(document).off 'mouseup', History.doc_mouseup
+
+
   mouse_is_down: ->
     History.dragging = true
-    document.observe 'mouseup', History.doc_mouseup
-    return
+    $(document).on 'mouseup', History.doc_mouseup
+
+
   mousedown: (id, event) ->
-    if !Event.isLeftClick(event)
-      return
+    # only for primary click
+    return if event.which != 1
+
     History.mouse_is_down()
     i = History.get_row_by_id(id)
-    if i == -1
-      return
+
+    # no row found?
+    return if i == -1
+
     first = null
     last = null
-    if History.last_click != -1 and event.shiftKey
+
+    if History.last_click != -1 && event.shiftKey
       first = History.last_click
       last = i
     else
       first = last = History.last_click = i
       History.checked[i].on = !History.checked[i].on
+
     isOn = History.checked[first].on
+
     if !event.ctrlKey
       History.set 0, History.checked.length - 1, false
     History.set first, last, isOn
     History.update()
+
     event.stopPropagation()
     event.preventDefault()
-    return
+
+
   mouseover: (id, event) ->
     i = History.get_row_by_id(id)
-    if i == -1
-      return
+
+    return if i == -1
+
     if History.last_click == -1
       History.last_click = i
-    if !History.dragging
-      return
+
+    return if !History.dragging
+
     History.set 0, History.checked.length - 1, false
     first = History.last_click
     last = i
     this_click = i
     History.set first, last, true
     History.update()
-    return
+
+
   undo: (redo) ->
-    if History.count_selected() == 0
-      return
+    return if History.count_selected() == 0
+
     list = []
-    i = 0
-    while i < History.checked.length
-      if !History.checked[i].on
-        ++i
-        continue
-      list = list.concat(History.checked[i].ids)
-      ++i
+
+    for entry in History.checked
+      list = list.concat(entry.ids) if entry.on
+
     if redo
       notice 'Reapplying...'
     else
       notice 'Undoing...'
-    new (Ajax.Request)('/history/undo.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters:
-        'id': list.join(',')
-        'redo': if redo then 1 else 0
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        if resp.success
-          text = resp.errors
-          if resp.successful > 0
-            text.unshift if redo then 'Changes reapplied.' else 'Changes undone.'
-          notice text.join('<br>')
-        else
-          notice 'Error: ' + resp.reason
-        return
-)
-    return
+
+    $.ajax '/history/undo.json',
+      method: 'POST'
+      dataType: 'json'
+      data:
+        id: list.join(',')
+        redo: if redo then 1 else 0
+    .done (resp) ->
+      text = resp.errors
+
+      if resp.successful > 0
+        mainMessage = "Changes #{if redo then 'reapplied' else 'undone'}."
+        text.unshift mainMessage
+
+      notice text.join('<br>')
+
+    .fail (resp) ->
+      notice "Error: #{resp.reason}"

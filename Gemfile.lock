@@ -114,8 +114,8 @@ GEM
       mini_portile2 (~> 2.3.0)
     non-stupid-digest-assets (1.0.9)
       sprockets (>= 2.0)
-    pg (1.0.0)
-    pg (1.0.0-x86-mingw32)
+    pg (0.21.0)
+    pg (0.21.0-x86-mingw32)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -244,7 +244,7 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri
   non-stupid-digest-assets
-  pg
+  pg (~> 0.18)
   pry
   puma
   rack-mini-profiler

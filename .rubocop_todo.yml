@@ -268,6 +268,7 @@ Style/ExtraSpacing:
 Style/FileName:
   Exclude:
     - 'lib/core_ext/ext-string.rb'
+    - 'lib/core_ext/fix-rack_params_key_unescape.rb'
     - 'lib/core_ext/patch-login_check_on_links_and_buttons.rb'
     - 'lib/core_ext/patch-remove_commit_search_from_form.rb'
     - 'lib/core_ext/patch-remove_utf8_enforcer_tag_in_form.rb'

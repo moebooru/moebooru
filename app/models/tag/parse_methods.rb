@@ -72,7 +72,7 @@ module Tag::ParseMethods
           if Regexp.last_match[1] == "user"
             q[:user] = Regexp.last_match[2]
           elsif Regexp.last_match[1] == "vote"
-            vote, user = Regexp.last_match[2].split(":")
+            vote, user = Regexp.last_match[2].split(":", 2)
             user_id = User.find_by_name(user).id rescue nil
             q[:vote] = [parse_helper(vote), user_id]
           elsif Regexp.last_match[1] == "-vote"

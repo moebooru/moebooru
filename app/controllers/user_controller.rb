@@ -217,7 +217,7 @@ class UserController < ApplicationController
 
     tags -= removed_tags
 
-    if @current_user.update_attribute(:blacklisted_tags, tags.join("\n"))
+    if @current_user.update(:blacklisted_tags => tags.join("\n"))
       respond_to_success("Tag blacklist updated", { :action => "home" }, :api => { :result => @current_user.blacklisted_tags_array })
     else
       respond_to_error(@current_user, :action => "edit")

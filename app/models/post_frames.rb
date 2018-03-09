@@ -185,7 +185,7 @@ class PostFrames < ActiveRecord::Base
     end
 
     # Delete any records that are completely cleaned up.
-    delete_all :is_target => false, :is_active => false, :is_created => false, :is_warehoused => false
+    where(:is_target => false, :is_active => false, :is_created => false, :is_warehoused => false).delete_all
   end
 
   def create_file

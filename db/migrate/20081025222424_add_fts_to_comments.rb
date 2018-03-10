@@ -1,4 +1,4 @@
-class AddFtsToComments < ActiveRecord::Migration
+class AddFtsToComments < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table comments add column text_search_index tsvector"
     execute "update comments set text_search_index = to_tsvector('english', body)"

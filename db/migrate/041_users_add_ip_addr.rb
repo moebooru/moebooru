@@ -1,4 +1,4 @@
-class UsersAddIpAddr < ActiveRecord::Migration
+class UsersAddIpAddr < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table users add column ip_addr text not null default ''"
     execute "alter table users add column last_logged_in_at timestamp not null default now()"

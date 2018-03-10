@@ -1,4 +1,4 @@
-class UsersAddCreatedAt < ActiveRecord::Migration
+class UsersAddCreatedAt < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE users ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT now()"
   end

@@ -1,4 +1,4 @@
-class AddUserFields < ActiveRecord::Migration
+class AddUserFields < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE users ADD COLUMN email TEXT NOT NULL DEFAULT ''"
     execute "ALTER TABLE users ADD COLUMN tag_blacklist TEXT NOT NULL DEFAULT ''"

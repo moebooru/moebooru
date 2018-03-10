@@ -1,4 +1,4 @@
-class  FixFtsUnderscores < ActiveRecord::Migration
+class  FixFtsUnderscores < ActiveRecord::Migration[5.1]
   def self.up
     execute """
       CREATE OR REPLACE FUNCTION replace_underscores(s varchar) RETURNS varchar IMMUTABLE AS $$

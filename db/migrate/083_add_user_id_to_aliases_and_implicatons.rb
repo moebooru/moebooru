@@ -1,4 +1,4 @@
-class AddUserIdToAliasesAndImplicatons < ActiveRecord::Migration
+class AddUserIdToAliasesAndImplicatons < ActiveRecord::Migration[5.1]
   def self.up
     add_column "tag_aliases", "creator_id", :integer
     add_column "tag_implications", "creator_id", :integer

@@ -1,4 +1,4 @@
-class DropDanbooruTextSearchConfiguration < ActiveRecord::Migration
+class DropDanbooruTextSearchConfiguration < ActiveRecord::Migration[5.1]
   def up
     execute <<-SQL.strip_heredoc
       DROP TEXT SEARCH CONFIGURATION danbooru;

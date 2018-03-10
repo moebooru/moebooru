@@ -1,4 +1,4 @@
-class UserRecordsCreate < ActiveRecord::Migration
+class UserRecordsCreate < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       create table user_records (

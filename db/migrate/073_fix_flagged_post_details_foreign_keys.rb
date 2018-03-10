@@ -1,4 +1,4 @@
-class FixFlaggedPostDetailsForeignKeys < ActiveRecord::Migration
+class FixFlaggedPostDetailsForeignKeys < ActiveRecord::Migration[5.1]
   def self.up
     remove_foreign_key :flagged_post_details, :flagged_post_details_post_id_fkey
     remove_foreign_key :flagged_post_details, :flagged_post_details_user_id_fkey

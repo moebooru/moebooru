@@ -1,4 +1,4 @@
-class AddUserIdIndexOnPostTagHistories < ActiveRecord::Migration
+class AddUserIdIndexOnPostTagHistories < ActiveRecord::Migration[5.1]
   def self.up
     add_index "post_tag_histories", "user_id"
   end

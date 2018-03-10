@@ -1,4 +1,4 @@
-class PostsAddIsFlagged < ActiveRecord::Migration
+class PostsAddIsFlagged < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table posts add column is_flagged boolean not null default false"
   end

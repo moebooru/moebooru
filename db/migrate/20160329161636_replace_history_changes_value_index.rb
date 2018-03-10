@@ -1,4 +1,4 @@
-class ReplaceHistoryChangesValueIndex < ActiveRecord::Migration
+class ReplaceHistoryChangesValueIndex < ActiveRecord::Migration[5.1]
   def up
     change_table :history_changes do |t|
       t.string :value_array, :array => true

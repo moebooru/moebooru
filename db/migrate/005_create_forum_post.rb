@@ -1,4 +1,4 @@
-class CreateForumPost < ActiveRecord::Migration
+class CreateForumPost < ActiveRecord::Migration[5.1]
   def self.up
     execute(<<-EOS)
       CREATE TABLE forum_posts (

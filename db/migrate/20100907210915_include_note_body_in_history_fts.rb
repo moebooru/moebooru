@@ -1,4 +1,4 @@
-class IncludeNoteBodyInHistoryFts < ActiveRecord::Migration
+class IncludeNoteBodyInHistoryFts < ActiveRecord::Migration[5.1]
   def self.up
     # For most value fields, just index it directly.  For cached_tags, index the changes compared
     # to the previous value.

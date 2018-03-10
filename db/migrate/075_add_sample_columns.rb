@@ -1,4 +1,4 @@
-class AddSampleColumns < ActiveRecord::Migration
+class AddSampleColumns < ActiveRecord::Migration[5.1]
   def self.up
     add_column :posts, :sample_width, :integer
     add_column :posts, :sample_height, :integer

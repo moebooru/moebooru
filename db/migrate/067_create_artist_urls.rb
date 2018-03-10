@@ -1,7 +1,7 @@
 class Artist < ActiveRecord::Base
 end
 
-class CreateArtistUrls < ActiveRecord::Migration
+class CreateArtistUrls < ActiveRecord::Migration[5.1]
   def self.up
     create_table :artist_urls do |t|
       t.column :artist_id, :integer, :null => false

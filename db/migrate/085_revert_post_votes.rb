@@ -1,4 +1,4 @@
-class RevertPostVotes < ActiveRecord::Migration
+class RevertPostVotes < ActiveRecord::Migration[5.1]
   # bad change disabled
   def self.down
   end

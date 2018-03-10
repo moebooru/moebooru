@@ -1,4 +1,4 @@
-class RemoveNeighborFieldsFromPosts < ActiveRecord::Migration
+class RemoveNeighborFieldsFromPosts < ActiveRecord::Migration[5.1]
   def self.up
     remove_column :posts, :next_post_id
     remove_column :posts, :prev_post_id

@@ -1,4 +1,4 @@
-class AddPendingToAliasesAndImplications < ActiveRecord::Migration
+class AddPendingToAliasesAndImplications < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE tag_aliases ADD COLUMN is_pending BOOLEAN NOT NULL DEFAULT FALSE"
     execute "ALTER TABLE tag_implications ADD COLUMN is_pending BOOLEAN NOT NULL DEFAULT FALSE"

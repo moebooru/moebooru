@@ -1,4 +1,4 @@
-class FavoriteTags < ActiveRecord::Migration
+class FavoriteTags < ActiveRecord::Migration[5.1]
   def self.up
     create_table :favorite_tags do |t|
       t.column :user_id, :integer, :null => false

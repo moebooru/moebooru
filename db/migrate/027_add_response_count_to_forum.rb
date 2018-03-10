@@ -1,4 +1,4 @@
-class AddResponseCountToForum < ActiveRecord::Migration
+class AddResponseCountToForum < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE forum_posts ADD COLUMN response_count INTEGER NOT NULL DEFAULT 0"
   end

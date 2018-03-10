@@ -1,4 +1,4 @@
-class AddPostForeignKeyToPostsTags < ActiveRecord::Migration
+class AddPostForeignKeyToPostsTags < ActiveRecord::Migration[5.1]
   def change
     execute <<-SQL
       DELETE FROM posts_tags

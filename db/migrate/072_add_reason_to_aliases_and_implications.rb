@@ -1,4 +1,4 @@
-class AddReasonToAliasesAndImplications < ActiveRecord::Migration
+class AddReasonToAliasesAndImplications < ActiveRecord::Migration[5.1]
   def self.up
     add_column :tag_aliases, :reason, :text, :null => false, :default => ""
     add_column :tag_implications, :reason, :text, :null => false, :default => ""

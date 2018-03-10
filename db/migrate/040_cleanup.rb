@@ -1,4 +1,4 @@
-class Cleanup < ActiveRecord::Migration
+class Cleanup < ActiveRecord::Migration[5.1]
   def self.up
     remove_column :forum_posts, :reply_count
     remove_column :users, :user_blacklist

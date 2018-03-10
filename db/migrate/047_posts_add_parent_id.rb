@@ -1,4 +1,4 @@
-class PostsAddParentId < ActiveRecord::Migration
+class PostsAddParentId < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table posts add column parent_id integer references posts on delete set null"
     execute "create index idx_posts_parent_id on posts (parent_id) where parent_id is not null"

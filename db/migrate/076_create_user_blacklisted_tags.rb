@@ -4,7 +4,7 @@ end
 class UserBlacklistedTags < ActiveRecord::Base
 end
 
-class CreateUserBlacklistedTags < ActiveRecord::Migration
+class CreateUserBlacklistedTags < ActiveRecord::Migration[5.1]
   def self.up
     create_table :user_blacklisted_tags do |t|
       t.column :user_id, :integer, :null => false

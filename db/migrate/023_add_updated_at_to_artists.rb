@@ -1,4 +1,4 @@
-class AddUpdatedAtToArtists < ActiveRecord::Migration
+class AddUpdatedAtToArtists < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE artists ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT now()"
   end

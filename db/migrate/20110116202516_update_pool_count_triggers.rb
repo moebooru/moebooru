@@ -1,4 +1,4 @@
-class UpdatePoolCountTriggers < ActiveRecord::Migration
+class UpdatePoolCountTriggers < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       CREATE OR REPLACE FUNCTION pools_posts_delete_trg() RETURNS "trigger" AS $$

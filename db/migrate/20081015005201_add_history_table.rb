@@ -1,4 +1,4 @@
-class AddHistoryTable < ActiveRecord::Migration
+class AddHistoryTable < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       CREATE TABLE history_changes (

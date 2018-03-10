@@ -1,4 +1,4 @@
-class AddReceiveMailsToUsers < ActiveRecord::Migration
+class AddReceiveMailsToUsers < ActiveRecord::Migration[5.1]
   def self.up
     add_column :users, :receive_dmails, :boolean, :default => false, :null => false
   end

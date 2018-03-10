@@ -1,6 +1,6 @@
 require "pool_post"
 
-class AddSlavePoolPosts < ActiveRecord::Migration
+class AddSlavePoolPosts < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE pools_posts ADD COLUMN master_id INTEGER REFERENCES pools_posts ON DELETE SET NULL"
     execute "ALTER TABLE pools_posts ADD COLUMN slave_id INTEGER REFERENCES pools_posts ON DELETE SET NULL"

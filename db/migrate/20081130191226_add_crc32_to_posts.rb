@@ -1,4 +1,4 @@
-class AddCrc32ToPosts < ActiveRecord::Migration
+class AddCrc32ToPosts < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE posts ADD COLUMN crc32 BIGINT"
     execute "ALTER TABLE posts ADD COLUMN sample_crc32 BIGINT"

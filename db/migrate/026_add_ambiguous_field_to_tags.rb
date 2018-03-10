@@ -1,4 +1,4 @@
-class AddAmbiguousFieldToTags < ActiveRecord::Migration
+class AddAmbiguousFieldToTags < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table tags add column is_ambiguous boolean not null default false"
     execute "update tags set is_ambiguous = true where tag_type = 2"

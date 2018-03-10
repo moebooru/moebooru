@@ -1,4 +1,4 @@
-class AddLastCommentReadAtToUser < ActiveRecord::Migration
+class AddLastCommentReadAtToUser < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table users add column last_comment_read_at timestamp not null default '1960-01-01'"
   end

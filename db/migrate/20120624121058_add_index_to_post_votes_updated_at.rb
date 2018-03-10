@@ -1,4 +1,4 @@
-class AddIndexToPostVotesUpdatedAt < ActiveRecord::Migration
+class AddIndexToPostVotesUpdatedAt < ActiveRecord::Migration[5.1]
   def self.up
     add_index :post_votes, :updated_at
   end

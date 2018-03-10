@@ -1,4 +1,4 @@
-class CleanUpUsers < ActiveRecord::Migration
+class CleanUpUsers < ActiveRecord::Migration[5.1]
   def self.up
     remove_column :users, :ip_addr
     remove_column :users, :tag_blacklist

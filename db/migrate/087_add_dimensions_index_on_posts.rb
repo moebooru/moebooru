@@ -1,4 +1,4 @@
-class AddDimensionsIndexOnPosts < ActiveRecord::Migration
+class AddDimensionsIndexOnPosts < ActiveRecord::Migration[5.1]
   def self.up
     add_index "posts", "width"
     add_index "posts", "height"

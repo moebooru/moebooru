@@ -1,4 +1,4 @@
-class AddVisibleOnProfileToTagSubscriptions < ActiveRecord::Migration
+class AddVisibleOnProfileToTagSubscriptions < ActiveRecord::Migration[5.1]
   def self.up
     remove_index :favorite_tags, :name
     remove_index :favorite_tags, :user_id

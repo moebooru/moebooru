@@ -1,4 +1,4 @@
-class ChangeArtistsA < ActiveRecord::Migration
+class ChangeArtistsA < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE artists ADD PRIMARY KEY (id)"
     execute "ALTER TABLE artists ADD COLUMN alias_id INTEGER REFERENCES artists ON DELETE SET NULL"

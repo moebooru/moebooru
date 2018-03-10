@@ -1,4 +1,4 @@
-class CreateForumPosts < ActiveRecord::Migration
+class CreateForumPosts < ActiveRecord::Migration[5.1]
   def self.up
   end
 

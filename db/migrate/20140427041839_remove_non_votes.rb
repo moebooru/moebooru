@@ -1,4 +1,4 @@
-class RemoveNonVotes < ActiveRecord::Migration
+class RemoveNonVotes < ActiveRecord::Migration[5.1]
   class PostVote < ActiveRecord::Base
   end
 

@@ -1,4 +1,4 @@
-class PostsAddStatus < ActiveRecord::Migration
+class PostsAddStatus < ActiveRecord::Migration[5.1]
   def self.up
     transaction do
       execute "create type post_status as enum ('deleted', 'flagged', 'pending', 'active')"

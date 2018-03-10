@@ -1,4 +1,4 @@
-class RenameInviteEmailField < ActiveRecord::Migration
+class RenameInviteEmailField < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE invites RENAME COLUMN invite_email TO email"
   end

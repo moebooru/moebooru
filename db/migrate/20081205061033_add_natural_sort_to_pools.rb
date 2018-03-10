@@ -1,4 +1,4 @@
-class AddNaturalSortToPools < ActiveRecord::Migration
+class AddNaturalSortToPools < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       CREATE OR REPLACE FUNCTION nat_sort_pad(t text) RETURNS text IMMUTABLE AS $$

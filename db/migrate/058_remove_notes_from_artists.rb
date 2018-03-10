@@ -1,4 +1,4 @@
-class RemoveNotesFromArtists < ActiveRecord::Migration
+class RemoveNotesFromArtists < ActiveRecord::Migration[5.1]
   def self.up
     Artist.find(:all, :conditions => ["notes <> '' and notes is not null"]).each do |artist|
       page = WikiPage.find_by_title(artist.name)

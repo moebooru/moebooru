@@ -1,4 +1,4 @@
-class CreateAdvertisements < ActiveRecord::Migration
+class CreateAdvertisements < ActiveRecord::Migration[5.1]
   def self.up
     create_table :advertisements do |t|
       t.column :image_url, :string, :null => false

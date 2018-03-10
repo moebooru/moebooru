@@ -1,4 +1,4 @@
-class AddLastSeenForumPostDate < ActiveRecord::Migration
+class AddLastSeenForumPostDate < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE users DROP COLUMN last_seen_forum_post_id"
     execute "ALTER TABLE users ADD COLUMN last_seen_forum_post_date TIMESTAMP NOT NULL DEFAULT now()"

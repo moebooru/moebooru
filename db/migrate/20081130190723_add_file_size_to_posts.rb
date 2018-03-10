@@ -1,4 +1,4 @@
-class AddFileSizeToPosts < ActiveRecord::Migration
+class AddFileSizeToPosts < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE posts ADD COLUMN file_size INTEGER NOT NULL DEFAULT 0"
     execute "ALTER TABLE posts ADD COLUMN sample_size INTEGER NOT NULL DEFAULT 0"

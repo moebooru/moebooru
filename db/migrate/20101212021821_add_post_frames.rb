@@ -1,4 +1,4 @@
-class AddPostFrames < ActiveRecord::Migration
+class AddPostFrames < ActiveRecord::Migration[5.1]
   def self.up
     create_table :post_frames do |t|
       t.column :post_id, :integer, :null => false

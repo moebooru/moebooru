@@ -1,4 +1,4 @@
-class PoolsCreate < ActiveRecord::Migration
+class PoolsCreate < ActiveRecord::Migration[5.1]
   def self.up
     ActiveRecord::Base.transaction do
       execute <<-EOS

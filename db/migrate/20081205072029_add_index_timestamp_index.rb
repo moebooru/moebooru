@@ -1,4 +1,4 @@
-class AddIndexTimestampIndex < ActiveRecord::Migration
+class AddIndexTimestampIndex < ActiveRecord::Migration[5.1]
   def self.up
     add_index :posts, :index_timestamp
   end

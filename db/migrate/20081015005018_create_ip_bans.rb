@@ -1,4 +1,4 @@
-class CreateIpBans < ActiveRecord::Migration
+class CreateIpBans < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       CREATE TABLE ip_bans (

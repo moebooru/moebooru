@@ -1,4 +1,4 @@
-class ForumAddIsLocked < ActiveRecord::Migration
+class ForumAddIsLocked < ActiveRecord::Migration[5.1]
   def self.up
     transaction do
       add_column :forum_posts, :is_locked, :boolean, :null => false, :default => false

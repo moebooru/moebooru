@@ -1,4 +1,4 @@
-class PostsTagsAddForeignKeys < ActiveRecord::Migration
+class PostsTagsAddForeignKeys < ActiveRecord::Migration[5.1]
   def self.up
     transaction do
       execute "update tags set post_count = (select count(*) from posts_tags pt where pt.tag_id = tags.id)"

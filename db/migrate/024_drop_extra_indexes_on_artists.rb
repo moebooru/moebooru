@@ -1,4 +1,4 @@
-class DropExtraIndexesOnArtists < ActiveRecord::Migration
+class DropExtraIndexesOnArtists < ActiveRecord::Migration[5.1]
   def self.up
     execute "DROP INDEX idx_artists__image_url"
     execute "DROP INDEX idx_favorites__post_user"

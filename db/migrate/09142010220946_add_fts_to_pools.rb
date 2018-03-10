@@ -1,4 +1,4 @@
-class AddFtsToPools < ActiveRecord::Migration
+class AddFtsToPools < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE pools ADD COLUMN search_index tsvector"
 

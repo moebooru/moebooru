@@ -1,4 +1,4 @@
-class MigrateUsersToContributor < ActiveRecord::Migration
+class MigrateUsersToContributor < ActiveRecord::Migration[5.1]
   def self.up
     User.find(:all, :conditions => "level = 30").each do |user|
       post_count = Post.count(:conditions => ["user_id = ? AND status <> 'deleted'", user.id])

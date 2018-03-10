@@ -1,4 +1,4 @@
-class CreatePostChangeSeq < ActiveRecord::Migration
+class CreatePostChangeSeq < ActiveRecord::Migration[5.1]
   def self.up
     execute "CREATE SEQUENCE post_change_seq INCREMENT BY 1 CACHE 10;"
     execute "ALTER TABLE posts ADD COLUMN change_seq INTEGER DEFAULT nextval('post_change_seq'::regclass) NOT NULL;"

@@ -1,4 +1,4 @@
-class AddInlineImages < ActiveRecord::Migration
+class AddInlineImages < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       CREATE TABLE inlines (

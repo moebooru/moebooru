@@ -1,4 +1,4 @@
-class AddFtsToHistory < ActiveRecord::Migration
+class AddFtsToHistory < ActiveRecord::Migration[5.1]
   def self.up
     execute "SET statement_timeout = 0"
     execute "SET search_path = public"

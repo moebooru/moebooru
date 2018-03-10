@@ -1,6 +1,6 @@
 require "post"
 
-class ConvertFavoritesToVotes < ActiveRecord::Migration
+class ConvertFavoritesToVotes < ActiveRecord::Migration[5.1]
   def self.up
     # Favorites doesn't have a dupe constraint and post_votes does, so make sure
     # there are no dupes before we copy.

@@ -1,4 +1,4 @@
-class MakeWikiTitlesUnique < ActiveRecord::Migration
+class MakeWikiTitlesUnique < ActiveRecord::Migration[5.1]
   def self.up
     execute "DROP INDEX idx_wiki_pages__title"
     execute "CREATE UNIQUE INDEX idx_wiki_pages__title ON wiki_pages (title)"

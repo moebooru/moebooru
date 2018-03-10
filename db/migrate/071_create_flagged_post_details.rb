@@ -4,7 +4,7 @@ end
 class FlaggedPostDetail < ActiveRecord::Base
 end
 
-class CreateFlaggedPostDetails < ActiveRecord::Migration
+class CreateFlaggedPostDetails < ActiveRecord::Migration[5.1]
   def self.up
     remove_column :posts, :approved_by
 

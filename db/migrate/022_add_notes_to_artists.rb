@@ -1,4 +1,4 @@
-class AddNotesToArtists < ActiveRecord::Migration
+class AddNotesToArtists < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table artists add column notes text not null default ''"
   end

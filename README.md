@@ -5,21 +5,20 @@ Moebooru
 
 An image board.
 
-* [Demo site](http://moe.dev.myconan.net)
-* [Source Repository](http://github.com/moebooru/moebooru)
+* [Source Repository](https://github.com/moebooru/moebooru)
 
 Requirements
 ------------
 
-As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application requires:
+As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application is developed using:
 
-* Ruby 2.1+
-* PostgreSQL 9.4+
+* Ruby 2.5
+* PostgreSQL 10.1
 * Bundler gem
 * ImageMagick
 * And various other requirement for the gems (check `Gemfile` for the list)
 
-On RHEL5 (and 6), it goes like this:
+On RHEL5 (and 6), it goes like this (outdated list):
 
 * gcc
 * gcc-c++

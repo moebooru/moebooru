@@ -1,4 +1,4 @@
-class UpdateHistories < ActiveRecord::Migration
+class UpdateHistories < ActiveRecord::Migration[5.1]
   def self.up
     ActiveRecord::Base.update_all_versioned_tables
   end

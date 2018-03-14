@@ -4,7 +4,7 @@ require "activerecord.rb"
 # migrated with our migrations, leave things alone; we're all set.  If the site was
 # migrated with upstream 085, the post_votes table is missing and needs to be
 # recreated.
-class NoReallyAddPostVotes < ActiveRecord::Migration
+class NoReallyAddPostVotes < ActiveRecord::Migration[5.1]
   def self.up
     return if select_value_sql "SELECT 1 FROM information_schema.tables WHERE table_name = 'post_votes'"
 

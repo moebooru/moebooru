@@ -1,4 +1,4 @@
-class AddTriggerForPostsTagsArray < ActiveRecord::Migration
+class AddTriggerForPostsTagsArray < ActiveRecord::Migration[5.1]
   def up
     execute <<-SQL.strip_heredoc
       CREATE OR REPLACE FUNCTION posts_tags_array_update() RETURNS trigger AS $$

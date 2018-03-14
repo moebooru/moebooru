@@ -1,4 +1,4 @@
-class AddInvitedByToUsers < ActiveRecord::Migration
+class AddInvitedByToUsers < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE users ADD COLUMN invited_by INTEGER"
   end

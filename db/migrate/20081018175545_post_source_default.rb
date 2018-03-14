@@ -1,4 +1,4 @@
-class PostSourceDefault < ActiveRecord::Migration
+class PostSourceDefault < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE posts ALTER COLUMN source SET DEFAULT ''"
   end

@@ -1,4 +1,4 @@
-class AddShownToPosts < ActiveRecord::Migration
+class AddShownToPosts < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE posts ADD COLUMN is_shown_in_index BOOLEAN NOT NULL DEFAULT TRUE"
     ActiveRecord::Base.update_versioned_tables Post, :attrs => [:is_shown_in_index]

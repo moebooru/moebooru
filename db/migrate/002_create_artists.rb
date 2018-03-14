@@ -1,4 +1,4 @@
-class CreateArtists < ActiveRecord::Migration
+class CreateArtists < ActiveRecord::Migration[5.1]
   def self.up
     execute(<<-EOS)
      CREATE TABLE artists (

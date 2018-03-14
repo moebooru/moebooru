@@ -1,4 +1,4 @@
-class AddRepeatCountToJobTasks < ActiveRecord::Migration
+class AddRepeatCountToJobTasks < ActiveRecord::Migration[5.1]
   def self.up
     add_column :job_tasks, :repeat_count, :integer, :null => false, :default => 0
     JobTask.create(:task_type => "calculate_favorite_tags", :status => "pending", :repeat_count => -1)

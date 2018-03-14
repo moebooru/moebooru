@@ -1,4 +1,4 @@
-class RemoveSlavePoolPosts < ActiveRecord::Migration
+class RemoveSlavePoolPosts < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE pools_posts DROP COLUMN master_id"
     execute "ALTER TABLE pools_posts DROP COLUMN slave_id"

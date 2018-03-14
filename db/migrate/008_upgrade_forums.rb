@@ -1,4 +1,4 @@
-class UpgradeForums < ActiveRecord::Migration
+class UpgradeForums < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE forum_posts ADD COLUMN reply_count INTEGER NOT NULL DEFAULT 0"
     execute "ALTER TABLE forum_posts ADD COLUMN last_updated_by INTEGER REFERENCES users ON DELETE SET NULL"

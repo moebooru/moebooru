@@ -1,4 +1,4 @@
-class DropLastSeenForumPostDateFromUsers < ActiveRecord::Migration
+class DropLastSeenForumPostDateFromUsers < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE users DROP COLUMN last_seen_forum_post_date"
   end

@@ -1,6 +1,6 @@
 require "activerecord.rb"
 
-class AddPostVotes < ActiveRecord::Migration
+class AddPostVotes < ActiveRecord::Migration[5.1]
   def self.up
     create_table :post_votes do |t|
       t.column :user_id, :integer, :null => false

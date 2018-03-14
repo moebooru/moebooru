@@ -1,4 +1,4 @@
-class DropIsAmbiguousFieldFromTags < ActiveRecord::Migration
+class DropIsAmbiguousFieldFromTags < ActiveRecord::Migration[5.1]
   def self.up
   end
 

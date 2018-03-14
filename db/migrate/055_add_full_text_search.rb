@@ -1,4 +1,4 @@
-class AddFullTextSearch < ActiveRecord::Migration
+class AddFullTextSearch < ActiveRecord::Migration[5.1]
   def self.up
     transaction do
       execute "alter table notes add column text_search_index tsvector"

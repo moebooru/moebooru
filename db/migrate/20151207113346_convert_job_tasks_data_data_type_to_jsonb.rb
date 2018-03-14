@@ -1,4 +1,4 @@
-class ConvertJobTasksDataDataTypeToJsonb < ActiveRecord::Migration
+class ConvertJobTasksDataDataTypeToJsonb < ActiveRecord::Migration[5.1]
   def up
     execute <<-SQL
       ALTER TABLE job_tasks RENAME data_as_json TO data;

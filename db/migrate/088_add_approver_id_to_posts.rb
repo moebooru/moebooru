@@ -1,4 +1,4 @@
-class AddApproverIdToPosts < ActiveRecord::Migration
+class AddApproverIdToPosts < ActiveRecord::Migration[5.1]
   def self.up
     add_column :posts, :approver_id, :integer
     add_foreign_key :posts, :approver_id, :users, :id, :on_delete => :set_null

@@ -1,4 +1,4 @@
-class PostsAddHasChildren < ActiveRecord::Migration
+class PostsAddHasChildren < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table posts add column has_children boolean not null default false"
   end

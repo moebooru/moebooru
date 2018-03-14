@@ -1,4 +1,4 @@
-class UpdateHistoriesTrigger < ActiveRecord::Migration
+class UpdateHistoriesTrigger < ActiveRecord::Migration[5.1]
   def up
     execute <<-SQL.strip_heredoc
       CREATE OR REPLACE FUNCTION history_changes_index_trigger() RETURNS trigger

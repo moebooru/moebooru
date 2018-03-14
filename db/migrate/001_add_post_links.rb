@@ -1,4 +1,4 @@
-class AddPostLinks < ActiveRecord::Migration
+class AddPostLinks < ActiveRecord::Migration[5.1]
   def self.up
     execute("ALTER TABLE posts ADD COLUMN next_post_id INTEGER REFERENCES posts ON DELETE SET NULL")
     execute("ALTER TABLE posts ADD COLUMN prev_post_id INTEGER REFERENCES posts ON DELETE SET NULL")

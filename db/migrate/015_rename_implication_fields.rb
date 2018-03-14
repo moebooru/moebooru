@@ -1,4 +1,4 @@
-class RenameImplicationFields < ActiveRecord::Migration
+class RenameImplicationFields < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE tag_implications RENAME COLUMN parent_id TO consequent_id"
     execute "ALTER TABLE tag_implications RENAME COLUMN child_id TO predicate_id"

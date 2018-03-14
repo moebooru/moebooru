@@ -1,4 +1,4 @@
-class AddSafePostCountToTags < ActiveRecord::Migration
+class AddSafePostCountToTags < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE tags ADD COLUMN safe_post_count INTEGER NOT NULL DEFAULT 0"
     execute "UPDATE tags SET safe_post_count = (SELECT COUNT(*) FROM posts p, posts_tags pt WHERE p.id = pt.post_id AND pt.tag_id = tags.id AND p.rating = 's')"

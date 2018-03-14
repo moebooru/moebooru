@@ -1,4 +1,4 @@
-class ExtendPostTagHistories < ActiveRecord::Migration
+class ExtendPostTagHistories < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE post_tag_histories ADD COLUMN user_id INTEGER REFERENCES users ON DELETE SET NULL"
     execute "ALTER TABLE post_tag_histories ADD COLUMN ip_addr TEXT"

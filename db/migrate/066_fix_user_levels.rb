@@ -1,4 +1,4 @@
-class FixUserLevels < ActiveRecord::Migration
+class FixUserLevels < ActiveRecord::Migration[5.1]
   def self.up
     execute("UPDATE users SET level = 50 WHERE level = 20")
     execute("UPDATE users SET level = 40 WHERE level = 10")

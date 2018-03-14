@@ -1,4 +1,4 @@
-class AddOldLevelToBans < ActiveRecord::Migration
+class AddOldLevelToBans < ActiveRecord::Migration[5.1]
   def self.up
     add_column :bans, :old_level, :integer
   end

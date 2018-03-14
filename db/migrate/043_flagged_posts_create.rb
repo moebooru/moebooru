@@ -1,4 +1,4 @@
-class FlaggedPostsCreate < ActiveRecord::Migration
+class FlaggedPostsCreate < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       create table flagged_posts (

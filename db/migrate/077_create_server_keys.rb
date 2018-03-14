@@ -1,6 +1,6 @@
 require "digest/sha1"
 
-class CreateServerKeys < ActiveRecord::Migration
+class CreateServerKeys < ActiveRecord::Migration[5.1]
   def self.up
     create_table :server_keys do |t|
       t.column :name, :string, :null => false

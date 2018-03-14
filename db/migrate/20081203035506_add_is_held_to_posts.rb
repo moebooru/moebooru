@@ -1,4 +1,4 @@
-class AddIsHeldToPosts < ActiveRecord::Migration
+class AddIsHeldToPosts < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE posts ADD COLUMN is_held BOOLEAN NOT NULL DEFAULT FALSE"
     execute "ALTER TABLE posts ADD COLUMN index_timestamp TIMESTAMP NOT NULL DEFAULT now()"

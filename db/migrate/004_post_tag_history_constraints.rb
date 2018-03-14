@@ -1,4 +1,4 @@
-class PostTagHistoryConstraints < ActiveRecord::Migration
+class PostTagHistoryConstraints < ActiveRecord::Migration[5.1]
   def self.up
     execute("UPDATE post_tag_histories SET created_at = now() WHERE created_at IS NULL")
     execute("UPDATE post_tag_histories SET ip_addr = '' WHERE ip_addr IS NULL")

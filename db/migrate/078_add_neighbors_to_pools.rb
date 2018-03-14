@@ -7,7 +7,7 @@ class Pool < ActiveRecord::Base
   has_many :pool_posts, :class_name => "PoolPost", :order => "sequence"
 end
 
-class AddNeighborsToPools < ActiveRecord::Migration
+class AddNeighborsToPools < ActiveRecord::Migration[5.1]
   def self.up
     add_column :pools_posts, :next_post_id, :integer
     add_column :pools_posts, :prev_post_id, :integer

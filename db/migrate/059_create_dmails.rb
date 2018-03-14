@@ -1,4 +1,4 @@
-class CreateDmails < ActiveRecord::Migration
+class CreateDmails < ActiveRecord::Migration[5.1]
   def self.up
     transaction do
       create_table :dmails do |t|

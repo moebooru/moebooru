@@ -1,4 +1,4 @@
-class CreateNewsUpdates < ActiveRecord::Migration
+class CreateNewsUpdates < ActiveRecord::Migration[5.1]
   def self.up
     execute <<-EOS
       CREATE TABLE news_updates (

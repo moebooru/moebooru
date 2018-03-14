@@ -1,4 +1,4 @@
-class AddPixivToArtists < ActiveRecord::Migration
+class AddPixivToArtists < ActiveRecord::Migration[5.1]
   def self.up
     add_column :artists, :pixiv_id, :integer
     add_index :artists, :pixiv_id

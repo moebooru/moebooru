@@ -1,4 +1,4 @@
-class ConvertIpTextToInet < ActiveRecord::Migration
+class ConvertIpTextToInet < ActiveRecord::Migration[5.1]
   def self.up
     transaction do
       execute "update posts set last_voter_ip = null where last_voter_ip = ''"

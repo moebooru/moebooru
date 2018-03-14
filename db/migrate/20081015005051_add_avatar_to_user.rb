@@ -1,4 +1,4 @@
-class AddAvatarToUser < ActiveRecord::Migration
+class AddAvatarToUser < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE users ADD COLUMN avatar_post_id INTEGER"
     execute "ALTER TABLE users ADD COLUMN avatar_width REAL"

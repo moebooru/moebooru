@@ -1,4 +1,4 @@
-class AddInvites < ActiveRecord::Migration
+class AddInvites < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE users ADD COLUMN invite_count INTEGER NOT NULL DEFAULT 0"
     execute <<-EOS

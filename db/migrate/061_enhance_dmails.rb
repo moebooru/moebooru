@@ -1,4 +1,4 @@
-class EnhanceDmails < ActiveRecord::Migration
+class EnhanceDmails < ActiveRecord::Migration[5.1]
   def self.up
     add_column :dmails, :parent_id, :integer
     add_foreign_key :dmails, :parent_id, :dmails, :id

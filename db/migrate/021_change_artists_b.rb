@@ -1,4 +1,4 @@
-class ChangeArtistsB < ActiveRecord::Migration
+class ChangeArtistsB < ActiveRecord::Migration[5.1]
   def self.up
     execute "ALTER TABLE artists DROP COLUMN japanese_name"
     execute "ALTER TABLE artists DROP COLUMN personal_name"

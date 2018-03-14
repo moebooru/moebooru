@@ -1,4 +1,4 @@
-class FlaggedPostsDropForeignKey < ActiveRecord::Migration
+class FlaggedPostsDropForeignKey < ActiveRecord::Migration[5.1]
   def self.up
     execute "alter table flagged_posts drop constraint flagged_posts_post_id_fkey"
   end

@@ -1,4 +1,4 @@
-class DropPostCountTriggers < ActiveRecord::Migration
+class DropPostCountTriggers < ActiveRecord::Migration[5.1]
   def self.up
     execute "drop trigger trg_posts__insert on posts"
     execute "drop trigger trg_posts_delete on posts"

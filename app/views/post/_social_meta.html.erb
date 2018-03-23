@@ -14,7 +14,7 @@
   # Other attributes are fulfilled by Open Graph.
   # Reference: https://dev.twitter.com/docs/cards
 %>
+<%= tag :meta, :name => 'twitter:card', :content => 'summary_large_image' %>
 <% if CONFIG['twitter_id'] %>
-  <%= tag :meta, :name => 'twitter:card', :content => 'summary_large_image' %>
   <%= tag :meta, :name => 'twitter:site', :content => "@#{CONFIG['twitter_id']}" %>
 <% end %>

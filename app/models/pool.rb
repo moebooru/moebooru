@@ -14,8 +14,8 @@ class Pool < ActiveRecord::Base
 
   module PostMethods
     def self.included(m)
-      m.has_many :pool_posts, lambda { where("pools_posts.active").order("nat_sort(sequence), post_id") }, :class_name => "PoolPost"
-      m.has_many :all_pool_posts, lambda { order "nat_sort(sequence), post_id" }, :class_name => "PoolPost"
+      m.has_many :pool_posts, lambda { where("pools_posts.active").order(Arel.sql("nat_sort(sequence), post_id")) }, :class_name => "PoolPost"
+      m.has_many :all_pool_posts, lambda { order Arel.sql("nat_sort(sequence), post_id") }, :class_name => "PoolPost"
       m.versioned :name
       m.versioned :description, :default => ""
       m.versioned :is_public, :default => true
@@ -91,7 +91,7 @@ class Pool < ActiveRecord::Base
       # the index.
       PoolPost.joins(:post)
         .where(:pool_id => id, :active => true, :posts => { :status => "active" })
-        .order("posts.is_shown_in_index DESC, NAT_SORT(pools_posts.sequence), pools_posts.post_id")
+        .order(Arel.sql("posts.is_shown_in_index DESC, NAT_SORT(pools_posts.sequence), pools_posts.post_id"))
         .to_a
         .find { |pool_post| pool_post if pool_post.post.can_be_seen_by?(Thread.current["danbooru-user"]) }
         .try(:post)

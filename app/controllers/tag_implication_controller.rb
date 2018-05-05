@@ -54,7 +54,7 @@ class TagImplicationController < ApplicationController
     end
 
     # FIXME: subquery in order
-    @implications = TagImplication.order("is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)")
+    @implications = TagImplication.order(Arel.sql("is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)"))
 
     if params[:query]
       tag_ids = Tag.where("name ILIKE ?", "*#{params[:query]}*".to_escaped_for_sql_like).select(:id)

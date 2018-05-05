@@ -81,7 +81,7 @@ class PoolController < ApplicationController
               else "created_at DESC"
             end
 
-    @pools = @pools.order(order).paginate options
+    @pools = @pools.order(Arel.sql(order)).paginate options
     @samples = {}
     @pools.each do |p|
       post = p.get_sample

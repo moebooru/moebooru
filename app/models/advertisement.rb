@@ -3,7 +3,7 @@ class Advertisement < ActiveRecord::Base
   validates_presence_of :image_url, :referral_url, :ad_type, :status, :width, :height
 
   def self.random(type = "vertical")
-    where(:ad_type => type, :status => "active").order("random()").take
+    where(:ad_type => type, :status => "active").order(Arel.sql("random()")).take
   end
 
   def self.reset_hit_count(ids)

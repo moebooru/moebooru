@@ -33,7 +33,7 @@ class WikiController < ApplicationController
       if params[:order] == "date"
         { :updated_at => :desc }
       else
-        "LOWER(title)"
+        Arel.sql("LOWER(title)")
       end
 
     limit = params[:limit] || 25

@@ -10,8 +10,11 @@
 #   inflect.uncountable %w( fish sheep )
 # end
 
-# These inflection rules are supported but not enabled by default:
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable %w( api )
-  # inflect.acronym 'RESTful'
 end
+
+# These inflection rules are supported but not enabled by default:
+# ActiveSupport::Inflector.inflections(:en) do |inflect|
+#   inflect.acronym 'RESTful'
+# end

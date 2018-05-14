@@ -6,14 +6,6 @@
   </div>
   <%= render :partial => "layouts/login" %>
 
-  <% if CONFIG["server_host"] == "yande.re" %>
-    <%# This is actually just to keyword "image board" and "danbooru" for searches like
-        "tinkle danbooru".  Be careful, this looks very stupid in search results if taken
-        too far: "Sex hentai porn danbooru image board"; this should hint search engines,
-        not spam them. %>
-    <div style="display: none;">Danbooru-based image board with a specialization in high-quality images.</div>
-  <% end %>
-
   <!--[if lt IE 7]>
   <div style="display: none;" id="old-browser"><%= t('.old_browser.info') %>
     <%= t('.old_browser.suggestion') %>:

@@ -529,6 +529,7 @@ class User < ActiveRecord::Base
         return false
       end
 
+      FileUtils.mkdir_p(File.dirname(avatar_path))
       FileUtils.mv(tempfile_path, avatar_path)
       FileUtils.chmod(0775, avatar_path)
 

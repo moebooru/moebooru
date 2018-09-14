@@ -3,7 +3,7 @@
   <%= form_tag({:controller => "post", :action => "index"}, :method => "get") do %>
     <div>
       <%= text_field_tag("tags", params[:tags], :size => 20) %>
-      <%= submit_tag t('.search'), :style => "display: none;" %>
+      <%= submit_tag t('.search'), :name => nil, :style => "display: none;" %>
     </div>
   <% end %>
 </div>

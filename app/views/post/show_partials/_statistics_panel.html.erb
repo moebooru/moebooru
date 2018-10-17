@@ -11,7 +11,7 @@
     <% end %>
     <% unless @post.source.blank? %>
       <% if @post.source[%r{\Ahttps?://}] %>
-        <li><%= t('.source') %>: <%= link_to @post.source.sub(%r{\Ahttps?://}, "")[0, 20] + "...", @post.normalized_source, :rel => 'nofollow', :target => "_blank" %></li>
+        <li><%= t('.source') %>: <%= link_to @post.source.sub(%r{\Ahttps?://}, "")[0, 20] + "...", @post.normalized_source, :rel => 'nofollow noopener noreferrer', :target => "_blank" %></li>
       <% else %>
         <li><%= t('.source') %>: <%= @post.source %></li>
       <% end %>

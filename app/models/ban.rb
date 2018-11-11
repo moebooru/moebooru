@@ -1,4 +1,4 @@
-class Ban < ActiveRecord::Base
+class Ban < ApplicationRecord
   before_create :save_level
   after_create :save_to_record
   after_create :update_level

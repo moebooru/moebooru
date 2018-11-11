@@ -1,4 +1,4 @@
-class PostFrames < ActiveRecord::Base
+class PostFrames < ApplicationRecord
   include Moebooru::TempfilePrefix
   belongs_to :post
 

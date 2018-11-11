@@ -1,4 +1,4 @@
-class Dmail < ActiveRecord::Base
+class Dmail < ApplicationRecord
   validates_presence_of :to_id
   validates_presence_of :from_id
   validates_format_of :title, :with => /\S/

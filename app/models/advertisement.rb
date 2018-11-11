@@ -1,4 +1,4 @@
-class Advertisement < ActiveRecord::Base
+class Advertisement < ApplicationRecord
   validates_inclusion_of :ad_type, :in => %w(horizontal vertical)
   validates_presence_of :image_url, :referral_url, :ad_type, :status, :width, :height
 

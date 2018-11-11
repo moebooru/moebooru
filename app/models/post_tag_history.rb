@@ -1,5 +1,5 @@
 # TODO: this isn't used anymore from what I can tell.
-class PostTagHistory < ActiveRecord::Base
+class PostTagHistory < ApplicationRecord
   belongs_to :user
   belongs_to :post
 

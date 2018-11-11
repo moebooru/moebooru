@@ -1,4 +1,4 @@
-class Post < ActiveRecord::Base
+class Post < ApplicationRecord
   STATUSES = %w(active pending flagged deleted)
 
   define_callbacks :delete

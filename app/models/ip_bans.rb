@@ -1,4 +1,4 @@
-class IpBans < ActiveRecord::Base
+class IpBans < ApplicationRecord
   belongs_to :user, :foreign_key => :banned_by
 
   def duration=(dur)

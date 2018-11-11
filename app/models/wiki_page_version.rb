@@ -1,4 +1,4 @@
-class WikiPageVersion < ActiveRecord::Base
+class WikiPageVersion < ApplicationRecord
   def author
     User.find_name(user_id)
   end

@@ -1,4 +1,4 @@
-class Note < ActiveRecord::Base
+class Note < ApplicationRecord
   include ActiveRecord::Acts::Versioned
 
   belongs_to :post

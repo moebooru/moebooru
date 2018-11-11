@@ -1,4 +1,4 @@
-class BatchUpload < ActiveRecord::Base
+class BatchUpload < ApplicationRecord
   belongs_to :user
 
   def data

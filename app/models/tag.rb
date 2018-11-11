@@ -1,4 +1,4 @@
-class Tag < ActiveRecord::Base
+class Tag < ApplicationRecord
   include Tag::TypeMethods
   include Tag::CacheMethods
   include Tag::RelatedTagMethods

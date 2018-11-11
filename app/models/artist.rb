@@ -1,4 +1,4 @@
-class Artist < ActiveRecord::Base
+class Artist < ApplicationRecord
   module UrlMethods
     module ClassMethods
       def find_all_by_url(url)

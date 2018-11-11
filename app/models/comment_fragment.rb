@@ -1,2 +1,2 @@
-class CommentFragment < ActiveRecord::Base
+class CommentFragment < ApplicationRecord
 end

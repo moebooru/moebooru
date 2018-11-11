@@ -1,4 +1,4 @@
-class TagAlias < ActiveRecord::Base
+class TagAlias < ApplicationRecord
   belongs_to :tag, :foreign_key => "alias_id"
   before_create :normalize
   before_create :validate_uniqueness

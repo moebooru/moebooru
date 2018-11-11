@@ -1,3 +1,3 @@
-class UserLog < ActiveRecord::Base
+class UserLog < ApplicationRecord
   belongs_to :user
 end

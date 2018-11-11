@@ -1,4 +1,4 @@
-class History < ActiveRecord::Base
+class History < ApplicationRecord
   belongs_to :user
   has_many :history_changes, -> { order("id") }
 

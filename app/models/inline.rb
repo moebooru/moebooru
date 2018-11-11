@@ -1,4 +1,4 @@
-class Inline < ActiveRecord::Base
+class Inline < ApplicationRecord
   belongs_to :user
   has_many :inline_images, -> { order :sequence }, :dependent => :destroy
 

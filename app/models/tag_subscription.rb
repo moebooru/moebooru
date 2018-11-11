@@ -1,5 +1,5 @@
 # encoding: utf-8
-class TagSubscription < ActiveRecord::Base
+class TagSubscription < ApplicationRecord
   belongs_to :user
   before_create :initialize_post_ids
   before_save :normalize_name

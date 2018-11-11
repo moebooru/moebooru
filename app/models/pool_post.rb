@@ -1,4 +1,4 @@
-class PoolPost < ActiveRecord::Base
+class PoolPost < ApplicationRecord
   self.table_name = "pools_posts"
   belongs_to :post
   belongs_to :pool, :touch => true

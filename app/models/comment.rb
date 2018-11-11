@@ -3,7 +3,7 @@ require "translate"
 #        moved to library instead. It's not really "view" helper anymore.
 include ApplicationHelper
 
-class Comment < ActiveRecord::Base
+class Comment < ApplicationRecord
   validates_format_of :body, :with => /\S/, :message => "has no content"
   belongs_to :post
   belongs_to :user

@@ -1,4 +1,4 @@
-class TagImplication < ActiveRecord::Base
+class TagImplication < ApplicationRecord
   before_create :validate_uniqueness
 
   def validate_uniqueness

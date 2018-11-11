@@ -1,4 +1,4 @@
-class JobTask < ActiveRecord::Base
+class JobTask < ApplicationRecord
   TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions upload_posts_to_mirrors periodic_maintenance upload_batch_posts update_post_frames)
   STATUSES = %w(pending processing finished error)
 

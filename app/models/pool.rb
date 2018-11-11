@@ -2,7 +2,7 @@ require "mirror"
 require "erb"
 include ERB::Util
 
-class Pool < ActiveRecord::Base
+class Pool < ApplicationRecord
   belongs_to :user
   validates_presence_of :name
 

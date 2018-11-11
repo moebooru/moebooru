@@ -1,4 +1,4 @@
-class HistoryChange < ActiveRecord::Base
+class HistoryChange < ApplicationRecord
   belongs_to :history
   belongs_to :previous, :class_name => "HistoryChange", :foreign_key => :previous_id
   after_create :set_previous

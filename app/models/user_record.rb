@@ -1,4 +1,4 @@
-class UserRecord < ActiveRecord::Base
+class UserRecord < ApplicationRecord
   belongs_to :user
   belongs_to :reporter, :foreign_key => "reported_by", :class_name => "User"
   validates_presence_of :user_id

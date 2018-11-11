@@ -1,2 +1,2 @@
-class PostsTag < ActiveRecord::Base
+class PostsTag < ApplicationRecord
 end

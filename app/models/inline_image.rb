@@ -24,7 +24,7 @@ require "fileutils"
 # Inline), crop to a region of interest, and post that inline.  The images can then be
 # compared in-place.  This can be used to clearly show editing problems and differences.
 
-class InlineImage < ActiveRecord::Base
+class InlineImage < ApplicationRecord
   belongs_to :inline
   before_validation :download_source, :on => :create
   before_validation :determine_content_type, :on => :create

@@ -515,9 +515,6 @@ en:
         search: Search Wiki
     news:
       close: Close
-    settings:
-      menu:
-        title: Settings
   note:
     footer:
       help: Help

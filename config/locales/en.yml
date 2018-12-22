@@ -207,10 +207,6 @@ en:
     add:
       post: Post
       title: Title
-    edit:
-      post: Post
-      post_title: Title
-      preview: Preview
     index:
       created_by: Created by
       help: Help
@@ -230,9 +226,6 @@ en:
     new:
       help: Help
       list: List
-      post: Post
-      post_title: Title
-      preview: Preview
       title: New Topic
     post:
       delete: Delete
@@ -243,6 +236,10 @@ en:
       stick: Stick
       unlock: Unlock
       unstick: Unstick
+    post_form:
+      post: Post
+      post_title: Title
+      preview: Preview
     search:
       author: Author
       last_updated: Last Updated

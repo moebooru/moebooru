@@ -1,0 +1,22 @@
+<%= form_tag({ action: action }, class: 'forum-post-form') do %>
+  <%= render 'shared/filter_spam' %>
+  <% if action == 'create' %>
+    <%= hidden_field 'forum_post', 'parent_id', value: params['parent_id'] %>
+  <% elsif action == 'update' %>
+    <%= hidden_field_tag 'id', params[:id] %>
+  <% end %>
+
+  <label for="forum_post_title" class="forum-post-form__row forum-post-form__row--title">
+    <div class="forum-post-form__title-label">
+      <%= t('.post_title') %>
+    </div>
+    <%= text_field 'forum_post', 'title', class: 'forum-post-form__title-input' %>
+  </label>
+
+  <%= text_area 'forum_post', 'body', rows: 20, class: 'forum-post-form__row forum-post-form__row--body' %>
+
+  <div class="forum-post-form__row">
+    <%= submit_tag t('.post') %>
+    <%= submit_to_remote "preview", t('.preview'), url: { action: 'preview' }, update: 'preview', success: "$('preview').show()" %>
+  </div>
+<% end %>

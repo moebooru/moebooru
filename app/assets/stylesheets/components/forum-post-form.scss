@@ -13,6 +13,10 @@
   &__row {
     margin: 2px 0;
 
+    &--body {
+      height: 400px;
+    }
+
     &--title {
       display: flex;
     }

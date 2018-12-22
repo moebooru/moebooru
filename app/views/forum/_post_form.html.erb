@@ -17,6 +17,6 @@
 
   <div class="forum-post-form__row">
     <%= submit_tag t('.post') %>
-    <%= submit_to_remote "preview", t('.preview'), url: { action: 'preview' }, update: 'preview', success: "$('preview').show()" %>
+    <%= submit_to_remote 'preview', t('.preview'), url: { action: 'preview' }, update: 'preview', success: "$('preview').show()" %>
   </div>
 <% end %>

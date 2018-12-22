@@ -6,21 +6,23 @@
   </div>
 
   <div id="reply" style="clear: both;">
-    <%= form_tag(action: 'create') do %>
+    <%= form_tag({ action: 'create' }, class: 'forum-post-form') do %>
       <%= render 'shared/filter_spam' %>
       <%= hidden_field 'forum_post', 'parent_id', value: params['parent_id'] %>
-      <table>
-        <tr>
-          <td><label for="forum_post_title"><%= t('.post_title') %></label></td>
-          <td><%= text_field 'forum_post', 'title', size: 60 %></td>
-        </tr>
-        <tr>
-          <td colspan="2"><%= text_area 'forum_post', 'body', rows: 20, cols: 80 %></td>
-        </tr>
-        <tr>
-          <td colspan="2"><%= submit_tag t('.post') %><%= submit_to_remote 'preview', t('.preview'), url: { action: 'preview' }, update: 'preview', success: '$("preview").show()' %></td>
-        </tr>
-      </table>
+
+      <label for="forum_post_title" class="forum-post-form__row forum-post-form__row--title">
+        <div class="forum-post-form__title-label">
+          <%= t('.post_title') %>
+        </div>
+        <%= text_field 'forum_post', 'title', class: 'forum-post-form__title-input' %>
+      </label>
+
+      <%= text_area 'forum_post', 'body', rows: 20, class: 'forum-post-form__row forum-post-form__row--body' %>
+
+      <div class="forum-post-form__row">
+        <%= submit_tag t('.post') %>
+        <%= submit_to_remote "preview", t('.preview'), url: { action: 'preview' }, update: 'preview', success: "$('preview').show()" %>
+      </div>
     <% end %>
   </div>
 

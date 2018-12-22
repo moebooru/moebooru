@@ -12,17 +12,23 @@
   <div class="blocked" id="block-reason" style="display: none;">
   </div>
 
-  <div id="main">
-    <div id="menu" class="settings">
-      <h5><%= t('.menu.title') %></h5>
-      <ul>
-        <li><%= link_to t('user.edit.title'), controller: '/user', action: :edit %></li>
-        <li><%= link_to t('settings.api.show.title'), settings_api_path %></li>
-        <li><%= link_to t('user.change_email.title'), user_change_email_path %></li>
-        <li><%= link_to t('user.change_password.title'), user_change_password_path %></li>
+  <div class="page-main">
+    <div class="sidebar-menu">
+      <h5 class="sidebar-menu__title"><%= t('.menu.title') %></h5>
+      <ul class="sidebar-menu__items">
+        <% [
+          [t('user.edit.title'), { controller: '/user', action: :edit }],
+          [t('settings.api.show.title'), settings_api_path],
+          [t('user.change_email.title'), user_change_email_path],
+          [t('user.change_password.title'), user_change_password_path],
+        ].each do |title, target| %>
+          <li class="sidebar-menu__item">
+            <%= link_to title, target, class: 'sidebar-menu__link' %>
+          </li>
+        <% end %>
       </ul>
     </div>
-    <div id="content">
+    <div class="page-main__content">
       <%= yield %>
     </div>
   </div>

@@ -1,0 +1,27 @@
+.sidebar-menu {
+  flex: none;
+  width: $sidebar-width;
+  padding: 0 20px 0 0;
+
+  &__item {
+    margin: 0;
+  }
+
+  &__items {
+    list-style: none;
+
+  }
+
+  &__link {
+    display: block;
+    padding: 4px 10px;
+
+    &:hover {
+      background: #333;
+    }
+  }
+
+  &__title {
+    padding: 0 10px 10px 10px;
+  }
+}

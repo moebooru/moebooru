@@ -1,0 +1,15 @@
+.wiki-form {
+  &, * {
+    box-sizing: border-box;
+  }
+
+  &__actions {
+    display: flex;
+  }
+
+  &__body {
+    width: 100%;
+    margin-bottom: 1em;
+    resize: vertical;
+  }
+}

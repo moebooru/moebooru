@@ -1,0 +1,4 @@
+zh_TW:
+  errors:
+    template:
+      body: '如下欄位出現錯誤：'

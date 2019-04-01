@@ -1,0 +1,1374 @@
+zh_TW:
+  activerecord:
+    attributes:
+      advertisement:
+        ad_type: 廣告類型
+        height: 圖像高度
+        hit_count: 點擊數
+        image_url: 圖像鏈接
+        referral_url: 推薦網址
+        reset_hit_count: 重置點擊數
+        status: 狀態
+        width: 寬度
+      user:
+        current_password: 當前密碼
+        password: 密碼
+        password_confirmation: 密碼確認
+    errors:
+      models:
+        wiki_page:
+          no_change: 頁面內容/標題 無變化
+    models:
+      advertisement: 廣告
+  admin:
+    edit_user:
+      level: 等級
+      save: 保存
+      user: 用戶
+    index:
+      cache_statistics: 緩存統計
+      edit_user: 編輯用戶
+      reset_password: 重置密碼
+      title: 管理員
+    reset_password:
+      name: 用戶名
+      reset: 重置
+      title: 重置密碼
+  advertisements:
+    edit:
+      title: '編輯廣告#%{id}'
+    index:
+      reset_hit_count: 重置點擊數
+      title: 廣告
+    new:
+      title: 新廣告
+    show:
+      title: '廣告#%{id}'
+  artist:
+    create:
+      alias_for: 別稱 for
+      aliases: 別稱
+      info: 用逗號開多個別稱與組別內容
+      members: 成員
+      name: 繪師名
+      notes: 附註
+      urls: URLs
+    destroy:
+      confirm: 你確定刪除%{name}嗎？
+      title: 刪除繪師
+    footer:
+      add: 添加
+      help: 幫助
+      list: 列表
+    index:
+      date: 日期
+      delete: 刪除繪師
+      edit: 編輯繪師
+      find: 按繪師找圖
+      is_alias: 此 繪師 是一個別稱為
+      is_group: 該繪師（隸屬於）一社團
+      last_modified: 最後編輯者為
+      name: 名稱
+      search: 搜索
+      title: 繪師
+      updated_by: 更新者
+    update:
+      preview: 預覽附註
+  banned:
+    index:
+      expires_in: 這將會在 %{t} 到期.
+      permanent: 永久封禁
+      reason: 你已經被封禁
+  batch:
+    create:
+      files: 文件
+      load_file_index: 載入文件目錄
+      submit: 開始上傳
+      tags: 標簽
+      title: 隊列上傳
+      url: URL
+    index:
+      cancel: 取消所有上傳
+      clear: 清除已完成上傳
+      completed_html: Post %{id} 完成
+      exists_html: Post %{id} 已經存在
+      pause: 暫停
+      paused: 已暫停
+      pending: 等待審核中
+      queue_uploads: 隊列上傳
+      resume: 繼續
+      retry_failed: 重試失敗
+      status: 狀態
+      tags: 標簽
+      title: 批量隊列
+      uploading: 上傳中
+      url: URL
+      username: 用戶
+  buttons:
+    _no: '否'
+    _yes: '是'
+    add: 添加
+    approve: 通過
+    back: 返回
+    cancel: 取消
+    delete: 刪除
+    edit: 編輯
+    save: 保存
+    search: 搜索
+    select:
+      all: 全選
+      invert: 反向選定
+    update: 更新
+  c:
+    pool:
+      not_found: "找不到 id 為%{id}的圖集"
+  comment:
+    comment:
+      delete: 刪除
+      edit: 編輯
+      flag: 標記待刪除
+      quote: 引用
+    comments:
+      bump: 發帖不頂帖
+      more: 更多
+      post: 發送
+      reply: 回復
+    edit:
+      save: 保存更改
+      title: 編輯評論
+    footer:
+      help: 幫助
+      list: 列表
+      search: 搜索
+      moderate: 管理
+    index:
+      date: 日期
+      empty: 暫無評論
+      hidden: 隱藏
+      score: 得分
+      tags: 標簽
+      title: 評論
+      translation_html: 評論由 %{p} 翻譯
+      user: 用戶
+    moderate:
+      approve: 通過
+      author: 作者
+      body: 正文
+      delete: 刪除
+      select_all: 選擇所有
+      select_invert: 反向選定
+      title: 管理評論
+    search:
+      author: 作者
+      message: 消息
+      post: 投稿
+      submit: 搜索
+      time: 時間
+    show:
+      return: 回到圖帖
+      title: 評論
+  confirmations:
+    is_sure: 確定要這樣做？
+  dmail:
+    compose:
+      form:
+        body: 正文
+        title: 標題
+        to: To
+      preview: 預覽
+      preview_loading: 預覽加載中…
+      send: 發送
+      title: 編寫消息
+    confirm_mark_all_read:
+      title: 全部標為已讀
+      info: 你確定將所有郵件標為已讀嗎？
+    footer:
+      compose: 編寫
+      inbox: 收件箱
+      mark_all_read: 全部標為已讀
+    inbox:
+      empty: 你沒有消息.
+      table:
+        from: 來自
+        title: 標題
+        to: 致
+        when: 時間
+      title: 收件箱
+    message:
+      sent_by_html: 由 %{user} %{x_ago} 前發送
+  forum:
+    add:
+      post: 發送
+      title: 標題
+    edit:
+      post: 發送
+      post_title: 標題
+      preview: 預覽
+    index:
+      created_by: 創建者
+      help: 幫助
+      is_locked: (鎖定)
+      last: 最近
+      mark: 全部標為已讀
+      new: 新主題
+      post: 發送
+      post_title: 標題
+      preview: 預覽
+      responses: 反應
+      search: 搜索
+      sticky: 置頂
+      title: 論壇
+      updated: 最後更新
+      updated_by: 更新者
+    new:
+      help: 幫助
+      list: 列表
+      post: 發送
+      post_title: 標題
+      preview: 預覽
+      title: 新主題
+    post:
+      delete: 刪除
+      delete_confirm: 你確認刪除此帖嗎?
+      edit: 編輯
+      lock: 鎖定
+      quote: 引用
+      stick: 置頂
+      unlock: 解除鎖定
+      unstick: 解除置頂
+    search:
+      author: 作者
+      last_updated: 按更新時間
+      last_updated_by: '%{t_ago} by %{u}'
+      message: 消息
+      post_title: 標題
+      search: 搜索
+    show:
+      help: 幫助
+      list: 列表
+      locked: 該主題已被鎖定.
+      new: 新主題
+      parent: 父項
+      post: 發送
+      preview: 預覽
+      reply: 回復
+  help:
+    index:
+      about: 關於 Moebooru
+      accounts: 帳戶
+      api: API
+      artists: 繪師
+      bookmarklet: 書簽
+      bugs: Bugs
+      cheat_sheet: 使用技巧
+      comments: 評論
+      dtext: DText
+      faq: 常見問題
+      firefox_ext: Firefox 擴充套件
+      help: 幫助
+      image_sampling: 圖片示例
+      irc: IRC 即時聊天
+      mass_tag_edit: 批量標簽編輯
+      notes: 附註
+      pools: 圖集
+      post_relationships: 圖帖間的關系
+      posts: 投稿
+      ratings: 評級
+      source: 源代碼
+      starting: 開始使用
+      suggestions: 建議
+      tag_aliases: 標簽別稱
+      tag_implications: 標簽映射
+      tag_scripts: 標簽腳本
+      tags: 標簽
+      voting: 投票
+      wiki: Wiki
+  helpers:
+    submit:
+      advertisement:
+        create: 新建
+        update: 保存
+  history:
+    index:
+      change: 更改
+      date: 日期
+      for: 歷史記錄：
+      id: Id
+      object_type: 類型
+      redo: 重做
+      search: 搜索
+      show:
+        all: 顯示所有標簽
+        changed: 僅顯示變更的標簽
+      title: 歷史
+      type:
+        all: 全部
+        pools: 圖集
+        posts: 投稿
+        tags: 標簽
+      undo: 撤銷
+      user: 用戶
+  inline:
+    crop:
+      crop_avatar: 選擇區域然後按下回車鍵以裁剪圖片。這個操作將無法被撤銷。
+    edit:
+      add_do: 添加圖片
+      add_image: 添加一張圖片
+      add_image_description: 添加描述
+      add_set_description_info: 點擊添加對這一系列的描述
+      copy: 復制
+      crop: 裁剪
+      delete: 刪除
+      delete_confirm: 確認刪除這組圖片嗎?
+      description: 描述
+      file: 文件
+      move:
+        down: 下移
+        up: 上移
+      preview: 預覽
+      remove: 移除圖片
+      remove_confirm: 確認移除嗎?
+      save: 更檔保存
+      source: Source
+      tag: 'Inline 標簽: 圖像 #%{id}'
+    footer:
+      help: 幫助
+      list: 列表
+    index:
+      create: 新建
+      description: 描述
+      first_image: 第一張圖片
+      images: 圖片
+      user: 用戶
+  job_task:
+    index:
+      table:
+        data: 數據
+        id: Id
+        message: 消息
+        status: 狀態
+        type: 類型
+      title: 工作任務
+    show:
+      nav:
+        list: 列表
+        restart: 重新開始
+      table:
+        data: 數據
+        id: Id
+        message: 消息
+        status: 狀態
+        type: 類型
+      title: '項目 #%{id}'
+  layout_login: "登入"
+  layout_login_text: "登入. 創建新帳號, 輸入用戶名與密碼."
+  layout_logout: "登出"
+  layout_mail: "郵件"
+  layout_mass_edit: "編輯"
+  layout_moderate: "管理"
+  layout_more: "更多 »"
+  layout_name: "名稱"
+  layout_new_mail: "新郵件"
+  layout_new_topic: "新主題"
+  layout_no_email: "您的帳號檔案中不包含 email 地址，所以我們不能為您重置密碼。"
+  layout_not_exist: "此用戶名之前無人註冊.  若要創建新帳號, 請確認密碼並登陸."
+  layout_notes: "附註"
+  layout_password: "密碼"
+  layout_pools: "圖集"
+  layout_popular: "人氣"
+  layout_posts: "投稿"
+  layout_profile: "個人資料"
+  layout_random: "隨機"
+  layout_requests: "請求"
+  layout_reset: "重置密碼"
+  layout_reset_successful: "密碼重置中. 請在數分鐘後檢查你的電子郵箱."
+  layout_search_artists: "搜索繪師"
+  layout_search_comments: "搜索評論"
+  layout_search_forum: "搜索論壇"
+  layout_search_notes: "搜索附註"
+  layout_search_pools: "搜索圖集"
+  layout_search_posts: "搜索帖子"
+  layout_search_tags: "搜索標簽"
+  layout_search_wiki: "搜索維基"
+  layout_settings: "設定"
+  layout_site_help: "本站幫助頁"
+  layout_tags: "標簽"
+  layout_unknown_user: "本帳號不存在."
+  layout_upload: "上傳"
+  layout_view_artists: "查看繪師"
+  layout_view_comments: "查看評論"
+  layout_view_notes: "查看附註"
+  layout_view_pools: "查看圖集"
+  layout_view_posts: "看貼"
+  layout_view_tags: "查看標簽"
+  layout_wiki: "維基"
+  layout_wiki_index: "查看維基索引"
+  layout_wrong_email: "email 地址與帳號不相符."
+  layouts:
+    default:
+      old_browser:
+        hide: (隱藏此條消息)
+        info: 你的瀏覽器太舊了，因此這個站點也許不能被正確的顯示
+        suggestion: 請考慮更新瀏覽器至較新版本
+    login:
+      email: Email 地址
+      email_info: 若你在創建帳號時提供電郵信箱或者在註冊後更新電郵信息, 之後你可以重置登入密碼.
+      info: 請先登入. 若要創建新帳號,您也可以在此輸入您想要使用的用戶名與密碼.
+      login: 登陸
+      name: 用戶名
+      password: 密碼
+      password_confirm: 確認密碼
+      popup:
+        email_reset: "輸入你在註冊時填寫的電郵信箱.  你將收到含新密碼的電子郵件."
+        exist: 此用戶名已被註冊.  若要創建新帳號, 請選擇別的用戶名.
+        invalid_email: 向目標信箱發送郵件失敗.
+        no_email: "您的帳號檔案中不包含 email 地址，所以我們不能為您重置密碼。"
+        not_exist: "此用戶名之前無人註冊.  若要創建新帳號, 請確認密碼並登陸."
+        reset_successful: 密碼已重置。請查收您的電子郵件。
+        unknown_user: 本帳號不存在.
+        wrong_email: email 地址與帳號不相符.
+      reset: 重置密碼
+    menu:
+      account:
+        _: 我的帳戶
+        change_password: 更改密碼
+        favorites: 我的收藏
+        login: 登入
+        logout: 登出
+        mail: 我的郵件
+        profile: 個人資料
+        reset: 重置密碼
+        settings: 設置
+      artists:
+        _: 繪師
+        create: 新建
+        search: 搜索繪師
+        view: 查看繪師
+      comments:
+        _: 評論
+        moderate: 管理
+        search: 搜索評論
+        view: 查看評論
+      forum:
+        _: 論壇
+        mark_all_read: 全部標為已讀
+        new: 新主題
+        search: 搜索論壇
+        view: 查看主題
+      help:
+        _: 幫助
+        artist: 畫師幫助
+        comment: 評論幫助
+        forum: 論壇幫助
+        note: 附註幫助
+        pool: 圖集幫助
+        post: 看貼幫助
+        site: 本站幫助頁
+        tag: 標簽幫助
+        wiki: wiki幫助
+      more: 更多 »
+      new_mail: 新郵件
+      notes:
+        _: 附註
+        requests: 請求
+        search: 搜索附註
+        view: 查看附註
+      pools:
+        _: 圖集
+        create: 創建新圖集
+        search: 搜索圖集
+        view: 查看圖集
+      posts:
+        _: 投稿
+        batch: 批量上傳
+        history: 歷史
+        image_search: 以圖搜圖
+        moderate: 管理
+        popular: 人氣
+        random: 隨機
+        search: 搜索帖子
+        upload: 上傳
+        view: 看貼
+      tags:
+        _: 標簽
+        aliases: 別稱
+        edit: 編輯
+        implications: 關聯
+        mass_edit: 批量編輯
+        popular: 人氣
+        search: 搜索標簽
+        view: 查看標簽
+      wiki:
+        _: 維基
+        create: 創建新頁面
+        index: 查看維基索引
+        search: 搜索維基
+    news:
+      close: 關閉
+  note:
+    footer:
+      help: 幫助
+      history: 歷史
+      list: 列表
+      requests: 請求
+      search: 搜索
+    history:
+      revert: 撤銷
+      revert_confirm: 確認撤銷對此附註的編輯嗎?
+      table:
+        body: 正文
+        date: 日期
+        edited: 編輯者
+        note: 附註
+        options: 選項
+        post: 投稿
+      title: 附註歷史
+    index:
+      title: 附註
+    note:
+      click: 點擊開始編輯
+    search:
+      search: 搜索
+      title: 搜索附註
+  pool:
+    add_post:
+      add: 添加項
+      cancel: 取消
+      info: '選擇將此圖帖要加入的圖集:'
+      order: 排序
+      pool: 圖集
+      title: 添加到圖集
+    copy:
+      copy: 復制圖集
+      name: 繪師名
+      title: 復制克隆
+    create:
+      cancel: 取消
+      description: 描述
+      is_public: 公開此圖集嗎?
+      name: 繪師名
+      save: 保存
+      title: 創建圖集
+    destroy:
+      confirm: '你確定要刪除圖集 %{name} 嗎？'
+      title: 刪除
+    footer:
+      help: 幫助
+      list: 列表
+      new: 新建
+    import:
+      import: 導入
+      info: 在進行標簽搜索後，你可以往圖集中導入所有符合條件的帖子.
+      search: 搜索
+      title: '導入圖集: %{name}'
+    index:
+      search: 搜索
+      table:
+        created: 創建時間
+        creator: 創建者
+        name: 繪師名
+        posts: 帖子
+        updated: 最後更新
+      title: '%{q} - 圖集'
+      title_main: 圖集
+    order:
+      auto_order: 自動排序
+      info: 圖帖將以升序排列.
+      interval: 輸入步長
+      minus_one: '-1'
+      order: 排序
+      plus_one: '+1'
+      reverse: 撤銷
+      title_html: '排序圖集: %{name}'
+    select_form:
+      add: 添加項
+    show:
+      delete_mode_info: '啟動刪除模式後, 點擊縮略圖標即可把帖子從圖集中刪去.'
+      links:
+        copy: 復制
+        delete: 刪除
+        delete_mode: 刪除模式
+        edit: 編輯
+        history: 歷史記
+        import: 導入
+        index_view: 索引查看
+        jpeg: 下載 JPG 格式
+        order: 排序
+        png: 下載
+        toggle_view: 切換視圖
+        transfer: 轉移圖帖數據
+      title: '圖集: %{name}'
+    transfer_metadata:
+      from:
+        from: 來自
+        from_number: '從圖集序號轉換'
+        to: To
+        transfer: 轉移
+      info_truncated: "以下圖集中投稿的數量不相等."
+      info_truncated_warning: '請檢查加註到投稿上的標簽是否正確.'
+      info_what: '標簽和評級將會被轉移, 舊投稿將成為新投稿的父項.'
+      reverse: 撤銷
+      table:
+        from: 來自
+        tags: 標簽
+        to: To
+        transfer: 轉移
+      title_html: '將%{from}圖集中的圖片數據轉移到%{to}圖集中'
+    update:
+      form:
+        description: 描述
+        is_active:
+          _: 活動
+          info: '非活動的圖集將不再出現在圖帖的添加到圖集的下拉菜單中.'
+        is_public:
+          _: '公開此圖集嗎?'
+          info: '公開圖集允許任何用戶增減圖帖.'
+        name: 繪師名
+      title: 編輯圖集
+  post:
+    blacklists:
+      add: 添加
+      hidden_posts: 隱藏帖
+      info: 含以下標簽的貼將被隱藏。用空格來標簽分隔不同標簽.
+    browse:
+      by:
+        all_html: '%{text} %{ago} %{by}'
+        by_html: by %{user}
+        text: 已投稿
+      child:
+        all_html: 此投稿有 %{child}.
+        child: 子項
+      deleted:
+        by: By
+        reason: 理由
+        title: 此帖已被刪除.
+        undelete: 撤銷刪除
+      download: 下載
+      edit: 編輯
+      flagged_info_html: 被 %{user} 標記.
+      frames: 邊框
+      held:
+        activate: (激活)
+        info: 此圖帖被上傳者掛起.
+      hidden: 隱藏
+      image_hidden:
+        info: 按照你的帳號設定這張圖片不顯示.
+        show: 雙擊以顯示此圖片
+        title: 隱藏圖片
+      no_result: 無搜索結果。
+      parent:
+        all_html: 此投稿有父項 %{parent} (%{make_parent}).
+        make_parent: 將此帖設為父項
+        parent: 父項
+      parent_post: 父投稿
+      pending_info: 本帖正在等待管理員批準.
+      post_num_html: '投稿 #%{num}'
+      reason: 原因
+      score: 得分
+      shown_in_index: 在索引中顯示
+      source: Source
+    delete:
+      delete: 刪除
+      noaccess_info: (由於訪問限制父項帖隱藏)
+      noparent_info: 此投稿沒有父項。如果此投稿將被其他投稿替代，請在刪除前先重新 parent，這樣投票將自動轉移。
+      parent_info: 用戶評分將隨父項帖子一同轉移. 若出現問題, 在刪除帖子前重新將其設為父項.
+      permanent: 永久性刪除
+      permanent_info: 此帖已被刪除. 再次刪除將使其永久性刪除.
+      reason: 原因
+      title: 刪除帖子
+    deleted_index:
+      by: 刪除人
+      post: 帖子
+      reason: 原因
+      tags: 標簽
+      title: 已刪除投稿
+      user: 用戶
+    favorites:
+      title: 收藏者
+    footer:
+      batch: 批量
+      browse: 瀏覽
+      help: 幫助
+      history: 歷史
+      image_search: 以圖搜圖
+      list: 列表
+      mod: 管理
+      popular: 人氣
+      random: 隨機
+      subs: 訂閱
+      upload: 上傳
+    hover:
+      child: 子項
+      flagged:
+        by_html: '%{text} by %{data}'
+        text: 已被標記
+      hidden: 隱藏
+      parent: 父項
+      pending: 等待中
+      post_number: '帖子 ID #'
+      rating: 評級
+      score: 分數
+    index:
+      activate: 激活所有被掛起的圖帖
+      ambiguous: 以下標簽是有歧義的
+      edit_tags: 編輯標簽
+      held_html: 你已掛起 %{count}
+      held_view: 查看
+      maybe_you_meant: 或許你想找的是
+      mode: 模式
+      mode_form:
+        approve: 通過投稿
+        edit: 編輯帖子
+        flag: 往此貼插旗
+        pool_remove: 從圖池移除
+        reparent: 將帖子重置為父項
+        script: 使用標簽腳本
+        view: 看貼
+      pool_view_html: 正在瀏覽圖池 %{pool}.
+    moderate:
+      down: down
+      flagged: 標記的
+      mod: mod
+      parent: 父項
+      pending: 懸置
+      prompt_reason: 輸入理由
+      rating: 評級
+      reason: 原因
+      score: 評分
+      size: 尺寸
+      tags: 標簽
+      title: 管理隊列
+      uploaded_by_when_html: 上傳於 %{u} %{t_ago} (%{mod})
+    popular_by_day:
+      popular:
+        _: 人氣
+        month: 人氣（按月）
+        week: 人氣（按周）
+      title: 正在瀏覽 %{year}/%{month}/%{day}
+    popular_by_month:
+      popular:
+        _: 人氣
+        month: 人氣 (按月)
+        week: 人氣 （按周）
+      title: 正在瀏覽 %{year}/%{month}
+    popular_by_week:
+      popular:
+        _: '人氣 '
+        month: 人氣 (按月)
+        week: 人氣 (按周)
+      title: 正在瀏覽 %{st_year}/%{st_month}/%{st_day} - %{end_year}/%{end_month}/%{end_day}
+    popular_recent:
+      popular:
+        _: 人氣
+        month: 人氣 (按月)
+        week: 人氣 (按周)
+      title: 正在瀏覽 %{period}
+    post_atom:
+      data: 圖片數據
+      source: 來源
+    posts:
+      empty: 沒有結果!
+    search:
+      search: 搜索
+      title: 搜索
+    show:
+      empty: 找不到結果
+    show_empty:
+      info: 此貼不存在。
+      related:
+        _: 相關的帖子
+        next: 後一帖
+        previous: 前一帖
+        random: 隨機
+    show_partials:
+      edit:
+        find_artists: 搜索繪師
+        help: 幫助
+        note_locked: 附註已被鎖定
+        parent: 父投稿
+        rating: 分級
+        rating_info_html: 露骨的標簽包括性，生殖器官，手淫，口交 等。 (%{more})
+        rating_locked: 評分鎖定
+        rating_locked_info: 分級已被鎖定
+        related:
+          artists: 相關繪師
+          characters: 相關角色
+          copyrights: 相關版權
+          none: 無
+          tags: 相關的標簽
+        save: 更檔保存
+        shown_in_index: 在索引中顯示
+        source: Source
+        tags: 編輯標簽
+        tags_info_html: 以空格分隔不同標簽 (%{more})
+      history_panel:
+        notes: 附註
+        tags: 標簽
+        title: 歷史
+      image:
+        denied: 帳號等級不足，無法觀看此帖
+        download:
+          _: 下載
+          info: 文件必須手動下載.
+        save_flash: 保持 flash (右鍵保存)
+      image_footer:
+        edit: 編輯
+        respond: 反應
+      options_panel:
+        add_notes: 添加翻譯
+        add_to_pool: 加入圖集
+        approve:
+          _: 通過
+          confirm: 確定通過此投稿？
+        delete: 刪除
+        download:
+          image: 圖片
+          larger: 下載大圖
+          normal: 下載
+        favorites:
+          add: 加入收藏
+          remove: 從收藏中移除
+        flag: 標記刪除
+        history: 圖帖歷史
+        resize: 重置圖片尺寸
+        set_avatar: 設置頭像
+        title: 選項
+        undelete: 取消刪除
+        view_larger: 看大圖
+      pool:
+        change: 修改頁碼
+        info_html: '這張圖片是%{pool}圖集中的第%{sequence}號'
+        next: '後一投稿 »'
+        previous: '« 前一投稿'
+        remove:
+          _: 移除
+          confirm: 你確定要從%{current_pool}圖集中移除這張圖片嗎？
+        transfer:
+          _: 轉移至父項
+          confirm: 你確定要把這張圖片從%{current_pool}圖集中移除並把這張圖的父項加入到圖集中嗎？
+      related_posts_panel:
+        find:
+          duplicate: 查重
+          similar: 查找類似
+        next: 下一張
+        parent: 父項
+        previous: 前一張
+        random: 隨機
+        title: 關聯投稿
+      statistics_panel:
+        approver: 審核者：
+        favorited_by: 收藏者：
+        id: Id
+        posted: 已投稿
+        posted_data_html: '%{time} by %{user}'
+        rating: 評分
+        score: 得分
+        size: 尺寸
+        source: 來源
+        title: 統計
+      status_notices:
+        by: By
+        deleted_info: 該投稿已被刪除。
+        flagged:
+          delete: 刪除
+          unflag: 撤銷標記
+        held:
+          activate: 激活本帖
+          info: 此圖帖被上傳者暫時掛起.
+        parent:
+          child: 子項
+          child_post_html: '投稿 #%{child}'
+          children: 子投稿
+          parent: 父投稿
+        pending:
+          approve:
+            _: 通過
+            confirm: 真的要通過這項投稿？
+          delete: 刪除
+          info: 此圖片正在等待管理員審核。
+        reason: 原因
+        resized:
+          always_view_original: 只看原圖
+          hide: 隱藏此信息
+          info_html: 此圖片已經被酌情縮小。如需查看高解析度版本，請點擊側邊欄上的%{larger}鏈接。
+          view_larger: 點擊查看大圖
+        samples_disabled: 顯示圖片樣張功能已被關閉. 若你感到瀏覽效率降低,請在帳號設定中打開顯示樣張功能.
+    similar:
+      apply_tag_script: 使用標簽腳本
+      duplicate:
+        blacklist: 被隱藏的投稿
+        delete: 請刪除你剛才發的貼
+        mark_duplicate: 往舊版本上插重復旗幟
+      edit_posts: 編輯帖子
+      edit_tags: 編輯標簽
+      file: 文件
+      flag_duplicate: 插旗：此圖重復
+      flag_post: 插旗
+      mode_color: "不忽略顏色"
+      mode_gray: 忽略顏色
+      options: 選項
+      reparent: 重置父項
+      services: 服務
+      show_more: 顯示更多
+      source: 來源
+      update: 更新
+      upload: 上傳這張圖片
+      use_all_services: 開啟所有服務
+      view_posts: 看貼
+    tag_script:
+      confirm: '對以下所有帖子使用標簽腳本嗎?'
+      title: 標簽腳本
+    tags:
+      title: 標簽
+    upload:
+      already_exists: 此投稿已存在
+      anonymous: 匿名上傳
+      form:
+        find_artist: 找到繪師
+        find_related:
+          artists: 相關繪師
+          characters: 相關角色
+          circles: 相關社團
+          copyrights: 相關版權
+          none: 無
+          tags: 相關的標簽
+        help: 幫助
+        parent: 父項
+        rating:
+          _: 評級
+        source:
+          _: 來源
+          info: 你可以在這里輸入一個鏈接（URL）以從另一個網站上導入圖像
+        tags:
+          _: 標簽
+        upload: 上傳
+      guidelines:
+        do_not:
+          obnoxious_watermarks: 不良水印
+        group: 同人志團體，漫畫頁，以及類似的 CG
+        info: 上傳時，請小心遵守下麵的準則。任何違反準則的行為將會導致封禁。
+        last_word_connector_or: '，或'
+        limit: 你今天只能上傳 %{n} 張。
+        more_html: 請閱讀 %{more_link}
+        title: 上傳準則
+      posts_deleted:
+        hide: 忽略這條信息
+        notice_plural_html: 你的一些投稿屬於 %{recently_deleted}.
+        recently: 最近被刪除
+      title: 上傳
+  ratings:
+    _: 評級
+    e: 露骨
+    q: 擦邊
+    s: 安全
+  record_action: "動作"
+  record_add: "增加記錄 為"
+  record_add2: "添加"
+  record_ago: "前"
+  record_body: "正文"
+  record_cancel: "取消"
+  record_delete: "刪除"
+  record_list: "單用戶列表"
+  record_list2: "全員列表"
+  record_pos: "積極"
+  record_reason: "理由"
+  record_record: "記錄"
+  record_reporter: "報告者"
+  record_submit: "提交"
+  record_user: "用戶"
+  record_when: "時間"
+  report: "報告 "
+  report_changes: "改變"
+  report_end: "結束日期"
+  report_level: "等級"
+  report_limit: "限制"
+  report_notes: "附錄"
+  report_percent: "百分率"
+  report_search: "搜索"
+  report_start: "起始日期"
+  report_tags: "標簽"
+  report_total: "總計"
+  report_uploads: "上傳"
+  report_user: "用戶"
+  report_votes: "報告：用戶評分"
+  report_votes2: "評分"
+  report_votes_text: "本報告顯示：該用戶在3天內參與過評分."
+  report_wiki: "維基"
+  static:
+    index:
+      search: 搜索
+  static1: "幫助"
+  static10: "隨機"
+  static11: "最近刪除"
+  static12: "歷史"
+  static13: "上傳"
+  static14: "小書簽/Bookmarklet"
+  static15: "Firefox 擴展"
+  static16: "API 參考文件"
+  static17: "註釋的更新"
+  static18: "標簽的更新"
+  static19: "wiki 的更新"
+  static2: "訂閱"
+  static20: "上傳帖子"
+  static21: "用戶投票"
+  static22: "工作任務"
+  static23: "幫助"
+  static24: "別稱"
+  static25: "關聯項"
+  static26: "編輯"
+  static27: "列表（雲形）"
+  static28: "列表（所有）"
+  static29: "批量編輯"
+  static3: "列表"
+  static30: "幫助"
+  static31: "歷史"
+  static32: "列表"
+  static33: "幫助"
+  static34: "列表"
+  static35: "幫助"
+  static36: "列表"
+  static37: "幫助"
+  static38: "列表"
+  static39: "管理"
+  static4: "瀏覽"
+  static40: "幫助"
+  static41: "列表"
+  static42: "內嵌圖像"
+  static43: "幫助"
+  static44: "列表"
+  static45: "歷史"
+  static46: "Source"
+  static47: "原始 Danbooru"
+  static48: "登入"
+  static49: "註冊"
+  static5: "以圖搜圖"
+  static50: "重置密碼"
+  static51: "主頁"
+  static52: "登出"
+  static53: "個人資料"
+  static54: "記錄"
+  static55: "設置"
+  static56: "屏蔽用戶"
+  static57: "更改密碼"
+  static58: "邀請"
+  static59: "幫助"
+  static6: "人氣（前24小時）"
+  static60: "列表"
+  static61: "服務條款"
+  static62: "編輯用戶"
+  static63: "重置密碼"
+  static7: "人氣（按日）"
+  static8: "人氣（按周）"
+  static9: "人氣（按月）"
+  static_comments: "評論"
+  static_comments_text: "生成所有評論的明細列表"
+  static_domain: "功能變數名稱提供者"
+  static_more: "網站地圖"
+  static_posts: "帖子"
+  static_posts2: " 帖子 "
+  static_posts_text: "生成所有貼的明細列表"
+  static_running: "運行 Moebooru "
+  static_search: "搜索"
+  static_serve: "服務器 "
+  static_t1: "投稿"
+  static_t10: "Wiki"
+  static_t11: "雜項"
+  static_t12: "用戶"
+  static_t13: "管理"
+  static_t2: "工具"
+  static_t3: "報告"
+  static_t4: "標簽"
+  static_t5: "附註"
+  static_t6: "繪師"
+  static_t7: "圖集"
+  static_t8: "評論"
+  static_t9: "論壇"
+  static_tags: "標簽"
+  static_tags_text: "生成所有標簽的明細列表"
+  static_wiki: "維基"
+  static_wiki_text: "維基"
+  sub_add: "添加"
+  sub_edit: "編輯"
+  sub_name: "名稱"
+  sub_none: "無"
+  sub_save: "保存"
+  sub_tags: "標簽"
+  sub_text: "你只可以創建至"
+  sub_text2: "訂閱標簽"
+  sub_vis: "可見"
+  tag:
+    cloud:
+      title: 標簽
+    index:
+      title: 標簽
+    mass_edit:
+      title: 批量編輯標簽
+  tag_action: "動作"
+  tag_alias:
+    index:
+      add: 添加
+      add_new:
+        alias_to: 等同於
+        info: 您可以建議一個別稱，但它必須待管理員審核通過後才能生效
+        name: 用戶名
+        submit: 提交
+        title: 添加別稱
+      alias: 別稱
+      approve: 通過
+      delete: 刪除
+      pending: 選擇審核中的 別名
+      reason: 理由
+      search: 搜索別稱
+      title: 等同的標簽
+      to: To
+  tag_aliases: "別稱"
+  tag_amb: "多義"
+  tag_cancel: "取消"
+  tag_cloud: "沒有標簽"
+  tag_count: "數量"
+  tag_date: "日期"
+  tag_edit: "編輯"
+  tag_help: "幫助"
+  tag_history: "歷史"
+  tag_imp: "關聯"
+  tag_implication:
+    index:
+      add: 添加項
+      add_new:
+        title: 添加關聯項
+        info: 若前提標簽被添加，與之關聯的結論標簽也會隨之被添加。例如，前提標簽是：正方形，結論標簽是：長方形，任何投稿被添加“正方形”標簽的同時也會被添加“長方形”的標簽。
+        info_moderation: 您可以建議一個新的關聯項，但它必須待管理員審核通過後才能生效
+        submit: 提交
+      approve: 通過
+      consequent: 結論
+      delete: 刪除
+      predicate: 前提
+      reason: 理由
+      search: 搜索關聯項
+      select_pending: 選擇審核中的投稿
+      title: 關聯標簽
+  tag_js: "你確定要對這個標簽進行編輯？"
+  tag_js_preview: "預覽"
+  tag_js_preview_txt: "加載中…"
+  tag_js_save: "保存"
+  tag_list: "列表"
+  tag_mass: "批量編輯"
+  tag_name: "名稱"
+  tag_order: "排序"
+  tag_popular: "人氣"
+  tag_popular_day: "人氣 按 日"
+  tag_popular_month: "人氣 按 月"
+  tag_popular_week: "人氣 按 周"
+  tag_posts: "投稿"
+  tag_save: "保存"
+  tag_search: "搜索"
+  tag_type: "類型"
+  tag_wild: "使用 * 作為通配符"
+  time:
+    x_ago: '%{t} 前'
+    x_ago_html: '%{t} 前'
+  user:
+    change_email:
+      current_email: 當前 Email 地址
+      current_password: 當前密碼
+      new_email: 新 Email 地址
+    change_password:
+      new_password: 新密碼
+    edit:
+      email: Email
+      no_email: 無
+      title: 編輯帳戶
+      update_email: 更改
+    home:
+      action_info: 在這里你可以您可以對您的個人帳號進行設置及對帳號的相關信息進行瀏覽。
+      blocked_users: 封禁用戶
+      change_password: 修改密碼
+      greet_user: '你好 %{u}!'
+      invites: 邀請
+      login: 登入
+      logout: 登出
+      moderator_tools: 管理工具
+      my_favorites: 我的收藏
+      my_mail: 我的郵件
+      my_profile: 個人資料
+      no_signup: 註冊當前未開放
+      not_logged_in: 您未登入
+      reset_password: 重置密碼
+      settings: 設置
+      signup: 註冊
+      title: 我的帳戶
+    index:
+      title: 用戶
+    login:
+      title: 登入
+    logout:
+      title: 登出
+    reset_password:
+      title: 重置密碼
+    show:
+      avatar:
+        remove:
+          confirm: 移除頭像？
+          link: (移除)
+      own_title: 我的資料
+      title: "%{name}的個人資料"
+    show_blocked_users:
+      title: 被封禁用戶
+    signup:
+      title: 註冊
+  user1: "標簽黑名單"
+  user10: "或編輯投稿"
+  user11: "調整圖像大小"
+  user12: "如果啟用，大圖將總是被調整至適應螢幕的大小"
+  user13: "收到的郵件"
+  user14: "接受郵件提醒當有人發送給你信息"
+  user15: "顯示圖片示例"
+  user16: "顯示尺寸壓縮後的圖像的圖像"
+  user17: "使用投稿瀏覽器"
+  user18: "瀏覽投稿和圖集時使用投稿瀏覽器"
+  user19: "增強型編輯"
+  user2: "任何包含在黑名單內的標簽的投稿將被隱藏。使用空格分開各個標簽。"
+  user20: "顯示高級編輯控制項"
+  user21: "語言"
+  user22: "用於顯示評論的語言。"
+  user23: "原始圖像(無轉換)"
+  user24: "第二語言"
+  user25: "不要翻譯從"
+  user3: "郵箱"
+  user4: "需要一個 email 地址以激活你的帳號"
+  user5: "此項是選填項。它將會在你忘記密碼並且想要重置密碼時有用。"
+  user6: "訂閱標簽"
+  user7: "編輯標簽"
+  user8: "這些將是可以取得的當你"
+  user9: "上傳"
+  user_address: "地址"
+  user_address_text: "IP掩碼可以被使用，例如 127.0.0.1/24"
+  user_ban: "Ban"
+  user_banned_by: "封禁 由"
+  user_blocked: "被封禁用戶"
+  user_blocked_ips: "被封禁IP"
+  user_cancel: "取消"
+  user_comments: "評論"
+  user_confirm_pwd: "確認密碼"
+  user_current_invites: "當前邀請"
+  user_current_invites_text: "這下是您目前邀請過的用戶"
+  user_deleted_posts: "已刪除投稿"
+  user_duration: "持續登陸(天數)"
+  user_edit: "(編輯)"
+  user_edits: "編輯次數"
+  user_expire2: " ; 截至: "
+  user_expires: "截至"
+  user_fav: "收藏"
+  user_fav2: "收藏"
+  user_fav3: "收藏"
+  user_forum_post: "論壇投稿"
+  user_home: "您當前未登入。"
+  user_home10: "» 我的郵件"
+  user_home11: "» 我的收藏"
+  user_home12: "» 設置"
+  user_home13: "» 修改密碼"
+  user_home14: "管理工具"
+  user_home15: "邀請"
+  user_home16: "» 被封禁用戶"
+  user_home2: "» 登陸"
+  user_home3: "» 註冊"
+  user_home4: "註冊功能當前關閉"
+  user_home5: "» 重置密碼"
+  user_home6: "你好"
+  user_home7: "在這里你可以您可以對您的個人帳號進行設置及對帳號的相關信息進行瀏覽。"
+  user_home8: "» 登出"
+  user_home9: "» 我的資料"
+  user_invite_link: "邀請"
+  user_invited_by: "邀請 由"
+  user_invites: "邀請"
+  user_invites2: "邀請的用戶"
+  user_invites_text: "您可以為已存在的用戶擔保，邀請使他們成為投稿者狀態。"
+  user_invites_text2: "確定要邀請嗎？"
+  user_ip: "IP"
+  user_join: "註冊日期"
+  user_level: "等級"
+  user_list: "列表"
+  user_login_text1: "登入"
+  user_login_text10: "點擊這里"
+  user_login_text11: "註冊功能當前關閉"
+  user_login_text2: "您還未激活您的帳戶。點擊"
+  user_login_text3: "點擊這裡"
+  user_login_text4: "為了重新發送確認郵件至"
+  user_login_text5: "你需要一個帳號以連接到一些部分 of "
+  user_login_text6: "點擊"
+  user_login_text7: "點擊這裡"
+  user_login_text8: "為了重置您的密碼。"
+  user_login_text9: "您可以註冊一個帳號"
+  user_logout_link: "&#171; 登入"
+  user_logout_text: "註銷"
+  user_logout_text2: "您已經登出系統"
+  user_new_pwd: "新密碼"
+  user_note_edits: "附註編輯"
+  user_password: "密碼"
+  user_password_confirm: "確認密碼"
+  user_password_text: "至少五個字元"
+  user_posts: "投稿"
+  user_reason: "理由"
+  user_reason2: "(理由:"
+  user_reason3: ")"
+  user_rec_invites: "最近邀請"
+  user_record: "記錄"
+  user_record_add: "添加"
+  user_record_none: "無"
+  user_resend: "如果您沒有收到您的確認信，請確認它沒有被您郵箱的垃圾郵件過濾器截獲。"
+  user_resend_email: "Email 地址"
+  user_resend_submit: "提交"
+  user_reset: "重置密碼"
+  user_reset_email: "Email 地址"
+  user_reset_name: "用戶名"
+  user_reset_text: "如果您在註冊時填寫了一個 Email 地址，或者在註冊之後已經為您的帳戶添加了一個 Email 地址，您可以重置您的密碼。您將會收到一封包含了您的新密碼的電子郵件。"
+  user_save: "保存"
+  user_send_msg: "發送消息"
+  user_set_avatar: "設置頭像"
+  user_signup: "註冊"
+  user_signup_email: "Email 地址"
+  user_signup_email_text: "可選，供郵箱驗證及密碼重置。"
+  user_signup_name: "用戶名"
+  user_signup_name_text: "請記住你的名字將可以通過 Google 被輕易的搜索到在這個網站上。"
+  user_signup_text: "註冊"
+  user_signup_text2: "註冊功能當前關閉"
+  user_signup_text3: "當你建立帳戶時，同時表明你同意"
+  user_signup_text4: "服務條款"
+  user_signup_text5: "."
+  user_signup_text6: "請記住本站允許網路爬蟲抓取，所以別人可以通過搜索你的名字輕易地發現你在這里。"
+  user_sub2: "訂閱標簽"
+  user_submit: "提交"
+  user_subs: "訂閱標簽"
+  user_tag_edits: "標簽編輯次數"
+  user_unblock: "解除封禁"
+  user_uploaded: "已上傳"
+  user_uploaded_tags: "上傳過的標簽"
+  user_uploads: "上傳"
+  user_user: "用戶"
+  user_votes: "評分"
+  user_when: "When"
+  user_wiki_edits: "Wiki 編輯次數"
+  users: "用戶"
+  users_deleted: "已刪除"
+  users_joined: "已加入"
+  users_level: "等級"
+  users_name: "用戶名"
+  users_neg: "% Neg"
+  users_notes: "附註"
+  users_order: "排序"
+  users_pos: "% Pos"
+  users_posts: "投稿"
+  users_search: "搜索"
+  wiki:
+    diff:
+      title: Wiki Diff 比較
+    footer:
+      list: 列表
+      new: 新建
+      help: 幫助
+    history:
+      title: Wiki 歷史
+    index:
+      title: Wiki
+    recent_changes:
+      title: 最近更改

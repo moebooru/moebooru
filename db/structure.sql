@@ -2493,6 +2493,13 @@ CREATE INDEX index_post_votes_on_user_id ON public.post_votes USING btree (user_
 
 
 --
+-- Name: index_post_votes_on_user_id_and_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_post_votes_on_user_id_and_id ON public.post_votes USING btree (user_id, id);
+
+
+--
 -- Name: index_posts_on_change_seq; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3382,6 +3389,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20160329161636'),
 ('20160330063707'),
 ('20180624074601'),
+('20190518111956'),
 ('21'),
 ('22'),
 ('23'),

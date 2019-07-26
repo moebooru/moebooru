@@ -128,8 +128,8 @@ class PostController < ApplicationController
       end
     else
       if params[:query]
-        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :pending => true, :order => "id desc"))
-        @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query], :flagged => true, :order => "id desc"))
+        @pending_posts = Post.find_by_sql(Post.generate_sql(params[:query], :holds => 'all', :pending => true, :order => "id desc"))
+        @flagged_posts = Post.find_by_sql(Post.generate_sql(params[:query], :holds => 'all', :flagged => true, :order => "id desc"))
       else
         @pending_posts = Post.where(:status => "pending").order(:id => :desc)
         @flagged_posts = Post.where(:status => "flagged").order(:id => :desc)

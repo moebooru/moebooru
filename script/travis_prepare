@@ -6,7 +6,7 @@ cat <<EOF > config/database.yml
 test:
   adapter: postgresql
   username: postgres
-  database: moebooru_test
+  database: travis_ci_test
   port: 5433
 EOF
 

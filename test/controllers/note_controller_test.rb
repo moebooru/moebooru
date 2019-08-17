@@ -46,8 +46,8 @@ class NoteControllerTest < ActionController::TestCase
     setup_test
 
     note = create_note("hoge", @post1.id)
-    note.update_attributes(:body => "mark ii")
-    note.update_attributes(:body => "mark iii")
+    note.update(:body => "mark ii")
+    note.update(:body => "mark iii")
 
     post :revert, :params => { :id => note.id, :version => 1 }, :session => { :user_id => 1 }
     note.reload

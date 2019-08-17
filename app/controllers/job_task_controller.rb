@@ -28,7 +28,7 @@ class JobTaskController < ApplicationController
     @job_task = JobTask.find(params[:id])
 
     if request.post?
-      @job_task.update_attributes!(:status => "pending", :status_message => "")
+      @job_task.update!(:status => "pending", :status_message => "")
       redirect_to :action => "show", :id => @job_task.id
     end
   end

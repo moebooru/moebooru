@@ -49,7 +49,7 @@ class ForumPostTest < ActiveSupport::TestCase
     ForumPost.lock!(topic.id)
     topic.reload
     assert_equal(true, topic.is_locked?)
-    topic.update_attributes(:body => "bumbleclot")
+    topic.update(:body => "bumbleclot")
     topic.reload
     assert_equal("hello", topic.body)
     ForumPost.unlock!(topic.id)

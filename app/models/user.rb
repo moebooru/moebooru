@@ -533,7 +533,7 @@ class User < ApplicationRecord
       FileUtils.mv(tempfile_path, avatar_path)
       FileUtils.chmod(0775, avatar_path)
 
-      update_attributes(
+      update(
         :avatar_post_id => params[:post_id],
         :avatar_top => params[:top],
         :avatar_bottom => params[:bottom],

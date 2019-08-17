@@ -54,7 +54,7 @@ class WikiControllerTest < ActionController::TestCase
 
   def test_update
     page = create_page("hoge")
-    page.update_attributes(:body => "moge moge")
+    page.update(:body => "moge moge")
 
     get :edit, :params => { :title => "hoge" }, :session => { :user_id => 4 }
     assert_response :success
@@ -69,7 +69,7 @@ class WikiControllerTest < ActionController::TestCase
 
   def test_show
     page = create_page("hoge")
-    page.update_attributes(:body => "moge moge")
+    page.update(:body => "moge moge")
 
     get :show, :params => { :title => "hoge" }
     assert_response :success
@@ -77,8 +77,8 @@ class WikiControllerTest < ActionController::TestCase
 
   def test_revert_unlocked
     page = create_page("hoge")
-    page.update_attributes(:body => "hoge 2")
-    page.update_attributes(:body => "hoge 3")
+    page.update(:body => "hoge 2")
+    page.update(:body => "hoge 3")
 
     post :revert, :params => { :title => "hoge", :version => 1 }, :session => { :user_id => 4 }
     page.reload
@@ -87,8 +87,8 @@ class WikiControllerTest < ActionController::TestCase
 
   def test_revert_locked
     page = create_page("hoge", :is_locked => true)
-    page.update_attributes(:body => "hoge hoge")
-    page.update_attributes(:body => "hoge hoge hoge")
+    page.update(:body => "hoge hoge")
+    page.update(:body => "hoge hoge hoge")
 
     post :revert, :params => { :title => "hoge", :version => 2 }, :session => { :user_id => 4 }
     page.reload
@@ -98,8 +98,8 @@ class WikiControllerTest < ActionController::TestCase
   def test_recent_changes
     create_page("hoge")
     page2 = create_page("moge")
-    page2.update_attributes(:body => "moge moge")
-    page2.update_attributes(:body => "moge moge moge")
+    page2.update(:body => "moge moge")
+    page2.update(:body => "moge moge moge")
 
     get :recent_changes
     assert_response :success
@@ -107,8 +107,8 @@ class WikiControllerTest < ActionController::TestCase
 
   def test_history
     page = create_page("moge")
-    page.update_attributes(:body => "moge moge")
-    page.update_attributes(:body => "moge moge moge")
+    page.update(:body => "moge moge")
+    page.update(:body => "moge moge moge")
 
     get :history, :params => { :title => "moge" }
     assert_response :success
@@ -116,8 +116,8 @@ class WikiControllerTest < ActionController::TestCase
 
   def test_diff
     page = create_page("moge")
-    page.update_attributes(:body => "moge moge")
-    page.update_attributes(:body => "moge moge moge")
+    page.update(:body => "moge moge")
+    page.update(:body => "moge moge moge")
 
     get :diff, :params => { :title => "moge", :from => 1, :to => 3 }
     assert_response :success

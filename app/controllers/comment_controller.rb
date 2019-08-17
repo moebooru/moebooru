@@ -13,7 +13,7 @@ class CommentController < ApplicationController
   def update
     comment = Comment.find(params[:id])
     if @current_user.has_permission?(comment)
-      comment.update_attributes(comment_params)
+      comment.update(comment_params)
       respond_to_success("Comment updated", :action => "index")
     else
       access_denied
@@ -69,7 +69,7 @@ class CommentController < ApplicationController
 
       newest_comment = comments.max { |a, b| a.created_at <=> b.created_at }
       if !@current_user.is_anonymous? && newest_comment && @current_user.last_comment_read_at < newest_comment.created_at
-        @current_user.update_attribute(:last_comment_read_at, newest_comment.created_at)
+        @current_user.update(:last_comment_read_at => newest_comment.created_at)
       end
 
       @posts = @posts.delete_if { |x| !x.can_be_seen_by?(@current_user, :show_deleted => true) }
@@ -120,7 +120,7 @@ class CommentController < ApplicationController
         coms.each(&:destroy)
       elsif params["commit"] == "Approve"
         coms.each do |c|
-          c.update_attribute(:is_spam, false)
+          c.update(:is_spam => false)
         end
       end
 
@@ -132,7 +132,7 @@ class CommentController < ApplicationController
 
   def mark_as_spam
     @comment = Comment.find(params[:id])
-    @comment.update_attributes(:is_spam => true)
+    @comment.update(:is_spam => true)
     respond_to_success("Comment marked as spam", :action => "index")
   end
 

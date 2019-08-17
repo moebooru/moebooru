@@ -259,7 +259,7 @@ class PoolControllerTest < ActionController::TestCase
     get :select, :params => { :post_id => 1 }, :session => { :user_id => 4 }
     assert_response :success
 
-    pool.update_attributes(:is_active => false)
+    pool.update(:is_active => false)
 
     get :select, :params => { :post_id => 1 }
     assert_equal(false, assigns(:pools).any? { |x| x.name == "hoge" })

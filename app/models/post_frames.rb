@@ -128,7 +128,7 @@ class PostFrames < ApplicationRecord
     frames_warehoused = !PostFrames.exists?(["post_id = ? AND is_target AND NOT is_warehoused", post.id])
 
     # Update the post's frames to reflect the newly activated frames.
-    post.update_attributes(:frames => post.frames_pending, :frames_warehoused => frames_warehoused)
+    post.update(:frames => post.frames_pending, :frames_warehoused => frames_warehoused)
 
     # Return false; there's nothing more for us to do with this post.
     false
@@ -151,7 +151,7 @@ class PostFrames < ApplicationRecord
     end
 
     # All frames are warehoused.
-    post.update_attributes(:frames_warehoused => true)
+    post.update(:frames_warehoused => true)
     true
   end
 
@@ -170,7 +170,7 @@ class PostFrames < ApplicationRecord
 
       # XXX
       logger.info("Unwarehousing #{frame.id}")
-      frame.update_attributes(:is_warehoused => false)
+      frame.update(:is_warehoused => false)
       return
     end
 
@@ -180,7 +180,7 @@ class PostFrames < ApplicationRecord
     unless frame.nil?
       logger.info("Deleting #{frame.id}")
       FileUtils.rm_f(frame.file_path)
-      frame.update_attributes(:is_created => false)
+      frame.update(:is_created => false)
       return
     end
 
@@ -225,7 +225,7 @@ class PostFrames < ApplicationRecord
     FileUtils.chmod(0775, preview_path)
 
     # Save the dimensions we computed, and mark the file created.
-    update_attributes(:is_created => true)
+    update(:is_created => true)
   end
 
   def warehouse_frame
@@ -237,7 +237,7 @@ class PostFrames < ApplicationRecord
     Mirrors.copy_file_to_mirrors(preview_path)
 
     # Mark the frame warehoused.
-    update_attributes(:is_warehoused => true)
+    update(:is_warehoused => true)
   end
 
   def self.filename(frame)

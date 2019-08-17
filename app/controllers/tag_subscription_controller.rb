@@ -19,7 +19,7 @@ class TagSubscriptionController < ApplicationController
         params[:tag_subscription].each do |id, params|
           tag_subscription = TagSubscription.find(id)
           if tag_subscription.user_id == @current_user.id
-            tag_subscription.update_attributes(tag_subscription_params(params))
+            tag_subscription.update(tag_subscription_params(params))
           end
         end
       end

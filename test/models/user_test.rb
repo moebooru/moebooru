@@ -31,7 +31,7 @@ class UserTest < ActiveSupport::TestCase
     user.password = user.password_confirmation = nil # to skip password validation check
     assert_equal("tag1\n", user.blacklisted_tags)
 
-    user.update_attributes(:blacklisted_tags => "tag2\ntag3\n")
+    user.update(:blacklisted_tags => "tag2\ntag3\n")
     assert_equal("tag2\ntag3\n", user.blacklisted_tags)
   end
 

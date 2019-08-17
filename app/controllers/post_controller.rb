@@ -148,7 +148,7 @@ class PostController < ApplicationController
 
     user_id = @current_user.id
 
-    if @post.update_attributes(post_params_for_update.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+    if @post.update(post_params_for_update.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
       @post.reload
@@ -185,7 +185,7 @@ class PostController < ApplicationController
 
       old_parent_id = @post.parent_id
 
-      if @post.update_attributes(post_params_for_update_single(post).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+      if @post.update(post_params_for_update_single(post).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
         # Reload the post to send the new status back; not all changes will be reflected in
         # @post due to after_save changes.
         @post.reload
@@ -246,7 +246,7 @@ class PostController < ApplicationController
 
   def deleted_index
     if !@current_user.is_anonymous? && params[:user_id] && params[:user_id].to_i == @current_user.id
-      @current_user.update_attribute(:last_deleted_post_seen_at, Time.now)
+      @current_user.update(:last_deleted_post_seen_at => Time.now)
     end
 
     @posts = Post
@@ -259,7 +259,7 @@ class PostController < ApplicationController
   end
 
   def acknowledge_new_deleted_posts
-    @current_user.update_attribute(:last_deleted_post_seen_at, Time.now) unless @current_user.is_anonymous?
+    @current_user.update(:last_deleted_post_seen_at => Time.now) unless @current_user.is_anonymous?
     respond_to_success("Success", {})
   end
 
@@ -491,7 +491,7 @@ class PostController < ApplicationController
   def revert_tags
     user_id = @current_user.id
     @post = Post.find(params[:id])
-    @post.update_attributes(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
+    @post.update(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
 
     respond_to_success("Tags reverted", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
   end

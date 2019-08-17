@@ -9,7 +9,7 @@ class ReportControllerTest < ActionController::TestCase
   end
 
   def update_post(post, params = {})
-    post.update_attributes({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
+    post.update({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
   end
 
   def create_note(params = {})
@@ -30,7 +30,7 @@ class ReportControllerTest < ActionController::TestCase
 
   def test_note_updates
     n1 = create_note(:body => "hoge")
-    n1.update_attributes(:body => "moge")
+    n1.update(:body => "moge")
 
     get :note_updates
     assert_response :success
@@ -38,7 +38,7 @@ class ReportControllerTest < ActionController::TestCase
 
   def test_wiki_updates
     w1 = create_wiki
-    w1.update_attributes(:body => "moge")
+    w1.update(:body => "moge")
 
     get :wiki_updates
     assert_response :success

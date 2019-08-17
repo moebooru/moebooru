@@ -70,10 +70,10 @@ module Post::StatusMethods
   end
 
   def update_status_on_destroy
-    # Can't use update_attributes here since this method is wrapped inside of a destroy call
+    # Can't use update here since this method is wrapped inside of a destroy call
     execute_sql("UPDATE posts SET status = ? WHERE id = ?", "deleted", id)
     Post.update_has_children(parent_id) if parent_id
-    flag_detail.update_attributes(:is_resolved => true) if flag_detail
+    flag_detail.update(:is_resolved => true) if flag_detail
     false
   end
 

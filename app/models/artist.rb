@@ -67,7 +67,7 @@ class Artist < ApplicationRecord
         elsif wiki_page.is_locked?
           errors.add(:notes, "are locked")
         else
-          wiki_page.update_attributes(:body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
+          wiki_page.update(:body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
         end
       end
     end
@@ -84,7 +84,7 @@ class Artist < ApplicationRecord
           self.class.where(:alias_id => id).update_all(:alias_id => nil)
           @alias_names.each do |name|
             a = Artist.find_or_create_by(:name => name)
-            a.update_attributes(:alias_id => id, :updater_id => updater_id)
+            a.update(:alias_id => id, :updater_id => updater_id)
           end
         end
       end
@@ -139,7 +139,7 @@ class Artist < ApplicationRecord
         if @member_names
           @member_names.each do |name|
             a = Artist.find_or_create_by(:name => name)
-            a.update_attributes(:group_id => id, :updater_id => updater_id)
+            a.update(:group_id => id, :updater_id => updater_id)
           end
         end
       end

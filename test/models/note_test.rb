@@ -24,7 +24,7 @@ class NoteTest < ActiveSupport::TestCase
     assert_not_nil(note_v1)
     assert_equal("hello", note_v1.body)
 
-    note.update_attributes(:body => "hello v2")
+    note.update(:body => "hello v2")
     note_v2 = NoteVersion.find_by(:note_id => note.id, :version => 2)
     assert_not_nil(note_v2)
     assert_equal("hello v2", note_v2.body)
@@ -46,7 +46,7 @@ class NoteTest < ActiveSupport::TestCase
     assert_equal(1, Note.where(:post_id => 1).count)
 
     Post.update(1, :is_note_locked => true)
-    note.update_attributes(:body => "hello v2")
+    note.update(:body => "hello v2")
     assert_equal(true, note.errors.any?)
     assert_equal(1, Note.where(:post_id => 1).count)
     assert_equal("hello", Note.find_by(:post_id => 1).body)

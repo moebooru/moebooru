@@ -195,7 +195,7 @@ class UserController < ApplicationController
       return
     end
 
-    if @current_user.update_attributes(user_params_for_update)
+    if @current_user.update(user_params_for_update)
       respond_to_success("Account settings saved", :action => "edit")
     else
       if params[:render] && params[:render][:view]
@@ -332,7 +332,7 @@ class UserController < ApplicationController
       users = User.where(:level => CONFIG["user_levels"]["Unactivated"])
       users.each do |user|
         if User.confirmation_hash(user.name) == params["hash"]
-          user.update_attribute(:level, CONFIG["starting_level"])
+          user.update(:level => CONFIG["starting_level"])
           flash[:notice] = "Account has been activated"
           break
         end

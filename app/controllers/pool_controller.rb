@@ -149,7 +149,7 @@ class PoolController < ApplicationController
     end
 
     if request.post?
-      @pool.update_attributes(pool_params)
+      @pool.update(pool_params)
       respond_to_success("Pool updated", :action => "show", :id => params[:id])
     end
   end

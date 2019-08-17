@@ -7,7 +7,7 @@ class CacheHelperTest < ActionView::TestCase
   include ApplicationHelper
 
   def update_post(post, params = {})
-    post.update_attributes({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
+    post.update({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
   end
 
   def get_cache_keys(searches)

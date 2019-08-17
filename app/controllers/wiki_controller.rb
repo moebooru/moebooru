@@ -92,7 +92,7 @@ class WikiController < ApplicationController
     if @page.is_locked?
       respond_to_error("Page is locked", { :action => "show", :title => @page.title }, :status => 422)
     else
-      if @page.update_attributes(wiki_page_params.merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
+      if @page.update(wiki_page_params.merge(:ip_addr => request.remote_ip, :user_id => session[:user_id]))
         respond_to_success("Page updated", :action => "show", :title => @page.title)
       else
         respond_to_error(@page, :action => "show", :title => @page.title)

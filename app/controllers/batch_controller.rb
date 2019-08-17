@@ -39,14 +39,14 @@ class BatchController < ApplicationController
     if params[:do] == "pause"
       conds.push("status = 'pending'")
       BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
-        item.update_attributes(:status => "paused")
+        item.update(:status => "paused")
         count += 1
       end
       flash[:notice] = "Paused %i uploads." % count
     elsif params[:do] == "unpause"
       conds.push("status = 'paused'")
       BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
-        item.update_attributes(:status => "pending")
+        item.update(:status => "pending")
         count += 1
       end
       flash[:notice] = "Resumed %i uploads." % count
@@ -54,7 +54,7 @@ class BatchController < ApplicationController
       conds.push("status = 'error'")
 
       BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
-        item.update_attributes(:status => "pending")
+        item.update(:status => "pending")
         count += 1
       end
 

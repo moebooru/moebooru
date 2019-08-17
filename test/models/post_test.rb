@@ -24,7 +24,7 @@ class PostTest < ActiveSupport::TestCase
   end
 
   def update_post(post, params = {})
-    post.update_attributes({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
+    post.update({ :updater_user_id => 1, :updater_ip_addr => "127.0.0.1" }.merge(params))
   end
 
   def create_comment(post, params = {})
@@ -224,7 +224,7 @@ class PostTest < ActiveSupport::TestCase
     p = create_post(:tags => "moge chichi")
     assert_equal("chichi moge", p.cached_tags)
     t = Tag.find_by_name("chichi")
-    t.update_attributes(:name => "oppai")
+    t.update(:name => "oppai")
     Post.recalculate_cached_tags(p.id)
     p.reload
     assert_equal("moge oppai", p.cached_tags)

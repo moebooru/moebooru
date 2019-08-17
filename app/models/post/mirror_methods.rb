@@ -52,6 +52,6 @@ module Post::MirrorMethods
     # This might take a while.  Rather than hold a transaction, just reload the post
     # after uploading.
     reload
-    update_attributes(:is_warehoused => true)
+    update(:is_warehoused => true)
   end
 end

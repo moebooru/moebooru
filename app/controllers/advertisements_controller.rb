@@ -30,7 +30,7 @@ class AdvertisementsController < ApplicationController
 
   def update
     @ad = Advertisement.find(params[:id])
-    if @ad.update_attributes(params[:advertisement])
+    if @ad.update(params[:advertisement])
       flash[:success] = "Advertisement updated"
       redirect_to @ad
     else

@@ -6,7 +6,7 @@ class WikiPageTest < ActiveSupport::TestCase
   end
 
   def update_wiki(w1, params = {})
-    w1.update_attributes(params)
+    w1.update(params)
   end
 
   def test_normalize

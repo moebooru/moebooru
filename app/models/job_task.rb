@@ -14,16 +14,16 @@ class JobTask < ApplicationRecord
 
     begin
       execute_sql("SET statement_timeout = 0")
-      update_attributes(:status => "processing")
+      update(:status => "processing")
       __send__("execute_#{task_type}")
 
       if count == 0
-        update_attributes(:status => "finished")
+        update(:status => "finished")
       else
-        update_attributes(:status => "pending", :repeat_count => count)
+        update(:status => "pending", :repeat_count => count)
       end
     rescue SystemExit => x
-      update_attributes(:status => "pending")
+      update(:status => "pending")
       raise x
     rescue => x
       text = "\n\n"
@@ -32,7 +32,7 @@ class JobTask < ApplicationRecord
       text << x.backtrace.join("\n    ")
       logger.fatal(text)
 
-      update_attributes(:status => "error", :status_message => "#{x.class}: #{x}")
+      update(:status => "error", :status_message => "#{x.class}: #{x}")
     end
   end
 
@@ -62,12 +62,12 @@ class JobTask < ApplicationRecord
     return if Rails.cache.read("delay-tag-sub-calc")
     Rails.cache.write("delay-tag-sub-calc", "1", :expires_in => 360.minutes)
     TagSubscription.process_all
-    update_attributes(:data => { :last_run => Time.now.strftime("%Y-%m-%d %H:%M") })
+    update(:data => { :last_run => Time.now.strftime("%Y-%m-%d %H:%M") })
   end
 
   def update_data(*args)
     hash = data.merge(args[0])
-    update_attributes(:data => hash)
+    update(:data => hash)
   end
 
   def execute_periodic_maintenance
@@ -97,17 +97,17 @@ class JobTask < ApplicationRecord
 
       data["left"] = Post.where.not(:is_warehoused => true, :status => "deleted").count
       data["post_id"] = post.id
-      update_attributes(:data => data)
+      update(:data => data)
 
       begin
         post.upload_to_mirrors
       ensure
         data["post_id"] = nil
-        update_attributes(:data => data)
+        update(:data => data)
       end
 
       data["left"] = Post.where.not(:is_warehoused => true, :status => "deleted").count
-      update_attributes(:data => data)
+      update(:data => data)
     end
   end
 
@@ -115,7 +115,7 @@ class JobTask < ApplicationRecord
     upload = BatchUpload.where(:status => "pending").order(:id => :asc).take
     if upload.nil? then return end
 
-    update_attributes(:data => { :id => upload.id, :user_id => upload.user_id, :url => upload.url })
+    update(:data => { :id => upload.id, :user_id => upload.user_id, :url => upload.url })
     upload.run
   end
 
@@ -210,7 +210,7 @@ class JobTask < ApplicationRecord
     # If we were interrupted without finishing a task, it may be left in processing; reset
     # thos tasks to pending.
     where(:status => "processing").find_each do |task|
-      task.update_attributes(:status => "pending")
+      task.update(:status => "pending")
     end
 
     loop do

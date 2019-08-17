@@ -5,7 +5,7 @@ class RemoveNotesFromArtists < ActiveRecord::Migration[5.1]
       notes = artist.__send__(:read_attribute, :notes)
 
       if page
-        page.update_attributes(:body => notes, :ip_addr => "127.0.0.1", :user_id => 1)
+        page.update(:body => notes, :ip_addr => "127.0.0.1", :user_id => 1)
       else
         WikiPage.create(:title => artist.name, :body => notes, :ip_addr => "127.0.0.1", :user_id => 1)
       end

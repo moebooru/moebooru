@@ -1,4 +1,4 @@
-dist: trusty
+dist: bionic
 cache: bundler
 sudo: false
 
@@ -7,11 +7,7 @@ rvm:
 - 2.6.3
 
 addons:
-  postgresql: 10
-  apt:
-    packages:
-      - postgresql-10
-      - postgresql-client-10
+  postgresql: 11
 
 services:
 - memcached

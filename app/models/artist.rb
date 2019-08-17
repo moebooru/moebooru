@@ -134,7 +134,7 @@ class Artist < ApplicationRecord
 
     def commit_members
       transaction do
-        self.class.where(:group_id => id).update_all(:group_id => nil)
+        self.class.unscoped.where(:group_id => id).update_all(:group_id => nil)
 
         if @member_names
           @member_names.each do |name|

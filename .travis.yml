@@ -6,6 +6,9 @@ language: ruby
 rvm:
 - 2.6.3
 
+addons:
+  postgresql: 10
+
 services:
 - memcached
 - postgresql

@@ -7,10 +7,7 @@ rvm:
 - 2.6.3
 
 addons:
-  postgresql: 11.5
-  apt:
-    packages:
-      - postgresql-11
+  postgresql: 10
 
 services:
 - memcached

@@ -1,13 +1,13 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 5.2.0"
+gem "rails", "~> 6.0.0"
 
-gem "coffee-rails", "~> 4.2" # Rails 5.2 default
+gem "coffee-rails"
 gem "jquery-rails"
 gem "jquery-ui-rails"
-gem "uglifier", ">= 1.3.0" # Rails 5.2 default
+gem "uglifier"
 
-gem "sass-rails", "~> 5.0" # Rails 5.2 default
+gem "sass-rails"
 
 source "https://rails-assets.org" do
   gem "rails-assets-js-cookie"
@@ -18,8 +18,7 @@ end
 
 gem "non-stupid-digest-assets"
 
-# FIXME: remove version restriction once activerecord is updated to support pg 1.0+
-gem "pg", "~> 0.18", :platforms => [:ruby, :mingw]
+gem "pg", :platforms => [:ruby, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.0", :platforms => :jruby
 
 gem "diff-lcs"
@@ -55,7 +54,7 @@ end
 
 gem "pry", :group => [:development, :test]
 
-gem "jbuilder", "~> 2.5" # Rails 5.2 default
+gem "jbuilder", "~> 2.5"
 
 # Must be last.
 gem "rack-mini-profiler", :group => :development

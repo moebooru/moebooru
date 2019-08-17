@@ -1,19 +1,23 @@
-require_relative "boot"
+require_relative 'boot'
 
 # To allow setting environment variable ZP_DATABASE_URL instead of DATABASE_URL.
-ENV["DATABASE_URL"] = ENV["MB_DATABASE_URL"] if ENV["MB_DATABASE_URL"]
+ENV['DATABASE_URL'] = ENV['MB_DATABASE_URL'] if ENV['MB_DATABASE_URL']
 
-require "rails/all"
+require 'rails/all'
 
-require_relative "init_config"
+require_relative 'init_config'
 
-Bundler.require(*CONFIG["bundler_groups"])
+Bundler.require(*CONFIG['bundler_groups'])
 
 module Moebooru
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.0
+
     # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
+    # Application configuration can go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded after loading
+    # the framework and any gems in your application.
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
@@ -68,5 +72,7 @@ module Moebooru
 
     config.action_controller.asset_host = CONFIG[:file_hosts][:assets] if CONFIG[:file_hosts]
     config.action_mailer.default_url_options = { :host => CONFIG["server_host"] }
+
+    config.middleware.delete ActionDispatch::HostAuthorization
   end
 end

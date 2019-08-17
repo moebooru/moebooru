@@ -4,10 +4,10 @@ sudo: false
 
 language: ruby
 rvm:
-- 2.4.1
+- 2.6.3
 
 addons:
-  postgresql: 9.6
+  postgresql: 11.5
 
 services:
 - memcached

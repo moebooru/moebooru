@@ -670,7 +670,7 @@ class User < ApplicationRecord
       else "id DESC"
       end
 
-    res.order(order)
+    res.order(Arel.sql(order))
   end
 
   # FIXME: ensure not used and then nuke

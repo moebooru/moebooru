@@ -17,4 +17,3 @@ $ ->
   # Check if there's any pending post moderation queue.
   if parseInt(Cookies.get('mod_pending')) > 0
     $('#moderate').addClass 'mod-pending'
-  return

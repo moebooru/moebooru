@@ -1,7 +1,7 @@
 $ = jQuery
 
 $ ->
-  notice = Cookies "notice"
+  notice = Cookies.get "notice"
   return unless notice && notice != ""
 
   window.notice notice, true

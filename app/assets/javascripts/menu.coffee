@@ -16,7 +16,7 @@ window.Menu =
   menu: null
 
   setPostModerateCount: ->
-    pending = parseInt Cookies("mod_pending")
+    pending = parseInt Cookies.get("mod_pending")
     return unless pending > 0
 
     link = @menu.find(".moderate")

@@ -4,8 +4,8 @@
 $ = jQuery
 
 class @Moebooru.RelatedTags
-  recentTags: => @parseTags Cookies("recent_tags")
-  myTags: => @parseTags Cookies("my_tags")
+  recentTags: => @parseTags Cookies.get("recent_tags")
+  myTags: => @parseTags Cookies.get("my_tags")
   artistSource: -> $("#post_source").val()
   source: -> $("#post_tags")
   target: -> $("#related")

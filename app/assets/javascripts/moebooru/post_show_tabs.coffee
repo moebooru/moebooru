@@ -9,13 +9,13 @@ $ ->
       e.preventDefault()
       @editTab.show()
       @commentsTab.hide()
-      Cookies "show_defaults_to_edit", 1
+      Cookies.set "show_defaults_to_edit", 1
       ($ "#post_tags").focus()
     showCommentsTab: (e) ->
       e.preventDefault()
       @editTab.hide()
       @commentsTab.show()
-      Cookies "show_defaults_to_edit", 0
+      Cookies.set "show_defaults_to_edit", 0
       ($ "#comments textarea").focus()
     initialize: ->
       ($ ".js-posts-show-edit-tab").click $.proxy(@showEditTab, this)
@@ -23,7 +23,7 @@ $ ->
 
       if (($ ".js-posts-show-edit-tab").length &&
         ($ ".js-posts-show-comments-tab").length &&
-        Cookies("show_defaults_to_edit") == "1" &&
+        Cookies.get("show_defaults_to_edit") == "1" &&
         window.location.hash != "#comments" &&
         !window.location.hash.match(/^#c[0-9]+$/))
           @editTab.show()

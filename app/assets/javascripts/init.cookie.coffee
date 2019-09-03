@@ -1,4 +1,6 @@
-jQuery(document).ready ($) ->
+$ = jQuery
+
+$ ->
   # Check if there's new dmail.
   if Cookies('has_mail') == '1'
     $('#has-mail-notice').show()

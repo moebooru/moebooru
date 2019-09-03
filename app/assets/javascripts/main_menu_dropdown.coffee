@@ -20,5 +20,5 @@ show = (e) ->
 
   setTimeout hide, 100
 
-$(document).ready ->
+$ ->
   $(".submenu-button").click show

@@ -1,6 +1,7 @@
 #= require moebooru
+$ = jQuery
 
-jQuery(document).ready ($) ->
+$ ->
   window.Moebooru.postShowTabs =
     editTab: $ "#edit"
     commentsTab: $ "#comments"

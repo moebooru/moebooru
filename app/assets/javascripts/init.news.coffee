@@ -1,6 +1,6 @@
 $ = jQuery
 
-$(document).on "ready page:load", ->
+$ ->
   $newsTicker = $("#news-ticker")
   newsDate = $newsTicker.attr("data-date")
   cookieKey = "hide-news-ticker"

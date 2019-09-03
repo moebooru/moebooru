@@ -1,6 +1,6 @@
 $ = jQuery
 
-$(document).on "ready", ->
+$ ->
   notice = Cookies "notice"
   return unless notice && notice != ""
 

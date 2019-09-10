@@ -16,7 +16,7 @@ class InlineController < ApplicationController
     end
     order << ["created_at DESC"]
 
-    @inlines = Inline.order(order.join(", ")).paginate :per_page => 20, :page => page_number
+    @inlines = Inline.order(Arel.sql(order.join(", "))).paginate :per_page => 20, :page => page_number
 
     respond_to_list("inlines")
   end

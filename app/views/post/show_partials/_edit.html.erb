@@ -19,12 +19,20 @@
             <% if @post.is_rating_locked? %>
               <%= t('.rating_locked_info') %>
             <% else %>
-              <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %>
-              <label for="post_rating_explicit"><%= t('ratings.e') %></label>
-              <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>
-              <label for="post_rating_questionable"><%= t('ratings.q') %></label>
-              <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %>
-              <label for="post_rating_safe"><%= t('ratings.s') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Explicit", @post.rating == "e", :id => "post_rating_explicit", :tabindex => 1 %>
+                <%= t('ratings.e') %>
+              </label>
+
+              <label>
+                <%= radio_button_tag "post[rating]", "Questionable", @post.rating == "q", :id => "post_rating_questionable", :tabindex => 2 %>
+                <%= t('ratings.q') %>
+              </label>
+
+              <label>
+                <%= radio_button_tag "post[rating]", "Safe", @post.rating == "s", :id => "post_rating_safe", :tabindex => 3 %>
+                <%= t('ratings.s') %>
+              </label>
             <% end %>
           </td>
         </tr>

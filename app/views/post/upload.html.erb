@@ -113,14 +113,20 @@
               <% end %>
             </th>
             <td>
-              <input id="post_rating_explicit" name="post[rating]" type="radio" value="Explicit" <% if (params[:rating] or "q") == "e" %>checked="checked"<% end %> tabindex="5">
-              <label for="post_rating_explicit"><%= t('ratings.e') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Explicit", params[:rating] == "e", :id => "post_rating_explicit", :tabindex => 5 %>
+                <%= t('ratings.e') %>
+              </label>
 
-              <input id="post_rating_questionable" name="post[rating]" type="radio" value="Questionable" <% if (params[:rating] or "q") == "q" %>checked="checked"<% end %> tabindex="6">
-              <label for="post_rating_questionable"><%= t('ratings.q') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Questionable", params[:rating].blank? || (params[:rating] == "q"), :id => "post_rating_questionable", :tabindex => 6 %>
+                <%= t('ratings.q') %>
+              </label>
 
-              <input id="post_rating_safe" name="post[rating]" type="radio" value="Safe" <% if (params[:rating] or "q") == "s" %>checked="checked"<% end %> tabindex="7">
-              <label for="post_rating_safe"><%= t('ratings.s') %></label>
+              <label>
+                <%= radio_button_tag "post[rating]", "Safe", params[:rating] == "s", :id => "post_rating_safe", :tabindex => 7 %>
+                <%= t('ratings.s') %>
+              </label>
             </td>
           </tr>
           <% if @current_user.is_contributor_or_higher? %>

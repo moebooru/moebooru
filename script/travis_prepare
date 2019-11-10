@@ -7,6 +7,16 @@ sudo apt-get update
 sudo apt-get install -y postgresql-12
 sudo pg_ctlcluster 12 main start
 
+printf 'Waiting for postgres...'
+n=60;
+while [ "$n" -gt 0 ]; do
+  printf .
+  pg_isready && break
+  sleep 1
+  n=$((n - 1))
+done
+echo done
+
 mkdir -p public/data
 
 cat <<EOF > config/database.yml

@@ -5,6 +5,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
@@ -111,7 +112,7 @@ CREATE FUNCTION public.nat_sort(t text) RETURNS text
     LANGUAGE plpgsql IMMUTABLE
     AS $$
       BEGIN
-        return array_to_string(array(select nat_sort_pad((regexp_matches(t, '([0-9]+|[^0-9]+)', 'g'))[1])), '');
+        return array_to_string(array(select public.nat_sort_pad((regexp_matches(t, '([0-9]+|[^0-9]+)', 'g'))[1])), '');
       END;
       $$;
 
@@ -302,7 +303,7 @@ CREATE FUNCTION public.user_logs_touch(new_user_id integer, new_ip inet) RETURNS
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: advertisements; Type: TABLE; Schema: public; Owner: -
@@ -2740,91 +2741,91 @@ CREATE RULE delete_histories AS
 -- Name: pools_posts pools_posts_delete_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_delete_trg BEFORE DELETE ON public.pools_posts FOR EACH ROW EXECUTE PROCEDURE public.pools_posts_delete_trg();
+CREATE TRIGGER pools_posts_delete_trg BEFORE DELETE ON public.pools_posts FOR EACH ROW EXECUTE FUNCTION public.pools_posts_delete_trg();
 
 
 --
 -- Name: pools_posts pools_posts_insert_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_insert_trg BEFORE INSERT ON public.pools_posts FOR EACH ROW EXECUTE PROCEDURE public.pools_posts_insert_trg();
+CREATE TRIGGER pools_posts_insert_trg BEFORE INSERT ON public.pools_posts FOR EACH ROW EXECUTE FUNCTION public.pools_posts_insert_trg();
 
 
 --
 -- Name: pools_posts pools_posts_update_trg; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER pools_posts_update_trg BEFORE UPDATE ON public.pools_posts FOR EACH ROW EXECUTE PROCEDURE public.pools_posts_update_trg();
+CREATE TRIGGER pools_posts_update_trg BEFORE UPDATE ON public.pools_posts FOR EACH ROW EXECUTE FUNCTION public.pools_posts_update_trg();
 
 
 --
 -- Name: posts posts_tags_array_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER posts_tags_array_update BEFORE INSERT OR UPDATE ON public.posts FOR EACH ROW EXECUTE PROCEDURE public.posts_tags_array_update();
+CREATE TRIGGER posts_tags_array_update BEFORE INSERT OR UPDATE ON public.posts FOR EACH ROW EXECUTE FUNCTION public.posts_tags_array_update();
 
 
 --
 -- Name: history_changes trg_cleanup_history; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_cleanup_history AFTER DELETE ON public.history_changes FOR EACH ROW EXECUTE PROCEDURE public.trg_purge_histories();
+CREATE TRIGGER trg_cleanup_history AFTER DELETE ON public.history_changes FOR EACH ROW EXECUTE FUNCTION public.trg_purge_histories();
 
 
 --
 -- Name: comments trg_comment_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_comment_search_update BEFORE INSERT OR UPDATE ON public.comments FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_comment_search_update BEFORE INSERT OR UPDATE ON public.comments FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: forum_posts trg_forum_post_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_forum_post_search_update BEFORE INSERT OR UPDATE ON public.forum_posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_forum_post_search_update BEFORE INSERT OR UPDATE ON public.forum_posts FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
 -- Name: history_changes trg_history_changes_value_index_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_history_changes_value_index_update BEFORE INSERT OR UPDATE ON public.history_changes FOR EACH ROW EXECUTE PROCEDURE public.history_changes_index_trigger();
+CREATE TRIGGER trg_history_changes_value_index_update BEFORE INSERT OR UPDATE ON public.history_changes FOR EACH ROW EXECUTE FUNCTION public.history_changes_index_trigger();
 
 
 --
 -- Name: notes trg_note_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_note_search_update BEFORE INSERT OR UPDATE ON public.notes FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
+CREATE TRIGGER trg_note_search_update BEFORE INSERT OR UPDATE ON public.notes FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'body');
 
 
 --
 -- Name: pools trg_pools_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_pools_search_update BEFORE INSERT OR UPDATE ON public.pools FOR EACH ROW EXECUTE PROCEDURE public.pools_search_update_trigger();
+CREATE TRIGGER trg_pools_search_update BEFORE INSERT OR UPDATE ON public.pools FOR EACH ROW EXECUTE FUNCTION public.pools_search_update_trigger();
 
 
 --
 -- Name: posts_tags trg_posts_tags__delete; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__delete BEFORE DELETE ON public.posts_tags FOR EACH ROW EXECUTE PROCEDURE public.trg_posts_tags__delete();
+CREATE TRIGGER trg_posts_tags__delete BEFORE DELETE ON public.posts_tags FOR EACH ROW EXECUTE FUNCTION public.trg_posts_tags__delete();
 
 
 --
 -- Name: posts_tags trg_posts_tags__insert; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_posts_tags__insert BEFORE INSERT ON public.posts_tags FOR EACH ROW EXECUTE PROCEDURE public.trg_posts_tags__insert();
+CREATE TRIGGER trg_posts_tags__insert BEFORE INSERT ON public.posts_tags FOR EACH ROW EXECUTE FUNCTION public.trg_posts_tags__insert();
 
 
 --
 -- Name: wiki_pages trg_wiki_page_search_update; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_wiki_page_search_update BEFORE INSERT OR UPDATE ON public.wiki_pages FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
+CREATE TRIGGER trg_wiki_page_search_update BEFORE INSERT OR UPDATE ON public.wiki_pages FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('text_search_index', 'pg_catalog.english', 'title', 'body');
 
 
 --
@@ -3391,6 +3392,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180624074601'),
 ('20190518111956'),
 ('20190817070727'),
+('20191110172526'),
 ('21'),
 ('22'),
 ('23'),

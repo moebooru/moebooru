@@ -7,7 +7,6 @@ rvm:
 
 services:
 - memcached
-- postgresql
 
 before_script:
 - script/travis_prepare

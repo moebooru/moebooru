@@ -9,4 +9,5 @@ services:
 - memcached
 
 before_script:
+- sudo script/travis_prepare_db
 - script/travis_prepare

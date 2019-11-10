@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. /etc/lsb-release
+echo "deb http://apt.postgresql.org/pub/repos/apt/ ${DISTRIB_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+apt-get update
+apt-get install -y postgresql-12
+
+cp /etc/postgresql/10/main/pg_hba.conf /etc/postgresql/12/main/pg_hba.conf
+
+pg_ctlcluster 12 main reload

@@ -1,27 +1,11 @@
 #!/bin/sh
 
-. /etc/lsb-release
-echo "deb http://apt.postgresql.org/pub/repos/apt/ ${DISTRIB_CODENAME}-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install -y postgresql-12
-sudo pg_ctlcluster 12 main start
-
-printf 'Waiting for postgres...'
-n=60;
-while [ "$n" -gt 0 ]; do
-  printf .
-  pg_isready -t 1 -q && break
-  sleep 1
-  n=$((n - 1))
-done
-echo done
-
 mkdir -p public/data
 
 cat <<EOF > config/database.yml
 test:
   adapter: postgresql
+  port: 5433
   username: postgres
   database: moebooru_test
 EOF

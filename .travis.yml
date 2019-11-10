@@ -1,13 +1,9 @@
 dist: bionic
 cache: bundler
-sudo: false
 
 language: ruby
 rvm:
 - 2.6.3
-
-addons:
-  postgresql: 12
 
 services:
 - memcached

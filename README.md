@@ -12,8 +12,8 @@ Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application is developed using:
 
-* Ruby 2.5
-* PostgreSQL 10.1
+* Ruby 2.6
+* PostgreSQL 12
 * Bundler gem
 * ImageMagick
 * And various other requirement for the gems (check `Gemfile` for the list)

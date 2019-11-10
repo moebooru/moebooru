@@ -7,7 +7,7 @@ rvm:
 - 2.6.3
 
 addons:
-  postgresql: 10
+  postgresql: 12
 
 services:
 - memcached

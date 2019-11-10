@@ -11,7 +11,7 @@ printf 'Waiting for postgres...'
 n=60;
 while [ "$n" -gt 0 ]; do
   printf .
-  pg_isready && break
+  pg_isready -t 1 -q && break
   sleep 1
   n=$((n - 1))
 done

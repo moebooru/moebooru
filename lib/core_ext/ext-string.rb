@@ -3,6 +3,8 @@
 class String
   # Strip out invalid utf8
   def to_valid_utf8
+    return self if self == ''
+
     str = self
     str.force_encoding(Encoding::UTF_8) if str.encoding != Encoding::UTF_8
     str.scrub("?").delete("\u0000")

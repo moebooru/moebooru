@@ -303,8 +303,6 @@ CREATE FUNCTION public.user_logs_touch(new_user_id integer, new_ip inet) RETURNS
 
 SET default_tablespace = '';
 
-SET default_table_access_method = heap;
-
 --
 -- Name: advertisements; Type: TABLE; Schema: public; Owner: -
 --

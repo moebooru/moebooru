@@ -3,11 +3,14 @@ cache: bundler
 
 language: ruby
 rvm:
-- 2.6.3
+- 2.7.0
 
 services:
 - memcached
+- postgresql
+
+addons:
+  postgresql: 11
 
 before_script:
-- sudo script/travis_prepare_db
 - script/travis_prepare

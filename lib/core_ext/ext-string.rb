@@ -5,9 +5,11 @@ class String
   def to_valid_utf8
     return self if self == ''
 
-    str = self
-    str.force_encoding(Encoding::UTF_8) if str.encoding != Encoding::UTF_8
-    str.scrub("?").delete("\u0000")
+    str = self.dup
+    str.force_encoding(Encoding::UTF_8)
+    str.scrub!("?")
+    str.delete!("\u0000")
+    str
   end
 
   # Returns true if it looks like true

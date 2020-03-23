@@ -1098,7 +1098,7 @@ ThumbnailView.prototype.displayed_image_loaded_event = function(event)
 
 
 /* This handler handles global keypress bindings, and fires viewer: events. */
-function InputHandler()
+window.InputHandler = function()
 {
   TrackFocus();
 

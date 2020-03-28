@@ -1,7 +1,7 @@
 <% content_for :html_header do %>
   <script type="text/javascript">
     if(navigator.platform.indexOf("iPhone") != -1 || navigator.platform == "iPad" || navigator.platform == "iPod") // includes "iPhone Simulator"
-      document.write('<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">');
+      document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">');
     else
       document.write('<meta name="viewport" content="target-densityDpi=150, user-scalable=0;">');
 

@@ -334,25 +334,7 @@ document.observe("dom:loaded", function()
     });
   }
 
-  if(AndroidDetectWindowSize.required())
-  {
-    /* We need to figure out the window size.  Do this before starting up the browser,
-     * to speed it up. */
-    var trigger_initialization = function(e)
-    {
-      document.stopObserving("resize", trigger_initialization);
-      initialize_browser.defer();
-    }
-    document.observe("resize", trigger_initialization);
-
-    /* This will always fire resize at least once. */
-    new AndroidDetectWindowSize();
-  }
-  else
-  {
-    /* Normal initialization. */
-    initialize_browser();
-  }
+  initialize_browser();
 }.bindAsEventListener(null));
 </script>
 

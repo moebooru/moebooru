@@ -294,7 +294,7 @@ class window.BrowserView
         drag.latest_event.stop()
         flash.hide()
         flash.removeClassName 'flash-star'
-        @popup_vote_widget.set_mouseover null
+        @popup_vote_widget.setMouseover null
         last_dragged_over = null
         popup_vote_widget_container.removeClassName 'vote-popup-hidden'
       onup: (drag) =>
@@ -304,8 +304,8 @@ class window.BrowserView
           last_dragged_over = null
 
         # Call even if star_container is null or not a star, so we clear any mouseover.
-        @popup_vote_widget.set_mouseover last_dragged_over
-        star = @popup_vote_widget.activate_item(last_dragged_over)
+        @popup_vote_widget.setMouseover last_dragged_over
+        star = @popup_vote_widget.activateItem(last_dragged_over)
 
         # If a vote was made, flash the vote star.
         if star?
@@ -329,7 +329,7 @@ class window.BrowserView
         last_dragged_over = null
       ondrag: (drag) =>
         last_dragged_over = document.elementFromPoint(drag.x, drag.y)
-        @popup_vote_widget.set_mouseover last_dragged_over
+        @popup_vote_widget.setMouseover last_dragged_over
     )
 
 

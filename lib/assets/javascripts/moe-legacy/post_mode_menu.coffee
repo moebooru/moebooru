@@ -101,9 +101,9 @@ window.PostModeMenu =
     s = $F('mode')
     Cookie.put 'mode', s, 7
     PostModeMenu.mode = s
-    if s.value != 'edit'
+    if s != 'edit'
       $('quick-edit').hide()
-    if s.value != 'apply-tag-script'
+    if s != 'apply-tag-script'
       $('edit-tag-script').hide()
       Post.reset_tag_script_applied()
     if s == 'vote'

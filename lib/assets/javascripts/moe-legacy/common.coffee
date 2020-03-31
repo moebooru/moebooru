@@ -936,7 +936,7 @@ window.ReportError = (message, file, line, exc, info) ->
   expiration = new Date
   expiration.setTime expiration.getTime() + 60 * 60 * 1000
   document.cookie = 'reported_error=1; path=/; expires=' + expiration.toGMTString()
-  report = FormatError(if exc then exc.message else message, file, line, exc, info)
+  report = FormatError((if exc then exc.message else message), file, line, exc, info)
   try
     new (Ajax.Request)('/user/error.json',
       requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')

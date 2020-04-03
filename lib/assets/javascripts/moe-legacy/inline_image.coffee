@@ -1,4 +1,4 @@
-@InlineImage =
+window.InlineImage =
   mouse_down: null
   zoom_levels: [
     1.0

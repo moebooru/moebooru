@@ -1,5 +1,5 @@
 # The following are instance methods and variables
-@Note = Class.create(
+window.Note = Class.create(
   initialize: (id, is_new, raw_body) ->
     if Note.debug
       console.debug 'Note#initialize (id=%d)', id

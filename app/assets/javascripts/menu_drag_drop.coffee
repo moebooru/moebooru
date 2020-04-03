@@ -1,6 +1,6 @@
 $ = jQuery
 
-class @MenuDragDrop
+class window.MenuDragDrop
   constructor: ->
     @menuLinks = $('#main-menu > ul > li > a')
     @submenus = @menuLinks.siblings('.submenu')

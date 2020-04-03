@@ -3,7 +3,7 @@
 
 $ = jQuery
 
-class @Moebooru.RelatedTags
+class window.Moebooru.RelatedTags
   recentTags: => @parseTags Cookies.get("recent_tags")
   myTags: => @parseTags Cookies.get("my_tags")
   artistSource: -> $("#post_source").val()

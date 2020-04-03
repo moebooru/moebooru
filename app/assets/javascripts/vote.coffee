@@ -10,7 +10,7 @@ getScore = (star) ->
   parseInt(star.dataset.star, 10)
 
 
-class @Vote
+class window.Vote
   constructor: (container, id) ->
     nodes = container.find('*')
     @desc = nodes.filter('.vote-desc')

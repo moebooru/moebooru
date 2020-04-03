@@ -60,7 +60,7 @@ class ImgPoolHandlerDummy
 
 # Create an image pool handler.  If the URL hash value "image-pools" is specified,
 # force image pools on or off for debugging; otherwise enable them only when needed. 
-@ImgPoolHandler = ->
+window.ImgPoolHandler = ->
   use_image_pools = Prototype.Browser.WebKit
   hash_value = UrlHash.get('image-pools')
 

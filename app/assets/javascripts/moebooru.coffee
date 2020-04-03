@@ -1,6 +1,6 @@
 $ = jQuery
-@Moebooru = {}
-@Moe = $(Moebooru)
+window.Moebooru = {}
+window.Moe = $(Moebooru)
 
 Moebooru.path = (url) ->
   if PREFIX == '/' then url else "#{PREFIX}#{url}"

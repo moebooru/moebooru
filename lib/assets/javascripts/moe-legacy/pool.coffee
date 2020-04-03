@@ -1,6 +1,6 @@
 $ = jQuery
 
-class @PoolClass
+class PoolClass
   constructor: ->
     @pools = {}
 
@@ -139,4 +139,4 @@ class @PoolClass
     }], callback
 
 
-@Pool = new PoolClass
+window.Pool = new PoolClass

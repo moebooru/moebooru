@@ -1,6 +1,6 @@
 _preload_image_pool = null
 
-@PreloadContainer = ->
+window.PreloadContainer = ->
 
   ### Initialize the pool the first time we make a container, since we may not
   # have ImgPoolHandler when the file is loaded. 
@@ -51,7 +51,7 @@ PreloadContainer::on_image_complete_event = (event) ->
   event.target.active = false
   return
 
-@Preload =
+window.Preload =
   preload_list: []
   preload_container: null
   preload_raw_urls: []

@@ -1,4 +1,4 @@
-@PostUploadForm = (form, progress) ->
+window.PostUploadForm = (form, progress) ->
   XHRLevel2 = 'XMLHttpRequest' of window and (new XMLHttpRequest).upload != null and (new XMLHttpRequest).upload != undefined
   SupportsFormData = 'FormData' of window
   if !XHRLevel2 or !SupportsFormData
@@ -134,7 +134,7 @@ PostUploadForm::cancel = ->
 # results.
 ###
 
-@UploadSimilarSearch = (file_field, results) ->
+window.UploadSimilarSearch = (file_field, results) ->
   if !ThumbnailUserImage
     return
   @file_field = file_field

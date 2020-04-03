@@ -1,7 +1,7 @@
-@Moe ?= {}
+window.Moe ?= {}
 $ = jQuery
 
-class @Moe.Timeago
+class window.Moe.Timeago
   constructor: ->
     @observe()
     @run()

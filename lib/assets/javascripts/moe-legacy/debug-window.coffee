@@ -1,4 +1,4 @@
-@DebugWindow = ->
+window.DebugWindow = ->
   @shown = false
   @log_data = []
   @hooks = []
@@ -101,7 +101,7 @@ DebugWindow::update = ->
 # debug.handler.add_hook();
 ###
 
-@NewDebug = ->
+window.NewDebug = ->
   debug_handler = new DebugWindow
   debug = debug_handler.log.bind(debug_handler)
   debug.handler = debug_handler

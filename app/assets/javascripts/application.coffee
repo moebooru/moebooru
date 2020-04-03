@@ -27,6 +27,9 @@
 
 #= require_tree ./_classes
 
+I18n.defaultLocale = locale.default
+I18n.locale = locale.current
+
 Moe.checkAll = new Moe.CheckAll
 Moe.timeago = new Moe.Timeago
 

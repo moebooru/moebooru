@@ -32,9 +32,17 @@
   <script id="user-blacklisted-tags" type="application/json">
     <%= json_escape @current_user.blacklisted_tags_array.to_json.html_safe %>
   </script>
+
+  <script type="text/javascript">
+    window.locale = {
+      current: "<%= I18n.locale %>",
+      default: "<%= I18n.default_locale %>",
+    }
+  </script>
+
   <%= javascript_include_tag :application %>
   <%= javascript_include_tag 'application-legacy' %>
-  <%= render 'layouts/locale' %>
+
   <!--[if lt IE 8]>
   <script src="/IE8.js" type="text/javascript"></script>
   <![endif]-->

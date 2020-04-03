@@ -1,9 +1,9 @@
 {
   "dependencies": {
+    "@rails/ujs": "^6.0.2-2",
     "@rails/webpacker": "5.0.1",
     "coffee-loader": "^0.9.0",
     "coffeescript": "1.12.7",
-    "i18n-js": "^3.5.1",
     "jquery": "^3.4.1",
     "jquery-ui": "^1.12.1",
     "js-cookie": "^2.2.1",

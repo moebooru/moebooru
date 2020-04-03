@@ -33,7 +33,7 @@
     <%= json_escape @current_user.blacklisted_tags_array.to_json.html_safe %>
   </script>
   <%= javascript_include_tag :application %>
-  <%= javascript_include_tag 'moe-legacy/application' %>
+  <%= javascript_include_tag 'application-legacy' %>
   <%= render 'layouts/locale' %>
   <!--[if lt IE 8]>
   <script src="/IE8.js" type="text/javascript"></script>

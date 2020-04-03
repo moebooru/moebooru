@@ -2,6 +2,7 @@ require_relative 'boot'
 
 # To allow setting environment variable ZP_DATABASE_URL instead of DATABASE_URL.
 ENV['DATABASE_URL'] = ENV['MB_DATABASE_URL'] if ENV['MB_DATABASE_URL']
+ENV['NODE_ENV'] = ENV['RAILS_ENV']
 
 require 'rails/all'
 

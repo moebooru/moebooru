@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@rails/webpacker": "5.0.1",
+    "coffee-loader": "^0.9.0",
+    "coffeescript": "1.12.7",
+    "rails-erb-loader": "^5.5.2"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.10.3"
+  }
+}

@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 6.0.0"
 
+gem "webpacker"
 gem "coffee-rails"
 gem "jquery-rails"
 gem "jquery-ui-rails"

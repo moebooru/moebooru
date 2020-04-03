@@ -15,6 +15,8 @@ As this is ongoing project, there will be more changes on requirement as this pr
 * Ruby 2.6+
 * PostgreSQL 11+
 * Bundler gem
+* node.js
+* yarn
 * ImageMagick
 * And various other requirement for the gems (check `Gemfile` for the list)
 

@@ -4,18 +4,9 @@ gem "rails", "~> 6.0.0"
 
 gem "webpacker"
 gem "coffee-rails"
-gem "jquery-rails"
-gem "jquery-ui-rails"
 gem "uglifier"
 
 gem "sass-rails"
-
-source "https://rails-assets.org" do
-  gem "rails-assets-js-cookie"
-  gem "rails-assets-mousetrap"
-  gem "rails-assets-timeago"
-  gem "rails-assets-MutationObserver"
-end
 
 gem "non-stupid-digest-assets"
 

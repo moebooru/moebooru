@@ -1,5 +1,8 @@
 dist: bionic
-cache: bundler
+
+cache:
+  bundler: true
+  yarn: true
 
 language: ruby
 rvm:
@@ -13,4 +16,5 @@ addons:
   postgresql: 11
 
 before_script:
+- yarn install
 - script/travis_prepare

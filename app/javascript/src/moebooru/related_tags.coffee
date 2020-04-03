@@ -1,6 +1,3 @@
-#= require moebooru
-#= require utils/fixed-encode-uri-component
-
 $ = jQuery
 
 class window.Moebooru.RelatedTags

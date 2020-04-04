@@ -1,5 +1,6 @@
 import CheckAll from './_classes/check_all'
 import RelatedTags from './_classes/related_tags'
+import Timeago from './_classes/timeago'
 
 jQuery =>
   window.menuDragDrop = new MenuDragDrop
@@ -8,4 +9,4 @@ jQuery =>
 
 window.relatedTags = new RelatedTags
 window.checkAll = new CheckAll
-Moe.timeago = new Moe.Timeago
+window.timeago = new Timeago

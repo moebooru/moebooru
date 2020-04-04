@@ -1,7 +1,6 @@
-window.Moe ?= {}
 $ = jQuery
 
-class window.Moe.Timeago
+export default class Timeago
   constructor: ->
     @observe()
     @run()

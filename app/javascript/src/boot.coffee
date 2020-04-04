@@ -5,7 +5,7 @@ import NewsTicker from './_classes/news_ticker'
 import PostShowTabs from './_classes/post_show_tabs'
 import RelatedTags from './_classes/related_tags'
 import Timeago from './_classes/timeago'
-import UserRecord from './user_record'
+import UserRecord from './_classes/user_record'
 
 window.checkAll = new CheckAll
 window.menu = new Menu

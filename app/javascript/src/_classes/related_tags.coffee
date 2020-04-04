@@ -15,7 +15,7 @@ export default class RelatedTags
 
   target: -> $("#related")
 
-  tagUrl: (tag) -> Moebooru.path "/post?tags=#{fixedEncodeURIComponent(tag)}"
+  tagUrl: (tag) -> Moebooru.path "/post?tags=#{encodeURIComponent(tag)}"
 
 
   initialize: =>
@@ -69,10 +69,14 @@ export default class RelatedTags
 
 
   highlightList: =>
-    highlightedTags = @parseTags @source().val()
-    $(".tag-column").find("a").removeClass "highlighted"
-    for tag in highlightedTags
-      $(".tag-column").find("a[href='#{@tagUrl tag}']").addClass "highlighted"
+    highlightedTags = {}
+    highlightedTags[t] = true for t in @parseTags(@source().val())
+
+    for tagLink in document.querySelectorAll('.js-related_tags--tag_link')
+      if highlightedTags[tagLink.dataset.tag]?
+        tagLink.classList.add 'highlighted'
+      else
+        tagLink.classList.remove 'highlighted'
 
 
   buildList: (title, tags) =>
@@ -82,8 +86,12 @@ export default class RelatedTags
 
     for tag in tags.sort()
       tagName = tag.replace /_/g, " "
-      $tagEntry = $("<li>").append $("<a>").text(tagName).attr(href: @tagUrl(tag))
-      tagsList.append $tagEntry
+      $tagLink = $("<a>")
+        .text(tagName)
+        .attr(href: @tagUrl(tag))
+        .attr('data-tag', tag)
+        .addClass('js-related_tags--tag_link')
+      tagsList.append $('<li>').append($tagLink)
 
     buf.append tagsList
 

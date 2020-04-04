@@ -10,8 +10,6 @@ import 'src/favorite'
 import 'src/forum'
 import 'src/notice'
 
-import 'src/utils/fixed-encode-uri-component'
-
 import 'src/moebooru'
 
 import 'src/comment'

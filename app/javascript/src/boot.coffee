@@ -1,3 +1,4 @@
+import CheckAll from './_classes/check_all'
 import RelatedTags from './_classes/related_tags'
 
 jQuery =>
@@ -6,5 +7,5 @@ jQuery =>
   Moebooru.postShowTabs.initialize()
 
 window.relatedTags = new RelatedTags
-Moe.checkAll = new Moe.CheckAll
+window.checkAll = new CheckAll
 Moe.timeago = new Moe.Timeago

@@ -1,7 +1,6 @@
-window.Moe ?= {}
 $ = jQuery
 
-class window.Moe.CheckAll
+export default class CheckAll
   constructor: ->
     $(document).on "click", ".js-check_all", @_checkAll
 

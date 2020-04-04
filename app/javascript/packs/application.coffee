@@ -14,7 +14,6 @@ import 'src/utils/fixed-encode-uri-component'
 
 import 'src/moebooru'
 
-import 'src/main_menu_dropdown'
 import 'src/comment'
 import 'src/init.autocomplete'
 import 'src/init.cookie'

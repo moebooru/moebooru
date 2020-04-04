@@ -1,6 +1,7 @@
 import CheckAll from './_classes/check_all'
 import Menu from './_classes/menu'
 import MenuDragDrop from './_classes/menu_drag_drop'
+import MenuDropdown from './main_menu_dropdown'
 import NewsTicker from './_classes/news_ticker'
 import PostShowTabs from './_classes/post_show_tabs'
 import RelatedTags from './_classes/related_tags'
@@ -10,6 +11,7 @@ import UserRecord from './_classes/user_record'
 window.checkAll = new CheckAll
 window.menu = new Menu
 window.menuDragDrop = new MenuDragDrop
+window.menuDropdown = new MenuDropdown
 window.newsTicker = new NewsTicker
 window.postShowTabs = new PostShowTabs
 window.relatedTags = new RelatedTags

@@ -1,24 +1,37 @@
 $ = jQuery
 
-show = (e) ->
-  e.preventDefault()
-  return if e.which != 1
+export default class MenuDropdown
+  constructor: ->
+    $(document).on 'click', '.submenu-button', @onToggle
+    $(document).on 'click', @onDocumentClick
 
-  link = $(e.target)
-  menu = link.siblings(".submenu")
 
-  return if menu.is(":visible")
+  hide: =>
+    return unless @current?
 
-  menu.show()
+    @current.$menu.hide()
+    @current = null
 
-  hide = ->
-    $(document).one "click", (e) ->
-      if e.which == 1
-        menu.hide()
-      else
-        setTimeout hide, 100
 
-  setTimeout hide, 100
+  onDocumentClick: (e) =>
+    return unless @current?
 
-$ ->
-  $(".submenu-button").click show
+    if e?.target? && $(e.target).closest(@current.link).length > 0
+      return
+
+    @hide()
+
+
+  onToggle: (e) =>
+    e.preventDefault()
+
+    link = e.currentTarget
+    openLink = @current?.link
+
+    @hide()
+
+    return if openLink == link
+
+    $menu = $(link).siblings('.submenu')
+    $menu.show()
+    @current = { link, $menu }

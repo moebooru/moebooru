@@ -1,10 +1,28 @@
 $ = jQuery
 
 class window.Moebooru.RelatedTags
+  constructor: ->
+    return unless @source().length && @target().length
+    $("[data-toggle='related-tags']").click @run
+    @target().on "click", "a", @toggleTag
+    @source().on "input keyup", @highlightList
+
+    $autoload = $(".js-related-tags--autoload")
+
+    if $autoload.length
+      $autoload.click()
+    else
+      @refreshList()
+
+
   recentTags: => @parseTags Cookies.get("recent_tags")
+
   myTags: => @parseTags Cookies.get("my_tags")
+
   artistSource: -> $("#post_source").val()
+
   source: -> $("#post_tags")
+
   target: -> $("#related")
 
   tagUrl: (tag) -> Moebooru.path "/post?tags=#{fixedEncodeURIComponent(tag)}"
@@ -128,17 +146,3 @@ class window.Moebooru.RelatedTags
     $.ajax url,
       data: data
     .done doneCallback
-
-
-  constructor: ->
-    return unless @source().length && @target().length
-    $("[data-toggle='related-tags']").click @run
-    @target().on "click", "a", @toggleTag
-    @source().on "input keyup", @highlightList
-
-    $autoload = $(".js-related-tags--autoload")
-
-    if $autoload.length
-      $autoload.click()
-    else
-      @refreshList()

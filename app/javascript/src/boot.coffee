@@ -1,4 +1,5 @@
 import CheckAll from './_classes/check_all'
+import MenuDragDrop from './_classes/menu_drag_drop'
 import RelatedTags from './_classes/related_tags'
 import Timeago from './_classes/timeago'
 

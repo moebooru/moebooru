@@ -1,6 +1,6 @@
 $ = jQuery
 
-class window.MenuDragDrop
+export default class MenuDragDrop
   constructor: ->
     $ @initialize
 

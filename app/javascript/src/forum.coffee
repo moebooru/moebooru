@@ -4,7 +4,7 @@
       $.ajax(url: Moebooru.path('/forum/mark_all_read')).done ->
         $('span.forum-topic').removeClass 'unread-topic'
         $('div.forum-update').removeClass 'forum-update'
-        Menu.sync_forum_menu(true)
+        menu.syncForumMenu(true)
         notice t('.mark_as_read')
         return
       return

@@ -1,21 +1,36 @@
 $ = jQuery
 
-$(document).on 'click', '#login-link', (e) ->
-  e.preventDefault()
-  User.run_login false, ->
-    window.location = window.location
+export default class Menu
+  constructor: ->
+    $ @initialize
 
 
-$(document).on 'click', '#forum-mark-all-read', (e) ->
-  e.preventDefault()
-  Forum.mark_all_read()
+  initialize: =>
+    @menu = $('#main-menu')
+
+    if @menu.length > 0
+      @setHighlight()
+      @setPostModerateCount()
+      @syncForumMenu()
+      @showHelpItem()
+
+    $(document).on 'click', '#login-link', (e) ->
+      e.preventDefault()
+      User.run_login false, ->
+        window.location = window.location
 
 
+    $(document).on 'click', '#forum-mark-all-read', (e) ->
+      e.preventDefault()
+      Forum.mark_all_read()
 
-window.Menu =
-  menu: null
+    $(document).on 'click', '#main-menu .search-link', (e) =>
+      e.preventDefault()
+      @showSearchBox e.currentTarget
+      return
 
-  setPostModerateCount: ->
+
+  setPostModerateCount: =>
     pending = parseInt Cookies.get("mod_pending")
     return unless pending > 0
 
@@ -25,19 +40,19 @@ window.Menu =
       .addClass "bolded"
 
 
-  setHighlight: ->
+  setHighlight: =>
     @menu
       .find(".#{@menu.data "controller"}")
       .addClass "current-menu"
 
 
-  showHelpItem: ->
+  showHelpItem: =>
     @menu
       .find(".help-item.#{@menu.data("controller")}")
       .show()
 
 
-  show_search_box: (elem) ->
+  showSearchBox: (elem) ->
     submenu = $(elem).parents('.submenu')
     search_box = submenu.siblings('.search-box')
     search_text_box = search_box.find('[type="text"]')
@@ -65,21 +80,21 @@ window.Menu =
       return
 
     show()
-    false
-  sync_forum_menu: (reload = false) ->
-    self = this
+
+
+  syncForumMenu: (reload = false) =>
     if reload
       $.get Moebooru.path('/forum.json'), { latest: 1 }, (resp) =>
-        window.forumMenuItems = resp
-        @sync_forum_menu(false)
+        @forumMenuItems = resp
+        @syncForumMenu(false)
 
       return
 
-    window.forumMenuItems ||= JSON.parse(document.getElementById("forum-posts-latest").text).forum_posts
+    @forumMenuItems ?= JSON.parse(document.getElementById("forum-posts-latest").text).forum_posts
 
     last_read = Cookies.getJSON('forum_post_last_read_at')
-    forum_menu_items = window.forumMenuItems
-    forum_submenu = $('li.forum ul.submenu', self.menu)
+    forum_menu_items = @forumMenuItems
+    forum_submenu = $('li.forum ul.submenu', @menu)
     forum_items_start = forum_submenu.find('.forum-items-start').show()
 
     create_forum_item = (post_data) ->
@@ -103,12 +118,3 @@ window.Menu =
       else
         $('#forum-link').removeClass 'forum-update'
         $('#forum-mark-all-read').hide()
-
-  init: ->
-    @menu = $('#main-menu')
-    return if @menu.length == 0
-
-    @setHighlight()
-    @setPostModerateCount()
-    @sync_forum_menu()
-    @showHelpItem()

@@ -1,5 +1,5 @@
 import CheckAll from './_classes/check_all'
-import Menu from './menu'
+import Menu from './_classes/menu'
 import MenuDragDrop from './_classes/menu_drag_drop'
 import PostShowTabs from './_classes/post_show_tabs'
 import RelatedTags from './_classes/related_tags'

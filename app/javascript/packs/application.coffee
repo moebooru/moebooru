@@ -15,7 +15,6 @@ import 'src/utils/fixed-encode-uri-component'
 
 import 'src/moebooru'
 import 'src/moebooru/post_show_tabs'
-import 'src/moebooru/related_tags'
 
 import 'src/_classes/check_all'
 import 'src/_classes/timeago'

@@ -1,6 +1,6 @@
 $ = jQuery
 
-class window.Moebooru.RelatedTags
+export default class RelatedTags
   constructor: ->
     $ @initialize
 

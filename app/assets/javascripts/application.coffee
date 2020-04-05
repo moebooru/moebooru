@@ -1,4 +1,4 @@
-#= require vendor-legacy
+#= require vendor_legacy
 #= require i18n
 #= require i18n/translations
 

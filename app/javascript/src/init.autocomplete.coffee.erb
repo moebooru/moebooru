@@ -1,13 +1,12 @@
-<% url = Rails.application.routes.url_helpers %>
 $ = jQuery
 
 $ ->
   $('.ac-user-name').autocomplete
-    source: '<%= url.ac_user_name_path %>'
+    source: Vars.path.ac_user_name
     minLength: 2
 
   $('.ac-tag-name').autocomplete
-    source: '<%= url.ac_tag_name_path %>'
+    source: Vars.path.ac_tag_name
     minLength: 2
 
   editForm = $('#edit-form')[0]

@@ -1,0 +1,9 @@
+<% url = Rails.application.routes.url_helpers %>
+window.Vars =
+  asset:
+    'blacklisted-preview.png': '<%= image_path 'blacklisted-preview.png' %>'
+    'blank.gif': '<%= image_path 'blank.gif' %>'
+  path:
+    ac_tag_name: '<%= url.ac_tag_name_path %>'
+    ac_user_name: '<%= url.ac_user_name_path %>'
+  prefix: '<%= url.root_path %>'

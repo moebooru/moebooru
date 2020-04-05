@@ -1,5 +1,4 @@
-<% helpers = ActionController::Base.helpers %>
 window.Moebooru.urls =
   images:
-    blank: '<%= helpers.image_path "blank.gif" %>'
-    blacklistedPreview: '<%= helpers.image_path "blacklisted-preview.png" %>'
+    blank: Vars.asset['blank.gif']
+    blacklistedPreview: Vars.asset['blacklisted-preview.png']

@@ -1,4 +1,3 @@
-<% helpers = ActionController::Base.helpers %>
 ###
 # Creating and deleting IMG nodes seems to cause memory leaks in WebKit, but
 # there are also reports that keeping the same node and replacing src can cause
@@ -47,7 +46,7 @@ class ImgPoolHandlerWebKit
     ###
     img.observe 'load', @blank_image_loaded_event
     @pool_waiting.push img
-    img.src = '<%= helpers.image_path "blank.gif" %>'
+    img.src = Vars.asset['blank.gif']
 
 
 class ImgPoolHandlerDummy
@@ -56,7 +55,7 @@ class ImgPoolHandlerDummy
 
 
   release: (img) ->
-    img.src = '<%= helpers.image_path "blank.gif" %>'
+    img.src = Vars.asset['blank.gif']
 
 
 # Create an image pool handler.  If the URL hash value "image-pools" is specified,

@@ -1,4 +1,3 @@
-<% helpers = ActionController::Base.helpers %>
 ###
 # Handle the thumbnail view, and navigation for the main view.
 #
@@ -820,7 +819,7 @@ ThumbnailView::expand_post = (post_idx) ->
   post_id = @post_ids[post_idx]
   overlay = @container.down('.browser-thumb-hover-overlay')
   overlay.hide()
-  overlay.down('IMG').src = '<%= helpers.image_path "blank.gif" %>'
+  overlay.down('IMG').src = Vars.asset['blank.gif']
   @expanded_post_idx = post_idx
   if post_idx == null or post_idx == undefined
     return

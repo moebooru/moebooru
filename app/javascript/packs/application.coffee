@@ -1,7 +1,6 @@
 import 'src/globals'
 import 'src/globals-jquery'
 
-import 'src/prefix'
 import 'src/cookie'
 import 'src/compat.jquery'
 import 'src/dmail'
@@ -15,7 +14,6 @@ import 'src/comment'
 import 'src/init.autocomplete'
 import 'src/init.cookie'
 import 'src/post'
-import 'src/urls'
 import 'src/vote'
 
 import 'src/legacy/browser-img-pool'

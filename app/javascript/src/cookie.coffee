@@ -11,7 +11,7 @@ window.Cookies = Cookies.withConverter
       .replace /(%[0-9A-Z]{2})+/g, decodeURIComponent
 
 
-Cookies.defaults.path = PREFIX
+Cookies.defaults.path = Vars.prefix
 Cookies.defaults.expires = 365
 
 window.Cookie =

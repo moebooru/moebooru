@@ -425,7 +425,7 @@ window.Post =
       count += bld
       if Post.blacklist_options.replace
         if bld
-          thumb.src = Moebooru.urls.images.blank
+          thumb.src = Vars.asset['blank.gif']
 
           ### Trying to work around Firefox displaying the old thumb.src briefly before loading
           # the blacklisted thumbnail, even though they're applied at the same time: 
@@ -807,7 +807,7 @@ window.Post =
     image.style.width = 'auto'
     image.style.height = 'auto'
     if Post.is_blacklisted(post_id)
-      image.src = Moebooru.urls.images.blacklistedPreview
+      image.src = Vars.asset['blacklisted-preview.png']
     else
       image.src = post.preview_url
       if post.status != 'deleted'
@@ -887,7 +887,7 @@ window.Post =
     if !post
       hover.hide()
       overlay.hide()
-      overlay.down('IMG').src = Moebooru.urls.images.blank
+      overlay.down('IMG').src = Vars.asset['blank.gif']
       return
     hover.down('#hover-dimensions').innerHTML = post.width + 'x' + post.height
     hover.select('#hover-tags SPAN A').each (elem) ->

@@ -3,7 +3,7 @@ window.Moebooru = {}
 window.Moe = $(Moebooru)
 
 Moebooru.path = (url) ->
-  if PREFIX == '/' then url else "#{PREFIX}#{url}"
+  if Vars.prefix == '/' then url else "#{Vars.prefix}#{url}"
 
 # XXX: Tested on chrome, mozilla, msie(9/10)
 # might or might not work in other browser

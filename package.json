@@ -9,7 +9,6 @@
     "jquery-ui-dist": "^1.12.1",
     "js-cookie": "^2.2.1",
     "mousetrap": "^1.6.5",
-    "rails-erb-loader": "^5.5.2",
     "timeago": "^1.6.7"
   },
   "devDependencies": {

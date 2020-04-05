@@ -36,8 +36,6 @@ default: &default
 
   extensions:
     - .coffee
-    - .erb
-    - .coffee.erb
     - .mjs
     - .js
     - .sass

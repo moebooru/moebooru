@@ -2,4 +2,3 @@
 #= require ./prototype/scriptaculous
 #= require ./prototype/effects
 #= require_tree ./prototype
-#= require ./cropper

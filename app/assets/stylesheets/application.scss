@@ -1,3 +1,4 @@
+@import 'cropperjs/dist/cropper';
 @import 'jquery-ui-dist/jquery-ui';
 @import 'variables';
 @import 'components/*';
@@ -1824,33 +1825,6 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 
 #post-content A.disabled {
   color: #555;
-}
-
-.avatar-crop {
-	float: left;
-	margin-left: 1em;
-}
-
-.crop-preview-frame-inner {
-        padding: 5px;
-}
-
-.avatar-submit {
-	margin-left: auto;
-	margin-right: auto;
-	width: 6em;
-}
-
-#crop-preview-box {
-	z-index: 30;
-	margin-top: 5px;
-	position: fixed;
-}
-
-.crop-preview-frame {
-	width: 110px;
-	height: 110px;
-	background-color: #333;
 }
 
 .comment-avatar-container

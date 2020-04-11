@@ -1,50 +1,25 @@
-<div id="set-avatar" class="page">
-<%= t('.crop_avatar') %>
-  <p>
-
-  <div class="avatar-crop">
-    <%= inline_image_tag(@image, {:use_sample => true}, {:id => "image"}) %>
-  </div>
-
-  <%= form_tag({:action => "crop"}, :id => "crop", :level => :member) do %>
-    <%= hidden_field_tag "id", @image.id %>
-    <%= hidden_field_tag "left", 0 %>
-    <%= hidden_field_tag "right", 0 %>
-    <%= hidden_field_tag "top", 0 %>
-    <%= hidden_field_tag "bottom", 0 %>
-  <% end %>
-
-  <script type="text/javascript" charset="utf-8">
-  function onEndCrop(coords, dimensions) {
-    $("left").value = (coords.x1 / $("image").width).toFixed(4);
-    $("right").value = (coords.x2 / $("image").width).toFixed(4);
-    $("top").value = (coords.y1 / $("image").height).toFixed(4);
-    $("bottom").value = (coords.y2 / $("image").height).toFixed(4);
-  }
-
-  // example with a preview of crop results, must have minimumm dimensions
-  var width = $("image").width;
-  var height = $("image").height;
-  var options =
-  {
-    displayOnInit: true,
-    onEndCrop: onEndCrop,
-    minWidth: 1,
-    minHeight: 1
-  }
-
-  /* Default to a square selection. */
-  if(width < height)
-    options.onloadCoords = { x1: width/4, y1: width/4, x2: width*2/4, y2: width*2/4 }
+<%
+  if @image.has_sample?
+    url = @image.sample_url
+    width = @image.sample_width
+    height = @image.sample_height
   else
-    options.onloadCoords = { x1: height/4, y1: height/4, x2: height*2/4, y2: height*2/4 }
+    url = @image.file_url
+    width = @image.width
+    height = @image.height
+  end
+%>
+<%= form_tag({ action: 'crop' },
+  class: 'image-crop js-image-crop',
+  level: :member,
+  style: "width: #{width}px; height:#{height}px",
+) do %>
+  <%= image_tag(url, class: 'image-crop__image js-image-crop--image') %>
 
-  new Cropper.ImgWithPreview("image", options)
-
-  OnKey(13, {AlwaysAllowOpera: true}, function(e) {
-    $("crop").submit();
-    return true;
-  });
-
-  </script>
-</div>
+  <%= hidden_field_tag 'id', @image.id %>
+  <%= hidden_field_tag 'left', 0 %>
+  <%= hidden_field_tag 'right', 0 %>
+  <%= hidden_field_tag 'top', 0 %>
+  <%= hidden_field_tag 'bottom', 0 %>
+  <%= submit_tag t('buttons.save') %>
+<% end %>

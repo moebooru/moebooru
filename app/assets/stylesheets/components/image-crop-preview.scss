@@ -1,0 +1,29 @@
+.image-crop-preview {
+  box-sizing: border-box;
+  z-index: 30;
+  position: fixed;
+  text-align: center;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &__frame {
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid #333;
+  }
+
+  &__preview {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &__submit {
+    display: block;
+    margin: auto;
+  }
+}

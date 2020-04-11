@@ -66,6 +66,10 @@ See `config/local_config.rb.example`. Additionally, as I move to ENV-based confi
 - `MB_PIWIK_ID`: sets the Site ID this application will send analytics data for.
 - `MB_THREADS`: sets number of threads this application is running. Currently used to determine number of connection pool for `memcached`. Defaults to 1 if unset.
 
+### Additional configuration for web server
+
+On setup with separate image servers, additional configuration is required for avatar and inline image cropping to work. Specifically, due to how the image cropping library works, the image servers need to allow [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) for image access from main url.
+
 Plans
 -----
 

@@ -11,6 +11,14 @@
 @import "profiler";
 @import "related_tags";
 
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
 body {
   word-wrap: break-word;
 }

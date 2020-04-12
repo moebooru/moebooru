@@ -66,6 +66,7 @@ export default class ImageCrop
     @submit = @form.querySelector('input[type="submit"]')
 
     options =
+      checkCrossOrigin: false
       preview: @preview
       zoomable: false
       movable: false

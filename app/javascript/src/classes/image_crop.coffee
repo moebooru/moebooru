@@ -67,11 +67,11 @@ export default class ImageCrop
 
     options =
       checkCrossOrigin: false
-      preview: @preview
-      zoomable: false
       movable: false
+      preview: @preview
       rotatable: false
       scalable: false
+      zoomable: false
     @image.addEventListener('cropend', @onCropend)
     @image.addEventListener('ready', @onReady)
     @cropper = new Cropper(@image, options)

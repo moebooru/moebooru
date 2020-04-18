@@ -15,7 +15,7 @@ module FavoriteHelper
           ", #{users_link.slice(6..-1).join(", ")}".html_safe
         end
         html << content_tag(:span, :id => "remaining-favs-link") do
-          " (#{link_to_function "#{users.size - 6} more", "$('remaining-favs').show(); $('remaining-favs-link').hide()"})".html_safe
+          " (#{link_to "#{users.size - 6} more", '#'})".html_safe
         end
       end
     end

@@ -1,29 +1,37 @@
 $ = jQuery
 
-usersLinks = (users) ->
-  users.map (user) ->
-    userLink(user.id, user.name)
-  .join(", ")
-
 
 userLink = (id, name) ->
   "<a href='#{Moebooru.path("/user/show/#{id}")}'>#{name}</a>"
 
 
-$(document).on "click", "#remaining-favs-link a", (e) ->
-  e.preventDefault()
+usersLinks = (users) ->
+  users.map (user) ->
+    userLink(user.id, user.name)
+  .join(', ')
 
-  $(e.target).closest("span").hide()
-  $("#remaining-favs").show()
+
+export default class Favorite
+  constructor: ->
+    $(document).on 'click', '#remaining-favs-link a', @onShowMoreFavoritedBy
 
 
-window.Favorite = link_to_users: (users = []) ->
-  return I18n.t "js.noone" if users.length == 0
+  linkToUsers: (users) ->
+    users ?= []
 
-  html = usersLinks users.slice(0, 6)
+    return I18n.t('js.noone') if users.length == 0
 
-  if users.length > 6
-    html += "<span id='remaining-favs' style='display: none;'>, #{usersLinks users.slice(6)}</span>"
-    html += " <span id='remaining-favs-link'>(<a href='#'>#{users.length - 6} more</a>)</span>"
+    html = usersLinks users[0..6]
 
-  html
+    if users.length > 6
+      html += "<span id='remaining-favs' style='display: none;'>, #{usersLinks users[6..]}</span>"
+      html += " <span id='remaining-favs-link'>(<a href='#'>#{users.length - 6} more</a>)</span>"
+
+    html
+
+
+  onShowMoreFavoritedBy: (e) =>
+    e.preventDefault()
+
+    $(e.target).closest('span').hide()
+    $('#remaining-favs').show()

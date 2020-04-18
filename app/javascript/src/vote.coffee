@@ -43,7 +43,7 @@ class window.Vote
         notice "#{t('js.error')}#{t('js.denied')}"
     .done (data) =>
       @updateWidget vote, data.posts[0].score
-      $('#favorited-by').html Favorite.link_to_users(data.voted_by[FAVORITE])
+      $('#favorited-by').html favorite.linkToUsers(data.voted_by[FAVORITE])
       notice t('.saved')
 
 

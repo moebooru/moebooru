@@ -1,5 +1,6 @@
 import CheckAll from './classes/check_all'
 import ImageCrop from './classes/image_crop'
+import Favorite from './favorite'
 import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
@@ -11,6 +12,7 @@ import UserRecord from './classes/user_record'
 
 window.imageCrop = new ImageCrop
 window.checkAll = new CheckAll
+window.favorite = new Favorite
 window.menu = new Menu
 window.menuDragDrop = new MenuDragDrop
 window.menuDropdown = new MenuDropdown

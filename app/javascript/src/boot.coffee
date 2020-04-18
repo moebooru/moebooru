@@ -1,6 +1,6 @@
 import CheckAll from './classes/check_all'
 import ImageCrop from './classes/image_crop'
-import Favorite from './favorite'
+import Favorite from './classes/favorite'
 import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'

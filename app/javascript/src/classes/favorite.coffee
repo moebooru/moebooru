@@ -13,7 +13,7 @@ usersLinks = (users) ->
 
 export default class Favorite
   constructor: ->
-    $(document).on 'click', '#remaining-favs-link a', @onShowMoreFavoritedBy
+    $(document).on 'click', '.js-favorite--show-more', @onShowMoreFavoritedBy
 
 
   linkToUsers: (users) ->
@@ -25,7 +25,7 @@ export default class Favorite
 
     if users.length > 6
       html += "<span id='remaining-favs' style='display: none;'>, #{usersLinks users[6..]}</span>"
-      html += " <span id='remaining-favs-link'>(<a href='#'>#{users.length - 6} more</a>)</span>"
+      html += " <span>(<a href='#' class='js-favorite--show-more'>#{users.length - 6} more</a>)</span>"
 
     html
 

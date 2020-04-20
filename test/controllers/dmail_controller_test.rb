@@ -53,21 +53,21 @@ class DmailControllerTest < ActionController::TestCase
 
     get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id }, :session => { :user_id => 1 }
     assert_response :success
-    assert_equal [d2], assigns(:dmails)
+    assert_equal [d1, d2], assigns(:dmails)
 
     get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id }, :session => { :user_id => 2 }
-    assert_equal [d2], assigns(:dmails)
+    assert_equal [d1, d2], assigns(:dmails)
 
     get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id }, :session => { :user_id => 3 }
     assert_equal [], assigns(:dmails)
 
     get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id + 1 }, :session => { :user_id => 2 }
-    assert_equal [d2, d3], assigns(:dmails)
+    assert_equal [d1, d2, d3], assigns(:dmails)
 
     get :show_previous_messages, :params => { :parent_id => d1.id, :id => d3.id + 1 }, :session => { :user_id => 4 }
     assert_equal [], assigns(:dmails)
 
     get :show_previous_messages, :params => { :parent_id => d2.id, :id => d3.id }, :session => { :user_id => 1 }
-    assert_equal [], assigns(:dmails)
+    assert_equal [d2], assigns(:dmails)
   end
 end

@@ -9,9 +9,12 @@
   </div>
 
   <% content_for :footer do %>
-    <li><%= link_to_function "Show conversation", "Dmail.expand(#{@dmail.parent_id || @dmail.id}, #{@dmail.id})" %></li>
+    <li><%= link_to 'Show conversation', '#',
+      class: 'js-dmail--expand',
+      data: { dmail_parent_id: @dmail.parent_id || @dmail.id, dmail_id: @dmail.id }
+    %></li>
     <% if @dmail.to_id == @current_user.id %>
-      <li><%= link_to_function "Respond", "Dmail.respond('#{escape_javascript(@dmail.from.name)}')" %></li>
+      <li><%= link_to 'Respond', '#', class: 'js-dmail--respond', data: { dmail_name: @dmail.from.name } %></li>
     <% end %>
   <% end %>
 

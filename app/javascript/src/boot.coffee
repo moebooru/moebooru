@@ -1,4 +1,5 @@
 import CheckAll from './classes/check_all'
+import Dmail from './dmail'
 import ImageCrop from './classes/image_crop'
 import Favorite from './classes/favorite'
 import Menu from './classes/menu'
@@ -12,6 +13,7 @@ import UserRecord from './classes/user_record'
 
 window.imageCrop = new ImageCrop
 window.checkAll = new CheckAll
+window.dmail = new Dmail
 window.favorite = new Favorite
 window.menu = new Menu
 window.menuDragDrop = new MenuDragDrop

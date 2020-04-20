@@ -7,17 +7,6 @@ export default class Dmail
     $(document).on 'click', '.js-dmail--expand', @expand
 
 
-  respond: (e) ->
-    e.preventDefault()
-
-    to = e.currentTarget.dataset.dmailName
-
-    $('#dmail_to_name').val to
-    strippedBody = $('#dmail_body').val().replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, '')
-    $('#dmail_body').val "[quote]You said:\n#{strippedBody}\n[/quote]\n\n"
-    $('#response').show()
-
-
   expand: (e) ->
     e.preventDefault()
 
@@ -36,3 +25,14 @@ export default class Dmail
       $('#previous-messages').html data
       $('#previous-messages').show()
       notice t('.prev_msg_loaded')
+
+
+  respond: (e) ->
+    e.preventDefault()
+
+    to = e.currentTarget.dataset.dmailName
+
+    $('#dmail_to_name').val to
+    strippedBody = $('#dmail_body').val().replace(/\[quote\](?:.|\n)+?\[\/quote\]\n*/gm, '')
+    $('#dmail_body').val "[quote]You said:\n#{strippedBody}\n[/quote]\n\n"
+    $('#response').show()

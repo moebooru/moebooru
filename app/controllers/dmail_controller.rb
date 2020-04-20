@@ -8,11 +8,11 @@ class DmailController < ApplicationController
 
   def show_previous_messages
     @dmails = Dmail
-      .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
-      .where(:parent_id => params[:parent_id])
-      .where("id < ?", params[:id])
-      .order(:id => :asc)
-    render :layout => false
+      .where('to_id = ? OR from_id = ?', @current_user.id, @current_user.id)
+      .where('id = ? OR parent_id = ?', params[:parent_id], params[:parent_id])
+      .where('id < ?', params[:id])
+      .order(id: :asc)
+    render layout: false
   end
 
   def compose

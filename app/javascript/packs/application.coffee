@@ -8,7 +8,6 @@ import 'src/notice'
 
 import 'src/moebooru'
 
-import 'src/comment'
 import 'src/init.autocomplete'
 import 'src/init.cookie'
 import 'src/post'

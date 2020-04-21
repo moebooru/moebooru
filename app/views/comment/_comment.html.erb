@@ -20,12 +20,12 @@
     </div>
     <div class="post-footer" style="clear: left;">
       <ul class="flat-list pipe-list">
-        <li> <%= link_to_function t('.quote'), "Comment.quote(#{comment.id})" %>
+        <li><a href="#" class="js-comment--quote" data-comment-id="<%= comment.id %>"><%= t('.quote') %></a>
         <% if @current_user.has_permission?(comment) %>
-          <li> <%= link_to t('.edit'), :controller => "comment", :action => "edit", :id => comment.id %>
-          <li> <%= link_to_function t('.delete'), "Comment.destroy(#{comment.id})" %>
+          <li><%= link_to t('.edit'), controller: 'comment', action: 'edit', id: comment.id %>
+          <li><a href="#" class="js-comment--destroy" data-comment-id="<%= comment.id %>"><%= t('.delete') %></a>
         <% else %>
-          <li> <%= link_to_function t('.flag'), "Comment.flag(#{comment.id})" %>
+          <li><a href="#" class="js-comment--flag" data-comment-id="<%= comment.id %>"><%= t('.flag') %></a>
         <% end %>
       </ul>
     </div>

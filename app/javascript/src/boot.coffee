@@ -1,8 +1,8 @@
 import CheckAll from './classes/check_all'
 import Comment from './classes/comment'
 import Dmail from './classes/dmail'
-import ImageCrop from './classes/image_crop'
 import Favorite from './classes/favorite'
+import ImageCrop from './classes/image_crop'
 import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
@@ -12,11 +12,11 @@ import RelatedTags from './classes/related_tags'
 import Timeago from './classes/timeago'
 import UserRecord from './classes/user_record'
 
-window.imageCrop = new ImageCrop
 window.checkAll = new CheckAll
 window.comment = new Comment
 window.dmail = new Dmail
 window.favorite = new Favorite
+window.imageCrop = new ImageCrop
 window.menu = new Menu
 window.menuDragDrop = new MenuDragDrop
 window.menuDropdown = new MenuDropdown

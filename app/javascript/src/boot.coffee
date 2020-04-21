@@ -1,5 +1,5 @@
 import CheckAll from './classes/check_all'
-import Comment from './comment'
+import Comment from './classes/comment'
 import Dmail from './classes/dmail'
 import ImageCrop from './classes/image_crop'
 import Favorite from './classes/favorite'

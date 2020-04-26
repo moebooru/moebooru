@@ -7,6 +7,7 @@ import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
 import NewsTicker from './classes/news_ticker'
+import Notice from './notice'
 import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
 import Timeago from './classes/timeago'
@@ -21,7 +22,11 @@ window.menu = new Menu
 window.menuDragDrop = new MenuDragDrop
 window.menuDropdown = new MenuDropdown
 window.newsTicker = new NewsTicker
+window.noticeInstance = new Notice
 window.postShowTabs = new PostShowTabs
 window.relatedTags = new RelatedTags
 window.timeago = new Timeago
 window.userRecord = new UserRecord
+
+# FIXME: update to call instance method directly.
+window.notice = noticeInstance.show

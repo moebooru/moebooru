@@ -1,43 +1,39 @@
 $ = jQuery
 
-### If initial is true, this is a notice set by the notice cookie and not a
-# realtime notice from user interaction.
-###
 
-window.notice = (msg, initial) ->
-
-  ### If this is an initial notice, and this screen has a dedicated notice
-  # container other than the floating notice, use that and don't disappear
-  # it.
-  ###
-
-  if initial
-    static_notice = $('#static_notice')
-    if static_notice
-      static_notice.html msg
-      static_notice.show()
-      return
-  start_notice_timer()
-  $('#notice').html msg
-  $('#notice-container').show()
-  return
-
-window.ClearNoticeTimer = null
+export default class Notice
+  constructor: ->
+    $ @initialize
 
 
-window.start_notice_timer = ->
-  if window.ClearNoticeTimer
-    window.clearTimeout window.ClearNoticeTimer
-  window.ClearNoticeTimer = window.setTimeout((->
+  hide: =>
     $('#notice-container').hide()
-    return
-  ), 5000)
-  return
 
 
-$ ->
-  notice = Cookies.get "notice"
-  return unless notice && notice != ""
+  initialize: =>
+    msg = Cookies.get 'notice'
 
-  window.notice notice, true
-  Cookies.remove "notice"
+    return unless msg? && msg != ''
+
+    @show msg, true
+    Cookies.remove 'notice'
+
+
+  # If initial is true, this is a notice set by the notice cookie and not a
+  # realtime notice from user interaction.
+  show: (msg, initial) =>
+    # If this is an initial notice, and this screen has a dedicated notice
+    # container other than the floating notice, use that and don't hide it.
+    if initial ? false
+      $staticNotice = $('#static_notice')
+      if $staticNotice.length > 0
+        $staticNotice
+          .html(msg)
+          .show()
+        return
+
+    $('#notice').html msg
+    $('#notice-container').show()
+
+    clearTimeout @timeout
+    @timeout = setTimeout @hide, 5000

@@ -4,7 +4,6 @@ import 'src/globals-jquery'
 import 'src/cookie'
 import 'src/compat.jquery'
 import 'src/forum'
-import 'src/notice'
 
 import 'src/moebooru'
 

@@ -3,27 +3,6 @@ window.DANBOORU_VERSION =
   minor: 0
   build: 0
 
-### If initial is true, this is a notice set by the notice cookie and not a
-# realtime notice from user interaction. 
-###
-
-window.notice = (msg, initial) ->
-
-  ### If this is an initial notice, and this screen has a dedicated notice
-  # container other than the floating notice, use that and don't disappear
-  # it. 
-  ###
-
-  if initial
-    static_notice = $('static_notice')
-    if static_notice
-      static_notice.update msg
-      static_notice.show()
-      return
-  start_notice_timer()
-  $('notice').update msg
-  $('notice-container').show()
-  return
 
 window.number_to_human_size = (size, precision) ->
   if precision == null or precision == undefined
@@ -85,17 +64,6 @@ window.scale = (x, l1, h1, l2, h2) ->
 
 window.clamp = (n, min, max) ->
   Math.max Math.min(n, max), min
-
-window.ClearNoticeTimer = null
-
-window.start_notice_timer = ->
-  if window.ClearNoticeTimer
-    window.clearTimeout window.ClearNoticeTimer
-  window.ClearNoticeTimer = window.setTimeout((->
-    $('notice-container').hide()
-    return
-  ), 5000)
-  return
 
 window.ClipRange = Class.create(
   initialize: (min, max) ->

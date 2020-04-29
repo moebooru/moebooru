@@ -28,11 +28,11 @@ export default class Notice
       $staticNotice = $('#static_notice')
       if $staticNotice.length > 0
         $staticNotice
-          .html(msg)
+          .text(msg)
           .show()
         return
 
-    $('#notice').html msg
+    $('#notice').text msg
     $('#notice-container').show()
 
     clearTimeout @timeout

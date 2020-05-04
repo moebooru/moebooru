@@ -240,7 +240,7 @@ module SimilarImages
       Moebooru::Resizer.resize(ext, tempfile_path, tempfile_path_resize, size, 95)
       FileUtils.mv(tempfile_path_resize, tempfile_path)
 
-      md5 = File.open(tempfile_path, "rb") { |fp| Digest::MD5.hexdigest(fp.read) }
+      md5 = Moebooru::Hasher.compute_one(tempfile_path, :md5)
       id = "#{md5}.#{ext}"
       file_path = "#{SEARCH_CACHE_DIR}/#{id}"
 

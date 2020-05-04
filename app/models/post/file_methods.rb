@@ -1,5 +1,4 @@
 require "download"
-require "zlib"
 
 # These are methods dealing with getting the image and generating the thumbnail.
 # It works in conjunction with the image_store methods. Since these methods have
@@ -117,34 +116,20 @@ module Post::FileMethods
       return false
     end
 
-    # Compute both hashes in one pass.
-    md5_obj = Digest::MD5.new
-    crc32_accum = 0
-    File.open(path, "rb") do |fp|
-      buf = ""
-      while fp.read(1024 * 64, buf)
-        md5_obj << buf
-        crc32_accum = Zlib.crc32(buf, crc32_accum)
-      end
-    end
+    hashes = Moebooru::Hasher.compute(path, [:crc32, :md5])
 
-    self.md5 = md5_obj.hexdigest
-    self.crc32 = crc32_accum
+    self.md5 = hashes[:md5]
+    self.crc32 = hashes[:crc32]
   end
 
   def regenerate_jpeg_hash
     return false unless has_jpeg?
 
-    crc32_accum = 0
-    File.open(jpeg_path, "rb") do |fp|
-      buf = ""
-      while fp.read(1024 * 64, buf)
-        crc32_accum = Zlib.crc32(buf, crc32_accum)
-      end
-    end
-    return false if jpeg_crc32 == crc32_accum
+    crc32 = Moebooru::Hasher.compute_one(jpeg_path, :crc32)
 
-    self.jpeg_crc32 = crc32_accum
+    return false if jpeg_crc32 == crc32
+
+    self.jpeg_crc32 = crc32
     true
   end
 
@@ -438,15 +423,7 @@ module Post::FileMethods
     self.sample_width = size[:width]
     self.sample_height = size[:height]
     self.sample_size = File.size(tempfile_sample_path)
-
-    crc32_accum = 0
-    File.open(tempfile_sample_path, "rb") do |fp|
-      buf = ""
-      while fp.read(1024 * 64, buf)
-        crc32_accum = Zlib.crc32(buf, crc32_accum)
-      end
-    end
-    self.sample_crc32 = crc32_accum
+    self.sample_crc32 = Moebooru::Hasher.compute_one(tempfile_sample_path, :crc32)
 
     true
   end
@@ -550,15 +527,7 @@ module Post::FileMethods
     self.jpeg_width = size[:width]
     self.jpeg_height = size[:height]
     self.jpeg_size = File.size(tempfile_jpeg_path)
-
-    crc32_accum = 0
-    File.open(tempfile_jpeg_path, "rb") do |fp|
-      buf = ""
-      while fp.read(1024 * 64, buf)
-        crc32_accum = Zlib.crc32(buf, crc32_accum)
-      end
-    end
-    self.jpeg_crc32 = crc32_accum
+    self.jpeg_crc32 = Moebooru::Hasher.compute_one(tempfile_jpeg_path, :crc32)
 
     true
   end

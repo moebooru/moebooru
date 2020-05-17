@@ -581,7 +581,7 @@ class PostController < ApplicationController
 
   def similar
     @params = params
-    if params[:file].blank? then params.delete(:file) end
+    unless params[:file].is_a?(ActionDispatch::Http::UploadedFile) then params.delete(:file) end
     if params[:url].blank? then params.delete(:url) end
     if params[:id].blank? then params.delete(:id) end
     if params[:search_id].blank? then params.delete(:search_id) end

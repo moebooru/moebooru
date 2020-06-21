@@ -63,10 +63,12 @@ class window.Vote
       @set(@vote + 1) if @vote < FAVORITE
       return
 
-    $('#add-to-favs > a').on 'click', =>
+    $('#add-to-favs > a').on 'click', (e) =>
+      e.preventDefault()
       @set FAVORITE
 
-    $('#remove-from-favs > a').on 'click', =>
+    $('#remove-from-favs > a').on 'click', (e) =>
+      e.preventDefault()
       @set GREAT
 
 

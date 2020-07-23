@@ -822,7 +822,7 @@ FrameEditor::focus = (post_frame) ->
   row = undefined
   if @editing_frame == post_frame
     return
-  if @editing_frame != null and @editing_frame == undefined
+  if @editing_frame?
     row = @container.down('.frame-' + @editing_frame)
     row.removeClassName 'frame-focused'
   @editing_frame = post_frame

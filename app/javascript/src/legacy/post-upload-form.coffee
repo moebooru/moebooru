@@ -1,5 +1,5 @@
 window.PostUploadForm = (form, progress) ->
-  XHRLevel2 = 'XMLHttpRequest' of window and (new XMLHttpRequest).upload != null and (new XMLHttpRequest).upload != undefined
+  XHRLevel2 = 'XMLHttpRequest' of window and (new XMLHttpRequest).upload?
   SupportsFormData = 'FormData' of window
   if !XHRLevel2 or !SupportsFormData
     return

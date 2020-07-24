@@ -1057,7 +1057,7 @@ window.Post =
         ++i
       # We have the list of changes to make in change_requests.
       # Send a batch request.
-      if typeof finished == 'undefined' or finished == null
+      if !finished?
 
         finished = ->
           document.location.reload()

@@ -6,7 +6,7 @@ window.PreloadContainer = ->
   # have ImgPoolHandler when the file is loaded. 
   ###
 
-  if _preload_image_pool == null or _preload_image_pool == undefined
+  if !_preload_image_pool?
     _preload_image_pool = new ImgPoolHandler
   @container = $(document.createElement('div'))
   @container.style.display = 'none'

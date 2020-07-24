@@ -21,7 +21,7 @@ window.ThumbnailUserImage = (file, onComplete) ->
 
   ### Create the shared image pool, if we havn't yet. ###
 
-  if ThumbnailUserImage.image_pool == null or ThumbnailUserImage.image_pool == undefined
+  if !ThumbnailUserImage.image_pool?
     ThumbnailUserImage.image_pool = new ImgPoolHandler
   @file = file
   @canvas = create_canvas_2d()
@@ -49,7 +49,7 @@ ThumbnailUserImage::destroy = ->
   @image.stopObserving()
   ThumbnailUserImage.image_pool.release @image
   @image = null
-  if @url != null and @url != undefined
+  if @url?
     URL.revokeObjectURL @url
     @url = null
   return
@@ -162,7 +162,7 @@ SimilarWithThumbnailing::form_submit_event = (e) ->
   # form submission. 
   ###
 
-  if post_file.files == null or post_file.files == undefined or post_file.files.length == 0
+  if !post_file.files? or post_file.files.length == 0
     return
 
   ### If we failed to load the image last time due to a silent Chrome error, continue with

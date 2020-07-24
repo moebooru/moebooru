@@ -41,13 +41,13 @@ PostLoader::preload_sample_image = ->
   if @sample_preload_container
     @sample_preload_container.destroy()
     @sample_preload_container = null
-  if post_id == null or post_id == undefined
+  if !post_id?
     return
 
   ### If this returns null, the browser doesn't support this. ###
 
   cached_sample_urls = Post.get_cached_sample_urls()
-  if cached_sample_urls == null or cached_sample_urls == undefined
+  if !cached_sample_urls?
     return
   if !(String(post_id) of cached_sample_urls)
     return
@@ -63,7 +63,7 @@ PostLoader::preload_sample_image = ->
   return
 
 PostLoader::server_load_pool = ->
-  if @result.pool_id == null or @result.pool_id == undefined
+  if !@result.pool_id?
     return
   if !@result.disable_cache
     pool = @cached_pools.get(@result.pool_id)
@@ -159,7 +159,7 @@ PostLoader::request_finished = ->
 
   ### If server_load_posts hit an error, it already displayed it; stop. ###
 
-  if result.error != null and result.error != undefined
+  if result.error?
     return
 
   ### If we have no search tags (result.tags == null, result.posts == null), then we're just
@@ -168,7 +168,7 @@ PostLoader::request_finished = ->
   ###
 
   new_post_ids = []
-  if result.posts != null and result.posts != undefined
+  if result.posts?
     i = 0
     while i < result.posts.length
       new_post_ids.push result.posts[i].id
@@ -221,12 +221,12 @@ PostLoader::load = (load_options) ->
   disable_cache = load_options.disable_cache
   extending = load_options.extending
   tags = load_options.tags
-  if tags == null or tags == undefined
+  if !tags?
     tags = UrlHash.get('tags')
 
   ### If neither a search nor a post-id is specified, set a default search. ###
 
-  if !extending and (tags == null or tags == undefined) and (UrlHash.get('post-id') == null or UrlHash.get('post-id') == undefined)
+  if !extending and (!tags?) and (!UrlHash.get('post-id')?)
     UrlHash.set tags: ''
 
     ### We'll receive another hashchange message for setting "tags".  Don't load now or we'll
@@ -245,7 +245,7 @@ PostLoader::load = (load_options) ->
   @result.load_options = load_options
   @result.tags = tags
   @result.disable_cache = disable_cache
-  if @result.tags == null or @result.tags == undefined
+  if !@result.tags?
 
     ### If no search is specified, don't run one; return empty results. ###
 
@@ -273,7 +273,7 @@ PostLoader::load = (load_options) ->
   ###
 
   limit = if extending then 1000 else 100
-  if pool_id != null and pool_id != undefined
+  if pool_id?
     limit = 1000
   @result.post_limit = limit
 

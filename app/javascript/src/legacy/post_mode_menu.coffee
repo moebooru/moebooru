@@ -26,7 +26,7 @@ window.PostModeMenu =
       post_id = p[0]
       post = p[1]
       span = $('p' + post.id)
-      if span == null or span == undefined
+      if !span?
         return
 
       ### Use post_id here, not post, since the post object can be replaced later after updates. ###

@@ -32,13 +32,13 @@ UrlHashHandler::fire_observers = (old_hash, new_hash) ->
   observers_to_call = []
   changed_hash_keys.each ((key) ->
     observers = @observers.get(key)
-    if observers == null or observers == undefined
+    if !observers?
       return
     observers_to_call = observers_to_call.concat(observers)
     return
   ).bind(this)
   universal_observers = @observers.get(null)
-  if universal_observers != null and universal_observers != undefined
+  if universal_observers?
     observers_to_call = observers_to_call.concat(universal_observers)
   observers_to_call.each (observer) ->
     observer changed_hash_keys, old_hash, new_hash
@@ -88,7 +88,7 @@ UrlHashHandler::hashchange_event = (event) ->
 ###
 
 UrlHashHandler::parse = (hash) ->
-  if hash == null or hash == undefined
+  if !hash?
     hash = ''
   if hash.substr(0, 1) == '#'
     hash = hash.substr(1)
@@ -124,7 +124,7 @@ UrlHashHandler::parse = (hash) ->
 UrlHashHandler::construct = (hash) ->
   s = '#'
   path = hash.get('')
-  if path != null and path != undefined
+  if path?
 
     ### For the path portion, we only need to escape the params separator ? and the escape
     # character % itself.  Don't use encodeURIComponent; it'll encode far more than necessary. 
@@ -138,7 +138,7 @@ UrlHashHandler::construct = (hash) ->
     value = k[1]
     if key == ''
       return
-    if value == null or value == undefined
+    if !value?
       return
     key = window.encodeURIComponent(key)
     value = window.encodeURIComponent(value)
@@ -218,7 +218,7 @@ UrlHashHandler::set_deferred = (hash, replace) ->
     @deferred_replace = false
     return
   ).bind(this)
-  if @deferred_set_timer == null or @deferred_set_timer == undefined
+  if !@deferred_set_timer?
     @deferred_set_timer = set.defer()
   return
 
@@ -255,7 +255,7 @@ UrlHashHandler::set_all = (query_params, replace) ->
 
 UrlHashHandler::observe = (key, func) ->
   observers = @observers.get(key)
-  if observers == null or observers == undefined
+  if !observers?
     observers = []
     @observers.set key, observers
   if observers.indexOf(func) != -1
@@ -265,7 +265,7 @@ UrlHashHandler::observe = (key, func) ->
 
 UrlHashHandler::stopObserving = (key, func) ->
   observers = @observers.get(key)
-  if observers == null or observers == undefined
+  if !observers?
     return
   observers = observers.without(func)
   @observers.set key, observers

@@ -59,7 +59,7 @@ DebugWindow::log = (s) ->
 
 DebugWindow::hashchange_debug = ->
   debug = UrlHash.get('debug')
-  if debug == null or debug == undefined
+  if !debug?
     debug = '0'
   debug = debug == '1'
   if debug == @shown

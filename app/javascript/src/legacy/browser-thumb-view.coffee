@@ -172,7 +172,7 @@ ThumbnailView::loaded_posts_event = (event) ->
   # don't show no-results. 
   ###
 
-  @container.down('.post-browser-no-results').show event.memo.tags != null and event.memo.tags != undefined and @post_ids.length == 0
+  @container.down('.post-browser-no-results').show event.memo.tags? and @post_ids.length == 0
   @container.down('.post-browser-posts').show @post_ids.length != 0
   if event.memo.extending
 
@@ -193,7 +193,7 @@ ThumbnailView::loaded_posts_event = (event) ->
     while i < post_id_search_order.length
       post_id_to_search = post_id_search_order[i]
       post = Post.posts.get(post_id_to_search)
-      if post != null and post != undefined
+      if post?
         initial_post_id = post.id
         break
       ++i
@@ -201,7 +201,7 @@ ThumbnailView::loaded_posts_event = (event) ->
 
     ### If we didn't find anything that matched, go back to the start. ###
 
-    if initial_post_id == null or initial_post_id == undefined
+    if !initial_post_id?
       @centered_post_offset = 0
       initial_post_id = new_post_ids[0]
     center_on_post_idx = @post_ids.indexOf(initial_post_id)
@@ -241,7 +241,7 @@ ThumbnailView::loaded_posts_event = (event) ->
     else
       initial_post_id_and_frame = @get_current_post_id_and_frame()
     center_on_post_idx = @get_post_idx(initial_post_id_and_frame)
-    if center_on_post_idx == null or center_on_post_idx == undefined
+    if !center_on_post_idx?
       center_on_post_idx = 0
     @centered_post_offset = 0
     @center_on_post_for_scroll center_on_post_idx
@@ -251,9 +251,9 @@ ThumbnailView::loaded_posts_event = (event) ->
     # info about the post we're starting on, instead of making a separate query. 
     ###
 
-    if results_mode == 'jump-to-first' or @view.wanted_post_id == null or @view.wanted_post_id == undefined
+    if results_mode == 'jump-to-first' or !@view.wanted_post_id?
       @set_active_post initial_post_id_and_frame, false, false, true
-  if event.memo.tags == null or event.memo.tags == undefined
+  if !event.memo.tags?
 
     ### If tags is null then no search has been done, which means we're on a URL
     # with a post ID and no search, eg. "/post/browse#12345".  Hide the thumb
@@ -289,7 +289,7 @@ ThumbnailView::container_mouseout_event = (event) ->
 
 ThumbnailView::hashchange_post_id = ->
   post_id_and_frame = @get_current_post_id_and_frame()
-  if post_id_and_frame[0] == null or post_id_and_frame[0] == undefined
+  if !post_id_and_frame[0]?
     return
 
   ### If we're already displaying this post, ignore the hashchange.  Don't center on the
@@ -342,7 +342,7 @@ ThumbnailView::get_post_idx = (post_id_and_frame) ->
 
 ThumbnailView::get_current_post_id_and_frame = ->
   post_id = UrlHash.get('post-id')
-  if post_id == null or post_id == undefined
+  if !post_id?
     if @post_ids.length == 0
       return [
         null
@@ -357,7 +357,7 @@ ThumbnailView::get_current_post_id_and_frame = ->
   post_frame = UrlHash.get('post-frame')
   # If no frame is set, attempt to resolve the post_frame we'll display, if the post data
   # is already loaded.  Otherwise, post_frame will remain null.
-  if post_frame == null or post_frame == undefined
+  if !post_frame?
     post_frame = @view.get_default_post_frame(post_id)
   [
     post_id
@@ -397,7 +397,7 @@ ThumbnailView::set_active_post = (post_id_and_frame, lazy, center_thumbs, no_has
   # no results. 
   ###
 
-  if post_id_and_frame[0] == null or post_id_and_frame[0] == undefined
+  if !post_id_and_frame[0]?
     return
   @view.set_post post_id_and_frame[0], post_id_and_frame[1], lazy, no_hash_change, replace_history
   if center_thumbs
@@ -407,7 +407,7 @@ ThumbnailView::set_active_post = (post_id_and_frame, lazy, center_thumbs, no_has
   return
 
 ThumbnailView::set_active_post_idx = (post_idx, lazy, center_thumbs, no_hash_change, replace_history) ->
-  if post_idx == null or post_idx == undefined
+  if !post_idx?
     return
   post_id = @post_ids[post_idx]
   post_frame = @post_frames[post_idx]
@@ -429,7 +429,7 @@ ThumbnailView::show_next_post = (prev) ->
   # at the beginning. 
   ###
 
-  if current_idx == null or current_idx == undefined
+  if !current_idx?
     current_idx = 0
   add = if prev then -1 else +1
   if @post_frames[current_idx] != @view.wanted_post_frame and add == +1
@@ -639,7 +639,7 @@ ThumbnailView::center_on_post = (post_idx) ->
     debug 'unexpected: center_on_post has no post_ids'
     return
   post_id = @post_ids[post_idx]
-  if Post.posts.get(post_id) == null or Post.posts.get(post_id) == undefined
+  if !Post.posts.get(post_id)?
     return
   if post_idx > @post_ids.length * 3 / 4
 
@@ -675,7 +675,7 @@ ThumbnailView::center_on_post = (post_idx) ->
       break
     next_post_idx = @centered_post_idx + (if @centered_post_offset > 0 then +1 else -1)
     next_post = $('p' + next_post_idx)
-    if next_post == null or next_post == undefined
+    if !next_post?
       break
     current_post_center = post.offsetLeft + post.offsetWidth / 2
     next_post_center = next_post.offsetLeft + next_post.offsetWidth / 2
@@ -788,7 +788,7 @@ ThumbnailView::preload_thumbs = ->
   i = 0
   while i < post_idxs.length
     post_idx = post_idxs[i]
-    if post_idx == null or post_idx == undefined
+    if !post_idx?
       ++i
       continue
     post_id = @post_ids[post_idx]
@@ -821,7 +821,7 @@ ThumbnailView::expand_post = (post_idx) ->
   overlay.hide()
   overlay.down('IMG').src = Vars.asset['blank.gif']
   @expanded_post_idx = post_idx
-  if post_idx == null or post_idx == undefined
+  if !post_idx?
     return
   post = Post.posts.get(post_id)
   if post.status == 'deleted'
@@ -974,7 +974,7 @@ ThumbnailView::container_click_event = (event) ->
     event.preventDefault()
     return
   li = $(event.target).up('.post-thumb')
-  if li == null or li == undefined
+  if !li?
     return
 
   ### An actual thumbnail was clicked.  This can happen if we don't have the expanded
@@ -1019,7 +1019,7 @@ ThumbnailView::displayed_image_loaded_event = (event) ->
 
   ### If we don't have a loaded search, then we don't have any nearby posts to preload. ###
 
-  if @post_ids == null or @post_ids == undefined
+  if !@post_ids?
     return
   post_id = event.memo.post_id
   post_frame = event.memo.post_frame
@@ -1027,7 +1027,7 @@ ThumbnailView::displayed_image_loaded_event = (event) ->
     post_id
     post_frame
   ])
-  if post_idx == null or post_idx == undefined
+  if !post_idx?
     return
 
   ###
@@ -1046,13 +1046,13 @@ ThumbnailView::displayed_image_loaded_event = (event) ->
     @post_frames[post_idx]
   ]
   adjacent_post_idx = @get_adjacent_post_idx_wrapped(post_idx, true)
-  if adjacent_post_idx != null and adjacent_post_idx != undefined
+  if adjacent_post_idx?
     post_ids_to_preload.push [
       @post_ids[adjacent_post_idx]
       @post_frames[adjacent_post_idx]
     ]
   adjacent_post_idx = @get_adjacent_post_idx_wrapped(post_idx, false)
-  if adjacent_post_idx != null and adjacent_post_idx != undefined
+  if adjacent_post_idx?
     post_ids_to_preload.push [
       @post_ids[adjacent_post_idx]
       @post_frames[adjacent_post_idx]

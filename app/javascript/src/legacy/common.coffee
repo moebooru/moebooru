@@ -5,7 +5,7 @@ window.DANBOORU_VERSION =
 
 
 window.number_to_human_size = (size, precision) ->
-  if precision == null or precision == undefined
+  if !precision?
     precision = 1
   text = undefined
   size = Number(size)
@@ -25,7 +25,7 @@ window.number_to_human_size = (size, precision) ->
   text
 
 window.time_ago_in_words = (from_time, to_time) ->
-  if to_time == null or to_time == undefined
+  if !to_time?
     to_time = new Date
   from_time = from_time.valueOf()
   to_time = to_time.valueOf()
@@ -82,7 +82,7 @@ window.ClipRange = Class.create(
 Object.extend Element.Methods,
   showBase: Element.show
   show: (element, visible) ->
-    if visible or visible == null or visible == undefined
+    if visible or !visible?
       $(element).showBase()
     else
       $(element).hide()
@@ -102,7 +102,7 @@ Object.extend Element.Methods,
       element = element.parentNode
     false
   setTextContent: (element, text) ->
-    if element.innerText != null and element.innerText != undefined
+    if element.innerText?
       element.innerText = text
     else
       element.textContent = text
@@ -233,7 +233,7 @@ Object.extend String.prototype,
     for s of subs
       r = new RegExp('\\${' + s + '}', 'g')
       to = subs[s]
-      if to == null or to == undefined
+      if !to?
         to = ''
       text = text.replace(r, to)
     text
@@ -258,7 +258,7 @@ Ajax.Request::successBase = Ajax.Request::success
 Ajax.Request::success = ->
   try
     responses = @transport.getAllResponseHeaders()
-    if responses == null or responses == undefined
+    if !responses?
       return false
   catch e
 
@@ -371,7 +371,7 @@ window.distance_squared = (x1, y1, x2, y2) ->
 
 window.getWindowSize = ->
   size = {}
-  if window.innerWidth != null and window.innerWidth != undefined
+  if window.innerWidth?
     size.width = window.innerWidth
     size.height = window.innerHeight
   else
@@ -418,7 +418,7 @@ Prototype.BrowserFeatures.Touchscreen = do ->
 window.DragElement = (element, options) ->
   $(document.body).addClassName 'not-dragging'
   @options = options or {}
-  if @options.snap_pixels == null or @options.snap_pixels == undefined
+  if !@options.snap_pixels?
     @options.snap_pixels = 10
   @ignore_mouse_events_until = null
   @mousemove_event = @mousemove_event.bindAsEventListener(this)
@@ -478,7 +478,7 @@ DragElement::move_timer_update = ->
   @move_timer = null
   if !@options.ondrag
     return
-  if @last_event_params == null or @last_event_params == undefined
+  if !@last_event_params?
     return
   last_event_params = @last_event_params
   @last_event_params = null
@@ -523,7 +523,7 @@ DragElement::touchmove_event = (event) ->
       touch = t
       break
     ++i
-  if touch == null or touch == undefined
+  if !touch?
     return
   event.preventDefault()
 
@@ -574,7 +574,7 @@ DragElement::handle_move_event = (event, x, y) ->
     # can process.  Set a timer, so we discard multiple events in quick succession. 
     ###
 
-    if @move_timer == null or @move_timer == undefined
+    if !@move_timer?
       @move_timer = window.setTimeout(@move_timer_update, 10)
   else
     @move_timer_update()
@@ -586,7 +586,7 @@ DragElement::mousedown_event = (event) ->
 
   ### Check if we're temporarily ignoring mouse events. ###
 
-  if @ignore_mouse_events_until != null and @ignore_mouse_events_until != undefined
+  if @ignore_mouse_events_until?
     now = (new Date).valueOf()
     if now < @ignore_mouse_events_until
       return
@@ -612,7 +612,7 @@ DragElement::touchstart_event = (event) ->
     touch = t
     break
     ++i
-  if touch == null or touch == undefined
+  if !touch?
     return
   x = touch.pageX
   y = touch.pageY
@@ -620,7 +620,7 @@ DragElement::touchstart_event = (event) ->
   return
 
 DragElement::start_dragging = (event, touch, x, y, touch_identifier) ->
-  if @dragging_touch_identifier != null and @dragging_touch_identifier != undefined
+  if @dragging_touch_identifier?
     return
 
   ### If we've been started with a touch event, only listen for touch events.  If we've
@@ -835,7 +835,7 @@ window.TrackFocus = ->
 window.FormatError = (message, file, line, exc, info) ->
   report = ''
   report += 'Error: ' + message + '\n'
-  if info != null and info != undefined
+  if info?
     report += info
   report += 'UA: ' + window.navigator.userAgent + '\n'
   report += 'URL: ' + window.location.href + '\n'
@@ -881,7 +881,7 @@ window.FormatError = (message, file, line, exc, info) ->
     report += '\n' + exc.stack + '\n'
   if file
     report += 'File: ' + file
-    if line != null and line != undefined
+    if line?
       report += ' line ' + line + '\n'
   report
 

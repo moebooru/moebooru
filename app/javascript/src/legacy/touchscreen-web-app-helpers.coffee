@@ -65,7 +65,7 @@ EmulateDoubleClick::touchstart_event = (event) ->
       this_touch.clientY
     ]
   @last_click = this_click
-  if last_click == null or last_click == undefined
+  if !last_click?
     return
 
   ### If the first tap was never released then this is a multitouch double-tap.
@@ -101,10 +101,10 @@ EmulateDoubleClick::touchstart_event = (event) ->
   return
 
 EmulateDoubleClick::touchend_event = (event) ->
-  if @last_click == null or @last_click == undefined
+  if !@last_click?
     return
   last_click_identifier = @last_click.identifier
-  if last_click_identifier == null or last_click_identifier == undefined
+  if !last_click_identifier?
     return
   last_click_position = @last_click.position
   this_click = event.changedTouches[0]
@@ -150,7 +150,7 @@ ResponsiveSingleClick::touchstart_event = (event) ->
   # a click, so cancel the click. 
   ###
 
-  if @last_touch != null and @last_touch != undefined
+  if @last_touch?
     debug 'Cancelling click (multitouch)'
     @last_touch = null
     return
@@ -169,7 +169,7 @@ ResponsiveSingleClick::touchstart_event = (event) ->
 
 ResponsiveSingleClick::touchend_event = (event) ->
   last_touch = @last_touch
-  if last_touch == null or last_touch == undefined
+  if !last_touch?
     return
   @last_touch = null
   touch = event.changedTouches[0]

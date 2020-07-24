@@ -50,7 +50,7 @@ window.Note = Class.create(
     if Note.debug
       console.debug 'Note#hideEditBox (id=%d)', @id
     editBox = $('edit-box')
-    if editBox != null and editBox != undefined
+    if editBox?
       boxid = editBox.noteid
       $('edit-box').stopObserving()
       $('note-save-' + boxid).stopObserving()

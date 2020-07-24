@@ -82,7 +82,7 @@ window.InlineImage =
     document.observe 'mouseup', (e) ->
       if e.button != 0
         return
-      if InlineImage.mouse_down == null or InlineImage.mouse_down == undefined
+      if !InlineImage.mouse_down?
         return
       e.stop()
       data = InlineImage.mouse_down

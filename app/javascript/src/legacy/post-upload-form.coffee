@@ -1,5 +1,5 @@
 window.PostUploadForm = (form, progress) ->
-  XHRLevel2 = 'XMLHttpRequest' of window and (new XMLHttpRequest).upload != null and (new XMLHttpRequest).upload != undefined
+  XHRLevel2 = 'XMLHttpRequest' of window and (new XMLHttpRequest).upload?
   SupportsFormData = 'FormData' of window
   if !XHRLevel2 or !SupportsFormData
     return
@@ -59,7 +59,7 @@ PostUploadForm::form_submit_event = (e) ->
 
   if e.stopped
     return
-  if @current_request != null and @current_request != undefined
+  if @current_request?
     return
   $('post-exists').hide()
   $('post-upload-error').hide()
@@ -69,7 +69,7 @@ PostUploadForm::form_submit_event = (e) ->
   ###
 
   post_file = $('post_file')
-  if post_file.files == null or post_file.files == undefined or post_file.files.length == 0
+  if !post_file.files? or post_file.files.length == 0
     return
   e.stop()
   @set_progress 0
@@ -121,7 +121,7 @@ PostUploadForm::form_submit_event = (e) ->
 ### Cancel the running request, if any. ###
 
 PostUploadForm::cancel = ->
-  if @current_request == null or @current_request == undefined
+  if !@current_request?
     return
 
   ### Don't clear this.current_request; it'll be done by the onComplete callback. ###
@@ -144,7 +144,7 @@ window.UploadSimilarSearch = (file_field, results) ->
 
 UploadSimilarSearch::field_changed_event = (event) ->
   @results.hide()
-  if @file_field.files == null or @file_field.files == undefined or @file_field.files.length == 0
+  if !@file_field.files? or @file_field.files.length == 0
     return
   @results.innerHTML = 'Searching...'
   @results.show()

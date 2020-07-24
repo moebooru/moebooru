@@ -91,25 +91,25 @@ apply_drag = (dragging_mode, x, y, image_dimensions, box) ->
 
   ### Apply the drag. ###
 
-  if mode.top != null and mode.top != undefined
+  if mode.top?
     result.top += y * mode.top
-  if mode.left != null and mode.left != undefined
+  if mode.left?
     result.left += x * mode.left
-  if mode.right != null and mode.right != undefined
+  if mode.right?
     right += x * mode.right
-  if mode.bottom != null and mode.bottom != undefined
+  if mode.bottom?
     bottom += y * mode.bottom
   if dragging_mode != 'move'
 
     ### Only clamp the dimensions that were modified. ###
 
-    if mode.left != null and mode.left != undefined
+    if mode.left?
       result.left = clamp(result.left, 0, right - 1)
-    if mode.top != null and mode.top != undefined
+    if mode.top?
       result.top = clamp(result.top, 0, bottom - 1)
-    if mode.bottom != null and mode.bottom != undefined
+    if mode.bottom?
       bottom = clamp(bottom, result.top + 1, image_dimensions.height)
-    if mode.right != null and mode.right != undefined
+    if mode.right?
       right = clamp(right, result.left + 1, image_dimensions.width)
   result.width = right - (result.left)
   result.height = bottom - (result.top)
@@ -280,7 +280,7 @@ FrameEditor::set_drag_to_create = (enable) ->
   return
 
 FrameEditor::update_show_corner_drag = ->
-  shown = @post_id != null and @post_id != undefined and @editing_frame != null and @editing_frame != undefined and @show_corner_drag
+  shown = @post_id? and @editing_frame? and @show_corner_drag
   if Prototype.Browser.WebKit
 
     ### Work around a WebKit (maybe just a Chrome) issue.  Images are downloaded immediately, but
@@ -330,7 +330,7 @@ FrameEditor::set_image_dimensions = (width, height) ->
     height: height
   @main_frame.style.width = @image_dimensions.width + 'px'
   @main_frame.style.height = @image_dimensions.height + 'px'
-  if post_id != null and post_id != undefined
+  if post_id?
     @open post_id
     @focus editing_frame
   return
@@ -360,14 +360,14 @@ elementArrayFromPoint = (x, y, top) ->
   elements
 
 FrameEditor::is_opened = ->
-  @post_id != null and @post_id != undefined
+  @post_id?
 
 ### Open the frame editor if it isn't already, and focus on the specified frame. ###
 
 FrameEditor::open = (post_id) ->
-  if @image_dimensions == null or @image_dimensions == undefined
+  if !@image_dimensions?
     throw 'Must call set_image_dimensions before open'
-  if @post_id != null and @post_id != undefined
+  if @post_id?
     return
   @post_id = post_id
   @editing_frame = null
@@ -437,14 +437,14 @@ FrameEditor::create_dragger = ->
         # so we prefer the corner handles (which are always on top) to edge handles. 
         ###
 
-        if (element == null or element == undefined) and e.hasClassName('frame-box-handle')
+        if (!element?) and e.hasClassName('frame-box-handle')
           element = e
         return
       ).bind(this)
 
       ### If a handle wasn't clicked, prefer the frame that's currently focused. ###
 
-      if element == null or element == undefined
+      if !element?
         clicked_elements.each ((e) ->
           if !e.hasClassName('frame-editor-frame-box')
             e = e.up('.frame-editor-frame-box')
@@ -455,7 +455,7 @@ FrameEditor::create_dragger = ->
 
       ### Otherwise, just use the first item that was found. ###
 
-      if element == null or element == undefined
+      if !element?
         element = clicked_elements[0]
 
       ### If a handle was clicked on, find the frame element that contains it. ###
@@ -466,7 +466,7 @@ FrameEditor::create_dragger = ->
 
       ### If we didn't click on a frame box at all, create a new one. ###
 
-      if frame_element == null or frame_element == undefined
+      if !frame_element?
         if !@drag_to_create
           return
         @dragging_new = true
@@ -545,7 +545,7 @@ FrameEditor::create_dragger = ->
         source_dims = frame_dimensions_from_image(dims, @image_dimensions, post)
         @dragging_idx = @add_frame(source_dims)
         post.frames_pending[@editing_frame] = source_dims
-      if @dragging_idx == null or @dragging_idx == undefined
+      if !@dragging_idx?
         return
       dims = apply_drag(@dragging_mode, e.aX, e.aY, @image_dimensions, @dragging_anchor)
 
@@ -587,10 +587,10 @@ FrameEditor::repopulate_table = ->
 
 FrameEditor::update = ->
   @update_show_corner_drag()
-  if @image_dimensions == null or @image_dimensions == undefined
+  if !@image_dimensions?
     return
   post = Post.posts.get(@post_id)
-  if post != null and post != undefined
+  if post?
     i = 0
     while i < post.frames_pending.length
       @update_image_frame i
@@ -600,7 +600,7 @@ FrameEditor::update = ->
 ### If the frame editor is open, discard changes and close it. ###
 
 FrameEditor::discard = ->
-  if @post_id == null or @post_id == undefined
+  if !@post_id?
     return
 
   ### Save revert_to, and close the editor before reverting, to make sure closing
@@ -640,7 +640,7 @@ FrameEditor::changed = ->
 ### Save changes to the post, if any.  If not null, call finished on completion. ###
 
 FrameEditor::save = (finished) ->
-  if @post_id == null or @post_id == undefined
+  if !@post_id?
     if finished
       finished()
     return
@@ -770,7 +770,7 @@ FrameEditor::update_frame_from_list = (frame_idx) ->
 
 FrameEditor::add_frame = (new_frame) ->
   post = Post.posts.get(@post_id)
-  if new_frame == null or new_frame == undefined
+  if !new_frame?
     new_frame =
       source_top: post.height * 1 / 4
       source_left: post.width * 1 / 4
@@ -826,7 +826,7 @@ FrameEditor::focus = (post_frame) ->
     row = @container.down('.frame-' + @editing_frame)
     row.removeClassName 'frame-focused'
   @editing_frame = post_frame
-  if @editing_frame != null and @editing_frame != undefined
+  if @editing_frame?
     row = @container.down('.frame-' + @editing_frame)
     row.addClassName 'frame-focused'
   i = 0
@@ -839,7 +839,7 @@ FrameEditor::focus = (post_frame) ->
 ### Close the frame editor.  Local changes are not saved or reverted. ###
 
 FrameEditor::close = ->
-  if @post_id == null or @post_id == undefined
+  if !@post_id?
     return
   @post_id = null
   @editing_frame = null
@@ -955,7 +955,7 @@ CornerDragger::set_post_id = (post_id) ->
   @post_frame = null
   url = null
   img = @container.down('img')
-  if post_id != null and post_id != undefined
+  if post_id?
     post = Post.posts.get(@post_id)
     @image_dimensions =
       width: post.jpeg_width
@@ -988,7 +988,7 @@ CornerDragger::set_post_frame = (post_frame) ->
   return
 
 CornerDragger::update = ->
-  if @post_id == null or @post_id == undefined or @post_frame == null or @post_frame == undefined
+  if !@post_id? or !@post_frame?
     return
   post = Post.posts.get(@post_id)
   frame = post.frames_pending[@post_frame]

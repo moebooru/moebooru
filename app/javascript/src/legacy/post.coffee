@@ -89,7 +89,7 @@ window.Post =
       ### Tell TagCompletion about recently used tags. ###
 
       posts.each (post) ->
-        if post.tags == null or post.tags == undefined
+        if !post.tags?
           return
         TagCompletion.add_recent_tags_from_update post.tags, post.old_tags
         return
@@ -205,7 +205,7 @@ window.Post =
   init_add_to_favs: (post_id, add_to_favs, remove_from_favs) ->
 
     update_add_to_favs = (e) ->
-      if e != null and e != undefined and (e.memo.post_ids.get(post_id) == null or e.memo.post_ids.get(post_id) == undefined)
+      if e? and (!e.memo.post_ids.get(post_id)?)
         return
       vote = Post.votes.get(post_id) or 0
       add_to_favs.show vote < 3
@@ -608,11 +608,11 @@ window.Post =
     false
   resize_image: ->
     img = $('image')
-    if img.original_width == null or img.original_width == undefined
+    if !img.original_width?
       img.original_width = img.width
       img.original_height = img.height
     ratio = 1
-    if img.scale_factor == 1 or img.scale_factor == null or img.scale_factor == undefined
+    if img.scale_factor == 1 or !img.scale_factor?
 
       ### Use clientWidth for sizing the width, and the window height for the height.
       # This prevents needing to scroll horizontally to center the image. 
@@ -689,7 +689,7 @@ window.Post =
       img = $('image')
     if !img
       return
-    if img.original_width == null or img.original_width == undefined
+    if !img.original_width?
       img.original_width = img.width
       img.original_height = img.height
     window_size = document.viewport.getDimensions()
@@ -721,7 +721,7 @@ window.Post =
       return
     img.already_resized = true
     # un-resize
-    if img.scale_factor != null and img.scale_factor != undefined and img.scale_factor != 1
+    if img.scale_factor? and img.scale_factor != 1
       Post.resize_image()
 
     f = ->
@@ -851,7 +851,7 @@ window.Post =
     return
   hover_info_pin: (post_id) ->
     post = null
-    if post_id != null and post_id != undefined
+    if post_id?
       post = Post.posts.get(post_id)
     Post.hover_info_pinned_post = post
     Post.hover_info_update()
@@ -864,7 +864,7 @@ window.Post =
     Post.hover_info_update()
     return
   hover_info_mouseout: ->
-    if Post.hover_info_hovered_post == null or Post.hover_info_hovered_post == undefined
+    if !Post.hover_info_hovered_post?
       return
     Post.hover_info_hovered_post = null
     Post.hover_info_update()
@@ -915,7 +915,7 @@ window.Post =
     else
       hover.down('#hover-not-shown').show()
     hover.down('#hover-is-parent').show post.has_children
-    hover.down('#hover-is-child').show post.parent_id != null and post.parent_id != undefined
+    hover.down('#hover-is-child').show post.parent_id?
     hover.down('#hover-is-pending').show post.status == 'pending'
     hover.down('#hover-is-flagged').show post.status == 'flagged'
 
@@ -1000,7 +1000,7 @@ window.Post =
       post_id = p[0]
       post = p[1]
       span = $('p' + post.id)
-      if span == null or span == undefined
+      if !span?
         return
       span.down('A').observe 'mouseover', (e) ->
         Post.hover_info_mouseover post_id
@@ -1047,7 +1047,7 @@ window.Post =
       i = 0
       while i < resp.length
         post = resp[i]
-        if post.id == old_parent_id and post.parent_id != null and post.parent_id != undefined
+        if post.id == old_parent_id and post.parent_id?
           alert 'The parent post has a parent, so this post can\'t be automatically reparented.'
           return
         change_requests.push
@@ -1057,7 +1057,7 @@ window.Post =
         ++i
       # We have the list of changes to make in change_requests.
       # Send a batch request.
-      if typeof finished == 'undefined' or finished == null
+      if !finished?
 
         finished = ->
           document.location.reload()
@@ -1069,7 +1069,7 @@ window.Post =
   get_url_for_post_in_pool: (post_id, pool_id) ->
     '/post/show/' + post_id + '?pool_id=' + pool_id
   jump_to_post_in_pool: (post_id, pool_id) ->
-    if post_id == null or post_id == undefined
+    if !post_id?
       notice 'No more posts in this pool'
       return
     window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id)
@@ -1119,7 +1119,7 @@ window.Post =
       if a.hasClassName('no-browser-link') or a.up('.no-browser-link')
         return
       tags = parse_index_url(a.href)
-      if tags != null and tags != undefined
+      if tags?
         a.href = '/post/browse#/' + tags
         return
       target = parse_url(a.href)
@@ -1134,7 +1134,7 @@ window.Post =
         return
       if target.controller == 'post' and target.action == 'show'
         url = '/post/browse#' + target.id
-        if current_pool_id != null and current_pool_id != undefined
+        if current_pool_id?
           url += '/pool:' + current_pool_id
         a.browse_href = url
         a.orig_href = a.href
@@ -1154,13 +1154,13 @@ window.Post =
 
     if localStorage.sample_url_format != '2'
       Post.clear_sample_url_cache()
-    if Post.cached_sample_urls != null and Post.cached_sample_urls != undefined
+    if Post.cached_sample_urls?
       return Post.cached_sample_urls
     try
       sample_urls = JSON.parse(window.localStorage.sample_urls)
     catch SyntaxError
       return {}
-    if sample_urls == null or sample_urls == undefined
+    if !sample_urls?
       return {}
     Post.cached_sample_urls = sample_urls
     sample_urls
@@ -1173,7 +1173,7 @@ window.Post =
     return
   cache_sample_urls: ->
     sample_urls = Post.get_cached_sample_urls()
-    if sample_urls == null or sample_urls == undefined
+    if !sample_urls?
       return
 
     ### Track post URLs in the order we see them, and push old data out. ###
@@ -1225,7 +1225,7 @@ window.Post =
       throw e
     return
   prompt_to_delete: (post_id, completed) ->
-    if completed == null or completed == undefined
+    if !completed?
 
       completed = ->
         window.location.reload()

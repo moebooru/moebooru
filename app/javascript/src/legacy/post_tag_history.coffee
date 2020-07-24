@@ -100,7 +100,7 @@ window.PostTagHistory =
       return
     PostTagHistory.mouse_is_down()
     i = PostTagHistory.get_row_by_id(id)
-    if i == null or i == undefined
+    if !i?
       return
     first = null
     last = null

@@ -309,7 +309,7 @@ TagCompletionClass::create_tag_search_regex = (tag, options) ->
 TagCompletionClass::retrieve_tag_search = (re, source, options) ->
   results = []
   max_results = 10
-  if options.max_results != null and options.max_results != undefined
+  if options.max_results?
     max_results = options.max_results
   while results.length < max_results
     m = re.exec(source)
@@ -379,7 +379,7 @@ TagCompletionClass::remove_recent_tag = (tag) ->
 
 TagCompletionClass::add_recent_tags_from_update = (tags, old_tags) ->
   tags = tags.split(' ')
-  if old_tags != null and old_tags != undefined
+  if old_tags?
     old_tags = old_tags.split(' ')
   tags.each ((tag) ->
 
@@ -409,7 +409,7 @@ TagCompletionClass::add_recent_tags_from_update = (tags, old_tags) ->
     # edit form is going to create them.
     ###
 
-    if (old_tags == null or old_tags == undefined) and tag.indexOf(':') == -1
+    if (!old_tags?) and tag.indexOf(':') == -1
       if @tag_data.indexOf('`' + tag + '`') == -1
         return
     @add_recent_tag tag
@@ -451,9 +451,9 @@ TagCompletionClass::reorder_search_results = (tag, results) ->
 ###
 
 TagCompletionClass::complete_tag = (tag, options) ->
-  if @tag_data == null or @tag_data == undefined
+  if !@tag_data?
     throw 'Tag data isn\'t loaded'
-  if options == null or options == undefined
+  if !options?
     options = {}
   if tag == ''
     return [
@@ -480,7 +480,7 @@ TagCompletionClass::complete_tag = (tag, options) ->
 
   if 'sqe'.indexOf(tag) != -1
     results.unshift '0`' + tag + '` '
-  results = results.slice(0, if options.max_results != null and options.max_results != undefined then options.max_results else 10)
+  results = results.slice(0, if options.max_results? then options.max_results else 10)
   recent_result_count = Math.min(results.length, recent_result_count)
 
   ### Strip the "1`" tag type prefix off of each result. ###
@@ -591,7 +591,7 @@ TagCompletionBox::input_keydown = (event) ->
     ).bind(this), 100)
     if @rapid_backspaces_received > 1
       @updates_deferred = true
-      if @defer_timeout != null and @defer_timeout != undefined
+      if @defer_timeout?
         clearTimeout @defer_timeout
       @defer_timeout = setTimeout((->
         @updates_deferred = false
@@ -622,7 +622,7 @@ TagCompletionBox::input_keydown = (event) ->
   return
 
 TagCompletionBox::focus_element = (element) ->
-  if element == null or element == undefined
+  if !element?
     throw 'Can\'t select no element'
   previous = @completion_box.down('.focused')
   if previous
@@ -635,7 +635,7 @@ TagCompletionBox::select_next = (next) ->
   focused = @completion_box.down('.focused')
   siblings = if next then focused.nextSiblings() else focused.previousSiblings()
   new_focus = Prototype.Selector.find(siblings, '.completed-tag', 0)
-  if new_focus == null or new_focus == undefined
+  if !new_focus?
     new_focus = @completion_box.down(if next then '.completed-tag' else '.completed-tag:last-child')
   @focus_element new_focus
   return
@@ -719,7 +719,7 @@ TagCompletionBox::update = (force) ->
   # completes. 
   ###
 
-  if TagCompletion.tag_data == null or TagCompletion.tag_data == undefined
+  if !TagCompletion.tag_data?
 
     ### If this returns true, we'll display with the data we have now.  If this happens,
     # don't update during the callback; it's bad UI to be changing the list out from

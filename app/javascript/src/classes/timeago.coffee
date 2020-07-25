@@ -1,6 +1,15 @@
 $ = jQuery
 
 export default class Timeago
+  @set: (el, date) =>
+    $(el).timeago('update', date)
+    @setTitle el, date
+
+
+  @setTitle: (el, date) ->
+    el.title = date.toString()
+
+
   constructor: ->
     @observe()
     @run()
@@ -11,8 +20,8 @@ export default class Timeago
       .find(".js-timeago")
       .addBack(".js-timeago")
       .timeago()
-      .each (_i, el) ->
-        el.title = new Date(el.getAttribute('datetime')).toString()
+      .each (_i, el) =>
+        @constructor.setTitle el, new Date(el.getAttribute('datetime'))
 
 
   observe: =>

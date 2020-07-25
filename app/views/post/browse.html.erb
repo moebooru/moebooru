@@ -110,7 +110,7 @@
         <span style="background-color: #000; margin-left: 0.25em; padding: 0 0.5em;" class="post-hidden"><%= t('.hidden') %></span>
       </div>
     <div class="pool-info"></div>
-    <div><%= t('.by.all_html', :text => t('.by.text'), :ago => t('time.x_ago_html', :t => content_tag(:span, '', :class => 'posted-at')), :by => content_tag(:span, t('.by.by_html', :user => link_to('', '#')), :class => 'posted-by')) %></div>
+    <div><%= t('.by.all_html', :text => t('.by.text'), :ago => content_tag(:span, '', :class => 'posted-at'), :by => content_tag(:span, t('.by.by_html', :user => link_to('', '#')), :class => 'posted-by')) %></div>
     <div id="vote-container" class="vote-container"><%= t('.score') %>: <span class="post-score"></span> <%= vote_widget(@current_user) %> <span class="vote-desc"></span></div>
     <div class="post-frames">
       <%= t('.frames') %>: <div class="post-frame-list"></div>

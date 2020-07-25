@@ -659,7 +659,7 @@ class window.BrowserView
     @container.down('.post-id').setTextContent post.id
     @container.down('.post-id-link').href = '/post/show/' + post.id
     @container.down('.posted-by').show()
-    jQuery(@container.down('.posted-at')).timeago('update', (new Date(post.created_at * 1000)))
+    timeago.constructor.set(@container.down('.posted-at'), new Date(post.created_at * 1000))
 
     # Fill in the pool list.
     pool_info = @container.down('.pool-info')

@@ -114,8 +114,9 @@ class window.BrowserView
     ###
 
     # Hide member-only and moderator-only controls:
-    $(document.body).pickClassName 'is-member', 'not-member', User.is_member_or_higher()
-    $(document.body).pickClassName 'is-moderator', 'not-moderator', User.is_mod_or_higher()
+    jQuery(document.body)
+      .toggleClass 'not-member', !User.is_member_or_higher()
+      .toggleClass 'not-moderator', !User.is_mod_or_higher()
     tag_span = @container.down('.post-tags')
     tag_span.on 'click', '.post-tag', (e, element) ->
       e.stop()

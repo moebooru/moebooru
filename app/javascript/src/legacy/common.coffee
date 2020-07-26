@@ -56,10 +56,6 @@ Object.extend Element.Methods,
       $(element).addClassName className
     else
       $(element).removeClassName className
-  pickClassName: (element, classNameEnabled, classNameDisabled, enabled) ->
-    $(element).setClassName classNameEnabled, enabled
-    $(element).setClassName classNameDisabled, !enabled
-    return
   isParentNode: (element, parentNode) ->
     while element
       if element == parentNode

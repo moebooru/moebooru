@@ -184,12 +184,6 @@ Object.extend String.prototype,
     container.innerHTML = this
     container.removeChild container.firstChild
 
-window.createElement = (type, className, html) ->
-  element = $(document.createElement(type))
-  element.className = className
-  element.innerHTML = html
-  element
-
 ### Prototype calls onSuccess instead of onFailure when the user cancelled the AJAX
 # request.  Fix that with a monkey patch, so we don't have to track changes inside
 # prototype.js. 

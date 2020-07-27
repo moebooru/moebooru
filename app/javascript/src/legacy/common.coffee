@@ -51,11 +51,6 @@ Object.extend Element.Methods,
       $(element).showBase()
     else
       $(element).hide()
-  setClassName: (element, className, enabled) ->
-    if enabled
-      $(element).addClassName className
-    else
-      $(element).removeClassName className
   isParentNode: (element, parentNode) ->
     while element
       if element == parentNode

@@ -892,23 +892,6 @@ window.LocalStorageDisabled = ->
       return 'error'
   return
 
-### Chrome 10/WebKit braindamage; stop breaking things intentionally just to create
-# busywork for everyone else: 
-###
-
-if !('URL' of window) and 'webkitURL' of window
-  window.URL = window.webkitURL
-
-### For Chrome 9: ###
-
-if 'createObjectURL' of window and !('URL' of window)
-  window.URL =
-    createObjectURL: (blob) ->
-      window.createObjectURL blob
-    revokeObjectURL: (url) ->
-      window.revokeObjectURL url
-      return
-
 ### Allow CSS styles for WebKit. ###
 
 if navigator.userAgent.indexOf('AppleWebKit/') != -1

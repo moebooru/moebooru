@@ -30,20 +30,6 @@ window.scale = (x, l1, h1, l2, h2) ->
 window.clamp = (n, min, max) ->
   Math.max Math.min(n, max), min
 
-window.ClipRange = Class.create(
-  initialize: (min, max) ->
-    if min > max
-      throw 'paramError'
-    @min = min
-    @max = max
-    return
-  clip: (x) ->
-    if x < @min
-      return @min
-    if x > @max
-      return @max
-    x
-)
 Object.extend Element.Methods,
   showBase: Element.show
   show: (element, visible) ->

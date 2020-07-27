@@ -1,4 +1,5 @@
 import CheckAll from './classes/check_all'
+import ClipRange from './classes/clip_range'
 import Comment from './classes/comment'
 import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
@@ -12,6 +13,8 @@ import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
 import Timeago from './classes/timeago'
 import UserRecord from './classes/user_record'
+
+window.ClipRange = ClipRange
 
 window.checkAll = new CheckAll
 window.comment = new Comment

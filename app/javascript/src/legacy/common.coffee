@@ -30,20 +30,6 @@ window.scale = (x, l1, h1, l2, h2) ->
 window.clamp = (n, min, max) ->
   Math.max Math.min(n, max), min
 
-window.ClipRange = Class.create(
-  initialize: (min, max) ->
-    if min > max
-      throw 'paramError'
-    @min = min
-    @max = max
-    return
-  clip: (x) ->
-    if x < @min
-      return @min
-    if x > @max
-      return @max
-    x
-)
 Object.extend Element.Methods,
   showBase: Element.show
   show: (element, visible) ->
@@ -51,11 +37,6 @@ Object.extend Element.Methods,
       $(element).showBase()
     else
       $(element).hide()
-  setClassName: (element, className, enabled) ->
-    if enabled
-      $(element).addClassName className
-    else
-      $(element).removeClassName className
   isParentNode: (element, parentNode) ->
     while element
       if element == parentNode
@@ -202,12 +183,6 @@ Object.extend String.prototype,
     container = document.createElement('div')
     container.innerHTML = this
     container.removeChild container.firstChild
-
-window.createElement = (type, className, html) ->
-  element = $(document.createElement(type))
-  element.className = className
-  element.innerHTML = html
-  element
 
 ### Prototype calls onSuccess instead of onFailure when the user cancelled the AJAX
 # request.  Fix that with a monkey patch, so we don't have to track changes inside
@@ -916,23 +891,6 @@ window.LocalStorageDisabled = ->
 
       return 'error'
   return
-
-### Chrome 10/WebKit braindamage; stop breaking things intentionally just to create
-# busywork for everyone else: 
-###
-
-if !('URL' of window) and 'webkitURL' of window
-  window.URL = window.webkitURL
-
-### For Chrome 9: ###
-
-if 'createObjectURL' of window and !('URL' of window)
-  window.URL =
-    createObjectURL: (blob) ->
-      window.createObjectURL blob
-    revokeObjectURL: (url) ->
-      window.revokeObjectURL url
-      return
 
 ### Allow CSS styles for WebKit. ###
 

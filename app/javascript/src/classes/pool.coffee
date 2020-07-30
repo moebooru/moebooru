@@ -52,7 +52,7 @@ export default class Pool
         pool_id: pool_id
       dataType: "json"
 
-    .done (resp) ->
+    .done ->
       notice "Post added to pool"
 
     .fail (xhr) ->

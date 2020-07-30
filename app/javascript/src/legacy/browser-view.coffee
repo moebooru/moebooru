@@ -666,9 +666,8 @@ class window.BrowserView
     pool_info = @container.down('.pool-info')
     while pool_info.firstChild
       pool_info.removeChild pool_info.firstChild
-    if post.pool_posts
-      post.pool_posts.each (pp) ->
-        pool_post = pp[1]
+    if post.pool_posts?
+      for own _postId, pool_post of post.pool_posts
         pool_id = pool_post.pool_id
         pool = Pool.pools[pool_id]
         pool_title = pool.name.replace(/_/g, ' ')

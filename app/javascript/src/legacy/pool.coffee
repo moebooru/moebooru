@@ -32,8 +32,8 @@ class PoolClass
 
       continue if !post?
 
-      post.pool_posts ?= new Hash
-      post.pool_posts.set pool_post.pool_id, pool_post
+      post.pool_posts ?= {}
+      post.pool_posts[pool_post.pool_id] = pool_post
 
 
   can_edit_pool: (pool) ->

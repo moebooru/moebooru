@@ -1,6 +1,6 @@
 $ = jQuery
 
-class PoolClass
+export default class Pool
   constructor: ->
     @pools = {}
 
@@ -32,8 +32,8 @@ class PoolClass
 
       continue if !post?
 
-      post.pool_posts ?= new Hash
-      post.pool_posts.set pool_post.pool_id, pool_post
+      post.pool_posts ?= {}
+      post.pool_posts[pool_post.pool_id] = pool_post
 
 
   can_edit_pool: (pool) ->
@@ -52,14 +52,13 @@ class PoolClass
         pool_id: pool_id
       dataType: "json"
 
-    .done (resp) ->
-      if resp.success
-        notice "Post added to pool"
-      else
-        notice "Error: #{resp.reason}"
+    .done ->
+      notice "Post added to pool"
 
-    .fail ->
-      notice "Error: unknown error"
+    .fail (xhr) ->
+      reason = xhr.responseJSON?.reason ? 'unknown error'
+
+      notice "Error: #{reason}"
 
 
   remove_post: (post_id, pool_id) ->
@@ -137,6 +136,3 @@ class PoolClass
       tags: "pool:#{pool_id}:#{new_sequence}"
       old_tags: ""
     }], callback
-
-
-window.Pool = new PoolClass

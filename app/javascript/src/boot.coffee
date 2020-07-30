@@ -9,6 +9,7 @@ import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
 import NewsTicker from './classes/news_ticker'
 import Notice from './classes/notice'
+import Pool from './classes/pool'
 import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
 import Timeago from './classes/timeago'
@@ -33,3 +34,6 @@ window.userRecord = new UserRecord
 
 # FIXME: update to call instance method directly.
 window.notice = noticeInstance.show
+
+# FIXME: update variable name to lowercase
+window.Pool = new Pool

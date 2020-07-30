@@ -1,6 +1,6 @@
 $ = jQuery
 
-class PoolClass
+export default class Pool
   constructor: ->
     @pools = {}
 
@@ -137,6 +137,3 @@ class PoolClass
       tags: "pool:#{pool_id}:#{new_sequence}"
       old_tags: ""
     }], callback
-
-
-window.Pool = new PoolClass

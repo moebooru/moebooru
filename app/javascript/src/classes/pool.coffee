@@ -53,13 +53,12 @@ export default class Pool
       dataType: "json"
 
     .done (resp) ->
-      if resp.success
-        notice "Post added to pool"
-      else
-        notice "Error: #{resp.reason}"
+      notice "Post added to pool"
 
-    .fail ->
-      notice "Error: unknown error"
+    .fail (xhr) ->
+      reason = xhr.responseJSON?.reason ? 'unknown error'
+
+      notice "Error: #{reason}"
 
 
   remove_post: (post_id, pool_id) ->

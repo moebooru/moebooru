@@ -676,7 +676,8 @@ class window.BrowserView
           sequence = '#' + sequence
         html = '<div class="pool-info">Post ${sequence} in <a class="pool-link" href="/post/browse#/pool:${pool_id}">${desc}</a> ' + '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)'
         if Pool.can_edit_pool(pool)
-          html += '<span class="advanced-editing"> (<a href="#" class="remove-pool-from-post">remove</a>)</div></span>'
+          html += '<span class="advanced-editing"> (<a href="#" class="remove-pool-from-post">remove</a>)</span>'
+        html += '</div>'
         div = html.subst(
           sequence: sequence
           pool_id: pool_id

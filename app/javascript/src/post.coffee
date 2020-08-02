@@ -39,7 +39,7 @@
       img.attr 'height', h
       img.attr 'src', @href
       img.show()
-      window.Note.all.invoke 'adjustScale'
+      notesManager.all.invoke 'adjustScale'
       false
     $('#post_tags').on 'keydown', (e) ->
       if e.which == 13

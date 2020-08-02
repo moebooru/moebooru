@@ -35,20 +35,19 @@
   <div style="margin-bottom: 1em;">
     <p id="note-count"></p>
     <script type="text/javascript">
-      Note.post_id = <%= @post.id %>
+      notesManager.post_id = <%= @post.id %>
 
       <% @post.active_notes.each do |note| %>
-        Note.all.push(new Note(<%= note.id %>, false, '<%= h note.body.to_escaped_js %>'))
+        notesManager.all.push(new Note(<%= note.id %>, false, '<%= h note.body.to_escaped_js %>'))
       <% end %>
 
-      Note.updateNoteCount()
-      Note.show()
+      notesManager.updateNoteCount()
+      notesManager.show()
 
       //new WindowDragElement($("image"));
       Moebooru.dragElement(jQuery('.image'));
 
-      $("image").observe("click", function(e) { if(!e.stopped) Note.toggle(); }.bindAsEventListener());
+      $("image").observe("click", function(e) { if(!e.stopped) notesManager.toggle(); }.bindAsEventListener());
     </script>
   </div>
 <% end %>
-

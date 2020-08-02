@@ -625,10 +625,10 @@ window.Post =
     img.width = img.original_width * ratio
     img.height = img.original_height * ratio
     img.scale_factor = ratio
-    if window.Note
+    if notesManager
       i = 0
-      while i < window.Note.all.length
-        window.Note.all[i].adjustScale()
+      while i < notesManager.all.length
+        notesManager.all[i].adjustScale()
         ++i
     return
   get_scroll_offset_to_center: (element) ->
@@ -708,11 +708,11 @@ window.Post =
     Post.adjust_notes()
     return
   adjust_notes: ->
-    if !window.Note
+    if !notesManager
       return
     i = 0
-    while i < window.Note.all.length
-      window.Note.all[i].adjustScale()
+    while i < notesManager.all.length
+      notesManager.all[i].adjustScale()
       ++i
     return
   highres: ->
@@ -732,8 +732,8 @@ window.Post =
       img.width = highres.getAttribute('link_width')
       $('note-container').insert after: img
       img.src = highres.href
-      if window.Note
-        window.Note.all.invoke 'adjustScale'
+      if notesManager
+        notesManager.all.invoke 'adjustScale'
       return
 
     # Clear the image before loading the new one, so it doesn't show the old image

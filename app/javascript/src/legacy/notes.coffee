@@ -1,7 +1,7 @@
 # The following are instance methods and variables
 window.Note = Class.create(
   initialize: (id, is_new, raw_body) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#initialize (id=%d)', id
     @id = id
     @is_new = is_new
@@ -43,11 +43,11 @@ window.Note = Class.create(
     @adjustScale()
     return
   textValue: ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#textValue (id=%d)', @id
     @old.raw_body.strip()
   hideEditBox: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#hideEditBox (id=%d)', @id
     editBox = $('edit-box')
     if editBox?
@@ -60,10 +60,10 @@ window.Note = Class.create(
       $('edit-box').remove()
     return
   showEditBox: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#showEditBox (id=%d)', @id
     @hideEditBox e
-    insertionPosition = Note.getInsertionPosition()
+    insertionPosition = notesManager.getInsertionPosition()
     top = insertionPosition[0]
     left = insertionPosition[1]
     html = ''
@@ -86,28 +86,28 @@ window.Note = Class.create(
     $('edit-box-text').focus()
     return
   bodyShow: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#bodyShow (id=%d)', @id
     if @dragging
       return
     if @hideTimer
       clearTimeout @hideTimer
       @hideTimer = null
-    if Note.noteShowingBody == this
+    if notesManager.noteShowingBody == this
       return
-    if Note.noteShowingBody
-      Note.noteShowingBody.bodyHide()
-    Note.noteShowingBody = this
-    if Note.zindex >= 9
+    if notesManager.noteShowingBody
+      notesManager.noteShowingBody.bodyHide()
+    notesManager.noteShowingBody = this
+    if notesManager.zindex >= 9
 
       ### don't use more than 10 layers (+1 for the body, which will always be above all notes) ###
 
-      Note.zindex = 0
+      notesManager.zindex = 0
       i = 0
-      while i < Note.all.length
-        Note.all[i].elements.box.style.zIndex = 0
+      while i < notesManager.all.length
+        notesManager.all[i].elements.box.style.zIndex = 0
         ++i
-    @elements.box.style.zIndex = ++Note.zindex
+    @elements.box.style.zIndex = ++notesManager.zindex
     @elements.body.style.zIndex = 10
     @elements.body.style.top = 0 + 'px'
     @elements.body.style.left = 0 + 'px'
@@ -183,16 +183,16 @@ window.Note = Class.create(
     @elements.body.style.visibility = 'visible'
     return
   bodyHideTimer: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#bodyHideTimer (id=%d)', @id
     @hideTimer = setTimeout(@bodyHide.bindAsEventListener(this), 250)
     return
   bodyHide: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#bodyHide (id=%d)', @id
     @elements.body.hide()
-    if Note.noteShowingBody == this
-      Note.noteShowingBody = null
+    if notesManager.noteShowingBody == this
+      notesManager.noteShowingBody = null
     return
   addDocumentObserver: (name, func) ->
     document.observe name, func
@@ -210,7 +210,7 @@ window.Note = Class.create(
     @document_observers = []
     return
   dragStart: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#dragStart (id=%d)', @id
     @addDocumentObserver 'mousemove', @drag.bindAsEventListener(this)
     @addDocumentObserver 'mouseup', @dragStop.bindAsEventListener(this)
@@ -226,7 +226,7 @@ window.Note = Class.create(
     @bodyHide()
     return
   dragStop: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#dragStop (id=%d)', @id
     @clearDocumentObservers()
     @cursorStartX = null
@@ -245,7 +245,7 @@ window.Note = Class.create(
     # ratio *= this.elements.image.scale_factor;
     # return ratio
   adjustScale: ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#adjustScale (id=%d)', @id
     ratio = @ratio()
     for p of @fullsize
@@ -264,7 +264,7 @@ window.Note = Class.create(
     e.stop()
     return
   editDragStart: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#editDragStart (id=%d)', @id
     node = e.element().nodeName
     if node != 'FORM' and node != 'DIV'
@@ -281,7 +281,7 @@ window.Note = Class.create(
     @dragging = true
     return
   editDragStop: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#editDragStop (id=%d)', @id
     @clearDocumentObservers()
     @cursorStartX = null
@@ -298,7 +298,7 @@ window.Note = Class.create(
     e.stop()
     return
   resizeStart: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#resizeStart (id=%d)', @id
     @cursorStartX = e.pointerX()
     @cursorStartY = e.pointerY()
@@ -316,7 +316,7 @@ window.Note = Class.create(
     @bodyHide()
     return
   resizeStop: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#resizeStop (id=%d)', @id
     @clearDocumentObservers()
     @boxCursorStartX = null
@@ -343,7 +343,7 @@ window.Note = Class.create(
     e.stop()
     return
   save: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#save (id=%d)', @id
     note = this
     for p of @fullsize
@@ -363,7 +363,7 @@ window.Note = Class.create(
       'note[height]': @old.height
       'note[body]': @old.raw_body
     if @is_new
-      params['note[post_id]'] = Note.post_id
+      params['note[post_id]'] = notesManager.post_id
     notice 'Saving note...'
     new (Ajax.Request)('/note/update.json',
       requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
@@ -372,7 +372,7 @@ window.Note = Class.create(
         resp = resp.responseJSON
         if resp.success
           notice 'Note saved'
-          note = Note.find(resp.old_id)
+          note = notesManager.find(resp.old_id)
           if resp.old_id < 0
             note.is_new = false
             note.id = resp.new_id
@@ -390,7 +390,7 @@ window.Note = Class.create(
     e.stop()
     return
   cancel: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#cancel (id=%d)', @id
     @hideEditBox e
     @bodyHide()
@@ -402,21 +402,21 @@ window.Note = Class.create(
     e.stop()
     return
   removeCleanup: ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#removeCleanup (id=%d)', @id
     @elements.box.remove()
     @elements.body.remove()
     allTemp = []
     i = 0
-    while i < Note.all.length
-      if Note.all[i].id != @id
-        allTemp.push Note.all[i]
+    while i < notesManager.all.length
+      if notesManager.all[i].id != @id
+        allTemp.push notesManager.all[i]
       ++i
-    Note.all = allTemp
-    Note.updateNoteCount()
+    notesManager.all = allTemp
+    notesManager.updateNoteCount()
     return
   remove: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#remove (id=%d)', @id
     @hideEditBox e
     @bodyHide()
@@ -443,7 +443,7 @@ window.Note = Class.create(
     e.stop()
     return
   history: (e) ->
-    if Note.debug
+    if notesManager.debug
       console.debug 'Note#history (id=%d)', @id
     @hideEditBox e
     if @is_new
@@ -453,78 +453,93 @@ window.Note = Class.create(
     e.stop()
     return
 )
-# The following are class methods and variables
-Object.extend Note,
-  zindex: 0
-  counter: -1
-  all: []
-  display: true
-  debug: false
-  show: ->
-    if Note.debug
-      console.debug 'Note.show'
+
+class NotesManager
+  constructor: ->
+    @zindex = 0
+    @counter = -1
+    @all = []
+    @display = true
+    @debug = false
+
+
+  show: =>
+    if @debug
+      console.debug '@show'
     $('note-container').show()
     return
-  hide: ->
-    if Note.debug
-      console.debug 'Note.hide'
+
+
+  hide: =>
+    if @debug
+      console.debug '@hide'
     $('note-container').hide()
     return
-  find: (id) ->
-    if Note.debug
-      console.debug 'Note.find'
+
+
+  find: (id) =>
+    if @debug
+      console.debug '@find'
     i = 0
-    while i < Note.all.size()
-      if Note.all[i].id == id
-        return Note.all[i]
+    while i < @all.size()
+      if @all[i].id == id
+        return @all[i]
       ++i
     null
-  toggle: ->
-    if Note.debug
-      console.debug 'Note.toggle'
-    if Note.display
-      Note.hide()
-      Note.display = false
+
+
+  toggle: =>
+    if @debug
+      console.debug '@toggle'
+    if @display
+      @hide()
+      @display = false
     else
-      Note.show()
-      Note.display = true
+      @show()
+      @display = true
     return
-  updateNoteCount: ->
-    if Note.debug
-      console.debug 'Note.updateNoteCount'
-    if Note.all.length > 0
+
+
+  updateNoteCount: =>
+    if @debug
+      console.debug '@updateNoteCount'
+    if @all.length > 0
       label = ''
-      if Note.all.length == 1
+      if @all.length == 1
         label = 'note'
       else
         label = 'notes'
-      $('note-count').innerHTML = 'This post has <a href="/note/history?post_id=' + Note.post_id + '">' + Note.all.length + ' ' + label + '</a>'
+      $('note-count').innerHTML = 'This post has <a href="/note/history?post_id=' + @post_id + '">' + @all.length + ' ' + label + '</a>'
     else
       $('note-count').innerHTML = ''
     return
-  create: ->
-    if Note.debug
-      console.debug 'Note.create'
-    Note.show()
-    insertion_position = Note.getInsertionPosition()
+
+
+  create: =>
+    if @debug
+      console.debug '@create'
+    @show()
+    insertion_position = @getInsertionPosition()
     top = insertion_position[0]
     left = insertion_position[1]
     html = ''
     html += '<div class="note-box unsaved" style="width: 150px; height: 150px; '
     html += 'top: ' + top + 'px; '
     html += 'left: ' + left + 'px;" '
-    html += 'id="note-box-' + Note.counter + '">'
-    html += '<div class="note-corner" id="note-corner-' + Note.counter + '"></div>'
+    html += 'id="note-box-' + @counter + '">'
+    html += '<div class="note-corner" id="note-corner-' + @counter + '"></div>'
     html += '</div>'
-    html += '<div class="note-body" title="Click to edit" id="note-body-' + Note.counter + '"></div>'
+    html += '<div class="note-body" title="Click to edit" id="note-body-' + @counter + '"></div>'
     $('note-container').insert bottom: html
-    note = new Note(Note.counter, true, '')
-    Note.all.push note
-    Note.counter -= 1
+    note = new Note(@counter, true, '')
+    @all.push note
+    @counter -= 1
     return
-  getInsertionPosition: ->
-    if Note.debug
-      console.debug 'Note.getInsertionPosition'
+
+
+  getInsertionPosition: =>
+    if @debug
+      console.debug '@getInsertionPosition'
     # We want to show the edit box somewhere on the screen, but not outside the image.
     scroll_x = $('image').cumulativeScrollOffset()[0]
     scroll_y = $('image').cumulativeScrollOffset()[1]
@@ -548,3 +563,5 @@ Object.extend Note,
       top
       left
     ]
+
+window.notesManager = new NotesManager

@@ -49,7 +49,7 @@
       <li><%= link_to_function t('.flag'), "Post.flag(#{@post.id}, function() { window.location.reload(); })", :level => :member %></li>
     <% end %>
     <% if !@post.is_deleted? && @post.image? && !@post.is_note_locked? %>
-      <li><%= link_to_function t('.add_notes'), "Note.create(#{@post.id})", :level => :member %></li>
+      <li><%= link_to_function t('.add_notes'), "notesManager.create(#{@post.id})", :level => :member %></li>
     <% end %>
     <li id="add-to-favs"><%= link_to t('.favorites.add'), "#" %></li>
     <li id="remove-from-favs"><%= link_to t('.favorites.remove'), "#" %></li>

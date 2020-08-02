@@ -9,6 +9,7 @@ import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
 import NewsTicker from './classes/news_ticker'
+import NotesManager from './classes/notes_manager'
 import Notice from './classes/notice'
 import Pool from './classes/pool'
 import PostLoader from './classes/post_loader'
@@ -28,6 +29,7 @@ window.menu = new Menu
 window.menuDragDrop = new MenuDragDrop
 window.menuDropdown = new MenuDropdown
 window.newsTicker = new NewsTicker
+window.notesManager = new NotesManager
 window.noticeInstance = new Notice
 window.postShowTabs = new PostShowTabs
 window.relatedTags = new RelatedTags

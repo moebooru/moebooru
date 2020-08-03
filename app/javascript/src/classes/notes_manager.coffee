@@ -24,11 +24,10 @@ export default class NotesManager
   find: (id) =>
     if @debug
       console.debug '@find'
-    i = 0
-    while i < @all.size()
-      if @all[i].id == id
-        return @all[i]
-      ++i
+
+    for item in @all
+      return item if item.id == id
+
     null
 
 

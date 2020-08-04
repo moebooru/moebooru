@@ -11,21 +11,21 @@ export default class NotesManager
 
   show: =>
     if @debug
-      console.debug '@show'
+      console.debug 'notesManager.show'
     $('note-container').show()
     return
 
 
   hide: =>
     if @debug
-      console.debug '@hide'
+      console.debug 'notesManager.hide'
     $('note-container').hide()
     return
 
 
   find: (id) =>
     if @debug
-      console.debug '@find'
+      console.debug 'notesManager.find'
 
     for item in @all
       return item if item.id == id
@@ -35,7 +35,7 @@ export default class NotesManager
 
   toggle: (e) =>
     if @debug
-      console.debug '@toggle'
+      console.debug 'notesManager.toggle'
 
     return if e.currentTarget.getAttribute('data-drag-element') == '1'
 
@@ -51,7 +51,7 @@ export default class NotesManager
 
   updateNoteCount: =>
     if @debug
-      console.debug '@updateNoteCount'
+      console.debug 'notesManager.updateNoteCount'
     if @all.length > 0
       label = ''
       if @all.length == 1
@@ -66,7 +66,7 @@ export default class NotesManager
 
   create: =>
     if @debug
-      console.debug '@create'
+      console.debug 'notesManager.create'
     @show()
     insertion_position = @getInsertionPosition()
     top = insertion_position[0]
@@ -88,7 +88,7 @@ export default class NotesManager
 
   getInsertionPosition: =>
     if @debug
-      console.debug '@getInsertionPosition'
+      console.debug 'notesManager.getInsertionPosition'
     # We want to show the edit box somewhere on the screen, but not outside the image.
     scroll_x = $('image').cumulativeScrollOffset()[0]
     scroll_y = $('image').cumulativeScrollOffset()[1]

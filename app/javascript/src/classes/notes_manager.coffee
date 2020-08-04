@@ -34,12 +34,14 @@ export default class NotesManager
   toggle: =>
     if @debug
       console.debug '@toggle'
+
+    @display = !@display
+
     if @display
-      @hide()
-      @display = false
-    else
       @show()
-      @display = true
+    else
+      @hide()
+
     return
 
 

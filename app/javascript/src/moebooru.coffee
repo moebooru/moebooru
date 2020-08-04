@@ -34,16 +34,20 @@ Moebooru.dragElement = (el) ->
     pageScroller = (e) ->
       scroll = current(e.clientX, e.clientY)
       scrollTo scroll[0], scroll[1]
+      el.attr 'data-drag-element', '1'
       false
 
+    unsetAttr = ->
+      el.removeAttr 'data-drag-element'
+
     el.css 'cursor', 'pointer'
-    prevPos = [
-      e.clientX
-      e.clientY
-    ]
+    prevPos = [e.clientX, e.clientY]
+
     doc.on 'mousemove', pageScroller
+
     doc.one 'mouseup', (e) ->
       doc.off 'mousemove', pageScroller
+      setTimeout unsetAttr, 0
       el.css 'cursor', 'auto'
       false
     false

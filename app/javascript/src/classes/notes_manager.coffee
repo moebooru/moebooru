@@ -33,9 +33,11 @@ export default class NotesManager
     null
 
 
-  toggle: =>
+  toggle: (e) =>
     if @debug
       console.debug '@toggle'
+
+    return if e.currentTarget.getAttribute('data-drag-element') == '1'
 
     @display = !@display
 

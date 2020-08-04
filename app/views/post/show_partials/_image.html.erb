@@ -15,7 +15,7 @@
       <%= image_tag(file_sample[:url],
                     :alt => @post.cached_tags,
                     :id => 'image',
-                    :class => 'image js-notes-manager--toggle',
+                    :class => 'image js-notes-manager--toggle js-notes-manager--image',
                     :width => file_sample[:width],
                     :height => file_sample[:height],
                     :large_width => @post.get_file_jpeg(@current_user)[:width],

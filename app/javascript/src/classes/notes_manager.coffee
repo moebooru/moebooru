@@ -89,26 +89,15 @@ export default class NotesManager
   getInsertionPosition: =>
     if @debug
       console.debug 'notesManager.getInsertionPosition'
-    # We want to show the edit box somewhere on the screen, but not outside the image.
-    scroll_x = $('image').cumulativeScrollOffset()[0]
-    scroll_y = $('image').cumulativeScrollOffset()[1]
-    image_left = $('image').positionedOffset()[0]
-    image_top = $('image').positionedOffset()[1]
-    image_right = image_left + $('image').width
-    image_bottom = image_top + $('image').height
-    left = 0
-    top = 0
-    if scroll_x > image_left
-      left = scroll_x
-    else
-      left = image_left
-    if scroll_y > image_top
-      top = scroll_y
-    else
-      top = image_top + 20
-    if top > image_bottom
-      top = image_top + 20
-    [
-      top
-      left
-    ]
+
+    image = document.querySelector('.js-notes-manager--image')
+
+    return [0, 0] unless image?
+
+    rect = image.getBoundingClientRect()
+
+    # Position the edit box 20px from top left of the image while making sure
+    # it's also inside the screen. When either left or top side is outside
+    # the screen, the visible part of it starts from its top (or left) rect
+    # but on the other direction (hence negative sign).
+    [-Math.min(rect.top, 0) + 20, -Math.min(rect.left, 0) + 20]

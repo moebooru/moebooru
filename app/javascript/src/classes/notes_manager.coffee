@@ -6,6 +6,8 @@ export default class NotesManager
     @display = true
     @debug = false
 
+    jQuery(document).on 'click', '.js-notes-manager--toggle', @toggle
+
 
   show: =>
     if @debug

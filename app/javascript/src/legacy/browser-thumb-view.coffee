@@ -557,8 +557,7 @@ ThumbnailView::remove_post = (right) ->
   true
 
 ThumbnailView::remove_all_posts = ->
-  while @remove_post(true)
-      return
+  continue while @remove_post(true)
 
 ### Add the next thumbnail to the left or right side. ###
 

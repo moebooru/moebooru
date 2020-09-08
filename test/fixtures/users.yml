@@ -1,6 +1,7 @@
 admin:
   id: 1
   name: admin
+  name_normalized: admin
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 50
   email: admin@danbooru.com
@@ -16,6 +17,7 @@ admin:
 mod:
   id: 2
   name: mod
+  name_normalized: mod
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 40
   email: mod@danbooru.com
@@ -31,6 +33,7 @@ mod:
 privileged:
   id: 3
   name: privileged
+  name_normalized: privileged
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 30
   email: privileged@danbooru.com
@@ -46,6 +49,7 @@ privileged:
 member:
   id: 4
   name: member
+  name_normalized: member
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 20
   email: member@danbooru.com
@@ -61,6 +65,7 @@ member:
 blocked:
   id: 5
   name: blocked
+  name_normalized: blocked
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 10
   email: blocked@danbooru.com
@@ -76,6 +81,7 @@ blocked:
 unactivated:
   id: 6
   name: unactivated
+  name_normalized: unactivated
   password_hash: 7498b36fa5792ef063e0798f2ef8ced74ee5b30f
   level: 0
   email: unactivated@danbooru.com

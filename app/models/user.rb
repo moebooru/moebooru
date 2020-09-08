@@ -85,7 +85,9 @@ class User < ApplicationRecord
       end
 
       def authenticate_hash(name, pass)
-        find_by(name_normalized: name.downcase, password_hash: pass)
+        user = find_by(name_normalized: name.downcase)
+
+        user if user && ActiveSupport::SecurityUtils.secure_compare(user.password_hash, pass)
       end
 
       def sha1(pass)

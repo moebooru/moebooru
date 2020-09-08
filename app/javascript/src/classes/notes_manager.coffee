@@ -1,4 +1,22 @@
 export default class NotesManager
+  @image: ->
+    document.querySelector('.js-notes-manager--image')
+
+
+  @ratio: =>
+    image = @image()
+
+    return null unless image?
+
+    currentWidth = image.width
+    fullWidth = image.getAttribute('large_width')
+
+    if fullWidth == 0
+      currentWidth
+    else
+      currentWidth / fullWidth
+
+
   constructor: ->
     @zindex = 0
     @counter = -1
@@ -7,6 +25,7 @@ export default class NotesManager
     @debug = false
 
     jQuery(document).on 'click', '.js-notes-manager--toggle', @toggle
+    jQuery(document).on 'click', '.js-notes-manager--create', @createButtonClick
 
 
   show: =>
@@ -64,11 +83,16 @@ export default class NotesManager
     return
 
 
+  createButtonClick: (e) =>
+    e.preventDefault()
+    User.run_login false, @create
+
+
   create: =>
     if @debug
       console.debug 'notesManager.create'
     @show()
-    insertion_position = @getInsertionPosition()
+    insertion_position = @getInsertionPosition(true)
     top = insertion_position[0]
     left = insertion_position[1]
     html = ''
@@ -86,18 +110,27 @@ export default class NotesManager
     return
 
 
-  getInsertionPosition: =>
+  getInsertionPosition: (scale) =>
     if @debug
       console.debug 'notesManager.getInsertionPosition'
 
-    image = document.querySelector('.js-notes-manager--image')
+    scale ?= false
+    image = @constructor.image()
 
     return [0, 0] unless image?
 
     rect = image.getBoundingClientRect()
 
+    res = [rect.top, rect.left]
     # Position the edit box 20px from top left of the image while making sure
     # it's also inside the screen. When either left or top side is outside
     # the screen, the visible part of it starts from its top (or left) rect
     # but on the other direction (hence negative sign).
-    [-Math.min(rect.top, 0) + 20, -Math.min(rect.left, 0) + 20]
+    res = res.map (x) -> -Math.min(x, 0) + 20
+
+    if scale
+      ratio = @constructor.ratio()
+      res = res.map (x) -> x / ratio
+
+    console.log 'res:',res
+    res

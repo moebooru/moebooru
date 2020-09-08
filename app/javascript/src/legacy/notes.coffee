@@ -1,3 +1,5 @@
+import NotesManager from '../classes/notes_manager'
+
 # The following are instance methods and variables
 window.Note = Class.create(
   initialize: (id, is_new, raw_body) ->
@@ -238,16 +240,10 @@ window.Note = Class.create(
     @dragging = false
     @bodyShow()
     return
-  ratio: ->
-    @elements.image.width / @elements.image.getAttribute('large_width')
-    # var ratio = this.elements.image.width / this.elements.image.getAttribute("large_width")
-    # if (this.elements.image.scale_factor != null)
-    # ratio *= this.elements.image.scale_factor;
-    # return ratio
   adjustScale: ->
     if notesManager.debug
       console.debug 'Note#adjustScale (id=%d)', @id
-    ratio = @ratio()
+    ratio = NotesManager.ratio()
     for p of @fullsize
       @elements.box.style[p] = @fullsize[p] * ratio + 'px'
     return

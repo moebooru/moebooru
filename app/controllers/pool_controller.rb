@@ -344,13 +344,14 @@ class PoolController < ApplicationController
     def zip
       pool = Pool.includes(:pool_posts => :post).find(params[:id])
 
-      @pool_zip = pool.get_zip_data(params)
+      pool_zip_data = pool.get_zip_data(params).map do |row|
+        "%s %s %s %s\n" % [row[:crc32], row[:file_size], row[:path], row[:filename]]
+      end.join
 
       headers["X-Archive-Files"] = "zip"
       Moebooru::SkipCookie.apply(request)
-      send_data render_to_string(:formats => :txt),
-        :type => Mime[:zip],
-        :filename => pool.get_zip_filename(params)
+
+      send_data pool_zip_data, type: Mime[:zip],filename: pool.get_zip_filename(params)
     end
   end
 

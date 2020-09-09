@@ -347,6 +347,7 @@ class PoolController < ApplicationController
       @pool_zip = pool.get_zip_data(params)
 
       headers["X-Archive-Files"] = "zip"
+      Moebooru::SkipCookie.apply(request)
       send_data render_to_string(:formats => :txt),
         :type => Mime[:zip],
         :filename => pool.get_zip_filename(params)

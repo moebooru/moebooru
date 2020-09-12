@@ -1528,7 +1528,8 @@ CREATE TABLE public.users (
     secondary_languages text DEFAULT ''::text NOT NULL,
     pool_browse_mode integer DEFAULT 1 NOT NULL,
     use_browser boolean DEFAULT false NOT NULL,
-    api_key character varying(255)
+    api_key character varying(255),
+    name_normalized character varying(255) NOT NULL
 );
 
 
@@ -2604,6 +2605,13 @@ CREATE INDEX index_users_on_avatar_post_id ON public.users USING btree (avatar_p
 
 
 --
+-- Name: index_users_on_name_normalized; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_name_normalized ON public.users USING btree (name_normalized);
+
+
+--
 -- Name: notes_text_search_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3391,6 +3399,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190518111956'),
 ('20190817070727'),
 ('20191110172526'),
+('20200908180652'),
 ('21'),
 ('22'),
 ('23'),

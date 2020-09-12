@@ -31,6 +31,12 @@ class User < ApplicationRecord
     end
   end
 
+  def name=(value)
+    self.name_normalized = value.try(:downcase)
+
+    super
+  end
+
   module UserBlacklistMethods
     # TODO: I don't see the advantage of normalizing these. Since commas are illegal
     # characters in tags, they can be used to separate lines (with whitespace separating
@@ -79,7 +85,9 @@ class User < ApplicationRecord
       end
 
       def authenticate_hash(name, pass)
-        where("LOWER(users.name) = LOWER(?)", name).where(:password_hash => pass).first
+        user = find_by(name_normalized: name.downcase)
+
+        user if user && ActiveSupport::SecurityUtils.secure_compare(user.password_hash, pass)
       end
 
       def sha1(pass)
@@ -143,7 +151,7 @@ class User < ApplicationRecord
       end
 
       def find_by_name(name)
-        find_by("LOWER(name) = LOWER(?)", name)
+        find_by(name_normalized: name)
       end
     end
 
@@ -663,7 +671,7 @@ class User < ApplicationRecord
 
     order =
       case params[:order]
-      when "name" then "LOWER(name)"
+      when "name" then "name_normalized"
       when "posts" then "(SELECT count(*) FROM posts WHERE user_id = users.id) DESC"
       when "favorites" then "(SELECT count(*) FROM favorites WHERE user_id = users.id) DESC"
       when "notes" then "(SELECT count(*) FROM note_versions WHERE user_id = users.id) DESC"
@@ -688,7 +696,7 @@ class User < ApplicationRecord
 
       case params[:order]
       when "name"
-        builder.order "lower(name)"
+        builder.order "name_normalized"
 
       when "posts"
         builder.order "(SELECT count(*) FROM posts WHERE user_id = users.id) DESC"

@@ -96,7 +96,7 @@ class UserController < ApplicationController
 
       redirect_to :action => "invites"
     else
-      @invited_users = User.where(:invited_by => @current_user.id).order("LOWER(name)")
+      @invited_users = User.where(:invited_by => @current_user.id).order('name_normalized')
     end
   end
 

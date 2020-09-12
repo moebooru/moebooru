@@ -19,4 +19,13 @@ namespace :maint do
   task :purge_tags => :environment do
     Tag.purge_tags
   end
+
+  desc 'Username case fix'
+  task username_case: :environment do
+    User.find_in_batches do |users|
+      users.each do |user|
+        user.update name_normalized: user.name.downcase
+      end
+    end
+  end
 end

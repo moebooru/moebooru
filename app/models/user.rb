@@ -151,7 +151,7 @@ class User < ApplicationRecord
       end
 
       def find_by_name(name)
-        find_by(name_normalized: name)
+        find_by(name_normalized: name.downcase)
       end
     end
 

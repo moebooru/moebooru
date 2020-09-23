@@ -12,7 +12,6 @@ import 'src/init.cookie'
 import 'src/post'
 import 'src/vote'
 
-import 'src/legacy/browser-img-pool'
 import 'src/legacy/browser-post-loading'
 import 'src/legacy/browser-thumb-view'
 import 'src/legacy/browser-url-hash'

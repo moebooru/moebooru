@@ -4,6 +4,7 @@ import Comment from './classes/comment'
 import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
 import ImageCrop from './classes/image_crop'
+import ImgPoolHandler from './classes/img_pool_handler'
 import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
@@ -37,3 +38,5 @@ window.notice = noticeInstance.show
 
 # FIXME: update variable name to lowercase
 window.Pool = new Pool
+
+window.ImgPoolHandler = ImgPoolHandler

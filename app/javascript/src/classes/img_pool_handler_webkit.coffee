@@ -12,7 +12,7 @@
 # This doesn't clear styles or any other properties.  To avoid leaking things from
 # one type of image to another, use separate pools for each.
 ###
-class ImgPoolHandlerWebKit
+export default class ImgPoolHandlerWebKit
   constructor: ->
     @pool = []
     @pool_waiting = []
@@ -47,27 +47,3 @@ class ImgPoolHandlerWebKit
     img.observe 'load', @blank_image_loaded_event
     @pool_waiting.push img
     img.src = Vars.asset['blank.gif']
-
-
-class ImgPoolHandlerDummy
-  get: ->
-    $ document.createElement('IMG')
-
-
-  release: (img) ->
-    img.src = Vars.asset['blank.gif']
-
-
-# Create an image pool handler.  If the URL hash value "image-pools" is specified,
-# force image pools on or off for debugging; otherwise enable them only when needed. 
-window.ImgPoolHandler = ->
-  use_image_pools = Prototype.Browser.WebKit
-  hash_value = UrlHash.get('image-pools')
-
-  if hash_value?
-    use_image_pools = hash_value != '0'
-
-  if use_image_pools
-    new ImgPoolHandlerWebKit(arguments)
-  else
-    new ImgPoolHandlerDummy(arguments)

@@ -151,7 +151,7 @@ class User < ApplicationRecord
       end
 
       def find_by_name(name)
-        find_by(name_normalized: name.downcase)
+        find_by(name_normalized: name.downcase) if name.is_a?(String)
       end
     end
 

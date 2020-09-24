@@ -5,6 +5,7 @@ cache:
   yarn: true
 
 language: ruby
+
 rvm:
 - 2.7.1
 
@@ -16,5 +17,6 @@ addons:
   postgresql: 12
 
 before_script:
+- nvm use 12
 - yarn install
 - script/travis_prepare

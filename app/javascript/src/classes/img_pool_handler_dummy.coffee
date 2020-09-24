@@ -1,6 +1,6 @@
 export default class ImgPoolHandlerDummy
   get: ->
-    $ document.createElement('IMG')
+    document.createElement('IMG')
 
 
   release: (img) ->

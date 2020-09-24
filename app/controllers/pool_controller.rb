@@ -348,7 +348,12 @@ class PoolController < ApplicationController
         "%s %s %s %s\n" % [row[:crc32], row[:file_size], row[:path], row[:filename]]
       end.join
 
-      headers["X-Archive-Files"] = "zip"
+      if pool_zip_data.empty?
+        pool_zip_data = Moebooru::Zip::EMPTY
+      else
+        headers["X-Archive-Files"] = "zip"
+      end
+
       Moebooru::SkipCookie.apply(request)
 
       send_data pool_zip_data, type: Mime[:zip],filename: pool.get_zip_filename(params)

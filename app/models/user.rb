@@ -85,6 +85,8 @@ class User < ApplicationRecord
       end
 
       def authenticate_hash(name, pass)
+        return unless name.is_a?(String) && name.present?
+
         user = find_by(name_normalized: name.downcase)
 
         user if user && ActiveSupport::SecurityUtils.secure_compare(user.password_hash, pass)
@@ -151,7 +153,7 @@ class User < ApplicationRecord
       end
 
       def find_by_name(name)
-        find_by(name_normalized: name.downcase) if name.is_a?(String)
+        find_by(name_normalized: name.downcase) if name.is_a?(String) && name.present?
       end
     end
 

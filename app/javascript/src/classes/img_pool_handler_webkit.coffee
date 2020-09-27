@@ -23,7 +23,7 @@ export default class ImgPoolHandlerWebKit
   blank_image_loaded_event: (event) =>
     img = event.target
     $(img).off 'load', @blank_image_loaded_event
-    @pool_waiting = @pool_waiting.without(img)
+    @pool_waiting = @pool_waiting.filter((item) => item != img)
     @pool.push img
 
 

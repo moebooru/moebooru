@@ -1,3 +1,5 @@
+$ = jQuery
+
 ###
 # Creating and deleting IMG nodes seems to cause memory leaks in WebKit, but
 # there are also reports that keeping the same node and replacing src can cause
@@ -12,7 +14,7 @@
 # This doesn't clear styles or any other properties.  To avoid leaking things from
 # one type of image to another, use separate pools for each.
 ###
-class ImgPoolHandlerWebKit
+export default class ImgPoolHandlerWebKit
   constructor: ->
     @pool = []
     @pool_waiting = []
@@ -20,15 +22,15 @@ class ImgPoolHandlerWebKit
 
   blank_image_loaded_event: (event) =>
     img = event.target
-    img.stopObserving 'load', @blank_image_loaded_event
-    @pool_waiting = @pool_waiting.without(img)
+    $(img).off 'load', @blank_image_loaded_event
+    @pool_waiting = @pool_waiting.filter((item) => item != img)
     @pool.push img
 
 
   get: =>
     if @pool.length == 0
       # debug("No images in pool; creating blank");
-      return $(document.createElement('IMG'))
+      return document.createElement('img')
     # debug("Returning image from pool");
     @pool.pop()
 
@@ -44,30 +46,6 @@ class ImgPoolHandlerWebKit
     # Note that Firefox will stop a download if we do this, but not if we only remove an
     # image from the document.
     ###
-    img.observe 'load', @blank_image_loaded_event
+    $(img).on 'load', @blank_image_loaded_event
     @pool_waiting.push img
     img.src = Vars.asset['blank.gif']
-
-
-class ImgPoolHandlerDummy
-  get: ->
-    $ document.createElement('IMG')
-
-
-  release: (img) ->
-    img.src = Vars.asset['blank.gif']
-
-
-# Create an image pool handler.  If the URL hash value "image-pools" is specified,
-# force image pools on or off for debugging; otherwise enable them only when needed. 
-window.ImgPoolHandler = ->
-  use_image_pools = Prototype.Browser.WebKit
-  hash_value = UrlHash.get('image-pools')
-
-  if hash_value?
-    use_image_pools = hash_value != '0'
-
-  if use_image_pools
-    new ImgPoolHandlerWebKit(arguments)
-  else
-    new ImgPoolHandlerDummy(arguments)

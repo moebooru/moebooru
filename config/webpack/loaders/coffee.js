@@ -1,6 +1,11 @@
 module.exports = {
   test: /\.coffee(\.erb)?$/,
   use: [{
-    loader: 'coffee-loader'
+    loader: 'coffee-loader',
+    options: {
+      transpile: {
+        presets: ['@babel/env'],
+      }
+    },
   }]
 }

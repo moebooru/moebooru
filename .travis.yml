@@ -1,20 +1,22 @@
-dist: bionic
+dist: focal
 
 cache:
   bundler: true
   yarn: true
 
 language: ruby
+
 rvm:
-- 2.7.0
+- 2.7.1
 
 services:
 - memcached
 - postgresql
 
 addons:
-  postgresql: 11
+  postgresql: 12
 
 before_script:
+- nvm use 12
 - yarn install
 - script/travis_prepare

@@ -35,13 +35,13 @@ export default class Not
       @bodyfit = true
       @elements.body.style.height = '100px'
     # Attach the event listeners
-    @elements.box.observe 'mousedown', @dragStart.bindAsEventListener(this)
-    @elements.box.observe 'mouseout', @bodyHideTimer.bindAsEventListener(this)
-    @elements.box.observe 'mouseover', @bodyShow.bindAsEventListener(this)
-    @elements.corner.observe 'mousedown', @resizeStart.bindAsEventListener(this)
-    @elements.body.observe 'mouseover', @bodyShow.bindAsEventListener(this)
-    @elements.body.observe 'mouseout', @bodyHideTimer.bindAsEventListener(this)
-    @elements.body.observe 'click', @showEditBox.bindAsEventListener(this)
+    @elements.box.observe 'mousedown', @dragStart
+    @elements.box.observe 'mouseout', @bodyHideTimer
+    @elements.box.observe 'mouseover', @bodyShow
+    @elements.corner.observe 'mousedown', @resizeStart
+    @elements.body.observe 'mouseover', @bodyShow
+    @elements.body.observe 'mouseout', @bodyHideTimer
+    @elements.body.observe 'click', @showEditBox
     @adjustScale()
 
 
@@ -66,7 +66,7 @@ export default class Not
     return
 
 
-  showEditBox: (e) ->
+  showEditBox: (e) =>
     if notesManager.debug
       console.debug 'Note#showEditBox (id=%d)', @id
     @hideEditBox e
@@ -85,16 +85,16 @@ export default class Not
     html += '</div>'
     $('note-container').insert bottom: html
     $('edit-box').noteid = @id
-    $('edit-box').observe 'mousedown', @editDragStart.bindAsEventListener(this)
-    $('note-save-' + @id).observe 'click', @save.bindAsEventListener(this)
-    $('note-cancel-' + @id).observe 'click', @cancel.bindAsEventListener(this)
-    $('note-remove-' + @id).observe 'click', @remove.bindAsEventListener(this)
-    $('note-history-' + @id).observe 'click', @history.bindAsEventListener(this)
+    $('edit-box').observe 'mousedown', @editDragStart
+    $('note-save-' + @id).observe 'click', @save
+    $('note-cancel-' + @id).observe 'click', @cancel
+    $('note-remove-' + @id).observe 'click', @remove
+    $('note-history-' + @id).observe 'click', @history
     $('edit-box-text').focus()
     return
 
 
-  bodyShow: (e) ->
+  bodyShow: (e) =>
     if notesManager.debug
       console.debug 'Note#bodyShow (id=%d)', @id
     if @dragging
@@ -193,14 +193,14 @@ export default class Not
     return
 
 
-  bodyHideTimer: (e) ->
+  bodyHideTimer: (e) =>
     if notesManager.debug
       console.debug 'Note#bodyHideTimer (id=%d)', @id
-    @hideTimer = setTimeout(@bodyHide.bindAsEventListener(this), 250)
+    @hideTimer = setTimeout(@bodyHide, 250)
     return
 
 
-  bodyHide: (e) ->
+  bodyHide: (e) =>
     if notesManager.debug
       console.debug 'Note#bodyHide (id=%d)', @id
     @elements.body.hide()
@@ -228,11 +228,11 @@ export default class Not
     return
 
 
-  dragStart: (e) ->
+  dragStart: (e) =>
     if notesManager.debug
       console.debug 'Note#dragStart (id=%d)', @id
-    @addDocumentObserver 'mousemove', @drag.bindAsEventListener(this)
-    @addDocumentObserver 'mouseup', @dragStop.bindAsEventListener(this)
+    @addDocumentObserver 'mousemove', @drag
+    @addDocumentObserver 'mouseup', @dragStop
     @addDocumentObserver 'selectstart', ->
       false
     @cursorStartX = e.pointerX()
@@ -246,7 +246,7 @@ export default class Not
     return
 
 
-  dragStop: (e) ->
+  dragStop: (e) =>
     if notesManager.debug
       console.debug 'Note#dragStop (id=%d)', @id
     @clearDocumentObservers()
@@ -270,7 +270,7 @@ export default class Not
     return
 
 
-  drag: (e) ->
+  drag: (e) =>
     left = @boxStartX + e.pointerX() - (@cursorStartX)
     top = @boxStartY + e.pointerY() - (@cursorStartY)
     left = @boundsX.clip(left)
@@ -284,14 +284,14 @@ export default class Not
     return
 
 
-  editDragStart: (e) ->
+  editDragStart: (e) =>
     if notesManager.debug
       console.debug 'Note#editDragStart (id=%d)', @id
     node = e.element().nodeName
     if node != 'FORM' and node != 'DIV'
       return
-    @addDocumentObserver 'mousemove', @editDrag.bindAsEventListener(this)
-    @addDocumentObserver 'mouseup', @editDragStop.bindAsEventListener(this)
+    @addDocumentObserver 'mousemove', @editDrag
+    @addDocumentObserver 'mouseup', @editDragStop
     @addDocumentObserver 'selectstart', ->
       false
     @elements.editBox = $('edit-box')
@@ -303,7 +303,7 @@ export default class Not
     return
 
 
-  editDragStop: (e) ->
+  editDragStop: (e) =>
     if notesManager.debug
       console.debug 'Note#editDragStop (id=%d)', @id
     @clearDocumentObservers()
@@ -315,7 +315,7 @@ export default class Not
     return
 
 
-  editDrag: (e) ->
+  editDrag: (e) =>
     left = @editStartX + e.pointerX() - (@cursorStartX)
     top = @editStartY + e.pointerY() - (@cursorStartY)
     @elements.editBox.style.left = left + 'px'
@@ -324,7 +324,7 @@ export default class Not
     return
 
 
-  resizeStart: (e) ->
+  resizeStart: (e) =>
     if notesManager.debug
       console.debug 'Note#resizeStart (id=%d)', @id
     @cursorStartX = e.pointerX()
@@ -337,14 +337,14 @@ export default class Not
     @boundsY = new ClipRange(10, @elements.image.clientHeight - (@boxStartY) - 5)
     @dragging = true
     @clearDocumentObservers()
-    @addDocumentObserver 'mousemove', @resize.bindAsEventListener(this)
-    @addDocumentObserver 'mouseup', @resizeStop.bindAsEventListener(this)
+    @addDocumentObserver 'mousemove', @resize
+    @addDocumentObserver 'mouseup', @resizeStop
     e.stop()
     @bodyHide()
     return
 
 
-  resizeStop: (e) ->
+  resizeStop: (e) =>
     if notesManager.debug
       console.debug 'Note#resizeStop (id=%d)', @id
     @clearDocumentObservers()
@@ -361,7 +361,7 @@ export default class Not
     return
 
 
-  resize: (e) ->
+  resize: (e) =>
     width = @boxStartWidth + e.pointerX() - (@cursorStartX)
     height = @boxStartHeight + e.pointerY() - (@cursorStartY)
     width = @boundsX.clip(width)
@@ -375,7 +375,7 @@ export default class Not
     return
 
 
-  save: (e) ->
+  save: (e) =>
     if notesManager.debug
       console.debug 'Note#save (id=%d)', @id
     note = this
@@ -424,7 +424,7 @@ export default class Not
     return
 
 
-  cancel: (e) ->
+  cancel: (e) =>
     if notesManager.debug
       console.debug 'Note#cancel (id=%d)', @id
     @hideEditBox e
@@ -454,7 +454,7 @@ export default class Not
     return
 
 
-  remove: (e) ->
+  remove: (e) =>
     if notesManager.debug
       console.debug 'Note#remove (id=%d)', @id
     @hideEditBox e
@@ -483,7 +483,7 @@ export default class Not
     return
 
 
-  history: (e) ->
+  history: (e) =>
     if notesManager.debug
       console.debug 'Note#history (id=%d)', @id
     @hideEditBox e

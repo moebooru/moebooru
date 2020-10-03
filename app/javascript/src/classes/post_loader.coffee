@@ -13,16 +13,13 @@ export default class PostLoader
 
   need_more_post_data: ->
 
-    ### We'll receive this message often once we're close to needing more posts.  Only
+    # We'll receive this message often once we're close to needing more posts.  Only
     # start loading more data the first time.
-    ###
-
     if @loaded_extended_results
       return
     @load extending: true
     return
 
-  ###
   # This is a response time optimization.  If we know the sample URL of what we want to display,
   # we can start loading it from the server without waiting for the full post.json response
   # to come back and tell us.  This saves us the time of a round-trip before we start loading the
@@ -32,7 +29,6 @@ export default class PostLoader
   #
   # We only do this for the sample image, to get a head-start loading it.  This is safe because
   # the image URLs are immutable (or effectively so).  The rest of the post information isn't cached.
-  ###
   preload_sample_image: ->
     post_id = UrlHash.get('post-id')
     if @preloading_sample_for_post_id == post_id
@@ -44,8 +40,7 @@ export default class PostLoader
     if !post_id?
       return
 
-    ### If this returns null, the browser doesn't support this. ###
-
+    # If this returns null, the browser doesn't support this.
     cached_sample_urls = Post.get_cached_sample_urls()
     if !cached_sample_urls?
       return
@@ -53,10 +48,8 @@ export default class PostLoader
       return
     sample_url = cached_sample_urls[String(post_id)]
 
-    ### If we have an existing preload_container, just add to it and allow any other
+    # If we have an existing preload_container, just add to it and allow any other
     # preloads to continue.
-    ###
-
     debug 'Advance preloading sample image for post ' + post_id
     @sample_preload_container = new PreloadContainer
     @sample_preload_container.preload sample_url
@@ -102,11 +95,9 @@ export default class PostLoader
       if results
         @result.posts = results
 
-        ### Don't Post.register the results when serving out of cache.  They're already
+        # Don't Post.register the results when serving out of cache.  They're already
         # registered, and the data in the post registry may be more current than the
         # cached search results.
-        ###
-
         @request_finished()
         return
     new (Ajax.Request)('/post.json',
@@ -150,23 +141,18 @@ export default class PostLoader
     if @current_ajax_requests.length
       return
 
-    ### Event handlers for the events we fire below might make requests back to us.  Save and
+    # Event handlers for the events we fire below might make requests back to us.  Save and
     # clear this.result before firing the events, so that behaves properly.
-    ###
-
     result = @result
     @result = null
 
-    ### If server_load_posts hit an error, it already displayed it; stop. ###
-
+    # If server_load_posts hit an error, it already displayed it; stop.
     if result.error?
       return
 
-    ### If we have no search tags (result.tags == null, result.posts == null), then we're just
+    # If we have no search tags (result.tags == null, result.posts == null), then we're just
     # displaying a post with no search, eg. "/post/browse#12345".  We'll still fire off the
     # same code path to make the post display in the view.
-    ###
-
     new_post_ids = []
     if result.posts?
       i = 0
@@ -176,33 +162,26 @@ export default class PostLoader
     document.fire 'viewer:displayed-pool-changed', pool: result.pool
     document.fire 'viewer:searched-tags-changed', tags: result.tags
 
-    ### Tell the thumbnail viewer whether it should allow scrolling over the left side. ###
-
+    # Tell the thumbnail viewer whether it should allow scrolling over the left side.
     can_be_extended_further = true
 
-    ### If we're reading from a pool, we requested a large block already. ###
-
+    # If we're reading from a pool, we requested a large block already.
     if result.pool
       can_be_extended_further = false
 
-    ### If we're already extending, don't extend further. ###
-
+    # If we're already extending, don't extend further.
     if result.load_options.extending
       can_be_extended_further = false
 
-    ### If we received fewer results than we requested we're at the end of the results,
+    # If we received fewer results than we requested we're at the end of the results,
     # so don't waste time requesting more.
-    ###
-
     if new_post_ids.length < result.post_limit
       debug 'Received posts fewer than requested (' + new_post_ids.length + ' < ' + result.post_limit + '), clamping'
       can_be_extended_further = false
 
-    ### Now that we have the result, update the URL hash.  Firing loaded-posts may change
+    # Now that we have the result, update the URL hash.  Firing loaded-posts may change
     # the displayed post, causing the post ID in the URL hash to change, so use set_deferred
     # to help ensure these happen atomically.
-    ###
-
     UrlHash.set_deferred tags: result.tags
     document.fire 'viewer:loaded-posts',
       tags: result.tags
@@ -213,8 +192,7 @@ export default class PostLoader
       load_options: result.load_options
     return
 
-  ### If extending is true, load a larger set of posts. ###
-
+  # If extending is true, load a larger set of posts.
   load: (load_options) ->
     if !load_options
       load_options = {}
@@ -224,22 +202,18 @@ export default class PostLoader
     if !tags?
       tags = UrlHash.get('tags')
 
-    ### If neither a search nor a post-id is specified, set a default search. ###
-
+    # If neither a search nor a post-id is specified, set a default search.
     if !extending and (!tags?) and (!UrlHash.get('post-id')?)
       UrlHash.set tags: ''
 
-      ### We'll receive another hashchange message for setting "tags".  Don't load now or we'll
+      # We'll receive another hashchange message for setting "tags".  Don't load now or we'll
       # end up loading twice.
-      ###
-
       return
     debug 'PostLoader.load(' + extending + ', ' + disable_cache + ')'
     @preload_sample_image()
     @loaded_extended_results = extending
 
-    ### Discard any running AJAX requests. ###
-
+    # Discard any running AJAX requests.
     @current_ajax_requests = []
     @result = {}
     @result.load_options = load_options
@@ -247,15 +221,12 @@ export default class PostLoader
     @result.disable_cache = disable_cache
     if !@result.tags?
 
-      ### If no search is specified, don't run one; return empty results. ###
-
+      # If no search is specified, don't run one; return empty results.
       @request_finished()
       return
 
-    ### See if we have a pool search.  This only checks for pool:id searches, not pool:*name* searches;
+    # See if we have a pool search.  This only checks for pool:id searches, not pool:*name* searches;
     # we want to know if we're displaying posts only from a single pool.
-    ###
-
     pool_id = null
     @result.tags.split(' ').each (tag) ->
       m = tag.match(/^pool:(\d+)/)
@@ -264,23 +235,18 @@ export default class PostLoader
       pool_id = parseInt(m[1])
       return
 
-    ### If we're loading from a pool, load the pool's data. ###
-
+    # If we're loading from a pool, load the pool's data.
     @result.pool_id = pool_id
 
-    ### Load the posts to display.  If we're loading a pool, load all posts (up to 1000);
+    # Load the posts to display.  If we're loading a pool, load all posts (up to 1000);
     # otherwise set a limit.
-    ###
-
     limit = if extending then 1000 else 100
     if pool_id?
       limit = 1000
     @result.post_limit = limit
 
-    ### Make sure that request_finished doesn't consider this request complete until we've
+    # Make sure that request_finished doesn't consider this request complete until we've
     # actually started every request.
-    ###
-
     @current_ajax_requests.push null
     @server_load_pool()
     @server_load_posts()

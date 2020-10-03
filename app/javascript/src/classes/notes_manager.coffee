@@ -132,5 +132,4 @@ export default class NotesManager
       ratio = @constructor.ratio()
       res = res.map (x) -> x / ratio
 
-    console.log 'res:',res
     res

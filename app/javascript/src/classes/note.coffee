@@ -43,11 +43,14 @@ export default class Not
     @elements.body.observe 'mouseout', @bodyHideTimer.bindAsEventListener(this)
     @elements.body.observe 'click', @showEditBox.bindAsEventListener(this)
     @adjustScale()
-    return
+
+
   textValue: ->
     if notesManager.debug
       console.debug 'Note#textValue (id=%d)', @id
     @old.raw_body.strip()
+
+
   hideEditBox: (e) ->
     if notesManager.debug
       console.debug 'Note#hideEditBox (id=%d)', @id
@@ -61,6 +64,8 @@ export default class Not
       $('note-history-' + boxid).stopObserving()
       $('edit-box').remove()
     return
+
+
   showEditBox: (e) ->
     if notesManager.debug
       console.debug 'Note#showEditBox (id=%d)', @id
@@ -87,6 +92,8 @@ export default class Not
     $('note-history-' + @id).observe 'click', @history.bindAsEventListener(this)
     $('edit-box-text').focus()
     return
+
+
   bodyShow: (e) ->
     if notesManager.debug
       console.debug 'Note#bodyShow (id=%d)', @id
@@ -184,11 +191,15 @@ export default class Not
       @elements.body.style.left = @elements.box.offsetLeft + 'px'
     @elements.body.style.visibility = 'visible'
     return
+
+
   bodyHideTimer: (e) ->
     if notesManager.debug
       console.debug 'Note#bodyHideTimer (id=%d)', @id
     @hideTimer = setTimeout(@bodyHide.bindAsEventListener(this), 250)
     return
+
+
   bodyHide: (e) ->
     if notesManager.debug
       console.debug 'Note#bodyHide (id=%d)', @id
@@ -196,6 +207,8 @@ export default class Not
     if notesManager.noteShowingBody == this
       notesManager.noteShowingBody = null
     return
+
+
   addDocumentObserver: (name, func) ->
     document.observe name, func
     @document_observers.push [
@@ -203,6 +216,8 @@ export default class Not
       func
     ]
     return
+
+
   clearDocumentObservers: (name, handler) ->
     i = 0
     while i < @document_observers.length
@@ -211,6 +226,8 @@ export default class Not
       ++i
     @document_observers = []
     return
+
+
   dragStart: (e) ->
     if notesManager.debug
       console.debug 'Note#dragStart (id=%d)', @id
@@ -227,6 +244,8 @@ export default class Not
     @dragging = true
     @bodyHide()
     return
+
+
   dragStop: (e) ->
     if notesManager.debug
       console.debug 'Note#dragStop (id=%d)', @id
@@ -240,6 +259,8 @@ export default class Not
     @dragging = false
     @bodyShow()
     return
+
+
   adjustScale: ->
     if notesManager.debug
       console.debug 'Note#adjustScale (id=%d)', @id
@@ -247,6 +268,8 @@ export default class Not
     for p of @fullsize
       @elements.box.style[p] = @fullsize[p] * ratio + 'px'
     return
+
+
   drag: (e) ->
     left = @boxStartX + e.pointerX() - (@cursorStartX)
     top = @boxStartY + e.pointerY() - (@cursorStartY)
@@ -259,6 +282,8 @@ export default class Not
     @fullsize.top = top / ratio
     e.stop()
     return
+
+
   editDragStart: (e) ->
     if notesManager.debug
       console.debug 'Note#editDragStart (id=%d)', @id
@@ -276,6 +301,8 @@ export default class Not
     @editStartY = @elements.editBox.offsetTop
     @dragging = true
     return
+
+
   editDragStop: (e) ->
     if notesManager.debug
       console.debug 'Note#editDragStop (id=%d)', @id
@@ -286,6 +313,8 @@ export default class Not
     @editStartY = null
     @dragging = false
     return
+
+
   editDrag: (e) ->
     left = @editStartX + e.pointerX() - (@cursorStartX)
     top = @editStartY + e.pointerY() - (@cursorStartY)
@@ -293,6 +322,8 @@ export default class Not
     @elements.editBox.style.top = top + 'px'
     e.stop()
     return
+
+
   resizeStart: (e) ->
     if notesManager.debug
       console.debug 'Note#resizeStart (id=%d)', @id
@@ -311,6 +342,8 @@ export default class Not
     e.stop()
     @bodyHide()
     return
+
+
   resizeStop: (e) ->
     if notesManager.debug
       console.debug 'Note#resizeStop (id=%d)', @id
@@ -326,6 +359,8 @@ export default class Not
     @dragging = false
     e.stop()
     return
+
+
   resize: (e) ->
     width = @boxStartWidth + e.pointerX() - (@cursorStartX)
     height = @boxStartHeight + e.pointerY() - (@cursorStartY)
@@ -338,6 +373,8 @@ export default class Not
     @fullsize.height = height / ratio
     e.stop()
     return
+
+
   save: (e) ->
     if notesManager.debug
       console.debug 'Note#save (id=%d)', @id
@@ -385,6 +422,8 @@ export default class Not
 )
     e.stop()
     return
+
+
   cancel: (e) ->
     if notesManager.debug
       console.debug 'Note#cancel (id=%d)', @id
@@ -397,6 +436,8 @@ export default class Not
     @elements.body.innerHTML = @old.formatted_body
     e.stop()
     return
+
+
   removeCleanup: ->
     if notesManager.debug
       console.debug 'Note#removeCleanup (id=%d)', @id
@@ -411,6 +452,8 @@ export default class Not
     notesManager.all = allTemp
     notesManager.updateNoteCount()
     return
+
+
   remove: (e) ->
     if notesManager.debug
       console.debug 'Note#remove (id=%d)', @id
@@ -438,6 +481,8 @@ export default class Not
 )
     e.stop()
     return
+
+
   history: (e) ->
     if notesManager.debug
       console.debug 'Note#history (id=%d)', @id

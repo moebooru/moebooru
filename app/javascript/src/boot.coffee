@@ -9,6 +9,7 @@ import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
 import NewsTicker from './classes/news_ticker'
+import Note from './classes/note'
 import NotesManager from './classes/notes_manager'
 import Notice from './classes/notice'
 import Pool from './classes/pool'
@@ -43,4 +44,5 @@ window.notice = noticeInstance.show
 window.Pool = new Pool
 
 window.ImgPoolHandler = ImgPoolHandler
+window.Note = Note
 window.PostLoader = PostLoader

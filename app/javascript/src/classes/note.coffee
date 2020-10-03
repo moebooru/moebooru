@@ -1,8 +1,8 @@
-import NotesManager from '../classes/notes_manager'
+import NotesManager from './notes_manager'
 
 # The following are instance methods and variables
-window.Note = Class.create(
-  initialize: (id, is_new, raw_body) ->
+export default class Not
+  constructor: (id, is_new, raw_body) ->
     if notesManager.debug
       console.debug 'Note#initialize (id=%d)', id
     @id = id
@@ -448,4 +448,3 @@ window.Note = Class.create(
       location.href = '/history?search=notes:' + @id
     e.stop()
     return
-)

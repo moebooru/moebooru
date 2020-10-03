@@ -1,4 +1,4 @@
-class window.PostLoader
+export default class PostLoader
   constructor: ->
     document.on 'viewer:need-more-thumbs', @need_more_post_data.bindAsEventListener(this)
     document.on 'viewer:perform-search', @perform_search.bindAsEventListener(this)

@@ -11,6 +11,7 @@ import MenuDropdown from './classes/menu_dropdown'
 import NewsTicker from './classes/news_ticker'
 import Notice from './classes/notice'
 import Pool from './classes/pool'
+import PostLoader from './classes/post_loader'
 import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
 import Timeago from './classes/timeago'
@@ -40,3 +41,4 @@ window.notice = noticeInstance.show
 window.Pool = new Pool
 
 window.ImgPoolHandler = ImgPoolHandler
+window.PostLoader = PostLoader

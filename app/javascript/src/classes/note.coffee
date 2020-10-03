@@ -277,7 +277,7 @@ export default class Not
     top = @boundsY.clip(top)
     @elements.box.style.left = left + 'px'
     @elements.box.style.top = top + 'px'
-    ratio = @ratio()
+    ratio = NotesManager.ratio()
     @fullsize.left = left / ratio
     @fullsize.top = top / ratio
     e.stop()
@@ -368,7 +368,7 @@ export default class Not
     height = @boundsY.clip(height)
     @elements.box.style.width = width + 'px'
     @elements.box.style.height = height + 'px'
-    ratio = @ratio()
+    ratio = NotesManager.ratio()
     @fullsize.width = width / ratio
     @fullsize.height = height / ratio
     e.stop()
@@ -429,7 +429,7 @@ export default class Not
       console.debug 'Note#cancel (id=%d)', @id
     @hideEditBox e
     @bodyHide()
-    ratio = @ratio()
+    ratio = NotesManager.ratio()
     for p of @fullsize
       @fullsize[p] = @old[p]
       @elements.box.style[p] = @fullsize[p] * ratio + 'px'

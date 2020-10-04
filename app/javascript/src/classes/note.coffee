@@ -1,7 +1,7 @@
 import NotesManager from './notes_manager'
 
 # The following are instance methods and variables
-export default class Not
+export default class Note
   constructor: (id, is_new, raw_body) ->
     if notesManager.debug
       console.debug 'Note#initialize (id=%d)', id

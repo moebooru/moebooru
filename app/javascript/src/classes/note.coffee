@@ -108,9 +108,7 @@ export default class Note
       notesManager.noteShowingBody.bodyHide()
     notesManager.noteShowingBody = this
     if notesManager.zindex >= 9
-
-      ### don't use more than 10 layers (+1 for the body, which will always be above all notes) ###
-
+      # don't use more than 10 layers (+1 for the body, which will always be above all notes)
       notesManager.zindex = 0
       i = 0
       while i < notesManager.all.length
@@ -135,9 +133,7 @@ export default class Note
       w = @elements.body.offsetWidth
       h = @elements.body.offsetHeight
       if w / h < 1.6180339887
-
-        ### for tall notes (lots of text), find more pleasant proportions ###
-
+        # for tall notes (lots of text), find more pleasant proportions
         lo = 140
         hi = 400
         loop
@@ -153,9 +149,7 @@ export default class Note
           unless lo < hi and w > last
             break
       else if @elements.body.scrollWidth <= @elements.body.clientWidth
-
-        ### for short notes (often a single line), make the box no wider than necessary ###
-
+        # for short notes (often a single line), make the box no wider than necessary
         # scroll test necessary for Firefox
         lo = 20
         hi = w

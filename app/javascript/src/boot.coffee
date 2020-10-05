@@ -5,6 +5,7 @@ import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
 import ImageCrop from './classes/image_crop'
 import ImgPoolHandler from './classes/img_pool_handler'
+import InputHandler from './classes/input_handler'
 import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
 import MenuDropdown from './classes/menu_dropdown'
@@ -17,6 +18,7 @@ import PostLoader from './classes/post_loader'
 import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
 import Timeago from './classes/timeago'
+import ThumbnailView from './classes/thumbnail_view'
 import UserRecord from './classes/user_record'
 
 window.ClipRange = ClipRange
@@ -44,5 +46,7 @@ window.notice = noticeInstance.show
 window.Pool = new Pool
 
 window.ImgPoolHandler = ImgPoolHandler
+window.InputHandler = InputHandler
 window.Note = Note
 window.PostLoader = PostLoader
+window.ThumbnailView = ThumbnailView

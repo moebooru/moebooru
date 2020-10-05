@@ -1,6 +1,5 @@
 $ = jQuery
 
-###
 # Creating and deleting IMG nodes seems to cause memory leaks in WebKit, but
 # there are also reports that keeping the same node and replacing src can cause
 # memory leaks (also in WebKit).
@@ -13,7 +12,6 @@ $ = jQuery
 #
 # This doesn't clear styles or any other properties.  To avoid leaking things from
 # one type of image to another, use separate pools for each.
-###
 export default class ImgPoolHandlerWebKit
   constructor: ->
     @pool = []
@@ -36,7 +34,6 @@ export default class ImgPoolHandlerWebKit
 
 
   release: (img) =>
-    ###
     # Replace the image with a blank, so when it's reused it doesn't show the previously-
     # loaded image until the new one is available.  Don't reuse the image until the blank
     # image is loaded.
@@ -45,7 +42,6 @@ export default class ImgPoolHandlerWebKit
     # PNG downloading that we've cancelled it won't continue and download the whole thing.
     # Note that Firefox will stop a download if we do this, but not if we only remove an
     # image from the document.
-    ###
     $(img).on 'load', @blank_image_loaded_event
     @pool_waiting.push img
     img.src = Vars.asset['blank.gif']

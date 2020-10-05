@@ -16,7 +16,6 @@ export default class Pool
 
 
   register_pool_posts: (pool_posts, posts) ->
-    ###
     # pool_post is an array of individual posts in pools.  It contains only data for posts
     # listed in posts.
     #
@@ -26,7 +25,6 @@ export default class Pool
     # We don't need to clear the pool_posts entry in posts, because the posts registered
     # by this function are always newly registered via Post.register_resp; pool_posts is
     # already empty.
-    ###
     for pool_post in pool_posts
       post = Post.posts.get(pool_post.post_id)
 

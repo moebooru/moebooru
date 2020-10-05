@@ -1,10 +1,8 @@
-### This handler handles global keypress bindings, and fires viewer: events. ###
-
+# This handler handles global keypress bindings, and fires viewer: events.
 export default class InputHandler
   constructor: ->
     TrackFocus()
 
-    ###
     # Keypresses are aggrevating:
     #
     # Opera can only stop key events from keypress, not keydown.
@@ -18,8 +16,6 @@ export default class InputHandler
     #
     # Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
     # keydown in other browsers.
-    ###
-
     keypress_event_name = if window.opera or Prototype.Browser.Gecko then 'keypress' else 'keydown'
     document.on keypress_event_name, @document_keypress_event.bindAsEventListener(this)
     return
@@ -29,8 +25,7 @@ export default class InputHandler
     if !key
       key = e.keyCode
 
-    ### Opera ###
-
+    # Opera
     if key == Event.KEY_ESC
       if document.focusedElement and document.focusedElement.blur and !document.focusedElement.hasClassName('no-blur-on-escape')
         document.focusedElement.blur()

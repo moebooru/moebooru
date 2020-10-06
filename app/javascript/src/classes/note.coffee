@@ -1,3 +1,4 @@
+import ClipRange from './clip_range'
 import NotesManager from './notes_manager'
 
 # The following are instance methods and variables

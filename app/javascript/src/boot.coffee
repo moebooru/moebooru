@@ -1,5 +1,4 @@
 import CheckAll from './classes/check_all'
-import ClipRange from './classes/clip_range'
 import Comment from './classes/comment'
 import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
@@ -21,8 +20,6 @@ import ThumbnailView from './classes/thumbnail_view'
 import Timeago from './classes/timeago'
 import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
-
-window.ClipRange = ClipRange
 
 window.UrlHash = new UrlHashHandler
 window.checkAll = new CheckAll

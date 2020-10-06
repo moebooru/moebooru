@@ -13,7 +13,6 @@ export default class UrlHashHandler
 
     # The last value received by the hashchange event:
     @last_hashchange = @current_hash.clone()
-    @hashchange_event = @hashchange_event.bindAsEventListener(this)
     Element.observe window, 'hashchange', @hashchange_event
     return
 
@@ -22,21 +21,19 @@ export default class UrlHashHandler
     all_keys = all_keys.concat(new_hash.keys())
     all_keys = all_keys.uniq()
     changed_hash_keys = []
-    all_keys.each ((key) ->
+    all_keys.each (key) ->
       old_value = old_hash.get(key)
       new_value = new_hash.get(key)
       if old_value != new_value
         changed_hash_keys.push key
       return
-    ).bind(this)
     observers_to_call = []
-    changed_hash_keys.each ((key) ->
+    changed_hash_keys.each (key) =>
       observers = @observers.get(key)
       if !observers?
         return
       observers_to_call = observers_to_call.concat(observers)
       return
-    ).bind(this)
     universal_observers = @observers.get(null)
     if universal_observers?
       observers_to_call = observers_to_call.concat(universal_observers)
@@ -67,7 +64,7 @@ export default class UrlHashHandler
     @set_all @current_hash.clone()
     return
 
-  hashchange_event: (event) ->
+  hashchange_event: (event) =>
     old_hash = @last_hashchange.clone()
     @normalize old_hash
     raw = @get_raw_hash()
@@ -183,7 +180,7 @@ export default class UrlHashHandler
     @deferred_sets.push hash
     if replace
       @deferred_replace = true
-    set = (->
+    set = =>
       @deferred_set_timer = null
       new_hash = @current_hash
       @deferred_sets.each (m) ->
@@ -195,7 +192,6 @@ export default class UrlHashHandler
       @hashchange_event null
       @deferred_replace = false
       return
-    ).bind(this)
     if !@deferred_set_timer?
       @deferred_set_timer = set.defer()
     return

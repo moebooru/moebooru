@@ -11,8 +11,7 @@ export default class UrlHashHandler
     @current_hash = @parse(@get_raw_hash())
     @normalize @current_hash
 
-    ### The last value received by the hashchange event: ###
-
+    # The last value received by the hashchange event:
     @last_hashchange = @current_hash.clone()
     @hashchange_event = @hashchange_event.bindAsEventListener(this)
     Element.observe window, 'hashchange', @hashchange_event
@@ -46,7 +45,6 @@ export default class UrlHashHandler
       return
     return
 
-  ###
   # Set handlers to normalize and denormalize the URL hash.
   #
   # Denormalizing a URL hash can convert the URL hash to something clearer for URLs.  Normalizing
@@ -62,8 +60,6 @@ export default class UrlHashHandler
   #
   # The denormalize callback will only be called with normalized input.  The normalize callback
   # may receive any combination of normalized or denormalized input.
-  ###
-
   set_normalize: (norm, denorm) ->
     @normalize = norm
     @denormalize = denorm
@@ -82,12 +78,9 @@ export default class UrlHashHandler
     @fire_observers old_hash, new_hash
     return
 
-  ###
   # Parse a hash, returning a Hash.
   #
   # #a/b?c=d&e=f -> {"": 'a/b', c: 'd', e: 'f'}
-  ###
-
   parse: (hash) ->
     if !hash?
       hash = ''
@@ -104,14 +97,11 @@ export default class UrlHashHandler
       while i < hash_query_values.length
         keyval = hash_query_values[i]
 
-        ### a=b ###
-
+        # a=b
         key = keyval.split('=', 1)[0]
 
-        ### If the key is blank, eg. "#path?a=b&=d", then ignore the value.  It'll overwrite
+        # If the key is blank, eg. "#path?a=b&=d", then ignore the value.  It'll overwrite
         # the path, which is confusing and never what's wanted.
-        ###
-
         if key == ''
           ++i
           continue
@@ -126,11 +116,8 @@ export default class UrlHashHandler
     s = '#'
     path = hash.get('')
     if path?
-
-      ### For the path portion, we only need to escape the params separator ? and the escape
+      # For the path portion, we only need to escape the params separator ? and the escape
       # character % itself.  Don't use encodeURIComponent; it'll encode far more than necessary.
-      ###
-
       path = path.replace(/%/g, '%25').replace(/\?/g, '%3f')
       s += path
     params = []
@@ -150,12 +137,8 @@ export default class UrlHashHandler
     s
 
   get_raw_hash: ->
-
-    ###
     # Firefox doesn't handle window.location.hash correctly; it decodes the contents,
     # where all other browsers give us the correct data.  http://stackoverflow.com/questions/1703552
-    ###
-
     pre_hash_part = window.location.href.split('#', 1)[0]
     window.location.href.substr pre_hash_part.length
 
@@ -167,22 +150,18 @@ export default class UrlHashHandler
   get: (key) ->
     @current_hash.get key
 
-  ###
   # Set keys in the URL hash.
   #
   # UrlHash.set({id: 50});
   #
   # If replace is true and the History API is available, replace the state instead
   # of pushing it.
-  ###
-
   set: (hash, replace) ->
     new_hash = @current_hash.merge(hash)
     @normalize new_hash
     @set_all new_hash, replace
     return
 
-  ###
   # Each call to UrlHash.set() will immediately set the new hash, which will create a new
   # browser history slot.  This isn't always wanted.  When several changes are being made
   # in response to a single action, all changes should be made simultaeously, so only a
@@ -200,8 +179,6 @@ export default class UrlHashHandler
   # If replace is true and the History API is available, replace the state instead of pushing
   # it.  If any set_deferred call consolidated into a single update has replace = false, the
   # new state will be pushed.
-  ###
-
   set_deferred: (hash, replace) ->
     @deferred_sets.push hash
     if replace
@@ -231,10 +208,8 @@ export default class UrlHashHandler
     new_hash = @construct(query_params)
     if window.location.hash != new_hash
 
-      ### If the History API is available, use it to support URL replacement.  FF4.0's pushState
+      # If the History API is available, use it to support URL replacement.  FF4.0's pushState
       # is broken; don't use it.
-      ###
-
       if window.history and window.history.replaceState and window.history.pushState and !navigator.userAgent.match('Firefox/[45].')
         url = window.location.protocol + '//' + window.location.host + window.location.pathname + new_hash
         if replace
@@ -244,16 +219,13 @@ export default class UrlHashHandler
       else
         window.location.hash = new_hash
 
-    ### Explicitly fire the hashchange event, so it's handled quickly even if the browser
+    # Explicitly fire the hashchange event, so it's handled quickly even if the browser
     # doesn't support the event.  It's harmless if we get this event multiple times due
     # to the browser delivering it normally due to our change.
-    ###
-
     @hashchange_event null
     return
 
-  ### Observe changes to the specified key.  If key is null, watch for all changes. ###
-
+  # Observe changes to the specified key.  If key is null, watch for all changes.
   observe: (key, func) ->
     observers = @observers.get(key)
     if !observers?

@@ -21,6 +21,7 @@ import Timeago from './classes/timeago'
 import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
 
+window.Pool = new Pool
 window.UrlHash = new UrlHashHandler
 window.checkAll = new CheckAll
 window.comment = new Comment
@@ -41,8 +42,6 @@ window.userRecord = new UserRecord
 # FIXME: update to call instance method directly.
 window.notice = noticeInstance.show
 
-# FIXME: update variable name to lowercase
-window.Pool = new Pool
 
 window.ImgPoolHandler = ImgPoolHandler
 window.InputHandler = InputHandler

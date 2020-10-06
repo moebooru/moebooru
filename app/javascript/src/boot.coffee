@@ -19,10 +19,12 @@ import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
 import Timeago from './classes/timeago'
 import ThumbnailView from './classes/thumbnail_view'
+import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
 
 window.ClipRange = ClipRange
 
+window.UrlHash = new UrlHashHandler
 window.checkAll = new CheckAll
 window.comment = new Comment
 window.dmail = new Dmail

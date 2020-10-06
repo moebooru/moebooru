@@ -1,5 +1,4 @@
 import CheckAll from './classes/check_all'
-import ClipRange from './classes/clip_range'
 import Comment from './classes/comment'
 import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
@@ -17,13 +16,12 @@ import Pool from './classes/pool'
 import PostLoader from './classes/post_loader'
 import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
-import Timeago from './classes/timeago'
 import ThumbnailView from './classes/thumbnail_view'
+import Timeago from './classes/timeago'
 import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
 
-window.ClipRange = ClipRange
-
+window.Pool = new Pool
 window.UrlHash = new UrlHashHandler
 window.checkAll = new CheckAll
 window.comment = new Comment
@@ -44,8 +42,6 @@ window.userRecord = new UserRecord
 # FIXME: update to call instance method directly.
 window.notice = noticeInstance.show
 
-# FIXME: update variable name to lowercase
-window.Pool = new Pool
 
 window.ImgPoolHandler = ImgPoolHandler
 window.InputHandler = InputHandler

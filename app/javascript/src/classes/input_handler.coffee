@@ -17,7 +17,7 @@ export default class InputHandler
     # Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
     # keydown in other browsers.
     keypress_event_name = if window.opera or Prototype.Browser.Gecko then 'keypress' else 'keydown'
-    document.on keypress_event_name, @document_keypress_event.bindAsEventListener(this)
+    document.on keypress_event_name, @document_keypress_event
     return
 
   handle_keypress: (e) ->
@@ -72,7 +72,7 @@ export default class InputHandler
       return false
     true
 
-  document_keypress_event: (e) ->
+  document_keypress_event: (e) =>
     #alert(e.charCode + ", " + e.keyCode);
     if @handle_keypress(e)
       e.stop()

@@ -1,3 +1,4 @@
+import BrowserView from './classes/browser_view'
 import CheckAll from './classes/check_all'
 import Comment from './classes/comment'
 import Dmail from './classes/dmail'
@@ -20,6 +21,7 @@ import ThumbnailView from './classes/thumbnail_view'
 import Timeago from './classes/timeago'
 import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
+import WindowTitleHandler from './classes/window_title_handler'
 
 window.Pool = new Pool
 window.UrlHash = new UrlHashHandler
@@ -43,8 +45,10 @@ window.userRecord = new UserRecord
 window.notice = noticeInstance.show
 
 
+window.BrowserView = BrowserView
 window.ImgPoolHandler = ImgPoolHandler
 window.InputHandler = InputHandler
 window.Note = Note
 window.PostLoader = PostLoader
 window.ThumbnailView = ThumbnailView
+window.WindowTitleHandler = WindowTitleHandler

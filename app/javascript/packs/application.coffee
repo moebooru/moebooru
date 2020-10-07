@@ -12,7 +12,6 @@ import 'src/init.cookie'
 import 'src/post'
 import 'src/vote'
 
-import 'src/legacy/browser-view'
 import 'src/legacy/common'
 import 'src/legacy/debug-window'
 import 'src/legacy/history'

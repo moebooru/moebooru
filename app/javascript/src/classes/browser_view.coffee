@@ -1,3 +1,5 @@
+import Navigator from './navigator'
+
 ###
 # We have a few competing goals:
 #
@@ -24,7 +26,7 @@
 #   don't pull an out-of-date page next time.  This is slower, and would require us
 #   to be careful about expiring the cache.
 ###
-class window.BrowserView
+export default class BrowserView
   constructor: (@container) ->
     # The post that we currently want to display.  This will be either one of the
     # current html_preloads, or be the displayed_post_id.

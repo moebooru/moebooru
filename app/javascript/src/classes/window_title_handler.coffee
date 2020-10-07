@@ -1,5 +1,5 @@
 # Update the window title when the display changes.
-class window.WindowTitleHandler
+export default class WindowTitleHandler
   constructor: ->
     @searched_tags = ''
     @post_id = null

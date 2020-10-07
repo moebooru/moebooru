@@ -1,4 +1,4 @@
-class Navigator
+export default class Navigator
   constructor: (container, target) ->
     @container = container
     @target = target

@@ -5,6 +5,7 @@ import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
 import ImageCrop from './classes/image_crop'
 import ImgPoolHandler from './classes/img_pool_handler'
+import InlineImage from './classes/inline_image'
 import InputHandler from './classes/input_handler'
 import Menu from './classes/menu'
 import MenuDragDrop from './classes/menu_drag_drop'
@@ -23,6 +24,7 @@ import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
 import WindowTitleHandler from './classes/window_title_handler'
 
+window.InlineImage = new InlineImage
 window.Pool = new Pool
 window.UrlHash = new UrlHashHandler
 window.checkAll = new CheckAll
@@ -43,7 +45,6 @@ window.userRecord = new UserRecord
 
 # FIXME: update to call instance method directly.
 window.notice = noticeInstance.show
-
 
 window.BrowserView = BrowserView
 window.ImgPoolHandler = ImgPoolHandler

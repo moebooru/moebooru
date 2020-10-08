@@ -1,16 +1,38 @@
-window.InlineImage =
+export default class InlineImage
+  init: ->
+
+    ### Mouseup events aren't necessarily sent to the same element that received the mousedown,
+    # so we need to track which element received a mousedown and handle mouseup globally. 
+    ###
+
+    document.observe 'mouseup', (e) =>
+      if e.button != 0
+        return
+      if !@mouse_down?
+        return
+      e.stop()
+      data = @mouse_down
+      @mouse_down = null
+      @show_image_no data.html_id, data.toggled_from
+      data.toggled_from = null
+      return
+    return
+
   mouse_down: null
+
   zoom_levels: [
     1.0
     1.5
     2.0
     4.0
   ]
+
   get_zoom: (level) ->
     if level >= 0
-      InlineImage.zoom_levels[level]
+      @zoom_levels[level]
     else
-      1 / InlineImage.zoom_levels[-level]
+      1 / @zoom_levels[-level]
+
   register: (id, data) ->
     container = $(id)
     data.html_id = id
@@ -43,9 +65,9 @@ window.InlineImage =
     ui_html += '<a href=\'#\' class=\'select-image\' onclick=\'InlineImage.close("' + data.html_id + '"); return false;\'>Close</a>'
     ui_html += '<a href=\'/inline/edit/' + data.id + '\' class=\'edit-link\'>Image&nbsp;#' + data.id + '</a>'
     container.down('.expanded-image-ui').innerHTML = ui_html
-    container.down('.inline-thumb').observe 'click', (e) ->
+    container.down('.inline-thumb').observe 'click', (e) =>
       e.stop()
-      InlineImage.expand data.html_id
+      @expand data.html_id
       return
     container.observe 'dblclick', (e) ->
       e.stop()
@@ -58,13 +80,13 @@ window.InlineImage =
 
     if data.images.length > 1
       viewer_img.addClassName 'clickable'
-    viewer_img.observe 'mousedown', (e) ->
+    viewer_img.observe 'mousedown', (e) =>
       if e.button != 0
         return
       data.toggled_from = data.current
       idx = (data.current + 1) % data.images.length
-      InlineImage.show_image_no data.html_id, idx
-      InlineImage.mouse_down = data
+      @show_image_no data.html_id, idx
+      @mouse_down = data
 
       ### We need to stop the event, so dragging the mouse after clicking won't turn it
       # into a drag in Firefox.  If that happens, we won't get the mouseup. 
@@ -73,24 +95,7 @@ window.InlineImage =
       e.stop()
       return
     return
-  init: ->
 
-    ### Mouseup events aren't necessarily sent to the same element that received the mousedown,
-    # so we need to track which element received a mousedown and handle mouseup globally. 
-    ###
-
-    document.observe 'mouseup', (e) ->
-      if e.button != 0
-        return
-      if !InlineImage.mouse_down?
-        return
-      e.stop()
-      data = InlineImage.mouse_down
-      InlineImage.mouse_down = null
-      InlineImage.show_image_no data.html_id, data.toggled_from
-      data.toggled_from = null
-      return
-    return
   expand: (id) ->
     container = $(id)
     data = container.inline_image
@@ -115,10 +120,11 @@ window.InlineImage =
       viewer_img = container.down('.main-inline-image')
       viewer_img.innerHTML = img_html
     container.down('.inline-thumb').hide()
-    InlineImage.show_image_no data.html_id, 0
+    @show_image_no data.html_id, 0
     container.down('.expanded-image').show()
     # container.down(".expanded-image").scrollIntoView();
     return
+
   close: (id) ->
     container = $(id)
     data = container.inline_image
@@ -126,12 +132,13 @@ window.InlineImage =
     container.down('.expanded-image').hide()
     container.down('.inline-thumb').show()
     return
+
   show_image_no: (id, idx) ->
     container = $(id)
     data = container.inline_image
     images = data['images']
     image = images[idx]
-    zoom = InlineImage.get_zoom(data.zoom_level)
+    zoom = @get_zoom(data.zoom_level)
 
     ### We need to set innerHTML rather than just setting attributes, so the changes happen
     # atomically.  Otherwise, Firefox will apply the width and height changes before source,
@@ -168,6 +175,7 @@ window.InlineImage =
         old_button.removeClassName 'selected-image-tab'
       data.current = idx
     return
+
   zoom: (id, dir) ->
     container = $(id)
     data = container.inline_image
@@ -175,15 +183,15 @@ window.InlineImage =
       data.zoom_level = 0
     else
       data.zoom_level += dir
-    if data.zoom_level > InlineImage.zoom_levels.length - 1
-      data.zoom_level = InlineImage.zoom_levels.length - 1
-    if data.zoom_level < -InlineImage.zoom_levels.length + 1
-      data.zoom_level = -InlineImage.zoom_levels.length + 1
+    if data.zoom_level > @zoom_levels.length - 1
+      data.zoom_level = @zoom_levels.length - 1
+    if data.zoom_level < -@zoom_levels.length + 1
+      data.zoom_level = -@zoom_levels.length + 1
 
     ### Update the zoom level. ###
 
     zoom_id = data.html_id + '-zoom'
-    zoom = InlineImage.get_zoom(data.zoom_level) * 100
+    zoom = @get_zoom(data.zoom_level) * 100
     $(zoom_id).update zoom.toFixed(0) + '%'
-    InlineImage.show_image_no id, data.current
+    @show_image_no id, data.current
     return

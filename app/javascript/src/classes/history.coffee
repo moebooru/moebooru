@@ -1,6 +1,6 @@
 $ = jQuery
 
-window.History =
+export default class History
   last_click: -1
   checked: []
   dragging: false
@@ -9,22 +9,22 @@ window.History =
   init: ->
     # Watch mousedown events on the table itself, so clicking between table rows
     # and dragging doesn't misbehave.
-    $('#history').on 'mousedown', (event) ->
+    $('#history').on 'mousedown', (event) =>
       if !event.shiftKey
         # Clear last_click, so dragging will extend from the next position
         # crossed instead of the previous position clicked.
-        History.last_click = -1
-      History.mouse_is_down()
+        @last_click = -1
+      @mouse_is_down()
       event.stopPropagation()
       event.preventDefault()
 
-    History.update()
+    @update()
 
 
   add_change: (change_id, group_by_type, group_by_id, ids, user_id) ->
     row = $("#r#{change_id}")
 
-    History.checked.push
+    @checked.push
       id: change_id
       ids: ids
       group_by_type: group_by_type
@@ -33,32 +33,32 @@ window.History =
       on: false
       row: row
 
-    row.on 'mousedown', (e) ->
-      History.mousedown(change_id, e)
+    row.on 'mousedown', (e) =>
+      @mousedown(change_id, e)
 
-    row.on 'mouseover', (e) ->
-      History.mouseover(change_id, e)
+    row.on 'mouseover', (e) =>
+      @mouseover(change_id, e)
 
-    row.find('.id').on 'click', (event) ->
-      History.id_click change_id
+    row.find('.id').on 'click', (event) =>
+      @id_click change_id
 
-    row.find('.author').on 'click', (event) ->
-      History.author_click change_id
+    row.find('.author').on 'click', (event) =>
+      @author_click change_id
 
-    row.find('.change').on 'click', (event) ->
-      History.change_click change_id
+    row.find('.change').on 'click', (event) =>
+      @change_click change_id
 
 
   update: ->
     # Set selected flags on selected rows, and remove them from unselected rows.
-    for entry in History.checked
+    for entry in @checked
       row = entry.row
       if entry.on
         row.addClass 'selected'
       else
         row.removeClass 'selected'
 
-    if History.count_selected() > 0
+    if @count_selected() > 0
       $('#undo').removeClass 'footer-disabled'
       $('#redo').removeClass 'footer-disabled'
     else
@@ -68,37 +68,37 @@ window.History =
 
 
   id_click: (id) ->
-    id = History.get_row_by_id(id)
-    entry = History.checked[id]
+    id = @get_row_by_id(id)
+    entry = @checked[id]
     $('#search').val "#{entry.group_by_type.toLowerCase()}:#{entry.group_by_id}"
 
 
   author_click: (id) ->
-    id = History.get_row_by_id(id)
-    $('#search').val "user:#{History.checked[id].user_id}"
+    id = @get_row_by_id(id)
+    $('#search').val "user:#{@checked[id].user_id}"
 
 
   change_click: (id) ->
-    id = History.get_row_by_id(id)
-    $('#search').val "change:#{History.checked[id].id}"
+    id = @get_row_by_id(id)
+    $('#search').val "change:#{@checked[id].id}"
 
 
   count_selected: ->
     ret = 0
-    ret++ for entry in History.checked when entry.on
+    ret++ for entry in @checked when entry.on
 
     ret
 
 
   get_first_selected_row: ->
-    return i for entry, i in History.checked when entry.on
+    return i for entry, i in @checked when entry.on
 
     # nothing found, return null
     null
 
 
   get_row_by_id: (id) ->
-    for entry, i in History.checked
+    for entry, i in @checked
       return i if entry.id.toString() == id.toString()
 
     # nothing found, return -1
@@ -111,26 +111,26 @@ window.History =
 
     [first, last] = [last, first] if last < first
 
-    for entry in History.checked[first..last]
+    for entry in @checked[first..last]
       entry.on = isOn
 
 
-  doc_mouseup: (event) ->
-    History.dragging = false
-    $(document).off 'mouseup', History.doc_mouseup
+  doc_mouseup: (event) =>
+    @dragging = false
+    $(document).off 'mouseup', @doc_mouseup
 
 
   mouse_is_down: ->
-    History.dragging = true
-    $(document).on 'mouseup', History.doc_mouseup
+    @dragging = true
+    $(document).on 'mouseup', @doc_mouseup
 
 
   mousedown: (id, event) ->
     # only for primary click
     return if event.which != 1
 
-    History.mouse_is_down()
-    i = History.get_row_by_id(id)
+    @mouse_is_down()
+    i = @get_row_by_id(id)
 
     # no row found?
     return if i == -1
@@ -138,48 +138,48 @@ window.History =
     first = null
     last = null
 
-    if History.last_click != -1 && event.shiftKey
-      first = History.last_click
+    if @last_click != -1 && event.shiftKey
+      first = @last_click
       last = i
     else
-      first = last = History.last_click = i
-      History.checked[i].on = !History.checked[i].on
+      first = last = @last_click = i
+      @checked[i].on = !@checked[i].on
 
-    isOn = History.checked[first].on
+    isOn = @checked[first].on
 
     if !event.ctrlKey
-      History.set 0, History.checked.length - 1, false
-    History.set first, last, isOn
-    History.update()
+      @set 0, @checked.length - 1, false
+    @set first, last, isOn
+    @update()
 
     event.stopPropagation()
     event.preventDefault()
 
 
   mouseover: (id, event) ->
-    i = History.get_row_by_id(id)
+    i = @get_row_by_id(id)
 
     return if i == -1
 
-    if History.last_click == -1
-      History.last_click = i
+    if @last_click == -1
+      @last_click = i
 
-    return if !History.dragging
+    return if !@dragging
 
-    History.set 0, History.checked.length - 1, false
-    first = History.last_click
+    @set 0, @checked.length - 1, false
+    first = @last_click
     last = i
     this_click = i
-    History.set first, last, true
-    History.update()
+    @set first, last, true
+    @update()
 
 
   undo: (redo) ->
-    return if History.count_selected() == 0
+    return if @count_selected() == 0
 
     list = []
 
-    for entry in History.checked
+    for entry in @checked
       list = list.concat(entry.ids) if entry.on
 
     if redo

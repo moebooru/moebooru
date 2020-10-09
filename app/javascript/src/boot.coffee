@@ -3,6 +3,7 @@ import CheckAll from './classes/check_all'
 import Comment from './classes/comment'
 import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
+import History from './classes/history'
 import ImageCrop from './classes/image_crop'
 import ImgPoolHandler from './classes/img_pool_handler'
 import InlineImage from './classes/inline_image'
@@ -24,6 +25,7 @@ import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
 import WindowTitleHandler from './classes/window_title_handler'
 
+window.History = new History
 window.InlineImage = new InlineImage
 window.Pool = new Pool
 window.UrlHash = new UrlHashHandler

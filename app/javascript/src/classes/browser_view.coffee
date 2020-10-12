@@ -1,3 +1,4 @@
+import ImgPoolHandler from './img_pool_handler'
 import Navigator from './navigator'
 
 ###

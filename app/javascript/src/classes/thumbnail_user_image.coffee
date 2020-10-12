@@ -1,3 +1,5 @@
+import ImgPoolHandler from './img_pool_handler'
+
 # This is a shared pool to be used by all instances
 image_pool = null
 

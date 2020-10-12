@@ -1,3 +1,5 @@
+import ThumbnailUserImage from './thumbnail_user_image'
+
 export default class SimilarWithThumbnailing
   constructor: (form) ->
     @similar = null

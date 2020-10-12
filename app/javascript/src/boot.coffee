@@ -19,6 +19,8 @@ import Pool from './classes/pool'
 import PostLoader from './classes/post_loader'
 import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
+import SimilarWithThumbnailing from './classes/similar_with_thumbnailing'
+import ThumbnailUserImage from './classes/thumbnail_user_image'
 import ThumbnailView from './classes/thumbnail_view'
 import Timeago from './classes/timeago'
 import UrlHashHandler from './classes/url_hash_handler'
@@ -53,5 +55,7 @@ window.ImgPoolHandler = ImgPoolHandler
 window.InputHandler = InputHandler
 window.Note = Note
 window.PostLoader = PostLoader
+window.SimilarWithThumbnailing = SimilarWithThumbnailing
+window.ThumbnailUserImage = ThumbnailUserImage
 window.ThumbnailView = ThumbnailView
 window.WindowTitleHandler = WindowTitleHandler

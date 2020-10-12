@@ -321,10 +321,7 @@ window.getWindowSize = ->
 ### If 2d canvases are supported, return one.  Otherwise, return null. ###
 
 window.create_canvas_2d = ->
-  canvas = document.createElement('canvas')
-  if canvas.getContext and canvas.getContext('2d')
-    return canvas
-  null
+  document.createElement('canvas')
 
 Prototype.Browser.AndroidWebKit = navigator.userAgent.indexOf('Android') != -1 and navigator.userAgent.indexOf('WebKit') != -1
 

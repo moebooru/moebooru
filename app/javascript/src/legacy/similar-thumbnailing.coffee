@@ -143,11 +143,6 @@ ThumbnailUserImage::image_error_event = (e) ->
   @completed success: false
   return
 
-### If the necessary APIs aren't supported, don't use ThumbnailUserImage. ###
-
-if !('URL' of window) or create_canvas_2d() == null
-  window.ThumbnailUserImage = null
-
 window.SimilarWithThumbnailing = (form) ->
   @similar = null
   @form = form
@@ -224,8 +219,3 @@ SimilarWithThumbnailing::complete = (result) ->
       return
 )
   return
-
-### If the necessary APIs aren't supported, don't use SimilarWithThumbnailing. ###
-
-if !('FormData' of window) or !ThumbnailUserImage
-  window.SimilarWithThumbnailing = null

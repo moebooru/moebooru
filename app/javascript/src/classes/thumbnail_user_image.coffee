@@ -17,7 +17,7 @@ image_pool = null
 # On success:
 # canvas: On success, the canvas containing the thumbnailed image.
 #
-class window.ThumbnailUserImage
+export default class ThumbnailUserImage
   constructor: (file, onComplete) ->
     # Create the shared image pool, if we havn't yet.
     image_pool ?= new ImgPoolHandler

@@ -26,9 +26,9 @@ class window.ThumbnailUserImage
     @image = image_pool.get()
     @onComplete = onComplete
     @url = URL.createObjectURL(@file)
-    @image.on 'load', @image_load_event.bindAsEventListener(this)
-    @image.on 'abort', @image_abort_event.bindAsEventListener(this)
-    @image.on 'error', @image_error_event.bindAsEventListener(this)
+    @image.on 'load', @image_load_event
+    @image.on 'abort', @image_abort_event
+    @image.on 'error', @image_error_event
     document.documentElement.addClassName 'progress'
     @image.src = @url
     return
@@ -54,7 +54,7 @@ class window.ThumbnailUserImage
 
   # When the image finishes loading after form_submit_event sets it, update the canvas
   # thumbnail from it.
-  image_load_event: (e) ->
+  image_load_event: (e) =>
     # Reduce the image size to thumbnail resolution.
     width = @image.width
     height = @image.height
@@ -112,14 +112,14 @@ class window.ThumbnailUserImage
       idx += 4
     false
 
-  image_abort_event: (e) ->
+  image_abort_event: (e) =>
     @completed
       success: false
       aborted: true
     return
 
   # This happens on normal errors, usually because the file isn't a supported image.
-  image_error_event: (e) ->
+  image_error_event: (e) =>
     @completed success: false
     return
 
@@ -128,10 +128,10 @@ class window.SimilarWithThumbnailing
     @similar = null
     @form = form
     @force_file = null
-    form.on 'submit', @form_submit_event.bindAsEventListener(this)
+    form.on 'submit', @form_submit_event
     return
 
-  form_submit_event: (e) ->
+  form_submit_event: (e) =>
     post_file = @form.down('#file')
 
     # If the files attribute isn't supported, or we have no file (source upload), use regular
@@ -148,11 +148,11 @@ class window.SimilarWithThumbnailing
     e.stop()
     if @similar
       @similar.destroy()
-    @similar = new ThumbnailUserImage(file, @complete.bind(this))
+    @similar = new ThumbnailUserImage(file, @complete)
     return
 
   # Submit a post/similar request using the image currently in the canvas.
-  complete: (result) ->
+  complete: (result) =>
     if result.chromeFailure
       notice 'The image failed to load; submitting normally...'
       @force_file = @file

@@ -1,4 +1,4 @@
-class window.SimilarWithThumbnailing
+export default class SimilarWithThumbnailing
   constructor: (form) ->
     @similar = null
     @form = form

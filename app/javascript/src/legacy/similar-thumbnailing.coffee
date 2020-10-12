@@ -17,205 +17,204 @@
 #
 ###
 
-window.ThumbnailUserImage = (file, onComplete) ->
+# This is a shared pool to be used by all instances
+image_pool = null
 
-  ### Create the shared image pool, if we havn't yet. ###
+class window.ThumbnailUserImage
+  constructor: (file, onComplete) ->
 
-  if !ThumbnailUserImage.image_pool?
-    ThumbnailUserImage.image_pool = new ImgPoolHandler
-  @file = file
-  @canvas = create_canvas_2d()
-  @image = ThumbnailUserImage.image_pool.get()
-  @onComplete = onComplete
-  @url = URL.createObjectURL(@file)
-  @image.on 'load', @image_load_event.bindAsEventListener(this)
-  @image.on 'abort', @image_abort_event.bindAsEventListener(this)
-  @image.on 'error', @image_error_event.bindAsEventListener(this)
-  document.documentElement.addClassName 'progress'
-  @image.src = @url
-  return
+    # Create the shared image pool, if we havn't yet.
+    image_pool ?= new ImgPoolHandler
+    @file = file
+    @canvas = create_canvas_2d()
+    @image = image_pool.get()
+    @onComplete = onComplete
+    @url = URL.createObjectURL(@file)
+    @image.on 'load', @image_load_event.bindAsEventListener(this)
+    @image.on 'abort', @image_abort_event.bindAsEventListener(this)
+    @image.on 'error', @image_error_event.bindAsEventListener(this)
+    document.documentElement.addClassName 'progress'
+    @image.src = @url
+    return
 
-### This is a shared pool; for clarity, don't put it in the prototype. ###
+  ### Cancel any running request.  The onComplete callback will not be called.
+  # The object must not be reused.
+  ###
 
-ThumbnailUserImage.image_pool = null
+  destroy: ->
+    document.documentElement.removeClassName 'progress'
+    @onComplete = null
+    @image.stopObserving()
+    image_pool.release @image
+    @image = null
+    if @url?
+      URL.revokeObjectURL @url
+      @url = null
+    return
 
-### Cancel any running request.  The onComplete callback will not be called.
-# The object must not be reused. 
-###
+  completed: (result) ->
+    if @onComplete
+      @onComplete result
+    @destroy()
+    return
 
-ThumbnailUserImage::destroy = ->
-  document.documentElement.removeClassName 'progress'
-  @onComplete = null
-  @image.stopObserving()
-  ThumbnailUserImage.image_pool.release @image
-  @image = null
-  if @url?
-    URL.revokeObjectURL @url
-    @url = null
-  return
+  ### When the image finishes loading after form_submit_event sets it, update the canvas
+  # thumbnail from it.
+  ###
 
-ThumbnailUserImage::completed = (result) ->
-  if @onComplete
-    @onComplete result
-  @destroy()
-  return
+  image_load_event: (e) ->
 
-### When the image finishes loading after form_submit_event sets it, update the canvas
-# thumbnail from it. 
-###
+    ### Reduce the image size to thumbnail resolution. ###
 
-ThumbnailUserImage::image_load_event = (e) ->
+    width = @image.width
+    height = @image.height
+    max_width = 128
+    max_height = 128
+    ratio = undefined
+    if width > max_width
+      ratio = max_width / width
+      height *= ratio
+      width *= ratio
+    if height > max_height
+      ratio = max_height / height
+      height *= ratio
+      width *= ratio
+    width = Math.round(width)
+    height = Math.round(height)
 
-  ### Reduce the image size to thumbnail resolution. ###
+    ### Set the canvas to the image size we want. ###
 
-  width = @image.width
-  height = @image.height
-  max_width = 128
-  max_height = 128
-  ratio = undefined
-  if width > max_width
-    ratio = max_width / width
-    height *= ratio
-    width *= ratio
-  if height > max_height
-    ratio = max_height / height
-    height *= ratio
-    width *= ratio
-  width = Math.round(width)
-  height = Math.round(height)
+    canvas = @canvas
+    canvas.width = width
+    canvas.height = height
 
-  ### Set the canvas to the image size we want. ###
+    ### Blit the image onto the canvas. ###
 
-  canvas = @canvas
-  canvas.width = width
-  canvas.height = height
+    ctx = canvas.getContext('2d')
 
-  ### Blit the image onto the canvas. ###
+    ### Clear the canvas, so check_image_contents can check that the data was correctly loaded. ###
 
-  ctx = canvas.getContext('2d')
+    ctx.clearRect 0, 0, canvas.width, canvas.height
+    ctx.drawImage @image, 0, 0, canvas.width, canvas.height
+    if !@check_image_contents()
+      @completed
+        success: false
+        chromeFailure: true
+      return
+    @completed
+      success: true
+      canvas: @canvas
+    return
 
-  ### Clear the canvas, so check_image_contents can check that the data was correctly loaded. ###
+  ###
+  # Work around a Chrome bug.  When very large images fail to load, we still get
+  # onload and the image acts like a loaded, completely transparent image, instead
+  # of firing onerror.  This makes it difficult to tell if the image actually loaded
+  # or not.  Check that the image loaded by looking at the results; reject the image
+  # if it's completely transparent.
+  ###
 
-  ctx.clearRect 0, 0, canvas.width, canvas.height
-  ctx.drawImage @image, 0, 0, canvas.width, canvas.height
-  if !@check_image_contents()
+  check_image_contents: ->
+    ctx = @canvas.getContext('2d')
+    image = ctx.getImageData(0, 0, @canvas.width, @canvas.height)
+    data = image.data
+
+    ### Iterate through the alpha components, and search for any nonzero value. ###
+
+    idx = 3
+    max_idx = image.width * image.height * 4
+    while idx < max_idx
+      if data[idx] != 0
+        return true
+      idx += 4
+    false
+
+  image_abort_event: (e) ->
     @completed
       success: false
-      chromeFailure: true
-    return
-  @completed
-    success: true
-    canvas: @canvas
-  return
-
-###
-# Work around a Chrome bug.  When very large images fail to load, we still get
-# onload and the image acts like a loaded, completely transparent image, instead
-# of firing onerror.  This makes it difficult to tell if the image actually loaded
-# or not.  Check that the image loaded by looking at the results; reject the image
-# if it's completely transparent.
-###
-
-ThumbnailUserImage::check_image_contents = ->
-  ctx = @canvas.getContext('2d')
-  image = ctx.getImageData(0, 0, @canvas.width, @canvas.height)
-  data = image.data
-
-  ### Iterate through the alpha components, and search for any nonzero value. ###
-
-  idx = 3
-  max_idx = image.width * image.height * 4
-  while idx < max_idx
-    if data[idx] != 0
-      return true
-    idx += 4
-  false
-
-ThumbnailUserImage::image_abort_event = (e) ->
-  @completed
-    success: false
-    aborted: true
-  return
-
-### This happens on normal errors, usually because the file isn't a supported image. ###
-
-ThumbnailUserImage::image_error_event = (e) ->
-  @completed success: false
-  return
-
-window.SimilarWithThumbnailing = (form) ->
-  @similar = null
-  @form = form
-  @force_file = null
-  form.on 'submit', @form_submit_event.bindAsEventListener(this)
-  return
-
-SimilarWithThumbnailing::form_submit_event = (e) ->
-  post_file = @form.down('#file')
-
-  ### If the files attribute isn't supported, or we have no file (source upload), use regular
-  # form submission. 
-  ###
-
-  if !post_file.files? or post_file.files.length == 0
+      aborted: true
     return
 
-  ### If we failed to load the image last time due to a silent Chrome error, continue with
-  # the submission normally this time. 
-  ###
+  ### This happens on normal errors, usually because the file isn't a supported image. ###
 
-  file = post_file.files[0]
-  if @force_file and @force_file == file
+  image_error_event: (e) ->
+    @completed success: false
+    return
+
+class window.SimilarWithThumbnailing
+  constructor: (form) ->
+    @similar = null
+    @form = form
     @force_file = null
+    form.on 'submit', @form_submit_event.bindAsEventListener(this)
     return
-  e.stop()
-  if @similar
-    @similar.destroy()
-  @similar = new ThumbnailUserImage(file, @complete.bind(this))
-  return
 
-### Submit a post/similar request using the image currently in the canvas. ###
+  form_submit_event: (e) ->
+    post_file = @form.down('#file')
 
-SimilarWithThumbnailing::complete = (result) ->
-  if result.chromeFailure
-    notice 'The image failed to load; submitting normally...'
-    @force_file = @file
-
-    ### Resend the submit event.  Defer it, so the notice can take effect before we
-    # navigate off the page. 
+    ### If the files attribute isn't supported, or we have no file (source upload), use regular
+    # form submission.
     ###
 
-    (->
-      @form.simulate_submit()
+    if !post_file.files? or post_file.files.length == 0
       return
-    ).bind(this).defer()
+
+    ### If we failed to load the image last time due to a silent Chrome error, continue with
+    # the submission normally this time.
+    ###
+
+    file = post_file.files[0]
+    if @force_file and @force_file == file
+      @force_file = null
+      return
+    e.stop()
+    if @similar
+      @similar.destroy()
+    @similar = new ThumbnailUserImage(file, @complete.bind(this))
     return
-  if !result.success
-    if !result.aborted
-      alert 'The file couldn\'t be loaded.'
-    return
 
-  ### Grab a data URL from the canvas; this is what we'll send to the server. ###
+  ### Submit a post/similar request using the image currently in the canvas. ###
 
-  data_url = result.canvas.toDataURL()
+  complete: (result) ->
+    if result.chromeFailure
+      notice 'The image failed to load; submitting normally...'
+      @force_file = @file
 
-  ### Create the FormData containing the thumbnail image we're sending. ###
+      ### Resend the submit event.  Defer it, so the notice can take effect before we
+      # navigate off the page.
+      ###
 
-  form_data = new FormData
-  form_data.append 'url', data_url
-  req = new (Ajax.Request)('/post/similar.json',
-    method: 'post'
-    postBody: form_data
-    contentType: null
-    onComplete: (resp) ->
-      json = resp.responseJSON
-      if !json.success
-        notice json.reason
+      (->
+        @form.simulate_submit()
         return
-
-      ### Redirect to the search results. ###
-
-      window.location.href = '/post/similar?search_id=' + json.search_id
+      ).bind(this).defer()
       return
-)
-  return
+    if !result.success
+      if !result.aborted
+        alert 'The file couldn\'t be loaded.'
+      return
+
+    ### Grab a data URL from the canvas; this is what we'll send to the server. ###
+
+    data_url = result.canvas.toDataURL()
+
+    ### Create the FormData containing the thumbnail image we're sending. ###
+
+    form_data = new FormData
+    form_data.append 'url', data_url
+    req = new (Ajax.Request)('/post/similar.json',
+      method: 'post'
+      postBody: form_data
+      contentType: null
+      onComplete: (resp) ->
+        json = resp.responseJSON
+        if !json.success
+          notice json.reason
+          return
+
+        ### Redirect to the search results. ###
+
+        window.location.href = '/post/similar?search_id=' + json.search_id
+        return
+  )
+    return

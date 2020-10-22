@@ -17,6 +17,7 @@ import NotesManager from './classes/notes_manager'
 import Notice from './classes/notice'
 import Pool from './classes/pool'
 import PostLoader from './classes/post_loader'
+import PostQuickEdit from './classes/post_quick_edit'
 import PostShowTabs from './classes/post_show_tabs'
 import RelatedTags from './classes/related_tags'
 import SimilarWithThumbnailing from './classes/similar_with_thumbnailing'
@@ -55,6 +56,7 @@ window.ImgPoolHandler = ImgPoolHandler
 window.InputHandler = InputHandler
 window.Note = Note
 window.PostLoader = PostLoader
+window.PostQuickEdit = PostQuickEdit
 window.SimilarWithThumbnailing = SimilarWithThumbnailing
 window.ThumbnailUserImage = ThumbnailUserImage
 window.ThumbnailView = ThumbnailView

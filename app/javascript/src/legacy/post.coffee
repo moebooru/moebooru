@@ -11,21 +11,6 @@ window.Post =
     'circle'
     'faults'
   ]
-  find_similar: ->
-    old_source_name = $('post_source').name
-    old_file_name = $('post_file').name
-    old_target = $('edit-form').target
-    old_action = $('edit-form').action
-    $('post_source').name = 'url'
-    $('post_file').name = 'file'
-    $('edit-form').target = '_blank'
-    $('edit-form').action = 'http://danbooru.iqdb.hanyuu.net/'
-    $('edit-form').submit()
-    $('post_source').name = old_source_name
-    $('post_file').name = old_file_name
-    $('edit-form').target = old_target
-    $('edit-form').action = old_action
-    return
   make_request: (path, params, finished) ->
     new (Ajax.Request)(path,
       requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')

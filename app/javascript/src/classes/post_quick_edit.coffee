@@ -55,5 +55,5 @@ export default class PostQuickEdit
 
     $(@container).show()
     inputBox = @container.querySelector('#post_tags')
-    inputBox.value = "#{post.tags.join(' ')} rating:#{post.rating.substr(0, 1)} "
+    inputBox.value = "#{@oldTags} rating:#{post.rating.substr(0, 1)} "
     inputBox.focus()

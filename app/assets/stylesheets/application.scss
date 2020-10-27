@@ -235,6 +235,10 @@ HTML.webkit input[type=file] {
   color: #FFF;
 }
 
+input[type=text], input[type=password] {
+  background: #fff;
+}
+
 input[type=password]:focus {
   background: #FFC;
 	color: #000;
@@ -414,6 +418,7 @@ textarea {
   padding: 0 0.3em;
   font-family: sans-serif;
   font-size: 1.2em;
+  background: #fff;
 }
 
 textarea.no-block {

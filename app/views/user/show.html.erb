@@ -54,7 +54,7 @@
       <td>
         <span class="stars">
           <% (1..3).each do |i| %>
-            <a class="star star-<%= i %>" href="<%= url_for :controller => "post", :action => "index", :tags => "vote:>=#{i}:#{@user.name} order:vote" %>">
+            <a class="star" data-star="<%= i %>" href="<%= url_for :controller => "post", :action => "index", :tags => "vote:>=#{i}:#{@user.name} order:vote" %>">
               <%= @user.post_votes.where(:score => i).count %>
               <span class="score-on score-voted score-visible">★</span>
             </a>

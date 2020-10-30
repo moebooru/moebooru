@@ -26,9 +26,12 @@
                       <span class='score-on score-voted score-visible'>★</span>
                     <% end %>
                     <% if user['id'].nil? %>
-                      <%= content_tag :span, text, :class => "star star-#{vote}" %>
+                      <%= content_tag :span, text, class: 'star', data: { star: vote } %>
                     <% else %>
-                      <%= link_to text, {:controller => "post", :action => "index", :tags => "vote:>=#{vote}:#{user['name']} order:vote"}, :class => "star star-#{vote}" %>
+                      <%= link_to text,
+                        { controller: 'post', action: 'index', tags: "vote:>=#{vote}:#{user['name']} order:vote" },
+                        { class: 'star', data: { star: vote } }
+                      %>
                     <% end %>
                 <% end %>
               <span>

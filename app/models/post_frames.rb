@@ -137,6 +137,7 @@ class PostFrames < ApplicationRecord
   # Warehouse frames.  Only frames which are created and finalized will be warehoused.
   def self.warehouse_frames(update_status = nil)
     # Find a post with frames that need warehousing.
+    # This SQL is designed to use the post_frames_for_warehouse.
     post = Post.find_by("frames = frames_pending AND frames <> '' AND NOT frames_warehoused")
     return false if post.nil?
 

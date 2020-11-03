@@ -2640,6 +2640,13 @@ CREATE INDEX pools_user_id_idx ON public.pools USING btree (user_id);
 
 
 --
+-- Name: post_frames_for_warehouse; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX post_frames_for_warehouse ON public.posts USING btree (id) WHERE ((frames = frames_pending) AND (frames <> ''::text) AND (NOT frames_warehoused));
+
+
+--
 -- Name: post_frames_out_of_date; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3400,6 +3407,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190817070727'),
 ('20191110172526'),
 ('20200908180652'),
+('20201103140508'),
 ('21'),
 ('22'),
 ('23'),

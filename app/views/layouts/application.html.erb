@@ -43,19 +43,8 @@
   <%= javascript_include_tag 'application' %>
   <%= javascript_pack_tag :application %>
 
-  <!--[if lt IE 8]>
-  <script src="/IE8.js" type="text/javascript"></script>
-  <![endif]-->
   <%= tag :link, :rel => 'search', :type => Mime[:opensearch], :href => opensearch_path(:xml), :title => CONFIG['app_name'] %>
   <%= CONFIG["custom_html_headers"] %>
-  <!--[if lt IE 7]>
-    <style type="text/css">
-      body div#post-view > div#right-col > div > div#note-container > div.note-body {
-        overflow: visible;
-      }
-    </style>
-    <script src="<%= request.protocol %>ie7-js.googlecode.com/svn/trunk/lib/IE7.js" type="text/javascript"></script>
-  <![endif]-->
   <%= csrf_meta_tag %>
 </head>
 <body>

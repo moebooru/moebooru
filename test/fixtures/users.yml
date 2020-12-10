@@ -77,7 +77,7 @@ blocked:
   has_mail: false
   receive_dmails: true
   show_samples: true
-  
+
 unactivated:
   id: 6
   name: unactivated

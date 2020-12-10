@@ -1,5 +1,3 @@
-require "download"
-
 class PostController < ApplicationController
   layout "default"
   helper :avatar

@@ -1,4 +1,3 @@
-require "translate"
 # FIXME: god, why I need this. Anyway, the required helper functions should be
 #        moved to library instead. It's not really "view" helper anymore.
 include ApplicationHelper

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'action_dispatch/middleware/cookies'
-
 module Moebooru
   # Allows skipping returning cookie for given request
   module SkipCookie

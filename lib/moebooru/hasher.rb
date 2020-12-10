@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative './hasher/crc32'
-require_relative './hasher/md5'
-
 module Moebooru
   # File hashing helper
   module Hasher

@@ -1,7 +1,3 @@
-require "multipart"
-require "external_post"
-require "cgi"
-
 module Translate
   class ServerError < Exception; end
 

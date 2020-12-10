@@ -1,5 +1,3 @@
-require "active_record"
-
 namespace :user_blacklisted_tags do
   def SetDefaultBlacklistedTags
     User.transaction do

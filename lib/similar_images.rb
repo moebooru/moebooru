@@ -1,6 +1,3 @@
-require "multipart"
-require "external_post"
-
 module SimilarImages
   def get_services(services)
     services = services

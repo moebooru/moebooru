@@ -1,5 +1,3 @@
-require "active_record"
-
 namespace :db do
   desc "Import post history"
   task :import_post_histories => :environment do

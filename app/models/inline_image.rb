@@ -1,5 +1,3 @@
-require "fileutils"
-
 # InlineImages can be uploaded, copied directly from posts, or cropped from other InlineImages.
 # To create an image by cropping a post, the post must be copied to an InlineImage of its own,
 # and cropped from there; the only UI for cropping is InlineImage->InlineImage.

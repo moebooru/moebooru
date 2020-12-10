@@ -1,5 +1,3 @@
-require "nokogiri"
-
 module ExtractUrls
   # Extract image URLs from HTML.
   def extract_image_urls(url, body)

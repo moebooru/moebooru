@@ -1,5 +1,3 @@
-require "digest/sha2"
-
 class UserController < ApplicationController
   layout "default"
   before_action :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]

@@ -1,6 +1,4 @@
 # encoding: utf-8
-require "cgi"
-require "nokogiri"
 
 module DText
   def parse(str)

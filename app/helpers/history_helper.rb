@@ -1,6 +1,4 @@
 # encoding: utf-8
-require "post_helper"
-require "diff"
 
 module HistoryHelper
   include PostHelper

@@ -1,5 +1,3 @@
-require "mirror"
-
 module Post::ImageStore
   module RemoteHierarchy
     def file_hierarchy

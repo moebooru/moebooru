@@ -1,5 +1,3 @@
-require "mini_magick"
-
 module Moebooru
   module Resizer
     class ResizeError < Exception; end

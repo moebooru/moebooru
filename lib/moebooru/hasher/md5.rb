@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'digest'
-
 module Moebooru
   module Hasher
     # MD5 hasher, returns hash in hex form

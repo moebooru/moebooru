@@ -13,7 +13,7 @@ gem "non-stupid-digest-assets"
 gem "pg", :platforms => [:ruby, :mingw]
 gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.0", :platforms => :jruby
 
-gem "diff-lcs"
+gem "diff-lcs", require: ['diff-lcs', 'diff/lcs/array']
 gem "dalli"
 gem "connection_pool"
 gem "acts_as_versioned_rails3"

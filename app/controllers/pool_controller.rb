@@ -1,5 +1,3 @@
-require 'digest'
-
 class PoolController < ApplicationController
   layout "default"
   before_action :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]

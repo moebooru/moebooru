@@ -1,5 +1,3 @@
-require "digest/sha1"
-
 class User < ApplicationRecord
   has_many :user_logs
   has_many :post_votes

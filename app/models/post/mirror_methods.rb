@@ -1,7 +1,3 @@
-require "mirror"
-
-class MirrorError < Exception; end
-
 module Post::MirrorMethods
   # On :normal, upload all files to all mirrors except :previews_only ones.
   # On :previews_only, upload previews to previews_only mirrors.
@@ -41,7 +37,7 @@ module Post::MirrorMethods
     begin
       upload_to_mirrors_internal(:normal)
       upload_to_mirrors_internal(:previews_only)
-    rescue MirrorError
+    rescue Mirrors::MirrorError
       # The post might be deleted while it's uploading.  Check the post status after
       # an error.
       reload

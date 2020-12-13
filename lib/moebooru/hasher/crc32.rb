@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'zlib'
-
 module Moebooru
   module Hasher
     # CRC32 hasher, returns hash in integer form

@@ -1,5 +1,3 @@
-require "versioning"
-
 class HistoryController < ApplicationController
   layout "default"
   #  before_filter :member_only

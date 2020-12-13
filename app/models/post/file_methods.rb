@@ -1,5 +1,3 @@
-require "download"
-
 # These are methods dealing with getting the image and generating the thumbnail.
 # It works in conjunction with the image_store methods. Since these methods have
 # to be called in a specific order, they've been bundled into one module.

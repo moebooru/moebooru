@@ -1,5 +1,3 @@
-require "mirror"
-require "erb"
 include ERB::Util
 
 class Pool < ApplicationRecord

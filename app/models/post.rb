@@ -21,6 +21,8 @@ class Post < ApplicationRecord
   scope :has_all_tags, lambda { |tags| where("posts.tags_array @> ARRAY[?]::varchar[]", Array(tags)) }
   scope :flagged, lambda { where "status = ?", "flagged" }
 
+  validates_length_of :source, maximum: 1000
+
   def self.slow_has_all_tags(tags)
     p = Post.scoped
     t_ids = Tag.where(:name => tags).pluck(:id)

@@ -3,7 +3,7 @@
 
 # You MUST configure these settings for your own server!
 CONFIG["app_name"] = "DAN_SITENAME"
-CONFIG["server_host"] = "DAN_HOSTNAME"
+CONFIG["server_host"] = "localhost"
 CONFIG["admin_contact"] = "webmaster@" + CONFIG["server_host"]
 
 # Generate with `bundle exec rake secret`

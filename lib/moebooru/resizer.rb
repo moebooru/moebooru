@@ -52,6 +52,7 @@ module Moebooru
         convert.crop write_crop
         convert.resize write_size
         convert.repage.+
+        convert.interlace 'Line'
 
         if write_format =~ /\Ajpe?g\z/
           convert.sampling_factor "2x2,1x1,1x1"

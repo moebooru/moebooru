@@ -82,16 +82,6 @@ class ApplicationController < ActionController::Base
       @current_user.log(request.remote_ip) unless @current_user.is_anonymous?
     end
 
-    def set_country
-      @current_user_country = Rails.cache.fetch({ :type => :geoip, :ip => request.remote_ip }, :expires_in => 1.month) do
-        begin
-          GeoIP.new(Rails.root.join("db", "GeoIP.dat").to_s).country(request.remote_ip).country_code2
-        rescue
-          "--"
-        end
-      end
-    end
-
     CONFIG["user_levels"].each do |name, _value|
       normalized_name = name.downcase.gsub(/ /, "_")
 
@@ -190,7 +180,6 @@ class ApplicationController < ActionController::Base
   before_action :set_current_user
   before_action :mini_profiler_check if Rails.env.development?
   before_action :limit_api
-  before_action :set_country
   before_action :check_ip_ban
   after_action :init_cookies
 
@@ -260,8 +249,6 @@ class ApplicationController < ActionController::Base
                                          else
                                            @current_user.last_forum_topic_read_at || Time.at(0)
                                          end.to_json
-
-    cookies["country"] = @current_user_country
 
     if @current_user.is_anonymous?
       cookies.delete :user_info

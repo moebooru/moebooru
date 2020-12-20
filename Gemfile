@@ -17,7 +17,6 @@ gem "diff-lcs", require: ['diff-lcs', 'diff/lcs/array']
 gem "dalli"
 gem "connection_pool"
 gem "acts_as_versioned_rails3"
-gem "geoip"
 gem "exception_notification"
 gem "will_paginate"
 gem "will-paginate-i18n"

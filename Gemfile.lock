@@ -88,7 +88,6 @@ GEM
     ffi (1.13.1)
     ffi (1.13.1-java)
     ffi (1.13.1-x86-mingw32)
-    geoip (1.6.4)
     get_process_mem (0.2.7)
       ffi (~> 1.0)
     globalid (0.4.2)
@@ -246,7 +245,6 @@ DEPENDENCIES
   dalli
   diff-lcs
   exception_notification
-  geoip
   i18n-js (>= 3.0.0.rc7)
   image_size
   jbuilder (~> 2.5)

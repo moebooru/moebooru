@@ -96,7 +96,6 @@ GEM
       concurrent-ruby (~> 1.0)
     i18n-js (3.7.1)
       i18n (>= 0.6.6)
-    image_size (2.1.0)
     jbuilder (2.10.0)
       activesupport (>= 5.0.0)
     jdbc-postgres (42.2.14)
@@ -246,7 +245,6 @@ DEPENDENCIES
   diff-lcs
   exception_notification
   i18n-js (>= 3.0.0.rc7)
-  image_size
   jbuilder (~> 2.5)
   mini_magick
   mini_mime

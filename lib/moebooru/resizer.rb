@@ -49,6 +49,7 @@ module Moebooru
         convert << input_path
         convert.background BGCOLOR
         convert.flatten
+        convert.auto_orient
         convert.crop write_crop
         convert.resize write_size
         convert.repage.+

@@ -27,7 +27,6 @@ gem "nokogiri"
 gem "rails-i18n"
 gem "addressable", :require => "addressable/uri"
 gem "mini_magick"
-gem "image_size"
 gem "i18n-js", ">= 3.0.0.rc7"
 gem "mini_mime"
 

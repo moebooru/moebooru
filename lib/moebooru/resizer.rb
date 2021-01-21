@@ -11,9 +11,9 @@ module Moebooru
                         "sRGB" : "RGB"
 
     def resize(file_ext, input_path, output_path, output_size, output_quality)
-      input_image = MiniMagick::Image.new(input_path)
+      input_image = Moebooru::ImageSizeExif.path(input_path)
 
-      colorspace = input_image["%[colorspace]"]
+      colorspace = input_image[:colorspace]
 
       if output_size[:width] && output_size[:height].nil?
         output_size[:height] = input_image[:height] * output_size[:width] / input_image[:width]

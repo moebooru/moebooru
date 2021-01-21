@@ -245,10 +245,10 @@ module Post::FileMethods
       return false
     end
 
-    imgsize = ImageSize.path(tempfile_path)
+    imgsize = Moebooru::ImageSizeExif.path(tempfile_path)
 
-    unless imgsize.format.nil?
-      self.file_ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
+    if imgsize[:type]
+      self.file_ext = imgsize[:type].to_s.gsub(/jpeg/i, "jpg").downcase
     end
   end
 
@@ -270,9 +270,9 @@ module Post::FileMethods
 
   def set_image_dimensions
     if image? || flash?
-      imgsize = ImageSize.path(tempfile_path)
-      self.width = imgsize.width
-      self.height = imgsize.height
+      imgsize = Moebooru::ImageSizeExif.path(tempfile_path)
+      self.width = imgsize[:width]
+      self.height = imgsize[:height]
     end
     self.file_size = File.size(tempfile_path) rescue 0
   end

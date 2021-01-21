@@ -110,10 +110,10 @@ class InlineImage < ApplicationRecord
       return false
     end
 
-    imgsize = ImageSize.path(tempfile_image_path)
+    imgsize = Moebooru::ImageSizeExif.path(tempfile_image_path)
 
-    unless imgsize.format.nil?
-      self.file_ext = imgsize.format.to_s.gsub(/jpeg/i, "jpg").downcase
+    if imgsize[:type]
+      self.file_ext = imgsize[:type].gsub(/jpeg/i, "jpg").downcase
     end
 
     unless %w(jpg png gif).include?(file_ext.downcase)
@@ -126,9 +126,9 @@ class InlineImage < ApplicationRecord
 
   def set_image_dimensions
     return true if width && height
-    imgsize = ImageSize.path(tempfile_image_path)
-    self.width = imgsize.width
-    self.height = imgsize.height
+    imgsize = Moebooru::ImageSizeExif.path(tempfile_image_path)
+    self.width = imgsize[:width]
+    self.height = imgsize[:height]
 
     true
   end

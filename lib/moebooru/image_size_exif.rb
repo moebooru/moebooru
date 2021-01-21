@@ -6,6 +6,7 @@ module Moebooru
     def self.path(file_path)
       image = MiniMagick::Image.new(file_path)
       ret = {
+        colorspace: image['%[colorspace]'],
         height: image.height,
         width: image.width,
         type: image.type

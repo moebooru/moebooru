@@ -4,7 +4,7 @@ module Moebooru
   # Get image size and format. It'll return oriented image size if applicable.
   module ImageSizeExif
     def self.data(stream)
-      self.parse MiniMagick::Image.read(stream)
+      parse MiniMagick::Image.read(stream)
     end
 
     def self.parse(image)
@@ -23,7 +23,7 @@ module Moebooru
     end
 
     def self.path(file_path)
-      self.parse MiniMagick::Image.new(file_path)
+      parse MiniMagick::Image.new(file_path)
     end
   end
 end

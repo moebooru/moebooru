@@ -3,8 +3,11 @@
 module Moebooru
   # Get image size and format. It'll return oriented image size if applicable.
   module ImageSizeExif
-    def self.path(file_path)
-      image = MiniMagick::Image.new(file_path)
+    def self.data(stream)
+      self.parse MiniMagick::Image.read(stream)
+    end
+
+    def self.parse(image)
       ret = {
         colorspace: image['%[colorspace]'],
         height: image.height,
@@ -17,6 +20,10 @@ module Moebooru
       ret
     rescue MiniMagick::Error
       {}
+    end
+
+    def self.path(file_path)
+      self.parse MiniMagick::Image.new(file_path)
     end
   end
 end

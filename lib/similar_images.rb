@@ -193,7 +193,7 @@ module SimilarImages
         post.url = ""
       end
 
-      imgsize = Moebooru::ImageSizeExif.new(source_file)
+      imgsize = Moebooru::ImageSizeExif.path(source_file)
       source_width = imgsize[:width]
       source_height = imgsize[:height]
 

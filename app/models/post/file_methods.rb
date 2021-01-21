@@ -248,7 +248,7 @@ module Post::FileMethods
     imgsize = Moebooru::ImageSizeExif.path(tempfile_path)
 
     if imgsize[:type]
-      self.file_ext = imgsize[:type].to_s.gsub(/jpeg/i, "jpg").downcase
+      self.file_ext = imgsize[:type].gsub(/jpeg/i, "jpg").downcase
     end
   end
 

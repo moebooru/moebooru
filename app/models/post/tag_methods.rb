@@ -52,7 +52,7 @@ module Post::TagMethods
     m.before_save :commit_metatags
     m.after_save :commit_tags
     m.after_save :save_post_history
-    m.has_many :tag_history, lambda { order "id DESC" }, :class_name => "PostTagHistory", :table_name => "post_tag_histories"
+    m.has_many :tag_history, lambda { order "id DESC" }, :class_name => "PostTagHistory"
     m.versioned :source, :default => ""
     m.versioned :cached_tags
   end

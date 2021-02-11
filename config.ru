@@ -5,14 +5,16 @@ if defined? Unicorn
   use Unicorn::WorkerKiller::Oom, (384*(1024**2)), (512*(1024**2))
 end
 
-require ::File.expand_path("../config/environment",  __FILE__)
+require_relative "config/environment"
 # Passenger hates map. And only it, AFAICT.
 if defined? PhusionPassenger
-  run Moebooru::Application
+  run Rails.application
+  Rails.application.load_server
 else
   ENV["RAILS_RELATIVE_URL_ROOT"] ||= "/"
 
   map ENV["RAILS_RELATIVE_URL_ROOT"] do
-    run Moebooru::Application
+    run Rails.application
+    Rails.application.load_server
   end
 end

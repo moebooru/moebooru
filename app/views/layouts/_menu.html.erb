@@ -205,6 +205,6 @@
 
 <% cache "forum_posts_latest", :skip_digest => true do %>
   <script id="forum-posts-latest" type="application/json">
-      <%= json_escape render("layouts/menu_forum_listing.json").html_safe %>
+      <%= json_escape render(partial: "layouts/menu_forum_listing", formats: :json).html_safe %>
   </script>
 <% end %>

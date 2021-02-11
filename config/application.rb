@@ -12,7 +12,7 @@ Bundler.require(*CONFIG['bundler_groups'])
 
 module Moebooru
   class Application < Rails::Application
-    config.load_defaults 6.0
+    config.load_defaults 6.1
     config.active_record.belongs_to_required_by_default = false
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
@@ -23,7 +23,7 @@ module Moebooru
     # config.autoload_paths += %W(#{config.root}/extras)
 
     # Also load files in lib/ in addition to app/.
-    config.eager_load_paths += ["#{config.root}/lib"]
+    config.eager_load_paths << Rails.root.join('lib')
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -44,7 +44,7 @@ module Moebooru
     config.active_record.schema_format = :sql
 
     if CONFIG["memcache_servers"]
-      config.cache_store = :dalli_store, CONFIG["memcache_servers"], {
+      config.cache_store = :mem_cache_store, CONFIG["memcache_servers"], {
         :namespace => CONFIG["app_name"],
         :pool_size => CONFIG["threads"],
         :value_max_bytes => 2_000_000

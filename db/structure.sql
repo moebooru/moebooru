@@ -1234,18 +1234,6 @@ ALTER SEQUENCE public.post_votes_id_seq OWNED BY public.post_votes.id;
 
 
 --
--- Name: posts_id_seq2; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.posts_id_seq2
-    START WITH 7168
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
 -- Name: posts_tags; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3408,6 +3396,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191110172526'),
 ('20200908180652'),
 ('20201103140508'),
+('20210211213304'),
 ('21'),
 ('22'),
 ('23'),

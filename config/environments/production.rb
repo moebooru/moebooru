@@ -101,7 +101,7 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :sendmail
 
   config.middleware.use ExceptionNotification::Rack,
-                        :ignore_exceptions => %w(ActionController::BadRequest ActionController::ParameterMissing) + ExceptionNotifier.ignored_exceptions,
+                        :ignore_exceptions => %w(ActionController::BadRequest ActionController::ParameterMissing ActionController::InvalidAuthenticityToken) + ExceptionNotifier.ignored_exceptions,
                         :email => {
                           :email_prefix => "[#{CONFIG["app_name"]}] ",
                           :sender_address => "notifier <#{CONFIG["email_from"]}>",

@@ -153,11 +153,9 @@ class Post < ApplicationRecord
   end
 
   def voted_by
-    # FIXME: shouldn't include user_blacklist_tags at all (used by API return).
     @voted_by ||=
       User.select(:name, :id, "post_votes.score AS vote_score")
         .joins(:post_votes)
-        .includes(:user_blacklisted_tags)
         .where(:post_votes => { :post_id => id })
         .order("post_votes.updated_at DESC")
         .group_by(&:vote_score)

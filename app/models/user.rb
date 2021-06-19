@@ -179,16 +179,12 @@ class User < ApplicationRecord
       options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.post(:name => name, :id => id) do
-        blacklisted_tags_array.each do |t|
-          xml.blacklisted_tag(:tag => t)
-        end
-
         yield options[:builder] if block_given?
       end
     end
 
     def as_json(*args)
-      { :name => name, :blacklisted_tags => blacklisted_tags_array, :id => id }.as_json(*args)
+      { :name => name, :id => id }.as_json(*args)
     end
 
     def user_info_cookie

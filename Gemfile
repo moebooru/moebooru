@@ -27,7 +27,7 @@ gem "nokogiri"
 gem "rails-i18n"
 gem "addressable", :require => "addressable/uri"
 gem "mini_magick"
-gem "i18n-js", ">= 3.0.0.rc7"
+gem "i18n-js", "~> 3.0.0"
 gem "mini_mime"
 
 group :standalone do

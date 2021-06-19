@@ -10,7 +10,9 @@
     "jquery-ui-dist": "^1.12.1",
     "js-cookie": "^2.2.1",
     "mousetrap": "^1.6.5",
-    "timeago": "^1.6.7"
+    "timeago": "^1.6.7",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.11.2"

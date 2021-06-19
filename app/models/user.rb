@@ -661,7 +661,7 @@ class User < ApplicationRecord
   def self.with_params(params)
     res = all
 
-    res = res.where("name ILIKE ?", "*#{params[:name].tr(" ", "_")}*".to_escaped_for_sql_like) if params[:name]
+    res = res.where("name ILIKE ?", "*#{params[:name].tr(" ", "_")}*".to_escaped_for_sql_like) if params[:name].is_a?(String) && params[:name].present?
     res = res.where(:level => params[:level]) if params[:level] && params[:level] != "any"
     res = res.where(:id => params[:id]) if params[:id]
 

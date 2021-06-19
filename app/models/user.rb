@@ -178,7 +178,7 @@ class User < ApplicationRecord
     def to_xml(options = {})
       options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.post(:name => name, :id => id) do
+      xml.user(:name => name, :id => id) do
         yield options[:builder] if block_given?
       end
     end

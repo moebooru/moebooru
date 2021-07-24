@@ -311,10 +311,6 @@ span.unread-topic {
   font-weight: bold;
 }
 
-span.stars .star {
-	font-family: "Zapf Dingbats", "Apple Symbols", sans-serif;	/* on OS X 10.4, different fonts are used as fallbacks for the full and empty star characters, so let's make sure we use a font that has them at the same size */
-}
-
 span.vote-desc {
 	color: #888;
 	margin-left: 0.5em;

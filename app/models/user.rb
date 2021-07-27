@@ -17,9 +17,9 @@ class User < ApplicationRecord
         UserLog.where("created_at < ?", 3.days.ago).delete_all
       end
       begin
-        log_entry = user_logs.find_or_initialize_by(:ip_addr => ip)
-        log_entry.created_at = Time.now
-        log_entry.save
+        current_time = Time.now
+        user_logs.find_or_initialize_by(ip_addr: ip).update created_at: current_time
+        update_column :last_logged_in_at, current_time
       # Once in a blue moon there will be race condition on find_or_initialize
       # resulting unique key constraint violation.
       # It doesn't really affect anything so just ignore that error.

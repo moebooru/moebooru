@@ -46,10 +46,6 @@ class ApplicationController < ActionController::Base
         @current_user = User.find_by_id(session[:user_id])
       end
 
-      if @current_user.nil? && cookies[:login] && cookies[:pass_hash]
-        @current_user = User.authenticate_hash(cookies[:login], cookies[:pass_hash])
-      end
-
       if @current_user.nil? && params[:login] && params[:password_hash]
         @current_user = User.authenticate_hash(params[:login], params[:password_hash])
       end

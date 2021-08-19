@@ -14,7 +14,7 @@ class User < ApplicationRecord
   def log(ip)
     Rails.cache.fetch({ :type => :user_logs, :id => id, :ip => ip }, :expires_in => 10.minutes) do
       Rails.cache.fetch({ :type => :user_logs, :id => :all }, :expires_in => 1.day) do
-        UserLog.where("created_at < ?", 3.days.ago).delete_all
+        UserLog.where("created_at < ?", 15.days.ago).delete_all
       end
       begin
         current_time = Time.now

@@ -141,6 +141,8 @@ class UserController < ApplicationController
     end
 
     save_cookies(user)
+    ret[:pass_hash] = user.password_hash
+    ret[:user_info] = user.user_info_cookie
     respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
   end
 

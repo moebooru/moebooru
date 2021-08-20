@@ -11,8 +11,6 @@ class UserController < ApplicationController
   protected
 
   def save_cookies(user)
-    cookies[:login] = { :value => user.name, :expires => 1.year.from_now }
-    cookies[:pass_hash] = { :value => user.password_hash, :expires => 1.year.from_now, :httponly => true }
     session[:user_id] = user.id
   end
 
@@ -142,8 +140,7 @@ class UserController < ApplicationController
         return
       end
 
-      ret[:pass_hash] = user.password_hash
-      ret[:user_info] = user.user_info_cookie
+      save_cookies(user)
       respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
     else
       redirect_to root_path

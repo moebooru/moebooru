@@ -47,11 +47,6 @@ window.User =
         return
 )
     return
-  set_login: (username, pass_hash, user_info) ->
-    Cookie.put 'login', username
-    Cookie.put 'pass_hash', pass_hash
-    Cookie.put 'user_info', user_info
-    return
   check_name_timer: null
   last_username_in_form: null
   success_func: null
@@ -407,7 +402,6 @@ window.User =
           # create account
           User.create username, password, null, (resp) ->
             if resp.response == 'success'
-              User.set_login resp.name, resp.pass_hash, resp.user_info
               User.close true
             else if resp.response == 'error'
               User.message resp.errors.join('<br>')
@@ -418,14 +412,9 @@ window.User =
           User.set_state 'login-confirm-password'
           return
 
-        ### We've authenticated successfully.  Our hash is in password_hash; insert the
-        # login cookies manually. 
-        ###
-
         if resp.response == 'wrong-password'
           notice 'Incorrect password'
           return
-        User.set_login resp.name, resp.pass_hash, resp.user_info
         User.close true
         return
     else if User.active_tab == 'tab-reset'

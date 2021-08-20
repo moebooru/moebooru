@@ -116,35 +116,32 @@ class UserController < ApplicationController
     respond_to_success("You are now logged in", path)
   end
 
+  # TODO: merge with .authenticate
   def check
-    if request.post?
-      user = User.find_by_name(params[:username])
-      ret = { :exists => false }
-      ret[:name] = params[:username]
+    user = User.find_by_name(params[:username])
+    ret = { :exists => false }
+    ret[:name] = params[:username]
 
-      unless user
-        respond_to_success("User does not exist", {}, :api => { :response => "unknown-user" }.merge(ret))
-        return
-      end
-
-      # Return some basic information about the user even if the password isn't given, for
-      # UI cosmetics.
-      ret[:exists] = true
-      ret[:id] = user.id
-      ret[:name] = user.name
-      ret[:no_email] = user.email.blank?
-
-      user = User.authenticate(params[:username], params[:password] || "")
-      unless user
-        respond_to_success("Wrong password", {}, :api => { :response => "wrong-password" }.merge(ret))
-        return
-      end
-
-      save_cookies(user)
-      respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
-    else
-      redirect_to root_path
+    unless user
+      respond_to_success("User does not exist", {}, :api => { :response => "unknown-user" }.merge(ret))
+      return
     end
+
+    # Return some basic information about the user even if the password isn't given, for
+    # UI cosmetics.
+    ret[:exists] = true
+    ret[:id] = user.id
+    ret[:name] = user.name
+    ret[:no_email] = user.email.blank?
+
+    user = User.authenticate(params[:username], params[:password] || "")
+    unless user
+      respond_to_success("Wrong password", {}, :api => { :response => "wrong-password" }.merge(ret))
+      return
+    end
+
+    save_cookies(user)
+    respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
   end
 
   def login

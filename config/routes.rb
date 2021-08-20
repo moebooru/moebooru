@@ -228,7 +228,7 @@ Rails.application.routes.draw do
   match "user/block(/:id)" => "user#block", :via => [:post, :get]
   match "user/change_email", :via => [:post, :get]
   match "user/change_password", :via => [:post, :get]
-  match "user/check", :via => [:post, :get]
+  post "user/check"
   match "user/edit", :via => [:post, :get]
   match "user/error", :via => [:post, :get]
   match "user/home", :via => [:post, :get]

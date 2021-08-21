@@ -205,7 +205,7 @@ window.User =
       event.stop()
     return
   run_login: (only_complete_on_login, complete) ->
-    if Cookie.get('login') != ''
+    if Cookie.get('user_info') != ''
       if !only_complete_on_login
         complete()
       return true

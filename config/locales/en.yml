@@ -1090,7 +1090,6 @@ en:
   static5: "Image Search"
   static50: "Reset Password"
   static51: "Home"
-  static52: "Logout"
   static53: "My Profile"
   static54: "Records"
   static55: "Settings"
@@ -1243,7 +1242,6 @@ en:
       greet_user: 'Hello %{u}!'
       invites: Invites
       login: Login
-      logout: Logout
       moderator_tools: Moderator Tools
       my_favorites: My Favorites
       my_mail: My Mail

@@ -937,7 +937,6 @@ es:
   static5: "Búsqueda de Imágenes"
   static50: "Resetear contraseña"
   static51: "Inicio"
-  static52: "Desconectarse"
   static53: "Mi Perfil"
   static54: "Records"
   static55: "Configuración"
@@ -1079,7 +1078,6 @@ es:
       greet_user: 'Hola %{u}!'
       invites: Invitaciones
       login: Ingresar
-      logout: Desconectarse
       moderator_tools: Herramientas de moderador
       my_favorites: Mis Favoritos
       my_mail: Mi Correo

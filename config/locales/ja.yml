@@ -945,7 +945,6 @@ ja:
   static5: "画像で検索"
   static50: "パスワードをリセット"
   static51: "ホーム"
-  static52: "ログアウト"
   static53: "プロフィール"
   static54: "レコード"
   static55: "設定"
@@ -1081,7 +1080,6 @@ ja:
       change_password: パスワード変更
       invites: 招待
       login: ログイン
-      logout: ログアウト
       moderator_tools: モデレーターツール
       my_favorites: お気に入り
       my_mail: メール

@@ -691,7 +691,6 @@ ru:
   static5: "Поиск Изображений"
   static50: "Сброс Пароля"
   static51: "Главная"
-  static52: "Выйти"
   static53: "Мой Профиль"
   static54: "Записи"
   static55: "Настройки"
@@ -813,7 +812,6 @@ ru:
       greet_user: 'Привет, %{u}!'
       invites: Приглашения
       login: Войти
-      logout: Выйти
       moderator_tools: Инструменты Модератора
       my_favorites: Избранное
       my_mail: Моя Почта

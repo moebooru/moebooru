@@ -1044,7 +1044,6 @@ zh_TW:
   static5: "以圖搜圖"
   static50: "重置密碼"
   static51: "主頁"
-  static52: "登出"
   static53: "個人資料"
   static54: "記錄"
   static55: "設置"
@@ -1186,7 +1185,6 @@ zh_TW:
       greet_user: '你好 %{u}!'
       invites: 邀請
       login: 登入
-      logout: 登出
       moderator_tools: 管理工具
       my_favorites: 我的收藏
       my_mail: 我的郵件

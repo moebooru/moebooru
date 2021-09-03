@@ -1044,7 +1044,6 @@ zh_CN:
   static5: "以图搜图"
   static50: "重置密码"
   static51: "主页"
-  static52: "登出"
   static53: "个人资料"
   static54: "记录"
   static55: "设置"
@@ -1186,7 +1185,6 @@ zh_CN:
       greet_user: '你好 %{u}!'
       invites: 邀请
       login: 登陆
-      logout: 登出
       moderator_tools: 管理工具
       my_favorites: 我的收藏
       my_mail: 我的邮件

@@ -553,7 +553,6 @@ de:
   static46: "Quelle"
   static48: "Login"
   static5: "Bildersuche"
-  static52: "Logout"
   static53: "Mein Profil"
   static55: "Einstellungen"
   static57: "Passwort ändern"
@@ -609,7 +608,7 @@ de:
   tag_type: "Typ"
   user:
     edit: {email: E-Mail, update_email: Änderung}
-    home: {change_password: Passwort ändern, login: Login, logout: Logout, my_favorites: Meine Favoriten, my_mail: Meine Nachrichten, my_profile: Mein Profil, settings: Einstellungen, title: Mein
+    home: {change_password: Passwort ändern, login: Login, my_favorites: Meine Favoriten, my_mail: Meine Nachrichten, my_profile: Mein Profil, settings: Einstellungen, title: Mein
         Konto}
     login: {title: Login}
     logout: {title: Logout}

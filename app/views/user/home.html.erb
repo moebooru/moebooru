@@ -18,7 +18,7 @@
 
     <div class="section">
       <ul class="link-page">
-        <li><%= link_to t('.logout'), :action => :logout %></li>
+        <li><%= link_to t('layouts.menu.account.logout'), logout_path, remote: true, method: :delete %></li>
         <li><%= link_to t('.my_profile'), :action => :show, :id => @current_user.id %></li>
         <li><%= link_to t('.my_mail'), :controller => :dmail, :action => :inbox %></li>
         <li><%= link_to t('.my_favorites'), :controller => :post, :action => :index, :tags => "vote:3:#{@current_user.name} order:vote" %></li>

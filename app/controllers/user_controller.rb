@@ -174,13 +174,13 @@ class UserController < ApplicationController
   end
 
   def logout
-    session[:user_id] = nil
-    cookies[:login] = nil
-    cookies[:pass_hash] = nil
+    reset_session
 
-    dest = { :action => "home" }
-    dest = params[:from] if params[:from]
-    respond_to_success("You are now logged out", dest)
+    flash[:notice] = 'You are now logged out'
+
+    respond_to do |format|
+      format.js
+    end
   end
 
   def update

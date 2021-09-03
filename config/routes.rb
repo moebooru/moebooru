@@ -234,7 +234,6 @@ Rails.application.routes.draw do
   match "user/home", :via => [:post, :get]
   match "user/invites", :via => [:post, :get]
   match "user/login", :via => [:post, :get]
-  match "user/logout", :via => [:post, :get]
   match "user/remove_from_blacklist", :via => [:post, :get]
   match "user/resend_confirmation", :via => [:post, :get]
   match "user/reset_password", :via => [:post, :get]
@@ -248,6 +247,9 @@ Rails.application.routes.draw do
   match "user/update", :via => [:post, :put, :patch]
   post "user/create"
   post "user/remove_avatar/:id" => "user#remove_avatar"
+
+  # Session, but in user for now
+  delete 'session', to: 'user#logout', as: :logout
 
   # UserRecord
   match "user_record" => "user_record#index", :via => [:post, :get]

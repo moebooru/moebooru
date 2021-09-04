@@ -1,1 +1,1 @@
-Rack::MiniProfiler.config.authorization_mode = :whitelist if Rails.env.development?
+Rack::MiniProfiler.config.authorization_mode = :allow_authorized if Rails.env.development?

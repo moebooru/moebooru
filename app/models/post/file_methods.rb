@@ -175,7 +175,7 @@ module Post::FileMethods
       FileUtils.chmod(0775, dest_path)
     end
 
-    true
+    save
   end
 
   def generate_preview

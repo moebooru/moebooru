@@ -527,7 +527,7 @@ module Post::FileMethods
     self.jpeg_size = File.size(tempfile_jpeg_path)
     self.jpeg_crc32 = Moebooru::Hasher.compute_one(tempfile_jpeg_path, :crc32)
 
-    true
+    save
   end
 
   def has_jpeg?

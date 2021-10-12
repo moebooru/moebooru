@@ -1,0 +1,44 @@
+name: Tests
+on: [push, pull_request]
+
+env:
+  RAILS_ENV: test
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      memcached:
+        image: memcached:alpine
+        ports: ['11211:11211']
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v1
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+
+    - name: Setup environment
+      run: ./script/gh-action-prepare
+
+    - name: Build assets
+      run: bundle exec rails assets:precompile
+
+    - name: Run test
+      run: bundle exec rails test

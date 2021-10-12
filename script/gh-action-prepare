@@ -5,8 +5,10 @@ mkdir -p public/data
 cat <<EOF > config/database.yml
 test:
   adapter: postgresql
+  host: '127.0.0.1'
   port: 5432
   username: postgres
+  password: postgres
   database: moebooru_test
 EOF
 

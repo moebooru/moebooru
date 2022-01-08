@@ -5,7 +5,7 @@ local_cache [@posts.map(&:id), params[:verbose]], expires: 1.hour do
     @posts.each do |post|
       post_url = url_for :controller => :post, :action => :show, :id => post.id, :only_path => false
       post_preview_url = URI.join root_url(:only_path => false), post.preview_url
-      feed.entry post, :url => post_url, :updated => post.created_at do |entry|
+      feed.entry post, :url => post_url, :updated => post.updated_at do |entry|
         entry.link :href => post_preview_url, :rel => 'enclosure'
         entry.title '%s [%s]' % [post.cached_tags, "#{post.width}x#{post.height}"]
         entry.summary post.cached_tags

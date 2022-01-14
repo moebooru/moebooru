@@ -6,8 +6,6 @@ ENV['NODE_ENV'] = ENV['RAILS_ENV']
 
 require 'rails/all'
 
-require_relative '../lib/acts_as_versioned_rails3'
-
 require_relative 'init_config'
 
 Bundler.require(*CONFIG['bundler_groups'])

@@ -324,7 +324,7 @@ class PostController < ApplicationController
 
     @showing_holds_only = q.key?(:show_holds) && q[:show_holds] == :only
     results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
-    ActiveRecord::Associations::Preloader.new.preload(results, :user)
+    ActiveRecord::Associations::Preloader.new(records: results, associations: :user).call
 
     @preload = []
     unless from_api

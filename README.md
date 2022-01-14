@@ -12,10 +12,10 @@ Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application is developed using:
 
-* Ruby (2.6 or later)
-* PostgreSQL (11 or later)
+* Ruby (3.1 or later)
+* PostgreSQL (14 or later)
 * Bundler gem
-* node.js (10.17 or later)
+* node.js (14.0 or later)
 * yarn
 * ImageMagick
 * And various other requirement for the gems (check `Gemfile` for the list)

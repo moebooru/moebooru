@@ -1,7 +1,3 @@
-require "history_change"
-require "history"
-require "set"
-
 module ActiveRecord
   module Versioning
     def self.included(base)

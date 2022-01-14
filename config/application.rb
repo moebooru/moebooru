@@ -6,13 +6,15 @@ ENV['NODE_ENV'] = ENV['RAILS_ENV']
 
 require 'rails/all'
 
+require_relative '../lib/acts_as_versioned_rails3'
+
 require_relative 'init_config'
 
 Bundler.require(*CONFIG['bundler_groups'])
 
 module Moebooru
   class Application < Rails::Application
-    config.load_defaults 6.1
+    config.load_defaults 7.0
     config.active_record.belongs_to_required_by_default = false
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 6.1.0"
+gem "rails", "~> 7.0.1"
 
 gem "webpacker"
 gem "coffee-rails"
@@ -16,7 +16,6 @@ gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.0", :platforms => :jruby
 gem "diff-lcs", require: ['diff-lcs', 'diff/lcs/array']
 gem "dalli"
 gem "connection_pool"
-gem "acts_as_versioned_rails3"
 gem "exception_notification"
 gem "will_paginate"
 gem "will-paginate-i18n"
@@ -35,7 +34,7 @@ group :standalone do
     gem "unicorn", :require => false
     gem "unicorn-worker-killer", :require => false
   end
-  gem "puma", :platforms => [:jruby, :rbx, :mswin], :require => false
+  gem "puma"
 end
 
 group :test do

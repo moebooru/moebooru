@@ -467,7 +467,7 @@ DragElement::touchmove_event = (event) ->
   ###
 
   if !window.navigator.standalone and touch.pageY > window.innerHeight - 10
-    debug 'Dragged off the bottom'
+    console.debug 'Dragged off the bottom'
     @stop_dragging event, true
     return
   x = touch.pageX

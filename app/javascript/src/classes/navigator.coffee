@@ -26,7 +26,7 @@ export default class Navigator
   mouseover_event: (e) =>
     return if e.relatedTarget?.isParentNode(@container)
 
-    debug "over #{e.target.className}, #{@container.className}, #{e.target.isParentNode(@container)}"
+    console.debug "over #{e.target.className}, #{@container.className}, #{e.target.isParentNode(@container)}"
     @hovering = true
     @update_visibility()
 
@@ -34,7 +34,7 @@ export default class Navigator
   mouseout_event: (e) =>
     return if e.relatedTarget?.isParentNode(@container)
 
-    debug "out #{e.target.className}"
+    console.debug "out #{e.target.className}"
     @hovering = false
     @update_visibility()
 

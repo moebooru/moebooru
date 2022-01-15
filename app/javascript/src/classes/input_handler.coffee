@@ -34,7 +34,7 @@ export default class InputHandler
     if target.tagName == 'INPUT' or target.tagName == 'TEXTAREA'
       return false
     if key == 63
-      debug 'xxx'
+      console.debug 'help key'
       document.fire 'viewer:show-help'
       return true
     if e.shiftKey or e.altKey or e.ctrlKey or e.metaKey

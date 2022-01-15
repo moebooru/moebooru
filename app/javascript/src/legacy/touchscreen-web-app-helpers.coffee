@@ -151,7 +151,7 @@ ResponsiveSingleClick::touchstart_event = (event) ->
   ###
 
   if @last_touch?
-    debug 'Cancelling click (multitouch)'
+    console.debug 'Cancelling click (multitouch)'
     @last_touch = null
     return
 
@@ -279,7 +279,7 @@ window.SendMissingResizeEvents = ->
     if last_seen_orientation == window.orientation
       return
     last_seen_orientation = window.orientation
-    debug 'dispatch fake resize event'
+    console.debug 'dispatch fake resize event'
     e = document.createEvent('Event')
     e.initEvent 'resize', true, true
     document.documentElement.dispatchEvent e

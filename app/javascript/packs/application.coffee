@@ -13,7 +13,6 @@ import 'src/post'
 import 'src/vote'
 
 import 'src/legacy/common'
-import 'src/legacy/debug-window'
 import 'src/legacy/post'
 import 'src/legacy/post-frame-editor'
 import 'src/legacy/post-upload-form'

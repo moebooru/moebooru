@@ -304,7 +304,7 @@ export default class BrowserView
       onup: (drag) =>
         # If we're cancelling the drag, don't activate the vote, if any.
         if drag.cancelling
-          debug 'cancelling drag'
+          console.debug 'cancelling drag'
           last_dragged_over = null
 
         # Call even if star_container is null or not a star, so we clear any mouseover.
@@ -409,7 +409,7 @@ export default class BrowserView
 
 
   load_post_id_data: (post_id) ->
-    debug 'load needed'
+    console.debug 'load needed'
     # If we already have a request in flight, don't start another; wait for the
     # first to finish.
     return if @current_ajax_request?
@@ -926,9 +926,9 @@ export default class BrowserView
             source = m[2]
         return
       ).bind(this)
-      debug 'rating: ' + rating
-      debug 'source: ' + source
-      debug 'parent: ' + parent_id
+      console.debug 'rating: ' + rating
+      console.debug 'source: ' + source
+      console.debug 'parent: ' + parent_id
     return
 
   edit_save: ->
@@ -1022,7 +1022,7 @@ export default class BrowserView
     original_height = img_box.original_height
     post = Post.posts.get(@displayed_post_id)
     if !post
-      debug 'unexpected: displayed post ' + @displayed_post_id + ' unknown'
+      console.debug 'unexpected: displayed post ' + @displayed_post_id + ' unknown'
       return
     window_size = @image_window_size
     ratio = 1.0
@@ -1097,7 +1097,7 @@ export default class BrowserView
   ###
   update_canvas: ->
     if !@img.fully_loaded
-      debug "image incomplete; can't render to canvas"
+      console.debug "image incomplete; can't render to canvas"
       return false
     if !@canvas
       return

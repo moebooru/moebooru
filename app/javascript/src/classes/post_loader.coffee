@@ -50,7 +50,7 @@ export default class PostLoader
 
     # If we have an existing preload_container, just add to it and allow any other
     # preloads to continue.
-    debug 'Advance preloading sample image for post ' + post_id
+    console.debug 'Advance preloading sample image for post ' + post_id
     @sample_preload_container = new PreloadContainer
     @sample_preload_container.preload sample_url
     return
@@ -176,7 +176,7 @@ export default class PostLoader
     # If we received fewer results than we requested we're at the end of the results,
     # so don't waste time requesting more.
     if new_post_ids.length < result.post_limit
-      debug 'Received posts fewer than requested (' + new_post_ids.length + ' < ' + result.post_limit + '), clamping'
+      console.debug 'Received posts fewer than requested (' + new_post_ids.length + ' < ' + result.post_limit + '), clamping'
       can_be_extended_further = false
 
     # Now that we have the result, update the URL hash.  Firing loaded-posts may change
@@ -209,7 +209,7 @@ export default class PostLoader
       # We'll receive another hashchange message for setting "tags".  Don't load now or we'll
       # end up loading twice.
       return
-    debug 'PostLoader.load(' + extending + ', ' + disable_cache + ')'
+    console.debug 'PostLoader.load(' + extending + ', ' + disable_cache + ')'
     @preload_sample_image()
     @loaded_extended_results = extending
 
@@ -259,7 +259,7 @@ export default class PostLoader
     if tags == @last_seen_tags
       return
     @last_seen_tags = tags
-    debug 'changed tags'
+    console.debug 'changed tags'
     @load()
     return
 
@@ -267,7 +267,7 @@ export default class PostLoader
     tags = event.memo.tags
     @last_seen_tags = tags
     results_mode = event.memo.results_mode or 'center-on-first'
-    debug 'do search: ' + tags
+    console.debug 'do search: ' + tags
     @load
       tags: tags
       results_mode: results_mode

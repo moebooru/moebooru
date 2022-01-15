@@ -96,17 +96,17 @@ export default class ThumbnailView
       # so these numbers aren't actually real pixels, and this scales based on the DPI
       # and size of the screen rather than the pixel count.
       @config.thumb_scale = scale(width, 320, 640, 0.5, 1.0)
-      debug 'Unclamped thumb scale: ' + @config.thumb_scale
+      console.debug 'Unclamped thumb scale: ' + @config.thumb_scale
 
       # Clamp to [0.5,1.0].
       @config.thumb_scale = Math.min(@config.thumb_scale, 1.0)
       @config.thumb_scale = Math.max(@config.thumb_scale, 0.5)
-      debug 'startup, window size: ' + window.innerWidth + 'x' + window.innerHeight
+      console.debug 'startup, window size: ' + window.innerWidth + 'x' + window.innerHeight
     else
 
       # Unknown device, or not a mobile device.
       @config.thumb_scale = 1.0
-    debug 'Thumb scale: ' + @config.thumb_scale
+    console.debug 'Thumb scale: ' + @config.thumb_scale
     @config_changed()
 
     # Send the initial viewer:thumb-bar-changed event.
@@ -175,7 +175,7 @@ export default class ThumbnailView
           initial_post_id = post.id
           break
         ++i
-      debug 'center-on-' + initial_post_id
+      console.debug 'center-on-' + initial_post_id
 
       # If we didn't find anything that matched, go back to the start.
 
@@ -392,7 +392,7 @@ export default class ThumbnailView
       # It's strange to be on the main post, to hit pgdn, and to end up on the second frame
       # because the nearest match was the first frame.  Instead, we should end up on the first
       # frame.  To do that, just don't add anything to the index.
-      debug 'Snapped the display to the nearest frame'
+      console.debug 'Snapped the display to the nearest frame'
       if add == +1
         add = 0
     new_idx = current_idx
@@ -558,7 +558,7 @@ export default class ThumbnailView
   # Fire viewer:need-more-thumbs if we're scrolling near the edge of the list.
   center_on_post: (post_idx) ->
     if !@post_ids
-      debug 'unexpected: center_on_post has no post_ids'
+      console.debug 'unexpected: center_on_post has no post_ids'
       return
     post_id = @post_ids[post_idx]
     if !Post.posts.get(post_id)?

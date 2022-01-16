@@ -203,8 +203,10 @@
   <% end %>
 </div>
 
-<% cache "forum_posts_latest", :skip_digest => true do %>
-  <script id="forum-posts-latest" type="application/json">
-      <%= json_escape render(partial: "layouts/menu_forum_listing", formats: :json).html_safe %>
-  </script>
-<% end %>
+<script id="forum-posts-latest" type="application/json">
+  <%=
+    Rails.cache.fetch "forum_posts_latest" do
+      json_escape render(partial: "layouts/menu_forum_listing", formats: :json).html_safe
+    end
+  %>
+</script>

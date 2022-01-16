@@ -156,7 +156,7 @@ class ForumPost < ApplicationRecord
 
   def clear_cache
     Rails.cache.delete "forum_posts"
-    Rails.cache.delete "forum_posts_latest"
+    Rails.cache.delete "forum_posts_latest_v2"
   end
 
   def last_updater

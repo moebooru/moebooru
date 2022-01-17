@@ -90,7 +90,7 @@ export default class Menu
 
       return
 
-    @forumMenuItems ?= JSON.parse(document.getElementById("forum-posts-latest").text).forum_posts
+    @forumMenuItems ?= JSON.parse(document.getElementById("forum-posts-latest").text)
 
     last_read = Cookies.getJSON('forum_post_last_read_at')
     forum_menu_items = @forumMenuItems

@@ -204,7 +204,7 @@
 </div>
 
 <script id="forum-posts-latest" type="application/json">
-  <%= Rails.cache.fetch "forum_posts_latest_v2" do
-    json_escape ForumPost.latest.map { |p| p.slice(:id, :pages, :title, :updated_at) }
-  end %>
+  <%= Rails.cache.fetch "forum_posts_latest_v3" do
+    ForumPost.latest.map { |p| p.slice(:id, :pages, :title, :updated_at) }.to_json
+  end.html_safe %>
 </script>

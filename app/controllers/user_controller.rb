@@ -107,11 +107,11 @@ class UserController < ApplicationController
   def authenticate
     save_cookies(@current_user)
 
-    if params[:url].blank?
-      path = { :action => "home" }
-    else
+    if params[:url].is_a?(String) && params[:url][0] == '/'
       path = params[:url]
     end
+
+    path ||= { :action => "home" }
 
     respond_to_success("You are now logged in", path)
   end

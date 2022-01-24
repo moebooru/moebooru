@@ -342,6 +342,7 @@ module Post::SqlMethods
           end
 
         when "random"
+          options[:offset] = nil
           sql << " ORDER BY random()"
 
         else

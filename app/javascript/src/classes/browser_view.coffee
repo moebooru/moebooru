@@ -1,3 +1,4 @@
+import PreloadContainer from 'src/classes/preload_container'
 import ImgPoolHandler from './img_pool_handler'
 import Navigator from './navigator'
 

@@ -1,3 +1,5 @@
+import PreloadContainer from './preload_container'
+
 export default class PostLoader
   constructor: ->
     document.on 'viewer:need-more-thumbs', @need_more_post_data.bindAsEventListener(this)

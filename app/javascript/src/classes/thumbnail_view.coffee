@@ -1,3 +1,5 @@
+import PreloadContainer from './preload_container'
+
 # Handle the thumbnail view, and navigation for the main view.
 #
 # Handle a large number (thousands) of entries cleanly.  Thumbnail nodes are created
@@ -670,22 +672,19 @@ export default class ThumbnailView
       ++i
 
     # Remove any preloaded thumbs that are no longer in the preload list.
-    @thumb_preload_container.get_all().each ((element) ->
+    for element in [...@thumb_preload_container.getAll()]
       post_idx = element.post_idx
-      if post_idxs.indexOf(post_idx) != -1
 
+      if post_idxs.indexOf(post_idx) != -1
         # The post is staying loaded.  Clear the value in post_idxs, so we don't load it
         # again down below.
         post_idxs[post_idx] = null
-        return
+        continue
 
       # The post is no longer being preloaded.  Remove the preload.
-      @thumb_preload_container.cancel_preload element
-      return
-    ).bind(this)
+      @thumb_preload_container.cancelPreload element
 
     # Add new preloads.
-
     i = 0
     while i < post_idxs.length
       post_idx = post_idxs[i]

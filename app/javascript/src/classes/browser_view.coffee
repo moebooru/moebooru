@@ -2,6 +2,8 @@ import PreloadContainer from 'src/classes/preload_container'
 import { removeImageElement } from 'src/utils/image'
 import Navigator from './navigator'
 
+$ = jQuery
+
 ###
 # We have a few competing goals:
 #
@@ -117,7 +119,7 @@ export default class BrowserView
     ###
 
     # Hide member-only and moderator-only controls:
-    jQuery(document.body)
+    $(document.body)
       .toggleClass 'not-member', !User.is_member_or_higher()
       .toggleClass 'not-moderator', !User.is_mod_or_higher()
     tag_span = @container.down('.post-tags')
@@ -238,7 +240,7 @@ export default class BrowserView
       return if !e.memo.post_ids.get(@displayed_post_id)?
       @set_post_info()
 
-    @vote_widget = new Vote(jQuery(@container.down('.vote-container'), null))
+    @vote_widget = new Vote($(@container.down('.vote-container'), null))
     @vote_widget.initShortcut()
     @blacklist_override_post_id = null
 
@@ -279,7 +281,7 @@ export default class BrowserView
     # Create the low-level voting widget.
     popup_vote_widget_container = @container.down('.vote-popup-container')
     popup_vote_widget_container.show()
-    @popup_vote_widget = new Vote(jQuery(popup_vote_widget_container), null)
+    @popup_vote_widget = new Vote($(popup_vote_widget_container), null)
     @popup_vote_widget.initShortcut()
     flash = @container.down('.vote-popup-flash')
 
@@ -415,7 +417,7 @@ export default class BrowserView
     return if @current_ajax_request?
 
     ok = false
-    @current_ajax_request = jQuery.ajax
+    @current_ajax_request = $.ajax
       url: '/post.json'
       method: 'get'
       dataType: 'json'
@@ -481,7 +483,7 @@ export default class BrowserView
     # This also helps us avoid briefly displaying the old image with the new dimensions, which
     # can otherwise take some hoop jumping to prevent.
     ###
-    jQuery(@img).off()
+    $(@img).off()
     @img = removeImageElement @img
 
     # If this post is blacklisted, show a message instead of displaying it.
@@ -504,7 +506,7 @@ export default class BrowserView
     # the image will actually be sent to the containing box directly.
     ###
     @img.setStyle pointerEvents: 'none'
-    jQuery(@img).on 'load', @image_loaded_event
+    $(@img).on 'load', @image_loaded_event
     @img.fully_loaded = false
     if post_frame != -1 && post_frame < post.frames.length
       frame = post.frames[post_frame]
@@ -800,21 +802,18 @@ export default class BrowserView
     tags_by_type.each (t) ->
       tag = t[0]
       type = t[1]
-      span = $(document.createElement('SPAN', ''))
-      span = $(span)
-      span.className = 'tag-type-' + type
-      space = document.createTextNode(' ')
-      span.appendChild space
-      a = jQuery('<a>',
-        text: tag
-        href: '/post/browse#/' + tag
-        class: 'post-tag tag-type-' + type)
 
+      span = document.createElement('span')
+      span.className = "tag-type-#{type}"
+      span.appendChild document.createTextNode(' ')
+
+      a = document.createElement('a')
+      a.href = "/post/browse#/#{tag}"
+      a.className = "post-tag tag-type-#{type}"
+      a.text = tag
       # Break tags with <wbr>, so long tags can be wrapped.
-      a.html a.html().replace(/_/g, '_<wbr>')
+      a.innerHTML = a.innerHTML.replace(/_/g, '_<wbr>')
 
-      # convert back to something Prototype or whatever can understand
-      a = a[0]
       a.tag_name = tag
       span.appendChild a
       tag_span.appendChild span

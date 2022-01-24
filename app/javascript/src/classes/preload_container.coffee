@@ -6,6 +6,7 @@ export default class PreloadContainer
 
 
   cancelPreload: (img) =>
+    img.src = Vars.blankImage
     img.remove()
 
 

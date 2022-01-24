@@ -1,3 +1,7 @@
+import { removeImageElement } from 'src/utils/image'
+
+$ = jQuery
+
 # file must be a Blob object.  Create and return a thumbnail of the image.
 # Perform an image search using post/similar.
 #
@@ -21,9 +25,10 @@ export default class ThumbnailUserImage
     @image = document.createElement('img')
     @onComplete = onComplete
     @url = URL.createObjectURL(@file)
-    @image.on 'load', @image_load_event
-    @image.on 'abort', @image_abort_event
-    @image.on 'error', @image_error_event
+    $(@image)
+      .on 'load', @image_load_event
+      .on 'abort', @image_abort_event
+      .on 'error', @image_error_event
     document.documentElement.addClassName 'progress'
     @image.src = @url
     return
@@ -33,7 +38,8 @@ export default class ThumbnailUserImage
   destroy: ->
     document.documentElement.removeClassName 'progress'
     @onComplete = null
-    @image = null
+    $(@image).off()
+    @image = removeImageElement @image
     if @url?
       URL.revokeObjectURL @url
       @url = null

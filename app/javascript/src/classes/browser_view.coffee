@@ -1,4 +1,5 @@
 import PreloadContainer from 'src/classes/preload_container'
+import { removeImageElement } from 'src/utils/image'
 import Navigator from './navigator'
 
 ###
@@ -480,10 +481,8 @@ export default class BrowserView
     # This also helps us avoid briefly displaying the old image with the new dimensions, which
     # can otherwise take some hoop jumping to prevent.
     ###
-    if @img?
-      # TODO: change to native .remove() once PrototypeJS is removed
-      @img.parentNode.removeChild @img if @img.parentNode
-      @img = null
+    jQuery(@img).off()
+    @img = removeImageElement @img
 
     # If this post is blacklisted, show a message instead of displaying it.
 
@@ -505,7 +504,7 @@ export default class BrowserView
     # the image will actually be sent to the containing box directly.
     ###
     @img.setStyle pointerEvents: 'none'
-    @img.on 'load', @image_loaded_event
+    jQuery(@img).on 'load', @image_loaded_event
     @img.fully_loaded = false
     if post_frame != -1 && post_frame < post.frames.length
       frame = post.frames[post_frame]

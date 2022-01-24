@@ -1,3 +1,5 @@
+import { removeImageElement } from 'src/utils/image'
+
 export default class PreloadContainer
   constructor: ->
     @container = document.createElement('div')
@@ -6,8 +8,7 @@ export default class PreloadContainer
 
 
   cancelPreload: (img) =>
-    img.src = Vars.blankImage
-    img.remove()
+    removeImageElement img
 
 
   destroy: =>

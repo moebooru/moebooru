@@ -1,8 +1,3 @@
-import ImgPoolHandler from './img_pool_handler'
-
-# This is a shared pool to be used by all instances
-image_pool = null
-
 # file must be a Blob object.  Create and return a thumbnail of the image.
 # Perform an image search using post/similar.
 #
@@ -21,11 +16,9 @@ image_pool = null
 #
 export default class ThumbnailUserImage
   constructor: (file, onComplete) ->
-    # Create the shared image pool, if we havn't yet.
-    image_pool ?= new ImgPoolHandler
     @file = file
     @canvas = create_canvas_2d()
-    @image = image_pool.get()
+    @image = document.createElement('img')
     @onComplete = onComplete
     @url = URL.createObjectURL(@file)
     @image.on 'load', @image_load_event
@@ -40,8 +33,6 @@ export default class ThumbnailUserImage
   destroy: ->
     document.documentElement.removeClassName 'progress'
     @onComplete = null
-    @image.stopObserving()
-    image_pool.release @image
     @image = null
     if @url?
       URL.revokeObjectURL @url

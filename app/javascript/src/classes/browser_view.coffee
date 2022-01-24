@@ -1,5 +1,4 @@
 import PreloadContainer from 'src/classes/preload_container'
-import ImgPoolHandler from './img_pool_handler'
 import Navigator from './navigator'
 
 ###
@@ -41,7 +40,6 @@ export default class BrowserView
     @current_ajax_request = null
     @last_preload_request = []
     @last_preload_request_active = false
-    @image_pool = new ImgPoolHandler
     @img_box = @container.down('.image-box')
 
     # In Opera 10.63, the img.complete property is not reset to false after changing the
@@ -483,9 +481,8 @@ export default class BrowserView
     # can otherwise take some hoop jumping to prevent.
     ###
     if @img?
-      @img.stopObserving()
-      @img.parentNode.removeChild @img
-      @image_pool.release @img
+      # TODO: change to native .remove() once PrototypeJS is removed
+      @img.parentNode.removeChild @img if @img.parentNode
       @img = null
 
     # If this post is blacklisted, show a message instead of displaying it.
@@ -494,7 +491,7 @@ export default class BrowserView
     @container.down('.blacklisted-message').show hide_post
     if hide_post
       return
-    @img = @image_pool.get()
+    @img = document.createElement('img')
     @img.className = 'main-image'
     if @canvas
       @canvas.hide()

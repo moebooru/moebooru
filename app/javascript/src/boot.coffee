@@ -5,7 +5,6 @@ import Dmail from './classes/dmail'
 import Favorite from './classes/favorite'
 import History from './classes/history'
 import ImageCrop from './classes/image_crop'
-import ImgPoolHandler from './classes/img_pool_handler'
 import InlineImage from './classes/inline_image'
 import InputHandler from './classes/input_handler'
 import Menu from './classes/menu'
@@ -52,7 +51,6 @@ window.userRecord = new UserRecord
 window.notice = noticeInstance.show
 
 window.BrowserView = BrowserView
-window.ImgPoolHandler = ImgPoolHandler
 window.InputHandler = InputHandler
 window.Note = Note
 window.PostLoader = PostLoader

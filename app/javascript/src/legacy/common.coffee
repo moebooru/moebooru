@@ -1,6 +1,3 @@
-window.scale = (x, l1, h1, l2, h2) ->
-  (x - l1) * (h2 - l2) / (h1 - l1) + l2
-
 window.clamp = (n, min, max) ->
   Math.max Math.min(n, max), min
 

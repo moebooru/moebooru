@@ -97,7 +97,7 @@ export default class ThumbnailView
       # that this width is already scaled by the DPI of the screen due to target-densityDpi,
       # so these numbers aren't actually real pixels, and this scales based on the DPI
       # and size of the screen rather than the pixel count.
-      @config.thumb_scale = scale(width, 320, 640, 0.5, 1.0)
+      @config.thumb_scale = width / 640
       console.debug 'Unclamped thumb scale: ' + @config.thumb_scale
 
       # Clamp to [0.5,1.0].

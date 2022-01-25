@@ -642,6 +642,7 @@ en:
       hidden_posts: Hidden Posts
       info: Posts containing all tags will be hidden. Seperate tags with spaces.
     browse:
+      add: Add frame
       by:
         # Posted / <x> ago / by <user>
         all_html: '%{text} %{ago} %{by}'

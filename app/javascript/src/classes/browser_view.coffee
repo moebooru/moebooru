@@ -1,5 +1,6 @@
 import PreloadContainer from 'src/classes/preload_container'
 import { removeImageElement } from 'src/utils/image'
+import { numberToHumanSize } from 'src/utils/math'
 import Navigator from './navigator'
 
 $ = jQuery
@@ -769,16 +770,16 @@ export default class BrowserView
     @container.down('.download-image').show has_image
     if has_image
       @container.down('.download-image').href = post.file_url
-      @container.down('.download-image-desc').setTextContent number_to_human_size(post.file_size) + ' ' + file_extension(post.file_url.toUpperCase())
+      @container.down('.download-image-desc').setTextContent numberToHumanSize(post.file_size) + ' ' + file_extension(post.file_url.toUpperCase())
     @container.down('.download-jpeg').show has_sample
     if has_sample
       @container.down('.download-jpeg').href = if has_jpeg then post.jpeg_url else post.file_url
-      image_desc = number_to_human_size(if has_jpeg then post.jpeg_file_size else post.file_size) + ' JPG'
+      image_desc = numberToHumanSize(if has_jpeg then post.jpeg_file_size else post.file_size) + ' JPG'
       @container.down('.download-jpeg-desc').setTextContent image_desc
     @container.down('.download-png').show has_jpeg
     if has_jpeg
       @container.down('.download-png').href = post.file_url
-      png_desc = number_to_human_size(post.file_size) + ' ' + file_extension(post.file_url.toUpperCase())
+      png_desc = numberToHumanSize(post.file_size) + ' ' + file_extension(post.file_url.toUpperCase())
       @container.down('.download-png-desc').setTextContent png_desc
 
     # For links that are handled by click events, try to set the href so that copying the

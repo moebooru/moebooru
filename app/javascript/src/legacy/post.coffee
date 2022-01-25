@@ -1,3 +1,5 @@
+import { numberToHumanSize } from 'src/utils/math'
+
 window.Post =
   posts: new Hash
   tag_types: new Hash
@@ -911,7 +913,7 @@ window.Post =
     if post.status == 'flagged'
       hover.down('#hover-flagged-reason').setTextContent post.flag_detail.reason
       hover.down('#hover-flagged-by').setTextContent post.flag_detail.flagged_by
-    hover.down('#hover-file-size').innerHTML = number_to_human_size(post.file_size)
+    hover.down('#hover-file-size').innerHTML = numberToHumanSize(post.file_size)
     hover.down('#hover-author').innerHTML = post.author
     hover.show()
 

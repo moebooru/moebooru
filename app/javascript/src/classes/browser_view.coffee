@@ -1,6 +1,7 @@
 import PreloadContainer from 'src/classes/preload_container'
 import { removeImageElement } from 'src/utils/image'
 import { numberToHumanSize } from 'src/utils/math'
+import FrameEditor from './frame_editor'
 import Navigator from './navigator'
 
 $ = jQuery

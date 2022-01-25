@@ -1,3 +1,6 @@
+export clamp = (n, min, max) ->
+  Math.max Math.min(n, max), min
+
 export numberToHumanSize = (size, precision) ->
   precision ?= 1
   text = undefined

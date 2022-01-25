@@ -1,6 +1,3 @@
-window.clamp = (n, min, max) ->
-  Math.max Math.min(n, max), min
-
 Object.extend Element.Methods,
   showBase: Element.show
   show: (element, visible) ->

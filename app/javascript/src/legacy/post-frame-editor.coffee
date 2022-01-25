@@ -1,3 +1,5 @@
+import { clamp } from 'src/utils/math'
+
 create_drag_box = (div) ->
 
   create_handle = (cursor, style) ->

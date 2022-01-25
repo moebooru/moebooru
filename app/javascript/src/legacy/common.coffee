@@ -1,9 +1,3 @@
-window.DANBOORU_VERSION =
-  major: 6
-  minor: 0
-  build: 0
-
-
 window.number_to_human_size = (size, precision) ->
   if !precision?
     precision = 1

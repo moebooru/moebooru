@@ -14,24 +14,22 @@ window.Post =
     'faults'
   ]
   make_request: (path, params, finished) ->
-    new (Ajax.Request)(path,
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters: params
-      onFailure: (req) ->
-        resp = req.responseJSON
-        notice 'Error: ' + resp.reason
-        return
-      onSuccess: (resp) ->
-        resp = resp.responseJSON
-        Post.register_resp resp
+    jQuery.ajax path,
+      data: params
+      dataType: 'json'
+      method: 'POST'
+    .fail (xhr) =>
+      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
 
-        # Fire posts:update, to allow observers to update their display on change.
-        if resp.posts? && resp.posts.length > 0
-          jQuery(document).trigger 'posts:update', [new Set(resp.posts.map((post) => post.id))]
+    .done (resp) =>
+      Post.register_resp resp
 
-        finished?(resp)
-        return
-)
+      # Fire posts:update, to allow observers to update their display on change.
+      if resp.posts? && resp.posts.length > 0
+        jQuery(document).trigger 'posts:update', [new Set(resp.posts.map((post) => post.id))]
+
+      finished?(resp)
+
   approve: (post_id, delete_reason, finished) ->
     notice 'Approving post #' + post_id
     params = {}

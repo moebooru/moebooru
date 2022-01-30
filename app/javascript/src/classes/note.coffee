@@ -371,9 +371,10 @@ export default class Note
 
 
   save: (e) =>
+    e.preventDefault()
+
     if notesManager.debug
       console.debug 'Note#save (id=%d)', @id
-    note = this
     for p of @fullsize
       @old[p] = @fullsize[p]
     @old.raw_body = $('edit-box-text').value
@@ -383,39 +384,39 @@ export default class Note
     @hideEditBox e
     @bodyHide()
     @bodyfit = false
-    params = 
-      'id': @id
-      'note[x]': @old.left
-      'note[y]': @old.top
-      'note[width]': @old.width
-      'note[height]': @old.height
-      'note[body]': @old.raw_body
+    params =
+      id: @id
+      note:
+        x: @old.left
+        y: @old.top
+        width: @old.width
+        height: @old.height
+        body: @old.raw_body
+
     if @is_new
-      params['note[post_id]'] = notesManager.post_id
+      params.note.post_id = notesManager.post_id
+
     notice 'Saving note...'
-    new (Ajax.Request)('/note/update.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters: params
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        if resp.success
-          notice 'Note saved'
-          note = notesManager.find(resp.old_id)
-          if resp.old_id < 0
-            note.is_new = false
-            note.id = resp.new_id
-            note.elements.box.id = 'note-box-' + note.id
-            note.elements.body.id = 'note-body-' + note.id
-            note.elements.corner.id = 'note-corner-' + note.id
-          note.elements.body.innerHTML = resp.formatted_body
-          note.elements.box.setOpacity 0.5
-          note.elements.box.removeClassName 'unsaved'
-        else
-          notice 'Error: ' + resp.reason
-          note.elements.box.addClassName 'unsaved'
-        return
-)
-    e.stop()
+
+    jQuery.ajax '/note/update.json',
+      data: params
+      dataType: 'json'
+      method: 'POST'
+    .done (resp) =>
+      notice 'Note saved'
+      if resp.old_id < 0
+        @is_new = false
+        @id = resp.new_id
+        @elements.box.id = "note-box-#{@id}"
+        @elements.body.id = "note-body-#{@id}"
+        @elements.corner.id = "note-corner-#{@id}"
+      @elements.body.innerHTML = resp.formatted_body
+      @elements.box.setOpacity 0.5
+      @elements.box.removeClassName 'unsaved'
+    .fail (xhr) =>
+      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
+      @elements.box.addClassName 'unsaved'
+
     return
 
 
@@ -450,31 +451,31 @@ export default class Note
 
 
   remove: (e) =>
+    e.preventDefault()
+
     if notesManager.debug
       console.debug 'Note#remove (id=%d)', @id
     @hideEditBox e
     @bodyHide()
-    this_note = this
+
     if @is_new
       @removeCleanup()
       notice 'Note removed'
     else
       notice 'Removing note...'
-      new (Ajax.Request)('/note/update.json',
-        requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-        parameters:
-          'id': @id
-          'note[is_active]': '0'
-        onComplete: (resp) ->
-          resp = resp.responseJSON
-          if resp.success
-            notice 'Note removed'
-            this_note.removeCleanup()
-          else
-            notice 'Error: ' + resp.reason
-          return
-)
-    e.stop()
+      jQuery.ajax '/note/update.json',
+        data:
+          id: @id
+          note:
+            is_active: 0
+        dataType: 'json'
+        method: 'POST'
+      .done =>
+        notice 'Note removed'
+        @removeCleanup()
+      .fail (xhr) =>
+        notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
+
     return
 
 

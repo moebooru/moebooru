@@ -238,8 +238,8 @@ export default class BrowserView
 
     # When the post that's currently being displayed is updated by an API call, update
     # the displayed info.
-    document.on 'posts:update', (e) =>
-      return if !e.memo.post_ids.get(@displayed_post_id)?
+    $(document).on 'posts:update', (e, postIds) =>
+      return if !postIds.has(@displayed_post_id)?
       @set_post_info()
 
     @vote_widget = new Vote($(@container.down('.vote-container'), null))

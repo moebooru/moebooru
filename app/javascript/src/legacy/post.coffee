@@ -25,18 +25,11 @@ window.Post =
         resp = resp.responseJSON
         Post.register_resp resp
 
-        ### Fire posts:update, to allow observers to update their display on change. ###
+        # Fire posts:update, to allow observers to update their display on change.
+        if resp.posts? && resp.posts.length > 0
+          jQuery(document).trigger 'posts:update', [new Set(resp.posts.map((post) => post.id))]
 
-        post_ids = new Hash
-        i = 0
-        while i < resp.posts.length
-          post_ids.set resp.posts[i].id, true
-          ++i
-        document.fire 'posts:update',
-          resp: resp
-          post_ids: post_ids
-        if finished
-          finished resp
+        finished?(resp)
         return
 )
   approve: (post_id, delete_reason, finished) ->
@@ -189,19 +182,21 @@ window.Post =
         $('held-notice').remove()
       return
     return
-  init_add_to_favs: (post_id, add_to_favs, remove_from_favs) ->
 
-    update_add_to_favs = (e) ->
-      if e? and (!e.memo.post_ids.get(post_id)?)
-        return
-      vote = Post.votes.get(post_id) or 0
-      add_to_favs.show vote < 3
-      remove_from_favs.show vote >= 3
+  init_add_to_favs: (postId, addToFavs, removeFromFavs) ->
+    updateAddToFavs = (e, postIds) ->
+      return if postIds? && !postIds.has(postId)?
+
+      vote = Post.votes.get(postId) || 0
+      addToFavs.show vote < 3
+      removeFromFavs.show vote >= 3
+
       return
 
-    update_add_to_favs()
-    document.on 'posts:update', update_add_to_favs
+    updateAddToFavs()
+    jQuery(document).on 'posts:update', updateAddToFavs
     return
+
   vote: (post_id, score) ->
     if score > 3
       return

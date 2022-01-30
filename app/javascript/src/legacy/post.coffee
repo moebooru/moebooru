@@ -135,23 +135,21 @@ window.Post =
         return
 )
     return
-  activate_posts: (post_ids, finished) ->
-    notice 'Activating ' + post_ids.length + (if post_ids.length == 1 then ' post' else ' posts')
-    params = {}
-    params['post_ids[]'] = post_ids
-    new (Ajax.Request)('/post/activate.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters: params
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        if resp.success
-          if finished
-            finished resp
-        else
-          notice 'Error: ' + resp.reason
-        return
-)
-    return
+
+  activate_posts: (postIds, finished) ->
+    notice "Activating #{postIds.length} #{if postIds.length == 1 then 'post' else 'posts'}"
+
+    jQuery.ajax '/post/activate.json',
+      data:
+        post_ids: postIds
+      dataType: 'json'
+      method: 'POST'
+
+    .done finished
+
+    .fail (xhr) =>
+      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
+
   activate_all_posts: ->
     post_ids = []
     Post.posts.each (pair) ->

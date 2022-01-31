@@ -2,9 +2,9 @@ import PreloadContainer from './preload_container'
 
 export default class PostLoader
   constructor: ->
-    document.on 'viewer:need-more-thumbs', @need_more_post_data.bindAsEventListener(this)
-    document.on 'viewer:perform-search', @perform_search.bindAsEventListener(this)
-    @hashchange_tags = @hashchange_tags.bind(this)
+    @xhr = new Set
+    document.on 'viewer:need-more-thumbs', @need_more_post_data
+    document.on 'viewer:perform-search', @perform_search
     UrlHash.observe 'tags', @hashchange_tags
     @cached_posts = new Hash
     @cached_pools = new Hash
@@ -13,7 +13,7 @@ export default class PostLoader
     @load results_mode: 'center-on-current'
     return
 
-  need_more_post_data: ->
+  need_more_post_data: =>
 
     # We'll receive this message often once we're close to needing more posts.  Only
     # start loading more data the first time.
@@ -58,40 +58,36 @@ export default class PostLoader
     return
 
   server_load_pool: ->
-    if !@result.pool_id?
-      return
+    return if !@result.pool_id?
+
     if !@result.disable_cache
       pool = @cached_pools.get(@result.pool_id)
       if pool
         @result.pool = pool
         @request_finished()
         return
-    new (Ajax.Request)('/pool/show.json',
-      parameters: id: @result.pool_id
-      method: 'get'
-      onCreate: ((resp) ->
-        @current_ajax_requests.push resp.request
-        return
-      ).bind(this)
-      onComplete: ((resp) ->
-        @current_ajax_requests = @current_ajax_requests.without(resp.request)
-        @request_finished()
-        return
-      ).bind(this)
-      onSuccess: ((resp) ->
-        if @current_ajax_requests.indexOf(resp.request) == -1
-          return
-        @result.pool = resp.responseJSON
-        @cached_pools.set @result.pool_id, @result.pool
-        return
-      ).bind(this))
+
+    xhr = jQuery.ajax '/pool/show.json',
+      data:
+        id: @result.pool_id
+      dataType: 'json'
+    .done (resp) =>
+      @result.pool = resp
+      @cached_pools.set @result.pool_id, @result.pool
+    .always =>
+      @xhr.delete xhr
+      @request_finished()
+
+    @xhr.add xhr
+
     return
 
   server_load_posts: ->
     tags = @result.tags
     # Put holds:false at the beginning, so the search can override it.  Put limit: at
     # the end, so it can't.
-    search = 'holds:false ' + tags + ' limit:' + @result.post_limit
+    search = "holds:false #{tags} limit:#{@result.post_limit}"
+
     if !@result.disable_cache
       results = @cached_posts.get(search)
       if results
@@ -102,45 +98,34 @@ export default class PostLoader
         # cached search results.
         @request_finished()
         return
-    new (Ajax.Request)('/post.json',
-      parameters:
+
+    xhr = jQuery.ajax '/post.json',
+      data:
         tags: search
         api_version: 2
         filter: 1
         include_tags: 1
         include_votes: 1
         include_pools: 1
-      method: 'get'
-      onCreate: ((resp) ->
-        @current_ajax_requests.push resp.request
-        return
-      ).bind(this)
-      onComplete: ((resp) ->
-        @current_ajax_requests = @current_ajax_requests.without(resp.request)
-        @request_finished()
-        return
-      ).bind(this)
-      onSuccess: ((resp) ->
-        if @current_ajax_requests.indexOf(resp.request) == -1
-          return
-        resp = resp.responseJSON
-        @result.posts = resp.posts
-        Post.register_resp resp
-        @cached_posts.set search, @result.posts
-        return
-      ).bind(this)
-      onFailure: ((resp) ->
-        error = 'error ' + resp.status
-        if resp.responseJSON
-          error = resp.responseJSON.reason
-        notice 'Error loading posts: ' + error
-        @result.error = true
-        return
-      ).bind(this))
+      dataType: 'json'
+    .done (resp) =>
+      @result.posts = resp.posts
+      Post.register_resp resp
+      @cached_posts.set search, @result.posts
+    .fail (xhr, status) ->
+      error = resp.responseJSON?.reason ? "error #{status}"
+      notice "Error loading posts: #{error}"
+      @result.error = true
+    .always =>
+      @xhr.delete xhr
+      @request_finished()
+
+    @xhr.add xhr
+
     return
 
   request_finished: ->
-    if @current_ajax_requests.length
+    if @xhr.size > 0
       return
 
     # Event handlers for the events we fire below might make requests back to us.  Save and
@@ -216,13 +201,14 @@ export default class PostLoader
     @loaded_extended_results = extending
 
     # Discard any running AJAX requests.
-    @current_ajax_requests = []
-    @result = {}
-    @result.load_options = load_options
-    @result.tags = tags
-    @result.disable_cache = disable_cache
-    if !@result.tags?
+    @xhr.forEach (xhr) => xhr?.abort()
+    @xhr.clear()
+    @result =
+      load_options: load_options
+      tags: tags
+      disable_cache: disable_cache
 
+    if !@result.tags?
       # If no search is specified, don't run one; return empty results.
       @request_finished()
       return
@@ -249,14 +235,14 @@ export default class PostLoader
 
     # Make sure that request_finished doesn't consider this request complete until we've
     # actually started every request.
-    @current_ajax_requests.push null
+    @xhr.add null
     @server_load_pool()
     @server_load_posts()
-    @current_ajax_requests = @current_ajax_requests.without(null)
+    @xhr.delete null
     @request_finished()
     return
 
-  hashchange_tags: ->
+  hashchange_tags: =>
     tags = UrlHash.get('tags')
     if tags == @last_seen_tags
       return
@@ -265,7 +251,7 @@ export default class PostLoader
     @load()
     return
 
-  perform_search: (event) ->
+  perform_search: (event) =>
     tags = event.memo.tags
     @last_seen_tags = tags
     results_mode = event.memo.results_mode or 'center-on-first'

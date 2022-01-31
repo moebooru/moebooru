@@ -18,6 +18,7 @@ export default class PreloadPosts
 
     container = new PreloadContainer
     @urls.forEach (url) => container.preload url
+    @urls.clear()
 
 
   getUrlsFromDocument: =>

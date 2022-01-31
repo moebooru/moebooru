@@ -18,6 +18,7 @@ import Pool from './classes/pool'
 import PostLoader from './classes/post_loader'
 import PostQuickEdit from './classes/post_quick_edit'
 import PostShowTabs from './classes/post_show_tabs'
+import PreloadPosts from './classes/preload_posts'
 import RelatedTags from './classes/related_tags'
 import SimilarWithThumbnailing from './classes/similar_with_thumbnailing'
 import ThumbnailUserImage from './classes/thumbnail_user_image'
@@ -43,6 +44,7 @@ window.newsTicker = new NewsTicker
 window.notesManager = new NotesManager
 window.noticeInstance = new Notice
 window.postShowTabs = new PostShowTabs
+window.preloadPosts = new PreloadPosts
 window.relatedTags = new RelatedTags
 window.timeago = new Timeago
 window.userRecord = new UserRecord

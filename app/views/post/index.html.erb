@@ -102,9 +102,6 @@
   post_quick_edit = new PostQuickEdit('#quick-edit');
 
   PostModeMenu.init(<%= j(@searching_pool && @searching_pool.id.to_s) %>)
-  <% @preload.each do |post| %>
-  Preload.preload('<%= escape_javascript(post.preview_url) %>');
-  <% end %>
 
   var held_posts = Cookie.get("held_post_count");
   if(held_posts && held_posts > 0)
@@ -123,6 +120,10 @@
   new TagCompletionBox($("post_tags"));
   if($("tag-script"))
     new TagCompletionBox($("tag-script"));
+</script>
+
+<script class="js-preload-posts" type="application/json">
+  <%= @preload.map { |post| { id: post.id, url: post.preview_url } }.to_json.html_safe %>
 </script>
 <% end %>
 

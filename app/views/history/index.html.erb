@@ -104,13 +104,17 @@
   <% end %>
   Post.init_blacklisted({replace: true});
 
-  <% @changes.each do |change| %>
-    <% if change.group_by_table_class == Post %>
-      if(!Post.is_blacklisted(<%= change.group_by_obj.id %>))
-        Preload.preload('<%= escape_javascript(change.group_by_obj.preview_url) %>');
-    <% end %>
-  <% end %>
   History.init()
+</script>
+
+<script class="js-preload-posts" type="application/json">
+  <%= @changes
+    .filter { |change| change.group_by_table_class == Post }
+    .map { |change| {
+        id: change.group_by_obj.id,
+        url: change.group_by_obj.preview_url,
+    } }.to_json.html_safe
+  %>
 </script>
 <% end %>
 

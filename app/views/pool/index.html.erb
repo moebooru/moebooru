@@ -50,11 +50,10 @@
     Post.init_hover_thumb(hover_row, <%= post.id %>, thumb, container);
   <% end %>
   Post.init_blacklisted({replace: true});
+</script>
 
-  <% @samples.each do |pool, post| %>
-    if(!Post.is_blacklisted(<%= post.id %>))
-      Preload.preload('<%= escape_javascript(post.preview_url) %>');
-  <% end %>
+<script class="js-preload-posts" type="application/json">
+  <%= @samples.map { |pool, post| { id: post.id, url: post.preview_url } }.to_json.html_safe %>
 </script>
 <% end %>
 

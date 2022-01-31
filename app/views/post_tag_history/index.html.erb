@@ -67,11 +67,11 @@
   <% end %>
   Post.init_blacklisted({replace: true});
 
-  <% @change_list.each do |change| %>
-    if(!Post.is_blacklisted(<%= change[:change].post.id %>))
-      Preload.preload('<%= escape_javascript(change[:change].post.preview_url) %>');
-  <% end %>
   PostTagHistory.init()
+</script>
+
+<sciprt class="js-preload-posts" type="application/json">
+  <%= @change_list.map { |change| { id: change[:change].post.id, url: change[:change].post.preview_url } }.to_json.html_safe %>
 </script>
 <% end %>
 

@@ -24,9 +24,7 @@ $ = jQuery
 # - When we load a new post, it's formatted and its scripts are evaluated normally.
 # - When we're replacing the displayed post, its node is stashed away in a node cache.
 # - If we come back to the post while it's in the node cache, we'll use the node directly.
-# - HTML and images for posts are preloaded.  We don't use a simple mechanism like
-#   Preload.preload_raw, because Opera's caching is broken for XHR and it'll always
-#   do a slow revalidation.
+# - HTML and images for posts are preloaded.
 # - We don't depend on browser caching for HTML.  That would require us to expire a
 #   page when we switch away from it if we've made any changes (eg. voting), so we
 #   don't pull an out-of-date page next time.  This is slower, and would require us

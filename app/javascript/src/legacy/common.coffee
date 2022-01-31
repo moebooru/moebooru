@@ -807,9 +807,7 @@ window.ReportError = (message, file, line, exc, info) ->
   document.cookie = 'reported_error=1; path=/; expires=' + expiration.toGMTString()
   report = FormatError((if exc then exc.message else message), file, line, exc, info)
   try
-    new (Ajax.Request)('/user/error.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters: report: report)
+    jQuery.post '/user/error.json', report: report
   catch e
     alert 'Error: ' + e
   return

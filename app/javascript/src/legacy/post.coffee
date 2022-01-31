@@ -463,7 +463,7 @@ window.Post =
       tags = s.match(/\S+/g)
       if !tags
         return
-      b = 
+      b =
         tags: tags
         original_tag_string: val
         require: []
@@ -569,7 +569,7 @@ window.Post =
     if tag == ''
       return
     $('add-blacklist').value = ''
-    User.modify_blacklist tag, [], (resp) ->
+    User.modify_blacklist [tag], [], (resp) ->
       notice 'Blacklisted "' + tag + '"'
       Post.current_blacklists = resp.result
       Post.init_blacklisted()

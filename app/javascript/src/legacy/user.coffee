@@ -1,52 +1,57 @@
 window.User =
+  checkXhr: null
+
   cancel_check: ->
-    window.current_check = null
-    return
+    User.checkXhr?.abort()
+
   reset_password: (username, email, func) ->
-    new_check = new (Ajax.Request)('/user/reset_password.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters:
-        'user[name]': username
-        'user[email]': email
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        func resp
-        return
-)
+    jQuery.ajax '/user/reset_password.json',
+      data:
+        user:
+          name: username
+          email: email
+      dataType: 'json'
+      method: 'POST'
+    .done func
+    .fail (xhr) ->
+      json = xhr.responseJSON
+      if json?
+        func json
+      else
+        notice "Error: unknown error"
+
     return
+
   check: (username, password, background, func) ->
-    parameters = 'username': username
+    parameters = username: username
     if password
       parameters.password = password
-    new_check = new (Ajax.Request)('/user/check.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters: parameters
-      onSuccess: (resp) ->
-        if background and resp.request != window.current_check
-          return
-        window.current_check = null
-        resp = resp.responseJSON
-        func resp
-        return
-)
-    if background
-      window.current_check = new_check
+
+    User.cancel_check()
+    User.checkXhr = jQuery.ajax '/user/check.json',
+      data: parameters
+      dataType: 'json'
+      method: 'POST'
+    .done func
+
     return
+
   create: (username, password, email, func) ->
-    parameters = 
-      'user[name]': username
-      'user[password]': password
+    parameters =
+      user
+        name: username
+        password: password
     if email
-      parameters['user[email]'] = email
-    new_check = new (Ajax.Request)('/user/create.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters: parameters
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        func resp
-        return
-)
+      parameters.user.email = email
+
+    jQuery.ajax '/user/create.json',
+      data: parameters
+      dataType: 'json'
+      method: 'POST'
+    .done func
+
     return
+
   check_name_timer: null
   last_username_in_form: null
   success_func: null
@@ -76,7 +81,7 @@ window.User =
 
     ### If you select an item from the history dropdown in IE7, change events never fire, so
     # use keyup instead.  This isn't a problem with password fields, since there's no history
-    # dropdown. 
+    # dropdown.
     ###
 
     $('login-popup').observe 'submit', (e) ->
@@ -116,7 +121,7 @@ window.User =
     # there's an <INPUT type="submit"> somewhere in the form.  IE is even worse:
     # even if there is one, if it's hidden on page load (including if it's a parent
     # element hidden), it'll never submit the form, even if it's shown later.  Don't
-    # rely on this behavior; just catch enter presses and submit the form explicitly. 
+    # rely on this behavior; just catch enter presses and submit the form explicitly.
     ###
 
     OnKey 13, {
@@ -173,7 +178,7 @@ window.User =
 
           ### This is a login button, and not an action that happened to need login.  After
           # a successful login, don't click the button; that'll just go to the login page.
-          # Instead, just reload the current page. 
+          # Instead, just reload the current page.
           ###
 
           Cookie.put 'notice', 'You have been logged in.'
@@ -186,7 +191,7 @@ window.User =
 
     ### Login is running, so stop the event.  Don't just return false; call stop(), so
     # event.stopped is available to the caller if we've been sent this message via
-    # Element.dispatchEvent. 
+    # Element.dispatchEvent.
     ###
 
     event.stop()
@@ -194,7 +199,7 @@ window.User =
   run_login_onsubmit: (event) ->
 
     ### Set skip_complete_on_true, so if we don't need to login, we don't resubmit the
-    # event; we just don't cancel it. 
+    # event; we just don't cancel it.
     ###
 
     target = $(event.target)
@@ -229,7 +234,7 @@ window.User =
     if tab == 'tab-login'
 
       ### If the user's browser fills in a username but no password, focus the password.  Otherwise,
-      # focus the username. 
+      # focus the username.
       ###
 
       if $('login-popup-password').value == '' and $('login-popup-username').value != ''
@@ -304,7 +309,7 @@ window.User =
       return
 
     ### Delay on keyup, so we don't send tons of requests.  Don't delay otherwise,
-    # so we don't introduce lag when we don't have to. 
+    # so we don't introduce lag when we don't have to.
     ###
 
     ms = 500
@@ -330,14 +335,14 @@ window.User =
           ### Update the username to match the actual user's case.  If the form contents have
           # changed since we started this check, don't do this.  (We cancel this event if we
           # see the contents change, but the contents can change without this event firing
-          # at all.) 
+          # at all.)
           ###
 
           current_username = $('login-popup-username').value
           if current_username == username
 
             ### If the element doesn't have focus, change the text to match.  If it does, wait
-            # until it loses focus, so it doesn't interfere with the user editing it. 
+            # until it loses focus, so it doesn't interfere with the user editing it.
             ###
 
             if !$('login-popup').focused
@@ -368,7 +373,7 @@ window.User =
     $('login-popup').focused = false
 
     ### When the username field loses focus, update the username case to match the
-    # result we got back from check(), if any. 
+    # result we got back from check(), if any.
     ###
 
     if User.pending_username
@@ -376,7 +381,7 @@ window.User =
       User.pending_username = null
 
     ### We watch keyup on the username, because change events are unreliable in IE; update
-    # when focus is lost, too, so we see changes made without using the keyboard. 
+    # when focus is lost, too, so we see changes made without using the keyboard.
     ###
 
     User.form_username_changed false
@@ -433,35 +438,35 @@ window.User =
           User.set_state 'reset-user-email-invalid'
         return
     return
+
   modify_blacklist: (add, remove, success) ->
-    new (Ajax.Request)('/user/modify_blacklist.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters:
-        'add[]': add
-        'remove[]': remove
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        if resp.success
-          if success
-            success resp
-        else
-          notice 'Error: ' + resp.reason
-        return
-)
+    jQuery.ajax '/user/modify_blacklist.json',
+      data:
+        add: add
+        remove: remove
+      dataType: 'json'
+      method: 'POST'
+    .done (resp) ->
+      success?(resp)
+    .fail (xhr) ->
+      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
+
     return
+
   set_pool_browse_mode: (browse_mode) ->
-    new (Ajax.Request)('/user/update.json',
-      requestHeaders: 'X-CSRF-Token': jQuery('meta[name=csrf-token]').attr('content')
-      parameters: 'user[pool_browse_mode]': browse_mode
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        if resp.success
-          window.location.reload()
-        else
-          notice 'Error: ' + resp.reason
-        return
-)
+    jQuery.ajax '/user/update.json',
+      data:
+        user:
+          pool_browse_mode: browse_mode
+      dataType: 'json'
+      method: 'POST'
+    .done (resp) ->
+      window.location.reload()
+    .fail (xhr) ->
+      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
+
     return
+
   get_current_user_info: ->
     user_info = Cookie.get('user_info')
     if !user_info

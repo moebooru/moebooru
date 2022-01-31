@@ -38,7 +38,7 @@ window.User =
 
   create: (username, password, email, func) ->
     parameters =
-      user
+      user:
         name: username
         password: password
     if email

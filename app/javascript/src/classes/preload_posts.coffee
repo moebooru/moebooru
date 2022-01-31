@@ -24,6 +24,7 @@ export default class PreloadPosts
   getUrlsFromDocument: =>
     for postsJson in document.querySelectorAll('.js-preload-posts')
       @getUrlsFromJson(JSON.parse(postsJson.text))
+      postsJson.remove()
 
 
   getUrlsFromJson: (json) =>

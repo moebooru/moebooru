@@ -340,7 +340,7 @@ window.Post =
     post = Post.posts.get(post_id)
 
     # Missing post data, pretend it's not blacklisted.
-    return true if !post?
+    return false if !post?
 
     has_tag = (tag) ->
       post.match_tags.indexOf(tag) != -1

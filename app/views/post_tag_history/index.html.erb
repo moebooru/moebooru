@@ -70,7 +70,7 @@
   PostTagHistory.init()
 </script>
 
-<sciprt class="js-preload-posts" type="application/json">
+<script class="js-preload-posts" type="application/json">
   <%= @change_list.map { |change| { id: change[:change].post.id, url: change[:change].post.preview_url } }.to_json.html_safe %>
 </script>
 <% end %>

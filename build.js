@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import coffeeScriptPlugin from 'esbuild-coffeescript';
-import esbuild from 'esbuild';
+import coffeeScriptPlugin from 'esbuild-coffeescript'
+import esbuild from 'esbuild'
 
 esbuild.build({
   bundle: true,
@@ -11,5 +11,5 @@ esbuild.build({
   plugins: [coffeeScriptPlugin({ bare: true })],
   resolveExtensions: ['.coffee', '.js'],
   sourcemap: true,
-  watch: process.argv[2] === '--watch',
-});
+  watch: process.argv[2] === '--watch'
+})

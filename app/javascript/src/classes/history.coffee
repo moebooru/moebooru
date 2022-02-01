@@ -1,9 +1,10 @@
 $ = jQuery
 
 export default class History
-  last_click: -1
-  checked: []
-  dragging: false
+  constructor: ->
+    @last_click = -1
+    @checked = []
+    @dragging = false
 
 
   init: ->

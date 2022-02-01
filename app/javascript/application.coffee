@@ -1,13 +1,10 @@
-import 'src/globals'
-import 'src/globals-jquery'
+import 'src/jquery/all'
 
 import 'src/cookie'
-import 'src/compat.jquery'
 import 'src/forum'
 
 import 'src/moebooru'
 
-import 'src/init.autocomplete'
 import 'src/init.cookie'
 import 'src/post'
 import 'src/vote'

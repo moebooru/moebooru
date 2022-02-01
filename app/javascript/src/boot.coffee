@@ -1,3 +1,5 @@
+import Rails from '@rails/ujs'
+import Autocomplete from './classes/autocomplete'
 import BrowserView from './classes/browser_view'
 import CheckAll from './classes/check_all'
 import Comment from './classes/comment'
@@ -28,10 +30,13 @@ import UrlHashHandler from './classes/url_hash_handler'
 import UserRecord from './classes/user_record'
 import WindowTitleHandler from './classes/window_title_handler'
 
+Rails.start()
+
 window.History = new History
 window.InlineImage = new InlineImage
 window.Pool = new Pool
 window.UrlHash = new UrlHashHandler
+window.autocomplete = new Autocomplete
 window.checkAll = new CheckAll
 window.comment = new Comment
 window.dmail = new Dmail

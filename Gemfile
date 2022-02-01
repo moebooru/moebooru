@@ -2,9 +2,9 @@ source "https://rubygems.org"
 
 gem "rails", "~> 7.0.1"
 
-gem "webpacker"
+gem "jsbundling-rails"
 gem "coffee-rails"
-gem "uglifier"
+gem "terser"
 
 gem "sass-rails"
 

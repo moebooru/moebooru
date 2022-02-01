@@ -1,18 +1,15 @@
+import BaseCookies from 'js-cookie'
+
 # welp
 # Reference: https://github.com/js-cookie/js-cookie/blob/3f2b5e6884407c54b391483f39ddcd4c70f9243c/SERVER_SIDE.md
-window.Cookies = Cookies.withConverter
-  write: (value) =>
-    encodeURIComponent value
-      .replace /%(23|24|26|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent
-
-  read: (value) =>
-    value
-      .replace /\+/g, " "
-      .replace /(%[0-9A-Z]{2})+/g, decodeURIComponent
-
-
-Cookies.defaults.path = Vars.prefix
-Cookies.defaults.expires = 365
+window.Cookies = BaseCookies
+  .withConverter
+    write: BaseCookies.converter.write
+    read: (value) =>
+      BaseCookies.converter.read value.replace(/\+/g, " ")
+  .withAttributes
+    path: Vars.prefix
+    expires: 365
 
 window.Cookie =
   put: (name, value, days) ->

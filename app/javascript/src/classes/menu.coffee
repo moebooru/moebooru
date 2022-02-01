@@ -1,3 +1,5 @@
+import Mousetrap from 'mousetrap'
+
 $ = jQuery
 
 export default class Menu
@@ -92,7 +94,7 @@ export default class Menu
 
     @forumMenuItems ?= JSON.parse(document.getElementById("forum-posts-latest").text)
 
-    last_read = Cookies.getJSON('forum_post_last_read_at')
+    last_read = JSON.parse(Cookies.get('forum_post_last_read_at'))
     forum_menu_items = @forumMenuItems
     forum_submenu = $('li.forum ul.submenu', @menu)
     forum_items_start = forum_submenu.find('.forum-items-start').show()

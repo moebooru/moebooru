@@ -14,7 +14,7 @@
         <tr>
           <td><label for="member_name"><%=t :user_name %></label></td>
           <td>
-            <%= text_field "member", "name", :class => 'ac-user-name' %>
+            <%= text_field "member", "name", data: { autocomplete: ac_user_name_path } %>
           </td>
         </tr>
         <tr>

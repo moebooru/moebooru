@@ -3,7 +3,7 @@
     <tr>
       <th width="15%"><label for="tag_name"><%=t :tag_name %></label></th>
       <td width="85%">
-        <%= text_field "tag", "name", :class => 'ac-tag-name' %>
+        <%= text_field "tag", "name", data: { autocomplete: ac_tag_name_path } %>
       </td>
     </tr>
     <tr>

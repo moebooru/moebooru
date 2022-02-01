@@ -1,3 +1,5 @@
+import Mousetrap from 'mousetrap'
+
 $ = jQuery
 t = I18n.scopify('js.vote')
 

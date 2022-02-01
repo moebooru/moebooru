@@ -1,4 +1,14 @@
 export default class InlineImage
+  constructor: ->
+    @mouse_down = null
+
+    @zoom_levels = [
+      1.0
+      1.5
+      2.0
+      4.0
+    ]
+
   init: ->
 
     ### Mouseup events aren't necessarily sent to the same element that received the mousedown,
@@ -17,15 +27,6 @@ export default class InlineImage
       data.toggled_from = null
       return
     return
-
-  mouse_down: null
-
-  zoom_levels: [
-    1.0
-    1.5
-    2.0
-    4.0
-  ]
 
   get_zoom: (level) ->
     if level >= 0

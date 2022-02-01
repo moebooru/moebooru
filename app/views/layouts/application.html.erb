@@ -40,8 +40,8 @@
     }
   </script>
 
-  <%= javascript_include_tag 'application' %>
-  <%= javascript_pack_tag :application %>
+  <%= javascript_include_tag :application_classic %>
+  <%= javascript_include_tag :application %>
 
   <%= tag :link, :rel => 'search', :type => Mime[:opensearch], :href => opensearch_path(:xml), :title => CONFIG['app_name'] %>
   <%= CONFIG["custom_html_headers"] %>

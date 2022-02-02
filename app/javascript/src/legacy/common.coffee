@@ -152,65 +152,6 @@ Object.extend String.prototype,
     container.innerHTML = this
     container.removeChild container.firstChild
 
-### Prototype calls onSuccess instead of onFailure when the user cancelled the AJAX
-# request.  Fix that with a monkey patch, so we don't have to track changes inside
-# prototype.js. 
-###
-
-Ajax.Request::successBase = Ajax.Request::success
-
-Ajax.Request::success = ->
-  try
-    responses = @transport.getAllResponseHeaders()
-    if !responses?
-      return false
-  catch e
-
-    ### FF throws an exception if we call getAllResponseHeaders on a cancelled request. ###
-
-    return false
-  @successBase()
-
-### Work around a Prototype bug; it discards exceptions instead of letting them fall back
-# to the browser where they'll be logged. 
-###
-
-Ajax.Responders.register onException: (request, exception) ->
-
-  ### Report the error here; don't wait for onerror to get it, since the exception
-  # isn't passed to it so the stack trace is lost.  
-  ###
-
-  data = ''
-  if request.url
-    data += 'AJAX URL: ' + request.url + '\n'
-  text = undefined
-  length = undefined
-  try
-    params = request.parameters
-    for key of params
-      text = params[key]
-      length = text.length
-      if text.length > 1024
-        text = text.slice(0, 1024) + '...'
-      data += 'Parameter (' + length + '): ' + key + '=' + text + '\n'
-  catch e
-    data += 'Couldn\'t get response parameters: ' + e + '\n'
-  try
-    text = request.transport.responseText
-    length = text.length
-    if text.length > 1024
-      text = text.slice(0, 1024) + '...'
-    data += 'Response (' + length + '): ->' + text + '<-\n'
-  catch e
-    data += 'Couldn\'t get response text: ' + e + '\n'
-  ReportError null, null, null, exception, data
-  (->
-    throw exception
-    return
-  ).defer()
-  return
-
 ###
 # In Firefox, exceptions thrown from event handlers tend to get lost.  Sometimes they
 # trigger window.onerror, but not reliably.  Catch exceptions out of event handlers and

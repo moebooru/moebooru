@@ -41,8 +41,7 @@ PostUploadForm::document_keydown_event = (e) ->
   if !key
     key = e.keyCode
 
-  ### Opera ###
-
+  # Opera
   if key != Event.KEY_ESC
     return
   @cancel()
@@ -54,9 +53,7 @@ PostUploadForm::click_cancel = (e) ->
   return
 
 PostUploadForm::form_submit_event = (e) ->
-
-  ### This submit may have been stopped by User.run_login_onsubmit. ###
-
+  # This submit may have been stopped by User.run_login_onsubmit.
   if e.stopped
     return
   if @current_request?
@@ -64,76 +61,72 @@ PostUploadForm::form_submit_event = (e) ->
   $('post-exists').hide()
   $('post-upload-error').hide()
 
-  ### If the files attribute isn't supported, or we have no file (source upload), use regular
-  # form submission. 
-  ###
-
+  # If the files attribute isn't supported, or we have no file (source upload), use regular
+  # form submission.
   post_file = $('post_file')
   if !post_file.files? or post_file.files.length == 0
     return
   e.stop()
   @set_progress 0
   @request_starting()
-  form_data = new FormData(@form_element)
-  onprogress = ((e) ->
+  formData = new FormData(@form_element)
+
+  onprogress = (e) =>
+    console.log 'hi'
     done = e.loaded
     total = e.total
-    @set_progress if total then done / total else 1
-    return
-  ).bind(this)
-  @current_request = new (Ajax.Request)('/post/create.json',
-    contentType: null
-    method: 'post'
-    postBody: form_data
-    onCreate: (resp) ->
-      xhr = resp.request.transport
-      xhr.upload.onprogress = onprogress
-      return
-    onComplete: ((resp) ->
-      @current_request = null
-      @request_ending()
-      json = resp.responseJSON
-      if !json
-        return
-      if !json.success
-        if json.location
-          a = $('post-exists-link')
-          a.setTextContent 'post #' + json.post_id
-          a.href = json.location
-          $('post-exists').show()
-          return
-        $('post-upload-error').setTextContent json.reason
-        $('post-upload-error').show()
-        return
+    progress = if total > 0 then done / total else 1
 
-      ### If a post/similar link was given and similar results exists, go to them.  Otherwise,
-      # go to the new post. 
-      ###
+    @set_progress progress
 
-      target = json.location
-      if json.similar_location and json.has_similar_hits
-        target = json.similar_location
-      window.location.href = target
+  @current_request = jQuery.ajax '/post/create.json',
+    contentType: false
+    data: formData
+    dataType: 'json'
+    method: 'POST'
+    processData :false
+    xhr: =>
+      xhr = new XMLHttpRequest
+      xhr.upload.addEventListener('progress', onprogress)
+      xhr
+  .always =>
+    @current_request = null
+    @request_ending()
+  .done (json) =>
+    # If a post/similar link was given and similar results exists, go to them.  Otherwise,
+    # go to the new post.
+    window.location.href =
+      if json.similar_location && json.has_similar_hits
+        json.similar_location
+      else
+        json.location
+  .fail (xhr) =>
+    json = xhr.responseJSON
+
+    if json? && json.location
+      a = document.querySelector('#post-exists-link')
+      a.text = "post ##{json.post_id}"
+      a.href = json.location
+      document.querySelector('#post-exists').style.display = ''
       return
-    ).bind(this))
+
+    errorLabel = document.querySelector('#post-upload-error')
+    errorLabel.text = json?.reason ? 'unknown error'
+    errorLabel.style.display = ''
+
   return
 
-### Cancel the running request, if any. ###
-
+# Cancel the running request, if any.
 PostUploadForm::cancel = ->
   if !@current_request?
     return
 
-  ### Don't clear this.current_request; it'll be done by the onComplete callback. ###
-
-  @current_request.transport.abort()
+  # Don't clear this.current_request; it'll be done by the onComplete callback.
+  @current_request.abort()
   return
 
-###
 # When file_field is changed to an image, run an image search and put a summary in
 # results.
-###
-
 window.UploadSimilarSearch = (file_field, results) ->
   if !ThumbnailUserImage
     return
@@ -155,49 +148,39 @@ UploadSimilarSearch::field_changed_event = (event) ->
 UploadSimilarSearch::thumbnail_complete = (result) ->
   if !result.success
     @results.innerHTML = 'Image load failed.'
-    @results.show()
+    @results.style.display = ''
     return
 
-  ### Grab a data URL from the canvas; this is what we'll send to the server. ###
-
-  data_url = result.canvas.toDataURL()
-
-  ### Create the FormData containing the thumbnail image we're sending. ###
-
-  form_data = new FormData
-  form_data.append 'url', data_url
-  req = new (Ajax.Request)('/post/similar.json',
-    method: 'post'
-    postBody: form_data
-    contentType: null
-    onComplete: ((resp) ->
-      @results.innerHTML = ''
-      @results.show()
-      json = resp.responseJSON
-      if !json.success
-        @results.innerHTML = json.reason
-        return
-      if json.posts.length > 0
-        posts = []
-        shown_posts = 3
-        json.posts.slice(0, shown_posts).each (post) ->
-          url = undefined
+  jQuery.ajax '/post/similar.json',
+    data:
+      url: result.canvas.toDataURL()
+    dataType: 'json'
+    method: 'POST'
+  .always =>
+    @results.innerHTML = ''
+    @results.style.display = ''
+  .done (json) =>
+    if json.posts.length > 0
+      posts = []
+      shownPosts = 3
+      makeUrl =
           if User.get_use_browser()
-            url = '/post/browse#' + post.id
+            (post) => "/post/browse##{post.id}"
           else
-            url = '/post/show/' + post.id
-          s = '<a href=\'' + url + '\'>post #' + post.id + '</a>'
-          posts.push s
-          return
-        post_links = posts.join(', ')
-        see_all = '<a href=\'/post/similar?search_id=' + json.search_id + '\'>(see all)</a>'
-        html = 'Similar posts ' + see_all + ': ' + post_links
-        if json.posts.length > shown_posts
-          remaining_posts = json.posts.length - shown_posts
-          html += ' (' + remaining_posts + ' more)'
-        @results.innerHTML = html
-      else
-        @results.innerHTML = 'No similar posts found.'
-      return
-    ).bind(this))
-  return
+            (post) => "/post/show/#{post.id}"
+      posts = json.posts.slice(0, shownPosts).map (post) =>
+        "<a href='#{makeUrl(post)}'>post ##{post.id}</a>"
+      seeAll = "<a href='/post/similar?search_id='#{json.search_id}'>(see all)</a>"
+      html = "Similar posts #{seeAll}: #{posts.join(', ')}"
+
+      if json.posts.length > shownPosts
+        remainingPosts = json.posts.length - shownPosts
+        html += " (#{remainingPosts} more)"
+
+      message = html
+    else
+      message = 'No similar posts found.'
+
+    @results.innerHTML = message
+  .fail (xhr) =>
+    @results.innerHTML = xhr.responseJSON?.reason ? 'unknown error'

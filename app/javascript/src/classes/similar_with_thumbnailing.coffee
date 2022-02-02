@@ -1,45 +1,25 @@
 import ThumbnailUserImage from './thumbnail_user_image'
 
+$ = jQuery
+
 export default class SimilarWithThumbnailing
   constructor: (form) ->
-    @similar = null
-    @form = form
-    @force_file = null
-    form.on 'submit', @form_submit_event
-    return
+    @_similar = null
+    @_form = form
+    @_forceFile = null
+    $(@_form).on 'submit', @_onSubmit
 
-  form_submit_event: (e) =>
-    post_file = @form.down('#file')
-
-    # If the files attribute isn't supported, or we have no file (source upload), use regular
-    # form submission.
-    if !post_file.files? or post_file.files.length == 0
-      return
-
-    # If we failed to load the image last time due to a silent Chrome error, continue with
-    # the submission normally this time.
-    file = post_file.files[0]
-    if @force_file and @force_file == file
-      @force_file = null
-      return
-    e.stop()
-    if @similar
-      @similar.destroy()
-    @similar = new ThumbnailUserImage(file, @complete)
-    return
 
   # Submit a post/similar request using the image currently in the canvas.
-  complete: (result) =>
+  _complete: (result) =>
     if result.chromeFailure
       notice 'The image failed to load; submitting normally...'
-      @force_file = @file
+      @_forceFile = @_file
 
       # Resend the submit event.  Defer it, so the notice can take effect before we
       # navigate off the page.
-      (->
-        @form.simulate_submit()
-        return
-      ).bind(this).defer()
+      window.setTimeout =>
+        $(@_form).submit()
       return
     if !result.success
       if !result.aborted
@@ -47,23 +27,39 @@ export default class SimilarWithThumbnailing
       return
 
     # Grab a data URL from the canvas; this is what we'll send to the server.
-    data_url = result.canvas.toDataURL()
 
-    # Create the FormData containing the thumbnail image we're sending.
-    form_data = new FormData
-    form_data.append 'url', data_url
-    req = new (Ajax.Request)('/post/similar.json',
-      method: 'post'
-      postBody: form_data
-      contentType: null
-      onComplete: (resp) ->
-        json = resp.responseJSON
-        if !json.success
-          notice json.reason
-          return
+    $.ajax '/post/similar.json',
+      method: 'POST'
+      data:
+        url: result.canvas.toDataURL()
+      dataType: 'json'
+    .done (resp) =>
+      # Redirect to the search results.
+      window.location.href = "/post/similar?search_id=#{resp.search_id}"
+    .fail (xhr) =>
+      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
 
-        # Redirect to the search results.
-        window.location.href = '/post/similar?search_id=' + json.search_id
-        return
-  )
+    return
+
+
+  _onSubmit: (e) =>
+    console.log 'wat'
+    postFile = @_form.querySelector('#file')
+
+    # If the files attribute isn't supported, or we have no file (source upload), use regular
+    # form submission.
+    return if !postFile.files? || postFile.files.length == 0
+
+    # If we failed to load the image last time due to a silent Chrome error, continue with
+    # the submission normally this time.
+    file = postFile.files[0]
+    if @_forceFile? && @_forceFile == file
+      @_forceFile = null
+      return
+
+    e.preventDefault()
+
+    @_similar?.destroy()
+    @_similar = new ThumbnailUserImage(file, @_complete)
+
     return

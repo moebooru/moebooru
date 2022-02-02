@@ -819,17 +819,16 @@ window.Post =
   hover_thumb_mouse_out: (image) ->
     image.hide()
     return
-  acknowledge_new_deleted_posts: (post_id) ->
-    new (Ajax.Request)('/post/acknowledge_new_deleted_posts.json', onComplete: (resp) ->
-      resp = resp.responseJSON
-      if resp.success
-        if $('posts-deleted-notice')
-          $('posts-deleted-notice').hide()
-      else
-        notice 'Error: ' + resp.reason
-      return
-)
-    return
+  acknowledge_new_deleted_posts: =>
+    jQuery.ajax '/post/acknowledge_new_deleted_posts.json',
+      method: 'POST'
+      dataType: 'json'
+    .done (resp) =>
+      noticeLabel = document.querySelector('#posts-deleted-notice')
+      noticeLabel.style.display = 'none' if noticeLabel?
+    .fail (xhr) =>
+      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
+
   hover_info_pin: (post_id) ->
     post = null
     if post_id?

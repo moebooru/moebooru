@@ -111,30 +111,6 @@ window.Post =
     else
       e.removeClassName 'has-parent'
     return
-  update: (post_id, params, finished) ->
-    notice 'Updating post #' + post_id
-    params['id'] = post_id
-    new (Ajax.Request)('/post/update.json',
-      parameters: params
-      onComplete: (resp) ->
-        resp = resp.responseJSON
-        if resp.success
-          notice 'Post updated'
-          # Update the stored post.
-          Post.register resp.post
-          Post.register_tags resp.tags
-          Post.update_styles resp.post
-          element = element = $$('#p' + post_id + ' > .directlink')
-          if element.length > 0
-            element[0].addClassName 'tag-script-applied'
-            Post.applied_list.push element[0]
-          if finished
-            finished resp.post
-        else
-          notice 'Error: ' + resp.reason
-        return
-)
-    return
 
   activate_posts: (postIds, finished) ->
     notice "Activating #{postIds.length} #{if postIds.length == 1 then 'post' else 'posts'}"

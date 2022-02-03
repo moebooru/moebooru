@@ -15,9 +15,12 @@ const babelOnEnd = {
       const result = babel.transformSync(fs.readFileSync(outfileEsbuild), {
         presets: [
           ['@babel/preset-env']
-        ]
+        ],
+        inputSourceMap: JSON.parse(fs.readFileSync(`${outfileEsbuild}.map`)),
+        sourceMaps: true
       })
-      fs.writeFileSync(outfileBabel, result.code)
+      fs.writeFileSync(outfileBabel, `${result.code}\n//# sourceMappingURL=application.js.map`)
+      fs.writeFileSync(`${outfileBabel}.map`, JSON.stringify(result.map))
     })
   }
 }

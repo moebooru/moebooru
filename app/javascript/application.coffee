@@ -1,5 +1,3 @@
-import 'src/jquery/all'
-
 import 'src/cookie'
 import 'src/forum'
 

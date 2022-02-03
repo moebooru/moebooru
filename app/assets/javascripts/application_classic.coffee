@@ -3,3 +3,7 @@
 #= require i18n/translations
 #= require_tree ./exts
 #= require_tree ./classes
+#= require jquery/dist/jquery
+#= require timeago/jquery.timeago
+
+jQuery.noConflict()

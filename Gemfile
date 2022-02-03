@@ -3,7 +3,6 @@ source "https://rubygems.org"
 gem "rails", "~> 7.0.1"
 
 gem "jsbundling-rails"
-gem "coffee-rails"
 gem "terser"
 
 gem "sass-rails"

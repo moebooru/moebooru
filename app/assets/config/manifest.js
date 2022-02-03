@@ -1,6 +1,5 @@
 // JS and CSS bundles
 //
-//= link application.js
 //= link application_classic.js
 //= link application.css
 //
@@ -9,3 +8,4 @@
 //= link 500.html
 //
 //= link_tree ../images
+//= link_tree ../builds

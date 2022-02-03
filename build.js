@@ -5,11 +5,9 @@ import esbuild from 'esbuild'
 import coffeeScriptPlugin from 'esbuild-coffeescript'
 import fsPromises from 'fs/promises'
 
-const outdir = 'app/assets/builds'
-const outfileEsbuild = 'application_es6.js'
-const outfileEsbuildPath = `${outdir}/${outfileEsbuild}`
-const outfileBabel = 'application.js'
-const outfileBabelPath = `${outdir}/${outfileBabel}`
+const outfileName = 'application.js'
+const outfileEsbuild = `tmp/${outfileName}`
+const outfileBabel = `app/assets/builds/${outfileName}`
 
 const analyzeOnEnd = {
   name: 'analyzeOnEnd',
@@ -28,20 +26,18 @@ const babelOnEnd = {
   name: 'babelOnEnd',
   setup (build) {
     build.onEnd(async () => {
-      const inputSourceMapString = await fsPromises.readFile(`${outfileEsbuildPath}.map`)
       const options = {
         presets: [
           ['@babel/preset-env']
         ],
-        inputSourceMap: JSON.parse(inputSourceMapString),
         sourceMaps: true
       }
-      const outEsbuild = await fsPromises.readFile(outfileEsbuildPath)
+      const outEsbuild = await fsPromises.readFile(outfileEsbuild)
       const result = await babel.transformAsync(outEsbuild, options)
 
       return Promise.all([
-        fsPromises.writeFile(outfileBabelPath, `${result.code}\n//# sourceMappingURL=${outfileBabel}.map`),
-        fsPromises.writeFile(`${outfileBabelPath}.map`, JSON.stringify(result.map))
+        fsPromises.writeFile(outfileBabel, `${result.code}\n//# sourceMappingURL=${outfileName}.map`),
+        fsPromises.writeFile(`${outfileBabel}.map`, JSON.stringify(result.map))
       ])
     })
   }
@@ -58,9 +54,9 @@ esbuild.build({
   entryPoints: ['app/javascript/application.coffee'],
   metafile: options.analyze,
   nodePaths: ['app/javascript'],
-  outfile: outfileEsbuildPath,
+  outfile: outfileEsbuild,
   plugins: [coffeeScriptPlugin({ bare: true }), babelOnEnd, analyzeOnEnd],
   resolveExtensions: ['.coffee', '.js'],
-  sourcemap: true,
+  sourcemap: 'inline',
   watch: options.watch
 })

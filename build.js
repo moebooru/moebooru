@@ -1,26 +1,35 @@
 #!/usr/bin/env node
 
 import babel from '@babel/core'
-import coffeeScriptPlugin from 'esbuild-coffeescript'
 import esbuild from 'esbuild'
-import fs from 'fs'
+import coffeeScriptPlugin from 'esbuild-coffeescript'
+import fsPromises from 'fs/promises'
 
-const outfileEsbuild = 'app/assets/builds/application_es6.js'
-const outfileBabel = 'app/assets/builds/application.js'
+const outdir = 'app/assets/builds'
+const outfileEsbuild = 'application_es6.js'
+const outfileEsbuildPath = `${outdir}/${outfileEsbuild}`
+const outfileBabel = 'application.js'
+const outfileBabelPath = `${outdir}/${outfileBabel}`
 
 const babelOnEnd = {
   name: 'babelOnEnd',
   setup (build) {
-    build.onEnd(() => {
-      const result = babel.transformSync(fs.readFileSync(outfileEsbuild), {
+    build.onEnd(async () => {
+      const inputSourceMapString = await fsPromises.readFile(`${outfileEsbuildPath}.map`)
+      const options = {
         presets: [
           ['@babel/preset-env']
         ],
-        inputSourceMap: JSON.parse(fs.readFileSync(`${outfileEsbuild}.map`)),
+        inputSourceMap: JSON.parse(inputSourceMapString),
         sourceMaps: true
-      })
-      fs.writeFileSync(outfileBabel, `${result.code}\n//# sourceMappingURL=application.js.map`)
-      fs.writeFileSync(`${outfileBabel}.map`, JSON.stringify(result.map))
+      }
+      const outEsbuild = await fsPromises.readFile(outfileEsbuildPath)
+      const result = await babel.transformAsync(outEsbuild, options)
+
+      return Promise.all([
+        fsPromises.writeFile(outfileBabelPath, `${result.code}\n//# sourceMappingURL=${outfileBabel}.map`),
+        fsPromises.writeFile(`${outfileBabelPath}.map`, JSON.stringify(result.map))
+      ])
     })
   }
 }
@@ -29,7 +38,7 @@ esbuild.build({
   bundle: true,
   entryPoints: ['app/javascript/application.coffee'],
   nodePaths: ['app/javascript'],
-  outfile: outfileEsbuild,
+  outfile: outfileEsbuildPath,
   plugins: [coffeeScriptPlugin({ bare: true }), babelOnEnd],
   resolveExtensions: ['.coffee', '.js'],
   sourcemap: true,

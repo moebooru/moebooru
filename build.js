@@ -11,6 +11,19 @@ const outfileEsbuildPath = `${outdir}/${outfileEsbuild}`
 const outfileBabel = 'application.js'
 const outfileBabelPath = `${outdir}/${outfileBabel}`
 
+const analyzeOnEnd = {
+  name: 'analyzeOnEnd',
+  setup (build) {
+    build.onEnd(async (result) => {
+      if (options.analyze) {
+        const analyzeResult = await esbuild.analyzeMetafile(result.metafile)
+
+        console.log(analyzeResult)
+      }
+    })
+  }
+}
+
 const babelOnEnd = {
   name: 'babelOnEnd',
   setup (build) {
@@ -34,13 +47,20 @@ const babelOnEnd = {
   }
 }
 
+const args = process.argv.slice(2)
+const options = {
+  watch: args.includes('--watch'),
+  analyze: args.includes('--analyze')
+}
+
 esbuild.build({
   bundle: true,
   entryPoints: ['app/javascript/application.coffee'],
+  metafile: options.analyze,
   nodePaths: ['app/javascript'],
   outfile: outfileEsbuildPath,
-  plugins: [coffeeScriptPlugin({ bare: true }), babelOnEnd],
+  plugins: [coffeeScriptPlugin({ bare: true }), babelOnEnd, analyzeOnEnd],
   resolveExtensions: ['.coffee', '.js'],
   sourcemap: true,
-  watch: process.argv[2] === '--watch'
+  watch: options.watch
 })

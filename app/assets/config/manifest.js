@@ -8,4 +8,4 @@
 //= link 500.html
 //
 //= link_tree ../images
-//= link_tree ../builds
+//= link ../builds/application.js

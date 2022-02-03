@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@babel/core": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
     "@rails/ujs": "^7.0.1",
     "autocompleter": "^6.1.2",
     "coffeescript": "2.6.1",

@@ -147,13 +147,13 @@ module Post::SqlMethods
       if q.key?(:exclude_pools)
         q[:exclude_pools].each_index do |i|
           if q[:exclude_pools][i].is_a?(Integer)
-            joins << "LEFT JOIN pools_posts ep#{i} ON (ep#{i}.post_id = p.id AND ep#{i}.pool_id = ?)"
+            joins << "LEFT JOIN pools_posts ep#{i} ON (ep#{i}.active AND ep#{i}.post_id = p.id AND ep#{i}.pool_id = ?)"
             join_params << q[:exclude_pools][i]
             conds << "ep#{i} IS NULL"
           end
 
           if q[:exclude_pools][i].is_a?(String)
-            joins << "LEFT JOIN pools_posts ep#{i} ON ep#{i}.post_id = p.id LEFT JOIN pools epp#{i} ON (ep#{i}.pool_id = epp#{i}.id AND epp#{i}.name ILIKE ? ESCAPE E'\\\\')"
+            joins << "LEFT JOIN pools_posts ep#{i} ON (ep#{i}.active AND ep#{i}.post_id = p.id) LEFT JOIN pools epp#{i} ON (ep#{i}.pool_id = epp#{i}.id AND epp#{i}.name ILIKE ? ESCAPE E'\\\\')"
             join_params << ("%" + q[:exclude_pools][i].to_escaped_for_sql_like + "%")
             conds << "ep#{i} IS NULL"
           end

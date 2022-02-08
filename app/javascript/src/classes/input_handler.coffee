@@ -3,22 +3,8 @@ export default class InputHandler
   constructor: ->
     TrackFocus()
 
-    # Keypresses are aggrevating:
-    #
-    # Opera can only stop key events from keypress, not keydown.
-    #
-    # Chrome only sends keydown for non-alpha keys, not keypress.
-    #
-    # In Firefox, keypress's keyCode value for non-alpha keys is always 0.
-    #
-    # Alpha keys can always be detected with keydown.  Don't use keypress; Opera only provides
-    # charCode to that event, and it's affected by the caps state, which we don't want.
-    #
-    # Use OnKey for alpha key bindings.  For other keys, use keypress in Opera and FF and
-    # keydown in other browsers.
-    keypress_event_name = if window.opera or Prototype.Browser.Gecko then 'keypress' else 'keydown'
-    document.on keypress_event_name, @document_keypress_event
-    return
+    document.on 'keydown', @document_keypress_event
+
 
   handle_keypress: (e) ->
     key = e.charCode

@@ -11,8 +11,7 @@ window.PostUploadForm = (form, progress) ->
   @current_request = null
   @form_element.on 'submit', @form_submit_event.bindAsEventListener(this)
   @cancel_element.on 'click', @click_cancel.bindAsEventListener(this)
-  keypress_event_name = if window.opera or Prototype.Browser.Gecko then 'keypress' else 'keydown'
-  document.on keypress_event_name, @document_keydown_event.bindAsEventListener(this)
+  document.on 'keydown', @document_keydown_event.bindAsEventListener(this)
   return
 
 PostUploadForm::set_progress = (f) ->

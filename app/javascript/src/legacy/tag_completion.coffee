@@ -492,7 +492,6 @@ window.TagCompletionBox = (input_field) ->
   @input_field.on 'mouseup', @input_mouse.bindAsEventListener(this)
   @input_field.parentNode.addEventListener 'keydown', @input_keydown.bindAsEventListener(this), true
   # need to use addEventListener for this since Prototype is broken
-  @input_field.on 'keypress', @input_keypress.bindAsEventListener(this)
   @completion_box.on 'mouseover', '.completed-tag', ((event, element) ->
     @focus_element element
     return
@@ -731,10 +730,6 @@ TagCompletionBox::update = (force) ->
 
   # Focus the first item.
   @focus_element @completion_box.down('.completed-tag')
-  return
-
-TagCompletionBox::input_keypress = (event) ->
-  @update.defer()
   return
 
 # If tag completion isn't supported, disable TagCompletionBox.

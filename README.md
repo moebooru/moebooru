@@ -15,27 +15,26 @@ As this is ongoing project, there will be more changes on requirement as this pr
 * Ruby (3.1 or later)
 * PostgreSQL (14 or later)
 * Bundler gem
-* node.js (14.0 or later)
-* yarn
+* node.js (16.0 or later)
 * ImageMagick
 * And various other requirement for the gems (check `Gemfile` for the list)
 
-On RHEL5 (and 6), it goes like this (outdated list):
+On RHEL, it goes like this (untested):
 
+* ImageMagick
 * gcc
 * gcc-c++
-* ImageMagick
+* git
 * jhead
 * libxslt-devel
 * libyaml-devel
-* git
+* nodejs
 * openssl-devel
 * pcre-devel
-* postgresql94-devel
-* postgresql94-server
-* readline-devel
+* postgresql14-devel
+* postgresql14-server
 
-Base, EPEL, and postgresql official repositories contain all the requirements.
+Base, EPEL, dnf module, and postgresql official repositories contain all the requirements.
 
 Installation
 ------------
@@ -47,13 +46,14 @@ After initializing PostgreSQL database, create user for moebooru with `createdb`
     postgres# create user moebooru_user with password 'the_password' createdb;
 
 
-### Rails Setup
+### Rails Setup (development)
 
 * Run `bundle install`
 * Create `config/database.yml` and `config/local_config.rb`
 * Initialize database with `bundle exec rake db:reset`
 * Run `bundle exec rake db:migrate`
-* Start the server (`bundle exec unicorn` or `bundle exec puma` if using JRuby/Rubinius)
+* Start the server (`bundle exec rails server`)
+* Start asset builder server (`npm run build -- --watch`)
 
 Configuration
 -------------

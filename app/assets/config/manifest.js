@@ -1,7 +1,6 @@
 // JS and CSS bundles
 //
 //= link application_classic.js
-//= link application.css
 //
 //= link 404.html
 //= link 429.html

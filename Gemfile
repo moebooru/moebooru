@@ -2,10 +2,9 @@ source "https://rubygems.org"
 
 gem "rails", "~> 7.0.1"
 
+gem "sprockets-rails"
 gem "jsbundling-rails"
 gem "terser"
-
-gem "sass-rails"
 
 gem "non-stupid-digest-assets"
 

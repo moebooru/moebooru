@@ -1,15 +1,21 @@
-@import 'cropperjs/dist/cropper';
-@import 'autocompleter/autocomplete';
-@import 'variables';
-@import 'components/*';
-@import "webtoolkit.clearfix";
+@import (inline) 'cropperjs/dist/cropper.css';
+@import (inline) 'autocompleter/autocomplete.css';
+@import 'stylesheets/variables';
+@import 'stylesheets/components/forum-post-form';
+@import 'stylesheets/components/image-crop-preview';
+@import 'stylesheets/components/image-crop';
+@import 'stylesheets/components/page-main';
+@import 'stylesheets/components/sidebar-menu';
+@import 'stylesheets/components/wiki-edit';
+@import 'stylesheets/components/wiki-form';
+@import 'stylesheets/webtoolkit.clearfix.css';
 
-@import "autocomplete";
-@import "filter_spam";
-@import "menu";
-@import "pool";
-@import "profiler";
-@import "related_tags";
+@import "stylesheets/autocomplete";
+@import "stylesheets/filter_spam.css";
+@import "stylesheets/menu.css";
+@import "stylesheets/pool.css";
+@import "stylesheets/profiler.css";
+@import "stylesheets/related_tags";
 
 html {
   box-sizing: border-box;
@@ -48,7 +54,7 @@ body {
 html.progress { cursor: progress !important; }
 body.dragging { cursor: pointer !important; }
 html.hourglass { cursor: wait !important; }
-body.hide-cursor { cursor: image-url('blank.gif'), pointer !important; }
+body.hide-cursor { cursor: url('blank.gif'), pointer !important; }
 body.n-resize { cursor: n-resize !important; }
 body.s-resize { cursor: s-resize !important; }
 body.e-resize { cursor: e-resize !important; }
@@ -73,7 +79,7 @@ a:link {
   text-decoration: none;
 }
 
-a.star { background: transparent image-url('blank.gif') no-repeat; }
+a.star { background: transparent url('blank.gif') no-repeat; }
 
 .blacklisted-tags-disabled {
   color: #AAA !important;
@@ -157,7 +163,7 @@ h1#static-index-header a {
   text-indent: -3000em;
   margin: 0;
   padding:75px 300px 75px 300px;
-  background: transparent image-url("logo.png") no-repeat scroll center center;
+  background: transparent url("logo.png") no-repeat scroll center center;
 }
 
 h2 {
@@ -197,7 +203,7 @@ div#static-more div#title {
 #site-link {
   display: block;
   font-size: 0px;
-  background: transparent image-url("logo_small.png") no-repeat scroll top left;
+  background: transparent url("logo_small.png") no-repeat scroll top left;
   margin: 0 0 .5em 0;
   padding: 37px 242px 38px 242px;
 }
@@ -1325,7 +1331,7 @@ ul#post-list-posts li {
 
   /* inline-block hack for IE: */
   zoom: 1;
-  *display: inline;
+  //display: inline;
 }
 
 img.preview {
@@ -1658,7 +1664,7 @@ img.service-icon#source {
 
   /* inline-block hack for IE: */
   zoom: 1;
-  *display: inline;
+  //display: inline;
 }
 
 /* The borders cause odd overflows if the width: 100% inputs are shortened by
@@ -1868,7 +1874,7 @@ body.not-dragging .frame-box-handle.se-resize { cursor: se-resize; }
 	position: fixed;
 	left: 0;
 	top: 0;
-        background: image-url("login-background.png") repeat scroll center center;
+        background: url("login-background.png") repeat scroll center center;
 }
 
 #login-container {

@@ -197,16 +197,6 @@ GEM
       zeitwerk (~> 2.5)
     raindrops (0.20.0)
     rake (13.0.6)
-    sass-rails (6.0.0)
-      sassc-rails (~> 2.1, >= 2.1.1)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     sitemap_generator (6.1.2)
       builder (~> 3.0)
     spoon (0.0.6)
@@ -222,7 +212,6 @@ GEM
     terser (1.1.8)
       execjs (>= 0.3.0, < 3)
     thor (1.2.1)
-    tilt (2.0.10)
     timeout (0.2.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
@@ -268,8 +257,8 @@ DEPENDENCIES
   rails (~> 7.0.1)
   rails-controller-testing
   rails-i18n
-  sass-rails
   sitemap_generator
+  sprockets-rails
   terser
   unicorn
   unicorn-worker-killer

@@ -29,9 +29,9 @@ jobs:
 
     - uses: actions/setup-node@v2
       with:
-        cache: yarn
+        cache: npm
 
-    - run: yarn install
+    - run: npm install
 
     - uses: ruby/setup-ruby@v1
       with:

@@ -63,6 +63,6 @@ class AdvertisementsController < ApplicationController
   def redirect
     ad = Advertisement.find(params[:id])
     ad.increment!(:hit_count)
-    redirect_to ad.referral_url
+    redirect_to ad.referral_url, allow_other_host: true
   end
 end

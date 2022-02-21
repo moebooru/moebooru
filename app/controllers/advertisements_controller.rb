@@ -61,7 +61,7 @@ class AdvertisementsController < ApplicationController
   end
 
   def redirect
-    ad = Advertisement.find(params[:id])
+    ad = Advertisement.where(status: 'active').find(params[:id])
     ad.increment!(:hit_count)
     redirect_to ad.referral_url, allow_other_host: true
   end

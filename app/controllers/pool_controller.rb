@@ -336,7 +336,10 @@ class PoolController < ApplicationController
     end
     @pools = @pools.order(:name)
 
-    render :layout => false
+    respond_to do |format|
+      format.html { render layout: false }
+      format.js
+    end
   end
 
   # Generate a ZIP control file for nginx, and redirect to the ZIP.

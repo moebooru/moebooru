@@ -79,9 +79,11 @@ module Post::ImageStore::Local2
   end
 
   def move_one_file(src_path, target_path)
-    FileUtils.mkdir_p(File.dirname(target_path), :mode => 0775)
-    FileUtils.mv(src_path, target_path)
-    FileUtils.chmod(0664, target_path)
+    FileUtils.mkdir_p(File.dirname(target_path), mode: 0775)
+    tmp_target_path = "#{target_path}.tmp.#{rand(1_000_000)}"
+    FileUtils.mv(src_path, tmp_target_path)
+    FileUtils.chmod(0664, tmp_target_path)
+    FileUtils.mv(tmp_target_path, target_path)
   end
 
   def move_file

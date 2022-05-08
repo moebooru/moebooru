@@ -26,7 +26,7 @@ module Post::ImageStore
 
     def preview_url
       if status == "deleted"
-        ApplicationController.helpers.image_url 'deleted-preview.png'
+        ApplicationController.helpers.image_path 'deleted-preview.png', host: base_url(:assets)
       elsif image?
         CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else

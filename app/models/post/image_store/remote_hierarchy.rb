@@ -36,7 +36,7 @@ module Post::ImageStore
     def preview_url
       if self.is_warehoused?
         if status == "deleted"
-          CONFIG["url_base"] + "/deleted-preview.png"
+          ApplicationController.helpers.image_url 'deleted-preview.png'
 
         elsif image?
           select_random_image_server(:preview => true, :use_aliases => true) + "/data/preview/#{file_hierarchy}/#{md5}.jpg"

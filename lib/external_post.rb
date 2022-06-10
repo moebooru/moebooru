@@ -6,7 +6,8 @@ class ExternalPost
     def get_service_icon(service)
       filename =
         case service
-        when CONFIG["local_image_service"]
+        # FIXME: figure out why it's empty string
+        when '', CONFIG["local_image_service"]
           nil
         when "gelbooru.com" # hack
           "#{service}.png"

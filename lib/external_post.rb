@@ -4,13 +4,20 @@ class ExternalPost
 
   class << self
     def get_service_icon(service)
-      case service
-      when CONFIG["local_image_service"]
-        "/favicon.ico"
-      when "gelbooru.com" # hack
-        "/favicon-#{service}.png"
+      filename =
+        case service
+        when CONFIG["local_image_service"]
+          nil
+        when "gelbooru.com" # hack
+          "#{service}.png"
+        else
+          "#{service}.ico"
+        end
+
+      if filename.present?
+        ApplicationController.helpers.image_url "favicons/#{filename}"
       else
-        "/favicon-#{service}.ico"
+        "/favicon.ico"
       end
     end
   end

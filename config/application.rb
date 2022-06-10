@@ -54,8 +54,9 @@ module Moebooru
     # This one is never reliable because there's no standard controlling this.
     config.action_dispatch.ip_spoofing_check = false
 
-    config.action_controller.asset_host = CONFIG[:file_hosts][:assets] if CONFIG[:file_hosts]
-    config.action_mailer.default_url_options = { :host => CONFIG["server_host"] }
+    scheme = "#{CONFIG['secure'] ? 'https' : 'http'}://"
+    config.action_controller.asset_host = "#{scheme}#{CONFIG[:file_hosts][:assets]}" if CONFIG[:file_hosts]
+    config.action_mailer.default_url_options = { :host => "#{scheme}#{CONFIG["server_host"]}" }
 
     config.ssl_options = { hsts: false }
 

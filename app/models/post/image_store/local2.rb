@@ -41,7 +41,7 @@ module Post::ImageStore::Local2
 
   def preview_url
     if status == "deleted"
-      ApplicationController.helpers.image_path 'deleted-preview.png', host: base_url(:assets)
+      ApplicationController.helpers.image_url 'deleted-preview.png'
     elsif image?
       "#{base_url :assets}/data/preview/#{file_hierarchy}/#{md5}.jpg"
     else

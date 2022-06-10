@@ -37,7 +37,7 @@
           <% CONFIG["image_service_list"].map do |service, server| %>
           <li>
             <span class="service-link<%= " service-active" if @services.find { |s| s == service }%>">
-              <%= image_tag(get_service_icon(service), :class=>"service-icon", :id=>"list") %>
+              <%= image_tag(get_service_icon(service), class: 'service-icon', id: 'list', skip_pipeline: true) %>
               <%= link_to service, similar_link_params(:services => service) %>
               <% if @errors and @errors[server] %>
                 (<%= t('.down') %>)

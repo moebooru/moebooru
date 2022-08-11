@@ -8,8 +8,7 @@ gem "terser"
 
 gem "non-stupid-digest-assets"
 
-gem "pg", :platforms => [:ruby, :mingw]
-gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.0", :platforms => :jruby
+gem "pg"
 
 gem "diff-lcs", require: ['diff-lcs', 'diff/lcs/array']
 gem "dalli"
@@ -28,10 +27,8 @@ gem "i18n-js", "~> 3.0.0"
 gem "mini_mime"
 
 group :standalone do
-  platform :mri do
-    gem "unicorn", :require => false
-    gem "unicorn-worker-killer", :require => false
-  end
+  gem "unicorn", :require => false
+  gem "unicorn-worker-killer", :require => false
   gem "puma"
 end
 

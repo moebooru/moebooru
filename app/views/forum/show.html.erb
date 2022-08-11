@@ -22,13 +22,15 @@
     </div>
 
     <div id="reply" style="display: none; clear: both;">
-      <%= form_tag({:action => "create"}, :level => :member) do %>
+      <%= form_tag({:action => "create"}, level: :member, class: 'forum-post-form forum-post-form--reply') do %>
         <%= render "shared/filter_spam" %>
         <%= hidden_field "forum_post", "title", :value => "" %>
         <%= hidden_field "forum_post", "parent_id", :value => @forum_post.root_id %>
-        <%= text_area "forum_post", "body", :rows => 20, :cols => 80, :value => "" %>
-        <%= submit_tag t('.post') %>
-        <%= submit_to_remote "preview", t('.preview'), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
+        <%= text_area 'forum_post', 'body', class: 'forum-post-form__row--body', value: '' %>
+        <div class="forum-post-form__row forum-post-form__row--buttons">
+          <%= submit_tag t('.post') %>
+          <%= submit_to_remote "preview", t('.preview'), :url => {:action => "preview"}, :update => "preview", :success => "$('preview').show()" %>
+        </div>
       <% end %>
     </div>
   </div>

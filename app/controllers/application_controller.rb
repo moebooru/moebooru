@@ -171,6 +171,7 @@ class ApplicationController < ActionController::Base
   include RespondToHelpers
   include CacheHelper
   include SessionsHelper
+  include ParamsHelper
   # local_addresses.clear
 
   before_action :set_current_user

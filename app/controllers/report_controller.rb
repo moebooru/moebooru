@@ -61,30 +61,9 @@ class ReportController < ApplicationController
   private
 
   def set_dates
-    if params[:start_date]
-      @start_date = Date.parse(params[:start_date][...128])
-    else
-      @start_date = 3.days.ago.to_date
-    end
-
-    if params[:end_date]
-      @end_date = Date.parse(params[:end_date][...128])
-    else
-      @end_date = Date.today + 1.day
-    end
-
-    if params[:level]
-      @level = params[:level].to_i
-    end
-
-    if params[:limit]
-      @limit = params[:limit].to_i
-    else
-      @limit = 29
-    end
-
-    if @limit > 100
-      @limit = 100
-    end
+    @start_date = parse_date(params[:start_date]) || 3.days.ago.to_date
+    @end_date = parse_date(params[:end_date]) || 1.day.from_now.to_date
+    @level = parse_int(params[:level])
+    @limit = (parse_int(params[:limit]) || 29).clamp(1, 100)
   end
 end

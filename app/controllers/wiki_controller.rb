@@ -101,6 +101,7 @@ class WikiController < ApplicationController
   end
 
   def show
+    params[:title] = parse_str(params[:title])
     if params[:title].blank?
       render :plain => "no title specified"
       return
@@ -152,6 +153,7 @@ class WikiController < ApplicationController
   end
 
   def history
+    params[:title] = parse_str(params[:title])
     if params[:title]
       wiki = WikiPage.find_by_title(params[:title])
       wiki_id = wiki.id if wiki

@@ -7,19 +7,23 @@ class WikiController < ApplicationController
   helper :post
 
   def destroy
+    # TODO: stop repeating this params title sanitation and have a before_action instead
+    params[:title] = parse_str(params[:title])
     page = WikiPage.find_page(params[:title])
     page.destroy
     respond_to_success("Page deleted", :action => "show", :title => params[:title])
   end
 
   def lock
+    params[:title] = parse_str(params[:title])
     page = WikiPage.find_page(params[:title])
     page.lock!
     respond_to_success("Page locked", :action => "show", :title => params[:title])
   end
 
   def unlock
-    page = WikiPage.find_page(params["title"])
+    params[:title] = parse_str(params[:title])
+    page = WikiPage.find_page(params[:title])
     page.unlock!
     respond_to_success("Page unlocked", :action => "show", :title => params[:title])
   end
@@ -60,6 +64,7 @@ class WikiController < ApplicationController
   end
 
   def add
+    params[:title] = parse_str(params[:title])
     @wiki_page = WikiPage.new
     @wiki_page.title = params[:title] || "Title"
   end
@@ -75,6 +80,7 @@ class WikiController < ApplicationController
   end
 
   def edit
+    params[:title] = parse_str(params[:title])
     if params[:title].blank?
       render :plain => "no title specified"
     else
@@ -87,6 +93,7 @@ class WikiController < ApplicationController
   end
 
   def update
+    params[:title] = parse_str(params[:title])
     @page = WikiPage.find_page(params[:title] || params[:wiki_page][:title])
 
     if @page.is_locked?
@@ -123,6 +130,7 @@ class WikiController < ApplicationController
   end
 
   def revert
+    params[:title] = parse_str(params[:title])
     @page = WikiPage.find_page(params[:title])
 
     if @page.is_locked?
@@ -166,6 +174,7 @@ class WikiController < ApplicationController
   end
 
   def diff
+    params[:title] = parse_str(params[:title])
     if params[:redirect]
       redirect_to :action => "diff", :title => params[:title], :from => params[:from], :to => params[:to]
       return
@@ -187,6 +196,7 @@ class WikiController < ApplicationController
   end
 
   def rename
+    params[:title] = parse_str(params[:title])
     @wiki_page = WikiPage.find_page(params[:title])
   end
 

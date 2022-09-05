@@ -368,7 +368,7 @@ class ApplicationController < ActionController::Base
   end
 
   def sanitize_id
-    params[:id] = params[:id].to_i
+    params[:id] = parse_int(params[:id]) || 0
   end
 
   def mini_profiler_check

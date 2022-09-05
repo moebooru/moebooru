@@ -24,7 +24,7 @@
           </tr>
           <tr>
             <td><label for="level"><%=t :report_level %></label></td>
-            <td><%= user_level_select_tag "level", :include_blank => true %></td>
+            <td><%= user_level_select_tag "level", include_blank: true, selected: @level %></td>
           </tr>
         </tbody>
       </table>

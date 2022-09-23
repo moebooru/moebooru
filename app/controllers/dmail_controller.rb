@@ -25,10 +25,16 @@ class DmailController < ApplicationController
       redirect_to :action => :inbox
       return
     end
-    @dmail = Dmail.create(dmail_params.merge(:from_id => @current_user.id))
 
-    if @dmail.errors.empty?
-      flash[:notice] = "Message sent to #{params[:dmail][:to_name]}"
+    @dmail = Dmail.new(dmail_params.merge(:from_id => @current_user.id))
+    if @current_user.is_blocked_or_lower? && !@dmail.to&.is_mod_or_higher?
+      flash[:notice] = 'You can only send message to moderators when blocked.'
+      render action: :compose
+      return
+    end
+
+    if @dmail.save
+      flash[:notice] = "Message sent to #{@dmail.to.name}"
       redirect_to :action => "inbox"
     else
       flash[:notice] = "Error: " + @dmail.errors.full_messages.join(", ")

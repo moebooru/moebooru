@@ -16,7 +16,7 @@
       <tr>
         <th><label for="dmail_to_name"><%= t('.form.to') %></label></th>
         <td>
-          <%= text_field "dmail", "to_name", value: params[:to], data: { autocomplete: ac_user_name_path } %>
+          <%= text_field "dmail", "to_name", value: params[:to] || @dmail.to_name, data: { autocomplete: ac_user_name_path } %>
         </td>
       </tr>
       <tr>

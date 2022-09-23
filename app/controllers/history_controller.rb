@@ -1,6 +1,6 @@
 class HistoryController < ApplicationController
+  before_action :member_only, except: [:index]
   layout "default"
-  #  before_filter :member_only
 
   def index
     search = params[:search] || ""

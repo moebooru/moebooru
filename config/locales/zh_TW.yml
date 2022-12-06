@@ -712,7 +712,7 @@ zh_TW:
       activate: 激活所有被掛起的圖帖
       ambiguous: 以下標簽是有歧義的
       edit_tags: 編輯標簽
-      held_html: 你已掛起 %{count}
+      held_html: 你已掛起 %{posts}
       held_view: 查看
       maybe_you_meant: 或許你想找的是
       mode: 模式

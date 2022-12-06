@@ -22,6 +22,10 @@ class AnonymousUser
     false
   end
 
+  def held_post_count
+    0
+  end
+
   def can_change?(record, attribute)
     method = "can_change_#{attribute}?"
     if record.respond_to?(method)

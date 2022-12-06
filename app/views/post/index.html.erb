@@ -54,7 +54,14 @@
         </div>
       <% end %>
     <% else %>
-      <div id="held-posts" style="display: none; margin-bottom: .5em;"><%= t('.held_html', :count => content_tag(:span, '', :id => 'held-posts-count')) %> (<a href="#"><%= t('.held_view') %></a>).</div>
+      <% if @current_user.held_post_count > 0 %>
+        <div style="margin-bottom: .5em;">
+          <%= t('.held_html', posts: link_to(
+            t('common.count.post', count: @current_user.held_post_count),
+            { controller: :post, action: :index, tags: "holds:only user:#{@current_user.name} limit:100" },
+          )) %>
+        </div>
+      <% end %>
     <% end %>
 
     <%= render :partial => 'blacklists' %>
@@ -102,20 +109,6 @@
   post_quick_edit = new PostQuickEdit('#quick-edit');
 
   PostModeMenu.init(<%= j(@searching_pool && @searching_pool.id.to_s) %>)
-
-  var held_posts = Cookie.get("held_post_count");
-  if(held_posts && held_posts > 0)
-  {
-    var e = $("held-posts");
-    if(e)
-    {
-      var a = e.down("A");
-      var cnt = e.down("#held-posts-count");
-      cnt.update("" + held_posts + " " + (held_posts == 1? "post":"posts"));
-      a.href = "/post?tags=holds%3Aonly%20user%3A" + Cookie.get("login") + "%20limit%3A100"
-      e.show();
-    }
-  }
   Post.cache_sample_urls();
   new TagCompletionBox($("post_tags"));
   if($("tag-script"))

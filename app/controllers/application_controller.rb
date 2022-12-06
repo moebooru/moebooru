@@ -293,7 +293,6 @@ class ApplicationController < ActionController::Base
         cookies["show_advanced_editing"] = "0"
       end
       cookies["my_tags"] = @current_user.my_tags
-      cookies["held_post_count"] = @current_user.held_post_count.to_s
     end
 
     if flash[:notice]

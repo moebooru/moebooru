@@ -712,7 +712,7 @@ zh_CN:
       activate: 激活所有被挂起的图帖
       ambiguous: 以下标签是有歧义的
       edit_tags: 编辑标签
-      held_html: 你已挂起 %{count}
+      held_html: 你已挂起 %{posts}
       held_view: 查看
       maybe_you_meant: 或许你想找的是
       mode: 模式

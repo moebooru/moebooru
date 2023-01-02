@@ -23,6 +23,7 @@ import PostShowTabs from './classes/post_show_tabs'
 import PreloadPosts from './classes/preload_posts'
 import RelatedTags from './classes/related_tags'
 import SimilarWithThumbnailing from './classes/similar_with_thumbnailing'
+import TagCompletion from './classes/tag_completion'
 import ThumbnailUserImage from './classes/thumbnail_user_image'
 import ThumbnailView from './classes/thumbnail_view'
 import Timeago from './classes/timeago'
@@ -35,6 +36,7 @@ Rails.start()
 window.History = new History
 window.InlineImage = new InlineImage
 window.Pool = new Pool
+window.TagCompletion = new TagCompletion
 window.UrlHash = new UrlHashHandler
 window.autocomplete = new Autocomplete
 window.checkAll = new CheckAll

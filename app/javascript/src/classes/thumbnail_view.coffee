@@ -27,51 +27,49 @@ export default class ThumbnailView
       0
       0
     ]
-    document.on 'DOMMouseScroll', @document_mouse_wheel_event.bindAsEventListener(this)
-    document.on 'mousewheel', @document_mouse_wheel_event.bindAsEventListener(this)
-    document.on 'viewer:displayed-image-loaded', @displayed_image_loaded_event.bindAsEventListener(this)
-    document.on 'viewer:set-active-post', ((e) ->
+    document.on 'DOMMouseScroll', @document_mouse_wheel_event
+    document.on 'mousewheel', @document_mouse_wheel_event
+    document.on 'viewer:displayed-image-loaded', @displayed_image_loaded_event
+    document.on 'viewer:set-active-post', (e) =>
       post_id_and_frame = [
         e.memo.post_id
         e.memo.post_frame
       ]
       @set_active_post post_id_and_frame, e.memo.lazy, e.memo.center_thumbs
       return
-    ).bindAsEventListener(this)
-    document.on 'viewer:show-next-post', ((e) ->
+
+    document.on 'viewer:show-next-post', (e) =>
       @show_next_post e.memo.prev
       return
-    ).bindAsEventListener(this)
-    document.on 'viewer:scroll', ((e) ->
+
+    document.on 'viewer:scroll', (e) =>
       @scroll e.memo.left
       return
-    ).bindAsEventListener(this)
-    document.on 'viewer:set-thumb-bar', ((e) ->
+
+    document.on 'viewer:set-thumb-bar', (e) =>
       if e.memo.toggle
         @show_thumb_bar !@thumb_container_shown
       else
         @show_thumb_bar e.memo.set
       return
-    ).bindAsEventListener(this)
-    document.on 'viewer:loaded-posts', @loaded_posts_event.bindAsEventListener(this)
-    @hashchange_post_id = @hashchange_post_id.bind(this)
+
+    document.on 'viewer:loaded-posts', @loaded_posts_event
     UrlHash.observe 'post-id', @hashchange_post_id
     UrlHash.observe 'post-frame', @hashchange_post_id
-    new DragElement(@container, ondrag: @container_ondrag.bind(this))
-    Element.on window, 'resize', @window_resize_event.bindAsEventListener(this)
-    @container.on 'mousemove', @container_mousemove_event.bindAsEventListener(this)
-    @container.on 'mouseover', @container_mouseover_event.bindAsEventListener(this)
-    @container.on 'mouseout', @container_mouseout_event.bindAsEventListener(this)
-    @container.on 'click', @container_click_event.bindAsEventListener(this)
-    @container.on 'dblclick', '.post-thumb,.browser-thumb-hover-overlay', @container_dblclick_event.bindAsEventListener(this)
+    new DragElement(@container, ondrag: @container_ondrag)
+    Element.on window, 'resize', @window_resize_event
+    @container.on 'mousemove', @container_mousemove_event
+    @container.on 'mouseover', @container_mouseover_event
+    @container.on 'mouseout', @container_mouseout_event
+    @container.on 'click', @container_click_event
+    @container.on 'dblclick', '.post-thumb,.browser-thumb-hover-overlay', @container_dblclick_event
 
     # Prevent the default behavior of left-clicking on the expanded thumbnail overlay.  It's
     # handled by container_click_event.
-    @container.down('.browser-thumb-hover-overlay').on 'click', ((event) ->
+    @container.down('.browser-thumb-hover-overlay').on 'click', (event) =>
       if event.isLeftClick()
         event.preventDefault()
       return
-    ).bindAsEventListener(this)
 
     # For Android browsers, we're set to 150 DPI, which (in theory) scales us to a consistent UI size
     # based on the screen DPI.  This means that we can determine the physical screen size from the
@@ -116,7 +114,7 @@ export default class ThumbnailView
     @show_thumb_bar true
     return
 
-  window_resize_event: (e) ->
+  window_resize_event: (e) =>
     if e.stopped
       return
     if @thumb_container_shown
@@ -125,7 +123,7 @@ export default class ThumbnailView
 
   # Show the given posts.  If extending is true, post_ids are meant to extend a previous
   # search; attempt to continue where we left off.
-  loaded_posts_event: (event) ->
+  loaded_posts_event: (event) =>
     post_ids = event.memo.post_ids
     old_post_ids = @post_ids
     old_centered_post_idx = @centered_post_idx
@@ -236,12 +234,12 @@ export default class ThumbnailView
       @show_thumb_bar false
     return
 
-  container_ondrag: (e) ->
+  container_ondrag: (e) =>
     @centered_post_offset -= e.dX
     @center_on_post_for_scroll @centered_post_idx
     return
 
-  container_mouseover_event: (event) ->
+  container_mouseover_event: (event) =>
     li = $(event.target)
     if !li.hasClassName('.post-thumb')
       li = li.up('.post-thumb')
@@ -249,7 +247,7 @@ export default class ThumbnailView
       @expand_post li.post_idx
     return
 
-  container_mouseout_event: (event) ->
+  container_mouseout_event: (event) =>
     # If the mouse is leaving the hover overlay, hide it.
     target = $(event.target)
     if !target.hasClassName('.browser-thumb-hover-overlay')
@@ -258,7 +256,7 @@ export default class ThumbnailView
       @expand_post null
     return
 
-  hashchange_post_id: ->
+  hashchange_post_id: =>
     post_id_and_frame = @get_current_post_id_and_frame()
     if !post_id_and_frame[0]?
       return
@@ -327,14 +325,14 @@ export default class ThumbnailView
     ]
 
   # Track the mouse cursor when it's within the container.
-  container_mousemove_event: (e) ->
+  container_mousemove_event: (e) =>
     x = e.pointerX() - (document.documentElement.scrollLeft)
     y = e.pointerY() - (document.documentElement.scrollTop)
     @last_mouse_x = x
     @last_mouse_y = y
     return
 
-  document_mouse_wheel_event: (event) ->
+  document_mouse_wheel_event: (event) =>
     event.stop()
     val = undefined
     if event.wheelDelta
@@ -788,7 +786,7 @@ export default class ThumbnailView
     @set_thumb_dimensions item
     item
 
-  set_thumb_dimensions: (li) ->
+  set_thumb_dimensions: (li) =>
     post_idx = li.post_idx
     post_id = @post_ids[post_idx]
     post_frame = @post_frames[post_idx]
@@ -836,13 +834,13 @@ export default class ThumbnailView
     # height of the thumb block, plus ten pixels for padding at the top and bottom.
     container_height = 200 * @config.thumb_scale + 10
     @container.down('.post-browser-posts-container').setStyle height: container_height + 'px'
-    @container.select('LI.post-thumb').each @set_thumb_dimensions.bind(this)
+    @container.select('LI.post-thumb').each @set_thumb_dimensions
     @center_on_post_for_scroll @centered_post_idx
     return
 
   # Handle clicks and doubleclicks on thumbnails.  These events are handled by
   # the container, so we don't need to put event handlers on every thumb.
-  container_click_event: (event) ->
+  container_click_event: (event) =>
 
     # Ignore the click if it was stopped by the DragElement.
 
@@ -865,7 +863,7 @@ export default class ThumbnailView
     @set_active_post_idx li.post_idx
     return
 
-  container_dblclick_event: (event) ->
+  container_dblclick_event: (event) =>
     if event.button
       return
     event.preventDefault()
@@ -892,8 +890,7 @@ export default class ThumbnailView
     post_idx = (post_idx + @post_ids.length) % @post_ids.length
     post_idx
 
-  displayed_image_loaded_event: (event) ->
-
+  displayed_image_loaded_event: (event) =>
     # If we don't have a loaded search, then we don't have any nearby posts to preload.
 
     if !@post_ids?

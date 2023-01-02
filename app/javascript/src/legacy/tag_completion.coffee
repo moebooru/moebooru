@@ -463,12 +463,7 @@ TagCompletionClass::complete_tag = (tag, options) ->
     final_aliases
   ]
 
-# This is only supported if the browser supports localStorage.  Also disable this if
-# addEventListener is missing; IE has various problems that aren't worth fixing.
-if !LocalStorageDisabled() and 'addEventListener' of document
-  window.TagCompletion = new TagCompletionClass
-else
-  window.TagCompletion = null
+window.TagCompletion = new TagCompletionClass
 
 window.TagCompletionBox = (input_field) ->
   @input_field = input_field
@@ -731,7 +726,3 @@ TagCompletionBox::update = (force) ->
   # Focus the first item.
   @focus_element @completion_box.down('.completed-tag')
   return
-
-# If tag completion isn't supported, disable TagCompletionBox.
-if TagCompletion == null or !('addEventListener' of document)
-  window.TagCompletionBox = ->

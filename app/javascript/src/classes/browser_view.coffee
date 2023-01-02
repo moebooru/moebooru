@@ -102,21 +102,19 @@ export default class BrowserView
       @set_post_ui e.memo.shown
       @scale_and_position_image true
 
-    ###
-      OnKey(79, null, function(e) {
-        this.zoom_level -= 1;
-        this.scale_and_position_image(true);
-        this.update_navigator();
-        return true;
-      }.bindAsEventListener(this));
+    #OnKey(79, null, (e) => {
+    #  this.zoom_level -= 1;
+    #  this.scale_and_position_image(true);
+    #  this.update_navigator();
+    #  return true;
+    #});
 
-      OnKey(80, null, function(e) {
-        this.zoom_level += 1;
-        this.scale_and_position_image(true);
-        this.update_navigator();
-        return true;
-      }.bindAsEventListener(this));
-    ###
+    #OnKey(80, null, (e) => {
+    #  this.zoom_level += 1;
+    #  this.scale_and_position_image(true);
+    #  this.update_navigator();
+    #  return true;
+    #});
 
     # Hide member-only and moderator-only controls:
     $(document.body)
@@ -902,7 +900,7 @@ export default class BrowserView
       rating = null
       source = null
       parent_id = null
-      element.value.split(' ').each ((tag) ->
+      element.value.split(' ').each (tag) ->
         # This mimics what the server side does; it does prevent metatags from using
         # uppercase in source: metatags.
         tag = tag.toLowerCase()
@@ -921,21 +919,20 @@ export default class BrowserView
           if m[1] == 'source'
             source = m[2]
         return
-      ).bind(this)
       console.debug 'rating: ' + rating
       console.debug 'source: ' + source
       console.debug 'parent: ' + parent_id
     return
 
   edit_save: ->
-    save_completed = (->
+    save_completed = =>
       notice 'Post saved'
 
       # If we're still showing the post we saved, hide the edit area.
       if @displayed_post_id == post_id
         @edit_show false
       return
-    ).bind(this)
+
     post_id = @displayed_post_id
 
     # If we're in the frame editor, save it.  Don't save the hidden main editor.

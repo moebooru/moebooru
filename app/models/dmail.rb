@@ -1,7 +1,7 @@
 class Dmail < ApplicationRecord
   validates_presence_of :to_id
   validates_presence_of :from_id
-  validates_format_of :title, :with => /\S/
+  validates :title, presence: true, length: { maximum: 100 }
   validates_format_of :body, :with => /\S/
 
   belongs_to :to, :class_name => "User", :foreign_key => "to_id"

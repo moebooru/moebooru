@@ -248,7 +248,7 @@ export default class TagCompletion
 
     # Allow "tgm" to match "tagme".  If top_results_only is set, we only want primary results,
     # so omit this match.
-    if !options.top_results_only
+    if !options.top_results_only && letters.length < 12
       s = '('
       letters.each (letter) ->
         escaped_letter = RegExp.escape(letter)

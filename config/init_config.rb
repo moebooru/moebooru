@@ -155,7 +155,6 @@ CONFIG["local_image_service"] = ""
 # List of image services available for similar image searching.
 CONFIG["image_service_list"] = {
   "danbooru.donmai.us" => "http://haruhidoujins.yi.org/multi-search.xml",
-  "moe.imouto.org" => "http://haruhidoujins.yi.org/multi-search.xml",
   "konachan.com" => "http://haruhidoujins.yi.org/multi-search.xml"
 }
 

@@ -58,8 +58,6 @@ module Moebooru
     config.action_controller.asset_host = "#{scheme}#{CONFIG[:file_hosts][:assets]}" if CONFIG[:file_hosts]
     config.action_mailer.default_url_options = { :host => "#{scheme}#{CONFIG["server_host"]}" }
 
-    config.ssl_options = { hsts: false }
-
     config.middleware.delete ActionDispatch::HostAuthorization
   end
 end

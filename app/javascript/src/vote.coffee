@@ -33,20 +33,21 @@ class window.Vote
 
 
   set: (vote) =>
-    notice t('.voting')
-    $.ajax
-      url: Moebooru.path('/post/vote.json')
-      data:
-        id: @post_id
-        score: vote
-      dataType: 'json'
-      type: 'post'
-      statusCode: 403: ->
-        notice "#{t('js.error')}#{t('js.denied')}"
-    .done (data) =>
-      @updateWidget vote, data.posts[0].score
-      $('#favorited-by').html favorite.linkToUsers(data.voted_by[FAVORITE])
-      notice t('.saved')
+    User.run_login false, =>
+      notice t('.voting')
+      $.ajax
+        url: Moebooru.path('/post/vote.json')
+        data:
+          id: @post_id
+          score: vote
+        dataType: 'json'
+        type: 'post'
+        statusCode: 403: ->
+          notice "#{t('js.error')}#{t('js.denied')}"
+      .done (data) =>
+        @updateWidget vote, data.posts[0].score
+        $('#favorited-by').html favorite.linkToUsers(data.voted_by[FAVORITE])
+        notice t('.saved')
 
 
   setupEvents: =>

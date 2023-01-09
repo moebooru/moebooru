@@ -239,6 +239,12 @@ class ApplicationController < ActionController::Base
   end
 
   def init_cookies
+    if @current_user.is_anonymous?
+      cookies.delete :user_info
+    else
+      cookies[:user_info] = @current_user.user_info_cookie
+    end
+
     return if params[:format] == "xml" || params[:format] == "json"
 
     cookies["forum_post_last_read_at"] = if @current_user.is_anonymous?
@@ -247,12 +253,8 @@ class ApplicationController < ActionController::Base
                                            @current_user.last_forum_topic_read_at || Time.at(0)
                                          end.to_json
 
-    if @current_user.is_anonymous?
-      cookies.delete :user_info
-    else
+    if !@current_user.is_anonymous?
       cookies["user_id"] = @current_user.id.to_s
-
-      cookies["user_info"] = @current_user.user_info_cookie
 
       if @current_user.has_mail?
         cookies["has_mail"] = "1"

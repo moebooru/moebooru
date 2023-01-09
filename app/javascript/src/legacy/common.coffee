@@ -42,6 +42,7 @@ window.OnKey = (key, options, press, release) ->
     element = document
   if element == document and window.opera and !options.AlwaysAllowOpera
     return
+  element = $(element)
   element.observe 'keyup', (e) ->
     if e.keyCode != key
       return

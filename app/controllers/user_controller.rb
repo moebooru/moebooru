@@ -11,6 +11,7 @@ class UserController < ApplicationController
   protected
 
   def save_cookies(user)
+    @current_user = user
     session[:user_id] = user.id
   end
 

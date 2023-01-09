@@ -19,7 +19,8 @@ export default class Menu
     $(document).on 'click', '#login-link', (e) ->
       e.preventDefault()
       User.run_login false, ->
-        window.location = window.location
+        Cookie.put 'notice', 'You have been logged in.'
+        document.location.reload()
 
 
     $(document).on 'click', '#forum-mark-all-read', (e) ->

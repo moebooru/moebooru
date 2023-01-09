@@ -1,11 +1,21 @@
-window.User =
-  checkXhr: null
+$ = jQuery
 
-  cancel_check: ->
-    User.checkXhr?.abort()
+export default class User
+  constructor: ->
+    @active_tab = null
+    @checkXhr = null
+    @current_state = null
+    @pending_username = null
+    @check_name_timer = null
+    @last_username_in_form = null
+    @success_func = null
+    @messages = []
+
+  cancel_check: =>
+    @checkXhr?.abort()
 
   reset_password: (username, email, func) ->
-    jQuery.ajax '/user/reset_password.json',
+    $.ajax '/user/reset_password.json',
       data:
         user:
           name: username
@@ -20,15 +30,13 @@ window.User =
       else
         notice "Error: unknown error"
 
-    return
-
-  check: (username, password, background, func) ->
+  check: (username, password, background, func) =>
     parameters = username: username
     if password
       parameters.password = password
 
-    User.cancel_check()
-    User.checkXhr = jQuery.ajax '/user/check.json',
+    @cancel_check()
+    @checkXhr = $.ajax '/user/check.json',
       data: parameters
       dataType: 'json'
       method: 'POST'
@@ -44,7 +52,7 @@ window.User =
     if email
       parameters.user.email = email
 
-    jQuery.ajax '/user/create.json',
+    $.ajax '/user/create.json',
       data: parameters
       dataType: 'json'
       method: 'POST'
@@ -52,16 +60,10 @@ window.User =
 
     return
 
-  check_name_timer: null
-  last_username_in_form: null
-  success_func: null
-  messages: []
-  init: ->
-    $('login-popup-notices').select('SPAN').each (e) ->
-      User.messages.push e.id
-      return
+  init: =>
+    for notice in document.querySelectorAll('#login-popup-notices span')
+      @messages.push notice.id
 
-    ###
     # IE makes us jump lots of hoops.  We have to watch submit events on every object
     # instead of just window because IE doesn't support event capturing.  We have to
     # override the submit method in every form to catch programmatic submits, because
@@ -72,251 +74,225 @@ window.User =
     # from continuing.  However, we need to attach after forms have been created.  So,
     # this needs to be run as an early DOMLoaded event, and any other code that attaches
     # submit events to code needs to be run in a later DOMLoaded event (or later events).
-    #
-    ###
+    for form in document.querySelectorAll('form.need-signup')
+      form.addEventListener 'submit', @run_login_onsubmit
 
-    $$('FORM.need-signup').each (form) ->
-      form.observe 'submit', User.run_login_onsubmit
-      return
-
-    ### If you select an item from the history dropdown in IE7, change events never fire, so
+    # If you select an item from the history dropdown in IE7, change events never fire, so
     # use keyup instead.  This isn't a problem with password fields, since there's no history
     # dropdown.
-    ###
-
-    $('login-popup').observe 'submit', (e) ->
-      e.stop()
-      User.form_submitted()
-      return
-    $('login-popup-submit').observe 'click', (e) ->
-      e.stop()
-      User.form_submitted()
-      return
-    $('login-popup-cancel').observe 'click', (e) ->
-      e.stop()
-      User.close false
-      return
-    $('login-popup-username').observe 'blur', (e) ->
-      User.form_username_blur()
-      return
-    $('login-popup-username').observe 'focus', (e) ->
-      User.form_username_focus()
-      return
-    $('login-popup-username').observe 'keyup', (e) ->
-      User.form_username_changed true
-      return
-    $('login-tabs').select('LI').each (a) ->
-      a.observe 'mousedown', (e) ->
-        e.stop()
-        return
-      return
-    $('login-tabs').select('LI').each (a) ->
-      a.observe 'click', (e) ->
-        e.stop()
-        User.set_tab a.id
-        return
+    document.getElementById('login-popup').addEventListener 'submit', (e) =>
+      e.stopPropagation()
+      e.preventDefault()
+      @form_submitted()
       return
 
-    ### IE and FF are glitchy with form submission: they fail to submit forms unless
+    document.getElementById('login-popup-submit').addEventListener 'click', (e) =>
+      e.stopPropagation()
+      e.preventDefault()
+      @form_submitted()
+      return
+
+    document.getElementById('login-popup-cancel').addEventListener 'click', (e) =>
+      e.stopPropagation()
+      e.preventDefault()
+      @close false
+      return
+
+    document.getElementById('login-popup-username').addEventListener 'blur', (e) =>
+      @form_username_blur()
+      return
+
+    document.getElementById('login-popup-username').addEventListener 'focus', (e) =>
+      @form_username_focus()
+      return
+
+    document.getElementById('login-popup-username').addEventListener 'keyup', (e) =>
+      @form_username_changed true
+      return
+
+    for a in document.querySelectorAll('#login-tabs li')
+      do (a) =>
+        a.addEventListener 'mousedown', (e) =>
+          e.stopPropagation()
+          e.preventDefault()
+        a.addEventListener 'click', (e) =>
+          e.stopPropagation()
+          e.preventDefault()
+          @set_tab a.id
+
+    # IE and FF are glitchy with form submission: they fail to submit forms unless
     # there's an <INPUT type="submit"> somewhere in the form.  IE is even worse:
     # even if there is one, if it's hidden on page load (including if it's a parent
     # element hidden), it'll never submit the form, even if it's shown later.  Don't
     # rely on this behavior; just catch enter presses and submit the form explicitly.
-    ###
-
     OnKey 13, {
       AllowInputFields: true
-      Element: $('login-popup')
-    }, (e) ->
+      Element: document.getElementById('login-popup')
+    }, (e) =>
       e.stop()
-      User.form_submitted()
+      @form_submitted()
       return
 
-    ### Escape closes the login box. ###
-
+    # Escape closes the login box.
     OnKey 27, {
       AllowInputFields: true
       AlwaysAllowOpera: true
-    }, (e) ->
-      if !User.success_func
-        return false
-      User.close false
+    }, (e) =>
+      return false if !@success_func
+      @close false
       true
-    return
-  open: (success) ->
-    if User.success_func
-      User.close false
-    User.success_func = success
-    $('login-background').show()
-    $('login-container').show()
-    User.set_tab 'tab-login'
-    return
-  close: (run_success_func) ->
-    if !User.success_func
-      return
-    $('login-background').hide()
-    $('login-container').hide()
-    User.active_tab = null
-    User.check_name_timer = null
-    func = User.success_func
-    User.success_func = null
+
+  open: (success) =>
+    if @success_func
+      @close false
+    @success_func = success
+    document.getElementById('login-background').style.display = ''
+    document.getElementById('login-container').style.display = ''
+    @set_tab 'tab-login'
+
+  close: (run_success_func) =>
+    return if !@success_func
+    document.getElementById('login-background').style.display = 'none'
+    document.getElementById('login-container').style.display = 'none'
+    @active_tab = null
+    @check_name_timer = null
+    func = @success_func
+    @success_func = null
     if run_success_func
       window.setTimeout func, 0
     return
-  run_login_onclick: (event) ->
-    event = Event.extend(event)
 
-    ### event.target is not copied by clone_event. ###
+  run_login_onclick: (event) =>
+    target = event.target
 
-    target = $(event.target)
+    loggedIn = @run_login true, =>
+      $(target).click()
+      return
 
-    ### event is not available when we get to the callback in IE7. ###
+    return true if loggedIn
 
-    e = clone_event(event)
-    if User.run_login(true, (->
-        if target.hasClassName('login-button')
-
-          ### This is a login button, and not an action that happened to need login.  After
-          # a successful login, don't click the button; that'll just go to the login page.
-          # Instead, just reload the current page.
-          ###
-
-          Cookie.put 'notice', 'You have been logged in.'
-          document.location.reload()
-          return
-        target.simulate_anchor_click e
-        return
-      ))
-      return true
-
-    ### Login is running, so stop the event.  Don't just return false; call stop(), so
+    # Login is running, so stop the event.  Don't just return false; call stop(), so
     # event.stopped is available to the caller if we've been sent this message via
     # Element.dispatchEvent.
-    ###
-
-    event.stop()
+    event.stopPropagation()
+    event.preventDefault()
     false
-  run_login_onsubmit: (event) ->
 
-    ### Set skip_complete_on_true, so if we don't need to login, we don't resubmit the
+  run_login_onsubmit: (event) =>
+    # Set skip_complete_on_true, so if we don't need to login, we don't resubmit the
     # event; we just don't cancel it.
-    ###
+    target = event.target
+    loggedIn = @run_login true, => target.submit()
 
-    target = $(event.target)
-    if !User.run_login(true, (->
-        target.simulate_submit()
-        return
-      ))
-      event.stop()
-    return
-  run_login: (only_complete_on_login, complete) ->
+    return true if loggedIn
+
+    event.stopPropagation()
+    event.preventDefault()
+    false
+
+  run_login: (only_complete_on_login, complete) =>
     if Cookie.get('user_info') != ''
       if !only_complete_on_login
         complete()
       return true
-    User.open complete
+    @open complete
     false
-  active_tab: null
-  set_tab: (tab) ->
-    if User.active_tab == tab
+
+  set_tab: (tab) =>
+    if @active_tab == tab
       return
-    User.active_tab = tab
-    User.check_name_timer = null
-    User.last_username_in_form = null
-    $('login-tabs').select('LI').each (li) ->
-      li.removeClassName 'selected'
-      return
-    $('login-tabs').down('#' + tab).addClassName 'selected'
-    $$('.tab-header-text').each (li) ->
-      li.hide()
-      return
-    $(tab + '-text').show()
+    @active_tab = tab
+    @check_name_timer = null
+    @last_username_in_form = null
+    for li in document.querySelectorAll('#login-tabs li')
+      li.classList.remove 'selected'
+
+    document.getElementById(tab).classList.add 'selected'
+    for li in document.querySelectorAll('.tab-header-text')
+      li.style.display = 'none'
+
+    document.getElementById("#{tab}-text").style.display = ''
+
+    usernameInput = document.getElementById 'login-popup-username'
     if tab == 'tab-login'
-
-      ### If the user's browser fills in a username but no password, focus the password.  Otherwise,
+      # If the user's browser fills in a username but no password, focus the password.  Otherwise,
       # focus the username.
-      ###
-
-      if $('login-popup-password').value == '' and $('login-popup-username').value != ''
-        $('login-popup-password').focus()
+      passwordInput = document.getElementById 'login-popup-password'
+      if passwordInput.value == '' && usernameInput.value != ''
+        passwordInput.focus()
       else
-        $('login-popup-username').focus()
-      User.set_state 'login-blank'
+        usernameInput.focus()
+      @set_state 'login-blank'
     else if tab == 'tab-reset'
-      User.set_state 'reset-blank'
-      $('login-popup-username').focus()
-    User.form_username_changed()
+      @set_state 'reset-blank'
+      usernameInput.focus()
+
+    @form_username_changed()
     return
-  message: (text) ->
-    i = 0
-    l = User.messages.length
-    while i < l
-      elem = User.messages[i]
-      $(elem).hide()
-      i++
-    $('login-popup-message').update text
-    $('login-popup-message').show()
+
+  message: (text) =>
+    for messageId in @messages
+      document.getElementById(messageId).style.display = 'none'
+
+    messageEl = document.getElementById('login-popup-message')
+    messageEl.innerHTML = text
+    messageEl.style.display = ''
     return
-  set_state: (state) ->
+
+  set_state: (state) =>
     show = {}
     if state.match(/^login-/)
       show['login-popup-password-box'] = true
       if state == 'login-blank'
-        $('login-popup-submit').update 'Login'
+        document.getElementById('login-popup-submit').innerText = 'Login'
       else if state == 'login-user-exists'
-        $('login-popup-submit').update 'Login'
+        document.getElementById('login-popup-submit').innerText = 'Login'
       else if state == 'login-confirm-password'
         show['login-popup-password-confirm-box'] = true
-        $('login-popup-submit').update 'Create account'
+        document.getElementById('login-popup-submit').innerText = 'Create account'
       else if state == 'login-confirm-password-mismatch'
-        $('login-popup-submit').update 'Create account'
-      show['login-popup-' + state] = true
+        document.getElementById('login-popup-submit').innerText = 'Create account'
+      show["login-popup-#{state}"] = true
     else if state.match(/^reset-/)
       show['login-popup-email-box'] = true
-      $('login-popup-submit').update 'Reset password'
-      show['login-popup-' + state] = true
+      document.getElementById('login-popup-submit').innerText = 'Reset password'
+      show["login-popup-#{state}"] = true
     all = [
       'login-popup-email-box'
       'login-popup-password-box'
       'login-popup-password-confirm-box'
-    ].concat(User.messages)
-    window.current_state = state
-    i = 0
-    l = all.length
-    while i < l
-      elem = all[i]
-      if show[elem]
-        $(elem).show()
-      else
-        $(elem).hide()
-      i++
+      ...@messages
+    ]
+    @current_state = state
+    for id in all
+      document.getElementById(id).style.display =
+        if show[id]
+          ''
+        else
+          'none'
     return
-  pending_username: null
-  form_username_changed: (keyup) ->
-    username = $('login-popup-username').value
-    if username == User.last_username_in_form
+
+  form_username_changed: (keyup) =>
+    username = document.getElementById('login-popup-username').value
+    if username == @last_username_in_form
       return
-    User.last_username_in_form = username
-    User.cancel_check()
-    if User.check_name_timer
-      window.clearTimeout User.check_name_timer
-    User.pending_username = null
+    @last_username_in_form = username
+    @cancel_check()
+    window.clearTimeout @check_name_timer
+    @pending_username = null
     if username == ''
-      if User.active_tab == 'tab-login'
-        User.set_state 'login-blank'
-      else if User.active_tab == 'tab-reset'
-        User.set_state 'reset-blank'
+      if @active_tab == 'tab-login'
+        @set_state 'login-blank'
+      else if @active_tab == 'tab-reset'
+        @set_state 'reset-blank'
       return
 
-    ### Delay on keyup, so we don't send tons of requests.  Don't delay otherwise,
+    # Delay on keyup, so we don't send tons of requests.  Don't delay otherwise,
     # so we don't introduce lag when we don't have to.
-    ###
-
     ms = 500
-    if !keyup and User.check_name_timer
+    if !keyup and @check_name_timer
       ms = 0
 
-    ###
     # Make sure the UI is still usable if this never finished.  This way, we don't
     # lag the interface if these JSON requests are taking longer than usual; you should
     # be able to click "login" immediately as soon as a username and password are entered.
@@ -325,122 +301,110 @@ window.User =
     # back yet.
     #
     # If the state isn't "blank", the button is already enabled.
-    ###
-
-    User.check_name_timer = window.setTimeout((->
-      User.check_name_timer = null
-      User.check username, null, true, (resp) ->
+    checkName = =>
+      @check_name_timer = null
+      @check username, null, true, (resp) =>
         if resp.exists
-
-          ### Update the username to match the actual user's case.  If the form contents have
+          # Update the username to match the actual user's case.  If the form contents have
           # changed since we started this check, don't do this.  (We cancel this event if we
           # see the contents change, but the contents can change without this event firing
           # at all.)
-          ###
-
-          current_username = $('login-popup-username').value
+          usernameInput = document.getElementById('login-popup-username')
+          current_username = usernameInput.value
           if current_username == username
-
-            ### If the element doesn't have focus, change the text to match.  If it does, wait
+            # If the element doesn't have focus, change the text to match.  If it does, wait
             # until it loses focus, so it doesn't interfere with the user editing it.
-            ###
-
-            if !$('login-popup').focused
-              $('login-popup-username').value = resp.name
+            if !document.getElementById('login-popup').focused
+              usernameInput.value = resp.name
             else
-              User.pending_username = resp.name
-        if User.active_tab == 'tab-login'
+              @pending_username = resp.name
+        if @active_tab == 'tab-login'
           if !resp.exists
-            User.set_state 'login-confirm-password'
-            return
+            @set_state 'login-confirm-password'
           else
-            User.set_state 'login-user-exists'
-        else if User.active_tab == 'tab-reset'
+            @set_state 'login-user-exists'
+        else if @active_tab == 'tab-reset'
           if !resp.exists
-            User.set_state 'reset-blank'
+            @set_state 'reset-blank'
           else if resp.no_email
-            User.set_state 'reset-user-has-no-email'
+            @set_state 'reset-user-has-no-email'
           else
-            User.set_state 'reset-user-exists'
-        return
-      return
-    ), ms)
+            @set_state 'reset-user-exists'
+
+    @check_name_timer = window.setTimeout(checkName, ms)
     return
+
   form_username_focus: ->
-    $('login-popup').focused = true
+    document.getElementById('login-popup').focused = true
     return
-  form_username_blur: ->
-    $('login-popup').focused = false
 
-    ### When the username field loses focus, update the username case to match the
+  form_username_blur: =>
+    document.getElementById('login-popup').focused = false
+
+    # When the username field loses focus, update the username case to match the
     # result we got back from check(), if any.
-    ###
+    if @pending_username
+      document.getElementById('login-popup').username.value = @pending_username
+      @pending_username = null
 
-    if User.pending_username
-      $('login-popup').username.value = User.pending_username
-      User.pending_username = null
-
-    ### We watch keyup on the username, because change events are unreliable in IE; update
+    # We watch keyup on the username, because change events are unreliable in IE; update
     # when focus is lost, too, so we see changes made without using the keyboard.
-    ###
-
-    User.form_username_changed false
+    @form_username_changed false
     return
-  form_submitted: ->
-    User.cancel_check()
-    if User.check_name_timer
-      window.clearTimeout User.check_name_timer
-    username = $('login-popup-username').value
-    password = $('login-popup-password').value
-    password_confirm = $('login-popup-password-confirm').value
-    email = $('login-popup-email').value
-    if username == ''
-      return
-    if User.active_tab == 'tab-login'
+
+  form_submitted: =>
+    @cancel_check()
+    window.clearTimeout @check_name_timer
+    username = document.getElementById('login-popup-username').value
+    password = document.getElementById('login-popup-password').value
+    password_confirm = document.getElementById('login-popup-password-confirm').value
+    email = document.getElementById('login-popup-email').value
+    return if username == ''
+
+    if @active_tab == 'tab-login'
       if password == ''
-        User.message 'Please enter a password.'
+        @message 'Please enter a password.'
         return
-      if window.current_state == 'login-confirm-password'
+      if @current_state == 'login-confirm-password'
         if password != password_confirm
-          User.message 'The passwords you\'ve entered don\'t match.'
+          @message "The passwords you've entered don't match."
         else
           # create account
-          User.create username, password, null, (resp) ->
+          @create username, password, null, (resp) =>
             if resp.response == 'success'
-              User.close true
+              @close true
             else if resp.response == 'error'
-              User.message resp.errors.join('<br>')
-            return
+              @message resp.errors.join('<br>')
         return
-      User.check username, password, false, (resp) ->
+
+      @check username, password, false, (resp) =>
         if !resp.exists
-          User.set_state 'login-confirm-password'
+          @set_state 'login-confirm-password'
           return
 
         if resp.response == 'wrong-password'
           notice 'Incorrect password'
           return
-        User.close true
+        @close true
         return
-    else if User.active_tab == 'tab-reset'
+
+    else if @active_tab == 'tab-reset'
       if email == ''
         return
-      User.reset_password username, email, (resp) ->
-        if resp.result == 'success'
-          User.set_state 'reset-successful'
-        else if resp.result == 'unknown-user'
-          User.set_state 'reset-unknown-user'
-        else if resp.result == 'wrong-email'
-          User.set_state 'reset-user-email-incorrect'
-        else if resp.result == 'no-email'
-          User.set_state 'reset-user-has-no-email'
-        else if resp.result == 'invalid-email'
-          User.set_state 'reset-user-email-invalid'
+
+      @reset_password username, email, (resp) =>
+        newState = switch resp.result
+          when 'success' then 'reset-successful'
+          when 'unknown-user' then 'reset-unknown-user'
+          when 'wrong-email' then 'reset-user-email-incorrect'
+          when 'no-email' then 'reset-user-has-no-email'
+          when 'invalid-email' then 'reset-user-email-invalid'
+        @set_state newState if newState?
         return
     return
 
-  modify_blacklist: (add, remove, success) ->
-    jQuery.ajax '/user/modify_blacklist.json',
+  modify_blacklist: (add, remove, success) =>
+    $.ajax '/user/modify_blacklist.json',
       data:
         add: add
         remove: remove
@@ -454,7 +418,7 @@ window.User =
     return
 
   set_pool_browse_mode: (browse_mode) ->
-    jQuery.ajax '/user/update.json',
+    $.ajax '/user/update.json',
       data:
         user:
           pool_browse_mode: browse_mode
@@ -469,24 +433,28 @@ window.User =
 
   get_current_user_info: ->
     user_info = Cookie.get('user_info')
-    if !user_info
-      return null
+    return null if !user_info
+
     user_info.split ';'
-  get_current_user_info_field: (idx, def) ->
-    user_info = User.get_current_user_info()
+
+  get_current_user_info_field: (idx, def) =>
+    user_info = @get_current_user_info()
     if !user_info
       return def
-    if idx >= user_info.length
-      return def
-    user_info[idx]
-  get_current_user_id: ->
-    parseInt User.get_current_user_info_field(0, 0)
-  get_current_user_level: ->
-    parseInt User.get_current_user_info_field(1, 0)
-  get_use_browser: ->
-    setting = User.get_current_user_info_field(2, '0')
-    setting == '1'
-  is_member_or_higher: ->
-    User.get_current_user_level() >= 20
-  is_mod_or_higher: ->
-    User.get_current_user_level() >= 40
+
+    user_info[idx] ? def
+
+  get_current_user_id: =>
+    parseInt @get_current_user_info_field(0, 0)
+
+  get_current_user_level: =>
+    parseInt @get_current_user_info_field(1, 0)
+
+  get_use_browser: =>
+    @get_current_user_info_field(2, '0') == '1'
+
+  is_member_or_higher: =>
+    @get_current_user_level() >= 20
+
+  is_mod_or_higher: =>
+    @get_current_user_level() >= 40

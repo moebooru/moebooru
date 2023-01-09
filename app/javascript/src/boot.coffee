@@ -29,6 +29,7 @@ import ThumbnailUserImage from './classes/thumbnail_user_image'
 import ThumbnailView from './classes/thumbnail_view'
 import Timeago from './classes/timeago'
 import UrlHashHandler from './classes/url_hash_handler'
+import User from './classes/user'
 import UserRecord from './classes/user_record'
 import WindowTitleHandler from './classes/window_title_handler'
 
@@ -39,6 +40,7 @@ window.InlineImage = new InlineImage
 window.Pool = new Pool
 window.TagCompletion = new TagCompletion
 window.UrlHash = new UrlHashHandler
+window.User = new User
 window.autocomplete = new Autocomplete
 window.checkAll = new CheckAll
 window.comment = new Comment

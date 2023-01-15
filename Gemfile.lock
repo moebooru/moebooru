@@ -82,9 +82,6 @@ GEM
       actionmailer (>= 5.2, < 8)
       activesupport (>= 5.2, < 8)
     execjs (2.8.1)
-    ffi (1.15.5)
-    get_process_mem (0.2.7)
-      ffi (~> 1.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
     i18n (1.12.0)
@@ -96,7 +93,6 @@ GEM
       activesupport (>= 5.0.0)
     jsbundling-rails (1.0.3)
       railties (>= 6.0.0)
-    kgio (2.11.4)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -127,8 +123,6 @@ GEM
     nokogiri (1.13.10)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    non-stupid-digest-assets (1.0.9)
-      sprockets (>= 2.0)
     pg (1.4.3)
     pry (0.14.1)
       coderay (~> 1.1)
@@ -175,7 +169,6 @@ GEM
       rake (>= 12.2)
       thor (~> 1.0)
       zeitwerk (~> 2.5)
-    raindrops (0.20.0)
     rake (13.0.6)
     sitemap_generator (6.3.0)
       builder (~> 3.0)
@@ -193,12 +186,6 @@ GEM
     timeout (0.3.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    unicorn (6.1.0)
-      kgio (~> 2.6)
-      raindrops (~> 0.7)
-    unicorn-worker-killer (0.4.5)
-      get_process_mem (~> 0)
-      unicorn (>= 4, < 7)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -223,7 +210,6 @@ DEPENDENCIES
   mini_mime
   newrelic_rpm
   nokogiri
-  non-stupid-digest-assets
   pg
   pry
   puma
@@ -234,8 +220,6 @@ DEPENDENCIES
   sitemap_generator
   sprockets-rails
   terser
-  unicorn
-  unicorn-worker-killer
   will-paginate-i18n
   will_paginate
 

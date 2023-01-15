@@ -25,12 +25,7 @@ gem "addressable", :require => "addressable/uri"
 gem "mini_magick"
 gem "i18n-js", "~> 3.0.0"
 gem "mini_mime"
-
-group :standalone do
-  gem "unicorn", :require => false
-  gem "unicorn-worker-killer", :require => false
-  gem "puma"
-end
+gem "puma", require: false
 
 group :test do
   gem "rails-controller-testing"

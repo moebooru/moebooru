@@ -6,8 +6,6 @@ gem "sprockets-rails"
 gem "jsbundling-rails"
 gem "terser"
 
-gem "non-stupid-digest-assets"
-
 gem "pg"
 
 gem "diff-lcs", require: ['diff-lcs', 'diff/lcs/array']

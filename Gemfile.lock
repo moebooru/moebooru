@@ -123,8 +123,6 @@ GEM
     nokogiri (1.13.10)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    non-stupid-digest-assets (1.0.9)
-      sprockets (>= 2.0)
     pg (1.4.3)
     pry (0.14.1)
       coderay (~> 1.1)
@@ -212,7 +210,6 @@ DEPENDENCIES
   mini_mime
   newrelic_rpm
   nokogiri
-  non-stupid-digest-assets
   pg
   pry
   puma

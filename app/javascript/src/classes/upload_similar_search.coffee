@@ -1,4 +1,5 @@
 import ThumbnailUserImage from './thumbnail_user_image'
+import { hideEl, showEl } from 'utils/dom'
 
 # When file_field is changed to an image, run an image search and put a summary in
 # results.
@@ -7,11 +8,11 @@ export default class UploadSimilarSearch
     @file_field.addEventListener 'change', @field_changed_event
 
   field_changed_event: (event) =>
-    @results.hide()
+    hideEl(@results)
     if !@file_field.files? or @file_field.files.length == 0
       return
     @results.innerHTML = 'Searching...'
-    @results.show()
+    showEl(@results)
     file = @file_field.files[0]
     similar = new ThumbnailUserImage(file, @thumbnail_complete)
     return

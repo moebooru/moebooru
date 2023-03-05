@@ -4,7 +4,7 @@ import ThumbnailUserImage from './thumbnail_user_image'
 # results.
 export default class UploadSimilarSearch
   constructor: (@file_field, @results) ->
-    @file_field.on 'change', @field_changed_event
+    @file_field.addEventListener 'change', @field_changed_event
 
   field_changed_event: (event) =>
     @results.hide()

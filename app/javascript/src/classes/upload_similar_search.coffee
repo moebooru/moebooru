@@ -8,8 +8,8 @@ export default class UploadSimilarSearch
     @file_field.addEventListener 'change', @field_changed_event
 
   field_changed_event: (event) =>
-    hideEl(@results)
     if !@file_field.files? or @file_field.files.length == 0
+      hideEl(@results)
       return
     @results.innerHTML = 'Searching...'
     showEl(@results)
@@ -20,7 +20,6 @@ export default class UploadSimilarSearch
   thumbnail_complete: (result) =>
     if !result.success
       @results.innerHTML = 'Image load failed.'
-      @results.style.display = ''
       return
 
     jQuery.ajax '/post/similar.json',
@@ -28,9 +27,6 @@ export default class UploadSimilarSearch
         url: result.canvas.toDataURL()
       dataType: 'json'
       method: 'POST'
-    .always =>
-      @results.innerHTML = ''
-      @results.style.display = ''
     .done (json) =>
       if json.posts.length > 0
         posts = []

@@ -1,3 +1,3 @@
-hideEl = (el) -> el.style.display = 'none'
+export hideEl = (el) -> el.style.display = 'none'
 
-showEl = (el) -> el.style.display = ''
+export showEl = (el) -> el.style.display = ''

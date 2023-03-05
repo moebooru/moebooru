@@ -69,6 +69,6 @@ window.PostLoader = PostLoader
 window.PostQuickEdit = PostQuickEdit
 window.SimilarWithThumbnailing = SimilarWithThumbnailing
 window.TagCompletionBox = TagCompletionBox
-window.ThumbnailUserImage = ThumbnailUserImage
 window.ThumbnailView = ThumbnailView
+window.UploadSimilarSearch = UploadSimilarSearch
 window.WindowTitleHandler = WindowTitleHandler

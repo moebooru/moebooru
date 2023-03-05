@@ -1,5 +1,5 @@
 import ThumbnailUserImage from './thumbnail_user_image'
-import { hideEl, showEl } from 'utils/dom'
+import { hideEl, showEl } from 'src/utils/dom'
 
 # When file_field is changed to an image, run an image search and put a summary in
 # results.

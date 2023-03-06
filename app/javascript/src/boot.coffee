@@ -25,9 +25,9 @@ import RelatedTags from './classes/related_tags'
 import SimilarWithThumbnailing from './classes/similar_with_thumbnailing'
 import TagCompletion from './classes/tag_completion'
 import TagCompletionBox from './classes/tag_completion_box'
-import ThumbnailUserImage from './classes/thumbnail_user_image'
 import ThumbnailView from './classes/thumbnail_view'
 import Timeago from './classes/timeago'
+import UploadSimilarSearch from './classes/upload_similar_search'
 import UrlHashHandler from './classes/url_hash_handler'
 import User from './classes/user'
 import UserRecord from './classes/user_record'
@@ -69,6 +69,6 @@ window.PostLoader = PostLoader
 window.PostQuickEdit = PostQuickEdit
 window.SimilarWithThumbnailing = SimilarWithThumbnailing
 window.TagCompletionBox = TagCompletionBox
-window.ThumbnailUserImage = ThumbnailUserImage
 window.ThumbnailView = ThumbnailView
+window.UploadSimilarSearch = UploadSimilarSearch
 window.WindowTitleHandler = WindowTitleHandler

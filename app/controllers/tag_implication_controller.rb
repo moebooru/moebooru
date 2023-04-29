@@ -1,9 +1,11 @@
+# Filename: tag_implication_controller.rb
+# Description: Provides controller for creating, updating, deleting, and indexing on implicit tags
 class TagImplicationController < ApplicationController
   layout 'default'
-  before_action :member_only, {only: [:create]}
+  before_action :member_only, only: [:create]
 
   def create
-    ti = TagImplication.new(tag_implication_params.merge({is_pending: true, creator_id: @current_user.id}))
+    ti = TagImplication.new(tag_implication_params.merge(is_pending: true, creator_id: @current_user.id))
     flash[:notice] = ti.save ? 'Tag implication created' : 'Error: ' + ti.errors.full_messages.join(', ')
     redirect_to action: 'index'
   end
@@ -22,18 +24,16 @@ class TagImplicationController < ApplicationController
   end
 
   def index
-    if params[:commit] == 'Search Aliases'
-      return redirect_to controller: 'tag_alias', action: 'index', query: params[:query]
-    end
+    return redirect_to controller: 'tag_alias', action: 'index', query: params[:query] if params[:commit] == 'Search Aliases'
 
     # FIXME: subquery in order
     @implications = TagImplication.order(Arel.sql('is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)'))
 
     if params[:query]
-      tag_ids = Tag.where('name ILIKE ?', '*#{params[:query]}*'.to_escaped_for_sql_like).select(:id)
+      tag_ids = Tag.where('name ILIKE ?', "*#{params[:query]}*".to_escaped_for_sql_like).select(:id)
       @implications = @implications
-        .where('predicate_id IN (?) OR consequent_id IN (?)', tag_ids, tag_ids)
-        .order(is_pending: :desc, consequent_id: :asc)
+                      .where('predicate_id IN (?) OR consequent_id IN (?)', tag_ids, tag_ids)
+                      .order(is_pending: :desc, consequent_id: :asc)
     end
 
     @implications = @implications.paginate page: page_number, per_page: 20
@@ -57,7 +57,7 @@ class TagImplicationController < ApplicationController
 
   def approve_tag(x)
     if CONFIG['enable_asynchronous_tasks']
-      JobTask.create({task_type: 'approve_tag_implication', status: 'pending', data: get_data(x)})
+      JobTask.create(task_type: 'approve_tag_implication', status: 'pending', data: get_data(x))
     else
       find_and_approve(x)
     end
@@ -83,11 +83,11 @@ class TagImplicationController < ApplicationController
   end
 
   def get_creator_tag(ids)
-    return TagImplication.where(id: ids, is_pending: true, creator_id: @current_user.id).count == ids.count
+    TagImplication.where(id: ids, is_pending: true, creator_id: @current_user.id).count == ids.count
   end
 
   def get_data(x)
-    return {'id': x, 'updater_id': @current_user.id, 'updater_ip_addr': request.remote_ip}
+    { 'id': x, 'updater_id': @current_user.id, 'updater_ip_addr': request.remote_ip }
   end
 
   def find_and_approve(x)

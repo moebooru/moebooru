@@ -64,7 +64,7 @@ class TagImplicationController < ApplicationController
   end
 
   def delete_tag_if_privileged_or_creator(ids)
-    if @current_user.is_mod_or_higher? || get_creator_tag
+    if @current_user.is_mod_or_higher? || get_creator_tag(ids)
       ids.each { |x| destroy_tag_and_notify_user(x) }
 
       flash[:notice] = 'Tag implications deleted'
@@ -82,7 +82,7 @@ class TagImplicationController < ApplicationController
     params.require(:tag_implication).permit(:predicate, :consequent, :reason)
   end
 
-  def get_creator_tag
+  def get_creator_tag(ids)
     return TagImplication.where(id: ids, is_pending: true, creator_id: @current_user.id).count == ids.count
   end
 

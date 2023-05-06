@@ -6,3 +6,5 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 Naming/MethodParameterName:
   MinNameLength: 1
+Documentation:
+  Enabled: false

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TagImplicationController < ApplicationController
   layout 'default'
   before_action :member_only, only: [:create]
@@ -22,11 +24,11 @@ class TagImplicationController < ApplicationController
   end
 
   def index
-    redirect_to_tag_alias_index if searching_aliases?
+    return redirect_to_tag_alias_index if searching_aliases?
 
-    @implications = retrieve_matching_tag_id
-    apply_query_filter
-    paginate_implications
+    @implications = TagImplication.retrieve_matching_tag_id
+    @implications = TagImplication.apply_query_filter(params[:query], @implications)
+    @implications = TagImplication.paginate(page: page_number, per_page: 20)
     respond_to_list('implications')
   end
 
@@ -38,31 +40,6 @@ class TagImplicationController < ApplicationController
 
   def searching_aliases?
     params[:commit] == 'Search Aliases'
-  end
-
-  def apply_query_filter
-    return unless params[:query].present?
-
-    @implications = retrieve_tag_with_matching_id_and_name(params[:query])
-  end
-
-  def paginate_implications
-    @implications = @implications.paginate(page: page_number, per_page: 20)
-  end
-
-  def page_number
-    params[:page] || 1
-  end
-
-  def retrieve_matching_tag_id
-    TagImplication.order(Arel.sql('is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)'))
-  end
-
-  def retrieve_tag_with_matching_id_and_name(query)
-    tag_ids = Tag.where('name ILIKE :query', query: "%#{query}%").select(:id)
-    @implications
-      .where('predicate_id IN (:tag_ids) OR consequent_id IN (:tag_ids)', tag_ids: tag_ids)
-      .order(is_pending: :desc, consequent_id: :asc)
   end
 
   def approve_tags(ids)
@@ -110,7 +87,7 @@ class TagImplicationController < ApplicationController
   end
 
   def format_with_user_info(x)
-    { 'id': x, 'updater_id': @current_user.id, 'updater_ip_addr': request.remote_ip }
+    { id: x, updater_id: @current_user.id, updater_ip_addr: request.remote_ip }
   end
 
   def find_and_approve(x)

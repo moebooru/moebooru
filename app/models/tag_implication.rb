@@ -32,10 +32,13 @@ class TagImplication < ApplicationRecord
       .order(is_pending: :desc, consequent_id: :asc)
   end
 
-  def self.apply_query_filter(query, implications)
-    return unless query.present?
+  def self.apply_query_filter(params, implications)
+    return unless params[:query]
 
-    retrieve_existing_tag_matching_id(query, implications)
+    tag_ids = Tag.where('name ILIKE ?', "*#{params[:query]}*".to_escaped_for_sql_like).select(:id)
+    implications
+      .where('predicate_id IN (?) OR consequent_id IN (?)', tag_ids, tag_ids)
+      .order(is_pending: :desc, consequent_id: :asc)
   end
 
   def predicate

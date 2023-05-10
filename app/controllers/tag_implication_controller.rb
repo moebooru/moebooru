@@ -27,8 +27,8 @@ class TagImplicationController < ApplicationController
     return redirect_to_tag_alias_index if searching_aliases?
 
     @implications = TagImplication.retrieve_matching_tag_id
-    @implications = TagImplication.apply_query_filter(params[:query], @implications)
-    @implications = TagImplication.paginate(page: page_number, per_page: 20)
+    @implications = TagImplication.apply_query_filter(params, @implications)
+    @implications = @implications.paginate(page: page_number, per_page: 20)
     respond_to_list('implications')
   end
 

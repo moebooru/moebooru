@@ -25,15 +25,8 @@ class TagImplication < ApplicationRecord
     order(Arel.sql('is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)'))
   end
 
-  def self.retrieve_existing_tag_matching_id(query, implications)
-    tag_ids = Tag.where('name ILIKE :query', query: "*#{query}*").select(:id)
-    implications
-      .where('predicate_id IN (:tag_ids) OR consequent_id IN (:tag_ids)', tag_ids: tag_ids)
-      .order(is_pending: :desc, consequent_id: :asc)
-  end
-
   def self.apply_query_filter(params, implications)
-    return unless params[:query]
+    return implications unless params[:query].present?
 
     tag_ids = Tag.where('name ILIKE ?', "*#{params[:query]}*".to_escaped_for_sql_like).select(:id)
     implications

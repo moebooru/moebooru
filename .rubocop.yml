@@ -1,10 +1,8 @@
 AllCops:
-  TargetRubyVersion: 2.5
+  NewCops: enable
 Layout/LineLength:
   Max: 200
-Style/FrozenStringLiteralComment:
-  Enabled: false
 Naming/MethodParameterName:
   MinNameLength: 1
-Documentation:
+Style/Documentation:
   Enabled: false

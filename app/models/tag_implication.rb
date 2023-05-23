@@ -1,6 +1,58 @@
 # frozen_string_literal: true
 
 class TagImplication < ApplicationRecord
+  # FIXME: subquery in order
+  def self.order_for_listing
+    order(Arel.sql('is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)'))
+  end
+
+  def self.search_by_tag_name(query)
+    return self unless query.present?
+
+    tag_ids = Tag.where('name ILIKE ?', "*#{query}*".to_escaped_for_sql_like).select(:id)
+
+    where('predicate_id IN (?) OR consequent_id IN (?)', tag_ids, tag_ids)
+      .order(is_pending: :desc, consequent_id: :asc)
+  end
+
+  def self.with_implied(tags)
+    return [] if tags.blank?
+
+    all = []
+    tags = tags.split if tags.respond_to?(:split) && !tags.is_a?(Array)
+    tags = [tags] unless tags.respond_to? :each
+
+    tags.each do |tag|
+      all << tag
+      results = [tag]
+
+      all = iterate_implied_tag_names(results, all)
+    end
+    all
+  end
+
+  def self.iterate_implied_tag_names(results, all)
+    10.times do
+      results = find_implied_tag_names(results)
+
+      break unless results.any?
+
+      all += results
+    end
+    all
+  end
+
+  def self.find_implied_tag_names(results)
+    connection.select_values(sanitize_sql_array([<<-SQL, results]))
+        SELECT t1.name
+        FROM tags t1, tags t2, tag_implications ti
+        WHERE ti.predicate_id = t2.id
+        AND ti.consequent_id = t1.id
+        AND t2.name IN (?)
+        AND ti.is_pending = FALSE
+    SQL
+  end
+
   before_create :validate_uniqueness
 
   def validate_uniqueness
@@ -19,19 +71,6 @@ class TagImplication < ApplicationRecord
     end
 
     destroy
-  end
-
-  def self.retrieve_matching_tag_id
-    order(Arel.sql('is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)'))
-  end
-
-  def self.apply_query_filter(params, implications)
-    return implications unless params[:query].present?
-
-    tag_ids = Tag.where('name ILIKE ?', "*#{params[:query]}*".to_escaped_for_sql_like).select(:id)
-    implications
-      .where('predicate_id IN (?) OR consequent_id IN (?)', tag_ids, tag_ids)
-      .order(is_pending: :desc, consequent_id: :asc)
   end
 
   def predicate
@@ -61,44 +100,6 @@ class TagImplication < ApplicationRecord
       post.reload
       post.update(tags: "#{post.cached_tags} #{implied_tags}", updater_user_id: user_id, updater_ip_addr: ip_addr)
     end
-  end
-
-  def self.with_implied(tags)
-    return [] if tags.blank?
-
-    all = []
-    tags = tags.split if tags.respond_to?(:split) && !tags.is_a?(Array)
-    tags = [tags] unless tags.respond_to? :each
-
-    tags.each do |tag|
-      all << tag
-      results = [tag]
-
-      all = select_tag_where_predicate_matches_consequent_10_times(results, all)
-    end
-    all
-  end
-
-  def self.select_tag_where_predicate_matches_consequent_10_times(results, all)
-    10.times do
-      results = select_tag_where_predicate_matches_consequent(results)
-
-      break unless results.any?
-
-      all += results
-    end
-    all
-  end
-
-  def self.select_tag_where_predicate_matches_consequent(results)
-    connection.select_values(sanitize_sql_array([<<-SQL, results]))
-      SELECT t1.name
-      FROM tags t1, tags t2, tag_implications ti
-      WHERE ti.predicate_id = t2.id
-      AND ti.consequent_id = t1.id
-      AND t2.name IN (?)
-      AND ti.is_pending = FALSE
-    SQL
   end
 
   def to_xml(options = {})

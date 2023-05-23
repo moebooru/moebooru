@@ -26,10 +26,10 @@ class TagImplicationController < ApplicationController
   def index
     return redirect_to_tag_alias_index if searching_aliases?
 
-    @implications = TagImplication.retrieve_matching_tag_id
-    @implications = TagImplication.apply_query_filter(params, @implications)
-    @implications = @implications.paginate(page: page_number, per_page: 20)
-    respond_to_list('implications')
+    @implications = TagImplication
+                    .order_for_listing
+                    .search_by_tag_name(params[:query])
+                    .paginate(page: page_number, per_page: 20)
   end
 
   private
@@ -87,7 +87,7 @@ class TagImplicationController < ApplicationController
   end
 
   def format_with_user_info(x)
-    { id: x, updater_id: @current_user.id, updater_ip_addr: request.remote_ip }
+    { 'id' => x, 'updater_id' => @current_user.id, 'updater_ip_addr' => request.remote_ip }
   end
 
   def find_and_approve(x)

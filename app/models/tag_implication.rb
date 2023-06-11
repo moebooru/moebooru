@@ -2,18 +2,16 @@
 
 class TagImplication < ApplicationRecord
   # FIXME: subquery in order
-  def self.order_for_listing
+  scope :order_for_listing, lambda {
     order(Arel.sql('is_pending DESC, (SELECT name FROM tags WHERE id = tag_implications.predicate_id), (SELECT name FROM tags WHERE id = tag_implications.consequent_id)'))
-  end
+  }
 
-  def self.search_by_tag_name(query)
-    return self unless query.present?
-
+  scope :search_by_tag_name, lambda { |query|
     tag_ids = Tag.where('name ILIKE ?', "*#{query}*".to_escaped_for_sql_like).select(:id)
 
     where('predicate_id IN (?) OR consequent_id IN (?)', tag_ids, tag_ids)
       .order(is_pending: :desc, consequent_id: :asc)
-  end
+  }
 
   def self.with_implied(tags)
     return [] if tags.blank?

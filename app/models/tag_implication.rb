@@ -7,6 +7,8 @@ class TagImplication < ApplicationRecord
   }
 
   scope :search_by_tag_name, lambda { |query|
+    return if query.blank?
+
     tag_ids = Tag.where('name ILIKE ?', "*#{query}*".to_escaped_for_sql_like).select(:id)
 
     where('predicate_id IN (?) OR consequent_id IN (?)', tag_ids, tag_ids)

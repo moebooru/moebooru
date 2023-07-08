@@ -1,0 +1,8 @@
+AllCops:
+  NewCops: enable
+Layout/LineLength:
+  Max: 200
+Naming/MethodParameterName:
+  MinNameLength: 1
+Style/Documentation:
+  Enabled: false

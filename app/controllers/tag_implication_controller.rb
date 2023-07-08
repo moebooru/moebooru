@@ -30,6 +30,8 @@ class TagImplicationController < ApplicationController
                     .order_for_listing
                     .search_by_tag_name(params[:query])
                     .paginate(page: page_number, per_page: 20)
+
+    respond_to_list 'implications'
   end
 
   private

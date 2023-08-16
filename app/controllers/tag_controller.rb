@@ -7,7 +7,7 @@ class TagController < ApplicationController
   before_action :set_query_date, only: %i[popular_by_day popular_by_week popular_by_month]
 
   def cloud
-    @tags = Tag.where('post_count > 0').order(post_count: :desc).limit(100).sort { |a, b| a.name <=> b.name }
+    @tags = Tag.where('post_count > 0').order(post_count: :desc).limit(100).sort_by(&:name)
   end
 
   # Generates list of tag names matching parameter term.
@@ -35,46 +35,8 @@ class TagController < ApplicationController
   end
 
   def index
-    limit = case params[:limit].presence
-            when nil
-              50
-            when '0'
-              request.format.html? ? 30 : nil
-            else
-              params[:limit].to_i
-            end
-
-    order = case params[:order]
-            when 'count'
-              'post_count desc'
-            when 'date'
-              'id desc'
-            else
-              'name'
-            end
-
     @tags = Tag.all
-
-    if params[:name].present?
-      keyword = if params[:name].include? '*'
-                  params[:name].to_escaped_for_sql_like
-                else
-                  "*#{params[:name]}*".to_escaped_for_sql_like
-                end
-      @tags = @tags.where 'name LIKE ?', keyword
-    end
-
-    @tags = @tags.where tag_type: params[:type].to_i if params[:type].present?
-
-    @tags = @tags.where 'id >= ?', params[:after_id].to_i if params[:after_id].present?
-
-    @tags = @tags.where id: params[:id].to_i if params[:id].present?
-
-    @tags = if limit
-              @tags.order(order).paginate per_page: limit, page: page_number
-            else
-              @tags.order order
-            end
+    populate_tags(limit_tags, order_tags)
 
     respond_to do |fmt|
       fmt.html
@@ -86,18 +48,9 @@ class TagController < ApplicationController
   def mass_edit
     return unless request.post?
 
-    if params[:start].blank?
-      respond_to_error('Start tag missing', { action: 'mass_edit' }, status: 424)
-      return
-    end
+    check_missing_start_tag_param
 
-    if CONFIG['enable_asynchronous_tasks']
-      JobTask.create(task_type: 'mass_tag_edit', status: 'pending',
-                     data: { 'start_tags' => params[:start], 'result_tags' => params[:result], 'updater_id' => session[:user_id], 'updater_ip_addr' => request.remote_ip })
-      respond_to_success('Mass tag edit job created', controller: 'job_task', action: 'index')
-    else
-      Tag.mass_edit(params[:start], params[:result], @current_user.id, request.remote_ip)
-    end
+    apply_mass_edit
   end
 
   def edit_preview
@@ -106,12 +59,12 @@ class TagController < ApplicationController
   end
 
   def edit
-    @tag = if params[:id]
-             Tag.find(params[:id])
-           else
-             Tag.find_by_name(params[:name])
-           end
-    @tag ||= Tag.new
+    @edit = if params[:id]
+              Tag.find(params[:id])
+            else
+              Tag.find_by_name(params[:name])
+            end
+    @edit ||= Tag.new
   end
 
   def update
@@ -123,41 +76,10 @@ class TagController < ApplicationController
 
   def related
     @tags = Tag.scan_tags(params[:tags])
-    if params[:type].present?
-      @tags = TagAlias.to_aliased(@tags)
-      @tags = @tags.each_with_object({}) do |x, all|
-        all[x] = Tag.calculate_related_by_type(x, CONFIG['tag_types'][params[:type]]).map { |y| [y['name'], y['post_count']] }
-      end
-    else
-      @patterns, @tags = @tags.partition { |x| x.include?('*') }
-      @tags = TagAlias.to_aliased(@tags)
-      @tags = @tags.each_with_object({}) do |x, all|
-        all[x] = Tag.find_related(x).map { |y| [y[0], y[1]] }
-      end
-      @patterns.each do |x|
-        @tags[x] = Tag.where('name LIKE ?', x.to_escaped_for_sql_like).pluck(:name, :post_count)
-      end
-    end
 
-    respond_to do |fmt|
-      fmt.xml do
-        # We basically have to do this by hand.
-        builder = Builder::XmlMarkup.new(indent: 2)
-        builder.instruct!
-        xml = builder.tag!('tags') do
-          @tags.each do |parent, related|
-            builder.tag!('tag', name: parent) do
-              related.each do |tag, count|
-                builder.tag!('tag', name: tag, count: count)
-              end
-            end
-          end
-        end
+    tag_relation
 
-        render xml: xml
-      end
-      fmt.json { render json: @tags.to_json }
-    end
+    respond_with_tag_relation
   end
 
   def popular_by_day
@@ -191,5 +113,148 @@ class TagController < ApplicationController
 
   def tag_params
     params.require(:tag).permit(:name, :tag_type, :is_ambiguous)
+  end
+
+  def limit_tags
+    case params[:limit].presence
+    when nil
+      50
+    when '0'
+      request.format.html? ? 30 : nil
+    else
+      params[:limit].to_i
+    end
+  end
+
+  def order_tags
+    case params[:order]
+    when 'count'
+      'post_count desc'
+    when 'date'
+      'id desc'
+    else
+      'name'
+    end
+  end
+
+  def tag_name_exist
+    return @tags unless params[:name].present?
+
+    keyword = if params[:name].include?('*')
+                params[:name].to_escaped_for_sql_like
+              else
+                "*#{params[:name]}*".to_escaped_for_sql_like
+              end
+    @tags.where('name LIKE ?', keyword)
+  end
+
+  def filter_tag_type
+    @tags.where(tag_type: params[:type].to_i) if params[:type].present?
+  end
+
+  def filter_tag_after_id
+    @tags.where('id >= ?', params[:after_id].to_i) if params[:after_id].present?
+  end
+
+  def filter_tag_id
+    @tags.where(id: params[:id].to_i) if params[:id].present?
+  end
+
+  def filter_tags
+    filter_tag_type
+    filter_tag_after_id
+    filter_tag_id
+    @tags
+  end
+
+  def limit_view(limit, order)
+    if limit
+      @tags.order(order).paginate(per_page: limit, page: page_number)
+    else
+      @tags.order(order)
+    end
+  end
+
+  def populate_tags(limit, order)
+    @tags = tag_name_exist
+
+    @tags = filter_tags
+
+    @tags = limit_view(limit, order)
+  end
+
+  def check_missing_start_tag_param
+    return respond_to_error('Start tag missing', { action: 'mass_edit' }, status: 424) if params[:start].blank?
+  end
+
+  def create_mass_edit_async_job
+    JobTask.create(task_type: 'mass_tag_edit', status: 'pending',
+                   data: { 'start_tags' => params[:start], 'result_tags' => params[:result], 'updater_id' => session[:user_id], 'updater_ip_addr' => request.remote_ip })
+
+    respond_to_success('Mass tag edit job created', controller: 'job_task', action: 'index')
+  end
+
+  def apply_mass_edit
+    if CONFIG['enable_asynchronous_tasks']
+      create_mass_edit_async_job
+    else
+      Tag.mass_edit(params[:start], params[:result], @current_user.id, request.remote_ip)
+    end
+  end
+
+  def apply_tag_relation_by_type
+    @tags = TagAlias.to_aliased(@tags)
+    @tags = @tags.each_with_object({}) do |x, all|
+      all[x] = Tag.calculate_related_by_type(x, CONFIG['tag_types'][params[:type]]).map { |y| [y['name'], y['post_count']] }
+    end
+  end
+
+  def filter_tag_relation
+    @patterns.each do |x|
+      @tags[x] = Tag.where('name LIKE ?', x.to_escaped_for_sql_like).pluck(:name, :post_count)
+    end
+  end
+
+  def apply_tag_relation_by_partition
+    @patterns, @tags = @tags.partition { |x| x.include?('*') }
+    @tags = TagAlias.to_aliased(@tags)
+    @tags = @tags.each_with_object({}) do |x, all|
+      all[x] = Tag.find_related(x).map { |y| [y[0], y[1]] }
+    end
+    filter_tag_relation
+  end
+
+  def tag_relation
+    if params[:type].present?
+      apply_tag_relation_by_type
+    else
+      apply_tag_relation_by_partition
+    end
+  end
+
+  def construct_tag_relation
+    builder.tag!('tags') do
+      @tags.each do |parent, related|
+        builder.tag!('tag', name: parent) do
+          related.each do |tag, count|
+            builder.tag!('tag', name: tag, count: count)
+          end
+        end
+      end
+    end
+  end
+
+  def respond_with_tag_relation
+    respond_to do |fmt|
+      fmt.xml do
+        # We basically have to do this by hand.
+        builder = Builder::XmlMarkup.new(indent: 2)
+        builder.instruct!
+        xml = construct_tag_relation
+
+        render xml: xml
+      end
+      fmt.json { render json: @tags.to_json }
+    end
   end
 end

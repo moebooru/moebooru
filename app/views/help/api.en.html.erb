@@ -82,7 +82,7 @@
       <h4>JSON Responses</h4>
       <p>While you will probably want to work with XML in the majority of cases, if you're writing something in Javascript then the JSON responses may be preferable. They are much faster to parse and there's less code to write to get your data structure:</p>
       <div class="code">
-        var data = eval("(" + responseText + ")")<br>
+        var data = JSON.parse(responseText)<br>
         alert(data.response)
       </div>
     </div>

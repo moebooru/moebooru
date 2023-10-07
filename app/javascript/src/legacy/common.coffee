@@ -153,35 +153,6 @@ Object.extend String.prototype,
     container.innerHTML = this
     container.removeChild container.firstChild
 
-###
-# In Firefox, exceptions thrown from event handlers tend to get lost.  Sometimes they
-# trigger window.onerror, but not reliably.  Catch exceptions out of event handlers and
-# throw them from a deferred context, so they'll make it up to the browser to be
-# logged.
-#
-# This depends on bindAsEventListener actually only being used for event listeners,
-# since it eats exceptions.
-#
-# Only do this in Firefox; not all browsers preserve the call stack in the exception,
-# so this can lose information if used when it's not needed.
-###
-
-if Prototype.Browser.Gecko
-
-  Function::bindAsEventListener = ->
-    __method = this
-    args = $A(arguments)
-    object = args.shift()
-    (event) ->
-      try
-        return __method.apply(object, [ event or window.event ].concat(args))
-      catch exception
-        (->
-          throw exception
-          return
-        ).defer()
-      return
-
 window.onerror = (error, file, line) ->
   ReportError error, file, line, null
   return

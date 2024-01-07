@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/rails/jsbundling-rails.git
+  revision: ddebd51a4128654ab3720ecf7f201c621c8cdc22
+  branch: main
+  specs:
+    jsbundling-rails (1.2.1)
+      railties (>= 6.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -92,8 +100,6 @@ GEM
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
-    jsbundling-rails (1.2.1)
-      railties (>= 6.0.0)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -206,7 +212,7 @@ DEPENDENCIES
   exception_notification
   i18n-js (~> 3.0.0)
   jbuilder (~> 2.5)
-  jsbundling-rails
+  jsbundling-rails!
   mini_magick
   mini_mime
   newrelic_rpm

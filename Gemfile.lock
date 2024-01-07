@@ -195,7 +195,7 @@ GEM
     zeitwerk (2.6.12)
 
 PLATFORMS
-  x86_64-freebsd-14
+  ruby
 
 DEPENDENCIES
   addressable

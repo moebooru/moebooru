@@ -24,9 +24,6 @@ CONFIG["local_image_service"] = CONFIG["app_name"]
 # CONFIG["piwik_host"] = "stats.moe.booru"
 # CONFIG["piwik_site_id"] = 1
 
-# Use this config to enable AddThis social sharing buttons. Fill in the Profile ID.
-# CONFIG['addthis-id'] = 'ra-...'
-
 # Default language. Defaults to en.
 # CONFIG['default_locale'] = 'en'
 

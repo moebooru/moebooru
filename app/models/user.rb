@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include Moebooru::TempfilePrefix
+
   has_many :user_logs
   has_many :post_votes
   attr_accessor :current_email
@@ -490,7 +492,7 @@ class User < ApplicationRecord
         return false
       end
 
-      tempfile_path = "#{Rails.root}/public/data/#{SecureRandom.random_number(2**32)}.avatar.jpg"
+      tempfile_path = "#{tempfile_prefix}.avatar.jpg"
 
       def reduce_and_crop(image_width, image_height, params)
         cropped_image_width = image_width * (params[:right] - params[:left])

@@ -1,6 +1,6 @@
 class Inline < ApplicationRecord
   belongs_to :user
-  has_many :inline_images, -> { order :sequence }, :dependent => :destroy
+  has_many :inline_images, -> { order :sequence }, dependent: :destroy
 
   # Sequence numbers must start at 1 and increase monotonically, to keep the UI simple.
   # If we've been given sequences with gaps or duplicates, sanitize them.
@@ -47,7 +47,7 @@ class Inline < ApplicationRecord
     for image in images do
       # Create a new image with the same properties, crop this image into the new one,
       # and delete the old one.
-      new_image = InlineImage.new(:description => image.description, :sequence => image.sequence, :inline_id => id, :file_ext => "jpg")
+      new_image = InlineImage.new(description: image.description, sequence: image.sequence, inline_id: id, file_ext: "jpg")
       size = reduce_and_crop(image.width, image.height, params)
 
       begin
@@ -69,10 +69,10 @@ class Inline < ApplicationRecord
 
   def api_attributes
     {
-      :id => id,
-      :description => description,
-      :user_id => user_id,
-      :images => inline_images
+      id: id,
+      description: description,
+      user_id: user_id,
+      images: inline_images
     }
   end
 

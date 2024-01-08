@@ -8,9 +8,9 @@ class Cleanup < ActiveRecord::Migration[5.1]
   end
 
   def self.down
-    add_column :forum_posts, :reply_count, :integer, :null => false, :default => 0
-    add_column :users, :user_blacklist, :text, :null => false, :default => ""
-    add_column :users, :post_threshold, :integer, :null => false, :default => -100
+    add_column :forum_posts, :reply_count, :integer, null: false, default: 0
+    add_column :users, :user_blacklist, :text, null: false, default: ""
+    add_column :users, :post_threshold, :integer, null: false, default: -100
     create_table :invites do |_t|
     end
     create_table :news_updates do |_t|

@@ -1,6 +1,6 @@
 module Report
   def usage_by_user(table_name, start, stop, limit, level, conds = [], params = [], column = "created_at")
-    conds << ["#{table_name}.#{column} BETWEEN ? AND ?"]
+    conds << [ "#{table_name}.#{column} BETWEEN ? AND ?" ]
     params << start
     params << stop
 
@@ -14,7 +14,7 @@ module Report
     conds << "users.id NOT IN (?)"
     params << users.map { |x| x["id"] }
 
-    other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql_array(["SELECT COUNT(*) FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND "), *params])).to_i
+    other_count = ActiveRecord::Base.connection.select_value(ActiveRecord::Base.sanitize_sql_array([ "SELECT COUNT(*) FROM #{table_name} JOIN users ON users.id = #{table_name}.user_id WHERE " + conds.join(" AND "), *params ])).to_i
 
     users << { "id" => nil, "change_count" => other_count }
 
@@ -34,7 +34,7 @@ module Report
   def tag_updates(start, stop, limit, level)
     users = usage_by_user("post_tag_histories", start, stop, limit, level)
     users.each do |user|
-      user["change_count"] = user["change_count"] - Post.where(:user_id => user["user_id"]).where("created_at BETWEEN ? AND ?", start, stop).count
+      user["change_count"] = user["change_count"] - Post.where(user_id: user["user_id"]).where("created_at BETWEEN ? AND ?", start, stop).count
     end
     bottom = users.pop
     users.sort! { |a, b| b["change_count"] <=> a["change_count"] }

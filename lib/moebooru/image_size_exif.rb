@@ -9,13 +9,13 @@ module Moebooru
 
     def self.parse(image)
       ret = {
-        colorspace: image['%[colorspace]'],
+        colorspace: image["%[colorspace]"],
         height: image.height,
         width: image.width,
         type: image.type
       }
 
-      ret[:height], ret[:width] = ret[:width], ret[:height] if %w[5 6 7 8].include? image.exif['Orientation']
+      ret[:height], ret[:width] = ret[:width], ret[:height] if %w[5 6 7 8].include? image.exif["Orientation"]
 
       ret
     rescue MiniMagick::Error

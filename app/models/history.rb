@@ -134,7 +134,7 @@ class History < ApplicationRecord
     objects[:objects] ||= {}
     objects[:objects][table_name] ||= {}
     objects[:objects][table_name][id] ||= {
-      :o => object
+      o: object
     }
     objects[:objects][table_name][id]
   end

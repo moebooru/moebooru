@@ -1,7 +1,7 @@
 class MigrateUsersToContributor < ActiveRecord::Migration[5.1]
   def self.up
-    User.find(:all, :conditions => "level = 30").each do |user|
-      post_count = Post.count(:conditions => ["user_id = ? AND status <> 'deleted'", user.id])
+    User.find(:all, conditions: "level = 30").each do |user|
+      post_count = Post.count(conditions: [ "user_id = ? AND status <> 'deleted'", user.id ])
 
       if post_count > 50
         user.update_attribute(:level, 33)

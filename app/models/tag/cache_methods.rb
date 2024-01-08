@@ -5,7 +5,7 @@ module Tag::CacheMethods
   end
 
   def update_cache
-    Rails.cache.write({ :tag_type => name }, self.class.type_name_from_value(tag_type))
+    Rails.cache.write({ tag_type: name }, self.class.type_name_from_value(tag_type))
 
     # Expire the tag cache if a tag's type changes.
     if saved_change_to_tag_type?

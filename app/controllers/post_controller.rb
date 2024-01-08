@@ -2,11 +2,11 @@ class PostController < ApplicationController
   layout "default"
   helper :avatar
 
-  before_action :member_only, :only => [:create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote]
-  before_action :post_member_only, :only => [:update, :upload, :flag]
-  before_action :janitor_only, :only => [:moderate, :undelete]
-  before_action :set_query_date, :only => [:popular_by_day, :popular_by_week, :popular_by_month]
-  after_action :save_tags_to_cookie, :only => [:update, :create]
+  before_action :member_only, only: [ :create, :destroy, :delete, :flag, :revert_tags, :activate, :update_batch, :vote ]
+  before_action :post_member_only, only: [ :update, :upload, :flag ]
+  before_action :janitor_only, only: [ :moderate, :undelete ]
+  before_action :set_query_date, only: [ :popular_by_day, :popular_by_week, :popular_by_month ]
+  after_action :save_tags_to_cookie, only: [ :update, :create ]
 
   helper :wiki, :tag, :comment, :pool, :favorite, :advertisements
 
@@ -15,7 +15,7 @@ class PostController < ApplicationController
 
     ids = params[:post_ids].map(&:to_i)
     changed = Post.batch_activate(@current_user.is_mod_or_higher? ? nil : @current_user.id, ids)
-    respond_to_success("Posts activated", { :action => "moderate" }, :api => { :count => changed })
+    respond_to_success("Posts activated", { action: "moderate" }, api: { count: changed })
   end
 
   def upload_problem
@@ -33,8 +33,8 @@ class PostController < ApplicationController
   end
 
   def create
-    if @current_user.is_member_or_lower? && Post.where(:user_id => @current_user.id).where("created_at > ?", 1.day.ago).count >= CONFIG["member_post_limit"]
-      respond_to_error("Daily limit exceeded", { :action => "error" }, :status => 421)
+    if @current_user.is_member_or_lower? && Post.where(user_id: @current_user.id).where("created_at > ?", 1.day.ago).count >= CONFIG["member_post_limit"]
+      respond_to_error("Daily limit exceeded", { action: "error" }, status: 421)
       return
     end
 
@@ -55,7 +55,7 @@ class PostController < ApplicationController
       user_id = @current_user.id
     end
 
-    @post = Post.new(post_params_for_create.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip, :user_id => user_id, :ip_addr => request.remote_ip, :status => status))
+    @post = Post.new(post_params_for_create.merge(updater_user_id: user_id, updater_ip_addr: request.remote_ip, user_id: user_id, ip_addr: request.remote_ip, status: status))
     begin
       @post.save
     rescue ActiveRecord::RecordNotUnique
@@ -65,12 +65,12 @@ class PostController < ApplicationController
     if @post.errors.empty?
       if params[:md5] && @post.md5 != params[:md5].downcase
         @post.destroy
-        respond_to_error("MD5 mismatch", { :action => "error" }, :status => 420)
+        respond_to_error("MD5 mismatch", { action: "error" }, status: 420)
       else
-        api_data = { :post_id => @post.id, :location => url_for(:controller => "post", :action => "show", :id => @post.id) }
+        api_data = { post_id: @post.id, location: url_for(controller: "post", action: "show", id: @post.id) }
         if CONFIG["dupe_check_on_upload"] && @post.image? && @post.parent_id.nil?
           if params[:format] == "xml" || params[:format] == "json"
-            options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
+            options = { services: SimilarImages.get_services("local"), type: :post, source: @post }
 
             res = SimilarImages.similar_images(options)
             unless res[:posts].empty?
@@ -80,16 +80,16 @@ class PostController < ApplicationController
             end
           end
 
-          api_data[:similar_location] = url_for(:controller => "post", :action => "similar", :id => @post.id, :initial => 1)
-          respond_to_success("Post uploaded", { :controller => "post", :action => "similar", :id => @post.id, :initial => 1 }, :api => api_data)
+          api_data[:similar_location] = url_for(controller: "post", action: "similar", id: @post.id, initial: 1)
+          respond_to_success("Post uploaded", { controller: "post", action: "similar", id: @post.id, initial: 1 }, api: api_data)
         else
-          respond_to_success("Post uploaded", { :controller => "post", :action => "show", :id => @post.id, :tag_title => @post.tag_title }, :api => api_data)
+          respond_to_success("Post uploaded", { controller: "post", action: "show", id: @post.id, tag_title: @post.tag_title }, api: api_data)
         end
       end
     elsif @post.errors[:md5].any?
       handle_duplicate
     else
-      respond_to_error(@post, :action => "error")
+      respond_to_error(@post, action: "error")
     end
   end
 
@@ -120,18 +120,18 @@ class PostController < ApplicationController
       api_data = Post.batch_api_data(posts) if params[:format] == "json" || params[:format] == "xml"
 
       if params[:commit] == "Approve"
-        respond_to_success("Post approved", { :action => "moderate" }, :api => api_data)
+        respond_to_success("Post approved", { action: "moderate" }, api: api_data)
       elsif params[:commit] == "Delete"
-        respond_to_success("Post deleted", { :action => "moderate" }, :api => api_data)
+        respond_to_success("Post deleted", { action: "moderate" }, api: api_data)
       end
     else
       if params[:query]
         query = "#{params[:query]} holds:all order:id_desc"
-        @pending_posts = Post.find_by_sql(Post.generate_sql(query, :pending => true))
-        @flagged_posts = Post.find_by_sql(Post.generate_sql(query, :flagged => true))
+        @pending_posts = Post.find_by_sql(Post.generate_sql(query, pending: true))
+        @flagged_posts = Post.find_by_sql(Post.generate_sql(query, flagged: true))
       else
-        @pending_posts = Post.where(:status => "pending").order(:id => :desc)
-        @flagged_posts = Post.where(:status => "flagged").order(:id => :desc)
+        @pending_posts = Post.where(status: "pending").order(id: :desc)
+        @flagged_posts = Post.where(status: "flagged").order(id: :desc)
       end
     end
   end
@@ -139,7 +139,7 @@ class PostController < ApplicationController
   def update
     @post = Post.find(params[:id])
     if @post.is_deleted? && !@current_user.is_mod_or_higher?
-      respond_to_error("Post Locked", { :action => :show, :id => params[:id] }, :status => 422)
+      respond_to_error("Post Locked", { action: :show, id: params[:id] }, status: 422)
       return
     end
 
@@ -147,15 +147,15 @@ class PostController < ApplicationController
 
     user_id = @current_user.id
 
-    if @post.update(post_params_for_update.merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+    if @post.update(post_params_for_update.merge(updater_user_id: user_id, updater_ip_addr: request.remote_ip))
       # Reload the post to send the new status back; not all changes will be reflected in
       # @post due to after_save changes.
       @post.reload
 
       api_data = @post.api_data if params[:format] == "json" || params[:format] == "xml"
-      respond_to_success("Post updated", { :action => "show", :id => @post.id, :tag_title => @post.tag_title }, :api => api_data)
+      respond_to_success("Post updated", { action: "show", id: @post.id, tag_title: @post.tag_title }, api: api_data)
     else
-      respond_to_error(@post, :action => "show", :id => params[:id])
+      respond_to_error(@post, action: "show", id: params[:id])
     end
   end
 
@@ -184,7 +184,7 @@ class PostController < ApplicationController
 
       old_parent_id = @post.parent_id
 
-      if @post.update(post_params_for_update_single(post).merge(:updater_user_id => user_id, :updater_ip_addr => request.remote_ip))
+      if @post.update(post_params_for_update_single(post).merge(updater_user_id: user_id, updater_ip_addr: request.remote_ip))
         # Reload the post to send the new status back; not all changes will be reflected in
         # @post due to after_save changes.
         @post.reload
@@ -198,12 +198,12 @@ class PostController < ApplicationController
 
     # Updates to one post may affect others, so only generate the return list after we've already
     # updated everything.
-    posts = Post.find_by_sql(["SELECT * FROM posts WHERE id IN (?)", ids.map { |id, _t| id }])
+    posts = Post.find_by_sql([ "SELECT * FROM posts WHERE id IN (?)", ids.map { |id, _t| id } ])
     api_data = Post.batch_api_data(posts)
 
     url = params[:url]
-    url = { :action => "index" } unless url
-    respond_to_success("Posts updated", url, :api => api_data)
+    url = { action: "index" } unless url
+    respond_to_success("Posts updated", url, api: api_data)
   end
 
   def delete
@@ -216,7 +216,7 @@ class PostController < ApplicationController
 
   def destroy
     if params[:commit] == "Cancel"
-      redirect_to :action => "show", :id => params[:id]
+      redirect_to action: "show", id: params[:id]
       return
     end
 
@@ -227,16 +227,16 @@ class PostController < ApplicationController
         if params[:destroy]
           if @current_user.is_mod_or_higher?
             @post.delete_from_database
-            respond_to_success("Post deleted permanently", :action => "show", :id => params[:id])
+            respond_to_success("Post deleted permanently", action: "show", id: params[:id])
           else
             access_denied
           end
         else
-          respond_to_success("Post already deleted", :action => "delete", :id => params[:id])
+          respond_to_success("Post already deleted", action: "delete", id: params[:id])
         end
       else
         Post.destroy_with_reason(@post.id, params[:reason], @current_user)
-        respond_to_success("Post deleted", :action => "show", :id => params[:id])
+        respond_to_success("Post deleted", action: "show", id: params[:id])
       end
     else
       access_denied
@@ -245,20 +245,20 @@ class PostController < ApplicationController
 
   def deleted_index
     if !@current_user.is_anonymous? && params[:user_id] && params[:user_id].to_i == @current_user.id
-      @current_user.update(:last_deleted_post_seen_at => Time.now)
+      @current_user.update(last_deleted_post_seen_at: Time.now)
     end
 
     @posts = Post
-      .where(:status => "deleted")
+      .where(status: "deleted")
       .select("flagged_post_details.reason, posts.cached_tags, posts.id, posts.user_id")
       .joins("JOIN flagged_post_details ON flagged_post_details.post_id = posts.id")
       .order("flagged_post_details.created_at DESC")
-    @posts = @posts.where(:user_id => params[:user_id]) if params[:user_id]
-    @posts = @posts.paginate(:per_page => 25, :page => page_number)
+    @posts = @posts.where(user_id: params[:user_id]) if params[:user_id]
+    @posts = @posts.paginate(per_page: 25, page: page_number)
   end
 
   def acknowledge_new_deleted_posts
-    @current_user.update(:last_deleted_post_seen_at => Time.now) unless @current_user.is_anonymous?
+    @current_user.update(last_deleted_post_seen_at: Time.now) unless @current_user.is_anonymous?
     respond_to_success("Success", {})
   end
 
@@ -273,7 +273,7 @@ class PostController < ApplicationController
     #      return
     #    elsif split_tags.size > 6
     if split_tags.size > 6
-      respond_to_error("You can only search up to six tags at once", :action => "error")
+      respond_to_error("You can only search up to six tags at once", action: "error")
       return
     end
 
@@ -289,7 +289,7 @@ class PostController < ApplicationController
     begin
       count = Post.fast_count(tags)
     rescue => x
-      respond_to_error("Error: #{x}", :action => "error")
+      respond_to_error("Error: #{x}", action: "error")
       return
     end
 
@@ -323,7 +323,7 @@ class PostController < ApplicationController
     end
 
     @showing_holds_only = q.key?(:show_holds) && q[:show_holds] == :only
-    results = Post.find_by_sql(Post.generate_sql(q, :original_query => tags, :from_api => from_api, :order => "p.id DESC", :offset => offset, :limit => posts_to_load))
+    results = Post.find_by_sql(Post.generate_sql(q, original_query: tags, from_api: from_api, order: "p.id DESC", offset: offset, limit: posts_to_load))
     ActiveRecord::Associations::Preloader.new(records: results, associations: :user).call
 
     @preload = []
@@ -340,12 +340,12 @@ class PostController < ApplicationController
     # Apply can_be_seen_by filtering to the results.  For API calls this is optional, and
     # can be enabled by specifying filter=1.
     if !from_api || params[:filter] == "1"
-      results = results.delete_if { |post| !post.can_be_seen_by?(@current_user, :show_deleted => true) }
+      results = results.delete_if { |post| !post.can_be_seen_by?(@current_user, show_deleted: true) }
       @preload = @preload.delete_if { |post| !post.can_be_seen_by?(@current_user) }
     end
 
     if from_api && params[:api_version] == "2" && params[:format] != "json"
-      respond_to_error("V2 API is JSON-only", {}, :status => 424)
+      respond_to_error("V2 API is JSON-only", {}, status: 424)
       return
     end
 
@@ -356,34 +356,34 @@ class PostController < ApplicationController
         if split_tags.any?
           @tags = Tag.parse_query(tags)
         else
-          @tags = Rails.cache.fetch("$poptags", :expires_in => 1.hour) do
-            { :include => Tag.count_by_period(1.day.ago, Time.now, :limit => 25, :exclude_types => CONFIG["exclude_from_tag_sidebar"]) }
+          @tags = Rails.cache.fetch("$poptags", expires_in: 1.hour) do
+            { include: Tag.count_by_period(1.day.ago, Time.now, limit: 25, exclude_types: CONFIG["exclude_from_tag_sidebar"]) }
           end
         end
       end
       fmt.xml do
-        render :layout => false
+        render layout: false
       end
       fmt.json do
         if params[:api_version] != "2"
-          render :json => @posts.to_json
+          render json: @posts.to_json
           return
         end
 
         api_data = Post.batch_api_data(@posts,
-                                       :exclude_tags => params[:include_tags] != "1",
-                                       :exclude_votes => params[:include_votes] != "1",
-                                       :exclude_pools => params[:include_pools] != "1"
+                                       exclude_tags: params[:include_tags] != "1",
+                                       exclude_votes: params[:include_votes] != "1",
+                                       exclude_pools: params[:include_pools] != "1"
                                       )
 
-        render :json => api_data.to_json
+        render json: api_data.to_json
       end
       fmt.atom
     end
   end
 
   def atom
-    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], :limit => 40, :order => "p.id DESC"))
+    @posts = Post.find_by_sql(Post.generate_sql(params[:tags], limit: 40, order: "p.id DESC"))
     respond_to do |format|
       format.atom { render "index" }
     end
@@ -391,7 +391,7 @@ class PostController < ApplicationController
 
   def piclens
     @posts = WillPaginate::Collection.create(page_number, 16, Post.fast_count(params[:tags])) do |pager|
-      pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], :order => "p.id DESC", :offset => pager.offset, :limit => pager.per_page)))
+      pager.replace(Post.find_by_sql(Post.generate_sql(params[:tags], order: "p.id DESC", offset: pager.offset, limit: pager.per_page)))
     end
 
     respond_to do |format|
@@ -400,27 +400,27 @@ class PostController < ApplicationController
   end
 
   def show
-    @post = Post.includes(:comments => [:user])
+    @post = Post.includes(comments: [ :user ])
     begin
       if params[:md5]
-        @post = @post.find_by! :md5 => params[:md5].downcase
+        @post = @post.find_by! md5: params[:md5].downcase
       else
         @post = @post.find(params[:id])
       end
     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid
       respond_to do |format|
-        format.html { render :action => "show_empty", :status => 404 }
+        format.html { render action: "show_empty", status: 404 }
       end
       return
     end
 
-    @pool_posts = PoolPost.where(:post_id => @post.id, :active => true).includes(:pool).references(:pool).order("pools.name")
+    @pool_posts = PoolPost.where(post_id: @post.id, active: true).includes(:pool).references(:pool).order("pools.name")
     if params[:pool_id]
       @following_pool_post = @pool_posts.to_a.find { |pp| pp.pool_id.to_s == params[:pool_id] }
     else
       @following_pool_post = @pool_posts.to_a.first
     end
-    @tags = { :include => @post.cached_tags.split(/ /) }
+    @tags = { include: @post.cached_tags.split(/ /) }
     @include_tag_reverse_aliases = true
     respond_to do |format|
       format.html
@@ -429,11 +429,11 @@ class PostController < ApplicationController
 
   def browse
     response.headers["Cache-Control"] = "max-age=300"
-    render :layout => "bare"
+    render layout: "bare"
   end
 
   def view
-    redirect_to :action => "show", :id => params[:id]
+    redirect_to action: "show", id: params[:id]
   end
 
   def popular_recent
@@ -457,7 +457,7 @@ class PostController < ApplicationController
     @start = @end - period
     @previous = @start - period
 
-    @posts = Post.available.where(:index_timestamp => @start..@end).order(:score => :desc).limit(40)
+    @posts = Post.available.where(index_timestamp: @start..@end).order(score: :desc).limit(40)
 
     respond_to_list("posts")
   end
@@ -465,7 +465,7 @@ class PostController < ApplicationController
   def popular_by_day
     @day = @query_date.beginning_of_day
 
-    @posts = Post.available.where(:created_at => @day.all_day).order(:score => :desc).limit(40)
+    @posts = Post.available.where(created_at: @day.all_day).order(score: :desc).limit(40)
 
     respond_to_list("posts")
   end
@@ -474,7 +474,7 @@ class PostController < ApplicationController
     @start = @query_date.beginning_of_week
     @end = @start.end_of_week
 
-    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(40)
+    @posts = Post.available.where(created_at: @start..@end).order(score: :desc).limit(40)
 
     respond_to_list("posts")
   end
@@ -483,7 +483,7 @@ class PostController < ApplicationController
     @start = @query_date.beginning_of_month
     @end = @start.end_of_month
 
-    @posts = Post.available.where(:created_at => @start..@end).order(:score => :desc).limit(40)
+    @posts = Post.available.where(created_at: @start..@end).order(score: :desc).limit(40)
 
     respond_to_list("posts")
   end
@@ -491,37 +491,37 @@ class PostController < ApplicationController
   def revert_tags
     user_id = @current_user.id
     @post = Post.find(params[:id])
-    @post.update(:tags => PostTagHistory.find(params[:history_id].to_i).tags, :updater_user_id => user_id, :updater_ip_addr => request.remote_ip)
+    @post.update(tags: PostTagHistory.find(params[:history_id].to_i).tags, updater_user_id: user_id, updater_ip_addr: request.remote_ip)
 
-    respond_to_success("Tags reverted", :action => "show", :id => @post.id, :tag_title => @post.tag_title)
+    respond_to_success("Tags reverted", action: "show", id: @post.id, tag_title: @post.tag_title)
   end
 
   def vote
     p = Post.find(params[:id])
 
     if params[:score].blank?
-      vote =  p.post_votes.find_by(:user_id => @current_user.id)
+      vote =  p.post_votes.find_by(user_id: @current_user.id)
       score = vote ? vote.score : 0
-      respond_to_success("", {}, :api => { :vote => score })
+      respond_to_success("", {}, api: { vote: score })
       return
     end
 
     score = params[:score].to_i
 
     if !@current_user.is_mod_or_higher? && score < 0 || score > 3
-      respond_to_error("Invalid score", { :action => "show", :id => params[:id], :tag_title => p.tag_title }, :status => 424)
+      respond_to_error("Invalid score", { action: "show", id: params[:id], tag_title: p.tag_title }, status: 424)
       return
     end
 
     vote_successful = p.vote!(score, @current_user)
 
-    api_data = Post.batch_api_data([p.reload])
+    api_data = Post.batch_api_data([ p.reload ])
     api_data[:voted_by] = p.voted_by
 
     if vote_successful
-      respond_to_success("Vote saved", { :action => "show", :id => params[:id], :tag_title => p.tag_title }, :api => api_data)
+      respond_to_success("Vote saved", { action: "show", id: params[:id], tag_title: p.tag_title }, api: api_data)
     else
-      respond_to_error("Already voted", { :action => "show", :id => params[:id], :tag_title => p.tag_title }, :api => api_data, :status => 423)
+      respond_to_error("Already voted", { action: "show", id: params[:id], tag_title: p.tag_title }, api: api_data, status: 423)
     end
   end
 
@@ -533,7 +533,7 @@ class PostController < ApplicationController
       # posts
       # "approve" is used both to mean "unflag post" and "approve pending post".
       if post.status != "flagged"
-        respond_to_error("Can only unflag flagged posts", :action => "show", :id => params[:id])
+        respond_to_error("Can only unflag flagged posts", action: "show", id: params[:id])
         return
       end
 
@@ -546,7 +546,7 @@ class PostController < ApplicationController
       message = "Post approved"
     else
       if post.status != "active"
-        respond_to_error("Can only flag active posts", :action => "show", :id => params[:id])
+        respond_to_error("Can only flag active posts", action: "show", id: params[:id])
         return
       end
 
@@ -557,24 +557,24 @@ class PostController < ApplicationController
     # Reload the post to pull in post.flag_reason.
     post.reload
 
-    api_data = Post.batch_api_data([post]) if params[:format] == "json" || params[:format] == "xml"
-    respond_to_success(message, { :action => "show", :id => params[:id] }, :api => api_data)
+    api_data = Post.batch_api_data([ post ]) if params[:format] == "json" || params[:format] == "xml"
+    respond_to_success(message, { action: "show", id: params[:id] }, api: api_data)
   end
 
   def random
     max_id = Post.maximum(:id)
 
     10.times do
-      post = Post.available.find_by(:id => rand(1..max_id))
+      post = Post.available.find_by(id: rand(1..max_id))
 
       if post && post.can_be_seen_by?(@current_user)
-        redirect_to :action => "show", :id => post.id, :tag_title => post.tag_title
+        redirect_to action: "show", id: post.id, tag_title: post.tag_title
         return
       end
     end
 
     flash[:notice] = "Couldn't find a post in 10 tries. Try again."
-    redirect_to :action => "index"
+    redirect_to action: "index"
   end
 
   def similar
@@ -601,13 +601,13 @@ class PostController < ApplicationController
       begin
         @compared_post = Post.find(params[:id])
       rescue ActiveRecord::RecordNotFound
-        render :status => 404
+        render status: 404
         return
       end
     end
 
     if @compared_post && @compared_post.is_deleted?
-      respond_to_error("Post deleted", :controller => "post", :action => "show", :id => params[:id], :tag_title => @compared_post.tag_title)
+      respond_to_error("Post deleted", controller: "post", action: "show", id: params[:id], tag_title: @compared_post.tag_title)
       return
     end
 
@@ -631,7 +631,7 @@ class PostController < ApplicationController
     # when doing later searches, so we don't need a cron job.
     def search(params)
       options = params.merge(
-        :services => @services
+        services: @services
       )
 
       # Check search_id first, so options links that include it will use it.  If the
@@ -642,7 +642,7 @@ class PostController < ApplicationController
           # The file was probably purged.  Delete :search_id before redirecting, so the
           # error doesn't loop.
           params.delete(:search_id)
-          return { :errors => { :error => "Search expired" } }
+          return { errors: { error: "Search expired" } }
         end
       elsif params[:url] || params[:file]
         # Save the file locally.
@@ -667,14 +667,14 @@ class PostController < ApplicationController
               end
 
               if wrote == 0
-                return { :errors => { :error => "No file received" } }
+                return { errors: { error: "No file received" } }
               end
             end
           end
         rescue Addressable::URI::InvalidURIError, SocketError, URI::Error, SystemCallError, Moebooru::Resizer::ResizeError => e
-          return { :errors => { :error => "#{e}" } }
+          return { errors: { error: "#{e}" } }
         rescue Timeout::Error
-          return { :errors => { :error => "Download timed out" } }
+          return { errors: { error: "Download timed out" } }
         end
 
         file_path = search[:file_path]
@@ -727,11 +727,11 @@ class PostController < ApplicationController
 
     if params[:format] == "json" || params[:format] == "xml"
       if @errors[:error]
-        respond_to_error(@errors[:error], { :action => "index" }, :status => 503)
+        respond_to_error(@errors[:error], { action: "index" }, status: 503)
         return
       end
       unless @searched
-        respond_to_error("no search supplied", { :action => "index" }, :status => 503)
+        respond_to_error("no search supplied", { action: "index" }, status: 503)
         return
       end
     end
@@ -740,7 +740,7 @@ class PostController < ApplicationController
       fmt.html do
         if @initial == "1" && @posts.empty?
           flash.keep
-          redirect_to :controller => "post", :action => "show", :id => params[:id], :tag_title => @compared_post.tag_title
+          redirect_to controller: "post", action: "show", id: params[:id], tag_title: @compared_post.tag_title
           return
         end
         if @errors[:error]
@@ -753,9 +753,9 @@ class PostController < ApplicationController
 
           # Add the original post to the start of the list.
           if res[:source]
-            @posts = [res[:source]] + @posts
+            @posts = [ res[:source] ] + @posts
           else
-            @posts = [res[:external_source]] + @posts
+            @posts = [ res[:external_source] ] + @posts
           end
         end
       end
@@ -767,49 +767,49 @@ class PostController < ApplicationController
           post.similarity = res[:similarity][post]
         end
         api_data = {
-          :posts => @posts + res[:posts_external],
-          :source => res[:source] ? res[:source] : res[:external_source],
-          :search_id => @search_id
+          posts: @posts + res[:posts_external],
+          source: res[:source] ? res[:source] : res[:external_source],
+          search_id: @search_id
         }
 
         unless res[:errors].empty?
           api_data[:error] = []
           res[:errors].map do |server, error|
-            api_data[:error] << { :server => server, :message => error[:message], :services => error[:services].join(",") }
+            api_data[:error] << { server: server, message: error[:message], services: error[:services].join(",") }
           end
         end
 
-        respond_to_success("", {}, :api => api_data)
+        respond_to_success("", {}, api: api_data)
       end
 
       fmt.xml do
-        x = Builder::XmlMarkup.new(:indent => 2)
+        x = Builder::XmlMarkup.new(indent: 2)
         x.instruct!
-        render :xml => x.posts do
+        render xml: x.posts do
           unless res[:errors].empty?
             res[:errors].map do |server, error|
-              { :server => server, :message => error[:message], :services => error[:services].join(",") }.to_xml(:root => "error", :builder => x, :skip_instruct => true)
+              { server: server, message: error[:message], services: error[:services].join(",") }.to_xml(root: "error", builder: x, skip_instruct: true)
             end
           end
 
           if res[:source]
             x.source do
-              res[:source].to_xml(:builder => x, :skip_instruct => true)
+              res[:source].to_xml(builder: x, skip_instruct: true)
             end
           else
             x.source do
-              res[:external_source].to_xml(:builder => x, :skip_instruct => true)
+              res[:external_source].to_xml(builder: x, skip_instruct: true)
             end
           end
 
           @posts.each do |e|
-            x.similar(:similarity => res[:similarity][e]) do
-              e.to_xml(:builder => x, :skip_instruct => true)
+            x.similar(similarity: res[:similarity][e]) do
+              e.to_xml(builder: x, skip_instruct: true)
             end
           end
           res[:posts_external].each do |e|
-            x.similar(:similarity => res[:similarity][e]) do
-              e.to_xml(:builder => x, :skip_instruct => true)
+            x.similar(similarity: res[:similarity][e]) do
+              e.to_xml(builder: x, skip_instruct: true)
             end
           end
         end
@@ -821,10 +821,10 @@ class PostController < ApplicationController
     post = Post.find(params[:id])
     post.undelete!
 
-    affected_posts = [post]
+    affected_posts = [ post ]
     affected_posts << post.get_parent if post.parent_id
     api_data = Post.batch_api_data(affected_posts) if params[:format] == "json" || params[:format] == "xml"
-    respond_to_success("Post was undeleted", { :action => "show", :id => params[:id] }, :api => api_data)
+    respond_to_success("Post was undeleted", { action: "show", id: params[:id] }, api: api_data)
   end
 
   def error
@@ -833,7 +833,7 @@ class PostController < ApplicationController
   private
 
   def handle_duplicate
-    p = Post.find_by(:md5 => @post.md5)
+    p = Post.find_by(md5: @post.md5)
 
     p.tags = "#{p.cached_tags} #{params[:post][:tags]}"
     p.updater_user_id = @current_user.id
@@ -842,11 +842,11 @@ class PostController < ApplicationController
     p.save
 
     api_data = {
-      :location => url_for(:controller => "post", :action => "show", :id => p.id),
-      :post_id => p.id
+      location: url_for(controller: "post", action: "show", id: p.id),
+      post_id: p.id
     }
 
-    respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => p.id, :tag_title => @post.tag_title }, :api => api_data, :status => 423)
+    respond_to_error("Post already exists", { controller: "post", action: "show", id: p.id, tag_title: @post.tag_title }, api: api_data, status: 423)
   end
 
   def post_params_for_create

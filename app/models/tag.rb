@@ -4,8 +4,8 @@ class Tag < ApplicationRecord
   include Tag::RelatedTagMethods
   include Tag::ParseMethods
   include Tag::ApiMethods
-  has_and_belongs_to_many :_posts, :class_name => "Post"
-  has_many :tag_aliases, :foreign_key => "alias_id"
+  has_and_belongs_to_many :_posts, class_name: "Post"
+  has_many :tag_aliases, foreign_key: "alias_id"
 
   TYPE_ORDER = CONFIG["tag_order"].each_with_index.to_h
   TAG_TYPE_INDEXES = CONFIG["tag_types"].values.uniq.sort.freeze
@@ -16,7 +16,7 @@ class Tag < ApplicationRecord
 
     tag_types_to_show = TAG_TYPE_INDEXES - options[:exclude_types]
     Tag.group(:name).joins(:_posts)
-      .where(:posts => { :created_at => start..stop }, :tag_type => tag_types_to_show)
+      .where(posts: { created_at: start..stop }, tag_type: tag_types_to_show)
       .order("count_all DESC").limit(options[:limit])
       .count
       .map { |name, count| { "post_count" => count, "name" => name } }
@@ -28,15 +28,15 @@ class Tag < ApplicationRecord
     end
 
     if tags[0].is_a? String
-      tags = where(:name => tags)
-        .select([:name, :post_count, :id, :tag_type])
-        .map { |t| [type_name_from_value(t.tag_type), t.name, t.post_count, t.id] }
+      tags = where(name: tags)
+        .select([ :name, :post_count, :id, :tag_type ])
+        .map { |t| [ type_name_from_value(t.tag_type), t.name, t.post_count, t.id ] }
     else
       case tags[0]
       when Hash
-        tags.map! { |x| [x["name"], x["post_count"], nil] }
+        tags.map! { |x| [ x["name"], x["post_count"], nil ] }
       when self
-        tags.map! { |x| [x.name, x.post_count, x.id] }
+        tags.map! { |x| [ x.name, x.post_count, x.id ] }
       end
 
       tags_type = batch_get_tag_types(tags.map { |data| data[0] })
@@ -44,9 +44,9 @@ class Tag < ApplicationRecord
     end
 
     if count_sorting
-      tags.sort_by { |a| [TYPE_ORDER[a[0]], -a[2].to_i, a[1]] }
+      tags.sort_by { |a| [ TYPE_ORDER[a[0]], -a[2].to_i, a[1] ] }
     else
-      tags.sort_by { |a| [TYPE_ORDER[a[0]], a[1]] }
+      tags.sort_by { |a| [ TYPE_ORDER[a[0]], a[1] ] }
     end
   end
 
@@ -75,16 +75,16 @@ class Tag < ApplicationRecord
 
     if tag
       if tag_type
-        tag.update(:tag_type => tag_type)
+        tag.update(tag_type: tag_type)
       end
 
       if ambiguous
-        tag.update(:is_ambiguous => ambiguous)
+        tag.update(is_ambiguous: ambiguous)
       end
 
-      return tag
+      tag
     else
-      create(:name => name, :tag_type => tag_type || CONFIG["tag_types"]["General"], :cached_related_expires_on => Time.now, :is_ambiguous => ambiguous)
+      create(name: name, tag_type: tag_type || CONFIG["tag_types"]["General"], cached_related_expires_on: Time.now, is_ambiguous: ambiguous)
     end
   end
 
@@ -111,7 +111,7 @@ class Tag < ApplicationRecord
       start = TagAlias.to_aliased(Tag.scan_tags(start_tags))
       result = TagAlias.to_aliased(Tag.scan_tags(result_tags))
       tags = (p.cached_tags.scan(/\S+/) - start + result).join(" ")
-      p.update(:updater_user_id => updater_id, :updater_ip_addr => updater_ip_addr, :tags => tags)
+      p.update(updater_user_id: updater_id, updater_ip_addr: updater_ip_addr, tags: tags)
     end
   end
 

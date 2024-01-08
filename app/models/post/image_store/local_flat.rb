@@ -26,7 +26,7 @@ module Post::ImageStore
 
     def preview_url
       if status == "deleted"
-        ApplicationController.helpers.image_path 'deleted-preview.png', host: base_url(:assets)
+        ApplicationController.helpers.image_path "deleted-preview.png", host: base_url(:assets)
       elsif image?
         CONFIG["url_base"] + "/data/preview/#{md5}.jpg"
       else
@@ -40,7 +40,7 @@ module Post::ImageStore
 
     def store_jpeg_url
       if CONFIG["use_pretty_image_urls"]
-        CONFIG["url_base"] + "/jpeg/#{md5}/#{url_encode(pretty_file_name(:type => :jpeg))}.jpg"
+        CONFIG["url_base"] + "/jpeg/#{md5}/#{url_encode(pretty_file_name(type: :jpeg))}.jpg"
       else
         CONFIG["url_base"] + "/data/jpeg/#{md5}.jpg"
       end
@@ -48,7 +48,7 @@ module Post::ImageStore
 
     def store_sample_url
       if CONFIG["use_pretty_image_urls"]
-        path = "/sample/#{md5}/#{url_encode(pretty_file_name(:type => :sample))}.jpg"
+        path = "/sample/#{md5}/#{url_encode(pretty_file_name(type: :sample))}.jpg"
       else
         path = "/data/sample/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
@@ -76,19 +76,19 @@ module Post::ImageStore
       FileUtils.chmod(0664, file_path)
 
       if image?
-        FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
+        FileUtils.mkdir_p(File.dirname(preview_path), mode: 0775)
         FileUtils.mv(tempfile_preview_path, preview_path)
         FileUtils.chmod(0664, preview_path)
       end
 
       if File.exist?(tempfile_sample_path)
-        FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
+        FileUtils.mkdir_p(File.dirname(sample_path), mode: 0775)
         FileUtils.mv(tempfile_sample_path, sample_path)
         FileUtils.chmod(0664, sample_path)
       end
 
       if File.exist?(tempfile_jpeg_path)
-        FileUtils.mkdir_p(File.dirname(jpeg_path), :mode => 0775)
+        FileUtils.mkdir_p(File.dirname(jpeg_path), mode: 0775)
         FileUtils.mv(tempfile_jpeg_path, jpeg_path)
         FileUtils.chmod(0664, jpeg_path)
       end

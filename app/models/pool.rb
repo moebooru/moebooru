@@ -12,12 +12,12 @@ class Pool < ApplicationRecord
 
   module PostMethods
     def self.included(m)
-      m.has_many :pool_posts, lambda { where("pools_posts.active").order(Arel.sql("nat_sort(sequence), post_id")) }, :class_name => "PoolPost"
-      m.has_many :all_pool_posts, lambda { order Arel.sql("nat_sort(sequence), post_id") }, :class_name => "PoolPost"
+      m.has_many :pool_posts, lambda { where("pools_posts.active").order(Arel.sql("nat_sort(sequence), post_id")) }, class_name: "PoolPost"
+      m.has_many :all_pool_posts, lambda { order Arel.sql("nat_sort(sequence), post_id") }, class_name: "PoolPost"
       m.versioned :name
-      m.versioned :description, :default => ""
-      m.versioned :is_public, :default => true
-      m.versioned :is_active, :default => true
+      m.versioned :description, default: ""
+      m.versioned :is_public, default: true
+      m.versioned :is_active, default: true
       m.set_callback :undo, :after, :update_pool_links
       m.after_save :expire_cache
     end
@@ -34,7 +34,7 @@ class Pool < ApplicationRecord
 
         seq = options[:sequence] || next_sequence
 
-        pool_post = all_pool_posts.where(:post_id => post_id).first
+        pool_post = all_pool_posts.where(post_id: post_id).first
         if pool_post
           # If :ignore_already_exists, we won't raise PostAlreadyExistsError; this allows
           # he sequence to be changed if the post already exists.
@@ -43,7 +43,7 @@ class Pool < ApplicationRecord
           pool_post.sequence = seq
           pool_post.save!
         else
-          PoolPost.create(:pool_id => id, :post_id => post_id, :sequence => seq)
+          PoolPost.create(pool_id: id, post_id: post_id, sequence: seq)
         end
 
         unless options[:skip_update_pool_links]
@@ -59,7 +59,7 @@ class Pool < ApplicationRecord
           raise AccessDeniedError
         end
 
-        pool_post = all_pool_posts.where(:post_id => post_id).first
+        pool_post = all_pool_posts.where(post_id: post_id).first
         if pool_post
           pool_post.active = false
           pool_post.save!
@@ -75,20 +75,20 @@ class Pool < ApplicationRecord
     end
 
     def transfer_post_to_parent(post_id, parent_id)
-      pool_post = pool_posts.find_by(:post_id => post_id)
-      parent_pool_post = pool_posts.find_by(:post_id => parent_id)
+      pool_post = pool_posts.find_by(post_id: post_id)
+      parent_pool_post = pool_posts.find_by(post_id: parent_id)
       return unless parent_pool_post.nil?
 
       sequence = pool_post.sequence
       remove_post(post_id)
-      add_post(parent_id, :sequence => sequence)
+      add_post(parent_id, sequence: sequence)
     end
 
     def get_sample
       # By preference, pick the first post (by sequence) in the pool that isn't hidden from
       # the index.
       PoolPost.joins(:post)
-        .where(:pool_id => id, :active => true, :posts => { :status => "active" })
+        .where(pool_id: id, active: true, posts: { status: "active" })
         .order(Arel.sql("posts.is_shown_in_index DESC, NAT_SORT(pools_posts.sequence), pools_posts.post_id"))
         .to_a
         .find { |pool_post| pool_post if pool_post.post.can_be_seen_by?(Thread.current["danbooru-user"]) }
@@ -127,14 +127,14 @@ class Pool < ApplicationRecord
   module ApiMethods
     def api_attributes
       {
-        :id => id,
-        :name => name,
-        :created_at => created_at,
-        :updated_at => updated_at,
-        :user_id => user_id,
-        :is_public => is_public,
-        :post_count => post_count,
-        :description => description
+        id: id,
+        name: name,
+        created_at: created_at,
+        updated_at: updated_at,
+        user_id: user_id,
+        is_public: is_public,
+        post_count: post_count,
+        description: description
       }
     end
 
@@ -144,7 +144,7 @@ class Pool < ApplicationRecord
 
     def to_xml(options = {})
       options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= Builder::XmlMarkup.new(indent: options[:indent])
       xml.pool(api_attributes) do
         xml.description(description)
         yield options[:builder] if block_given?
@@ -156,7 +156,7 @@ class Pool < ApplicationRecord
     module ClassMethods
       def find_by_name(name)
         if name =~ /^\d+$/
-          find_by(:id => name)
+          find_by(id: name)
         else
           find_by("LOWER(name) = LOWER(?)", name)
         end
@@ -223,7 +223,7 @@ class Pool < ApplicationRecord
       pool_posts.each do |pool_post|
         filtered_sequence = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)?)?.*/, '\1') # 45a -> 45
         filtered_sequence.split(/-/).each do |p|
-          max_sequence_digits = [p.length, max_sequence_digits].max
+          max_sequence_digits = [ p.length, max_sequence_digits ].max
         end
       end
 
@@ -248,11 +248,11 @@ class Pool < ApplicationRecord
           if Regexp.last_match[1] != ""
             suffix = Regexp.last_match[3]
             numbers = Regexp.last_match[1].split(/-/).map do |p|
-              "%0*i" % [max_sequence_digits, p.to_i]
+              "%0*i" % [ max_sequence_digits, p.to_i ]
             end.join("-")
-            "%s%s" % [numbers, suffix]
+            "%s%s" % [ numbers, suffix ]
           else
-            "%s" % [Regexp.last_match[3]]
+            "%s" % [ Regexp.last_match[3] ]
           end
         end
 
@@ -262,9 +262,9 @@ class Pool < ApplicationRecord
         filename_count[filename] ||= 0
         filename_count[filename] = filename_count[filename] + 1
         if filename_count[filename] > 1
-          filename << " (%i)" % [filename_count[filename]]
+          filename << " (%i)" % [ filename_count[filename] ]
         end
-        filename << ".%s" % [file_ext]
+        filename << ".%s" % [ file_ext ]
 
         # buf << "#{filename}\n"
         # buf << "#{path}\n"
@@ -276,7 +276,7 @@ class Pool < ApplicationRecord
           crc32 = post.crc32
         end
         crc32 = crc32 ? "%08x" % crc32.to_i : "-"
-        buf += [{ :filename => filename, :path => path, :file_size => file_size, :crc32 => crc32 }]
+        buf += [ { filename: filename, path: path, file_size: file_size, crc32: crc32 } ]
       end
 
       buf
@@ -299,7 +299,7 @@ class Pool < ApplicationRecord
       pool_posts.each do |pool_post|
         filtered_sequence = pool_post.sequence.gsub(/^([0-9]+(-[0-9]+)?)?.*/, '\1') # 45a -> 45
         filtered_sequence.split(/-/).each do |p|
-          max_sequence_digits = [p.length, max_sequence_digits].max
+          max_sequence_digits = [ p.length, max_sequence_digits ].max
         end
       end
 
@@ -324,11 +324,11 @@ class Pool < ApplicationRecord
           if Regexp.last_match[1] != ""
             suffix = Regexp.last_match[3]
             numbers = Regexp.last_match[1].split(/-/).map do |p|
-              "%0*i" % [max_sequence_digits, p.to_i]
+              "%0*i" % [ max_sequence_digits, p.to_i ]
             end.join("-")
-            "%s%s" % [numbers, suffix]
+            "%s%s" % [ numbers, suffix ]
           else
-            "%s" % [Regexp.last_match[3]]
+            "%s" % [ Regexp.last_match[3] ]
           end
         end
 
@@ -338,9 +338,9 @@ class Pool < ApplicationRecord
         filename_count[filename] ||= 0
         filename_count[filename] = filename_count[filename] + 1
         if filename_count[filename] > 1
-          filename << " (%i)" % [filename_count[filename]]
+          filename << " (%i)" % [ filename_count[filename] ]
         end
-        filename << ".%s" % [file_ext]
+        filename << ".%s" % [ file_ext ]
 
         buf << "#{filename}\n"
         buf << "#{path}\n"

@@ -9,7 +9,7 @@ class AddAvatarToUser < ActiveRecord::Migration[5.1]
     execute "ALTER TABLE users ADD COLUMN avatar_right REAL"
     execute "ALTER TABLE users ADD COLUMN avatar_timestamp TIMESTAMP"
 
-    add_foreign_key "users", "avatar_post_id", "posts", "id", :on_delete => :set_null
+    add_foreign_key "users", "avatar_post_id", "posts", "id", on_delete: :set_null
     add_index :users, :avatar_post_id
   end
 

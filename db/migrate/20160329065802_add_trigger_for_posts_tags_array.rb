@@ -16,7 +16,7 @@ class AddTriggerForPostsTagsArray < ActiveRecord::Migration[5.1]
       FOR EACH ROW EXECUTE PROCEDURE posts_tags_array_update();
     SQL
 
-    add_index :posts, :tags_array, :using => :gin
+    add_index :posts, :tags_array, using: :gin
   end
 
   def down

@@ -4,30 +4,30 @@ class ArtistControllerTest < ActionController::TestCase
   fixtures :users
 
   def create_artist(name, params = {})
-    Artist.create({ :updater_id => 1, :updater_ip_addr => "127.0.0.1", :name => name }.merge(params))
+    Artist.create({ updater_id: 1, updater_ip_addr: "127.0.0.1", name: name }.merge(params))
   end
 
   def test_destroy
     artist = create_artist("bob")
 
-    post :destroy, :params => { :id => artist.id, :commit => "Yes" }, :session => { :user_id => 1 }
-    assert_redirected_to :action => "index"
+    post :destroy, params: { id: artist.id, commit: "Yes" }, session: { user_id: 1 }
+    assert_redirected_to action: "index"
     assert_nil(Artist.find_by_name("bob"))
   end
 
   def test_update
     artist = create_artist("bob")
 
-    get :update, :params => { :id => artist.id }, :session => { :user_id => 4 }
+    get :update, params: { id: artist.id }, session: { user_id: 4 }
     assert_response :success
 
-    post :update, :params => { :id => artist.id, :artist => { :name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :alias_names => "claude, oscar", :member_names => "john, mary", :notes => "Claude Oscar Monet" } }, :session => { :user_id => 4 }
+    post :update, params: { id: artist.id, artist: { name: "monet", urls: "http://monet.com/home\nhttp://monet.com/links\n", alias_names: "claude, oscar", member_names: "john, mary", notes: "Claude Oscar Monet" } }, session: { user_id: 4 }
     artist.reload
     assert_equal("monet", artist.name)
 
     monet = Artist.find_by_name("monet")
     assert_not_nil(monet)
-    assert_redirected_to :controller => "artist", :action => "show", :id => monet.id
+    assert_redirected_to controller: "artist", action: "show", id: monet.id
 
     claude = Artist.find_by_name("claude")
     assert_not_nil(claude)
@@ -42,18 +42,18 @@ class ArtistControllerTest < ActionController::TestCase
 
     mary = Artist.find_by_name("mary")
     assert_not_nil(mary)
-    assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)
+    assert_equal([ "http://monet.com/home", "http://monet.com/links" ], monet.artist_urls.map(&:url).sort)
   end
 
   def test_create
-    get :create, :session => { :user_id => 4 }
+    get :create, session: { user_id: 4 }
     assert_response :success
 
-    post :create, :params => { :artist => { :name => "monet", :urls => "http://monet.com/home\nhttp://monet.com/links\n", :alias_names => "claude, oscar", :member_names => "john, mary", :notes => "Claude Oscar Monet" } }, :session => { :user_id => 4 }
+    post :create, params: { artist: { name: "monet", urls: "http://monet.com/home\nhttp://monet.com/links\n", alias_names: "claude, oscar", member_names: "john, mary", notes: "Claude Oscar Monet" } }, session: { user_id: 4 }
 
     monet = Artist.find_by_name("monet")
     assert_not_nil(monet)
-    assert_redirected_to :controller => "artist", :action => "show", :id => monet.id
+    assert_redirected_to controller: "artist", action: "show", id: monet.id
 
     claude = Artist.find_by_name("claude")
     assert_not_nil(claude)
@@ -68,19 +68,19 @@ class ArtistControllerTest < ActionController::TestCase
 
     mary = Artist.find_by_name("mary")
     assert_not_nil(mary)
-    assert_equal(["http://monet.com/home", "http://monet.com/links"], monet.artist_urls.map(&:url).sort)
+    assert_equal([ "http://monet.com/home", "http://monet.com/links" ], monet.artist_urls.map(&:url).sort)
   end
 
   def test_show
     monet = create_artist("monet")
-    get :show, :params => { :id => monet.id }
-    assert_redirected_to :controller => "wiki", :action => "show", :title => monet.name
+    get :show, params: { id: monet.id }
+    assert_redirected_to controller: "wiki", action: "show", title: monet.name
   end
 
   def test_index
     create_artist("monet")
-    create_artist("pablo", :alias_name => "monet")
-    create_artist("hanaharu", :group_name => "monet")
+    create_artist("pablo", alias_name: "monet")
+    create_artist("hanaharu", group_name: "monet")
     get :index
     assert_response :success
 

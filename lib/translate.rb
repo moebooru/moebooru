@@ -51,17 +51,17 @@ module Translate
     languages = options[:languages]
 
     params = []
-    params += [{ :name => "v", :data => "1.0" }]
-    params += [{ :name => "format", :data => "html" }]
-    params += [{ :name => "q", :data => s }]
+    params += [ { name: "v", data: "1.0" } ]
+    params += [ { name: "format", data: "html" } ]
+    params += [ { name: "q", data: s } ]
 
     path = "/ajax/services/language/translate"
     languages.each do |lang|
-      params += [{ :name => "langpair", :data => "|%s" % lang }]
+      params += [ { name: "langpair", data: "|%s" % lang } ]
     end
 
     # resp = Translate.request(path)
-    resp = Translate.post(path, params, :referer => options[:referer])
+    resp = Translate.post(path, params, referer: options[:referer])
     if resp.nil?
       # We didn't get a usable response.
       return {}, ""
@@ -92,7 +92,7 @@ module Translate
         result[lang] = translations[i]["translatedText"]
       end
     end
-    [result, source_lang]
+    [ result, source_lang ]
   end
 
   #  def request(path, options={})

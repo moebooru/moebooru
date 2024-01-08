@@ -7,7 +7,7 @@ class ExternalPost
       filename =
         case service
         # FIXME: figure out why it's empty string
-        when '', CONFIG["local_image_service"]
+        when "", CONFIG["local_image_service"]
           nil
         when "gelbooru.com" # hack
           "#{service}.png"
@@ -36,12 +36,12 @@ class ExternalPost
   end
 
   def to_xml(options = {})
-    { :md5 => md5, :url => url, :preview_url => preview_url, :service => service }.to_xml(options.merge(:root => "external-post"))
+    { md5: md5, url: url, preview_url: preview_url, service: service }.to_xml(options.merge(root: "external-post"))
   end
 
   def preview_dimensions
-    dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 150, :height => 150)
-    [dim[:width], dim[:height]]
+    dim = Moebooru::Resizer.reduce_to({ width: width, height: height }, width: 150, height: 150)
+    [ dim[:width], dim[:height] ]
   end
 
   def use_jpeg?(_user)

@@ -4,7 +4,7 @@ class ForumPostTest < ActiveSupport::TestCase
   fixtures :users
 
   def create_post(msg, parent_id = nil, params = {})
-    ForumPost.create({ :creator_id => 1, :body => msg, :title => msg, :is_sticky => false, :is_locked => false, :parent_id => parent_id }.merge(params))
+    ForumPost.create({ creator_id: 1, body: msg, title: msg, is_sticky: false, is_locked: false, parent_id: parent_id }.merge(params))
   end
 
   def test_parents
@@ -12,7 +12,7 @@ class ForumPostTest < ActiveSupport::TestCase
     assert_equal(true, topic.is_parent?)
     assert_equal(topic.id, topic.root_id)
 
-    resp1 = create_post("orly", topic.id, :creator_id => 2)
+    resp1 = create_post("orly", topic.id, creator_id: 2)
     topic.reload
     assert_equal(true, topic.is_parent?)
     assert_equal(false, resp1.is_parent?)
@@ -22,7 +22,7 @@ class ForumPostTest < ActiveSupport::TestCase
     assert_equal(topic.id, resp1.root_id)
     assert_equal(resp1.creator_id, topic.last_updated_by)
 
-    resp2 = create_post("yarly", topic.id, :creator_id => 3)
+    resp2 = create_post("yarly", topic.id, creator_id: 3)
     topic.reload
     assert_equal(2, topic.response_count)
     assert_equal(resp2.creator_id, topic.last_updated_by)
@@ -49,7 +49,7 @@ class ForumPostTest < ActiveSupport::TestCase
     ForumPost.lock!(topic.id)
     topic.reload
     assert_equal(true, topic.is_locked?)
-    topic.update(:body => "bumbleclot")
+    topic.update(body: "bumbleclot")
     topic.reload
     assert_equal("hello", topic.body)
     ForumPost.unlock!(topic.id)

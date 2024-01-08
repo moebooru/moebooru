@@ -14,7 +14,7 @@ module Post::VoteMethods
         cond_params << id
       end
 
-      sql = [sql, conds].join(" ")
+      sql = [ sql, conds ].join(" ")
       execute_sql sql, *cond_params
     end
   end
@@ -37,13 +37,13 @@ module Post::VoteMethods
 
     if score > 0
       begin
-        vote = post_votes.find_or_initialize_by :user_id => user.id
-        vote.update :score => score
+        vote = post_votes.find_or_initialize_by user_id: user.id
+        vote.update score: score
       rescue ActiveRecord::RecordNotUnique
         retry
       end
     else
-      post_votes.where(:user_id => user.id).delete_all
+      post_votes.where(user_id: user.id).delete_all
     end
 
     recalculate_score

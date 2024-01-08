@@ -1,6 +1,6 @@
 class HistoryChange < ApplicationRecord
   belongs_to :history
-  belongs_to :previous, :class_name => "HistoryChange", :foreign_key => :previous_id
+  belongs_to :previous, class_name: "HistoryChange", foreign_key: :previous_id
   after_create :set_previous
 
   def options
@@ -58,10 +58,10 @@ class HistoryChange < ApplicationRecord
   def default_history
     return nil unless has_default?
 
-    History.new :table_name => table_name,
-                :remote_id => remote_id,
-                :column_name => column_name,
-                :value => get_default
+    History.new table_name: table_name,
+                remote_id: remote_id,
+                column_name: column_name,
+                value: get_default
   end
 
   # Return the object this change modifies.
@@ -70,18 +70,18 @@ class HistoryChange < ApplicationRecord
   end
 
   def latest
-    self.class.order(:id => :desc).find_by(:table_name => table_name, :remote_id => remote_id, :column_name => column_name)
+    self.class.order(id: :desc).find_by(table_name: table_name, remote_id: remote_id, column_name: column_name)
   end
 
   def next
-    self.class.order(:id => :asc).find_by(:table_name => table_name, :remote_id => remote_id, :column_name => column_name)
+    self.class.order(id: :asc).find_by(table_name: table_name, remote_id: remote_id, column_name: column_name)
   end
 
   def set_previous
     self.previous = self.class
-      .where(:table_name => table_name, :remote_id => remote_id, :column_name => column_name)
+      .where(table_name: table_name, remote_id: remote_id, column_name: column_name)
       .where("id < ?", id)
-      .order(:id => :desc)
+      .order(id: :desc)
       .take
     self.save!
   end

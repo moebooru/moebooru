@@ -4,11 +4,11 @@ class PoolTest < ActiveSupport::TestCase
   fixtures :users, :posts
 
   def create_pool(params = {})
-    Pool.create({ :user_id => 1, :name => "my pool", :post_count => 0, :is_public => false, :description => "pools" }.merge(params))
+    Pool.create({ user_id: 1, name: "my pool", post_count: 0, is_public: false, description: "pools" }.merge(params))
   end
 
   def find_post(pool, post_id)
-    PoolPost.find_by(:pool_id => pool.id, :post_id => post_id)
+    PoolPost.find_by(pool_id: pool.id, post_id: post_id)
   end
 
   def add_posts(pool, _options = {})
@@ -26,7 +26,7 @@ class PoolTest < ActiveSupport::TestCase
   def test_uniqueness
     create_pool
     create_pool
-    assert_equal 1, Pool.where(:name => "my_pool").count
+    assert_equal 1, Pool.where(name: "my_pool").count
   end
 
   def test_api
@@ -59,7 +59,7 @@ class PoolTest < ActiveSupport::TestCase
     post2 = find_post(pool, 2)
     post3 = find_post(pool, 3)
     post4 = find_post(pool, 4)
-    assert(!post1.active)
+    assert_not(post1.active)
     assert_nil(post2.prev_post_id)
     assert_equal(3, post2.next_post_id)
     assert_equal(2, post3.prev_post_id)
@@ -78,7 +78,7 @@ class PoolTest < ActiveSupport::TestCase
     post2 = find_post(pool, 2)
     post3 = find_post(pool, 3)
     post4 = find_post(pool, 4)
-    assert(!post2.active)
+    assert_not(post2.active)
     assert_nil(post1.prev_post_id)
     assert_equal(3, post1.next_post_id)
     assert_equal(1, post3.prev_post_id)
@@ -97,7 +97,7 @@ class PoolTest < ActiveSupport::TestCase
     post2 = find_post(pool, 2)
     post3 = find_post(pool, 3)
     post4 = find_post(pool, 4)
-    assert(!post4.active)
+    assert_not(post4.active)
     assert_nil(post1.prev_post_id)
     assert_equal(2, post1.next_post_id)
     assert_equal(3, post2.next_post_id)
@@ -184,16 +184,16 @@ class PoolTest < ActiveSupport::TestCase
   def test_access
     pool = create_pool
     assert_raise(Pool::AccessDeniedError) do
-      pool.add_post(1, :user => User.find(4))
+      pool.add_post(1, user: User.find(4))
     end
     assert_nothing_raised do
-      pool.add_post(1, :user => User.find(2))
+      pool.add_post(1, user: User.find(2))
     end
     assert_raise(Pool::AccessDeniedError) do
-      pool.remove_post(1, :user => User.find(4))
+      pool.remove_post(1, user: User.find(4))
     end
     assert_nothing_raised do
-      pool.remove_post(1, :user => User.find(2))
+      pool.remove_post(1, user: User.find(2))
     end
   end
 end

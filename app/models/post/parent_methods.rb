@@ -5,21 +5,21 @@ module Post::ParentMethods
     after_save :update_parent
     validate :validate_parent
     set_callback :delete, :after, :give_favorites_to_parent
-    versioned :parent_id, :default => nil
+    versioned :parent_id, default: nil
     has_many :children, lambda { where("status <> ?", "deleted").order("id") },
-             :class_name => "Post", :foreign_key => :parent_id
+             class_name: "Post", foreign_key: :parent_id
   end
 
   module ClassMethods
     def update_has_children(post_id)
-      has_children = Post.exists?(["parent_id = ? AND status <> 'deleted'", post_id])
+      has_children = Post.exists?([ "parent_id = ? AND status <> 'deleted'", post_id ])
       execute_sql("UPDATE posts SET has_children = ? WHERE id = ?", !!has_children, post_id)
     end
 
     def recalculate_has_children
       transaction do
-        where(:has_children => true).update_all(:has_children => false)
-        where(:id => available.where.not(:parent_id => nil).select(:parent_id)).update_all(:has_children => true)
+        where(has_children: true).update_all(has_children: false)
+        where(id: available.where.not(parent_id: nil).select(:parent_id)).update_all(has_children: true)
       end
     end
 
@@ -61,6 +61,6 @@ module Post::ParentMethods
   end
 
   def get_parent
-    self.class.find_by(:id => parent_id)
+    self.class.find_by(id: parent_id)
   end
 end

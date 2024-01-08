@@ -24,11 +24,11 @@ module ApplicationHelper
       klass = nil
     end
 
-    if %w(tag_alias tag_implication).include?(params[:controller]) && options[:controller] == "tag"
+    if %w[tag_alias tag_implication].include?(params[:controller]) && options[:controller] == "tag"
       klass = "current-page"
     end
 
-    content_tag("li", link_to(text, options, html_options), :class => klass)
+    content_tag("li", link_to(text, options, html_options), class: klass)
   end
 
   def timeago(time, options = {})
@@ -53,7 +53,7 @@ module ApplicationHelper
     unless preview_html
       preview_html = %(<img src="#{url}">)
     end
-    id_text = "inline-%s-%i" % [id, num]
+    id_text = "inline-%s-%i" % [ id, num ]
     block = %(
       <div class="inline-image" id="#{id_text}">
         <div class="inline-thumb" style="display: inline;">
@@ -65,18 +65,18 @@ module ApplicationHelper
         </div>
       </div>
     )
-    inline_id = "inline-%s-%i" % [id, num]
+    inline_id = "inline-%s-%i" % [ id, num ]
     # FIXME: for some reason rails invoked the old, useless json_escape when
     #        used here.
-    script = 'InlineImage.register("%s", %s);' % [inline_id, inline.to_json.gsub("/", '\/')]
-    [block.html_safe, script.html_safe, inline_id]
+    script = 'InlineImage.register("%s", %s);' % [ inline_id, inline.to_json.gsub("/", '\/') ]
+    [ block.html_safe, script.html_safe, inline_id ]
   end
 
   def format_inlines(text, id)
     num = 0
     list = []
     text.gsub!(/image #\d+/i) do |t|
-      i = Inline.find_by(:id => t[7..-1])
+      i = Inline.find_by(id: t[7..-1])
       if i
         block, script = format_inline(i, num, id)
         list << script
@@ -103,7 +103,7 @@ module ApplicationHelper
 
   def tag_header(tags)
     unless tags.blank?
-      ("/" + Tag.scan_query(tags).map { |t| link_to(t.tr("_", " "), :controller => "post", :action => "index", :tags => t) }.join("+")).html_safe
+      ("/" + Tag.scan_query(tags).map { |t| link_to(t.tr("_", " "), controller: "post", action: "index", tags: t) }.join("+")).html_safe
     end
   end
 
@@ -120,7 +120,7 @@ module ApplicationHelper
   def content_for_prefix(name)
     content_current = content_for(name)
 
-    content_for(name, :flush => true) { yield }
+    content_for(name, flush: true) { yield }
     content_for(name, content_current)
   end
 
@@ -128,21 +128,21 @@ module ApplicationHelper
     html = []
 
     if post.is_a?(Post)
-      html << tag("link", :rel => "prev", :title => "Previous Post", :href => url_for(:controller => "post", :action => "show", :id => post.id - 1))
-      html << tag("link", :rel => "next", :title => "Next Post", :href => url_for(:controller => "post", :action => "show", :id => post.id + 1))
+      html << tag("link", rel: "prev", title: "Previous Post", href: url_for(controller: "post", action: "show", id: post.id - 1))
+      html << tag("link", rel: "next", title: "Next Post", href: url_for(controller: "post", action: "show", id: post.id + 1))
 
     elsif post.is_a?(Array)
       posts = post
-      new_params = params.to_unsafe_h.merge :only_path => true
+      new_params = params.to_unsafe_h.merge only_path: true
 
       if posts.previous_page.present?
-        html << tag("link", :href => url_for(new_params.merge :page => 1), :rel => "first", :title => "First Page")
-        html << tag("link", :href => url_for(new_params.merge :page => posts.previous_page), :rel => "prev", :title => "Previous Page")
+        html << tag("link", href: url_for(new_params.merge page: 1), rel: "first", title: "First Page")
+        html << tag("link", href: url_for(new_params.merge page: posts.previous_page), rel: "prev", title: "Previous Page")
       end
 
       if posts.next_page.present?
-        html << tag("link", :href => url_for(new_params.merge :page => posts.next_page), :rel => "next", :title => "Next Page")
-        html << tag("link", :href => url_for(new_params.merge :page => posts.total_pages), :rel => "last", :title => "Last Page")
+        html << tag("link", href: url_for(new_params.merge page: posts.next_page), rel: "next", title: "Next Page")
+        html << tag("link", href: url_for(new_params.merge page: posts.total_pages), rel: "last", title: "Last Page")
       end
     end
 
@@ -151,9 +151,9 @@ module ApplicationHelper
 
   def make_menu_item(label, url_options = {}, options = {})
     item = {
-      :label => label,
-      :dest => url_for(url_options),
-      :class_names => options[:class_names] || []
+      label: label,
+      dest: url_for(url_options),
+      class_names: options[:class_names] || []
     }
     item[:html_id] = options[:html_id] if options[:html_id]
     item[:name] = options[:name] if options[:name]
@@ -182,12 +182,12 @@ module ApplicationHelper
   end
 
   def get_help_action_for_controller(controller)
-    singular = %w(forum wiki)
+    singular = %w[forum wiki]
     help_action = controller.to_s
     if singular.include?(help_action)
-      return help_action
+      help_action
     else
-      return help_action.pluralize
+      help_action.pluralize
     end
   end
 
@@ -214,12 +214,12 @@ module ApplicationHelper
   # Submit tag with a twist: removes name from tag form data so it doesn't add
   # unnecessary query string on forms with GET method.
   def get_submit_tag(value = "Save changes", options = {})
-    submit_tag value, options.merge(:name => nil)
+    submit_tag value, options.merge(name: nil)
   end
 
   # Text field tag without id.
   def generic_text_field_tag(name, value = nil, options = {})
-    text_field_tag name, value, options.merge(:id => nil)
+    text_field_tag name, value, options.merge(id: nil)
   end
 
   # Cache with locale. Only works when the name is an array or string.

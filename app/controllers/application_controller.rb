@@ -2,7 +2,7 @@
 
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  rescue_from ActiveRecord::StatementInvalid, :with => :rescue_pg_invalid_query
+  rescue_from ActiveRecord::StatementInvalid, with: :rescue_pg_invalid_query
   before_action :filter_spam
   before_action :set_locale
 
@@ -24,16 +24,16 @@ class ApplicationController < ActionController::Base
       end
 
       respond_to do |fmt|
-        fmt.html { redirect_to user_login_path(:url => previous_url), :notice => "Access denied" }
-        fmt.xml { render :xml => { :success => false, :reason => "access denied" }.to_xml(:root => "response"), :status => 403 }
-        fmt.json { render :json => { :success => false, :reason => "access denied" }.to_json, :status => 403 }
+        fmt.html { redirect_to user_login_path(url: previous_url), notice: "Access denied" }
+        fmt.xml { render xml: { success: false, reason: "access denied" }.to_xml(root: "response"), status: 403 }
+        fmt.json { render json: { success: false, reason: "access denied" }.to_json, status: 403 }
         fmt.js { head :forbidden }
       end
     end
 
     def set_current_user
       if Rails.env.test? && session[:user_id]
-        @current_user = User.find_by(:id => session[:user_id])
+        @current_user = User.find_by(id: session[:user_id])
       end
 
       if !@current_user && params[:api_key] && params[:username]
@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
       if @current_user
         if @current_user.is_blocked? && @current_user.ban && @current_user.ban.expires_at < Time.now
           @current_user.update_attribute(:level, CONFIG["starting_level"])
-          Ban.where(:user_id => @current_user.id).destroy_all
+          Ban.where(user_id: @current_user.id).destroy_all
         end
 
         session[:user_id] = @current_user.id
@@ -83,7 +83,7 @@ class ApplicationController < ActionController::Base
 
       define_method("#{normalized_name}_only") do
         if @current_user.__send__("is_#{normalized_name}_or_higher?")
-          return true
+          true
         else
           access_denied
         end
@@ -96,7 +96,7 @@ class ApplicationController < ActionController::Base
         return true unless request.post?
 
         if @current_user.__send__("is_#{normalized_name}_or_higher?")
-          return true
+          true
         else
           access_denied
         end
@@ -111,9 +111,9 @@ class ApplicationController < ActionController::Base
       extra_api_params = options[:api] || {}
 
       respond_to do |fmt|
-        fmt.html { redirect_to redirect_to_params, :notice => notice }
-        fmt.json { render :json => extra_api_params.merge(:success => true).to_json }
-        fmt.xml { render :xml => extra_api_params.merge(:success => true).to_xml(:root => "response") }
+        fmt.html { redirect_to redirect_to_params, notice: notice }
+        fmt.json { render json: extra_api_params.merge(success: true).to_json }
+        fmt.xml { render xml: extra_api_params.merge(success: true).to_xml(root: "response") }
       end
     end
 
@@ -144,9 +144,9 @@ class ApplicationController < ActionController::Base
       end
 
       respond_to do |fmt|
-        fmt.html { redirect_to redirect_to_params, :notice => "Error: #{obj}" }
-        fmt.json { render :json => extra_api_params.merge(:success => false, :reason => obj).to_json, :status => status }
-        fmt.xml { render :xml => extra_api_params.merge(:success => false, :reason => obj).to_xml(:root => "response"), :status => status }
+        fmt.html { redirect_to redirect_to_params, notice: "Error: #{obj}" }
+        fmt.json { render json: extra_api_params.merge(success: false, reason: obj).to_json, status: status }
+        fmt.xml { render xml: extra_api_params.merge(success: false, reason: obj).to_xml(root: "response"), status: status }
       end
     end
 
@@ -156,14 +156,14 @@ class ApplicationController < ActionController::Base
       respond_to do |fmt|
         fmt.html
         fmt.atom if formats[:atom]
-        fmt.json { render :json => inst_var.to_json }
-        fmt.xml { render :xml => inst_var.to_xml(:root => inst_var_name) }
+        fmt.json { render json: inst_var.to_json }
+        fmt.xml { render xml: inst_var.to_xml(root: inst_var_name) }
       end
     end
 
     def render_error(record)
       @record = record
-      render :status => 500, :layout => "bare", :inline => "<%= render 'shared/error_messages', :object => @record %>"
+      render status: 500, layout: "bare", inline: "<%= render 'shared/error_messages', :object => @record %>"
     end
   end
 
@@ -196,11 +196,11 @@ class ApplicationController < ActionController::Base
     return unless ban
 
     if ban.expires_at && ban.expires_at < Time.now
-      IpBans.where(:ip_addr => request.remote_ip).destroy_all
+      IpBans.where(ip_addr: request.remote_ip).destroy_all
       return
     end
 
-    redirect_to :controller => "banned", :action => "index"
+    redirect_to controller: "banned", action: "index"
   end
 
   def save_tags_to_cookie
@@ -217,13 +217,13 @@ class ApplicationController < ActionController::Base
 
   def cache_action
     if request.method == :get && request.env !~ /Googlebot/ && params[:format] != "xml" && params[:format] != "json"
-      key, expiry = get_cache_key(controller_name, action_name, params, :user => @current_user)
+      key, expiry = get_cache_key(controller_name, action_name, params, user: @current_user)
 
       if key && key.size < 200
         cached = Rails.cache.read(key)
 
         unless cached.blank?
-          render :plain => cached
+          render plain: cached
           return
         end
       end
@@ -231,7 +231,7 @@ class ApplicationController < ActionController::Base
       yield
 
       if key && response.headers["Status"] =~ /^200/
-        Rails.cache.write(key, response.body, :expires_in => expiry)
+        Rails.cache.write(key, response.body, expires_in: expiry)
       end
     else
       yield
@@ -249,9 +249,9 @@ class ApplicationController < ActionController::Base
 
     cookies["forum_post_last_read_at"] = if @current_user.is_anonymous?
                                            Time.now
-                                         else
+    else
                                            @current_user.last_forum_topic_read_at || Time.at(0)
-                                         end.to_json
+    end.to_json
 
     if !@current_user.is_anonymous?
       cookies["user_id"] = @current_user.id.to_s
@@ -269,7 +269,7 @@ class ApplicationController < ActionController::Base
       end
 
       if @current_user.is_janitor_or_higher?
-        mod_pending = Post.where("status" => %w(flagged pending)).count
+        mod_pending = Post.where("status" => %w[flagged pending]).count
         cookies["mod_pending"] = mod_pending
       end
 
@@ -329,9 +329,9 @@ class ApplicationController < ActionController::Base
     begin
       @query_date ||= if year && month
                         Time.local year, month, (day || 1)
-                      else
+      else
                         Time.current
-                      end
+      end
     rescue ArgumentError, RangeError
       head :bad_request
     end
@@ -339,7 +339,7 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     if params[:locale] && CONFIG["available_locales"].include?(params[:locale])
-      cookies["locale"] = { :value => params[:locale], :expires => 1.year.from_now }
+      cookies["locale"] = { value: params[:locale], expires: 1.year.from_now }
       I18n.locale = params[:locale].to_sym
     elsif cookies["locale"] && CONFIG["available_locales"].include?(cookies["locale"])
       I18n.locale = cookies["locale"].to_sym

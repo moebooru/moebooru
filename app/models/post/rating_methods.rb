@@ -3,8 +3,8 @@ module Post::RatingMethods
 
   def self.included(m)
     m.versioned :rating
-    m.versioned :is_rating_locked, :default => false
-    m.versioned :is_note_locked, :default => false
+    m.versioned :is_rating_locked, default: false
+    m.versioned :is_note_locked, default: false
   end
 
   def rating=(r)
@@ -18,7 +18,7 @@ module Post::RatingMethods
 
     r = r.to_s.downcase[0, 1]
 
-    if %w(q e s).include?(r)
+    if %w[q e s].include?(r)
       new_rating = r
     else
       new_rating = "q"
@@ -33,13 +33,13 @@ module Post::RatingMethods
   def pretty_rating
     case rating
     when "q"
-      return "Questionable"
+      "Questionable"
 
     when "e"
-      return "Explicit"
+      "Explicit"
 
     when "s"
-      return "Safe"
+      "Safe"
     end
   end
 

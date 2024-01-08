@@ -1,10 +1,10 @@
 class WikiPage < ApplicationRecord
-  acts_as_versioned_rails3 :table_name => "wiki_page_versions", :foreign_key => "wiki_page_id", :order => "updated_at DESC"
+  acts_as_versioned_rails3 table_name: "wiki_page_versions", foreign_key: "wiki_page_id", order: "updated_at DESC"
   before_save :normalize_title
   belongs_to :user
-  validates_uniqueness_of :title, :case_sensitive => false
+  validates_uniqueness_of :title, case_sensitive: false
   validates_presence_of :body, :title
-  before_validation :ensure_changed, :on => :update
+  before_validation :ensure_changed, on: :update
 
   class << self
     def generate_sql(options)
@@ -23,9 +23,9 @@ class WikiPage < ApplicationRecord
       end
 
       joins = joins.join(" ")
-      conds = [conds.join(" AND "), *params]
+      conds = [ conds.join(" AND "), *params ]
 
-      [joins, conds]
+      [ joins, conds ]
     end
   end
 
@@ -96,17 +96,17 @@ class WikiPage < ApplicationRecord
   end
 
   def to_xml(options = {})
-    { :id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version }.to_xml(options.reverse_merge(:root => "wiki_page"))
+    { id: id, created_at: created_at, updated_at: updated_at, title: title, body: body, updater_id: user_id, locked: is_locked, version: version }.to_xml(options.reverse_merge(root: "wiki_page"))
   end
 
   def as_json(*args)
-    { :id => id, :created_at => created_at, :updated_at => updated_at, :title => title, :body => body, :updater_id => user_id, :locked => is_locked, :version => version }.as_json(*args)
+    { id: id, created_at: created_at, updated_at: updated_at, title: title, body: body, updater_id: user_id, locked: is_locked, version: version }.as_json(*args)
   end
 
   protected
 
   def ensure_changed
-    unless (changed & %w(title body)).any?
+    unless (changed & %w[title body]).any?
       errors.add :base, :no_change
     end
   end

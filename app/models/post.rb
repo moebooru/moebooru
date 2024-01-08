@@ -1,22 +1,22 @@
 class Post < ApplicationRecord
-  STATUSES = %w(active pending flagged deleted)
+  STATUSES = %w[active pending flagged deleted]
 
   define_callbacks :delete
   define_callbacks :undelete
   has_many :notes, lambda { order "id DESC" }
-  has_one :flag_detail, :class_name => "FlaggedPostDetail"
+  has_one :flag_detail, class_name: "FlaggedPostDetail"
   belongs_to :user
-  before_validation :set_random!, :on => :create
+  before_validation :set_random!, on: :create
   before_create :set_index_timestamp!
-  belongs_to :approver, :class_name => "User"
+  belongs_to :approver, class_name: "User"
   attr_accessor :updater_ip_addr, :updater_user_id
   attr_accessor :metatag_flagged
   has_many :post_votes
-  has_many :avatars, :class_name => "User", :foreign_key => "avatar_post_id"
+  has_many :avatars, class_name: "User", foreign_key: "avatar_post_id"
   set_callback :delete, :before, :clear_avatars
   after_save :commit_flag
-  has_and_belongs_to_many :_tags, :class_name => "Tag"
-  scope :available, lambda { where.not :status => "deleted" }
+  has_and_belongs_to_many :_tags, class_name: "Tag"
+  scope :available, lambda { where.not status: "deleted" }
   scope :has_any_tags, lambda { |tags| where("posts.tags_array && ARRAY[?]::varchar[]", Array(tags)) }
   scope :has_all_tags, lambda { |tags| where("posts.tags_array @> ARRAY[?]::varchar[]", Array(tags)) }
   scope :flagged, lambda { where "status = ?", "flagged" }
@@ -25,16 +25,16 @@ class Post < ApplicationRecord
 
   def self.slow_has_all_tags(tags)
     p = Post.scoped
-    t_ids = Tag.where(:name => tags).pluck(:id)
+    t_ids = Tag.where(name: tags).pluck(:id)
     t_ids.each do |t_id|
-      p = p.where(:id => PostsTag.where(:tag_id => t_id).select(:post_id))
+      p = p.where(id: PostsTag.where(tag_id: t_id).select(:post_id))
     end
     p
   end
 
   def self.slow_has_any_tags(tags)
-    t_ids = Tag.where(:name => tags).pluck(:id)
-    Post.where(:id => PostsTag.where(:tag_id => t_ids).select(:post_id))
+    t_ids = Tag.where(name: tags).pluck(:id)
+    Post.where(id: PostsTag.where(tag_id: t_ids).select(:post_id))
   end
 
   def next_id
@@ -66,7 +66,7 @@ class Post < ApplicationRecord
       flag!(reason, current_user.id)
 
       if flag_detail
-        flag_detail.update(:is_resolved => true)
+        flag_detail.update(is_resolved: true)
       end
 
       delete
@@ -80,14 +80,14 @@ class Post < ApplicationRecord
 
   def delete
     run_callbacks :delete do
-      update(:status => "deleted")
+      update(status: "deleted")
     end
   end
 
   def undelete
     return if status == "active"
     run_callbacks :undelete do
-      update(:status => "active")
+      update(status: "active")
     end
   end
 
@@ -113,15 +113,15 @@ class Post < ApplicationRecord
 
   def set_flag_detail(reason, creator_id)
     if flag_detail
-      flag_detail.update(:reason => reason, :user_id => creator_id, :created_at => Time.now)
+      flag_detail.update(reason: reason, user_id: creator_id, created_at: Time.now)
     else
-      create_flag_detail!(:reason => reason, :user_id => creator_id, :is_resolved => false)
+      create_flag_detail!(reason: reason, user_id: creator_id, is_resolved: false)
     end
   end
 
   def flag!(reason, creator_id)
     transaction do
-      update(:status => "flagged")
+      update(status: "flagged")
       set_flag_detail(reason, creator_id)
     end
   end
@@ -139,10 +139,10 @@ class Post < ApplicationRecord
     old_status = status
 
     if flag_detail
-      flag_detail.update(:is_resolved => true)
+      flag_detail.update(is_resolved: true)
     end
 
-    update(:status => "active", :approver_id => approver_id)
+    update(status: "active", approver_id: approver_id)
 
     # Don't bump posts if the status wasn't "pending"; it might be "flagged".
     if old_status == "pending" && CONFIG["hide_pending_posts"]
@@ -156,7 +156,7 @@ class Post < ApplicationRecord
     @voted_by ||=
       User.select(:name, :id, "post_votes.score AS vote_score")
         .joins(:post_votes)
-        .where(:post_votes => { :post_id => id })
+        .where(post_votes: { post_id: id })
         .order("post_votes.updated_at DESC")
         .group_by(&:vote_score)
   end
@@ -180,7 +180,7 @@ class Post < ApplicationRecord
 
   STATUSES.each do |x|
     define_method("is_#{x}?") do
-      return status == x
+      status == x
     end
   end
 
@@ -193,9 +193,9 @@ class Post < ApplicationRecord
 
   def self.new_deleted?(user)
     conds = []
-    conds += ["creator_id <> %d" % [user.id]] unless user.is_anonymous?
+    conds += [ "creator_id <> %d" % [ user.id ] ] unless user.is_anonymous?
 
-    newest_topic = ForumPost.where(conds).order(:id => :desc).select(:created_at).take
+    newest_topic = ForumPost.where(conds).order(id: :desc).select(:created_at).take
     return false if newest_topic.nil?
     newest_topic.created_at > user.last_forum_topic_read_at
   end
@@ -227,7 +227,7 @@ class Post < ApplicationRecord
       end_id = (i + 1) * 1000
 
       Rails.logger.info "Updating tags array for post #{start_id}..#{end_id} of #{max_id}"
-      where('id BETWEEN ? AND ?', start_id, end_id).update_all "tags_array = string_to_array(cached_tags, ' ')"
+      where("id BETWEEN ? AND ?", start_id, end_id).update_all "tags_array = string_to_array(cached_tags, ' ')"
     end
   end
 end

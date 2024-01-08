@@ -3,7 +3,7 @@ module FavoriteHelper
     html = "".html_safe
 
     users = post.favorited_by
-    users_link = users.map { |user| link_to user.pretty_name, :controller => :user, :action => :show, :id => user.id  }
+    users_link = users.map { |user| link_to user.pretty_name, controller: :user, action: :show, id: user.id  }
 
     if users.empty?
       html << "no one"
@@ -11,7 +11,7 @@ module FavoriteHelper
       html << users_link.first(6).join(", ").html_safe
 
       if users.size > 6
-        html << content_tag(:span, :id => "remaining-favs", :style => "display: none;") do
+        html << content_tag(:span, id: "remaining-favs", style: "display: none;") do
           ", #{users_link.slice(6..-1).join(", ")}".html_safe
         end
         html << content_tag(:span) do

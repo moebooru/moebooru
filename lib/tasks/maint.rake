@@ -1,6 +1,6 @@
 namespace :maint do
   desc "fix_tags"
-  task :fix_tags => :environment do
+  task fix_tags: :environment do
     # Fix post counts
     Tag.recalculate_post_count
 
@@ -11,16 +11,16 @@ namespace :maint do
   end
 
   desc "Recalculate post counts"
-  task :recalculate_row_count => :environment do
+  task recalculate_row_count: :environment do
     Post.recalculate_row_count
   end
 
   desc "Purge unused tags"
-  task :purge_tags => :environment do
+  task purge_tags: :environment do
     Tag.purge_tags
   end
 
-  desc 'Username case fix'
+  desc "Username case fix"
   task username_case: :environment do
     User.find_in_batches do |users|
       users.each do |user|

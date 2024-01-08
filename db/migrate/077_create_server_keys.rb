@@ -3,11 +3,11 @@ require "digest/sha1"
 class CreateServerKeys < ActiveRecord::Migration[5.1]
   def self.up
     create_table :server_keys do |t|
-      t.column :name, :string, :null => false
+      t.column :name, :string, null: false
       t.column :value, :text
     end
 
-    add_index :server_keys, :name, :unique => true
+    add_index :server_keys, :name, unique: true
 
     session_secret_key = CONFIG["session_secret_key"] || Digest::SHA1.hexdigest(rand(10**32))
     user_password_salt = CONFIG["password_salt"] || Digest::SHA1.hexdigest(rand(10**32))

@@ -1,14 +1,14 @@
-require_relative 'boot'
+require_relative "boot"
 
 # To allow setting environment variable ZP_DATABASE_URL instead of DATABASE_URL.
-ENV['DATABASE_URL'] = ENV['MB_DATABASE_URL'] if ENV['MB_DATABASE_URL']
-ENV['NODE_ENV'] = ENV['RAILS_ENV']
+ENV["DATABASE_URL"] = ENV["MB_DATABASE_URL"] if ENV["MB_DATABASE_URL"]
+ENV["NODE_ENV"] = ENV["RAILS_ENV"]
 
-require 'rails/all'
+require "rails/all"
 
-require_relative 'init_config'
+require_relative "init_config"
 
-Bundler.require(*CONFIG['bundler_groups'])
+Bundler.require(*CONFIG["bundler_groups"])
 
 module Moebooru
   class Application < Rails::Application
@@ -23,7 +23,7 @@ module Moebooru
     # config.autoload_paths += %W(#{config.root}/extras)
 
     # Also load files in lib/ in addition to app/.
-    config.eager_load_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join("lib")
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -45,9 +45,9 @@ module Moebooru
 
     if CONFIG["memcache_servers"]
       config.cache_store = :mem_cache_store, CONFIG["memcache_servers"], {
-        :namespace => CONFIG["app_name"],
-        :pool_size => CONFIG["threads"],
-        :value_max_bytes => 2_000_000
+        namespace: CONFIG["app_name"],
+        pool_size: CONFIG["threads"],
+        value_max_bytes: 2_000_000
       }
     end
 
@@ -56,7 +56,7 @@ module Moebooru
 
     scheme = "#{CONFIG['secure'] ? 'https' : 'http'}://"
     config.action_controller.asset_host = "#{scheme}#{CONFIG[:file_hosts][:assets]}" if CONFIG[:file_hosts]
-    config.action_mailer.default_url_options = { :host => "#{scheme}#{CONFIG["server_host"]}" }
+    config.action_mailer.default_url_options = { host: "#{scheme}#{CONFIG["server_host"]}" }
 
     config.middleware.delete ActionDispatch::HostAuthorization
   end

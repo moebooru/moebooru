@@ -35,9 +35,9 @@ module ActiveRecord
 
       unless history
         options = {
-          :group_by_table => self.class.get_group_by_table_name,
-          :group_by_id => get_group_by_id,
-          :user_id => Thread.current["danbooru-user_id"]
+          group_by_table: self.class.get_group_by_table_name,
+          group_by_id: get_group_by_id,
+          user_id: Thread.current["danbooru-user_id"]
         }
 
         cb = self.class.versioning_aux_callback
@@ -69,11 +69,11 @@ module ActiveRecord
           next if old == new && !@object_is_new
 
           history = get_current_history
-          h = HistoryChange.new(:table_name => self.class.table_name,
-                                :remote_id => id,
-                                :column_name => att.to_s,
-                                :value => new,
-                                :history_id => history.id)
+          h = HistoryChange.new(table_name: self.class.table_name,
+                                remote_id: id,
+                                column_name: att.to_s,
+                                value: new,
+                                history_id: history.id)
           h.save!
         end
       end
@@ -126,9 +126,9 @@ module ActiveRecord
       #   versioning_group_by :class => :pool, :foreign_key => :pool_id, :controller => Post
       def versioning_group_by(options = {})
         opt = {
-          :class => to_s,
-          :controller => to_s,
-          :action => "show"
+          class: to_s,
+          controller: to_s,
+          action: "show"
         }.merge(options)
 
         unless opt[:foreign_key]
@@ -153,7 +153,7 @@ module ActiveRecord
         attr = get_versioned_attributes[name]
         return nil, false if attr.nil?
         return nil, false unless attr.include?(:default)
-        [attr[:default], true]
+        [ attr[:default], true ]
       end
 
       def get_versioning_group_by
@@ -182,8 +182,8 @@ module ActiveRecord
         foreign_key ||= reflections[c].klass.base_class.to_s.foreign_key
         foreign_key = foreign_key.to_sym
         @versioned_parent = {
-          :class => c,
-          :foreign_key => foreign_key
+          class: c,
+          foreign_key: foreign_key
         }
       end
 
@@ -223,7 +223,7 @@ module ActiveRecord
       # errors (versioned properties that don't match up with column names).
       def update_versioned_tables(c, options = {})
         table_name = c.table_name
-        p "Updating %s ..." % [table_name]
+        p "Updating %s ..." % [ table_name ]
 
         # Our schema doesn't allow us to apply single ON DELETE constraints, so use
         # a rule to do it.  This is Postgresql-specific.
@@ -244,7 +244,7 @@ module ActiveRecord
           missing_attributes = attrs - c.get_versioned_attributes.keys
           p c.get_versioned_attributes
           unless missing_attributes.empty?
-            raise "Tried to add versioned propertes for table \"%s\" that aren't versioned: %s" % [table_name, missing_attributes.join(" ")]
+            raise "Tried to add versioned propertes for table \"%s\" that aren't versioned: %s" % [ table_name, missing_attributes.join(" ") ]
           end
         else
           attrs = c.get_versioned_attributes
@@ -252,7 +252,7 @@ module ActiveRecord
 
         attrs.each do |att, _opts|
           # If any histories already exist for this attribute, assume that it's already been updated.
-          next if HistoryChange.find(:first, :conditions => ["table_name = ? AND column_name = ?", table_name, att.to_s])
+          next if HistoryChange.find(:first, conditions: [ "table_name = ? AND column_name = ?", table_name, att.to_s ])
           attributes_to_update << att
         end
         return if attributes_to_update.empty?
@@ -263,7 +263,7 @@ module ActiveRecord
             true
           else
             unless options[:allow_missing]
-              raise "Expected to add versioned property \"%s\" for table \"%s\", but that column doesn't exist in the database" % [att, table_name]
+              raise "Expected to add versioned property \"%s\" for table \"%s\", but that column doesn't exist in the database" % [ att, table_name ]
             end
 
             false
@@ -274,21 +274,21 @@ module ActiveRecord
         transaction do
           current = 1
           count = c.count(:all)
-          c.find(:all, :order => :id).each do |item|
-            p "%i/%i" % [current, count]
+          c.find(:all, order: :id).each do |item|
+            p "%i/%i" % [ current, count ]
             current += 1
 
             group_by_table = item.class.get_group_by_table_name
             group_by_id = item.get_group_by_id
             # p "group %s by %s" % [item.to_s, item.class.get_group_by_table_name.to_s]
-            history = History.find(:first, :order => "id ASC",
-                                           :conditions => ["group_by_table = ? AND group_by_id = ?", group_by_table, group_by_id])
+            history = History.find(:first, order: "id ASC",
+                                           conditions: [ "group_by_table = ? AND group_by_id = ?", group_by_table, group_by_id ])
 
             unless history
               # p "new history"
               options = {
-                :group_by_table => group_by_table,
-                :group_by_id => group_by_id
+                group_by_table: group_by_table,
+                group_by_id: group_by_id
               }
               options[:user_id] = item.user_id if item.respond_to?("user_id")
               options[:user_id] ||= 1
@@ -300,11 +300,11 @@ module ActiveRecord
             attributes_to_update.each do |att|
               value = item.__send__(att.to_s)
               options = {
-                :column_name => att.to_s,
-                :value => value,
-                :table_name => table_name,
-                :remote_id => item.id,
-                :history_id => history.id
+                column_name: att.to_s,
+                value: value,
+                table_name: table_name,
+                remote_id: item.id,
+                history_id: history.id
               }
 
               escaped_options = {}
@@ -318,7 +318,7 @@ module ActiveRecord
                 end
               end
 
-              to_create += [escaped_options]
+              to_create += [ escaped_options ]
             end
 
             columns = to_create.first.map { |key, _value| key.to_s }
@@ -328,9 +328,9 @@ module ActiveRecord
               outrow = []
               columns.each do |col|
                 val = row[col.to_sym]
-                outrow += [val]
+                outrow += [ val ]
               end
-              values += ["(#{outrow.join(",")})"]
+              values += [ "(#{outrow.join(",")})" ]
             end
             sql = <<-EOS
               INSERT INTO history_changes (#{columns.join(", ")}) VALUES #{values.join(",")}
@@ -343,8 +343,8 @@ module ActiveRecord
       def import_post_tag_history
         count = PostTagHistory.count(:all)
         current = 1
-        PostTagHistory.find(:all, :order => "id ASC").each do |tag_history|
-          p "%i/%i" % [current, count]
+        PostTagHistory.find(:all, order: "id ASC").each do |tag_history|
+          p "%i/%i" % [ current, count ]
           current += 1
 
           prev = tag_history.previous
@@ -376,25 +376,25 @@ module ActiveRecord
           end
 
           if tags != prev_tags || rating != prev_rating
-            h = History.new(:group_by_table => "posts",
-                            :group_by_id => tag_history.post_id,
-                            :user_id => tag_history.user_id || tag_history.post.user_id,
-                            :created_at => tag_history.created_at)
+            h = History.new(group_by_table: "posts",
+                            group_by_id: tag_history.post_id,
+                            user_id: tag_history.user_id || tag_history.post.user_id,
+                            created_at: tag_history.created_at)
             h.save!
           end
           if tags != prev_tags
-            c = h.history_changes.new(:table_name => "posts",
-                                      :remote_id => tag_history.post_id,
-                                      :column_name => "cached_tags",
-                                      :value => tags)
+            c = h.history_changes.new(table_name: "posts",
+                                      remote_id: tag_history.post_id,
+                                      column_name: "cached_tags",
+                                      value: tags)
             c.save!
           end
 
           if rating != prev_rating
-            c = h.history_changes.new(:table_name => "posts",
-                                      :remote_id => tag_history.post_id,
-                                      :column_name => "rating",
-                                      :value => rating)
+            c = h.history_changes.new(table_name: "posts",
+                                      remote_id: tag_history.post_id,
+                                      column_name: "rating",
+                                      value: rating)
             c.save!
           end
         end
@@ -403,40 +403,40 @@ module ActiveRecord
       def import_note_history
         count = NoteVersion.count(:all)
         current = 1
-        NoteVersion.find(:all, :order => "id ASC").each do |ver|
-          p "%i/%i" % [current, count]
+        NoteVersion.find(:all, order: "id ASC").each do |ver|
+          p "%i/%i" % [ current, count ]
           current += 1
 
           if ver.version == 1
             prev = nil
           else
-            prev = NoteVersion.find(:first, :conditions => ["post_id = ? and note_id = ? and version = ?", ver.post_id, ver.note_id, ver.version - 1])
+            prev = NoteVersion.find(:first, conditions: [ "post_id = ? and note_id = ? and version = ?", ver.post_id, ver.note_id, ver.version - 1 ])
           end
 
           fields = []
-          [:is_active, :body, :x, :y, :width, :height].each do |field|
+          [ :is_active, :body, :x, :y, :width, :height ].each do |field|
             value = ver.send(field)
             if prev
               prev_value = prev.send(field)
               next if value == prev_value
             end
-            fields << [field.to_s, value]
+            fields << [ field.to_s, value ]
           end
 
           # Only create the History if we actually found any changes.
           if fields.any?
-            h = History.new(:group_by_table => "posts",
-                            :group_by_id => ver.post_id,
-                            :user_id => ver.user_id || ver.post.user_id,
-                            :created_at => ver.created_at,
-                            :aux => { :note_body => prev ? prev.body : ver.body })
+            h = History.new(group_by_table: "posts",
+                            group_by_id: ver.post_id,
+                            user_id: ver.user_id || ver.post.user_id,
+                            created_at: ver.created_at,
+                            aux: { note_body: prev ? prev.body : ver.body })
             h.save!
 
             fields.each do |f|
-              c = h.history_changes.new(:table_name => "notes",
-                                        :remote_id => ver.note_id,
-                                        :column_name => f[0],
-                                        :value => f[1])
+              c = h.history_changes.new(table_name: "notes",
+                                        remote_id: ver.note_id,
+                                        column_name: f[0],
+                                        value: f[1])
               c.save!
             end
           end
@@ -449,7 +449,7 @@ module ActiveRecord
       # call update_versioned_tables directly with the table and attributes to update.
       def update_all_versioned_tables
         Versioned.get_versioned_classes.each do |cls|
-          update_versioned_tables cls, :allow_missing => true
+          update_versioned_tables cls, allow_missing: true
         end
       end
     end

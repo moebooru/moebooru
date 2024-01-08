@@ -1,8 +1,8 @@
 class ReplaceHistoryChangesValueIndex < ActiveRecord::Migration[5.1]
   def up
     change_table :history_changes do |t|
-      t.string :value_array, :array => true
-      t.index :value_array, :using => :gin
+      t.string :value_array, array: true
+      t.index :value_array, using: :gin
       t.remove :value_index
     end
 

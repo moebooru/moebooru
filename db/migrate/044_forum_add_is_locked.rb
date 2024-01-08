@@ -1,7 +1,7 @@
 class ForumAddIsLocked < ActiveRecord::Migration[5.1]
   def self.up
     transaction do
-      add_column :forum_posts, :is_locked, :boolean, :null => false, :default => false
+      add_column :forum_posts, :is_locked, :boolean, null: false, default: false
       execute "alter table users add column last_forum_topic_read_at timestamp not null default '1960-01-01'"
       drop_table :forum_posts_user_views
       add_index :forum_posts, :updated_at

@@ -24,13 +24,13 @@
 
 class InlineImage < ApplicationRecord
   belongs_to :inline
-  before_validation :download_source, :on => :create
-  before_validation :determine_content_type, :on => :create
-  before_validation :set_image_dimensions, :on => :create
-  before_validation :generate_sample, :on => :create
-  before_validation :generate_preview, :on => :create
-  before_validation :move_file, :on => :create
-  before_validation :set_default_sequence, :on => :create
+  before_validation :download_source, on: :create
+  before_validation :determine_content_type, on: :create
+  before_validation :set_image_dimensions, on: :create
+  before_validation :generate_sample, on: :create
+  before_validation :generate_preview, on: :create
+  before_validation :move_file, on: :create
+  before_validation :set_default_sequence, on: :create
   after_destroy :delete_file
   before_create :validate_uniqueness
   include Moebooru::TempfilePrefix
@@ -94,11 +94,11 @@ class InlineImage < ApplicationRecord
       end
       got_file
 
-      return true
+      true
     rescue SocketError, URI::Error, Timeout::Error, SystemCallError => x
       delete_tempfile
       errors.add "source", "couldn't be opened: #{x}"
-      return false
+      false
     end
   end
 
@@ -116,7 +116,7 @@ class InlineImage < ApplicationRecord
       self.file_ext = imgsize[:type].gsub(/jpeg/i, "jpg").downcase
     end
 
-    unless %w(jpg png gif).include?(file_ext.downcase)
+    unless %w[jpg png gif].include?(file_ext.downcase)
       errors.add(:file, "is an invalid content type: " + (file_ext.downcase || "unknown"))
       return false
     end
@@ -134,11 +134,11 @@ class InlineImage < ApplicationRecord
   end
 
   def preview_dimensions
-    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 150, :height => 150)
+    Moebooru::Resizer.reduce_to({ width: width, height: height }, width: 150, height: 150)
   end
 
   def thumb_size
-    Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 400, :height => 400)
+    Moebooru::Resizer.reduce_to({ width: width, height: height }, width: 400, height: 400)
   end
 
   def generate_sample
@@ -156,7 +156,7 @@ class InlineImage < ApplicationRecord
     # If we're not reducing the resolution for the sample image, only reencode if the
     # source image is above the reencode threshold.  Anything smaller won't be reduced
     # enough by the reencode to bother, so don't reencode it and save disk space.
-    sample_size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => CONFIG["inline_sample_width"], :height => CONFIG["inline_sample_height"])
+    sample_size = Moebooru::Resizer.reduce_to({ width: width, height: height }, width: CONFIG["inline_sample_width"], height: CONFIG["inline_sample_height"])
     if sample_size[:width] == width && sample_size[:height] == height && File.size?(path) < CONFIG["sample_always_generate_size"]
       return true
     end
@@ -264,9 +264,9 @@ class InlineImage < ApplicationRecord
 
   def sample_url
     if self.has_sample?
-      return CONFIG["url_base"] + "/data/inline/sample/#{file_name_jpg}"
+      CONFIG["url_base"] + "/data/inline/sample/#{file_name_jpg}"
     else
-      return file_url
+      file_url
     end
   end
 
@@ -277,7 +277,7 @@ class InlineImage < ApplicationRecord
   def delete_file
     # If several inlines use the same image, they'll share the same file via the MD5.  Only
     # delete the file if this is the last one using it.
-    exists = InlineImage.where.not(:id => id).where(:md5 => md5)
+    exists = InlineImage.where.not(id: id).where(md5: md5)
     return unless exists.nil?
 
     FileUtils.rm_f(file_path)
@@ -303,19 +303,19 @@ class InlineImage < ApplicationRecord
 
   def api_attributes
     {
-      :id => id,
-      :sequence => sequence,
-      :md5 => md5,
-      :width => width,
-      :height => height,
-      :sample_width => sample_width,
-      :sample_height => sample_height,
-      :preview_width => preview_dimensions[:width],
-      :preview_height => preview_dimensions[:height],
-      :description => description,
-      :file_url => file_url,
-      :sample_url => sample_url,
-      :preview_url => preview_url
+      id: id,
+      sequence: sequence,
+      md5: md5,
+      width: width,
+      height: height,
+      sample_width: sample_width,
+      sample_height: sample_height,
+      preview_width: preview_dimensions[:width],
+      preview_height: preview_dimensions[:height],
+      description: description,
+      file_url: file_url,
+      sample_url: sample_url,
+      preview_url: preview_url
     }
   end
 

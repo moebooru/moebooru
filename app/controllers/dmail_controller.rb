@@ -3,14 +3,14 @@ class DmailController < ApplicationController
   layout "default"
 
   def preview
-    render :layout => false
+    render layout: false
   end
 
   def show_previous_messages
     @dmails = Dmail
-      .where('to_id = ? OR from_id = ?', @current_user.id, @current_user.id)
-      .where('id = ? OR parent_id = ?', params[:parent_id], params[:parent_id])
-      .where('id < ?', params[:id])
+      .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
+      .where("id = ? OR parent_id = ?", params[:parent_id], params[:parent_id])
+      .where("id < ?", params[:id])
       .order(id: :asc)
     render layout: false
   end
@@ -20,33 +20,33 @@ class DmailController < ApplicationController
   end
 
   def create
-    if Dmail.where(:from_id => @current_user.id).where("created_at > ?", 1.hour.ago).count > 10
+    if Dmail.where(from_id: @current_user.id).where("created_at > ?", 1.hour.ago).count > 10
       flash[:notice] = "You can't send more than 10 dmails per hour."
-      redirect_to :action => :inbox
+      redirect_to action: :inbox
       return
     end
 
-    @dmail = Dmail.new(dmail_params.merge(:from_id => @current_user.id))
+    @dmail = Dmail.new(dmail_params.merge(from_id: @current_user.id))
     if @current_user.is_blocked_or_lower? && !@dmail.to&.is_mod_or_higher?
-      flash[:notice] = 'You can only send message to moderators when blocked.'
+      flash[:notice] = "You can only send message to moderators when blocked."
       render action: :compose
       return
     end
 
     if @dmail.save
       flash[:notice] = "Message sent to #{@dmail.to.name}"
-      redirect_to :action => "inbox"
+      redirect_to action: "inbox"
     else
       flash[:notice] = "Error: " + @dmail.errors.full_messages.join(", ")
-      render :action => "compose"
+      render action: "compose"
     end
   end
 
   def inbox
     @dmails = Dmail
       .where("to_id = ? OR from_id = ?", @current_user.id, @current_user.id)
-      .order(:created_at => :desc)
-      .paginate(:per_page => 25, :page => page_number)
+      .order(created_at: :desc)
+      .paginate(per_page: 25, page: page_number)
   end
 
   def show
@@ -54,7 +54,7 @@ class DmailController < ApplicationController
 
     if @dmail.to_id != @current_user.id && @dmail.from_id != @current_user.id
       flash[:notice] = "Access denied"
-      redirect_to :controller => "user", :action => "login"
+      redirect_to controller: "user", action: "login"
       return
     end
 
@@ -68,14 +68,14 @@ class DmailController < ApplicationController
 
   def mark_all_read
     if params[:commit] == "Yes"
-      Dmail.where(:has_seen => false, :to_id => @current_user.id).find_each do |dmail|
+      Dmail.where(has_seen: false, to_id: @current_user.id).find_each do |dmail|
         dmail.update_attribute(:has_seen, true)
       end
 
       @current_user.update_attribute(:has_mail, false)
-      respond_to_success("All messages marked as read", :action => "inbox")
+      respond_to_success("All messages marked as read", action: "inbox")
     else
-      redirect_to :action => "inbox"
+      redirect_to action: "inbox"
     end
   end
 

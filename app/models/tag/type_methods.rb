@@ -11,7 +11,7 @@ module Tag::TypeMethods
     end
 
     def type_name_helper(tag_name) # :nodoc:
-      tag = Tag.where(:name => tag_name).select(:tag_type).first
+      tag = Tag.where(name: tag_name).select(:tag_type).first
 
       if tag.nil?
         "general"
@@ -25,7 +25,7 @@ module Tag::TypeMethods
     # === Parameters
     # * :tag_name<String>:: The tag name to search for
     def type_name(tag_name)
-      Rails.cache.fetch({ :tag_type => tag_name }, :expires_in => 1.day) do
+      Rails.cache.fetch({ tag_type: tag_name }, expires_in: 1.day) do
         type_name_helper(tag_name.gsub(/\s/, "_"))
       end
     end
@@ -43,7 +43,7 @@ module Tag::TypeMethods
     def batch_get_tag_types(post_tags)
       post_tags = Set.new(post_tags)
 
-      post_tags_key = post_tags.each_with_object([]) { |t, k| k << { :tag_type => t } }
+      post_tags_key = post_tags.each_with_object([]) { |t, k| k << { tag_type: t } }
       # Without this, the following splat will eat the last argument because
       # it'll be considered an option instead of key (being a hash).
       post_tags_key << {}
@@ -84,13 +84,13 @@ module Tag::TypeMethods
 
     def tag_list_order(tag_type)
       case tag_type
-        when "artist" then 0
-        when "circle" then 1
-        when "copyright" then 2
-        when "character" then 3
-        when "general" then 5
-        when "faults" then 6
-        else 4
+      when "artist" then 0
+      when "circle" then 1
+      when "copyright" then 2
+      when "character" then 3
+      when "general" then 5
+      when "faults" then 6
+      else 4
       end
     end
   end
@@ -98,9 +98,9 @@ module Tag::TypeMethods
   def self.included(m)
     m.extend(ClassMethods)
     m.versioned :tag_type
-    m.versioned :is_ambiguous, :default => false
+    m.versioned :is_ambiguous, default: false
 
-    m.versioning_group_by :action => "edit"
+    m.versioning_group_by action: "edit"
 
     # This maps ids to names
     m.type_map = CONFIG["tag_types"].keys.select { |x| x =~ /^[A-Z]/ }.each_with_object({}) { |i, a| a[CONFIG["tag_types"][i]] = i.downcase }

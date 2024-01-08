@@ -2,7 +2,7 @@ class AddJpegColumns < ActiveRecord::Migration[5.1]
   def self.up
     add_column :posts, :jpeg_width, :integer
     add_column :posts, :jpeg_height, :integer
-    add_column :posts, :jpeg_size, :integer, :default => 0, :null => false
+    add_column :posts, :jpeg_size, :integer, default: 0, null: false
     add_column :posts, :jpeg_crc32, :bigint
   end
 

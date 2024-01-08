@@ -4,10 +4,10 @@ module Post::CountMethods
       # A small sanitation
       tags = tags.to_s.strip.gsub(/ +/, " ")
       cache_version = Moebooru::CacheHelper.get_version
-      key = { :post_count => tags, :v => cache_version }
+      key = { post_count: tags, v: cache_version }
 
       count = Rails.cache.fetch(key) do
-        Post.count_by_sql(Post.generate_sql(tags, :count => true))
+        Post.count_by_sql(Post.generate_sql(tags, count: true))
       end.to_i
 
       count

@@ -1,1 +1,1 @@
-FileUtils.mkdir_p Rails.root.join('tmp/work')
+FileUtils.mkdir_p Rails.root.join("tmp/work")

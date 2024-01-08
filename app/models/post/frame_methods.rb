@@ -1,6 +1,6 @@
 module Post::FrameMethods
   def self.included(m)
-    m.versioned :frames_pending, :default => "", :allow_reverting_to_default => true
+    m.versioned :frames_pending, default: "", allow_reverting_to_default: true
   end
 
   def frames_pending_string=(frames)

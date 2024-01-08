@@ -22,6 +22,6 @@ module ParamsHelper
   end
 
   def parse_str(input)
-    return input if input.is_a? String
+    input if input.is_a? String
   end
 end

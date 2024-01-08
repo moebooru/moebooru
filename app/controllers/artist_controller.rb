@@ -3,14 +3,14 @@
 class ArtistController < ApplicationController
   layout "default"
 
-  before_action :post_member_only, :only => [:create, :update]
-  before_action :post_privileged_only, :only => [:destroy]
+  before_action :post_member_only, only: [ :create, :update ]
+  before_action :post_privileged_only, only: [ :destroy ]
   helper :post, :wiki
 
   def preview
     @notes = params.fetch(:artist, {})[:notes]
     respond_to do |format|
-      format.html { render :layout => false }
+      format.html { render layout: false }
     end
   end
 
@@ -21,9 +21,9 @@ class ArtistController < ApplicationController
     if request.post?
       if params[:commit] == "Yes"
         @artist.destroy
-        respond_to_success("Artist deleted", :action => "index", :page => params[:page])
+        respond_to_success("Artist deleted", action: "index", page: params[:page])
       else
-        redirect_to :action => "index", :page => params[:page]
+        redirect_to action: "index", page: params[:page]
       end
     end
   end
@@ -31,17 +31,17 @@ class ArtistController < ApplicationController
   def update
     if request.post?
       if params[:commit] == "Cancel"
-        redirect_to :action => "show", :id => params[:id]
+        redirect_to action: "show", id: params[:id]
         return
       end
 
       artist = Artist.find(params[:id])
-      artist.update(artist_params.merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
+      artist.update(artist_params.merge(updater_ip_addr: request.remote_ip, updater_id: @current_user.id))
 
       if artist.errors.empty?
-        respond_to_success("Artist updated", :action => "show", :id => artist.id)
+        respond_to_success("Artist updated", action: "show", id: artist.id)
       else
-        respond_to_error(artist, :action => "update", :id => artist.id)
+        respond_to_error(artist, action: "update", id: artist.id)
       end
     else
       @artist = Artist.find(params["id"])
@@ -50,12 +50,12 @@ class ArtistController < ApplicationController
 
   def create
     if request.post?
-      artist = Artist.create(artist_params.merge(:updater_ip_addr => request.remote_ip, :updater_id => @current_user.id))
+      artist = Artist.create(artist_params.merge(updater_ip_addr: request.remote_ip, updater_id: @current_user.id))
 
       if artist.errors.empty?
-        respond_to_success("Artist created", :action => "show", :id => artist.id)
+        respond_to_success("Artist created", action: "show", id: artist.id)
       else
-        respond_to_error(artist, :action => "create", :alias_id => params[:alias_id])
+        respond_to_error(artist, action: "create", alias_id: params[:alias_id])
       end
     else
       @artist = Artist.new
@@ -76,33 +76,33 @@ class ArtistController < ApplicationController
   end
 
   def index
-    @artists = Artist.order(params[:order] == "date" ? { :updated_at => :desc } : :name)
+    @artists = Artist.order(params[:order] == "date" ? { updated_at: :desc } : :name)
 
     per_page = 50
     if params[:name]
       @artists = @artists.where "name LIKE ?", "#{params[:name].to_escaped_for_sql_like}%"
     elsif params[:url]
-      @artists = @artists.where :id => Artist.find_all_by_url(params[:url]).map(&:id)
+      @artists = @artists.where id: Artist.find_all_by_url(params[:url]).map(&:id)
     else
       per_page = 25
     end
 
-    @artists = @artists.paginate :per_page => per_page, :page => page_number
+    @artists = @artists.paginate per_page: per_page, page: page_number
 
     respond_to_list("artists")
   end
 
   def show
     if params[:name]
-      @artist = Artist.find_by(:name => params[:name])
+      @artist = Artist.find_by(name: params[:name])
     else
       @artist = Artist.find(params[:id])
     end
 
     if @artist.nil?
-      redirect_to :action => "create", :name => params[:name]
+      redirect_to action: "create", name: params[:name]
     else
-      redirect_to :controller => "wiki", :action => "show", :title => @artist.name
+      redirect_to controller: "wiki", action: "show", title: @artist.name
     end
   end
 

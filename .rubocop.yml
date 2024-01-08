@@ -1,8 +1,3 @@
-AllCops:
-  NewCops: enable
-Layout/LineLength:
-  Max: 200
-Naming/MethodParameterName:
-  MinNameLength: 1
-Style/Documentation:
-  Enabled: false
+# Omakase Ruby styling for Rails
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml

@@ -3,23 +3,23 @@ source "https://rubygems.org"
 gem "rails", "~> 7.1.2"
 
 gem "sprockets-rails"
-gem 'jsbundling-rails', github: 'rails/jsbundling-rails', tag: 'v1.2.2'
+gem "jsbundling-rails", github: "rails/jsbundling-rails", tag: "v1.2.2"
 gem "terser"
 
 gem "pg"
 
-gem "diff-lcs", require: ['diff-lcs', 'diff/lcs/array']
+gem "diff-lcs", require: [ "diff-lcs", "diff/lcs/array" ]
 gem "dalli"
 gem "connection_pool"
 gem "exception_notification"
 gem "will_paginate"
 gem "will-paginate-i18n"
 gem "sitemap_generator"
-gem "daemons", :require => false
+gem "daemons", require: false
 gem "newrelic_rpm"
 gem "nokogiri"
 gem "rails-i18n"
-gem "addressable", :require => "addressable/uri"
+gem "addressable", require: "addressable/uri"
 gem "mini_magick"
 gem "i18n-js", "~> 3.0.0"
 gem "mini_mime"
@@ -29,9 +29,10 @@ group :test do
   gem "rails-controller-testing"
 end
 
-gem "pry", :group => [:development, :test]
+gem "pry", group: [ :development, :test ]
+gem "rubocop-rails-omakase", require: false, group: [ :development ]
 
 gem "jbuilder", "~> 2.5"
 
 # Must be last.
-gem "rack-mini-profiler", :group => :development
+gem "rack-mini-profiler", group: :development

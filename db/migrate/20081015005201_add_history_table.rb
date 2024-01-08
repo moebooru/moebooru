@@ -36,8 +36,8 @@ class AddHistoryTable < ActiveRecord::Migration[5.1]
     EOS
     execute "CREATE TRIGGER trg_cleanup_history AFTER DELETE ON history_changes FOR EACH ROW EXECUTE PROCEDURE trg_purge_histories()"
 
-    add_foreign_key :history_changes, :history_id, :histories, :id, :on_delete => :cascade
-    add_foreign_key :history_changes, :previous_id, :history_changes, :id, :on_delete => :set_null
+    add_foreign_key :history_changes, :history_id, :histories, :id, on_delete: :cascade
+    add_foreign_key :history_changes, :previous_id, :history_changes, :id, on_delete: :set_null
 
     add_index :histories, :group_by_table
     add_index :histories, :group_by_id
@@ -47,7 +47,7 @@ class AddHistoryTable < ActiveRecord::Migration[5.1]
     add_index :history_changes, :remote_id
     add_index :history_changes, :history_id
 
-    add_column :pools_posts, :active, :boolean, :default => true, :null => false
+    add_column :pools_posts, :active, :boolean, default: true, null: false
     add_index :pools_posts, :active
   end
 

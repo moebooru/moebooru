@@ -4,7 +4,7 @@ class PostTagHistory < ApplicationRecord
   belongs_to :post
 
   def self.undo_user_changes(user_id)
-    posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.id", :conditions => ["pth.user_id = ?", user_id])
+    posts = Post.find(:all, joins: "join post_tag_histories pth on pth.post_id = posts.id", select: "distinct posts.id", conditions: [ "pth.user_id = ?", user_id ])
     puts posts.size
     p posts.map(&:id)
     #    destroy_all(["user_id = ?", user_id])
@@ -30,9 +30,9 @@ class PostTagHistory < ApplicationRecord
 
   def self.undo_changes_by_user(user_id)
     transaction do
-      posts = Post.find(:all, :joins => "join post_tag_histories pth on pth.post_id = posts.id", :select => "distinct posts.*", :conditions => ["pth.user_id = ?", user_id])
+      posts = Post.find(:all, joins: "join post_tag_histories pth on pth.post_id = posts.id", select: "distinct posts.*", conditions: [ "pth.user_id = ?", user_id ])
 
-      PostTagHistory.where(:user_id => user_id).destroy_all
+      PostTagHistory.where(user_id: user_id).destroy_all
       posts.each do |post|
         first = post.tag_history.first
         if first
@@ -63,7 +63,7 @@ class PostTagHistory < ApplicationRecord
 
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
     options[:update_options] ||= {}
-    post.attributes = { :tags => new_tags.join(" ") }.merge(options[:update_options])
+    post.attributes = { tags: new_tags.join(" ") }.merge(options[:update_options])
   end
 
   def author
@@ -77,27 +77,27 @@ class PostTagHistory < ApplicationRecord
     latest_tags = latest.scan(/\S+/)
 
     {
-      :added_tags => new_tags - old_tags,
-      :removed_tags => old_tags - new_tags,
-      :unchanged_tags => new_tags & old_tags,
-      :obsolete_added_tags => (new_tags - old_tags) - latest_tags,
-      :obsolete_removed_tags => (old_tags - new_tags) & latest_tags
+      added_tags: new_tags - old_tags,
+      removed_tags: old_tags - new_tags,
+      unchanged_tags: new_tags & old_tags,
+      obsolete_added_tags: (new_tags - old_tags) - latest_tags,
+      obsolete_removed_tags: (old_tags - new_tags) & latest_tags
     }
   end
 
   def next
-    self.class.where(:post_id => post_id).where("id > ?", id).order(:id => :asc).first
+    self.class.where(post_id: post_id).where("id > ?", id).order(id: :asc).first
   end
 
   def previous
-    self.class.where(:post_id => post_id).where("id < ?", id).order(:id => :desc).first
+    self.class.where(post_id: post_id).where("id < ?", id).order(id: :desc).first
   end
 
   def to_xml(options = {})
-    { :id => id, :post_id => post_id, :tags => tags }.to_xml(options.reverse_merge(:root => "tag_history"))
+    { id: id, post_id: post_id, tags: tags }.to_xml(options.reverse_merge(root: "tag_history"))
   end
 
   def as_json(*args)
-    { :id => id, :post_id => post_id, :tags => tags }.as_json(*args)
+    { id: id, post_id: post_id, tags: tags }.as_json(*args)
   end
 end

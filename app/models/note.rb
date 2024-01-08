@@ -3,11 +3,11 @@ class Note < ApplicationRecord
 
   belongs_to :post
   before_save :blank_body
-  acts_as_versioned_rails3 :table_name => "note_versions", :foreign_key => "note_id", :order => "updated_at DESC"
+  acts_as_versioned_rails3 table_name: "note_versions", foreign_key: "note_id", order: "updated_at DESC"
   after_save :update_post
 
-  versioning_group_by :class => "post"
-  versioned :is_active, :default => "f", :allow_reverting_to_default => true
+  versioning_group_by class: "post"
+  versioned :is_active, default: "f", allow_reverting_to_default: true
   versioned :x
   versioned :y
   versioned :width
@@ -22,7 +22,7 @@ class Note < ApplicationRecord
   def aux_callback
     # If our body has been changed and we have an old one, record it as the body;
     # otherwise if we're a new note and have no old body, record the current one.
-    { :note_body => body_before_last_save || body }
+    { note_body: body_before_last_save || body }
   end
 
   module LockMethods
@@ -33,15 +33,15 @@ class Note < ApplicationRecord
     def post_must_not_be_note_locked
       if is_locked?
         errors.add :base, "Post is note locked"
-        return false
+        false
       end
     end
 
     def is_locked?
       if select_value_sql("SELECT 1 FROM posts WHERE id = ? AND is_note_locked = ?", post_id, true)
-        return true
+        true
       else
-        return false
+        false
       end
     end
   end
@@ -49,23 +49,23 @@ class Note < ApplicationRecord
   module ApiMethods
     def api_attributes
       {
-        :id => id,
-        :created_at => created_at,
-        :updated_at => updated_at,
-        :creator_id => user_id,
-        :x => x,
-        :y => y,
-        :width => width,
-        :height => height,
-        :is_active => is_active,
-        :post_id => post_id,
-        :body => body,
-        :version => version
+        id: id,
+        created_at: created_at,
+        updated_at: updated_at,
+        creator_id: user_id,
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        is_active: is_active,
+        post_id: post_id,
+        body: body,
+        version: version
       }
     end
 
     def to_xml(options = {})
-      api_attributes.to_xml(options.reverse_merge(:root => "note"))
+      api_attributes.to_xml(options.reverse_merge(root: "note"))
     end
 
     def as_json(*args)

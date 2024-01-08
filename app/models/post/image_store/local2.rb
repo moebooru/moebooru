@@ -2,7 +2,7 @@ module Post::ImageStore::Local2
   BASE_URL_SCHEME = CONFIG["secure"] ? "https" : "http"
 
   def file_hierarchy
-    "%s/%s" % [md5[0, 2], md5[2, 2]]
+    "%s/%s" % [ md5[0, 2], md5[2, 2] ]
   end
 
   def file_path
@@ -41,7 +41,7 @@ module Post::ImageStore::Local2
 
   def preview_url
     if status == "deleted"
-      ApplicationController.helpers.image_url 'deleted-preview.png'
+      ApplicationController.helpers.image_url "deleted-preview.png"
     elsif image?
       "#{base_url :assets}/data/preview/#{file_hierarchy}/#{md5}.jpg"
     else
@@ -51,7 +51,7 @@ module Post::ImageStore::Local2
 
   def store_jpeg_url
     if CONFIG["use_pretty_image_urls"]
-      "#{base_url}/jpeg/#{md5}/#{url_encode pretty_file_name(:type => :jpeg)}.jpg"
+      "#{base_url}/jpeg/#{md5}/#{url_encode pretty_file_name(type: :jpeg)}.jpg"
     else
       "#{base_url}/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
     end
@@ -59,7 +59,7 @@ module Post::ImageStore::Local2
 
   def store_sample_url
     if CONFIG["use_pretty_image_urls"]
-      "#{base_url}/sample/#{md5}/#{url_encode pretty_file_name(:type => :sample)}.jpg"
+      "#{base_url}/sample/#{md5}/#{url_encode pretty_file_name(type: :sample)}.jpg"
     else
       "#{base_url}/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
     end
@@ -75,7 +75,7 @@ module Post::ImageStore::Local2
 
   def delete_file
     FileUtils.rm_f(file_path)
-    FileUtils.rm_f([preview_path, sample_path, jpeg_path]) if image?
+    FileUtils.rm_f([ preview_path, sample_path, jpeg_path ]) if image?
   end
 
   def move_one_file(src_path, target_path)

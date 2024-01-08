@@ -73,14 +73,14 @@ module Post::StatusMethods
     # Can't use update here since this method is wrapped inside of a destroy call
     execute_sql("UPDATE posts SET status = ? WHERE id = ?", "deleted", id)
     Post.update_has_children(parent_id) if parent_id
-    flag_detail.update(:is_resolved => true) if flag_detail
+    flag_detail.update(is_resolved: true) if flag_detail
     false
   end
 
   def self.included(m)
     m.extend(ClassMethods)
     m.before_create :reset_index_timestamp
-    m.versioned :is_shown_in_index, :default => true
+    m.versioned :is_shown_in_index, default: true
 
     # This is only used on initial creation: if the post is initially set to flagged or
     # pending, this may contain the reason, which will be stored as a flagged_post_detail

@@ -1,7 +1,7 @@
 module Post::ImageStore
   module RemoteHierarchy
     def file_hierarchy
-      "%s/%s" % [md5[0, 2], md5[2, 2]]
+      "%s/%s" % [ md5[0, 2], md5[2, 2] ]
     end
 
     def select_random_image_server(options = {})
@@ -36,9 +36,9 @@ module Post::ImageStore
     def preview_url
       if self.is_warehoused?
         if status == "deleted"
-          ApplicationController.helpers.image_path 'deleted-preview.png', host: base_url(:assets)
+          ApplicationController.helpers.image_path "deleted-preview.png", host: base_url(:assets)
         elsif image?
-          select_random_image_server(:preview => true, :use_aliases => true) + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
+          select_random_image_server(preview: true, use_aliases: true) + "/data/preview/#{file_hierarchy}/#{md5}.jpg"
         else
           CONFIG["url_base"] + "/download-preview.png"
         end
@@ -59,7 +59,7 @@ module Post::ImageStore
 
     def store_jpeg_url
       if CONFIG["use_pretty_image_urls"]
-        path = "/jpeg/#{md5}/#{url_encode(pretty_file_name(:type => :jpeg))}.jpg"
+        path = "/jpeg/#{md5}/#{url_encode(pretty_file_name(type: :jpeg))}.jpg"
       else
         path = "/data/jpeg/#{file_hierarchy}/#{md5}.jpg"
       end
@@ -69,7 +69,7 @@ module Post::ImageStore
 
     def store_sample_url
       if CONFIG["use_pretty_image_urls"]
-        path = "/sample/#{md5}/#{url_encode(pretty_file_name(:type => :sample))}.jpg"
+        path = "/sample/#{md5}/#{url_encode(pretty_file_name(type: :sample))}.jpg"
       else
         path = "/data/sample/#{file_hierarchy}/" + CONFIG["sample_filename_prefix"] + "#{md5}.jpg"
       end
@@ -83,7 +83,7 @@ module Post::ImageStore
     end
 
     def frame_preview_url(filename, frame_number)
-      frame_preview_server ||= Mirrors.select_image_server(frames_warehoused, created_at.to_i + frame_number, :use_aliases => true)
+      frame_preview_server ||= Mirrors.select_image_server(frames_warehoused, created_at.to_i + frame_number, use_aliases: true)
       "#{frame_preview_server}/data/frame-preview/#{filename}"
     end
 
@@ -95,24 +95,24 @@ module Post::ImageStore
     end
 
     def move_file
-      FileUtils.mkdir_p(File.dirname(file_path), :mode => 0775)
+      FileUtils.mkdir_p(File.dirname(file_path), mode: 0775)
       FileUtils.mv(tempfile_path, file_path)
       FileUtils.chmod(0664, file_path)
 
       if image?
-        FileUtils.mkdir_p(File.dirname(preview_path), :mode => 0775)
+        FileUtils.mkdir_p(File.dirname(preview_path), mode: 0775)
         FileUtils.mv(tempfile_preview_path, preview_path)
         FileUtils.chmod(0664, preview_path)
       end
 
       if File.exist?(tempfile_sample_path)
-        FileUtils.mkdir_p(File.dirname(sample_path), :mode => 0775)
+        FileUtils.mkdir_p(File.dirname(sample_path), mode: 0775)
         FileUtils.mv(tempfile_sample_path, sample_path)
         FileUtils.chmod(0664, sample_path)
       end
 
       if File.exist?(tempfile_jpeg_path)
-        FileUtils.mkdir_p(File.dirname(jpeg_path), :mode => 0775)
+        FileUtils.mkdir_p(File.dirname(jpeg_path), mode: 0775)
         FileUtils.mv(tempfile_jpeg_path, jpeg_path)
         FileUtils.chmod(0664, jpeg_path)
       end

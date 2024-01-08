@@ -111,7 +111,7 @@ CONFIG["amazon_s3_bucket_name"] = ""
 CONFIG["enable_aggressive_caching"] = false
 
 # Any post rated safe or questionable that has one of the following tags will automatically be rated explicit.
-CONFIG["explicit_tags"] = %w(pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape asshole footjob handjob blowjob cunnilingus anal_sex)
+CONFIG["explicit_tags"] = %w[pussy penis cum anal vibrator dildo masturbation oral_sex sex paizuri penetration guro rape asshole footjob handjob blowjob cunnilingus anal_sex]
 
 # After a post receives this many posts, new comments will no longer bump the post in comment/index.
 CONFIG["comment_threshold"] = 40
@@ -194,10 +194,10 @@ CONFIG["tag_types"] = {
   "copy" => 3,
   "char" => 4
 }
-CONFIG["tag_order"] = %w(artist copyright character general)
+CONFIG["tag_order"] = %w[artist copyright character general]
 
 # Tag type IDs to not list in recent tag summaries, such as on the side of post/index:
-CONFIG["exclude_from_tag_sidebar"] = [0]
+CONFIG["exclude_from_tag_sidebar"] = [ 0 ]
 
 # Determine who can see a post. Note that since this is a block, return won't work. Use break.
 CONFIG["can_see_post"] = lambda do |_user, _post|
@@ -261,7 +261,7 @@ CONFIG["min_mpixels"] = nil
 # approved.
 CONFIG["hide_pending_posts"] = false
 
-CONFIG["available_locales"] = %w(de en es ja ru zh_CN zh_TW)
+CONFIG["available_locales"] = %w[de en es ja ru zh_CN zh_TW]
 
 # Time to load local configurations.
 # The timing is probably wrong but whatever, I'll fix this later(tm).
@@ -286,7 +286,7 @@ CONFIG["url_base"] ||= "http://#{CONFIG["server_host"] || "localhost"}"
 # Set secure to false by default due to ssl requirement
 CONFIG["secure"] = false if CONFIG["secure"].nil?
 
-CONFIG["bundler_groups"] ||= [:default, Rails.env]
+CONFIG["bundler_groups"] ||= [ :default, Rails.env ]
 
 CONFIG["bgcolor"] ||= "gray"
 

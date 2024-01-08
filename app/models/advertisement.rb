@@ -1,13 +1,13 @@
 class Advertisement < ApplicationRecord
-  validates_inclusion_of :ad_type, :in => %w(horizontal vertical)
+  validates_inclusion_of :ad_type, in: %w[horizontal vertical]
   validates_presence_of :image_url, :referral_url, :ad_type, :status, :width, :height
 
   def self.random(type = "vertical")
-    where(:ad_type => type, :status => "active").order(Arel.sql("random()")).take
+    where(ad_type: type, status: "active").order(Arel.sql("random()")).take
   end
 
   def self.reset_hit_count(ids)
-    where(:id => ids).update_all(:hit_count => 0)
+    where(id: ids).update_all(hit_count: 0)
   end
 
   # virtual method for resetting hit count in view

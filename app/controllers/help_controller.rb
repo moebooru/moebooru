@@ -5,11 +5,11 @@ class HelpController < ApplicationController
     page = params[:page].presence
 
     if page.present?
-      sanitized_page = page.gsub(/[^a-z0-9_]/, '')
+      sanitized_page = page.gsub(/[^a-z0-9_]/, "")
 
       return head(:not_found) if sanitized_page != page
     else
-      page = 'index'
+      page = "index"
     end
 
     render "/help/#{page}"

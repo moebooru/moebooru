@@ -1,5 +1,5 @@
 # Copyright (c) 2005 Rick Olson
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including
@@ -7,10 +7,10 @@
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject to
 # the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -18,11 +18,11 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-require 'active_support/concern'
+require "active_support/concern"
 
-module ActiveRecord #:nodoc:
-  module Acts #:nodoc:
-    # Specify this act if you want to save a copy of the row in a versioned table.  This assumes there is a 
+module ActiveRecord # :nodoc:
+  module Acts # :nodoc:
+    # Specify this act if you want to save a copy of the row in a versioned table.  This assumes there is a
     # versioned table ready and that your model has a version field.  This works with optimistic locking if the lock_version
     # column is present as well.
     #
@@ -56,7 +56,7 @@ module ActiveRecord #:nodoc:
     #
     # Simple Queries to page between versions
     #
-    #   page.versions.before(version) 
+    #   page.versions.before(version)
     #   page.versions.after(version)
     #
     # Access the previous/next versions from the versioned model itself
@@ -68,7 +68,7 @@ module ActiveRecord #:nodoc:
     # See ActiveRecord::Acts::Versioned::ClassMethods#acts_as_versioned for configuration options
     module Versioned
       VERSION   = "0.6.2"
-      CALLBACKS = [:set_new_version, :save_version, :save_version?]
+      CALLBACKS = [ :set_new_version, :save_version, :save_version? ]
 
       # == Configuration options
       #
@@ -172,15 +172,15 @@ module ActiveRecord #:nodoc:
         self.versioned_foreign_key        = options[:foreign_key] || self.to_s.foreign_key
         self.versioned_table_name         = options[:table_name] || "#{table_name_prefix}#{base_class.name.demodulize.underscore}_versions#{table_name_suffix}"
         self.versioned_inheritance_column = options[:inheritance_column] || "versioned_#{inheritance_column}"
-        self.version_column               = options[:version_column] || 'version'
+        self.version_column               = options[:version_column] || "version"
         self.version_sequence_name        = options[:sequence_name]
         self.max_version_limit            = options[:limit].to_i
         self.version_condition            = options[:if] || true
-        self.non_versioned_columns        = [self.primary_key, inheritance_column, self.version_column, 'lock_version', versioned_inheritance_column] + options[:non_versioned_columns].to_a.map(&:to_s)
+        self.non_versioned_columns        = [ self.primary_key, inheritance_column, self.version_column, "lock_version", versioned_inheritance_column ] + options[:non_versioned_columns].to_a.map(&:to_s)
         self.version_association_options  = {
-                                                    :class_name  => "#{self.to_s}::#{versioned_class_name}",
-                                                    :foreign_key => versioned_foreign_key,
-                                                    :dependent   => :delete_all
+                                                    class_name: "#{self}::#{versioned_class_name}",
+                                                    foreign_key: versioned_foreign_key,
+                                                    dependent: :delete_all
         }.merge(options[:association_options] || {})
 
         if block_given?
@@ -194,7 +194,7 @@ module ActiveRecord #:nodoc:
 
         unless options[:if_changed].nil?
           self.track_altered_attributes = true
-          options[:if_changed] = [options[:if_changed]] unless options[:if_changed].is_a?(Array)
+          options[:if_changed] = [ options[:if_changed] ] unless options[:if_changed].is_a?(Array)
           self.version_if_changed = options[:if_changed].map(&:to_s)
         end
 
@@ -206,21 +206,21 @@ module ActiveRecord #:nodoc:
         # Create the dynamic versioned model
         #
         const_set(versioned_class_name, Class.new(ActiveRecord::Base)).class_eval do
-          def self.reloadable?;
-            false;
+          def self.reloadable?
+            false
           end
 
           # find first version before the given version
           def self.before(version)
-            where(["#{original_class.versioned_foreign_key} = ? and version < ?", version.send(original_class.versioned_foreign_key), version.version]).
-                    order('version DESC').
+            where([ "#{original_class.versioned_foreign_key} = ? and version < ?", version.send(original_class.versioned_foreign_key), version.version ]).
+                    order("version DESC").
                     first
           end
 
           # find first version after the given version.
           def self.after(version)
-            where(["#{original_class.versioned_foreign_key} = ? and version > ?", version.send(original_class.versioned_foreign_key), version.version]).
-                    order('version ASC').
+            where([ "#{original_class.versioned_foreign_key} = ? and version > ?", version.send(original_class.versioned_foreign_key), version.version ]).
+                    order("version ASC").
                     first
           end
 
@@ -251,8 +251,8 @@ module ActiveRecord #:nodoc:
         versioned_class.original_class = self
         versioned_class.table_name = versioned_table_name
         versioned_class.belongs_to self.to_s.demodulize.underscore.to_sym,
-                                   :class_name  => "::#{self.to_s}",
-                                   :foreign_key => versioned_foreign_key
+                                   class_name: "::#{self}",
+                                   foreign_key: versioned_foreign_key
         versioned_class.send :include, options[:extend] if options[:extend].is_a?(Module)
         versioned_class.sequence_name = version_sequence_name if version_sequence_name
       end
@@ -286,7 +286,7 @@ module ActiveRecord #:nodoc:
           return if self.class.max_version_limit == 0
           excess_baggage = send(self.class.version_column).to_i - self.class.max_version_limit
           if excess_baggage > 0
-            self.class.versioned_class.delete_all ["#{self.class.version_column} <= ? and #{self.class.versioned_foreign_key} = ?", excess_baggage, id]
+            self.class.versioned_class.delete_all [ "#{self.class.version_column} <= ? and #{self.class.versioned_foreign_key} = ?", excess_baggage, id ]
           end
         end
 
@@ -336,7 +336,7 @@ module ActiveRecord #:nodoc:
 
           clone_inheritance_column(orig_model, new_model)
         end
-        
+
         def clone_inheritance_column(orig_model, new_model)
           if orig_model.is_a?(self.class.versioned_class) && new_model.class.column_names.include?(new_model.class.inheritance_column.to_s)
             new_model[new_model.class.inheritance_column] = orig_model[self.class.versioned_inheritance_column]
@@ -354,11 +354,11 @@ module ActiveRecord #:nodoc:
         # custom version condition checking.
         def version_condition_met?
           case
-            when version_condition.is_a?(Symbol)
+          when version_condition.is_a?(Symbol)
               send(version_condition)
-            when version_condition.respond_to?(:call) && (version_condition.arity == 1 || version_condition.arity == -1)
+          when version_condition.respond_to?(:call) && (version_condition.arity == 1 || version_condition.arity == -1)
               version_condition.call(self)
-            else
+          else
               version_condition
           end
         end
@@ -383,10 +383,10 @@ module ActiveRecord #:nodoc:
           self.class.without_locking(&block)
         end
 
-        def empty_callback()
+        def empty_callback
         end
 
-        #:nodoc:
+        # :nodoc:
 
         protected
         # sets the new version before saving, unless you're using optimistic locking.  In that case, let it take care of the version.
@@ -414,7 +414,7 @@ module ActiveRecord #:nodoc:
           # Rake migration task to create the versioned table using options passed to acts_as_versioned
           def create_versioned_table(create_table_options = {})
             # create version column in main table if it does not exist
-            if !self.content_columns.find { |c| [version_column.to_s, 'lock_version'].include? c.name }
+            if !self.content_columns.find { |c| [ version_column.to_s, "lock_version" ].include? c.name }
               self.connection.add_column table_name, version_column, :integer
               self.reset_column_information
             end
@@ -428,18 +428,18 @@ module ActiveRecord #:nodoc:
 
             self.versioned_columns.each do |col|
               self.connection.add_column versioned_table_name, col.name, col.type,
-                                         :limit     => col.limit,
-                                         :default   => col.default,
-                                         :scale     => col.scale,
-                                         :precision => col.precision
+                                         limit: col.limit,
+                                         default: col.default,
+                                         scale: col.scale,
+                                         precision: col.precision
             end
 
             if type_col = self.columns_hash[inheritance_column]
               self.connection.add_column versioned_table_name, versioned_inheritance_column, type_col.type,
-                                         :limit     => type_col.limit,
-                                         :default   => type_col.default,
-                                         :scale     => type_col.scale,
-                                         :precision => type_col.precision
+                                         limit: type_col.limit,
+                                         default: type_col.default,
+                                         scale: type_col.scale,
+                                         precision: type_col.precision
             end
 
             self.connection.add_index versioned_table_name, versioned_foreign_key

@@ -1,18 +1,19 @@
 # encoding: utf-8
+
 class ActiveRecord::Base
   class << self
     public :sanitize_sql_array
   end
 
-  %w(execute select_value select_values select_all).each do |method_name|
+  %w[execute select_value select_values select_all].each do |method_name|
     define_method("#{method_name}_sql") do |sql, *params|
-      ActiveRecord::Base.connection.__send__(method_name, self.class.sanitize_sql_array([sql, *params])).tap do
+      ActiveRecord::Base.connection.__send__(method_name, self.class.sanitize_sql_array([ sql, *params ])).tap do
         ActiveRecord::Base.connection.clear_query_cache
       end
     end
 
     self.class.__send__(:define_method, "#{method_name}_sql") do |sql, *params|
-      ActiveRecord::Base.connection.__send__(method_name, ActiveRecord::Base.sanitize_sql_array([sql, *params])).tap do
+      ActiveRecord::Base.connection.__send__(method_name, ActiveRecord::Base.sanitize_sql_array([ sql, *params ])).tap do
         ActiveRecord::Base.connection.clear_query_cache
       end
     end
@@ -37,13 +38,13 @@ class Hash
       if value.respond_to?(:to_xml) || value.is_a?(Array)
         # If an array child is empty, omit the node entirely.
         next if value.is_a?(Array) && value.empty?
-        children << [key, value]
+        children << [ key, value ]
       else
         attrs[key] = value
       end
     end
 
-    options.reverse_merge!(:builder => Builder::XmlMarkup.new(:indent => options[:indent]))
+    options.reverse_merge!(builder: Builder::XmlMarkup.new(indent: options[:indent]))
     unless options[:skip_instruct]
       options[:skip_instruct] = true
       options[:builder].instruct!
@@ -54,7 +55,7 @@ class Hash
     else
       options[:builder].tag!(root, attrs) do
         children.each do |key, child|
-          child.to_xml(options.merge(:root => key.to_s))
+          child.to_xml(options.merge(root: key.to_s))
         end
       end
     end

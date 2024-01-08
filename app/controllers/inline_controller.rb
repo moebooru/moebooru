@@ -1,22 +1,22 @@
 class InlineController < ApplicationController
   layout "default"
-  before_action :member_only, :only => [:create, :copy]
+  before_action :member_only, only: [ :create, :copy ]
 
   def create
     # If this user already has an inline with no images, use it.
-    inline = Inline.where("(SELECT count(*) FROM inline_images WHERE inline_images.inline_id = inlines.id) = 0").where(:user_id => @current_user.id).take
-    inline ||= Inline.create(:user_id => @current_user.id)
-    redirect_to :action => "edit", :id => inline.id
+    inline = Inline.where("(SELECT count(*) FROM inline_images WHERE inline_images.inline_id = inlines.id) = 0").where(user_id: @current_user.id).take
+    inline ||= Inline.create(user_id: @current_user.id)
+    redirect_to action: "edit", id: inline.id
   end
 
   def index
     order = []
     unless @current_user.is_anonymous?
-      order << ["user_id = #{@current_user.id} DESC"]
+      order << [ "user_id = #{@current_user.id} DESC" ]
     end
-    order << ["created_at DESC"]
+    order << [ "created_at DESC" ]
 
-    @inlines = Inline.order(Arel.sql(order.join(", "))).paginate :per_page => 20, :page => page_number
+    @inlines = Inline.order(Arel.sql(order.join(", "))).paginate per_page: 20, page: page_number
 
     respond_to_list("inlines")
   end
@@ -30,7 +30,7 @@ class InlineController < ApplicationController
     end
 
     @inline.destroy
-    respond_to_success("Image group deleted", :action => "index")
+    respond_to_success("Image group deleted", action: "index")
   end
 
   def add_image
@@ -45,12 +45,12 @@ class InlineController < ApplicationController
       new_image = @inline.inline_images.create(inline_image_params)
 
       unless new_image.errors.empty?
-        respond_to_error(new_image, :action => "edit", :id => @inline.id)
+        respond_to_error(new_image, action: "edit", id: @inline.id)
         return
       end
 
-      redirect_to :action => "edit", :id => @inline.id
-      return
+      redirect_to action: "edit", id: @inline.id
+      nil
     end
   end
 
@@ -64,7 +64,7 @@ class InlineController < ApplicationController
     end
 
     image.destroy
-    redirect_to :action => "edit", :id => inline.id
+    redirect_to action: "edit", id: inline.id
   end
 
   def update
@@ -87,14 +87,14 @@ class InlineController < ApplicationController
     inline.renumber_sequences
 
     flash[:notice] = "Image updated"
-    redirect_to :action => "edit", :id => inline.id
+    redirect_to action: "edit", id: inline.id
   end
 
   # Create a copy of an inline image and all of its images.  Allow copying from images
   # owned by someone else.
   def copy
     inline = Inline.find(params[:id])
-    new_inline = Inline.new(:user_id => @current_user.id, :description => inline.description)
+    new_inline = Inline.new(user_id: @current_user.id, description: inline.description)
 
     new_inline.transaction do
       new_inline.save!
@@ -107,7 +107,7 @@ class InlineController < ApplicationController
       end
     end
 
-    respond_to_success("Image copied", :action => "edit", :id => new_inline.id)
+    respond_to_success("Image copied", action: "edit", id: new_inline.id)
   end
 
   def edit
@@ -123,9 +123,9 @@ class InlineController < ApplicationController
 
     if request.post?
       if @inline.crop(params)
-        redirect_to :action => "edit", :id => @inline.id
+        redirect_to action: "edit", id: @inline.id
       else
-        respond_to_error(@inline, :action => "edit", :id => @inline.id)
+        respond_to_error(@inline, action: "edit", id: @inline.id)
       end
     end
 

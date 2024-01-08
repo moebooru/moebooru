@@ -1,15 +1,15 @@
 class PoolController < ApplicationController
   layout "default"
-  before_action :member_only, :only => [:destroy, :update, :add_post, :remove_post, :import, :zip]
-  before_action :post_member_only, :only => [:create]
-  before_action :contributor_only, :only => [:copy, :transfer_metadata]
+  before_action :member_only, only: [ :destroy, :update, :add_post, :remove_post, :import, :zip ]
+  before_action :post_member_only, only: [ :create ]
+  before_action :contributor_only, only: [ :copy, :transfer_metadata ]
   helper :post
 
   def index
     @pools = Pool.all
     options = {
-      :per_page => 20,
-      :page => page_number
+      per_page: 20,
+      page: page_number
     }
 
     order = params[:order]
@@ -30,7 +30,7 @@ class PoolController < ApplicationController
             order = Regexp.last_match[2]
           elsif Regexp.last_match[1] == "limit"
             options[:per_page] = Regexp.last_match[2].to_i
-            options[:per_page] = [options[:per_page], 100].min
+            options[:per_page] = [ options[:per_page], 100 ].min
           elsif Regexp.last_match[1] == "posts"
             @pools = @pools.where(*Post.sql_range_for_where(Tag.parse_helper(Regexp.last_match[2]), "post_count"))
           end
@@ -74,12 +74,12 @@ class PoolController < ApplicationController
     end
 
     order = case order
-              when "name" then "nat_sort(name) ASC"
-              when "date" then "created_at DESC"
-              when "updated" then "updated_at DESC"
-              when "id" then "id DESC"
-              else "created_at DESC"
-            end
+    when "name" then "nat_sort(name) ASC"
+    when "date" then "created_at DESC"
+    when "updated" then "updated_at DESC"
+    when "id" then "id DESC"
+    else "created_at DESC"
+    end
 
     @pools = @pools.order(Arel.sql(order)).paginate options
     @samples = {}
@@ -89,17 +89,17 @@ class PoolController < ApplicationController
       @samples[p] = post
     end
 
-    respond_to_list("pools", :atom => true)
+    respond_to_list("pools", atom: true)
   end
 
   def show
     if params[:samples] == "0" then params.delete(:samples) end
 
     begin
-      @pool = Pool.includes(:pool_posts => :post).find(params[:id])
+      @pool = Pool.includes(pool_posts: :post).find(params[:id])
     rescue
-      flash[:notice] = t("c.pool.not_found", :id => params[:id].to_i)
-      redirect_to :action => :index
+      flash[:notice] = t("c.pool.not_found", id: params[:id].to_i)
+      redirect_to action: :index
       return
     end
 
@@ -114,27 +114,27 @@ class PoolController < ApplicationController
       q[:limit] = 24
     end
 
-    count = Post.count_by_sql(Post.generate_sql(q, :from_api => true, :count => true))
+    count = Post.count_by_sql(Post.generate_sql(q, from_api: true, count: true))
 
     @posts = WillPaginate::Collection.new(page_number, q[:limit], count)
 
-    sql = Post.generate_sql(q, :from_api => true, :offset => @posts.offset, :limit => @posts.per_page)
+    sql = Post.generate_sql(q, from_api: true, offset: @posts.offset, limit: @posts.per_page)
     @posts.replace(Post.find_by_sql(sql))
 
     respond_to do |fmt|
       fmt.html
       fmt.xml do
-        builder = Builder::XmlMarkup.new(:indent => 2)
+        builder = Builder::XmlMarkup.new(indent: 2)
         builder.instruct!
 
-        xml = @pool.to_xml(:builder => builder, :skip_instruct => true) do
+        xml = @pool.to_xml(builder: builder, skip_instruct: true) do
           builder.posts do
             @posts.each do |post|
-              post.to_xml(:builder => builder, :skip_instruct => true)
+              post.to_xml(builder: builder, skip_instruct: true)
             end
           end
         end
-        render :xml => xml
+        render xml: xml
       end
       fmt.json
     end
@@ -150,21 +150,21 @@ class PoolController < ApplicationController
 
     if request.post?
       @pool.update(pool_params)
-      respond_to_success("Pool updated", :action => "show", :id => params[:id])
+      respond_to_success("Pool updated", action: "show", id: params[:id])
     end
   end
 
   def create
     if request.post?
-      @pool = Pool.create(pool_params.merge(:user_id => @current_user.id))
+      @pool = Pool.create(pool_params.merge(user_id: @current_user.id))
 
       if @pool.errors.empty?
-        respond_to_success("Pool created", :action => "show", :id => @pool.id)
+        respond_to_success("Pool created", action: "show", id: @pool.id)
       else
-        respond_to_error(@pool, :action => "index")
+        respond_to_error(@pool, action: "index")
       end
     else
-      @pool = Pool.new(:user_id => @current_user.id)
+      @pool = Pool.new(user_id: @current_user.id)
     end
   end
 
@@ -172,21 +172,21 @@ class PoolController < ApplicationController
     @old_pool = Pool.find_by_id(params[:id])
 
     name = params[:name] || "#{@old_pool.name} (copy)"
-    @new_pool = Pool.new(:user_id => @current_user.id, :name => name, :description => @old_pool.description)
+    @new_pool = Pool.new(user_id: @current_user.id, name: name, description: @old_pool.description)
 
     if request.post?
       @new_pool.save
 
       unless @new_pool.errors.empty?
-        respond_to_error(@new_pool, :action => "index")
+        respond_to_error(@new_pool, action: "index")
         return
       end
 
       @old_pool.pool_posts.each do |pp|
-        @new_pool.add_post(pp.post_id, :sequence => pp.sequence)
+        @new_pool.add_post(pp.post_id, sequence: pp.sequence)
       end
 
-      respond_to_success("Pool created", :action => "show", :id => @new_pool.id)
+      respond_to_success("Pool created", action: "show", id: @new_pool.id)
     end
   end
 
@@ -196,7 +196,7 @@ class PoolController < ApplicationController
     if request.post?
       if @pool.can_be_updated_by?(@current_user)
         @pool.destroy
-        respond_to_success("Pool deleted", :action => "index")
+        respond_to_success("Pool deleted", action: "index")
       else
         access_denied
       end
@@ -215,19 +215,19 @@ class PoolController < ApplicationController
       end
 
       begin
-        @pool.add_post(params[:post_id], :sequence => sequence, :user => @current_user)
-        respond_to_success("Post added", :controller => "post", :action => "show", :id => params[:post_id])
+        @pool.add_post(params[:post_id], sequence: sequence, user: @current_user)
+        respond_to_success("Post added", controller: "post", action: "show", id: params[:post_id])
       rescue Pool::PostAlreadyExistsError
-        respond_to_error("Post already exists", { :controller => "post", :action => "show", :id => params[:post_id] }, :status => 423)
+        respond_to_error("Post already exists", { controller: "post", action: "show", id: params[:post_id] }, status: 423)
       rescue Pool::AccessDeniedError
         access_denied
       rescue => x
-        respond_to_error(x.class, :controller => "post", :action => "show", :id => params[:post_id])
+        respond_to_error(x.class, controller: "post", action: "show", id: params[:post_id])
       end
     else
-      @pools = Pool.where(:is_active => true)
+      @pools = Pool.where(is_active: true)
       if @current_user.is_anonymous?
-        @pools = @pools.where(:is_public => true)
+        @pools = @pools.where(is_public: true)
       else
         @pools = @pools.where("is_public = TRUE OR user_id = ?", @current_user.id)
       end
@@ -243,16 +243,16 @@ class PoolController < ApplicationController
       post = Post.find(params[:post_id])
 
       begin
-        @pool.remove_post(params[:post_id], :user => @current_user)
+        @pool.remove_post(params[:post_id], user: @current_user)
       rescue Pool::AccessDeniedError
         access_denied
         return
       end
 
-      api_data = Post.batch_api_data([post])
+      api_data = Post.batch_api_data([ post ])
 
       response.headers["X-Post-Id"] = params[:post_id]
-      respond_to_success("Post removed", { :controller => "post", :action => "show", :id => params[:post_id] }, :api => api_data)
+      respond_to_success("Post removed", { controller: "post", action: "show", id: params[:post_id] }, api: api_data)
     else
       @pool = Pool.find(params[:pool_id])
       @post = Post.find(params[:post_id])
@@ -270,7 +270,7 @@ class PoolController < ApplicationController
     if request.post?
       PoolPost.transaction do
         params.fetch(:pool_post_sequence, []).each do |i, seq|
-          PoolPost.update(i, :sequence => seq)
+          PoolPost.update(i, sequence: seq)
         end
 
         @pool.reload
@@ -278,7 +278,7 @@ class PoolController < ApplicationController
       end
 
       flash[:notice] = "Ordering updated"
-      return redirect_to :action => "show", :id => params[:id]
+      return redirect_to action: "show", id: params[:id]
     else
       @pool_posts = @pool.pool_posts
     end
@@ -305,7 +305,7 @@ class PoolController < ApplicationController
         PoolPost.transaction do
           ordered_posts.each do |post_id|
             begin
-              @pool.add_post(post_id, :skip_update_pool_links => true)
+              @pool.add_post(post_id, skip_update_pool_links: true)
             rescue Pool::PostAlreadyExistsError
               # ignore
             end
@@ -314,12 +314,12 @@ class PoolController < ApplicationController
         end
       end
 
-      redirect_to :action => "show", :id => @pool.id
+      redirect_to action: "show", id: @pool.id
     else
       respond_to do |fmt|
         fmt.html
         fmt.js do
-          @posts = Post.find_by_tags(params[:query], :limit => 500)
+          @posts = Post.find_by_tags(params[:query], limit: 500)
           @posts = @posts.select { |x| x.can_be_seen_by?(@current_user) }
         end
       end
@@ -328,9 +328,9 @@ class PoolController < ApplicationController
 
   def select
     @post_id = params[:post_id].to_i
-    @pools = Pool.where(:is_active => true)
+    @pools = Pool.where(is_active: true)
     if @current_user.is_anonymous?
-      @pools = @pools.where(:is_public => true)
+      @pools = @pools.where(is_public: true)
     else
       @pools = @pools.where("is_public = TRUE OR user_id = ?", @current_user.id)
     end
@@ -354,22 +354,22 @@ class PoolController < ApplicationController
       if pool_zip[:data].empty?
         pool_zip[:data] = Moebooru::Zip::EMPTY
       else
-        headers['X-Archive-Files'] = 'zip'
+        headers["X-Archive-Files"] = "zip"
       end
 
       return send_data(pool_zip[:data], type: Mime[:zip], filename: pool_zip[:filename])
     end
 
-    pool = Pool.includes(:pool_posts => :post).find(params[:id])
+    pool = Pool.includes(pool_posts: :post).find(params[:id])
 
     pool_zip_data = pool.get_zip_data(params).map do |row|
-      "%s %s %s %s\n" % [row[:crc32], row[:file_size], row[:path], row[:filename]]
+      "%s %s %s %s\n" % [ row[:crc32], row[:file_size], row[:path], row[:filename] ]
     end.join
 
     hash = Digest::MD5.hexdigest(pool_zip_data)
     pool_zip = {
       data: pool_zip_data,
-      filename: pool.get_zip_filename(params),
+      filename: pool.get_zip_filename(params)
     }
     Rails.cache.write "pool_zip:#{hash}", pool_zip
 
@@ -395,7 +395,7 @@ class PoolController < ApplicationController
       n = from_posts.length
     else
       @truncated = true
-      n = [from_posts.length, to_posts.length].min
+      n = [ from_posts.length, to_posts.length ].min
     end
 
     @posts = []

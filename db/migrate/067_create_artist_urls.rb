@@ -4,9 +4,9 @@ end
 class CreateArtistUrls < ActiveRecord::Migration[5.1]
   def self.up
     create_table :artist_urls do |t|
-      t.column :artist_id, :integer, :null => false
-      t.column :url, :text, :null => false
-      t.column :normalized_url, :text, :null => false
+      t.column :artist_id, :integer, null: false
+      t.column :url, :text, null: false
+      t.column :normalized_url, :text, null: false
     end
 
     add_index :artist_urls, :artist_id
@@ -15,10 +15,10 @@ class CreateArtistUrls < ActiveRecord::Migration[5.1]
 
     add_foreign_key :artist_urls, :artist_id, :artists, :id
 
-    Artist.find(:all, :order => "id").each do |artist|
-      [:url_a, :url_b, :url_c].each do |field|
+    Artist.find(:all, order: "id").each do |artist|
+      [ :url_a, :url_b, :url_c ].each do |field|
         unless artist[field].blank?
-          ArtistUrl.create(:artist_id => artist.id, :url => artist[field])
+          ArtistUrl.create(artist_id: artist.id, url: artist[field])
         end
       end
     end

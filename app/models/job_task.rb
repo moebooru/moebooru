@@ -1,9 +1,9 @@
 class JobTask < ApplicationRecord
-  TASK_TYPES = %w(mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions upload_posts_to_mirrors periodic_maintenance upload_batch_posts update_post_frames)
-  STATUSES = %w(pending processing finished error)
+  TASK_TYPES = %w[mass_tag_edit approve_tag_alias approve_tag_implication calculate_tag_subscriptions upload_posts_to_mirrors periodic_maintenance upload_batch_posts update_post_frames]
+  STATUSES = %w[pending processing finished error]
 
-  validates_inclusion_of :task_type, :in => TASK_TYPES
-  validates_inclusion_of :status, :in => STATUSES
+  validates_inclusion_of :task_type, in: TASK_TYPES
+  validates_inclusion_of :status, in: STATUSES
 
   def execute!
     if repeat_count > 0
@@ -14,16 +14,16 @@ class JobTask < ApplicationRecord
 
     begin
       execute_sql("SET statement_timeout = 0")
-      update(:status => "processing")
+      update(status: "processing")
       __send__("execute_#{task_type}")
 
       if count == 0
-        update(:status => "finished")
+        update(status: "finished")
       else
-        update(:status => "pending", :repeat_count => count)
+        update(status: "pending", repeat_count: count)
       end
     rescue SystemExit => x
-      update(:status => "pending")
+      update(status: "pending")
       raise x
     rescue => x
       text = "\n\n"
@@ -32,7 +32,7 @@ class JobTask < ApplicationRecord
       text << x.backtrace.join("\n    ")
       logger.fatal(text)
 
-      update(:status => "error", :status_message => "#{x.class}: #{x}")
+      update(status: "error", status_message: "#{x.class}: #{x}")
     end
   end
 
@@ -60,14 +60,14 @@ class JobTask < ApplicationRecord
 
   def execute_calculate_tag_subscriptions
     return if Rails.cache.read("delay-tag-sub-calc")
-    Rails.cache.write("delay-tag-sub-calc", "1", :expires_in => 360.minutes)
+    Rails.cache.write("delay-tag-sub-calc", "1", expires_in: 360.minutes)
     TagSubscription.process_all
-    update(:data => { :last_run => Time.now.strftime("%Y-%m-%d %H:%M") })
+    update(data: { last_run: Time.now.strftime("%Y-%m-%d %H:%M") })
   end
 
   def update_data(*args)
     hash = data.merge(args[0])
-    update(:data => hash)
+    update(data: hash)
   end
 
   def execute_periodic_maintenance
@@ -92,30 +92,30 @@ class JobTask < ApplicationRecord
     # then give other jobs a chance to run.
     data = {}
     (1..10).each do
-      post = Post.where.not(:is_warehoused => true, :status => "deleted").order(:is_held => :asc, :index_timestamp => :desc).take
+      post = Post.where.not(is_warehoused: true, status: "deleted").order(is_held: :asc, index_timestamp: :desc).take
       break unless post
 
-      data["left"] = Post.where.not(:is_warehoused => true, :status => "deleted").count
+      data["left"] = Post.where.not(is_warehoused: true, status: "deleted").count
       data["post_id"] = post.id
-      update(:data => data)
+      update(data: data)
 
       begin
         post.upload_to_mirrors
       ensure
         data["post_id"] = nil
-        update(:data => data)
+        update(data: data)
       end
 
-      data["left"] = Post.where.not(:is_warehoused => true, :status => "deleted").count
-      update(:data => data)
+      data["left"] = Post.where.not(is_warehoused: true, status: "deleted").count
+      update(data: data)
     end
   end
 
   def execute_upload_batch_posts
-    upload = BatchUpload.where(:status => "pending").order(:id => :asc).take
+    upload = BatchUpload.where(status: "pending").order(id: :asc).take
     if upload.nil? then return end
 
-    update(:data => { :id => upload.id, :user_id => upload.user_id, :url => upload.url })
+    update(data: { id: upload.id, user_id: upload.user_id, url: upload.url })
     upload.run
   end
 
@@ -185,22 +185,22 @@ class JobTask < ApplicationRecord
 
     when "upload_batch_posts"
       if status == "pending"
-        return "idle"
+        "idle"
       elsif status == "processing"
         user = User.find_name(data["user_id"])
-        return "uploading #{data["url"]} for #{user}"
+        "uploading #{data["url"]} for #{user}"
       end
     when "update_post_frames"
       if status == "pending"
-        return "idle"
+        "idle"
       elsif status == "processing"
-        return data["status"]
+        data["status"]
       end
     end
   end
 
   def self.execute_once
-    where(:status => "pending").order(:id => :desc).find_each do |task|
+    where(status: "pending").order(id: :desc).find_each do |task|
       task.execute!
       sleep 1
     end
@@ -209,8 +209,8 @@ class JobTask < ApplicationRecord
   def self.execute_all
     # If we were interrupted without finishing a task, it may be left in processing; reset
     # thos tasks to pending.
-    where(:status => "processing").find_each do |task|
-      task.update(:status => "pending")
+    where(status: "processing").find_each do |task|
+      task.update(status: "pending")
     end
 
     loop do

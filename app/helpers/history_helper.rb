@@ -8,7 +8,7 @@ module HistoryHelper
   # :show_all_tags: Show unchanged tags.
   def get_default_field_options
     @default_field_options ||= {
-      :suppress_fields => []
+      suppress_fields: []
     }
   end
 
@@ -43,48 +43,46 @@ module HistoryHelper
       # - Adding a post to a pool usually causes the sequence number to change, too, but
       # this isn't very interesting and clutters the display.  :suppress_fields is used
       # to hide these unless viewing the specific change.
-      :Post => {
-        :fields => {
-          :cached_tags => { :primary_order => 2 }, # show tag changes after other things
-          :source => { :primary_order => 3 }
+      Post: {
+        fields: {
+          cached_tags: { primary_order: 2 }, # show tag changes after other things
+          source: { primary_order: 3 }
         },
-        :never_obsolete => { :cached_tags => true } # tags handle obsolete themselves per-tag
+        never_obsolete: { cached_tags: true } # tags handle obsolete themselves per-tag
       },
 
-      :Pool => {
-        :primary_order => 0,
+      Pool: {
+        primary_order: 0,
 
-        :fields => {
-          :description => { :primary_order => 5 } # we don't handle commas correctly if this isn't last
+        fields: {
+          description: { primary_order: 5 } # we don't handle commas correctly if this isn't last
         },
-        :never_obsolete => { :description => true } # changes to description aren't obsolete just because the text has changed again
+        never_obsolete: { description: true } # changes to description aren't obsolete just because the text has changed again
       },
 
-      :PoolPost => {
-        :fields => {
-          :sequence => { :max_to_display => 5 },
-          :active => {
-            :max_to_display => 10,
-            :suppress_fields => [:sequence], # changing active usually changes sequence; this isn't interesting
-            :primary_order => 2, # show pool post changes after other things
+      PoolPost: {
+        fields: {
+          sequence: { max_to_display: 5 },
+          active: {
+            max_to_display: 10,
+            suppress_fields: [ :sequence ], # changing active usually changes sequence; this isn't interesting
+            primary_order: 2 # show pool post changes after other things
           },
-          :cached_tags => {}
+          cached_tags: {}
         }
       },
 
-      :Tag => {
-      },
+      Tag: {},
 
-      :Note => {
-      }
+      Note: {}
     }
 
     @att_options.each_key do |classname|
       @att_options[classname] = {
-        :fields => {},
-        :primary_order => 1,
-        :never_obsolete => {},
-        :force_show_initial => {}
+        fields: {},
+        primary_order: 1,
+        never_obsolete: {},
+        force_show_initial: {}
       }.merge(@att_options[classname])
 
       c = @att_options[classname][:fields]
@@ -147,7 +145,7 @@ module HistoryHelper
           part = format_change(history, c, options, table_options)
           next unless part
 
-          part = part.merge(:primary_order => field_options[:primary_order] || table_options[:primary_order])
+          part = part.merge(primary_order: field_options[:primary_order] || table_options[:primary_order])
           parts << part
         end
       end
@@ -155,7 +153,7 @@ module HistoryHelper
 
     parts.sort! do |a, b|
       comp = 0
-      [:primary_order, :field, :sort_key].each do |field|
+      [ :primary_order, :field, :sort_key ].each do |field|
         comp = a[field] <=> b[field]
         break if comp != 0
       end
@@ -185,7 +183,7 @@ module HistoryHelper
     html << parts.map { |part| part[:html] }.join(" ")
 
     if hidden > 0
-      html << " (#{link_to("%i more..." % hidden, :search => "change:%i" % history.id)})"
+      html << " (#{link_to("%i more..." % hidden, search: "change:%i" % history.id)})"
     end
 
     # FIXME: more why.jpg on rbx.
@@ -197,7 +195,7 @@ module HistoryHelper
 
     classes = []
     if !table_options[:never_obsolete][change.column_name.to_sym] && change.is_obsolete?
-      classes << ["obsolete"]
+      classes << [ "obsolete" ]
     end
 
     added = %(<span class="added">+</span>)
@@ -205,7 +203,7 @@ module HistoryHelper
 
     sort_key = change.remote_id
     case change.table_name
-    when"posts"
+    when "posts"
       case change.column_name
       when "rating"
         html << %(<span class="changed-post-rating">rating:)
@@ -220,7 +218,7 @@ module HistoryHelper
         if change.value
           begin
             new = Post.find(change.value.to_i)
-            html << link_to("%i" % new.id, :controller => "post", :action => "show", :id => new.id)
+            html << link_to("%i" % new.id, controller: "post", action: "show", id: new.id)
           rescue ActiveRecord::RecordNotFound
             html << "%i" % change.value.to_i
           end
@@ -233,7 +231,7 @@ module HistoryHelper
           if change.previous.value
             begin
               old = Post.find(change.previous.value.to_i)
-              html << link_to("%i" % old.id, :controller => "post", :action => "show", :id => old.id)
+              html << link_to("%i" % old.id, controller: "post", action: "show", id: old.id)
             rescue ActiveRecord::RecordNotFound
               html << "%i" % change.previous.value.to_i
             end
@@ -244,9 +242,9 @@ module HistoryHelper
 
       when "source"
         if change.previous
-          html << "source changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [source_link(change.previous.value, false), source_link(change.value, false)]
+          html << "source changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [ source_link(change.previous.value, false), source_link(change.value, false) ]
         else
-          html << "source: <span class='name-change'>%s</span>" % [source_link(change.value, false)]
+          html << "source: <span class='name-change'>%s</span>" % [ source_link(change.value, false) ]
         end
 
       when "frames_pending"
@@ -270,11 +268,11 @@ module HistoryHelper
         changes = Post.tag_changes(change, previous, change.latest)
 
         list = []
-        list << tag_list(changes[:added_tags], :obsolete => changes[:obsolete_added_tags], :prefix => "+", :class => "added")
-        list << tag_list(changes[:removed_tags], :obsolete => changes[:obsolete_removed_tags], :prefix => "-", :class => "removed")
+        list << tag_list(changes[:added_tags], obsolete: changes[:obsolete_added_tags], prefix: "+", class: "added")
+        list << tag_list(changes[:removed_tags], obsolete: changes[:obsolete_removed_tags], prefix: "-", class: "removed")
 
         if options[:show_all_tags]
-          list << tag_list(changes[:unchanged_tags], :prefix => "", :class => "unchanged")
+          list << tag_list(changes[:unchanged_tags], prefix: "", class: "unchanged")
         end
         html << list.join(" ")
         html.strip!
@@ -283,9 +281,9 @@ module HistoryHelper
       case change.column_name
       when "name"
         if change.previous
-          html << "name changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [h(change.previous.value), h(change.value)]
+          html << "name changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [ h(change.previous.value), h(change.value) ]
         else
-          html << "name: <span class='name-change'>%s</span>" % [h(change.value)]
+          html << "name: <span class='name-change'>%s</span>" % [ h(change.value) ]
         end
 
       when "description"
@@ -342,14 +340,14 @@ module HistoryHelper
       when "active"
         html << (change.value.trueish? ? added : removed)
 
-        html << link_to("post #%i" % change.obj.post_id, :controller => "post", :action => "show", :id => change.obj.post_id)
+        html << link_to("post #%i" % change.obj.post_id, controller: "post", action: "show", id: change.obj.post_id)
 
       when "sequence"
-        seq = "order:%i:%s" % [change.obj.post_id, change.value]
+        seq = "order:%i:%s" % [ change.obj.post_id, change.value ]
         if change.previous
           seq << %(←#{change.previous.value})
         end
-        html << link_to("%s" % seq, :controller => "post", :action => "show", :id => change.obj.post_id)
+        html << link_to("%s" % seq, controller: "post", action: "show", id: change.obj.post_id)
       end
     when "tags"
       case change.column_name
@@ -369,9 +367,9 @@ module HistoryHelper
       case change.column_name
       when "body"
         if change.previous
-          html << "body changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [h(change.previous.value), h(change.value)]
+          html << "body changed from <span class='name-change'>%s</span> to <span class='name-change'>%s</span>" % [ h(change.previous.value), h(change.value) ]
         else
-          html << "body: <span class='name-change'>%s</span>" % [h(change.value)]
+          html << "body: <span class='name-change'>%s</span>" % [ h(change.value) ]
         end
       when "x"
         html << "x:#{h(change.value)}"
@@ -396,9 +394,9 @@ module HistoryHelper
     span << %(<span class="#{classes.join(" ")}">#{html}</span>)
 
     {
-      :html => span,
-      :field => change.column_name,
-      :sort_key => sort_key
+      html: span,
+      field: change.column_name,
+      sort_key: sort_key
     }
   end
 
@@ -417,6 +415,6 @@ module HistoryHelper
 
     html << tags_html.join(" ")
     html << %(</span>)
-    [html]
+    [ html ]
   end
 end

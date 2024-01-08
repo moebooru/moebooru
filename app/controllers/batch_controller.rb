@@ -1,6 +1,6 @@
 class BatchController < ApplicationController
   layout "default"
-  before_action :contributor_only, :only => [:index, :create, :enqueue, :update]
+  before_action :contributor_only, only: [ :index, :create, :enqueue, :update ]
 
   def index
     if @current_user.is_mod_or_higher? && params[:user_id] == "all"
@@ -11,9 +11,9 @@ class BatchController < ApplicationController
       user_id = @current_user.id
     end
 
-    @items = BatchUpload.order(:created_at => :asc, :id => :asc)
-    @items = @items.where(:user_id => user_id) if user_id.present?
-    @items = @items.paginate(:per_page => 25, :page => page_number)
+    @items = BatchUpload.order(created_at: :asc, id: :asc)
+    @items = @items.where(user_id: user_id) if user_id.present?
+    @items = @items.paginate(per_page: 25, page: page_number)
   end
 
   def update
@@ -37,14 +37,14 @@ class BatchController < ApplicationController
     if params[:do] == "pause"
       conds.push("status = 'pending'")
       BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
-        item.update(:status => "paused")
+        item.update(status: "paused")
         count += 1
       end
       flash[:notice] = "Paused %i uploads." % count
     elsif params[:do] == "unpause"
       conds.push("status = 'paused'")
       BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
-        item.update(:status => "pending")
+        item.update(status: "pending")
         count += 1
       end
       flash[:notice] = "Resumed %i uploads." % count
@@ -52,7 +52,7 @@ class BatchController < ApplicationController
       conds.push("status = 'error'")
 
       BatchUpload.where(conds.join(" AND "), *cond_params).find_each do |item|
-        item.update(:status => "pending")
+        item.update(status: "pending")
         count += 1
       end
 
@@ -75,7 +75,7 @@ class BatchController < ApplicationController
       flash[:notice] = "Cancelled %i uploads." % count
     end
 
-    redirect_to :action => "index"
+    redirect_to action: "index"
   end
 
   def create
@@ -110,18 +110,18 @@ class BatchController < ApplicationController
       if params[:post][:rating]
         # Add this to the beginning, so any rating: metatags in the tags will
         # override it.
-        tags = ["rating:" + params[:post][:rating]] + tags
+        tags = [ "rating:" + params[:post][:rating] ] + tags
       end
       tags.push("hold")
       tags = tags.uniq.join(" ")
 
-      b = BatchUpload.find_or_initialize_by(:user_id => @current_user.id, :url => url)
+      b = BatchUpload.find_or_initialize_by(user_id: @current_user.id, url: url)
       b.tags = tags
       b.ip = request.remote_ip
       b.save!
     end
 
     flash[:notice] = "Queued %i files" % params[:files].count
-    redirect_to :action => "index"
+    redirect_to action: "index"
   end
 end

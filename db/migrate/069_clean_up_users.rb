@@ -7,7 +7,7 @@ class CleanUpUsers < ActiveRecord::Migration[5.1]
 
   def self.down
     execute "ALTER TABLE users ADD COLUMN ip_addr inet NOT NULL"
-    add_column :users, :tag_blacklist, :text, :null => false, :default => ""
-    add_column :users, :login_count, :integer, :null => false, :default => 0
+    add_column :users, :tag_blacklist, :text, null: false, default: ""
+    add_column :users, :login_count, :integer, null: false, default: 0
   end
 end

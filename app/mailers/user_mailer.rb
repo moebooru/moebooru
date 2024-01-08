@@ -5,7 +5,7 @@ end
 
 class UserMailer < ActionMailer::Base
   helper :application
-  default :from => CONFIG["email_from"]
+  default from: CONFIG["email_from"]
 
   # def confirmation_email(user)
   #   recipients UserMailer.normalize_address(user.email)
@@ -20,7 +20,7 @@ class UserMailer < ActionMailer::Base
     subject = "#{CONFIG["app_name"]} - Password Reset"
     @user = user
     @password = password
-    mail :to => recipients, :subject => subject
+    mail to: recipients, subject: subject
   end
 
   def dmail(recipient, sender, msg_title, msg_body)
@@ -29,7 +29,7 @@ class UserMailer < ActionMailer::Base
     @body = msg_body
     @sender = sender
     @subject = msg_title
-    mail :to => recipients, :subject => subject
+    mail to: recipients, subject: subject
   end
 
   def self.normalize_address(address)

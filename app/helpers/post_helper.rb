@@ -5,7 +5,7 @@ module PostHelper
     elsif source[/^http/]
       text = source
       text = text[7, 20] + "..." if abbreviate
-      link_to text, source, :rel => "nofollow"
+      link_to text, source, rel: "nofollow"
     else
       h(source)
     end
@@ -18,7 +18,7 @@ module PostHelper
       "type"  => tag_options[:type] || "application/#{type}+xml",
       "title" => tag_options[:title] || type.to_s.upcase,
       "id"    => tag_options[:id],
-      "href"  => url_options.is_a?(Hash) ? url_for(url_options.merge(:only_path => false)) : url_options
+      "href"  => url_options.is_a?(Hash) ? url_for(url_options.merge(only_path: false)) : url_options
     )
   end
 
@@ -45,18 +45,18 @@ module PostHelper
       # Show the thumbnail at its actual resolution, and crop it with northern orientation
       # to a smaller size.
       width, height = post.raw_preview_dimensions
-      block_size = [200, 200]
-      visible_width = [block_size[0], width].min
+      block_size = [ 200, 200 ]
+      visible_width = [ block_size[0], width ].min
       crop_left = (width - visible_width) / 2
     elsif options[:display] == :large
       width, height = post.raw_preview_dimensions
-      block_size = [width, height]
+      block_size = [ width, height ]
       crop_left = 0
     else
       # Scale it down to a smaller size.  This is exactly one half the actual size, to improve
       # resizing quality.
       width, height = post.preview_dimensions
-      block_size = [150, 150]
+      block_size = [ 150, 150 ]
       crop_left = 0
     end
 

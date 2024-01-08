@@ -2,10 +2,10 @@ class Dmail < ApplicationRecord
   validates_presence_of :to_id
   validates_presence_of :from_id
   validates :title, presence: true, length: { maximum: 100 }
-  validates_format_of :body, :with => /\S/
+  validates_format_of :body, with: /\S/
 
-  belongs_to :to, :class_name => "User", :foreign_key => "to_id"
-  belongs_to :from, :class_name => "User", :foreign_key => "from_id"
+  belongs_to :to, class_name: "User", foreign_key: "to_id"
+  belongs_to :from, class_name: "User", foreign_key: "from_id"
 
   after_create :update_recipient
   after_create :send_dmail
@@ -19,7 +19,7 @@ class Dmail < ApplicationRecord
   def mark_as_read!(current_user)
     update_attribute(:has_seen, true)
 
-    unless Dmail.exists?(["to_id = ? AND has_seen = false", current_user.id])
+    unless Dmail.exists?([ "to_id = ? AND has_seen = false", current_user.id ])
       current_user.update_attribute(:has_mail, false)
     end
   end
@@ -51,9 +51,9 @@ class Dmail < ApplicationRecord
 
   def title
     if parent_id
-      return "Re: " + self[:title]
+      "Re: " + self[:title]
     else
-      return self[:title]
+      self[:title]
     end
   end
 end

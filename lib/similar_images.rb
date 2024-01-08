@@ -23,11 +23,11 @@ module SimilarImages
     services.each do |service|
       server = CONFIG["image_service_list"][service]
       unless server
-        errors[""] = { :services => [service], :message => "%s is an unknown service" % service }
+        errors[""] = { services: [ service ], message: "%s is an unknown service" % service }
         next
       end
       services_by_server[server] = [] unless services_by_server[server]
-      services_by_server[server] += [service]
+      services_by_server[server] += [ service ]
     end
 
     # If the source is a local post, read the preview and send it with the request.
@@ -52,23 +52,23 @@ module SimilarImages
 
         params = []
         if search_url
-          params += [{
-            :name => "url",
-            :data => search_url
-          }]
+          params += [ {
+            name: "url",
+            data: search_url
+          } ]
         else
-          params += [{
-            :name => "file",
-            :binary => true,
-            :data => source_file,
-            :filename => File.basename(source_filename)
-          }]
+          params += [ {
+            name: "file",
+            binary: true,
+            data: source_file,
+            filename: File.basename(source_filename)
+          } ]
         end
 
         services_list.each do |s|
-          params += [{ :name => "service[]", :data => s }]
+          params += [ { name: "service[]", data: s } ]
         end
-        params += [{ :name => "forcegray", :data => "on" }] if options[:forcegray] == "1"
+        params += [ { name: "forcegray", data: "on" } ] if options[:forcegray] == "1"
 
         begin
           Timeout.timeout(10) do
@@ -91,9 +91,9 @@ module SimilarImages
             end
           end
         rescue SocketError, SystemCallError => e
-          errors[server] = { :message => e }
+          errors[server] = { message: e }
         rescue Timeout::Error
-          errors[server] = { :message => "Timed out" }
+          errors[server] = { message: "Timed out" }
         end
       }
     end
@@ -107,17 +107,17 @@ module SimilarImages
       doc = begin
         Nokogiri::XML xml.to_valid_utf8
       rescue
-        errors[server] = { :message => "parse error" }
+        errors[server] = { message: "parse error" }
         next
       end
 
       unless doc.root
-        errors[server] = { :message => "invalid response" }
+        errors[server] = { message: "invalid response" }
         next
       end
 
       if doc.root.name == "error"
-        errors[server] = { :message => doc.root[:message] }
+        errors[server] = { message: doc.root[:message] }
         next
       end
 
@@ -132,9 +132,9 @@ module SimilarImages
           md5 = element[:md5]
 
           if service == local_service
-            post = Post.find_by(:id => id)
+            post = Post.find_by(id: id)
             unless post.nil? || post == options[:source]
-              posts += [post]
+              posts += [ post ]
               similarity[post] = element[:sim].to_f
             end
           elsif service
@@ -156,7 +156,7 @@ module SimilarImages
             post.height = element[:height].to_i
             post.tags = image[:tags] || ""
             post.rating = image[:rating] || "s"
-            posts_external += [post]
+            posts_external += [ post ]
 
             similarity[post] = element[:sim].to_f
           end
@@ -172,7 +172,7 @@ module SimilarImages
         error[:services] = services_by_server[server] rescue server
       end
     end
-    ret = { :posts => posts, :posts_external => posts_external, :similarity => similarity, :services => services, :errors => errors }
+    ret = { posts: posts, posts_external: posts_external, similarity: similarity, services: services, errors: errors }
     if options[:type] == :post
       ret[:source] = options[:source]
       ret[:similarity][options[:source]] = "Original"
@@ -216,7 +216,7 @@ module SimilarImages
   # the search ID which can be passed to find_saved_search.
   def save_search
     begin
-      FileUtils.mkdir_p(SEARCH_CACHE_DIR, :mode => 0775)
+      FileUtils.mkdir_p(SEARCH_CACHE_DIR, mode: 0775)
 
       tempfile_path = "#{SEARCH_CACHE_DIR}/#{SecureRandom.random_number(2**32)}.upload"
       File.open(tempfile_path, "wb") { |f| yield f }
@@ -230,7 +230,7 @@ module SimilarImages
       ret = {}
       ret[:original_width] = imgsize[:width]
       ret[:original_height] = imgsize[:height]
-      size = Moebooru::Resizer.reduce_to({ :width => ret[:original_width], :height => ret[:original_height] }, :width => 150, :height => 150)
+      size = Moebooru::Resizer.reduce_to({ width: ret[:original_width], height: ret[:original_height] }, width: 150, height: 150)
       ext = imgsize[:type].gsub(/jpeg/i, "jpg").downcase
 
       tempfile_path_resize = "#{tempfile_path}.2"

@@ -46,7 +46,7 @@ module ActionView
         onclick = "#{"#{html_options[:onclick]}; " if html_options[:onclick]}#{function}; return false;"
         href = html_options[:href] || "#"
 
-        content_tag(:a, name, html_options.merge(:href => href, :onclick => onclick))
+        content_tag(:a, name, html_options.merge(href: href, onclick: onclick))
       end
 
       # Add the need-signup class if signing up would allow a logged-out user to
@@ -71,7 +71,7 @@ module ActionView
 
         onclick = "#{"#{html_options[:onclick]}; " if html_options[:onclick]}#{function};"
 
-        tag(:input, html_options.merge(:type => "button", :value => name, :onclick => onclick))
+        tag(:input, html_options.merge(type: "button", value: name, onclick: onclick))
       end
 
       # Add the need-signup class if signing up would allow a logged-out user to

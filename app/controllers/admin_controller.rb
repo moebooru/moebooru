@@ -10,14 +10,14 @@ class AdminController < ApplicationController
       @user = User.find_by_name(params[:user][:name])
       if @user.nil?
         flash[:notice] = "User not found"
-        redirect_to :action => "edit_user"
+        redirect_to action: "edit_user"
         return
       end
       @user.level = params[:user][:level]
 
       if @user.save
         flash[:notice] = "User updated"
-        redirect_to :action => "edit_user"
+        redirect_to action: "edit_user"
       else
         render_error(@user)
       end
@@ -37,13 +37,13 @@ class AdminController < ApplicationController
             UserMailer.new_password(@user, new_password).deliver_now
           rescue Net::SMTPSyntaxError, Net::SMTPFatalError
             respond_to_success("Specified user's email address was invalid",
-                               { :action => :reset_password }, :api => { :result => "invalid-email" })
-            return
+                               { action: :reset_password }, api: { result: "invalid-email" })
+            nil
           end
         end
       else
         flash[:notice] = "That account does not exist"
-        redirect_to :action => "reset_password"
+        redirect_to action: "reset_password"
       end
     else
       @user = User.new
@@ -52,10 +52,10 @@ class AdminController < ApplicationController
 
   def cache_stats
     keys = []
-    [0, 20, 30, 35, 40, 50].each do |level|
+    [ 0, 20, 30, 35, 40, 50 ].each do |level|
       keys << "stats/count/level=#{level}"
 
-      [0, 1, 2, 3, 4, 5].each do |tag_count|
+      [ 0, 1, 2, 3, 4, 5 ].each do |tag_count|
         keys << "stats/tags/level=#{level}&tags=#{tag_count}"
       end
 
@@ -69,10 +69,10 @@ class AdminController < ApplicationController
 
   def reset_post_stats
     keys = []
-    [0, 20, 30, 35, 40].each do |level|
+    [ 0, 20, 30, 35, 40 ].each do |level|
       keys << "stats/count/level=#{level}"
 
-      [0, 1, 2, 3, 4, 5].each do |tag_count|
+      [ 0, 1, 2, 3, 4, 5 ].each do |tag_count|
         keys << "stats/tags/level=#{level}&tags=#{tag_count}"
       end
 
@@ -85,6 +85,6 @@ class AdminController < ApplicationController
       Rails.cache.write(key, 0)
     end
 
-    redirect_to :action => "cache_stats"
+    redirect_to action: "cache_stats"
   end
 end

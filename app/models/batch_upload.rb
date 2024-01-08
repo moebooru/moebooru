@@ -22,11 +22,11 @@ class BatchUpload < ApplicationRecord
     self.active = true
     self.save!
 
-    @post = Post.create(:source => url, :tags => tags, :updater_user_id => user_id, :updater_ip_addr => ip, :user_id => user_id, :ip_addr => ip, :status => "active")
+    @post = Post.create(source: url, tags: tags, updater_user_id: user_id, updater_ip_addr: ip, user_id: user_id, ip_addr: ip, status: "active")
 
     if @post.errors.empty?
       if CONFIG["dupe_check_on_upload"] && @post.image? && @post.parent_id.nil?
-        options = { :services => SimilarImages.get_services("local"), :type => :post, :source => @post }
+        options = { services: SimilarImages.get_services("local"), type: :post, source: @post }
 
         res = SimilarImages.similar_images(options)
         unless res[:posts].empty?
@@ -35,14 +35,14 @@ class BatchUpload < ApplicationRecord
         end
       end
 
-      self.data = { :success => true, :post_id => @post.id }
+      self.data = { success: true, post_id: @post.id }
     elsif @post.errors[:md5].any?
       p @post.errors
       p = Post.find_by_md5(@post.md5)
-      self.data = { :success => false, :error => "Post already exists", :post_id => p.id }
+      self.data = { success: false, error: "Post already exists", post_id: p.id }
     else
       p @post.errors
-      self.data = { :success => false, :error => @post.errors.full_messages.join(", ") }
+      self.data = { success: false, error: @post.errors.full_messages.join(", ") }
     end
 
     self.active = false

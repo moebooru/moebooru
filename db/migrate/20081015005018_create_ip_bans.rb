@@ -10,7 +10,7 @@ class CreateIpBans < ActiveRecord::Migration[5.1]
         banned_by integer NOT NULL
       )
     EOS
-    add_foreign_key "ip_bans", "banned_by", "users", "id", :on_delete => :cascade
+    add_foreign_key "ip_bans", "banned_by", "users", "id", on_delete: :cascade
     add_index :ip_bans, :ip_addr
   end
 

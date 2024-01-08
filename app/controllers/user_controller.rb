@@ -1,10 +1,10 @@
 class UserController < ApplicationController
   layout "default"
-  before_action :blocked_only, :only => [:authenticate, :update, :edit, :modify_blacklist]
-  before_action :janitor_only, :only => [:invites]
-  before_action :mod_only, :only => [:block, :unblock, :show_blocked_users]
-  before_action :post_member_only, :only => [:set_avatar]
-  before_action :no_anonymous, :only => [:change_password, :change_email, :show]
+  before_action :blocked_only, only: [ :authenticate, :update, :edit, :modify_blacklist ]
+  before_action :janitor_only, only: [ :invites ]
+  before_action :mod_only, only: [ :block, :unblock, :show_blocked_users ]
+  before_action :post_member_only, only: [ :set_avatar ]
+  before_action :no_anonymous, only: [ :change_password, :change_email, :show ]
   helper :post, :tag_subscription
   helper :avatar
 
@@ -19,9 +19,9 @@ class UserController < ApplicationController
 
   def autocomplete_name
     keyword = params[:term].to_s
-    @users = User.where(["name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like]).order('LENGTH(name)', :name).limit(20).pluck(:name) if keyword.length >= 2
+    @users = User.where([ "name ILIKE ?", "*#{keyword}*".to_escaped_for_sql_like ]).order("LENGTH(name)", :name).limit(20).pluck(:name) if keyword.length >= 2
     respond_to do |format|
-      format.json { render :json => (@users || []) }
+      format.json { render json: (@users || []) }
     end
   end
 
@@ -41,18 +41,18 @@ class UserController < ApplicationController
     else
       flash[:notice] = "Failed removing avatar"
     end
-    redirect_to :action => :show, :id => params[:id]
+    redirect_to action: :show, id: params[:id]
   end
 
   def change_password
     @title = "Change Password"
-    respond_to { |format| format.html { render :layout => "settings" } }
+    respond_to { |format| format.html { render layout: "settings" } }
   end
 
   def change_email
     @title = "Change Email"
     @current_user.current_email = @current_user.email
-    respond_to { |format| format.html { render :layout => "settings" } }
+    respond_to { |format| format.html { render layout: "settings" } }
   end
 
   def show
@@ -91,9 +91,9 @@ class UserController < ApplicationController
         end
       end
 
-      redirect_to :action => "invites"
+      redirect_to action: "invites"
     else
-      @invited_users = User.where(:invited_by => @current_user.id).order('name_normalized')
+      @invited_users = User.where(invited_by: @current_user.id).order("name_normalized")
     end
   end
 
@@ -101,18 +101,18 @@ class UserController < ApplicationController
   end
 
   def index
-    @users = User.with_params(params).paginate(:per_page => 20, :page => page_number)
+    @users = User.with_params(params).paginate(per_page: 20, page: page_number)
     respond_to_list("users")
   end
 
   def authenticate
     save_cookies(@current_user)
 
-    if params[:url].is_a?(String) && params[:url][0] == '/'
+    if params[:url].is_a?(String) && params[:url][0] == "/"
       path = params[:url]
     end
 
-    path ||= { :action => "home" }
+    path ||= { action: "home" }
 
     respond_to_success("You are now logged in", path)
   end
@@ -120,11 +120,11 @@ class UserController < ApplicationController
   # TODO: merge with .authenticate
   def check
     user = User.find_by_name(params[:username])
-    ret = { :exists => false }
+    ret = { exists: false }
     ret[:name] = params[:username]
 
     unless user
-      respond_to_success("User does not exist", {}, :api => { :response => "unknown-user" }.merge(ret))
+      respond_to_success("User does not exist", {}, api: { response: "unknown-user" }.merge(ret))
       return
     end
 
@@ -137,14 +137,14 @@ class UserController < ApplicationController
 
     user = User.authenticate(params[:username], params[:password] || "")
     unless user
-      respond_to_success("Wrong password", {}, :api => { :response => "wrong-password" }.merge(ret))
+      respond_to_success("Wrong password", {}, api: { response: "wrong-password" }.merge(ret))
       return
     end
 
     save_cookies(user)
     ret[:pass_hash] = user.password_hash
     ret[:user_info] = user.user_info_cookie
-    respond_to_success("Successful", {}, :api => { :response => "success" }.merge(ret))
+    respond_to_success("Successful", {}, api: { response: "success" }.merge(ret))
   end
 
   def login
@@ -157,16 +157,16 @@ class UserController < ApplicationController
     if user.errors.empty?
       save_cookies(user)
 
-      ret = { :exists => false }
+      ret = { exists: false }
       ret[:name] = user.name
       ret[:id] = user.id
       ret[:pass_hash] = user.password_hash
       ret[:user_info] = user.user_info_cookie
 
-      respond_to_success("New account created", { :action => "home" }, :api => { :response => "success" }.merge(ret))
+      respond_to_success("New account created", { action: "home" }, api: { response: "success" }.merge(ret))
     else
       error = user.errors.full_messages.join(", ")
-      respond_to_success("Error: " + error, { :action => "signup" }, :api => { :response => "error", :errors => user.errors.full_messages })
+      respond_to_success("Error: " + error, { action: "signup" }, api: { response: "error", errors: user.errors.full_messages })
     end
   end
 
@@ -177,7 +177,7 @@ class UserController < ApplicationController
   def logout
     reset_session
 
-    flash[:notice] = 'You are now logged out'
+    flash[:notice] = "You are now logged out"
 
     respond_to do |format|
       format.js
@@ -186,17 +186,17 @@ class UserController < ApplicationController
 
   def update
     if params[:commit] == "Cancel"
-      redirect_to :action => "home"
+      redirect_to action: "home"
       return
     end
 
     if @current_user.update(user_params_for_update)
-      respond_to_success("Account settings saved", :action => "edit")
+      respond_to_success("Account settings saved", action: "edit")
     else
       if params[:render] && params[:render][:view]
         render get_view_name_for_edit(params[:render][:view])
       else
-        respond_to_error(@current_user, :action => "edit")
+        respond_to_error(@current_user, action: "edit")
       end
     end
   end
@@ -212,10 +212,10 @@ class UserController < ApplicationController
 
     tags -= removed_tags
 
-    if @current_user.update(:blacklisted_tags => tags.join("\n"))
-      respond_to_success("Tag blacklist updated", { :action => "home" }, :api => { :result => @current_user.blacklisted_tags_array })
+    if @current_user.update(blacklisted_tags: tags.join("\n"))
+      respond_to_success("Tag blacklist updated", { action: "home" }, api: { result: @current_user.blacklisted_tags_array })
     else
-      respond_to_error(@current_user, :action => "edit")
+      respond_to_error(@current_user, action: "edit")
     end
   end
 
@@ -224,7 +224,7 @@ class UserController < ApplicationController
 
   def edit
     @user = @current_user
-    render :layout => "settings"
+    render layout: "settings"
   end
 
   def reset_password
@@ -232,19 +232,19 @@ class UserController < ApplicationController
       @user = User.find_by_name(params[:user][:name])
 
       if @user.nil?
-        respond_to_error("That account does not exist", { :action => "reset_password" }, :api => { :result => "unknown-user" })
+        respond_to_error("That account does not exist", { action: "reset_password" }, api: { result: "unknown-user" })
         return
       end
 
       if @user.email.blank?
         respond_to_error("You never supplied an email address, therefore you cannot have your password automatically reset",
-                         { :action => "login" }, :api => { :result => "no-email" })
+                         { action: "login" }, api: { result: "no-email" })
         return
       end
 
       if @user.email != params[:user][:email]
         respond_to_error("That is not the email address you supplied",
-                         { :action => "login" }, :api => { :result => "wrong-email" })
+                         { action: "login" }, api: { result: "wrong-email" })
         return
       end
 
@@ -254,11 +254,11 @@ class UserController < ApplicationController
           new_password = @user.reset_password
           UserMailer.new_password(@user, new_password).deliver_now
           respond_to_success("Password reset. Check your email in a few minutes.",
-                             { :action => "login" }, :api => { :result => "success" })
+                             { action: "login" }, api: { result: "success" })
         end
       rescue Net::SMTPSyntaxError, Net::SMTPFatalError
         respond_to_success("Your email address was invalid",
-                           { :action => "login" }, :api => { :result => "invalid-email" })
+                           { action: "login" }, api: { result: "invalid-email" })
       end
     else
       @user = User.new
@@ -272,23 +272,23 @@ class UserController < ApplicationController
     if request.post?
       if @user.is_mod_or_higher?
         flash[:notice] = "You can not ban other moderators or administrators"
-        redirect_to :action => "block"
+        redirect_to action: "block"
         return
       end
 
-      Ban.create(ban_params.merge(:banned_by => @current_user.id, :user_id => params[:id]))
-      redirect_to :action => "show_blocked_users"
+      Ban.create(ban_params.merge(banned_by: @current_user.id, user_id: params[:id]))
+      redirect_to action: "show_blocked_users"
     else
-      @ban = Ban.new(:user_id => @user.id, :duration => "1")
+      @ban = Ban.new(user_id: @user.id, duration: "1")
     end
   end
 
   def unblock
     params[:user].keys.each do |user_id|
-      Ban.where(:user_id => user_id).destroy_all
+      Ban.where(user_id: user_id).destroy_all
     end
 
-    redirect_to :action => "show_blocked_users"
+    redirect_to action: "show_blocked_users"
   end
 
   def show_blocked_users
@@ -303,35 +303,35 @@ class UserController < ApplicationController
 
         if user.nil?
           flash[:notice] = "No account exists with that email"
-          redirect_to :action => "home"
+          redirect_to action: "home"
           return
         end
 
         if user.is_blocked_or_higher?
           flash[:notice] = "Your account is already activated"
-          redirect_to :action => "home"
+          redirect_to action: "home"
           return
         end
 
         UserMailer.confirmation_email(user).deliver_now
         flash[:notice] = "Confirmation email sent"
-        redirect_to :action => "home"
+        redirect_to action: "home"
       end
     end
 
     def activate_user
       flash[:notice] = "Invalid confirmation code"
 
-      users = User.where(:level => CONFIG["user_levels"]["Unactivated"])
+      users = User.where(level: CONFIG["user_levels"]["Unactivated"])
       users.each do |user|
         if User.confirmation_hash(user.name) == params["hash"]
-          user.update(:level => CONFIG["starting_level"])
+          user.update(level: CONFIG["starting_level"])
           flash[:notice] = "Account has been activated"
           break
         end
       end
 
-      redirect_to :action => "home"
+      redirect_to action: "home"
     end
   end
 
@@ -339,7 +339,7 @@ class UserController < ApplicationController
     @user = @current_user
     if params[:user_id]
       @user = User.find(params[:user_id])
-      respond_to_error("Not found", :action => "index", :status => 404) unless @user
+      respond_to_error("Not found", action: "index", status: 404) unless @user
     end
 
     if !@user.is_anonymous? && !@current_user.has_permission?(@user, :id)
@@ -349,9 +349,9 @@ class UserController < ApplicationController
 
     if request.post?
       if @user.set_avatar(params)
-        redirect_to :action => "show", :id => @user.id
+        redirect_to action: "show", id: @user.id
       else
-        respond_to_error(@user, :action => "home")
+        respond_to_error(@user, action: "home")
       end
     end
 
@@ -371,7 +371,7 @@ class UserController < ApplicationController
       f.write(report.to_s + "\n\n\n-------------------------------------------\n\n\n")
     end
 
-    render :json => { :success => true }
+    render json: { success: true }
   end
 
   private

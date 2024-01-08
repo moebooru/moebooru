@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 class AnonymousUser
   def id
     0

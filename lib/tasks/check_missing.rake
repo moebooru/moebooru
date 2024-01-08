@@ -1,8 +1,8 @@
 desc "find if there's any posts missing on file system"
-task :find_posts => :environment do
+task find_posts: :environment do
   images_path = "#{Rails.root}/public/data/image/"
 
-  Post.find(:all, :conditions => ["status != 'deleted'"], :order => "id DESC").each do |post|
+  Post.find(:all, conditions: [ "status != 'deleted'" ], order: "id DESC").each do |post|
     md5 = post.md5
     ext = post.file_ext
     path = "#{images_path}/#{md5[0..1]}/#{md5[2..3]}"

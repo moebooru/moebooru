@@ -28,7 +28,7 @@ class ActiveSupport::TestCase
   end
 
   def reset_thread_variables
-    %w(danbooru-user danbooru-user_id versioning_history).each do |x|
+    %w[danbooru-user danbooru-user_id versioning_history].each do |x|
       Thread.current[x] = nil
     end
   end

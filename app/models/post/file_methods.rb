@@ -3,19 +3,19 @@
 # to be called in a specific order, they've been bundled into one module.
 module Post::FileMethods
   def self.included(m)
-    m.before_validation :download_source, :on => :create
-    m.before_validation :ensure_tempfile_exists, :on => :create
-    m.before_validation :determine_content_type, :on => :create
-    m.before_validation :validate_content_type, :on => :create
-    m.before_validation :strip_exif, :on => :create
-    m.before_validation :generate_hash, :on => :create
-    m.before_validation :set_image_dimensions, :on => :create
-    m.before_validation :set_image_status, :on => :create
-    m.before_validation :check_pending_count, :on => :create
-    m.before_validation :generate_sample, :on => :create
-    m.before_validation :generate_jpeg, :on => :create
-    m.before_validation :generate_preview, :on => :create
-    m.before_validation :move_file, :on => :create
+    m.before_validation :download_source, on: :create
+    m.before_validation :ensure_tempfile_exists, on: :create
+    m.before_validation :determine_content_type, on: :create
+    m.before_validation :validate_content_type, on: :create
+    m.before_validation :strip_exif, on: :create
+    m.before_validation :generate_hash, on: :create
+    m.before_validation :set_image_dimensions, on: :create
+    m.before_validation :set_image_status, on: :create
+    m.before_validation :check_pending_count, on: :create
+    m.before_validation :generate_sample, on: :create
+    m.before_validation :generate_jpeg, on: :create
+    m.before_validation :generate_preview, on: :create
+    m.before_validation :move_file, on: :create
   end
   include Moebooru::TempfilePrefix
 
@@ -24,7 +24,7 @@ module Post::FileMethods
       # FIXME: awesome way to strip EXIF.
       #        This will silently fail on systems without jhead in their PATH
       #        and may cause confusion for some bored ones.
-      system('jhead', '-dc', '-di', '-dx', '-dt', '-q', tempfile_path)
+      system("jhead", "-dc", "-di", "-dx", "-dt", "-q", tempfile_path)
     end
     true
   end
@@ -37,7 +37,7 @@ module Post::FileMethods
   end
 
   def validate_content_type
-    unless %w(jpg png gif swf).include?(file_ext.downcase)
+    unless %w[jpg png gif swf].include?(file_ext.downcase)
       errors.add(:file, "is an invalid content type: " + file_ext.downcase)
       throw :abort
     end
@@ -114,7 +114,7 @@ module Post::FileMethods
       return false
     end
 
-    hashes = Moebooru::Hasher.compute(path, [:crc32, :md5])
+    hashes = Moebooru::Hasher.compute(path, [ :crc32, :md5 ])
 
     self.md5 = hashes[:md5]
     self.crc32 = hashes[:crc32]
@@ -136,12 +136,12 @@ module Post::FileMethods
       throw :abort
     end
 
-    if Post.exists? :md5 => md5
+    if Post.exists? md5: md5
       delete_tempfile
       errors.add "md5", "already exists"
       throw :abort
     else
-      return true
+      true
     end
   end
 
@@ -170,7 +170,7 @@ module Post::FileMethods
     # save us to the database; we need to only move the new files in if we're going to be
     # saved.  This is normally handled by move_file.
     if File.exist?(temp_path)
-      FileUtils.mkdir_p(File.dirname(dest_path), :mode => 0775)
+      FileUtils.mkdir_p(File.dirname(dest_path), mode: 0775)
       FileUtils.mv(temp_path, dest_path)
       FileUtils.chmod(0775, dest_path)
     end
@@ -181,7 +181,7 @@ module Post::FileMethods
   def generate_preview
     return true unless image? && width && height
 
-    size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 300, :height => 300)
+    size = Moebooru::Resizer.reduce_to({ width: width, height: height }, width: 300, height: 300)
 
     # Generate the preview from the new sample if we have one to save CPU, otherwise from the image.
     if File.exist?(tempfile_sample_path)
@@ -231,11 +231,11 @@ module Post::FileMethods
         self.source = ""
       end
 
-      return true
+      true
     rescue SocketError, URI::Error, Timeout::Error, SystemCallError => x
       delete_tempfile
       errors.add "source", "couldn't be opened: #{x}"
-      return false
+      false
     end
   end
 
@@ -305,7 +305,7 @@ module Post::FileMethods
     return if user.nil? # implies anonymous upload
     return if user.is_contributor_or_higher?
 
-    pending_posts = Post.where(:user_id => user_id, :status => "pending").count
+    pending_posts = Post.where(user_id: user_id, status: "pending").count
     return if pending_posts < CONFIG["max_pending_images"]
 
     errors.add(:base, "You have too many posts pending moderation")
@@ -314,7 +314,7 @@ module Post::FileMethods
 
   # Returns true if the post is an image format that GD can handle.
   def image?
-    %w(jpg jpeg gif png).include?(file_ext.downcase)
+    %w[jpg jpeg gif png].include?(file_ext.downcase)
   end
 
   # Returns true if the post is a Flash movie.
@@ -325,46 +325,46 @@ module Post::FileMethods
   def find_ext(file_path)
     ext = File.extname(file_path)
     if ext.blank?
-      return "txt"
+      "txt"
     else
       ext = ext[1..-1].downcase
       ext = "jpg" if ext == "jpeg"
-      return ext
+      ext
     end
   end
 
   def content_type_to_file_ext(content_type)
     case content_type.chomp
     when "image/jpeg"
-      return "jpg"
+      "jpg"
 
     when "image/gif"
-      return "gif"
+      "gif"
 
     when "image/png"
-      return "png"
+      "png"
 
     when "application/x-shockwave-flash"
-      return "swf"
+      "swf"
 
     end
   end
 
   def raw_preview_dimensions
     if image?
-      dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 300, :height => 300)
-      return [dim[:width], dim[:height]]
+      dim = Moebooru::Resizer.reduce_to({ width: width, height: height }, width: 300, height: 300)
+      [ dim[:width], dim[:height] ]
     else
-      return [300, 300]
+      [ 300, 300 ]
     end
   end
 
   def preview_dimensions
     if image?
-      dim = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, :width => 150, :height => 150)
-      return [dim[:width], dim[:height]]
+      dim = Moebooru::Resizer.reduce_to({ width: width, height: height }, width: 150, height: 150)
+      [ dim[:width], dim[:height] ]
     else
-      return [150, 150]
+      [ 150, 150 ]
     end
   end
 
@@ -372,7 +372,7 @@ module Post::FileMethods
     return true unless image?
     return true unless CONFIG["image_samples"]
     return true unless width && height
-    return true if (file_ext.downcase == "gif")
+    return true if file_ext.downcase == "gif"
 
     # Always create samples for PNGs.
     if file_ext.downcase == "png"
@@ -381,11 +381,11 @@ module Post::FileMethods
       ratio = CONFIG["sample_ratio"]
     end
 
-    size = { :width => width, :height => height }
+    size = { width: width, height: height }
     unless CONFIG["sample_width"].nil?
-      size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_width"], :height => CONFIG["sample_height"] }, ratio)
+      size = Moebooru::Resizer.reduce_to(size, { width: CONFIG["sample_width"], height: CONFIG["sample_height"] }, ratio)
     end
-    size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_max"], :height => CONFIG["sample_min"] }, ratio, false, true)
+    size = Moebooru::Resizer.reduce_to(size, { width: CONFIG["sample_max"], height: CONFIG["sample_min"] }, ratio, false, true)
 
     # We can generate the sample image during upload or offline.  Use tempfile_path
     # if it exists, otherwise use file_path.
@@ -442,11 +442,11 @@ module Post::FileMethods
 
   def get_file_image(_user = nil)
     {
-      :url => file_url,
-      :ext => file_ext,
-      :size => file_size,
-      :width => width,
-      :height => height
+      url: file_url,
+      ext: file_ext,
+      size: file_size,
+      width: width,
+      height: height
     }
   end
 
@@ -456,11 +456,11 @@ module Post::FileMethods
     end
 
     {
-      :url => store_jpeg_url,
-      :size => jpeg_size,
-      :ext => "jpg",
-      :width => jpeg_width,
-      :height => jpeg_height
+      url: store_jpeg_url,
+      size: jpeg_size,
+      ext: "jpg",
+      width: jpeg_width,
+      height: jpeg_height
     }
   end
 
@@ -470,11 +470,11 @@ module Post::FileMethods
     end
 
     {
-      :url => store_sample_url,
-      :size => sample_size,
-      :ext => "jpg",
-      :width => sample_width,
-      :height => sample_height
+      url: store_sample_url,
+      size: sample_size,
+      ext: "jpg",
+      width: sample_width,
+      height: sample_height
     }
   end
 
@@ -498,7 +498,7 @@ module Post::FileMethods
     return true unless width && height
     # Only generate JPEGs for PNGs.  Don't do it for files that are already JPEGs; we'll just add
     # artifacts and/or make the file bigger.  Don't do it for GIFs; they're usually animated.
-    return true if (file_ext.downcase != "png")
+    return true if file_ext.downcase != "png"
 
     # We can generate the image during upload or offline.  Use tempfile_path
     # if it exists, otherwise use file_path.
@@ -514,7 +514,7 @@ module Post::FileMethods
       return true
     end
 
-    size = Moebooru::Resizer.reduce_to({ :width => width, :height => height }, { :width => CONFIG["jpeg_width"], :height => CONFIG["jpeg_height"] }, CONFIG["jpeg_ratio"])
+    size = Moebooru::Resizer.reduce_to({ width: width, height: height }, { width: CONFIG["jpeg_width"], height: CONFIG["jpeg_height"] }, CONFIG["jpeg_ratio"])
     begin
       Moebooru::Resizer.resize(file_ext, path, tempfile_jpeg_path, size, CONFIG["jpeg_quality"])
     rescue => x

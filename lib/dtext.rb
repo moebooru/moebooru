@@ -4,7 +4,7 @@ module DText
   def parse(str)
     return "" unless str
 
-    state = ["newline"]
+    state = [ "newline" ]
     result = ""
 
     # Normalize newlines.

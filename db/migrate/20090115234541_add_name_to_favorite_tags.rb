@@ -1,7 +1,7 @@
 class AddNameToFavoriteTags < ActiveRecord::Migration[5.1]
   def self.up
-    add_foreign_key :favorite_tags, :user_id, :users, :id, :on_delete => :cascade
-    add_column :favorite_tags, :name, :string, :null => false, :default => "General"
+    add_foreign_key :favorite_tags, :user_id, :users, :id, on_delete: :cascade
+    add_column :favorite_tags, :name, :string, null: false, default: "General"
     add_index :favorite_tags, :name
   end
 

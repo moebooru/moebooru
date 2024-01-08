@@ -1,9 +1,9 @@
 class AdvertisementsController < ApplicationController
   layout "default"
-  before_action :admin_only, :except => :redirect
+  before_action :admin_only, except: :redirect
 
   def index
-    @ads = Advertisement.paginate(:page => page_number, :per_page => 100)
+    @ads = Advertisement.paginate(page: page_number, per_page: 100)
   end
 
   def show
@@ -42,10 +42,10 @@ class AdvertisementsController < ApplicationController
     if params[:advertisement_ids]
       ids = params[:advertisement_ids].map(&:to_i)
     else
-      return redirect_to advertisements_path, :notice => "No advertisement selected"
+      return redirect_to advertisements_path, notice: "No advertisement selected"
     end
     if params[:do_delete]
-      Advertisement.destroy_all :id => ids
+      Advertisement.destroy_all id: ids
     elsif params[:do_reset_hit_count]
       Advertisement.reset_hit_count ids
     end
@@ -61,7 +61,7 @@ class AdvertisementsController < ApplicationController
   end
 
   def redirect
-    ad = Advertisement.where(status: 'active').find(params[:id])
+    ad = Advertisement.where(status: "active").find(params[:id])
     ad.increment!(:hit_count)
     redirect_to ad.referral_url, allow_other_host: true
   end

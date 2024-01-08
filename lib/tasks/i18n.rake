@@ -1,6 +1,6 @@
 namespace :i18n do
   desc "Find missing translations for each locales."
-  task :find_missing => :environment do
+  task find_missing: :environment do
     @reference = "en"
 
     def print_header(text, line)

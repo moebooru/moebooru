@@ -5,16 +5,16 @@ module Tag::ApiMethods
 
   def api_attributes
     {
-      :id => id,
-      :name => name,
-      :count => post_count,
-      :type => tag_type,
-      :ambiguous => is_ambiguous
+      id: id,
+      name: name,
+      count: post_count,
+      type: tag_type,
+      ambiguous: is_ambiguous
     }
   end
 
   def to_xml(options = {})
-    api_attributes.to_xml(options.merge(:root => "tag"))
+    api_attributes.to_xml(options.merge(root: "tag"))
   end
 
   def as_json(*args)
@@ -33,7 +33,7 @@ module Tag::ApiMethods
       summary_version = Tag.get_summary_version
       key = "tag_summary/#{summary_version}"
 
-      Rails.cache.fetch(key, :expires_in => 1.hour) do
+      Rails.cache.fetch(key, expires_in: 1.hour) do
         Tag.get_json_summary_no_cache
       end.to_json
     end
@@ -58,7 +58,7 @@ module Tag::ApiMethods
           end
 
           last_tag_id = id
-          current_tag = "%s`%s`" % [tag["tag_type"], tag["name"]]
+          current_tag = "%s`%s`" % [ tag["tag_type"], tag["name"] ]
         end
 
         unless tag["alias"].nil?
@@ -70,7 +70,7 @@ module Tag::ApiMethods
       end
 
       tags_string = tags_with_type.join(" ") + " "
-      { :version => version, :data => tags_string }
+      { version: version, data: tags_string }
     end
 
     # Return the cache version of the summary.

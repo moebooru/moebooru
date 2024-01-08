@@ -6,23 +6,23 @@ class TagTest < ActiveSupport::TestCase
   end
 
   def create_tag(params = {})
-    Tag.create({ :post_count => 0, :cached_related => "", :cached_related_expires_on => Time.now, :tag_type => 0, :is_ambiguous => false }.merge(params))
+    Tag.create({ post_count: 0, cached_related: "", cached_related_expires_on: Time.now, tag_type: 0, is_ambiguous: false }.merge(params))
   end
 
   def create_post(tags, params = {})
-    post = Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_file("#{Rails.root}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
+    post = Post.create({ user_id: 1, score: 0, source: "", rating: "s", width: 100, height: 100, ip_addr: "127.0.0.1", updater_ip_addr: "127.0.0.1", updater_user_id: 1, tags: tags, status: "active", file: upload_file("#{Rails.root}/test/mocks/test/test#{@test_number}.jpg") }.merge(params))
     @test_number += 1
     post
   end
 
   def test_api
-    tag = create_tag(:name => "t1")
+    tag = create_tag(name: "t1")
     assert_nothing_raised { tag.to_json }
     assert_nothing_raised { tag.to_xml }
   end
 
   def test_count_by_period
-    create_post("tag1", :created_at => 10.days.ago)
+    create_post("tag1", created_at: 10.days.ago)
     create_post("tag1")
     create_post("tag1 tag2")
 
@@ -43,7 +43,7 @@ class TagTest < ActiveSupport::TestCase
     assert_not_nil(Tag.find_by_name("ho-ge"))
     t = Tag.find_by_name("ho-ge")
     assert_equal(CONFIG["tag_types"]["General"], t.tag_type)
-    assert(!t.is_ambiguous?, "Tag should not be ambiguous")
+    assert_not(t.is_ambiguous?, "Tag should not be ambiguous")
 
     Tag.find_or_create_by_name("ambiguous:ho-ge")
     t = Tag.find_by_name("ho-ge")
@@ -63,28 +63,28 @@ class TagTest < ActiveSupport::TestCase
     Tag.find_or_create_by_name("ambiguous:moge")
     Tag.find_or_create_by_name("chichi")
     assert_equal([], Tag.select_ambiguous([]))
-    assert_equal(["moge"], Tag.select_ambiguous(%w(moge chichi oppai)))
+    assert_equal([ "moge" ], Tag.select_ambiguous(%w[moge chichi oppai]))
   end
 
   def test_cache
     Tag.find_or_create_by_name("artist:a1")
-    assert_equal("artist", Rails.cache.read(:tag_type => "a1"))
+    assert_equal("artist", Rails.cache.read(tag_type: "a1"))
   end
 
   def test_parse_query
     results = Tag.parse_query("tag1 tag2")
-    assert_equal(%w(tag1 tag2), results[:related])
+    assert_equal(%w[tag1 tag2], results[:related])
     assert_equal([], results[:include])
     assert_equal([], results[:exclude])
 
     results = Tag.parse_query("tag1 -tag2")
-    assert_equal(["tag1"], results[:related])
+    assert_equal([ "tag1" ], results[:related])
     assert_equal([], results[:include])
-    assert_equal(["tag2"], results[:exclude])
+    assert_equal([ "tag2" ], results[:exclude])
 
     results = Tag.parse_query("tag1 ~tag2")
-    assert_equal(["tag1"], results[:related])
-    assert_equal(["tag2"], results[:include])
+    assert_equal([ "tag1" ], results[:related])
+    assert_equal([ "tag2" ], results[:include])
     assert_equal([], results[:exclude])
 
     results = Tag.parse_query("user:bof")
@@ -94,32 +94,32 @@ class TagTest < ActiveSupport::TestCase
     assert_equal("bof", results[:user])
 
     results = Tag.parse_query("id:5")
-    assert_equal([:eq, 5], results[:post_id])
+    assert_equal([ :eq, 5 ], results[:post_id])
 
     results = Tag.parse_query("id:5..")
-    assert_equal([:gte, 5], results[:post_id])
+    assert_equal([ :gte, 5 ], results[:post_id])
 
     results = Tag.parse_query("id:..5")
-    assert_equal([:lte, 5], results[:post_id])
+    assert_equal([ :lte, 5 ], results[:post_id])
 
     results = Tag.parse_query("id:5..10")
-    assert_equal([:between, 5, 10], results[:post_id])
+    assert_equal([ :between, 5, 10 ], results[:post_id])
 
     # Test aliasing & implications
     tag_z = Tag.find_or_create_by_name("tag-z")
-    TagAlias.create(:name => "tag-x", :alias_id => tag_z.id, :is_pending => false, :reason => "none", :creator_id => 1)
+    TagAlias.create(name: "tag-x", alias_id: tag_z.id, is_pending: false, reason: "none", creator_id: 1)
     tag_a = Tag.find_or_create_by_name("tag-a")
     tag_b = Tag.find_or_create_by_name("tag-b")
-    TagImplication.create(:predicate_id => tag_a.id, :consequent_id => tag_b.id, :is_pending => false)
+    TagImplication.create(predicate_id: tag_a.id, consequent_id: tag_b.id, is_pending: false)
 
     results = Tag.parse_query("tag-x")
-    assert_equal(["tag-z"], results[:related])
+    assert_equal([ "tag-z" ], results[:related])
 
     results = Tag.parse_query("-tag-x")
-    assert_equal(["tag-z"], results[:exclude])
+    assert_equal([ "tag-z" ], results[:exclude])
 
     results = Tag.parse_query("tag-a")
-    assert_equal(["tag-a"], results[:related])
+    assert_equal([ "tag-a" ], results[:related])
   end
 
   def test_related
@@ -128,29 +128,29 @@ class TagTest < ActiveSupport::TestCase
 
     t = Tag.find_by_name("tag1")
     related = t.related.sort { |a, b| a[0] <=> b[0] }
-    assert_equal(%w(tag1 2), related[0])
-    assert_equal(%w(tag2 2), related[1])
-    assert_equal(%w(tag3 1), related[2])
+    assert_equal(%w[tag1 2], related[0])
+    assert_equal(%w[tag2 2], related[1])
+    assert_equal(%w[tag3 1], related[2])
 
     # Make sure the related tags are cached
     create_post("tag1 tag4")
     t.reload
     related = t.related.sort { |a, b| a[0] <=> b[0] }
     assert_equal(3, related.size)
-    assert_equal(%w(tag1 2), related[0])
-    assert_equal(%w(tag2 2), related[1])
-    assert_equal(%w(tag3 1), related[2])
+    assert_equal(%w[tag1 2], related[0])
+    assert_equal(%w[tag2 2], related[1])
+    assert_equal(%w[tag3 1], related[2])
 
     # Make sure related tags are properly updated
-    t.update(:cached_related_expires_on => 5.days.ago)
+    t.update(cached_related_expires_on: 5.days.ago)
     Rails.cache.clear
     t.reload
     related = t.related.sort { |a, b| a[0] <=> b[0] }
     assert_equal(4, related.size)
-    assert_equal(%w(tag1 3), related[0])
-    assert_equal(%w(tag2 2), related[1])
-    assert_equal(%w(tag3 1), related[2])
-    assert_equal(%w(tag4 1), related[3])
+    assert_equal(%w[tag1 3], related[0])
+    assert_equal(%w[tag2 2], related[1])
+    assert_equal(%w[tag3 1], related[2])
+    assert_equal(%w[tag4 1], related[3])
   end
 
   def test_related_by_type
@@ -174,7 +174,7 @@ class TagTest < ActiveSupport::TestCase
     create_post("julius_caesar")
     create_post("julian")
 
-    assert_equal(["julius_caesar"], Tag.find_suggestions("caesar_julius"))
-    assert_equal(%w(julian julius_caesar), Tag.find_suggestions("juli"))
+    assert_equal([ "julius_caesar" ], Tag.find_suggestions("caesar_julius"))
+    assert_equal(%w[julian julius_caesar], Tag.find_suggestions("juli"))
   end
 end

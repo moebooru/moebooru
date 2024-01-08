@@ -6,7 +6,7 @@ class FavoriteController < ApplicationController
     @post = Post.find(params[:id])
     respond_to do |fmt|
       fmt.json do
-        render :json => { :favorited_users => @post.favorited_by.map(&:name).join(",") }.to_json
+        render json: { favorited_users: @post.favorited_by.map(&:name).join(",") }.to_json
       end
     end
   end

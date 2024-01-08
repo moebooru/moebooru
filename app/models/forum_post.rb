@@ -1,10 +1,10 @@
 class ForumPost < ApplicationRecord
-  belongs_to :creator, :class_name => "User", :foreign_key => :creator_id
-  belongs_to :updater, :class_name => "User", :foreign_key => :last_updated_by
+  belongs_to :creator, class_name: "User", foreign_key: :creator_id
+  belongs_to :updater, class_name: "User", foreign_key: :last_updated_by
   after_create :initialize_last_updated_by
   after_create :clear_cache
   before_validation :validate_title
-  validates_length_of :body, :minimum => 1, :message => "You need to enter a body"
+  validates_length_of :body, minimum: 1, message: "You need to enter a body"
 
   module LockMethods
     module ClassMethods
@@ -56,21 +56,21 @@ class ForumPost < ApplicationRecord
     def self.included(m)
       m.after_create :update_parent_on_create
       m.before_destroy :update_parent_on_destroy
-      m.has_many :children, lambda { order "id" }, :class_name => "ForumPost", :foreign_key => :parent_id
-      m.belongs_to :parent, :class_name => "ForumPost", :foreign_key => :parent_id
+      m.has_many :children, lambda { order "id" }, class_name: "ForumPost", foreign_key: :parent_id
+      m.belongs_to :parent, class_name: "ForumPost", foreign_key: :parent_id
     end
 
     def update_parent_on_destroy
       unless is_parent?
         p = parent
-        p.update(:response_count => p.response_count - 1)
+        p.update(response_count: p.response_count - 1)
       end
     end
 
     def update_parent_on_create
       unless is_parent?
         p = parent
-        p.update(:updated_at => updated_at, :response_count => p.response_count + 1, :last_updated_by => creator_id)
+        p.update(updated_at: updated_at, response_count: p.response_count + 1, last_updated_by: creator_id)
       end
     end
 
@@ -80,17 +80,17 @@ class ForumPost < ApplicationRecord
 
     def root
       if is_parent?
-        return self
+        self
       else
-        return parent
+        parent
       end
     end
 
     def root_id
       if is_parent?
-        return id
+        id
       else
-        return parent_id
+        parent_id
       end
     end
   end
@@ -98,14 +98,14 @@ class ForumPost < ApplicationRecord
   module ApiMethods
     def api_attributes
       {
-        :body => body,
-        :creator => author,
-        :creator_id => creator_id,
-        :id => id,
-        :parent_id => parent_id,
-        :title => title,
-        :updated_at => updated_at,
-        :pages => pages
+        body: body,
+        creator: author,
+        creator_id: creator_id,
+        id: id,
+        parent_id: parent_id,
+        title: title,
+        updated_at: updated_at,
+        pages: pages
       }
     end
 
@@ -114,7 +114,7 @@ class ForumPost < ApplicationRecord
     end
 
     def to_xml(options = {})
-      api_attributes.to_xml(options.reverse_merge(:root => "forum_post"))
+      api_attributes.to_xml(options.reverse_merge(root: "forum_post"))
     end
   end
 
@@ -125,9 +125,9 @@ class ForumPost < ApplicationRecord
 
   def self.updated?(user)
     conds = []
-    conds += ["creator_id <> %d" % [user.id]] unless user.is_anonymous?
+    conds += [ "creator_id <> %d" % [ user.id ] ] unless user.is_anonymous?
 
-    newest_topic = ForumPost.where(conds).order(:id => :desc).select(:created_at).take
+    newest_topic = ForumPost.where(conds).order(id: :desc).select(:created_at).take
     return false if newest_topic.nil?
     newest_topic.created_at > user.last_forum_topic_read_at
   end
@@ -150,7 +150,7 @@ class ForumPost < ApplicationRecord
 
   def initialize_last_updated_by
     if is_parent?
-      update(:last_updated_by => creator_id)
+      update(last_updated_by: creator_id)
     end
   end
 
@@ -174,6 +174,6 @@ class ForumPost < ApplicationRecord
   end
 
   def self.latest
-    where(:parent_id => nil).reorder(:updated_at => :desc).paginate(:page => 1, :per_page => 10)
+    where(parent_id: nil).reorder(updated_at: :desc).paginate(page: 1, per_page: 10)
   end
 end

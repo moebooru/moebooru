@@ -18,10 +18,10 @@ class PostFrames < ApplicationRecord
     data_string.split(";").each do |frame_data|
       split_data = frame_data.split(",").map { |f| f.split("x").map(&:to_i) }
       p = {
-        :source_left => split_data[0][0],
-        :source_top => split_data[0][1],
-        :source_width => split_data[1][0],
-        :source_height => split_data[1][1]
+        source_left: split_data[0][0],
+        source_top: split_data[0][1],
+        source_width: split_data[1][0],
+        source_height: split_data[1][1]
       }
       p[:post_id] = post_id if post_id
       frames << p
@@ -39,28 +39,28 @@ class PostFrames < ApplicationRecord
   end
 
   def self.frame_image_dimensions(frame)
-    size = { :width => frame[:source_width], :height => frame[:source_height] }
+    size = { width: frame[:source_width], height: frame[:source_height] }
 
     unless CONFIG["sample_width"].nil?
-      size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_width"], :height => CONFIG["sample_height"] }, CONFIG["sample_ratio"])
+      size = Moebooru::Resizer.reduce_to(size, { width: CONFIG["sample_width"], height: CONFIG["sample_height"] }, CONFIG["sample_ratio"])
     end
-    size = Moebooru::Resizer.reduce_to(size, { :width => CONFIG["sample_max"], :height => CONFIG["sample_min"] }, 1, false, true)
+    size = Moebooru::Resizer.reduce_to(size, { width: CONFIG["sample_max"], height: CONFIG["sample_min"] }, 1, false, true)
 
     size
   end
 
   def self.frame_preview_dimensions(frame)
-    Moebooru::Resizer.reduce_to({ :width => frame[:source_width], :height => frame[:source_height] },
-                                :width => 300, :height => 300)
+    Moebooru::Resizer.reduce_to({ width: frame[:source_width], height: frame[:source_height] },
+                                width: 300, height: 300)
   end
 
   # Clamp frames to the size of the actual post, and remove any empty frames.
   def self.sanitize_frames(frames, post)
     frames.each do |frame|
-      frame[:source_left] = [frame[:source_left], post.width].min
-      frame[:source_top] = [frame[:source_top], post.height].min
-      frame[:source_width] = [frame[:source_width], post.width - frame[:source_left]].min
-      frame[:source_height] = [frame[:source_height], post.height - frame[:source_top]].min
+      frame[:source_left] = [ frame[:source_left], post.width ].min
+      frame[:source_top] = [ frame[:source_top], post.height ].min
+      frame[:source_width] = [ frame[:source_width], post.width - frame[:source_left] ].min
+      frame[:source_height] = [ frame[:source_height], post.height - frame[:source_top] ].min
     end
     frames.delete_if { |frame| frame[:source_width] == 0 || frame[:source_height] == 0 }
   end
@@ -74,17 +74,17 @@ class PostFrames < ApplicationRecord
       if update_status
         update_status.call("Creating frames for post #{post.id}")
       end
-      return PostFrames.process_post(post)
+      PostFrames.process_post(post)
     end
   end
 
   def self.find_frame(frame_desc)
     conds = {
-      :post_id => frame_desc[:post_id],
-      :source_left => frame_desc[:source_left],
-      :source_top => frame_desc[:source_top],
-      :source_width => frame_desc[:source_width],
-      :source_height => frame_desc[:source_height]
+      post_id: frame_desc[:post_id],
+      source_left: frame_desc[:source_left],
+      source_top: frame_desc[:source_top],
+      source_width: frame_desc[:source_width],
+      source_height: frame_desc[:source_height]
     }
     PostFrames.find_by(conds)
   end
@@ -96,7 +96,7 @@ class PostFrames < ApplicationRecord
     # and set it false for the rest.
     frames = PostFrames.parse_frames(post.frames_pending, post.id)
 
-    where(:post_id => post.id).update_all(:is_target => false)
+    where(post_id: post.id).update_all(is_target: false)
     frames.each_index do |idx|
       frame_desc = frames[idx]
       frame = PostFrames.find_frame(frame_desc)
@@ -113,7 +113,7 @@ class PostFrames < ApplicationRecord
     # work to do.
     #
     # Try to find a post that needs to be created.
-    frame = PostFrames.find_by(:post_id => post.id, :is_target => true, :is_created => false)
+    frame = PostFrames.find_by(post_id: post.id, is_target: true, is_created: false)
     if frame
       frame.create_file
       return true
@@ -122,13 +122,13 @@ class PostFrames < ApplicationRecord
     # All frames are created.  Finalize the frames, activating the target ones and deactivating the
     # old non-target ones.
     logger.info("Finished creating frames for post #{post.id}; finalizing")
-    where(:post_id => post.id).update_all("is_active = is_target")
+    where(post_id: post.id).update_all("is_active = is_target")
 
     # Set frames_warehoused to true only if all of the new target frames are already warehoused.
-    frames_warehoused = !PostFrames.exists?(["post_id = ? AND is_target AND NOT is_warehoused", post.id])
+    frames_warehoused = !PostFrames.exists?([ "post_id = ? AND is_target AND NOT is_warehoused", post.id ])
 
     # Update the post's frames to reflect the newly activated frames.
-    post.update(:frames => post.frames_pending, :frames_warehoused => frames_warehoused)
+    post.update(frames: post.frames_pending, frames_warehoused: frames_warehoused)
 
     # Return false; there's nothing more for us to do with this post.
     false
@@ -142,7 +142,7 @@ class PostFrames < ApplicationRecord
     return false if post.nil?
 
     # Try to find a frame that needs to be warehoused.
-    frame = PostFrames.find_by(:post_id => post.id, :is_active => true, :is_warehoused => false)
+    frame = PostFrames.find_by(post_id: post.id, is_active: true, is_warehoused: false)
     if frame
       if update_status
         update_status.call("Warehousing frames for post #{frame.post_id}")
@@ -152,7 +152,7 @@ class PostFrames < ApplicationRecord
     end
 
     # All frames are warehoused.
-    post.update(:frames_warehoused => true)
+    post.update(frames_warehoused: true)
     true
   end
 
@@ -163,7 +163,7 @@ class PostFrames < ApplicationRecord
     end
 
     # Find a file that needs to be unwarehoused.
-    frame = PostFrames.find_by(:is_target => false, :is_active => false, :is_warehoused => true)
+    frame = PostFrames.find_by(is_target: false, is_active: false, is_warehoused: true)
     unless frame.nil?
       if update_status
         update_status.call("Unwarehousing old frames for post #{frame.post_id}")
@@ -171,22 +171,22 @@ class PostFrames < ApplicationRecord
 
       # XXX
       logger.info("Unwarehousing #{frame.id}")
-      frame.update(:is_warehoused => false)
+      frame.update(is_warehoused: false)
       return
     end
 
     # Find a file that needs to be deleted.  Only do this after unwarehousing the image, so we don't
     # end up in a confusing state where a file is on a mirror and not the master.
-    frame = PostFrames.find_by(:is_active => false, :is_target => false, :is_created => true, :is_warehoused => false)
+    frame = PostFrames.find_by(is_active: false, is_target: false, is_created: true, is_warehoused: false)
     unless frame.nil?
       logger.info("Deleting #{frame.id}")
       FileUtils.rm_f(frame.file_path)
-      frame.update(:is_created => false)
+      frame.update(is_created: false)
       return
     end
 
     # Delete any records that are completely cleaned up.
-    where(:is_target => false, :is_active => false, :is_created => false, :is_warehoused => false).delete_all
+    where(is_target: false, is_active: false, is_created: false, is_warehoused: false).delete_all
   end
 
   def create_file
@@ -226,7 +226,7 @@ class PostFrames < ApplicationRecord
     FileUtils.chmod(0775, preview_path)
 
     # Save the dimensions we computed, and mark the file created.
-    update(:is_created => true)
+    update(is_created: true)
   end
 
   def warehouse_frame
@@ -238,7 +238,7 @@ class PostFrames < ApplicationRecord
     Mirrors.copy_file_to_mirrors(preview_path)
 
     # Mark the frame warehoused.
-    update(:is_warehoused => true)
+    update(is_warehoused: true)
   end
 
   def self.filename(frame)

@@ -1,17 +1,17 @@
 module Post::SqlMethods
   module ClassMethods
     def find_by_tag_join(tag, options = {})
-      joins(:_tags).where(:tags => { :name => tag.downcase.tr(" ", "_") })
+      joins(:_tags).where(tags: { name: tag.downcase.tr(" ", "_") })
         .limit(options[:limit])
         .offset(options[:offset])
-        .order(options[:order] || { :id => :desc })
+        .order(options[:order] || { id: :desc })
     end
 
     def sql_range_for_where(parsed_query, field)
       conds = []
       params = []
       generate_sql_range_helper(parsed_query, field, conds, params)
-      [*conds, *params]
+      [ *conds, *params ]
     end
 
     def generate_sql_range_helper(arr, field, c, p)
@@ -42,7 +42,7 @@ module Post::SqlMethods
         p << arr[2]
 
       when :in
-        items = ["?"] * arr[1].length
+        items = [ "?" ] * arr[1].length
         c << "#{field} IN (#{items.join(", ")})"
         p.concat(arr[1])
 
@@ -57,8 +57,8 @@ module Post::SqlMethods
         q = Tag.parse_query(q)
       end
 
-      conds = ["true"]
-      joins = ["posts p"]
+      conds = [ "true" ]
+      joins = [ "posts p" ]
       join_params = []
       cond_params = []
 
@@ -375,7 +375,7 @@ module Post::SqlMethods
 
       params = join_params + cond_params
 
-      Post.sanitize_sql_array([sql, *params])
+      Post.sanitize_sql_array([ sql, *params ])
     end
   end
 

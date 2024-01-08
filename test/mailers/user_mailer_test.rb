@@ -8,7 +8,7 @@ class UserMailerTest < ActionMailer::TestCase
   end
 
   def create_user(name, params = {})
-    user = User.new({ :password => "zugzug1", :password_confirmation => "zugzug1", :email => "#{name}@danbooru.com" }.merge(params))
+    user = User.new({ password: "zugzug1", password_confirmation: "zugzug1", email: "#{name}@danbooru.com" }.merge(params))
     user.name = name
     user.level = CONFIG["user_levels"]["Member"]
     user.save
@@ -26,8 +26,8 @@ class UserMailerTest < ActionMailer::TestCase
     user = create_user("bob")
     assert_nothing_raised { UserMailer.new_password(user, "zugzug2").deliver_now }
     assert_emails 1
-    assert_equal [CONFIG["email_from"]], ActionMailer::Base.deliveries[0].from
-    assert_equal [user.email], ActionMailer::Base.deliveries[0].to
+    assert_equal [ CONFIG["email_from"] ], ActionMailer::Base.deliveries[0].from
+    assert_equal [ user.email ], ActionMailer::Base.deliveries[0].to
     assert_equal "#{CONFIG["app_name"]} - Password Reset", ActionMailer::Base.deliveries[0].subject
     assert_match /Your password has been reset to/, ActionMailer::Base.deliveries[0].body.parts.first.decoded
   end
@@ -37,8 +37,8 @@ class UserMailerTest < ActionMailer::TestCase
     receiver = User.find(2)
     assert_nothing_raised { UserMailer.dmail(receiver, sender, "test title", "test body").deliver_now }
     assert_emails 1
-    assert_equal [CONFIG["email_from"]], ActionMailer::Base.deliveries[0].from
-    assert_equal [receiver.email], ActionMailer::Base.deliveries[0].to
+    assert_equal [ CONFIG["email_from"] ], ActionMailer::Base.deliveries[0].from
+    assert_equal [ receiver.email ], ActionMailer::Base.deliveries[0].to
     assert_equal "#{CONFIG["app_name"]} - Message received from admin", ActionMailer::Base.deliveries[0].subject
     assert_match /admin said:/, ActionMailer::Base.deliveries[0].body.decoded
   end

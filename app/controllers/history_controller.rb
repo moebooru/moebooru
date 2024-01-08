@@ -1,5 +1,5 @@
 class HistoryController < ApplicationController
-  before_action :member_only, except: [:index]
+  before_action :member_only, except: [ :index ]
   layout "default"
 
   def index
@@ -145,9 +145,9 @@ class HistoryController < ApplicationController
     # :specific_table => showing changes only for a particular table
     # :show_all_tags => don't omit post tags that didn't change
     @options = {
-      :show_all_tags => params[:show_all_tags] == "1",
-      :specific_object => (q.key?(:type) && q.key?(:id)),
-      :specific_history => q.key?(:change)
+      show_all_tags: params[:show_all_tags] == "1",
+      specific_object: (q.key?(:type) && q.key?(:id)),
+      specific_history: q.key?(:change)
     }
 
     @options[:show_name] = false
@@ -161,8 +161,8 @@ class HistoryController < ApplicationController
     @changes = History
       .includes(:history_changes)
       .where(conds.join(" AND "), *cond_params)
-      .order(:id => :desc)
-      .paginate(:per_page => 20, :page => page_number)
+      .order(id: :desc)
+      .paginate(per_page: 20, page: page_number)
 
     # If we're searching for a specific change, force the display to the
     # type of the change we found.
@@ -176,11 +176,11 @@ class HistoryController < ApplicationController
   def undo
     ids = params[:id].split(/,/)
 
-    @changes = HistoryChange.where(:id => ids).order(:id => :desc)
+    @changes = HistoryChange.where(id: ids).order(id: :desc)
     histories = @changes.map(&:history_id).uniq
 
     if histories.count > 1 && !@current_user.is_privileged_or_higher?
-      respond_to_error("Only privileged users can undo more than one change at once", :status => 403)
+      respond_to_error("Only privileged users can undo more than one change at once", status: 403)
       return
     end
 
@@ -199,6 +199,6 @@ class HistoryController < ApplicationController
     failed = errors.count
     successful = @changes.count - failed
 
-    respond_to_success("Changes made.", { :action => "index" }, :api => { :successful => successful, :failed => failed, :errors => error_texts })
+    respond_to_success("Changes made.", { action: "index" }, api: { successful: successful, failed: failed, errors: error_texts })
   end
 end

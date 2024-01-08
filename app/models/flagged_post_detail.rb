@@ -7,16 +7,16 @@ class FlaggedPostDetail < ApplicationRecord
 
   def author
     if user_id.nil?
-      return "system"
+      "system"
     else
-      return User.find_name(user_id)
+      User.find_name(user_id)
     end
   end
 
   def self.new_deleted_posts(user)
     return 0 if user.is_anonymous?
 
-    Rails.cache.fetch("deleted_posts:#{user.id}:#{user.last_deleted_post_seen_at.to_i}", :expires_in => 1.minute) do
+    Rails.cache.fetch("deleted_posts:#{user.id}:#{user.last_deleted_post_seen_at.to_i}", expires_in: 1.minute) do
       select_value_sql(
         "SELECT COUNT(*) FROM flagged_post_details fpd JOIN posts p ON (p.id = fpd.post_id) " \
         "WHERE p.status = 'deleted' AND p.user_id = ? AND fpd.user_id <> ? AND fpd.created_at > ?",
@@ -27,17 +27,17 @@ class FlaggedPostDetail < ApplicationRecord
   # XXX: author and flagged_by are redundant
   def flagged_by
     if user_id.nil?
-      return "system"
+      "system"
     else
-      return User.find_name(user_id)
+      User.find_name(user_id)
     end
   end
 
   def api_attributes
     ret = {
-      :post_id => post_id,
-      :reason => reason,
-      :created_at => created_at
+      post_id: post_id,
+      reason: reason,
+      created_at: created_at
     }
 
     unless hide_user
@@ -53,6 +53,6 @@ class FlaggedPostDetail < ApplicationRecord
   end
 
   def to_xml(options = {})
-    api_attributes.to_xml(options.reverse_merge(:root => "flagged_post_detail"))
+    api_attributes.to_xml(options.reverse_merge(root: "flagged_post_detail"))
   end
 end

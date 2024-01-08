@@ -32,7 +32,7 @@ Rails.application.configure do
   config.assets.compile = false
 
   # force manifest resolver even when debug is (globally) enabled
-  config.assets.resolve_with = [:manifest]
+  config.assets.resolve_with = [ :manifest ]
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -103,19 +103,17 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :sendmail
 
   config.middleware.use ExceptionNotification::Rack,
-                        :ignore_exceptions =>
-                          %w(
+                        ignore_exceptions:                           %w[
                             ActionController::UnknownHttpMethod
                             ActionController::BadRequest
                             ActionController::ParameterMissing
                             ActionController::InvalidAuthenticityToken
                             ActionDispatch::Http::MimeNegotiation::InvalidType
                             ActionDispatch::Http::Parameters::ParseError
-                          ) + ExceptionNotifier.ignored_exceptions,
-                        :email => {
-                          :email_prefix => "[#{CONFIG["app_name"]}] ",
-                          :sender_address => "notifier <#{CONFIG["email_from"]}>",
-                          :exception_recipients => CONFIG["admin_contact"]
+                          ] + ExceptionNotifier.ignored_exceptions,
+                        email: {
+                          email_prefix: "[#{CONFIG["app_name"]}] ",
+                          sender_address: "notifier <#{CONFIG["email_from"]}>",
+                          exception_recipients: CONFIG["admin_contact"]
                         }
-
 end

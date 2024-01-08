@@ -26,7 +26,7 @@ module Post::TagMethods
         cond_params << id
       end
 
-      sql = [sql, conds].join(" ")
+      sql = [ sql, conds ].join(" ")
       execute_sql sql, *cond_params
     end
 
@@ -38,11 +38,11 @@ module Post::TagMethods
       latest_tags = latest.value.scan(/\S+/)
 
       {
-        :added_tags => new_tags - old_tags,
-        :removed_tags => old_tags - new_tags,
-        :unchanged_tags => new_tags & old_tags,
-        :obsolete_added_tags => (new_tags - old_tags) - latest_tags,
-        :obsolete_removed_tags => (old_tags - new_tags) & latest_tags
+        added_tags: new_tags - old_tags,
+        removed_tags: old_tags - new_tags,
+        unchanged_tags: new_tags & old_tags,
+        obsolete_added_tags: (new_tags - old_tags) - latest_tags,
+        obsolete_removed_tags: (old_tags - new_tags) & latest_tags
       }
     end
   end
@@ -52,8 +52,8 @@ module Post::TagMethods
     m.before_save :commit_metatags
     m.after_save :commit_tags
     m.after_save :save_post_history
-    m.has_many :tag_history, lambda { order "id DESC" }, :class_name => "PostTagHistory"
-    m.versioned :source, :default => ""
+    m.has_many :tag_history, lambda { order "id DESC" }, class_name: "PostTagHistory"
+    m.versioned :source, default: ""
     m.versioned :cached_tags
   end
 
@@ -64,7 +64,7 @@ module Post::TagMethods
     change, prev = prev, change if redo_changes
     changes = Post.tag_changes(change, prev, change.latest)
     new_tags = (current_tags - changes[:added_tags]) | changes[:removed_tags]
-    self.attributes = { :tags => new_tags.join(" ") }
+    self.attributes = { tags: new_tags.join(" ") }
   end
 
   def cached_tags_redo(change)
@@ -107,7 +107,7 @@ module Post::TagMethods
 
   # Returns all versioned tags and metatags.
   def cached_tags_versioned
-    ["rating:" + rating, cached_tags].join(" ")
+    [ "rating:" + rating, cached_tags ].join(" ")
   end
 
   # Commit metatags; this is done before save, so any changes are stored normally.
@@ -170,13 +170,13 @@ module Post::TagMethods
 
             # Set :ignore_already_exists, so pool:1:2 can be used to change the sequence number
             # of a post that already exists in the pool.
-            options = { :user => User.find(updater_user_id), :ignore_already_exists => true }
+            options = { user: User.find(updater_user_id), ignore_already_exists: true }
             if defined?(seq)
               options[:sequence] = seq
             end
 
             if pool.nil? && name !~ /^\d+$/
-              pool = Pool.create(:name => name, :is_public => false, :user_id => updater_user_id)
+              pool = Pool.create(name: name, is_public: false, user_id: updater_user_id)
             end
 
             next if pool.nil?
@@ -286,9 +286,9 @@ module Post::TagMethods
   def save_post_history
     new_cached_tags = cached_tags_versioned
     if tag_history.empty? || tag_history.first.tags != new_cached_tags
-      PostTagHistory.create(:post_id => id, :tags => new_cached_tags,
-                            :user_id => Thread.current["danbooru-user_id"],
-                            :ip_addr => Thread.current["danbooru-ip_addr"] || "127.0.0.1")
+      PostTagHistory.create(post_id: id, tags: new_cached_tags,
+                            user_id: Thread.current["danbooru-user_id"],
+                            ip_addr: Thread.current["danbooru-ip_addr"] || "127.0.0.1")
     end
   end
 end

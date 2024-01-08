@@ -18,9 +18,9 @@ module Nagato
     # Returns an array of 1 or more elements, the first being a SQL fragment and the rest being placeholder parameters.
     def conditions
       if @conditions.empty?
-        return ["TRUE"]
+        [ "TRUE" ]
       else
-        return [@conditions.join(" " + @join + " "), *@condition_params]
+        [ @conditions.join(" " + @join + " "), *@condition_params ]
       end
     end
 

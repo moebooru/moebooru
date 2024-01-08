@@ -5,7 +5,7 @@ class TagControllerTest < ActionController::TestCase
 
   def create_post(tags, post_number = 1, params = {})
     Thread.current["danbooru-user_id"] = 1
-    Post.create({ :user_id => 1, :score => 0, :source => "", :rating => "s", :width => 100, :height => 100, :ip_addr => "127.0.0.1", :updater_ip_addr => "127.0.0.1", :updater_user_id => 1, :tags => tags, :status => "active", :file => upload_file("#{Rails.root}/test/mocks/test/test#{post_number}.jpg") }.merge(params))
+    Post.create({ user_id: 1, score: 0, source: "", rating: "s", width: 100, height: 100, ip_addr: "127.0.0.1", updater_ip_addr: "127.0.0.1", updater_user_id: 1, tags: tags, status: "active", file: upload_file("#{Rails.root}/test/mocks/test/test#{post_number}.jpg") }.merge(params))
   end
 
   def test_cloud
@@ -29,7 +29,7 @@ class TagControllerTest < ActionController::TestCase
   end
 
   def test_mass_edit
-    get :mass_edit, :session => { :user_id => 2 }
+    get :mass_edit, session: { user_id: 2 }
     assert_response :success
 
     # Can't easily test the mass_edit action. The daemon process does the actual work.
@@ -44,17 +44,17 @@ class TagControllerTest < ActionController::TestCase
     create_post("hoge moge", 2)
     create_post("lodge", 3)
 
-    get :edit_preview, :params => { :tags => "hoge" }, :session => { :user_id => 2 }
+    get :edit_preview, params: { tags: "hoge" }, session: { user_id: 2 }
     assert_response :success
   end
 
   def test_update
     create_post("hoge", 1)
 
-    get :edit, :params => { :name => "hoge" }, :session => { :user_id => 3 }
+    get :edit, params: { name: "hoge" }, session: { user_id: 3 }
     assert_response :success
 
-    post :update, :params => { :tag => { :name => "hoge", :tag_type => CONFIG["tag_types"]["Artist"] } }, :session => { :user_id => 3 }
+    post :update, params: { tag: { name: "hoge", tag_type: CONFIG["tag_types"]["Artist"] } }, session: { user_id: 3 }
     assert_equal(CONFIG["tag_types"]["Artist"], Tag.find_by_name("hoge").tag_type)
   end
 
@@ -63,7 +63,7 @@ class TagControllerTest < ActionController::TestCase
     create_post("hoge moge", 2)
     create_post("lodge", 3)
 
-    get :related, :params => { :tags => "hoge", :format => "json" }
+    get :related, params: { tags: "hoge", format: "json" }
     assert_response :success
   end
 

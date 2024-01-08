@@ -8,10 +8,10 @@ module Mirrors
       ret = yield(f)
     end
     if ($CHILD_STATUS & 0xFF) != 0
-      raise MirrorError, "Command \"%s\" to %s exited with signal %i" % [command, mirror[:host], $CHILD_STATUS & 0xFF]
+      raise MirrorError, "Command \"%s\" to %s exited with signal %i" % [ command, mirror[:host], $CHILD_STATUS & 0xFF ]
     end
     if ($CHILD_STATUS >> 8) != 0
-      raise MirrorError, "Command \"%s\" to %s exited with status %i" % [command, mirror[:host], $CHILD_STATUS >> 8]
+      raise MirrorError, "Command \"%s\" to %s exited with status %i" % [ command, mirror[:host], $CHILD_STATUS >> 8 ]
     end
     ret
   end
@@ -59,7 +59,7 @@ module Mirrors
   def copy_file_to_mirrors(file, options = {})
     # CONFIG[:data_dir] is equivalent to our local_base.
     local_base = "#{Rails.root}/public/data/"
-    options = { :timeout => 30 }.merge(options)
+    options = { timeout: 30 }.merge(options)
 
     if file[0, local_base.length] != local_base
       raise "Invalid filename to mirror: \"%s" % file

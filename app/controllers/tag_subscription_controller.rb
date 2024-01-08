@@ -1,6 +1,6 @@
 class TagSubscriptionController < ApplicationController
   layout "default"
-  before_action :member_only, :except => :index
+  before_action :member_only, except: :index
   before_action :no_anonymous
 
   def create
@@ -8,7 +8,7 @@ class TagSubscriptionController < ApplicationController
       if @current_user.tag_subscriptions.size >= CONFIG["max_tag_subscriptions"]
         @tag_subscription = nil
       else
-        @tag_subscription = TagSubscription.create(:user_id => @current_user.id, :tag_query => "")
+        @tag_subscription = TagSubscription.create(user_id: @current_user.id, tag_query: "")
       end
     end
   end
@@ -25,7 +25,7 @@ class TagSubscriptionController < ApplicationController
       end
 
       flash[:notice] = "Tag subscriptions updated"
-      redirect_to :controller => "user", :action => "edit"
+      redirect_to controller: "user", action: "edit"
     end
   end
 

@@ -13,9 +13,9 @@ module Moebooru
     def self.compute(path, hashes)
       return {} if hashes.empty?
 
-      hashers = hashes.map { |h| [h, HASHERS[h].new] }.to_h
+      hashers = hashes.map { |h| [ h, HASHERS[h].new ] }.to_h
 
-      File.open(path, 'rb') do |fp|
+      File.open(path, "rb") do |fp|
         while (block = fp.read(BLOCK_SIZE))
           hashers.each_value { |h| h.append block }
         end
@@ -25,7 +25,7 @@ module Moebooru
     end
 
     def self.compute_one(path, hash)
-      compute(path, [hash])[hash]
+      compute(path, [ hash ])[hash]
     end
   end
 end

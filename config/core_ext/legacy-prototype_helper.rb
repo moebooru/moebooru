@@ -94,12 +94,12 @@ module ActionView
     # == Updating multiple elements
     # See JavaScriptGenerator for information on updating multiple elements
     # on the page in an Ajax response.
-    CALLBACKS    = Set.new([:create, :uninitialized, :loading, :loaded,
-                            :interactive, :complete, :failure, :success] +
+    CALLBACKS    = Set.new([ :create, :uninitialized, :loading, :loaded,
+                            :interactive, :complete, :failure, :success ] +
                      (100..599).to_a)
-    AJAX_OPTIONS = Set.new([:before, :after, :condition, :url,
+    AJAX_OPTIONS = Set.new([ :before, :after, :condition, :url,
                             :asynchronous, :method, :insertion, :position,
-                            :form, :with, :update, :script, :type]).merge(CALLBACKS)
+                            :form, :with, :update, :script, :type ]).merge(CALLBACKS)
 
     # Returns the JavaScript needed for a remote function.
     # See the link_to_remote documentation at http://github.com/rails/prototype_legacy_helper as it takes the same arguments.
@@ -143,8 +143,8 @@ module ActionView
 
     # All the methods were moved to GeneratorMethods so that
     # #include_helpers_from_context has nothing to overwrite.
-    class JavaScriptGenerator #:nodoc:
-      def initialize(context, &block) #:nodoc:
+    class JavaScriptGenerator # :nodoc:
+      def initialize(context, &block) # :nodoc:
         @context = context
         @lines = []
         include_helpers_from_context
@@ -227,7 +227,7 @@ module ActionView
       # PrototypeHelper#update_page to wrap the generated JavaScript in a
       # <tt>\<script></tt> tag.
       module GeneratorMethods
-        def to_s #:nodoc:
+        def to_s # :nodoc:
           (@lines * $INPUT_RECORD_SEPARATOR).tap do |javascript|
             if ActionView::Base.debug_rjs
               source = javascript.dup
@@ -251,9 +251,9 @@ module ActionView
         #   page[Post.new]  # => $('new_post')
         def [](id)
           case id
-            when String, Symbol, NilClass
+          when String, Symbol, NilClass
               JavaScriptElementProxy.new(self, id)
-            else
+          else
               JavaScriptElementProxy.new(self, ActionController::RecordIdentifier.dom_id(id))
           end
         end
@@ -548,7 +548,7 @@ module ActionView
         end
 
         def with_formats(*args)
-          @context ? @context.update_details(:formats => args) { yield } : yield
+          @context ? @context.update_details(formats: args) { yield } : yield
         end
 
         def javascript_object_for(object)
@@ -649,7 +649,7 @@ module ActionView
   end
 
   # Converts chained method calls on DOM proxy elements into JavaScript chains
-  class JavaScriptProxy < ActiveSupport::ProxyObject #:nodoc:
+  class JavaScriptProxy < ActiveSupport::ProxyObject # :nodoc:
     def initialize(generator, root = nil)
       @generator = generator
       @generator << root if root
@@ -688,7 +688,7 @@ module ActionView
     end
   end
 
-  class JavaScriptElementProxy < JavaScriptProxy #:nodoc:
+  class JavaScriptElementProxy < JavaScriptProxy # :nodoc:
     def initialize(generator, id)
       @id = id
       super(generator, "$(#{::ActiveSupport::JSON.encode(id)})")
@@ -718,11 +718,11 @@ module ActionView
     end
 
     def reload(options_for_replace = {})
-      replace(options_for_replace.merge(:partial => @id.to_s))
+      replace(options_for_replace.merge(partial: @id.to_s))
     end
   end
 
-  class JavaScriptVariableProxy < JavaScriptProxy #:nodoc:
+  class JavaScriptVariableProxy < JavaScriptProxy # :nodoc:
     def initialize(generator, variable)
       @variable = ::ActiveSupport::JSON::Variable.new(variable)
       @empty    = true # only record lines if we have to.  gets rid of unnecessary linebreaks
@@ -748,11 +748,11 @@ module ActionView
     end
   end
 
-  class JavaScriptCollectionProxy < JavaScriptProxy #:nodoc:
-    ENUMERABLE_METHODS_WITH_RETURN = [:all, :any, :collect, :map, :detect, :find, :find_all, :select, :max, :min, :partition, :reject, :sort_by, :in_groups_of, :each_slice] unless defined? ENUMERABLE_METHODS_WITH_RETURN
-    ENUMERABLE_METHODS = ENUMERABLE_METHODS_WITH_RETURN + [:each] unless defined? ENUMERABLE_METHODS
+  class JavaScriptCollectionProxy < JavaScriptProxy # :nodoc:
+    ENUMERABLE_METHODS_WITH_RETURN = [ :all, :any, :collect, :map, :detect, :find, :find_all, :select, :max, :min, :partition, :reject, :sort_by, :in_groups_of, :each_slice ] unless defined? ENUMERABLE_METHODS_WITH_RETURN
+    ENUMERABLE_METHODS = ENUMERABLE_METHODS_WITH_RETURN + [ :each ] unless defined? ENUMERABLE_METHODS
     attr_reader :generator
-    delegate :arguments_for_call, :to => :generator
+    delegate :arguments_for_call, to: :generator
 
     def initialize(generator, pattern)
       super(generator, @pattern = pattern)
@@ -760,7 +760,7 @@ module ActionView
 
     def each_slice(variable, number, &block)
       if block
-        enumerate :eachSlice, :variable => variable, :method_args => [number], :yield_args => %w(value index), :return => true, &block
+        enumerate :eachSlice, variable: variable, method_args: [ number ], yield_args: %w[value index], return: true, &block
       else
         add_variable_assignment!(variable)
         append_enumerable_function!("eachSlice(#{::ActiveSupport::JSON.encode(number)});")
@@ -768,18 +768,18 @@ module ActionView
     end
 
     def grep(variable, pattern, &block)
-      enumerate :grep, :variable => variable, :return => true, :method_args => [::ActiveSupport::JSON::Variable.new(pattern.inspect)], :yield_args => %w(value index), &block
+      enumerate :grep, variable: variable, return: true, method_args: [ ::ActiveSupport::JSON::Variable.new(pattern.inspect) ], yield_args: %w[value index], &block
     end
 
     def in_groups_of(variable, number, fill_with = nil)
-      arguments = [number]
+      arguments = [ number ]
       arguments << fill_with unless fill_with.nil?
       add_variable_assignment!(variable)
       append_enumerable_function!("inGroupsOf(#{arguments_for_call arguments});")
     end
 
     def inject(variable, memo, &block)
-      enumerate :inject, :variable => variable, :method_args => [memo], :yield_args => %w(memo value index), :return => true, &block
+      enumerate :inject, variable: variable, method_args: [ memo ], yield_args: %w[memo value index], return: true, &block
     end
 
     def pluck(variable, property)
@@ -805,7 +805,7 @@ module ActionView
     def method_missing(method, *arguments, &block)
       if ENUMERABLE_METHODS.include?(method)
         returnable = ENUMERABLE_METHODS_WITH_RETURN.include?(method)
-        enumerate(method, { :variable => (arguments.first if returnable), :return => returnable, :yield_args => %w(value index) }, &block)
+        enumerate(method, { variable: (arguments.first if returnable), return: returnable, yield_args: %w[value index] }, &block)
       else
         super
       end
@@ -846,7 +846,7 @@ module ActionView
     end
   end
 
-  class JavaScriptElementCollectionProxy < JavaScriptCollectionProxy #:nodoc:\
+  class JavaScriptElementCollectionProxy < JavaScriptCollectionProxy # :nodoc:\
     def initialize(generator, pattern)
       super(generator, "$$(#{::ActiveSupport::JSON.encode(pattern)})")
     end

@@ -7,7 +7,7 @@ class Artist < ApplicationRecord
 
         while artists.empty? && url.size > 10
           u = "#{url.to_escaped_for_sql_like}%"
-          artists += Artist.joins(:artist_urls).where(:alias_id => nil).where("artist_urls.normalized_url LIKE ?", u).order(:name)
+          artists += Artist.joins(:artist_urls).where(alias_id: nil).where("artist_urls.normalized_url LIKE ?", u).order(:name)
 
           # Remove duplicates based on name
           artists = artists.each_with_object({}) { |i, a| a[i.name] = i }.values
@@ -21,7 +21,7 @@ class Artist < ApplicationRecord
     def self.included(m)
       m.extend(ClassMethods)
       m.after_save :commit_urls
-      m.has_many :artist_urls, :dependent => :delete_all
+      m.has_many :artist_urls, dependent: :delete_all
     end
 
     def commit_urls
@@ -29,7 +29,7 @@ class Artist < ApplicationRecord
         artist_urls.clear
 
         @urls.scan(/\S+/).each do |url|
-          artist_urls.create(:url => url)
+          artist_urls.create(url: url)
         end
       end
     end
@@ -63,11 +63,11 @@ class Artist < ApplicationRecord
     def commit_notes
       unless @notes.blank?
         if wiki_page.nil?
-          WikiPage.create(:title => name, :body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
+          WikiPage.create(title: name, body: @notes, ip_addr: updater_ip_addr, user_id: updater_id)
         elsif wiki_page.is_locked?
           errors.add(:notes, "are locked")
         else
-          wiki_page.update(:body => @notes, :ip_addr => updater_ip_addr, :user_id => updater_id)
+          wiki_page.update(body: @notes, ip_addr: updater_ip_addr, user_id: updater_id)
         end
       end
     end
@@ -81,10 +81,10 @@ class Artist < ApplicationRecord
     def commit_aliases
       if @alias_names
         transaction do
-          self.class.where(:alias_id => id).update_all(:alias_id => nil)
+          self.class.where(alias_id: id).update_all(alias_id: nil)
           @alias_names.each do |name|
-            a = Artist.find_or_create_by(:name => name)
-            a.update(:alias_id => id, :updater_id => updater_id)
+            a = Artist.find_or_create_by(name: name)
+            a.update(alias_id: id, updater_id: updater_id)
           end
         end
       end
@@ -102,7 +102,7 @@ class Artist < ApplicationRecord
       if new_record?
         self.class.none
       else
-        self.class.where(:alias_id => id).order(:name)
+        self.class.where(alias_id: id).order(:name)
       end
     end
 
@@ -121,7 +121,7 @@ class Artist < ApplicationRecord
       if name.blank?
         self.alias_id = nil
       else
-        artist = Artist.find_or_create_by(:name => name)
+        artist = Artist.find_or_create_by(name: name)
         self.alias_id = artist.id
       end
     end
@@ -134,12 +134,12 @@ class Artist < ApplicationRecord
 
     def commit_members
       transaction do
-        self.class.unscoped.where(:group_id => id).update_all(:group_id => nil)
+        self.class.unscoped.where(group_id: id).update_all(group_id: nil)
 
         if @member_names
           @member_names.each do |name|
-            a = Artist.find_or_create_by(:name => name)
-            a.update(:group_id => id, :updater_id => updater_id)
+            a = Artist.find_or_create_by(name: name)
+            a.update(group_id: id, updater_id: updater_id)
           end
         end
       end
@@ -155,7 +155,7 @@ class Artist < ApplicationRecord
       if new_record?
         self.class.none
       else
-        self.class.where(:group_id => id).order(:name)
+        self.class.where(group_id: id).order(:name)
       end
     end
 
@@ -171,7 +171,7 @@ class Artist < ApplicationRecord
       if name.blank?
         self.group_id = nil
       else
-        artist = Artist.find_or_create_by(:name => name)
+        artist = Artist.find_or_create_by(name: name)
         self.group_id = artist.id
       end
     end
@@ -180,18 +180,18 @@ class Artist < ApplicationRecord
   module ApiMethods
     def api_attributes
       {
-        :id => id,
-        :name => name,
-        :alias_id => alias_id,
-        :group_id => group_id,
-        :urls => artist_urls.map(&:url)
+        id: id,
+        name: name,
+        alias_id: alias_id,
+        group_id: group_id,
+        urls: artist_urls.map(&:url)
       }
     end
 
     def to_xml(options = {})
       attribs = api_attributes
       attribs[:urls] = attribs[:urls].join(" ")
-      attribs.to_xml(options.reverse_merge(:root => "artist"))
+      attribs.to_xml(options.reverse_merge(root: "artist"))
     end
 
     def as_json(*args)
@@ -208,7 +208,7 @@ class Artist < ApplicationRecord
   before_validation :normalize
   validates_uniqueness_of :name
   validates_presence_of :name
-  belongs_to :updater, :class_name => "User", :foreign_key => "updater_id"
+  belongs_to :updater, class_name: "User", foreign_key: "updater_id"
   attr_accessor :updater_ip_addr
 
   def normalize

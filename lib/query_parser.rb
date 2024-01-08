@@ -12,7 +12,7 @@ module QueryParser
   # === Parameters
   # * :parsed_query<Array>: a list of tokens
   def parse_meta(parsed_query)
-    hoge = [[], {}]
+    hoge = [ [], {} ]
 
     parsed_query.each do |token|
       if token =~ /^(.+?):(.+)$/

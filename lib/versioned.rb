@@ -1,6 +1,6 @@
 module Versioned
   def get_versioned_classes
-    [Pool, PoolPost, Post, Tag, Note]
+    [ Pool, PoolPost, Post, Tag, Note ]
   end
   module_function :get_versioned_classes
 

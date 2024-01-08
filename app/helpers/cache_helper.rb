@@ -21,7 +21,7 @@ module CacheHelper
     key[:page] = page
     key[:user_level] = user_level
     key[:limit] = limit
-    [key, 0]
+    [ key, 0 ]
   end
 
   def get_cache_key(controller_name, action_name, params, options = {})

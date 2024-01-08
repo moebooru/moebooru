@@ -1,10 +1,9 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 7.0.1"
+gem "rails", "~> 7.1.2"
 
 gem "sprockets-rails"
-# TODO: remove github once 1.2.2 (or later) is released
-gem 'jsbundling-rails', github: 'rails/jsbundling-rails', branch: 'main'
+gem 'jsbundling-rails', github: 'rails/jsbundling-rails', tag: 'v1.2.2'
 gem "terser"
 
 gem "pg"

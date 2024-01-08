@@ -343,39 +343,37 @@ class PoolController < ApplicationController
   end
 
   # Generate a ZIP control file for nginx, and redirect to the ZIP.
-  if CONFIG["pool_zips"]
-    def zip
-      if params[:hash].is_a?(String) && params[:hash] =~ /^\h{32}$/
-        pool_zip = Rails.cache.read("pool_zip:#{params[:hash]}")
+  def zip
+    if params[:hash].is_a?(String) && params[:hash] =~ /^\h{32}$/
+      pool_zip = Rails.cache.read("pool_zip:#{params[:hash]}")
 
-        return head(:not_found) if pool_zip.nil?
+      return head(:not_found) if pool_zip.nil?
 
-        Moebooru::SkipCookie.apply(request)
+      Moebooru::SkipCookie.apply(request)
 
-        if pool_zip[:data].empty?
-          pool_zip[:data] = Moebooru::Zip::EMPTY
-        else
-          headers['X-Archive-Files'] = 'zip'
-        end
-
-        return send_data(pool_zip[:data], type: Mime[:zip], filename: pool_zip[:filename])
+      if pool_zip[:data].empty?
+        pool_zip[:data] = Moebooru::Zip::EMPTY
+      else
+        headers['X-Archive-Files'] = 'zip'
       end
 
-      pool = Pool.includes(:pool_posts => :post).find(params[:id])
-
-      pool_zip_data = pool.get_zip_data(params).map do |row|
-        "%s %s %s %s\n" % [row[:crc32], row[:file_size], row[:path], row[:filename]]
-      end.join
-
-      hash = Digest::MD5.hexdigest(pool_zip_data)
-      pool_zip = {
-        data: pool_zip_data,
-        filename: pool.get_zip_filename(params),
-      }
-      Rails.cache.write "pool_zip:#{hash}", pool_zip
-
-      redirect_to hash: hash, jpeg: params[:jpeg]
+      return send_data(pool_zip[:data], type: Mime[:zip], filename: pool_zip[:filename])
     end
+
+    pool = Pool.includes(:pool_posts => :post).find(params[:id])
+
+    pool_zip_data = pool.get_zip_data(params).map do |row|
+      "%s %s %s %s\n" % [row[:crc32], row[:file_size], row[:path], row[:filename]]
+    end.join
+
+    hash = Digest::MD5.hexdigest(pool_zip_data)
+    pool_zip = {
+      data: pool_zip_data,
+      filename: pool.get_zip_filename(params),
+    }
+    Rails.cache.write "pool_zip:#{hash}", pool_zip
+
+    redirect_to hash: hash, jpeg: params[:jpeg]
   end
 
   def transfer_metadata

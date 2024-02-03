@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gem "rails", "~> 7.1.2"
 
 gem "sprockets-rails"
-gem "jsbundling-rails", github: "rails/jsbundling-rails", tag: "v1.2.2"
+gem "jsbundling-rails", ">= 1.3.0"
 gem "terser"
 
 gem "pg"

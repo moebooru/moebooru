@@ -1,3 +1,15 @@
+createCompletionBox = ->
+  ret = document.createElement('div')
+  ret.className = 'tag-completion-box'
+  ret.tabIndex = -1
+
+  types = document.createElement('ul')
+  types.className = 'color-tag-types'
+  ret.appendChild types
+
+  ret
+
+
 export default class TagCompletionBox
   constructor: (input_field) ->
     @input_field = input_field
@@ -5,11 +17,8 @@ export default class TagCompletionBox
 
     # Disable browser autocomplete.
     @input_field.setAttribute 'autocomplete', 'off'
-    html = '<div class="tag-completion-box"><ul class="color-tag-types"></ul></div>'
-    div = html.createElement()
-    div.tabindex = -1
-    document.body.appendChild div
-    @completion_box = div
+    @completion_box = createCompletionBox()
+    document.body.appendChild @completion_box
     document.on 'mousedown', (event) =>
       if event.target.isParentNode(@input_field) or event.target.isParentNode(@completion_box)
         return

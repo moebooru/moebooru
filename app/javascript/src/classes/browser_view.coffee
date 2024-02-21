@@ -1,4 +1,5 @@
 import PreloadContainer from 'src/classes/preload_container'
+import { escapeHtml } from 'src/utils/dom'
 import { removeImageElement } from 'src/utils/image'
 import { numberToHumanSize } from 'src/utils/math'
 import FrameEditor from './frame_editor'
@@ -681,7 +682,7 @@ export default class BrowserView
         div = html.subst(
           sequence: sequence
           pool_id: pool_id
-          desc: pool_title.escapeHTML()).createElement()
+          desc: escapeHtml(pool_title)).createElement()
         div.post_id = post.id
         div.pool_id = pool_id
         pool_info.appendChild div

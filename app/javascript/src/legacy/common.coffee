@@ -138,21 +138,6 @@ window.clone_event = (orig) ->
     e = document.createEventObject(orig)
     Event.extend e
 
-Object.extend String.prototype,
-  subst: (subs) ->
-    text = this
-    for s of subs
-      r = new RegExp('\\${' + s + '}', 'g')
-      to = subs[s]
-      if !to?
-        to = ''
-      text = text.replace(r, to)
-    text
-  createElement: ->
-    container = document.createElement('div')
-    container.innerHTML = this
-    container.removeChild container.firstChild
-
 window.onerror = (error, file, line) ->
   ReportError error, file, line, null
   return

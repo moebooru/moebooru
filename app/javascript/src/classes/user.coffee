@@ -166,7 +166,7 @@ export default class User
     target = event.target
 
     loggedIn = @run_login true, =>
-      $(target).click()
+      target.click()
       return
 
     return true if loggedIn
@@ -182,7 +182,9 @@ export default class User
     # Set skip_complete_on_true, so if we don't need to login, we don't resubmit the
     # event; we just don't cancel it.
     target = event.target
-    loggedIn = @run_login true, => target.submit()
+    loggedIn = @run_login true, =>
+      target.requestSubmit()
+      return
 
     return true if loggedIn
 

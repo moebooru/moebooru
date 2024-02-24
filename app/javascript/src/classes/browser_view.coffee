@@ -1,4 +1,5 @@
 import PreloadContainer from 'src/classes/preload_container'
+import { escapeHtml, stringToDom } from 'src/utils/dom'
 import { removeImageElement } from 'src/utils/image'
 import { numberToHumanSize } from 'src/utils/math'
 import FrameEditor from './frame_editor'
@@ -674,14 +675,11 @@ export default class BrowserView
         sequence = pool_post.sequence
         if sequence.match(/^[0-9]/)
           sequence = '#' + sequence
-        html = '<div class="pool-info">Post ${sequence} in <a class="pool-link" href="/post/browse#/pool:${pool_id}">${desc}</a> ' + '(<a target="_blank" href="/pool/show/${pool_id}">pool page</a>)'
+        html = "<div class='pool-info'>Post #{sequence} in <a class='pool-link' href='/post/browse#/pool:#{pool_id}'>#{escapeHtml(pool_title)}</a> (<a target='_blank' href='/pool/show/#{pool_id}'>pool page</a>)"
         if Pool.can_edit_pool(pool)
           html += '<span class="advanced-editing"> (<a href="#" class="remove-pool-from-post">remove</a>)</span>'
         html += '</div>'
-        div = html.subst(
-          sequence: sequence
-          pool_id: pool_id
-          desc: pool_title.escapeHTML()).createElement()
+        div = stringToDom html
         div.post_id = post.id
         div.pool_id = pool_id
         pool_info.appendChild div

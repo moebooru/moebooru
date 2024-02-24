@@ -1,3 +1,5 @@
+import { escapeHtml } from 'src/utils/dom'
+
 export default class InlineImage
   constructor: ->
     @mouse_down = null
@@ -54,7 +56,7 @@ export default class InlineImage
       while idx < data.images.length
         # html_id looks like "inline-123-456".  Mark the button for each individual image as "inline-123-456-2".
         button_id = data.html_id + '-' + idx
-        text = data.images[idx].description.escapeHTML()
+        text = escapeHtml(data.images[idx].description)
         if text == ''
           text = '#' + idx + 1
         ui_html += '<a href=\'#\' id=\'' + button_id + '\' class=\'select-image\' onclick=\'InlineImage.show_image_no("' + data.html_id + '", ' + idx + '); return false;\'>' + text + '</a>'

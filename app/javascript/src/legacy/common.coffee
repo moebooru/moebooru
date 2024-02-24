@@ -118,25 +118,6 @@ Element.addMethods 'FORM', simulate_submit: (form) ->
     if form.fireEvent('onsubmit')
       form.submit()
   return
-Element.addMethods simulate_anchor_click: (a, ev) ->
-  a = $(a)
-  if document.dispatchEvent
-    if a.dispatchEvent(ev) and !ev.stopped
-      window.location.href = a.href
-  else
-    if a.fireEvent('onclick', ev)
-      window.location.href = a.href
-  return
-
-window.clone_event = (orig) ->
-  e = undefined
-  if document.dispatchEvent
-    e = document.createEvent('MouseEvent')
-    e.initMouseEvent orig.type, orig.canBubble, orig.cancelable, orig.view, orig.detail, orig.screenX, orig.screenY, orig.clientX, orig.clientY, orig.ctrlKey, orig.altKey, orig.shiftKey, orig.metaKey, orig.button, orig.relatedTarget
-    Event.extend e
-  else
-    e = document.createEventObject(orig)
-    Event.extend e
 
 window.onerror = (error, file, line) ->
   ReportError error, file, line, null

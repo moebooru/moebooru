@@ -1103,11 +1103,7 @@ window.Post =
     return
   cached_sample_urls: null
   get_cached_sample_urls: ->
-    if LocalStorageDisabled()
-      return null
-
-    ### If the data format is out of date, clear it. ###
-
+    # If the data format is out of date, clear it.
     if localStorage.sample_url_format != '2'
       Post.clear_sample_url_cache()
     if Post.cached_sample_urls?

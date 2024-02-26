@@ -691,50 +691,6 @@ window.ReportError = (message, file, line, exc, info) ->
     alert 'Error: ' + e
   return
 
-window.LocalStorageDisabled = ->
-  if !('localStorage' of window)
-    return 'unsupported'
-  cleared_storage = false
-  loop
-    try
-
-      ### We can't just access a property to test it; that detects it being disabled in FF, but
-      # not in Chrome. 
-      ###
-
-      localStorage.x = '1'
-      if localStorage.x != '1'
-        throw 'disabled'
-      delete localStorage.x
-      return null
-    catch e
-
-      ### If local storage is full, we may not be able to even run this test.  If that ever happens
-      # something is wrong, so after a failure clear localStorage once and try again.  This call
-      # may fail, too; ignore that and we'll catch the problem on the next try. 
-      ###
-
-      if !cleared_storage
-        cleared_storage = true
-        try
-          localStorage.clear()
-        catch e
-        ++i
-        ++i
-        continue
-      if navigator.userAgent.indexOf('Gecko/') != -1
-        # If the user or an extension toggles about:config dom.storage.enabled, this happens:
-        if e.message.indexOf('Security error') != -1
-          return 'ff-disabled'
-
-      ### Chrome unhelpfully reports QUOTA_EXCEEDED_ERR if local storage is disabled, which
-      # means we can't easily detect it being disabled and show a tip to the user. 
-      ###
-
-      return 'error'
-  return
-
-### Allow CSS styles for WebKit. ###
-
+# Allow CSS styles for WebKit.
 if navigator.userAgent.indexOf('AppleWebKit/') != -1
   document.documentElement.className += ' webkit'

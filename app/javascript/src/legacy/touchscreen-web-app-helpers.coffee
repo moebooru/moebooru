@@ -229,12 +229,6 @@ window.PreventDragScrolling = ->
 ###
 
 MaintainUrlHash = ->
-
-  ### This requires DOM storage. ###
-
-  if LocalStorageDisabled()
-    return
-
   ### When any part of the URL hash changes, save it. ###
 
   update_stored_hash = (changed_hash_keys, old_hash, new_hash) ->

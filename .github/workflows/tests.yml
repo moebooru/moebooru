@@ -41,6 +41,9 @@ jobs:
     - name: Setup environment
       run: ./script/gh-action-prepare
 
+    - name: Lint assets
+      run: npm run lint
+
     - name: Build assets
       run: bundle exec rails assets:precompile
 

@@ -13,10 +13,12 @@
     "jquery": "^3.6.0",
     "js-cookie": "^3.0.1",
     "mousetrap": "^1.6.5",
+    "semistandard": "^17.0.0",
     "timeago": "^1.6.7"
   },
   "scripts": {
-    "build": "./build.js"
+    "build": "./build.js",
+    "lint": "semistandard *.js app/javascript/**/*.js app/assets/javascripts/*.js"
   },
   "type": "module"
 }

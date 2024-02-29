@@ -5,4 +5,5 @@
 //= require jquery/dist/jquery
 //= require timeago/jquery.timeago
 
-jQuery.noConflict()
+/* global jQuery */
+jQuery.noConflict();

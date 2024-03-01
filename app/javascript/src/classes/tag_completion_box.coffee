@@ -1,3 +1,5 @@
+import { stringToDom } from 'src/utils/dom'
+
 createCompletionBox = ->
   ret = document.createElement('div')
   ret.className = 'tag-completion-box'
@@ -251,7 +253,7 @@ export default class TagCompletionBox
       if i < recent_result_count
         li.className += ' recent-tag'
         h = '<a class=\'remove-recent-tag\' href=\'#\'>X</a>\''
-        li.appendChild h.createElement()
+        li.appendChild stringToDom(h)
       li.result_tag = tag
       ++i
     @completion_box.show()

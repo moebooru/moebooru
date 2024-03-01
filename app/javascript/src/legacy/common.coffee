@@ -11,12 +11,6 @@ Object.extend Element.Methods,
         return true
       element = element.parentNode
     false
-  setTextContent: (element, text) ->
-    if element.innerText?
-      element.innerText = text
-    else
-      element.textContent = text
-    element
   recursivelyVisible: (element) ->
     while element != document.documentElement
       if !element.visible()

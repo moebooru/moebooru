@@ -658,7 +658,7 @@ export default class BrowserView
   set_post_info: ->
     post = Post.posts.get(@displayed_post_id)
     return if !post
-    @container.down('.post-id').setTextContent post.id
+    @container.down('.post-id').textContent = post.id
     @container.down('.post-id-link').href = '/post/show/' + post.id
     @container.down('.posted-by').show()
     timeago.constructor.set(@container.down('.posted-at'), new Date(post.created_at * 1000))
@@ -686,11 +686,11 @@ export default class BrowserView
 
     if post.creator_id?
       @container.down('.posted-by').down('A').href = "/user/show/#{post.creator_id}"
-      @container.down('.posted-by').down('A').setTextContent post.author
+      @container.down('.posted-by').down('A').textContent = post.author
     else
       @container.down('.posted-by').down('A').href = '#'
-      @container.down('.posted-by').down('A').setTextContent 'Anonymous'
-    @container.down('.post-dimensions').setTextContent post.width + 'x' + post.height
+      @container.down('.posted-by').down('A').textContent = 'Anonymous'
+    @container.down('.post-dimensions').textContent = "#{post.width}x#{post.height}"
     @container.down('.post-source').show post.source != ''
     if post.source != ''
       text = post.source
@@ -717,9 +717,9 @@ export default class BrowserView
       source_box.down('SPAN').show !url?
       if url
         source_box.down('A').href = url
-        source_box.down('A').setTextContent text
+        source_box.down('A').textContent = text
       else
-        source_box.down('SPAN').setTextContent text
+        source_box.down('SPAN').textContent = text
     if post.frames.length > 0
       # Hide this with a class rather than by changing display, so show_frame_editor
       # and hide_frame_editor can hide and unhide this separately.
@@ -735,7 +735,7 @@ export default class BrowserView
         a.className = 'post-frame-link'
         if @displayed_post_frame == i
           a.className += ' current-post-frame'
-        a.setTextContent text
+        a.textContent = text
         a.post_frame = i
         frame_list.appendChild a
         ++i
@@ -745,8 +745,8 @@ export default class BrowserView
       s: 'Safe'
       q: 'Questionable'
       e: 'Explicit'
-    @container.down('.post-rating').setTextContent ratings[post.rating]
-    @container.down('.post-score').setTextContent post.score
+    @container.down('.post-rating').textContent = ratings[post.rating]
+    @container.down('.post-score').textContent = post.score
     @container.down('.post-hidden').show !post.is_shown_in_index
     @container.down('.post-info').show @post_ui_visible
 
@@ -765,17 +765,17 @@ export default class BrowserView
     @container.down('.download-image').show has_image
     if has_image
       @container.down('.download-image').href = post.file_url
-      @container.down('.download-image-desc').setTextContent numberToHumanSize(post.file_size) + ' ' + file_extension(post.file_url.toUpperCase())
+      @container.down('.download-image-desc').textContent = "#{numberToHumanSize(post.file_size)} #{file_extension(post.file_url.toUpperCase())}"
     @container.down('.download-jpeg').show has_sample
     if has_sample
       @container.down('.download-jpeg').href = if has_jpeg then post.jpeg_url else post.file_url
       image_desc = numberToHumanSize(if has_jpeg then post.jpeg_file_size else post.file_size) + ' JPG'
-      @container.down('.download-jpeg-desc').setTextContent image_desc
+      @container.down('.download-jpeg-desc').textContent = image_desc
     @container.down('.download-png').show has_jpeg
     if has_jpeg
       @container.down('.download-png').href = post.file_url
       png_desc = numberToHumanSize(post.file_size) + ' ' + file_extension(post.file_url.toUpperCase())
-      @container.down('.download-png-desc').setTextContent png_desc
+      @container.down('.download-png-desc').textContent = png_desc
 
     # For links that are handled by click events, try to set the href so that copying the
     # link will give a similar effect.  For example, clicking parent-post will call set_post
@@ -825,10 +825,10 @@ export default class BrowserView
       byEl = flagged.down('.by')
       flagged.down('.flagged-by-box').show post.flag_detail.user_id?
       if post.flag_detail.user_id?
-        byEl.setTextContent post.flag_detail.flagged_by
+        byEl.textContent = post.flag_detail.flagged_by
         byEl.href = '/user/show/' + post.flag_detail.user_id
       reason = flagged.down('.reason')
-      reason.setTextContent post.flag_detail.reason
+      reason.textContent = post.flag_detail.reason
 
     # Moderators can unflag images, and the person who flags an image can unflag it himself.
     is_flagger = post.flag_detail and post.flag_detail.user_id == User.get_current_user_id()
@@ -838,17 +838,17 @@ export default class BrowserView
     pending.show post.status == 'pending'
     @container.down('.pending-reason-box').show post.flag_detail and post.flag_detail.reason
     if post.flag_detail
-      @container.down('.pending-reason').setTextContent post.flag_detail.reason
+      @container.down('.pending-reason').textContent = post.flag_detail.reason
     deleted = @container.down('.status-deleted')
     deleted.show post.status == 'deleted'
     if post.status == 'deleted'
       by_container = deleted.down('.by-container')
       by_container.show post.flag_detail.flagged_by?
       byEl = by_container.down('.by')
-      byEl.setTextContent post.flag_detail.flagged_by
+      byEl.textContent = post.flag_detail.flagged_by
       byEl.href = '/user/show/' + post.flag_detail.user_id
       reason = deleted.down('.reason')
-      reason.setTextContent post.flag_detail.reason
+      reason.textContent = post.flag_detail.reason
     @container.down('.status-held').show post.is_held
     has_permission = User.get_current_user_id() == post.creator_id or User.is_mod_or_higher()
     @container.down('.activate-post').show has_permission

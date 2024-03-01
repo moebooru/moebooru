@@ -880,8 +880,8 @@ window.Post =
       return
 
     if post.status == 'flagged'
-      hover.down('#hover-flagged-reason').setTextContent post.flag_detail.reason
-      hover.down('#hover-flagged-by').setTextContent post.flag_detail.flagged_by
+      hover.down('#hover-flagged-reason').textContent = post.flag_detail.reason
+      hover.down('#hover-flagged-by').textContent = post.flag_detail.flagged_by
     hover.down('#hover-file-size').innerHTML = numberToHumanSize(post.file_size)
     hover.down('#hover-author').innerHTML = post.author
     hover.show()

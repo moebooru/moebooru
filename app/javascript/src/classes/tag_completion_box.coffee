@@ -236,7 +236,7 @@ export default class TagCompletionBox
       tag = tags[i]
       li = document.createElement('LI')
       li.className = 'completed-tag'
-      li.setTextContent tag
+      li.textContent = tag
       ul.appendChild li
 
       # If we have any aliases, show the first one.
@@ -244,7 +244,7 @@ export default class TagCompletionBox
       if aliases.length > 0
         span = document.createElement('span')
         span.className = 'completed-tag-alias'
-        span.setTextContent aliases[0]
+        span.textContent = aliases[0]
         li.appendChild span
       tag_type = Post.tag_types.get(tag)
       li.className += ' tag-type-' + tag_type

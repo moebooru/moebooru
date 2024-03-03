@@ -133,20 +133,16 @@ export default class ThumbnailView
     post_ids = post_ids.reject(Post.is_blacklisted)
     @post_ids = []
     @post_frames = []
-    i = 0
-    while i < post_ids.length
-      post_id = post_ids[i]
-      post = Post.posts.get(post_id)
+    for postId in post_ids
+      post = Post.posts.get(postId)
       if post.frames.length > 0
-        frame_idx = 0
-        while frame_idx < post.frames.length
-          @post_ids.push post_id
-          @post_frames.push frame_idx
-          ++frame_idx
+        for _frame, frameIdx in post.frames
+          console.log 'hey'
+          @post_ids.push postId
+          @post_frames.push frameIdx
       else
-        @post_ids.push post_id
+        @post_ids.push postId
         @post_frames.push -1
-      ++i
     @allow_wrapping = !event.memo.can_be_extended_further
 
     # Show the results box or "no results".  Do this before updating the results box to make sure

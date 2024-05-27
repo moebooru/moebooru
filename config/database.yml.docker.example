@@ -1,0 +1,24 @@
+# Copy this to "database.yml" and adjust the fields accordingly.
+# Only works with postgresql adapter.
+login: &login
+  adapter: postgresql
+  username: postgres
+  password: imouto
+
+development:
+  database: moebooru-dev
+  host: moebooru-dev
+  port: 5432
+  <<: *login
+
+test:
+  database: moebooru-test
+  host: moebooru-test
+  port: 5432
+  <<: *login
+
+production:
+  database: moebooru
+  host: moebooru-prod
+  port: 5432
+  <<: *login

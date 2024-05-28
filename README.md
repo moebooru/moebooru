@@ -61,33 +61,37 @@ After initializing PostgreSQL database, create user for moebooru with `createdb`
 * Creates three PSQL containers for each environment
 * Builds and deploys moebooru container
 
-| Environment Vars     | Default                            | Description                                                                  |
-|----------------------|------------------------------------|------------------------------------------------------------------------------|
-| LOCAL_CONFIG_PATH    | config/local_config.rb.example     | Sets the local path config                                                   |
-| DATABASE_CONFIG_PATH | config/database.yml.docker.example | Sets the database path config                                                |
-| RAILS_ENV            | development                        | Sets the environment to deploy moebooru                                      |
-| COMMAND_PARAMS       | echo ''                            | Runs command on container creation                                           |
-| ARCHICTECTURE        | x86_64                             | Sets architecture to use. Please refer to https://hub.docker.com/_/ruby/tags |
-| APP_LISTEN_IP        | 0.0.0.0                            | Sets moebooru listen IP                                                      |
-| HOST_PORT            | 8080                               | Sets port on host to bind to moebooru port                                   |
-| DB_TEST_VOL_PATH     | null                               | Sets Postgresql DB Volume Path for Test environment                          |
-| DB_PROD_VOL_PATH     | null                               | Sets Postgresql DB Volume Path for Prod environment                          |
-| DB_DEV_VOL_PATH      | null                               | Sets Postgresql DB Volume Path for Dev environment                           |
+| Environment Vars           | Default                            | Description                                                                  |
+|----------------------------|------------------------------------|------------------------------------------------------------------------------|
+| **LOCAL_CONFIG_PATH**        | `config/local_config.rb.example`   | Sets the local path config                                                   |
+| **DATABASE_CONFIG_PATH**     | `config/database.yml.docker.example` | Sets the database path config                                                |
+| **RAILS_ENV**                | `development`                      | Sets the environment to deploy moebooru                                      |
+| **COMMAND_PARAMS**           | `echo ''`                          | Runs command on container creation                                           |
+| **ARCHITECTURE**             | `x86_64`                           | Sets architecture to use. Please refer to [Docker Ruby Tags](https://hub.docker.com/_/ruby/tags) |
+| **APP_LISTEN_IP**            | `0.0.0.0`                          | Sets moebooru listen IP                                                      |
+| **HOST_PORT**                | `8080`                             | Sets port on host to bind to moebooru port                                   |
+| **DB_TEST_VOL_PATH**         | `null`                             | Sets Postgresql DB Volume Path for Test environment                          |
+| **DB_PRODUCTION_VOL_PATH**   | `null`                             | Sets Postgresql DB Volume Path for Prod environment                          |
+| **DB_DEVELOPMENT_VOL_PATH**  | `null`                             | Sets Postgresql DB Volume Path for Dev environment                           |
+| **DB_USERNAME**              | `postgres`                         | Sets Postgresql DB username                                                  |
+| **DB_PASSWORD**              | `imouto`                           | Sets Postgresql DB password                                                  |
 
-Information on utilizing these variables can be found here:
-* [moebooru-app.env.example](.docker-env/moebooru-app.env.example)
-* [moebooru-db.env.example](.docker-env/moebooru-db.env.example)
+Information on utilizing these variables can be found here in each separate environment:
+* [moebooru-app.dev.env.example](.docker/moebooru-app.dev.env.example)
+* [moebooru-app.test.env.example](.docker/moebooru-app.test.env.example)
+* [moebooru-app.prod.env.example](.docker/moebooru-app.prod.env.example)
+* [moebooru-db.env.example](.docker/moebooru-db.env.example)
 
 Sample Deployment:
 ```
 # Build the image
-docker compose --env-file .docker-env/moebooru-db.env.example --env-file .docker-env/moebooru-app.env.example build
+docker compose --env-file .docker/moebooru-app.dev.env.example --env-file .docker/moebooru-db.env.example -f docker-compose.yml -f .docker/docker-compose.dev.yml build
 
 # Start the container
-docker compose --env-file .docker-env/moebooru-db.env.example --env-file .docker-env/moebooru-app.env.example up -d
+docker compose --env-file .docker/moebooru-app.dev.env.example --env-file .docker/moebooru-db.env.example -f docker-compose.yml -f .docker/docker-compose.dev.yml up -d
 
 # Destroy the container
-docker compose --env-file .docker-env/moebooru-db.env.example --env-file .docker-env/moebooru-app.env.example down
+docker compose --env-file .docker/moebooru-app.dev.env.example --env-file .docker/moebooru-db.env.example -f docker-compose.yml -f .docker/docker-compose.dev.yml down
 ```
 
 Configuration

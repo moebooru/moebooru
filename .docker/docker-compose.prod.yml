@@ -1,0 +1,11 @@
+# Override values for docker-compose.yml on production environment.
+# database.yml and local_config.rb should exist inside config directory.
+
+version: '3'
+services:
+  moebooru-db:
+    volumes:
+      - ${DB_PRODUCTION_VOL_PATH}:/var/lib/postgresql
+  moebooru-app:
+    command: >
+      "${COMMAND_PARAMS} && bundle exec rails server -b ${APP_LISTEN_IP}"

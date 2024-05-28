@@ -7,54 +7,31 @@
 # * ./docker_env/moebooru-app.env.example
 # * ./docker_env/moebooru-db.env.example
 #
-# Example Usage: docker compose --env-file .docker-env/moebooru-app.env.example --env-file .docker-env/moebooru-db.env.example up -d 
+# Example Usage: docker compose --env-file .docker/moebooru-app.dev.env.example --env-file .docker/moebooru-db.env.example -f docker-compose.yml -f .docker/docker-compose.dev.yml up -d
 #
 
 version: '3'
 services:
-  moebooru-dev:
+  moebooru-db:
     image: postgres:alpine
-    container_name: moebooru-dev
-    volumes:
-      - ${DB_DEV_VOL_PATH}:/var/lib/postgresql
+    container_name: moebooru-db-${RAILS_ENV}
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: imouto
-      POSTGRES_DB: moebooru-dev
-    restart: unless-stopped
-
-  moebooru-test:
-    image: postgres:alpine
-    container_name: moebooru-test
-    volumes:
-      - ${DB_TEST_VOL_PATH}:/var/lib/postgresql
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: imouto
-      POSTGRES_DB: moebooru-test
-    restart: unless-stopped
-
-  moebooru-prod:
-    image: postgres:alpine
-    container_name: moebooru-prod
-    volumes:
-      - ${DB_PROD_VOL_PATH}:/var/lib/postgresql
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: imouto
-      POSTGRES_DB: moebooru
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: moebooru-${RAILS_ENV}
     restart: unless-stopped
 
   moebooru-app:
-    platform: linux/${ARCHITECTURE:-x86_64}
-    image: moebooru:latest
-    container_name: moebooru-app
-    command: >
-      "${COMMAND_PARAMS:-echo ''} && npm run build && bundle exec rails server -b ${APP_LISTEN_IP:-'0.0.0.0'}"
+    platform: linux/${ARCHITECTURE}
+    image: moebooru:${RAILS_ENV}
+    container_name: moebooru-app-${RAILS_ENV}
     build:
       dockerfile: "./Dockerfile"
+      target: moebooru-${RAILS_ENV}
     environment:
       - RAILS_ENV
+      - DB_USERNAME
+      - DB_PASSWORD
       # Additional environment variables that can be set
       # - MB_DATABASE_URL # This must be set accordingly. Uncommenting this and not setting will cause the container to not work.
       # - MB_MEMCACHE_SERVERS
@@ -62,5 +39,5 @@ services:
       # - MB_PIWIK_ID
       # - MB_THREADS
     ports:
-      - ${HOST_PORT:-8080}:3000
+      - ${HOST_PORT}:3000
     restart: unless-stopped

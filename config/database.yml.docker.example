@@ -2,23 +2,23 @@
 # Only works with postgresql adapter.
 login: &login
   adapter: postgresql
-  username: postgres
-  password: imouto
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
 
 development:
-  database: moebooru-dev
-  host: moebooru-dev
+  database: moebooru-development
+  host: moebooru-db-development
   port: 5432
   <<: *login
 
 test:
   database: moebooru-test
-  host: moebooru-test
+  host: moebooru-db-test
   port: 5432
   <<: *login
 
 production:
-  database: moebooru
-  host: moebooru-prod
+  database: moebooru-production
+  host: moebooru-db-production
   port: 5432
   <<: *login

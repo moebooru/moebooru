@@ -14,7 +14,7 @@ ENV DB_PASSWORD $DB_PASSWORD
 ARG DATABASE_CONFIG_PATH=${DATABASE_CONFIG_PATH:-config/database.yml.docker.example}
 ARG LOCAL_CONFIG_PATH=${LOCAL_CONFIG_PATH:-config/local_config.rb.example}
 
-RUN apk add --no-cache curl build-base libpq-dev npm imagemagick nodejs tzdata postgresql-client yarn
+RUN apk add --no-cache curl build-base libpq-dev npm imagemagick nodejs tzdata postgresql-client yarn gcompat
 
 RUN bundle config --global frozen 1
 
@@ -45,7 +45,7 @@ ENV RAILS_ENV $RAILS_ENV
 ENV DB_USERNAME $DB_USERNAME
 ENV DB_PASSWORD $DB_PASSWORD
 
-RUN apk add --no-cache curl build-base libpq-dev npm imagemagick nodejs tzdata postgresql-client
+RUN apk add --no-cache curl build-base libpq-dev npm imagemagick nodejs tzdata postgresql-client gcompat
 
 RUN bundle config --global frozen 1
 
@@ -70,7 +70,7 @@ ENV RAILS_ENV $RAILS_ENV
 ENV DB_USERNAME $DB_USERNAME
 ENV DB_PASSWORD $DB_PASSWORD
 
-RUN apk add --no-cache curl build-base libpq-dev npm imagemagick nodejs tzdata postgresql-client
+RUN apk add --no-cache curl build-base libpq-dev npm imagemagick nodejs tzdata postgresql-client gcompat
 
 RUN bundle config --global frozen 1
 

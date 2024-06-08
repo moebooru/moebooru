@@ -121,7 +121,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.0.2)
+    marcel (1.0.4)
     method_source (1.0.0)
     mini_magick (4.12.0)
     mini_mime (1.1.5)

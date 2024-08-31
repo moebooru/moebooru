@@ -1,6 +1,6 @@
 require_relative "boot"
 
-# To allow setting environment variable ZP_DATABASE_URL instead of DATABASE_URL.
+# To allow setting environment variable MB_DATABASE_URL instead of DATABASE_URL.
 ENV["DATABASE_URL"] = ENV["MB_DATABASE_URL"] if ENV["MB_DATABASE_URL"]
 ENV["NODE_ENV"] = ENV["RAILS_ENV"]
 
@@ -8,33 +8,28 @@ require "rails/all"
 
 require_relative "init_config"
 
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
 Bundler.require(*CONFIG["bundler_groups"])
 
 module Moebooru
   class Application < Rails::Application
-    config.load_defaults 7.1
-    config.active_record.belongs_to_required_by_default = false
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration can go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded after loading
-    # the framework and any gems in your application.
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 7.2
 
-    # Custom directories with classes and modules you want to be autoloadable.
-    # config.autoload_paths += %W(#{config.root}/extras)
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
-    # Also load files in lib/ in addition to app/.
-    config.eager_load_paths << Rails.root.join("lib")
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
+    #
+    # config.time_zone = "Central Time (US & Canada)"
+    # config.eager_load_paths << Rails.root.join("extras")
 
-    # Only load the plugins named here, in the order given (default is alphabetical).
-    # :all can be used as a placeholder for all plugins not explicitly named.
-    # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
-
-    # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
-    # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Central Time (US & Canada)'
-
-    # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
-    # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     config.i18n.available_locales = CONFIG["available_locales"]
     config.i18n.default_locale = CONFIG["default_locale"]
 
@@ -59,5 +54,7 @@ module Moebooru
     config.action_mailer.default_url_options = { host: "#{scheme}#{CONFIG["server_host"]}" }
 
     config.middleware.delete ActionDispatch::HostAuthorization
+
+    config.active_record.belongs_to_required_by_default = false
   end
 end

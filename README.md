@@ -12,10 +12,10 @@ Requirements
 
 As this is ongoing project, there will be more changes on requirement as this project goes. Currently this application is developed using:
 
-* Ruby (3.1 or later)
-* PostgreSQL (14 or later)
+* Ruby (3.3 or later)
+* PostgreSQL (15 or later)
 * Bundler gem
-* node.js (16.0 or later)
+* node.js (20.0 or later)
 * ImageMagick
 * And various other requirement for the gems (check `Gemfile` for the list)
 
@@ -31,8 +31,8 @@ On RHEL, it goes like this (untested):
 * nodejs
 * openssl-devel
 * pcre-devel
-* postgresql14-devel
-* postgresql14-server
+* postgresql15-devel
+* postgresql15-server
 
 Base, EPEL, dnf module, and postgresql official repositories contain all the requirements.
 

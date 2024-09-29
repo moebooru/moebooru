@@ -14,6 +14,12 @@ export function hideEl (el) {
   el.style.display = 'none';
 }
 
+export function isVisible (el) {
+  const rect = el.getBoundingClientRect();
+
+  return rect.x !== 0 || rect.y !== 0 || rect.width !== 0 || rect.height !== 0;
+}
+
 export function showEl (el) {
   el.style.display = '';
 }

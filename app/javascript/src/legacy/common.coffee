@@ -11,12 +11,6 @@ Object.extend Element.Methods,
         return true
       element = element.parentNode
     false
-  recursivelyVisible: (element) ->
-    while element != document.documentElement
-      if !element.visible()
-        return false
-      element = element.parentNode
-    true
 Element.addMethods()
 KeysDown = new Hash
 

@@ -1,4 +1,4 @@
-import { stringToDom } from 'src/utils/dom'
+import { isVisible, stringToDom } from 'src/utils/dom'
 
 createCompletionBox = ->
   ret = document.createElement('div')
@@ -214,7 +214,7 @@ export default class TagCompletionBox
     @current_tag = tag
 
     # Don't display if the input field itself is hidden.
-    if !@input_field.recursivelyVisible()
+    if !isVisible(@input_field)
       return
     tags_and_recent_count = TagCompletion.complete_tag(tag)
     tags = tags_and_recent_count[0]

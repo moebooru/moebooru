@@ -1,15 +1,16 @@
-require File.expand_path("../dtext/helper.rb", __FILE__)
+require "test_helper"
+require_relative "./dtext/helper"
 
 describe DText do
-  tests = find_test
+  tests = DTextHelper.find_test
   tests.each do |t|
     match = t.gsub /\.txt$/, ".html"
     it t do
-      assert_equal h(match), p(r(t))
+      assert_equal DTextHelper.h(match), DTextHelper.p(DTextHelper.r(t))
     end
   end
 
   it "does not explode on nil" do
-    assert_equal "", p(nil)
+    assert_equal "", DTextHelper.p(nil)
   end
 end

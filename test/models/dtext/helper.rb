@@ -1,8 +1,6 @@
 require "./lib/dtext"
 require "nokogiri"
 
-include DText
-
 module DTextHelper
   TestDir = File.expand_path("../tests", __FILE__)
 

@@ -6,7 +6,7 @@ import esbuild from 'esbuild';
 import coffeeScriptPlugin from 'esbuild-coffeescript';
 import { lessLoader } from 'esbuild-plugin-less';
 import fsPromises from 'fs/promises';
-import glob from 'glob';
+import { globSync } from 'glob';
 
 const outdir = 'app/assets/builds';
 
@@ -41,15 +41,13 @@ const plugins = [
         const outfileBabel = `${outdir}/${filename}`;
         result.map.sources = result.map.sources
           // CoffeeScript sourcemap and Esbuild sourcemap combined generates duplicated source paths
-          .map((path) => path.replace(/\.\.\/\.\.\/javascript(\/.+)?\/app\/javascript\//, '../app/javascript/'));
+          .map((path) => path.replace(/\.\.\/\.\.\/javascript(\/.+)?\/app\/javascript\//, '../../javascript/'));
         const resultMap = JSON.stringify(result.map);
         const resultMapHash = createHash('sha256').update(resultMap).digest('hex');
 
-        return Promise.all([
-          // add hash so it matches sprocket output
-          fsPromises.writeFile(outfileBabel, `${result.code}\n//# sourceMappingURL=${filename}-${resultMapHash}.map`),
-          fsPromises.writeFile(`${outfileBabel}.map`, JSON.stringify(result.map))
-        ]);
+        // add hash so it matches sprocket output
+        fsPromises.writeFile(outfileBabel, `${result.code}\n//# sourceMappingURL=${filename}-${resultMapHash}.map`);
+        fsPromises.writeFile(`${outfileBabel}.map`, JSON.stringify(result.map));
       });
     }
   },
@@ -64,6 +62,17 @@ const plugins = [
         }
       });
     }
+  },
+  {
+    name: 'log',
+    setup (build) {
+      build.onStart(() => {
+        console.log(new Date(), 'Build started');
+      });
+      build.onEnd(() => {
+        console.log(new Date(), 'Build finished');
+      });
+    }
   }
 ];
 
@@ -72,26 +81,21 @@ const options = {
   watch: args.includes('--watch'),
   analyze: args.includes('--analyze')
 };
-const watch = options.watch
-  ? {
-      onRebuild (error) {
-        if (error == null) {
-          console.log(new Date(), 'Rebuild succeeded');
-        }
-      }
-    }
-  : false;
 
-esbuild.build({
+const ctx = await esbuild.context({
   bundle: true,
-  entryPoints: glob.sync('app/javascript/*.*'),
+  entryPoints: globSync('app/javascript/*.*'),
   external: ['*.gif', '*.png'],
   metafile: options.analyze,
   nodePaths: ['app/javascript'],
   outdir,
   plugins,
   resolveExtensions: ['.coffee', '.js'],
-  sourcemap: 'external',
-  watch
-}).then(() => console.log(new Date(), 'Build succeeded'))
-  .catch((e) => console.debug(e));
+  sourcemap: 'external'
+});
+
+if (options.watch) {
+  ctx.watch();
+} else {
+  ctx.rebuild();
+}

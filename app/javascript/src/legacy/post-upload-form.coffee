@@ -56,6 +56,7 @@ PostUploadForm::form_submit_event = (e) ->
   if e.stopped
     return
   if @current_request?
+    e.preventDefault()
     return
   $('post-exists').hide()
   $('post-upload-error').hide()

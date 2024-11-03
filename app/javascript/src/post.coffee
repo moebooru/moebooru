@@ -44,7 +44,7 @@
     $('#post_tags').on 'keydown', (e) ->
       if e.which == 13
         e.preventDefault()
-        $('#edit-form').submit()
+        document.getElementById('edit-form').requestSubmit()
       return
     return
   return

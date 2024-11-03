@@ -25,6 +25,7 @@ export default class Autocomplete
         .done (matches) =>
           update matches.map(autocompleterMap)
       onSelect: (match) => input.value = match.value
+      preventSubmit: 2 # OnSelect
 
 
   _genericCompletionAll: =>

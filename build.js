@@ -82,7 +82,7 @@ const options = {
   analyze: args.includes('--analyze')
 };
 
-const ctx = await esbuild.context({
+const config = {
   bundle: true,
   entryPoints: globSync('app/javascript/*.*'),
   external: ['*.gif', '*.png'],
@@ -92,10 +92,10 @@ const ctx = await esbuild.context({
   plugins,
   resolveExtensions: ['.coffee', '.js'],
   sourcemap: 'external'
-});
+};
 
 if (options.watch) {
-  ctx.watch();
+  (await esbuild.context(config)).watch();
 } else {
-  ctx.rebuild();
+  esbuild.build(config);
 }

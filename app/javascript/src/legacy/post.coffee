@@ -219,7 +219,7 @@ window.Post =
     $(field_id).observe 'keydown', (e) ->
       if e.keyCode == Event.KEY_RETURN
         e.stop()
-        @up('form').simulate_submit()
+        @up('form').requestSubmit()
       return
     return
   get_post_tags_by_type: (post) ->

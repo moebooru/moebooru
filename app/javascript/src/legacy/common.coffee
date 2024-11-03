@@ -78,7 +78,7 @@ window.InitTextAreas = ->
       AllowTextAreaFields: true
       Element: elem
     }, (f) ->
-      $(form).simulate_submit()
+      form.requestSubmit()
       return
     return
   return
@@ -87,24 +87,6 @@ window.InitAdvancedEditing = ->
   if Cookie.get('show_advanced_editing') != '1'
     return
   $(document.documentElement).removeClassName 'hide-advanced-editing'
-  return
-
-### When we resume a user submit after logging in, we want to run submit events, as
-# if the submit had happened normally again, but submit() doesn't do this.  Run
-# a submit event manually. 
-###
-
-Element.addMethods 'FORM', simulate_submit: (form) ->
-  form = $(form)
-  if document.createEvent
-    e = document.createEvent('HTMLEvents')
-    e.initEvent 'submit', true, true
-    form.dispatchEvent e
-    if !e.stopped
-      form.submit()
-  else
-    if form.fireEvent('onsubmit')
-      form.submit()
   return
 
 window.onerror = (error, file, line) ->

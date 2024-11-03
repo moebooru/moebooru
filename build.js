@@ -76,7 +76,7 @@ const watch = options.watch
   ? {
       onRebuild (error) {
         if (error == null) {
-          console.log('Rebuild succeeded');
+          console.log(new Date(), 'Rebuild succeeded');
         }
       }
     }
@@ -93,5 +93,5 @@ esbuild.build({
   resolveExtensions: ['.coffee', '.js'],
   sourcemap: 'external',
   watch
-}).then(() => console.log('Build succeeded'))
+}).then(() => console.log(new Date(), 'Build succeeded'))
   .catch((e) => console.debug(e));

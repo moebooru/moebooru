@@ -66,11 +66,13 @@ const plugins = [
   {
     name: 'log',
     setup (build) {
+      const startTime = Date.now();
+
       build.onStart(() => {
         console.log(new Date(), 'Build started');
       });
       build.onEnd(() => {
-        console.log(new Date(), 'Build finished');
+        console.log(new Date(), `Build finished (${Date.now() - startTime}ms)`);
       });
     }
   }

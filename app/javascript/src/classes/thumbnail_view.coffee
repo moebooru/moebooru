@@ -1,3 +1,4 @@
+import { sortArrayByDistance } from '../utils/array'
 import PreloadContainer from './preload_container'
 
 # Handle the thumbnail view, and navigation for the main view.
@@ -161,7 +162,7 @@ export default class ThumbnailView
       # centered on.  If that doesn't match, move outwards from there.  Only look forward
       # a little bit, or we may match a post that was never seen and jump forward too far
       # in the results.
-      post_id_search_order = sort_array_by_distance(old_post_ids.slice(0, old_centered_post_idx + 3), old_centered_post_idx)
+      post_id_search_order = sortArrayByDistance(old_post_ids.slice(0, old_centered_post_idx + 3), old_centered_post_idx)
       initial_post_id = null
       i = 0
       while i < post_id_search_order.length

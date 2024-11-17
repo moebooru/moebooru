@@ -638,7 +638,3 @@ window.ReportError = (message, file, line, exc, info) ->
   catch e
     alert 'Error: ' + e
   return
-
-# Allow CSS styles for WebKit.
-if navigator.userAgent.indexOf('AppleWebKit/') != -1
-  document.documentElement.className += ' webkit'

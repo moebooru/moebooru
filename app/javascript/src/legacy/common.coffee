@@ -94,27 +94,10 @@ window.onerror = (error, file, line) ->
   return
 
 ### Return the squared distance between two points. ###
-
 window.distance_squared = (x1, y1, x2, y2) ->
   (x1 - x2) ** 2 + (y1 - y2) ** 2
 
-### Return the size of the window. ###
-
-window.getWindowSize = ->
-  size = {}
-  if window.innerWidth?
-    size.width = window.innerWidth
-    size.height = window.innerHeight
-  else
-
-    ### IE: ###
-
-    size.width = document.documentElement.clientWidth
-    size.height = document.documentElement.clientHeight
-  size
-
 ### If 2d canvases are supported, return one.  Otherwise, return null. ###
-
 window.create_canvas_2d = ->
   document.createElement('canvas')
 
@@ -523,17 +506,14 @@ WindowDragElementAbsolute::ondrag = (e) ->
   scrollLeft = @scroll_anchor_x + e.aX
   scrollTop = @scroll_anchor_y + e.aY
 
-  ### Don't allow dragging the image off the screen; there'll be no way to
+  # Don't allow dragging the image off the screen; there'll be no way to
   # get it back. 
-  ###
-
-  window_size = getWindowSize()
   min_visible = Math.min(100, @element.offsetWidth)
   scrollLeft = Math.max(scrollLeft, min_visible - (@element.offsetWidth))
-  scrollLeft = Math.min(scrollLeft, window_size.width - min_visible)
+  scrollLeft = Math.min(scrollLeft, window.innerWidth - min_visible)
   min_visible = Math.min(100, @element.offsetHeight)
   scrollTop = Math.max(scrollTop, min_visible - (@element.offsetHeight))
-  scrollTop = Math.min(scrollTop, window_size.height - min_visible)
+  scrollTop = Math.min(scrollTop, window.innerHeight - min_visible)
   @element.setStyle
     left: scrollLeft + 'px'
     top: scrollTop + 'px'

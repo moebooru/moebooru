@@ -991,7 +991,9 @@ export default class BrowserView
 
   # this.image_window_size is the size of the area where the image is visible.
   update_image_window_size: ->
-    @image_window_size = getWindowSize()
+    @image_window_size =
+      width: window.innerWidth
+      height: window.innerHeight
 
     # If the thumb bar is shown, exclude it from the window height and fit the image
     # in the remainder.  Since the bar is at the bottom, we don't need to do anything to

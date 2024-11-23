@@ -89,10 +89,6 @@ window.InitAdvancedEditing = ->
   $(document.documentElement).removeClassName 'hide-advanced-editing'
   return
 
-window.onerror = (error, file, line) ->
-  ReportError error, file, line, null
-  return
-
 ### Return the squared distance between two points. ###
 window.distance_squared = (x1, y1, x2, y2) ->
   (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -538,83 +534,4 @@ window.TrackFocus = ->
     document.focusedElement = event.srcElement
     return
   ).bindAsEventListener(this)
-  return
-
-window.FormatError = (message, file, line, exc, info) ->
-  report = ''
-  report += 'Error: ' + message + '\n'
-  if info?
-    report += info
-  report += 'UA: ' + window.navigator.userAgent + '\n'
-  report += 'URL: ' + window.location.href + '\n'
-  cookies = document.cookie
-  cookies = cookies.replace(/(pass_hash)=[0-9a-f]{40}/, '$1=(removed)')
-  try
-    report += 'Cookies: ' + decodeURIComponent(cookies) + '\n'
-  catch e
-    report += 'Cookies (couldn\'t decode): ' + cookies + '\n'
-  if 'localStorage' of window
-
-    ### FF's localStorage is broken; we can't iterate over it.  Name the keys we use explicitly. ###
-
-    keys = []
-    try
-      for storageKey of localStorage
-        keys.push storageKey
-    catch e
-      keys = [
-        'sample_urls'
-        'sample_url_fifo'
-        'tag_data'
-        'tag_data_version'
-        'recent_tags'
-        'tag_data_format'
-      ]
-    i = 0
-    while i < keys.length
-      key = keys[i]
-      try
-        if !(key of localStorage)
-          ++i
-          continue
-        data = localStorage[key]
-        length = data.length
-        if data.length > 512
-          data = data.slice(0, 512)
-        report += 'localStorage.' + key + ' (size: ' + length + '): ' + data + '\n'
-      catch e
-        report += '(ignored errors retrieving localStorage for ' + key + ': ' + e + ')\n'
-      ++i
-  if exc and exc.stack
-    report += '\n' + exc.stack + '\n'
-  if file
-    report += 'File: ' + file
-    if line?
-      report += ' line ' + line + '\n'
-  report
-
-window.reported_error = false
-
-window.ReportError = (message, file, line, exc, info) ->
-  if navigator.userAgent.match(/.*MSIE [67]/)
-    return
-
-  ### Only attempt to report an error once per page load. ###
-
-  if window.reported_error
-    return
-  window.reported_error = true
-
-  ### Only report an error at most once per hour. ###
-
-  if document.cookie.indexOf('reported_error=1') != -1
-    return
-  expiration = new Date
-  expiration.setTime expiration.getTime() + 60 * 60 * 1000
-  document.cookie = 'reported_error=1; path=/; expires=' + expiration.toGMTString()
-  report = FormatError((if exc then exc.message else message), file, line, exc, info)
-  try
-    jQuery.post '/user/error.json', report: report
-  catch e
-    alert 'Error: ' + e
   return

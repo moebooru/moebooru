@@ -363,17 +363,6 @@ class UserController < ApplicationController
     @post = Post.find(params[:id])
   end
 
-  def error
-    report = params[:report]
-
-    file = "#{Rails.root}/log/user_errors.log"
-    File.open(file, "a") do |f|
-      f.write(report.to_s + "\n\n\n-------------------------------------------\n\n\n")
-    end
-
-    render json: { success: true }
-  end
-
   private
 
   def get_view_name_for_edit(param)

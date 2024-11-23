@@ -230,7 +230,6 @@ Rails.application.routes.draw do
   match "user/change_password", via: [ :post, :get ]
   post "user/check"
   match "user/edit", via: [ :post, :get ]
-  match "user/error", via: [ :post, :get ]
   match "user/home", via: [ :post, :get ]
   match "user/invites", via: [ :post, :get ]
   match "user/login", via: [ :post, :get ]

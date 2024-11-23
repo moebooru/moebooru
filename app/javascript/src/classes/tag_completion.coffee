@@ -422,8 +422,7 @@ export default class TagCompletion
     results.each (tag) ->
       m = tag.match(/(\d+)`([^`]*)`(([^ ]*)`)? /)
       if !m
-        ReportError 'Unparsable cached tag: \'' + tag + '\'', null, null, null, null
-        throw 'Unparsable cached tag: \'' + tag + '\''
+        throw "Unparsable cached tag: '#{tag}'"
       tag = m[2]
       tag_type = Post.tag_type_names[m[1]]
       aliases = m[4]

@@ -1,6 +1,8 @@
 # encoding: utf-8
 
 class AnonymousUser
+  include Singleton
+
   def id
     0
   end

@@ -149,7 +149,7 @@ class User < ApplicationRecord
   module UserNameMethods
     module ClassMethods
       def find_name(user_id)
-        (select(:name).find_by(id: user_id) || AnonymousUser.new).name
+        (select(:name).find_by(id: user_id) || AnonymousUser.instance).name
       end
 
       def find_by_name(name)

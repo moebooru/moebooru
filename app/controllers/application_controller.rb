@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
 
         session[:user_id] = @current_user.id
       else
-        @current_user = AnonymousUser.new
+        @current_user = AnonymousUser.instance
       end
 
       # For convenient access in activerecord models

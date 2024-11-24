@@ -166,7 +166,7 @@ class Post < ApplicationRecord
   end
 
   def author
-    (user || AnonymousUser.new).name
+    (user || AnonymousUser.instance).name
   end
 
   def delete_from_database

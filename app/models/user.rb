@@ -163,16 +163,11 @@ class User < ApplicationRecord
       m.validates_format_of :name, with: /\A[^\p{Space};,]+\Z/, on: :create, message: "cannot have whitespace, commas, or semicolons"
       #      validates_format_of :name, :with => /^(Anonymous|[Aa]dministrator)/, :on => :create, :message => "this is a disallowed username"
       m.validates_uniqueness_of :name, case_sensitive: false, on: :create
-      m.after_save :update_cached_name
     end
 
     # FIXME: nuke this
     def pretty_name
       name
-    end
-
-    def update_cached_name
-      Rails.cache.write("user_name:#{id}", name)
     end
   end
 

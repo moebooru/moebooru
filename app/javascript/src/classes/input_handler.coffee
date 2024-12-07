@@ -1,8 +1,6 @@
 # This handler handles global keypress bindings, and fires viewer: events.
 export default class InputHandler
   constructor: ->
-    TrackFocus()
-
     document.on 'keydown', @document_keypress_event
 
 
@@ -13,8 +11,9 @@ export default class InputHandler
 
     # Opera
     if key == Event.KEY_ESC
-      if document.focusedElement and document.focusedElement.blur and !document.focusedElement.hasClassName('no-blur-on-escape')
-        document.focusedElement.blur()
+      activeElement = document.activeElement
+      if activeElement != null && activeElement.blur != null && !activeElement.classList.contains('no-blur-on-escape')
+        activeElement.blur()
         return true
     target = e.target
     if target.tagName == 'INPUT' or target.tagName == 'TEXTAREA'

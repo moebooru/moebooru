@@ -520,18 +520,3 @@ WindowDragElementAbsolute::ondrag = (e) ->
 WindowDragElementAbsolute::destroy = ->
   @dragger.destroy()
   return
-
-### Track the focused element, and store it in document.focusedElement.. ###
-
-window.TrackFocus = ->
-  document.focusedElement = null
-  if document.addEventListener
-    document.addEventListener 'focus', ((e) ->
-      document.focusedElement = e.target
-      return
-    ).bindAsEventListener(this), true
-  document.observe 'focusin', ((event) ->
-    document.focusedElement = event.srcElement
-    return
-  ).bindAsEventListener(this)
-  return

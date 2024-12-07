@@ -1102,9 +1102,13 @@ export default class BrowserView
       # debug("Skipping canvas blit");
       return
     @canvas.rendered_url = @img.src
-    @canvas.width = @displayed_image_width
-    @canvas.height = @displayed_image_height
+    scale = window.devicePixelRatio
+    @canvas.width = @displayed_image_width * scale
+    @canvas.height = @displayed_image_height * scale
+    @canvas.style.width = "#{@displayed_image_width}px"
+    @canvas.style.height = "#{@displayed_image_height}px"
     ctx = @canvas.getContext('2d')
+    ctx.scale scale, scale
     ctx.drawImage @img, 0, 0, @displayed_image_width, @displayed_image_height
     @canvas.show()
     @img.hide()

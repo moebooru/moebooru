@@ -1,21 +1,11 @@
 <% content_for :html_header do %>
-  <script type="text/javascript">
-    if(navigator.platform.indexOf("iPhone") != -1 || navigator.platform == "iPad" || navigator.platform == "iPod") // includes "iPhone Simulator"
-      document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">');
-    else
-      document.write('<meta name="viewport" content="target-densityDpi=150, user-scalable=0;">');
-
-    if(navigator.platform == "iPad")
-      document.write('<link rel="apple-touch-startup-image" href="<%= image_path "iphone-startup-ipad.png" %>">');
-    else
-      document.write('<link rel="apple-touch-startup-image" href="<%= image_path "iphone-startup.png" %>">');
-  </script>
-
   <meta name="apple-mobile-web-app-capable" content="yes" >
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="application-name" content="<%= CONFIG["app_name"].gsub(".", " ") %>">
   <meta name="application-url" content="/post/browse">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <link rel="apple-touch-startup-image" href="<%= image_path "iphone-startup-ipad.png" %>">
   <link rel="apple-touch-icon" href="<%= image_path "iphone-icon.png" %>">
   <style type="text/css">
     /* iPhone tends to highlight things oddly, sometimes even highlighting the

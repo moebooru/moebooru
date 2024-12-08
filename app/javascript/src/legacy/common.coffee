@@ -17,7 +17,7 @@ keysDown = new Map
 # Many browsers eat keyup events if focus is lost while the button
 # is pressed. 
 document.addEventListener 'blur', ->
-  keysDown = new Map
+  keysDown.clear()
 
 window.OnKey = (key, options, press, release) ->
   options ?= {}

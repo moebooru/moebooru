@@ -27,6 +27,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install additional packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install imagemagick
+
     - uses: actions/setup-node@v4
       with:
         cache: npm

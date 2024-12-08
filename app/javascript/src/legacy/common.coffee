@@ -12,57 +12,46 @@ Object.extend Element.Methods,
       element = element.parentNode
     false
 Element.addMethods()
-KeysDown = new Hash
 
-### Many browsers eat keyup events if focus is lost while the button
+keysDown = new Map
+# Many browsers eat keyup events if focus is lost while the button
 # is pressed. 
-###
-
-document.observe 'blur', (e) ->
-  KeysDown = new Hash
-  return
+document.addEventListener 'blur', ->
+  keysDown = new Map
 
 window.OnKey = (key, options, press, release) ->
-  if !options
-    options = {}
-  element = options['Element']
-  if !element
-    element = document
-  if element == document and window.opera and !options.AlwaysAllowOpera
-    return
-  element = $(element)
-  element.observe 'keyup', (e) ->
+  options ?= {}
+  element = options.Element ? document
+
+  element.addEventListener 'keyup', (e) ->
     if e.keyCode != key
       return
-    KeysDown[e.keyCode] = false
+    keysDown.set(e.keyCode, false)
     if release
       release e
     return
-  element.observe 'keydown', (e) ->
+  element.addEventListener 'keydown', (e) ->
     if e.keyCode != key
       return
     if e.metaKey
       return
-    if e.shiftKey != ! !options.shiftKey
+    if e.shiftKey != !!options.shiftKey
       return
-    if e.altKey != ! !options.altKey
+    if e.altKey != !!options.altKey
       return
-    if e.ctrlKey != ! !options.ctrlKey
+    if e.ctrlKey != !!options.ctrlKey
       return
-    if !options.allowRepeat and KeysDown[e.keyCode]
+    if !options.allowRepeat && keysDown.get(e.keyCode) == true
       return
-    KeysDown[e.keyCode] = true
+    keysDown.set(e.keyCode, true)
     target = e.target
-    if !options.AllowTextAreaFields and target.tagName == 'TEXTAREA'
+    if !options.AllowTextAreaFields && target.tagName == 'TEXTAREA'
       return
-    if !options.AllowInputFields and target.tagName == 'INPUT'
+    if !options.AllowInputFields && target.tagName == 'INPUT'
       return
-    if press and !press(e)
+    if press? && !press(e)
       return
-    e.stop()
     e.preventDefault()
-    return
-  return
 
 window.InitTextAreas = ->
   $$('TEXTAREA').each (elem) ->

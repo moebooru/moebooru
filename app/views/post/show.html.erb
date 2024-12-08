@@ -47,7 +47,7 @@
 
         <% browser_url = "/post/browse##{@post.id}" %>
         <% browser_url += "/pool:#{@following_pool_post.pool_id}" if not @following_pool_post.nil? %>
-        OnKey(66, { AlwaysAllowOpera: true }, function(e) { window.location.href = <%= json_escape browser_url.to_json.html_safe %>; });
+        OnKey(66, {}, function(e) { window.location.href = <%= json_escape browser_url.to_json.html_safe %>; });
       </script>
     <% end %>
   <% end %>

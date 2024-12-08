@@ -21,7 +21,7 @@ $ = jQuery
 export default class ThumbnailUserImage
   constructor: (file, onComplete) ->
     @file = file
-    @canvas = create_canvas_2d()
+    @canvas = document.createElement('canvas')
     @image = document.createElement('img')
     @onComplete = onComplete
     @url = URL.createObjectURL(@file)

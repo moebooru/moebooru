@@ -93,10 +93,6 @@ window.InitAdvancedEditing = ->
 window.distance_squared = (x1, y1, x2, y2) ->
   (x1 - x2) ** 2 + (y1 - y2) ** 2
 
-### If 2d canvases are supported, return one.  Otherwise, return null. ###
-window.create_canvas_2d = ->
-  document.createElement('canvas')
-
 Prototype.Browser.AndroidWebKit = navigator.userAgent.indexOf('Android') != -1 and navigator.userAgent.indexOf('WebKit') != -1
 
 ### Some UI simply doesn't make sense on a touchscreen, and may need to be disabled or changed.

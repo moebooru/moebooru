@@ -46,15 +46,9 @@ export default class BrowserView
     @last_preload_request_active = false
     @img_box = @container.down('.image-box')
 
-    # In Opera 10.63, the img.complete property is not reset to false after changing the
-    # src property.  Blits from images to the canvas silently fail, with nothing being
-    # blitted and no exception raised.  This causes blank canvases to be displayed, because
-    # we have no way of telling whether the image is blittable or if the blit succeeded.
-    if !Prototype.Browser.Opera
-      @canvas = create_canvas_2d()
-    if @canvas
-      @canvas.hide()
-      @img_box.appendChild @canvas
+    @canvas = document.createElement('canvas')
+    @canvas.hide()
+    @img_box.appendChild @canvas
     @zoom_level = 0
 
     # True if the post UI is visible.
@@ -493,8 +487,7 @@ export default class BrowserView
       return
     @img = document.createElement('img')
     @img.className = 'main-image'
-    if @canvas
-      @canvas.hide()
+    @canvas.hide()
     @img.show()
 
     ###
@@ -1092,8 +1085,6 @@ export default class BrowserView
     if !@img.fully_loaded
       console.debug "image incomplete; can't render to canvas"
       return false
-    if !@canvas
-      return
 
     # If the contents havn't changed, skip the blit.  This happens frequently when resizing
     # the window when not fitting the image to the screen.

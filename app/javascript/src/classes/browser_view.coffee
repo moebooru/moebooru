@@ -1,4 +1,5 @@
 import PreloadContainer from 'src/classes/preload_container'
+import WindowDragElementAbsolute from 'src/classes/window_drag_element_absolute'
 import { escapeHtml, stringToDom } from 'src/utils/dom'
 import { removeImageElement } from 'src/utils/image'
 import { numberToHumanSize } from 'src/utils/math'

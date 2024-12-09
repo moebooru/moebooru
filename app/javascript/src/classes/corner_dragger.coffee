@@ -22,13 +22,13 @@ export default class CornerDragger
         # handle for the corner we're in.
         if element.classList.contains('frame-box-handle')
           @dragging_mode = element._frameDragCursor
-        else if part == '.frame-editor-nw'
+        else if @part == '.frame-editor-nw'
           @dragging_mode = 'nw-resize'
-        else if part == '.frame-editor-ne'
+        else if @part == '.frame-editor-ne'
           @dragging_mode = 'ne-resize'
-        else if part == '.frame-editor-sw'
+        else if @part == '.frame-editor-sw'
           @dragging_mode = 'sw-resize'
-        else if part == '.frame-editor-se'
+        else if @part == '.frame-editor-se'
           @dragging_mode = 'se-resize'
         post = Post.posts.get(@post_id)
         frame = post.frames_pending[@post_frame]

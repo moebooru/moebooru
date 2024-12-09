@@ -289,11 +289,6 @@ class ApplicationController < ActionController::Base
         cookies["resize_image"] = "0"
       end
 
-      if @current_user.show_advanced_editing
-        cookies["show_advanced_editing"] = "1"
-      else
-        cookies["show_advanced_editing"] = "0"
-      end
       cookies["my_tags"] = @current_user.my_tags
     end
 

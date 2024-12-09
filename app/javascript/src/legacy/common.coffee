@@ -32,12 +32,6 @@ window.InitTextAreas = ->
     return
   return
 
-window.InitAdvancedEditing = ->
-  if Cookie.get('show_advanced_editing') != '1'
-    return
-  $(document.documentElement).removeClassName 'hide-advanced-editing'
-  return
-
 ### Return the squared distance between two points. ###
 window.distance_squared = (x1, y1, x2, y2) ->
   (x1 - x2) ** 2 + (y1 - y2) ** 2

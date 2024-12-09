@@ -24,9 +24,9 @@ export default class Navigator
 
 
   mouseover_event: (e) =>
-    return if e.relatedTarget?.isParentNode(@container)
+    return if @container.contains(e.relatedTarget)
 
-    console.debug "over #{e.target.className}, #{@container.className}, #{e.target.isParentNode(@container)}"
+    console.debug "over #{e.target.className}, #{@container.className}, #{@container.contains(e.target)}"
     @hovering = true
     @update_visibility()
 

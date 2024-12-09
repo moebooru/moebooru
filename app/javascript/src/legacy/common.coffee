@@ -383,27 +383,3 @@ DragElement::selectstart_event = (event) ->
   if event.target.tagName != 'INPUT'
     event.stop()
   return
-
-### When element is dragged, the document moves around it.  If scroll_element is true, the
-# element should be positioned (eg. position: absolute), and the element itself will be
-# scrolled. 
-###
-
-window.WindowDragElement = (element) ->
-  @element = element
-  @dragger = new DragElement(element,
-    no_touch: true
-    ondrag: @ondrag.bind(this)
-    onstartdrag: @startdrag.bind(this))
-  return
-
-WindowDragElement::startdrag = ->
-  @scroll_anchor_x = window.pageXOffset or document.documentElement.scrollLeft or document.body.scrollLeft
-  @scroll_anchor_y = window.pageYOffset or document.documentElement.scrollTop or document.body.scrollTop
-  return
-
-WindowDragElement::ondrag = (e) ->
-  scrollLeft = @scroll_anchor_x - (e.aX)
-  scrollTop = @scroll_anchor_y - (e.aY)
-  scrollTo scrollLeft, scrollTop
-  return

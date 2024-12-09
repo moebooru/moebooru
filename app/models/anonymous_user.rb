@@ -40,6 +40,10 @@ class AnonymousUser
     end
   end
 
+  def show_advanced_editing
+    false
+  end
+
   def show_samples?
     true
   end

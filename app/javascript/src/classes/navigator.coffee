@@ -32,7 +32,7 @@ export default class Navigator
 
 
   mouseout_event: (e) =>
-    return if e.relatedTarget?.isParentNode(@container)
+    return if @container.contains(e.relatedTarget)
 
     console.debug "out #{e.target.className}"
     @hovering = false

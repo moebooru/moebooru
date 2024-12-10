@@ -962,7 +962,7 @@ window.Post =
         Post.hover_info_mouseover post_id
         return
       span.down('A').observe 'mouseout', (e) ->
-        if e.relatedTarget and e.relatedTarget.isParentNode(overlay)
+        if e.relatedTarget? && overlay.contains(e.relatedTarget)
           return
         Post.hover_info_mouseout()
         return

@@ -22,7 +22,7 @@ export default class TagCompletionBox
     @completion_box = createCompletionBox()
     document.body.appendChild @completion_box
     document.on 'mousedown', (event) =>
-      if event.target.isParentNode(@input_field) or event.target.isParentNode(@completion_box)
+      if @input_field.contains(event.target) || @completion_box.contains(event.target)
         return
       @hide()
       return

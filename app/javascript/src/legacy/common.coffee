@@ -5,12 +5,6 @@ Object.extend Element.Methods,
       $(element).showBase()
     else
       $(element).hide()
-  isParentNode: (element, parentNode) ->
-    while element
-      if element == parentNode
-        return true
-      element = element.parentNode
-    false
 Element.addMethods()
 
 window.InitTextAreas = ->
@@ -244,7 +238,7 @@ DragElement::touchstart_event = (event) ->
   i = 0
   while i < event.changedTouches.length
     t = event.changedTouches[i]
-    if !t.target.isParentNode(@element)
+    if !@element.contains(t.target)
       ++i
       continue
     touch = t

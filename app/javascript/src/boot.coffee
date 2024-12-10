@@ -32,6 +32,7 @@ import UrlHashHandler from './classes/url_hash_handler'
 import User from './classes/user'
 import UserRecord from './classes/user_record'
 import WindowTitleHandler from './classes/window_title_handler'
+import { onKey } from './utils/on_key'
 
 Rails.start()
 
@@ -65,6 +66,7 @@ window.notice = noticeInstance.show
 window.BrowserView = BrowserView
 window.InputHandler = InputHandler
 window.Note = Note
+window.OnKey = onKey
 window.PostLoader = PostLoader
 window.PostQuickEdit = PostQuickEdit
 window.SimilarWithThumbnailing = SimilarWithThumbnailing

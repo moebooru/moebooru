@@ -1,4 +1,3 @@
-import 'src/on_key'
 import 'src/i18n'
 import 'src/cookie'
 import 'src/forum'

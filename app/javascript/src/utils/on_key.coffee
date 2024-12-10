@@ -4,7 +4,7 @@ keysDown = new Map
 document.addEventListener 'blur', ->
   keysDown.clear()
 
-window.OnKey = (key, options, press, release) ->
+export onKey = (key, options, press, release) ->
   options ?= {}
   element = options.Element ? document
 
@@ -15,6 +15,7 @@ window.OnKey = (key, options, press, release) ->
     if release
       release e
     return
+
   element.addEventListener 'keydown', (e) ->
     if e.keyCode != key
       return

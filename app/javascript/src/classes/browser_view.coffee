@@ -1,3 +1,4 @@
+import DragElement from 'src/classes/drag_element'
 import PreloadContainer from 'src/classes/preload_container'
 import WindowDragElementAbsolute from 'src/classes/window_drag_element_absolute'
 import { escapeHtml, stringToDom } from 'src/utils/dom'

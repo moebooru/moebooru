@@ -1,3 +1,5 @@
+import DragElement from 'src/classes/drag_element'
+
 export default class Navigator
   constructor: (container, target) ->
     @container = container

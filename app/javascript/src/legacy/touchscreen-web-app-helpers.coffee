@@ -1,3 +1,5 @@
+import DragElement from 'src/classes/drag_element'
+
 ###
 # This file implements several helpers for fixing up full-page web apps on touchscreen
 # browsers:

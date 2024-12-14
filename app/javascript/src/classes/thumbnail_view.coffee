@@ -1,4 +1,5 @@
-import { sortArrayByDistance } from '../utils/array'
+import DragElement from 'src/classes/drag_element'
+import { sortArrayByDistance } from 'src/utils/array'
 import PreloadContainer from './preload_container'
 
 # Handle the thumbnail view, and navigation for the main view.

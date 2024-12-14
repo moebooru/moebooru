@@ -1,3 +1,5 @@
+import DragElement from 'src/classes/drag_element'
+
 # element should be positioned (eg. position: absolute).  When the element is dragged,
 # scroll it around. 
 export default class WindowDragElementAbsolute

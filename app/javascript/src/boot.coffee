@@ -32,6 +32,7 @@ import UrlHashHandler from './classes/url_hash_handler'
 import User from './classes/user'
 import UserRecord from './classes/user_record'
 import WindowTitleHandler from './classes/window_title_handler'
+import { initTextAreas } from './utils/init_text_areas'
 import { onKey } from './utils/on_key'
 
 Rails.start()
@@ -64,6 +65,7 @@ window.userRecord = new UserRecord
 window.notice = noticeInstance.show
 
 window.BrowserView = BrowserView
+window.InitTextAreas = initTextAreas
 window.InputHandler = InputHandler
 window.Note = Note
 window.OnKey = onKey

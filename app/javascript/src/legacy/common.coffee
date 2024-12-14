@@ -7,19 +7,6 @@ Object.extend Element.Methods,
       $(element).hide()
 Element.addMethods()
 
-window.InitTextAreas = ->
-  for elem in document.querySelectorAll('form textarea')
-    continue if elem.dataset.setAutoSubmitHandler == '1'
-
-    elem.dataset.setAutoSubmitHandler = '1'
-    form = elem.closest('form')
-    OnKey 13, {
-      ctrlKey: true
-      AllowInputFields: true
-      AllowTextAreaFields: true
-      Element: elem
-    }, -> form.requestSubmit()
-
 ### Return the squared distance between two points. ###
 window.distance_squared = (x1, y1, x2, y2) ->
   (x1 - x2) ** 2 + (y1 - y2) ** 2

@@ -1,3 +1,4 @@
+import DragElement from 'src/classes/drag_element'
 import { applyDrag, createDragBox } from 'src/utils/drag_box'
 import { frameDimensionsFromImage, frameDimensionsToImage } from 'src/utils/frame_math'
 

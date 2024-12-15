@@ -52,23 +52,15 @@ module SimilarImages
 
         params = []
         if search_url
-          params += [ {
-            name: "url",
-            data: search_url
-          } ]
+          params << [ "url", search_url ]
         else
-          params += [ {
-            name: "file",
-            binary: true,
-            data: source_file,
-            filename: File.basename(source_filename)
-          } ]
+          params << [ "file", source_file, filename: File.basename(source_filename) ]
         end
 
         services_list.each do |s|
-          params += [ { name: "service[]", data: s } ]
+          params << [ "service[]", s ]
         end
-        params += [ { name: "forcegray", data: "on" } ] if options[:forcegray] == "1"
+        params << [ "forcegray", "on" ] if options[:forcegray] == "1"
 
         begin
           Timeout.timeout(10) do
@@ -85,7 +77,7 @@ module SimilarImages
               http.read_timeout = 10
 
               request = Net::HTTP::Post.new(server)
-              request.multipart = params
+              request.set_form params, "multipart/form-data"
               response = http.request(request)
               server_responses[server] = response.body
             end

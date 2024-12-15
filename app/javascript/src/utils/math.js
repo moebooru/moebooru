@@ -10,20 +10,23 @@ export function distanceSquared (x1, y1, x2, y2) {
 export function numberToHumanSize (size, precision) {
   precision ??= 1;
   size = Number(size);
-  let text;
+  let unit;
   if (size.toFixed(0) === '1') {
-    text = '1 Byte';
+    precision = 0;
+    unit = 'Byte';
   } else if (size < 1024) {
-    text = `${size.toFixed(0)} Bytes`;
-  } else if (size < 1024 * 1024) {
-    text = `${(size / 1024).toFixed(precision)} KB`;
-  } else if (size < 1024 * 1024 * 1024) {
-    text = `${(size / (1024 * 1024)).toFixed(precision)} MB`;
-  } else if (size < 1024 * 1024 * 1024 * 1024) {
-    text = `${(size / (1024 * 1024 * 1024)).toFixed(precision)} GB`;
+    precision = 0;
+    unit = 'Bytes';
+  } else if ((size /= 1024) < 1024) {
+    unit = 'KB';
+  } else if ((size /= 1024) < 1024) {
+    unit = 'MB';
+  } else if ((size /= 1024) < 1024) {
+    unit = 'GB';
   } else {
-    text = `${(size / (1024 * 1024 * 1024 * 1024)).toFixed(precision)} TB`;
+    size /= 1024;
+    unit = 'TB';
   }
 
-  return text.replace(/([0-9]\.\d*?)0+ /, '$1 ').replace('. ', ' ');
+  return `${size.toLocaleString(undefined, { maximumFractionDigits: precision })} ${unit}`;
 }

@@ -38,7 +38,7 @@ export default class UploadSimilarSearch
               (post) => "/post/show/#{post.id}"
         posts = json.posts.slice(0, shownPosts).map (post) =>
           "<a href='#{makeUrl(post)}'>post ##{post.id}</a>"
-        seeAll = "<a href='/post/similar?search_id='#{json.search_id}'>(see all)</a>"
+        seeAll = "<a href='/post/similar?search_id=#{json.search_id}'>(see all)</a>"
         html = "Similar posts #{seeAll}: #{posts.join(', ')}"
 
         if json.posts.length > shownPosts

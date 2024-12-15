@@ -244,49 +244,9 @@ MaintainUrlHash = ->
     UrlHash.set_raw_hash hash
   return
 
-###
-# In some versions of the browser, iPhones don't send resize events after an
-# orientation change, so we need to fire it ourself.  Try not to do this if not
-# needed, so we don't fire spurious events.
-#
-# This is never needed in web app mode.
-#
-# Needed on user-agents:
-# iPhone OS 4_0_2 ... AppleWebKit/532.9 ... Version/4.0.5
-# iPhone OS 4_1 ... AppleWebKit/532.9 ... Version/4.0.5
-#
-# Not needed on:
-# (iPad, OS 3.2)
-# CPU OS 3_2 ... AppleWebKit/531.1.10 ... Version/4.0.4
-# iPhone OS 4_2 ... AppleWebKit/533.17.9 ... Version/5.0.2
-#
-# This seems to be specific to Version/4.0.5.
-###
-
-window.SendMissingResizeEvents = ->
-  if window.navigator.standalone
-    return
-  if navigator.userAgent.indexOf('Version/4.0.5') == -1
-    return
-  last_seen_orientation = window.orientation
-  window.addEventListener 'orientationchange', ((e) ->
-    if last_seen_orientation == window.orientation
-      return
-    last_seen_orientation = window.orientation
-    console.debug 'dispatch fake resize event'
-    e = document.createEvent('Event')
-    e.initEvent 'resize', true, true
-    document.documentElement.dispatchEvent e
-    return
-  ), true
-  return
-
 window.InitializeFullScreenBrowserHandlers = ->
-
-  ### These handlers deal with heavily browser-specific issues.  Only install them
+  # These handlers deal with heavily browser-specific issues.  Only install them
   # on browsers that have been tested to need them. 
-  ###
-
   if navigator.userAgent.indexOf('Android') != -1 and navigator.userAgent.indexOf('WebKit') != -1
     new ResponsiveSingleClick
     new EmulateDoubleClick
@@ -298,6 +258,5 @@ window.InitializeFullScreenBrowserHandlers = ->
 
     if window.navigator.standalone
       MaintainUrlHash()
-    SendMissingResizeEvents()
   PreventDragScrolling()
   return

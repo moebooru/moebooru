@@ -134,10 +134,7 @@ export default class UrlHashHandler
     s
 
   get_raw_hash: ->
-    # Firefox doesn't handle window.location.hash correctly; it decodes the contents,
-    # where all other browsers give us the correct data.  http://stackoverflow.com/questions/1703552
-    pre_hash_part = window.location.href.split('#', 1)[0]
-    window.location.href.substr pre_hash_part.length
+    window.location.hash.slice(1)
 
   set_raw_hash: (hash) ->
     query_params = @parse(hash)

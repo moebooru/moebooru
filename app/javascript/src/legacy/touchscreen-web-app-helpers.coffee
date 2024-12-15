@@ -1,3 +1,4 @@
+import { distanceSquared } from 'src/utils/math'
 ###
 # This file implements several helpers for fixing up full-page web apps on touchscreen
 # browsers:
@@ -81,9 +82,8 @@ EmulateDoubleClick::touchstart_event = (event) ->
   if time_since_previous > 500
     return
 
-  ### Check that the clicks aren't too far apart. ###
-
-  distance = (this_touch.screenX - (last_click.position[0])) ** 2 + (this_touch.screenY - (last_click.position[1])) ** 2
+  # Check that the clicks aren't too far apart.
+  distance = distanceSquared(this_touch.screenX, this_touch.screenY, last_click.position[0], last_click.position[1])
   if distance > 500
     return
   if event.target != last_click.target
@@ -110,11 +110,9 @@ EmulateDoubleClick::touchend_event = (event) ->
   this_click = event.changedTouches[0]
   if this_click.identifier == last_click_identifier
 
-    ### If the touch moved too far when it was removed, don't fire a doubleclick; for
+    # If the touch moved too far when it was removed, don't fire a doubleclick; for
     # example, two quick swipe gestures aren't a double-click. 
-    ###
-
-    distance = (this_click.screenX - (last_click_position[0])) ** 2 + (this_click.screenY - (last_click_position[1])) ** 2
+    distance = distanceSquared(this_click.screenX, this_click.screenY, last_click_position[0], last_click_position[1])
     if distance > 500
       @last_click = null
       return
@@ -178,9 +176,8 @@ ResponsiveSingleClick::touchend_event = (event) ->
     touch.screenY
   ]
 
-  ### Don't trigger a click if the point has moved too far. ###
-
-  distance = distance_squared(this_touch[0], this_touch[1], last_touch[0], last_touch[1])
+  # Don't trigger a click if the point has moved too far.
+  distance = distanceSquared(this_touch[0], this_touch[1], last_touch[0], last_touch[1])
   if distance > 50
     return
   e = document.createEvent('MouseEvent')

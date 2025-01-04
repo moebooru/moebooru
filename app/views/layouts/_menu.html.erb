@@ -204,7 +204,10 @@
 </div>
 
 <script id="forum-posts-latest" type="application/json">
-  <%= Rails.cache.fetch "forum_posts_latest_v3" do
-    ForumPost.latest.map { |p| p.slice(:id, :pages, :title, :updated_at) }.to_json
-  end.html_safe %>
+  <%= Rails.cache.fetch "forum_posts_latest_v4" do
+    ForumPost.latest.map { |p| p.slice(:id, :pages, :title, :updated_at) }.to_json.html_safe
+  end %>
+</script>
+<script id="forum-post-last-read-at" type="application/json">
+  <%= (@current_user.last_forum_topic_read_at || Time.at(0)).to_json.html_safe %>
 </script>

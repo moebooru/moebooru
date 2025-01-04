@@ -247,12 +247,6 @@ class ApplicationController < ActionController::Base
 
     return if params[:format] == "xml" || params[:format] == "json"
 
-    cookies["forum_post_last_read_at"] = if @current_user.is_anonymous?
-                                           Time.now
-    else
-                                           @current_user.last_forum_topic_read_at || Time.at(0)
-    end.to_json
-
     if !@current_user.is_anonymous?
       cookies["user_id"] = @current_user.id.to_s
 

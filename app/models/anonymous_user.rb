@@ -91,4 +91,8 @@ class AnonymousUser
   def blacklisted_tags_array
     CONFIG["default_blacklists"]
   end
+
+  def last_forum_topic_read_at
+    Time.now
+  end
 end

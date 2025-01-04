@@ -45,7 +45,7 @@ module Moebooru
         write_format = file_ext
       end
 
-      MiniMagick::Tool::Convert.new do |convert|
+      MiniMagick.convert do |convert|
         convert << input_path
         convert.background BGCOLOR
         convert.flatten

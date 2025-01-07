@@ -1,4 +1,5 @@
 import EmulateDoubleClick from 'src/classes/emulate_double_click'
+import ResponsiveSingleClick from 'src/classes/responsive_single_click'
 import { maintainUrlHash } from 'src/utils/maintain_url_hash'
 ###
 # This file implements several helpers for fixing up full-page web apps on touchscreen

@@ -43,7 +43,6 @@ export default class SimilarWithThumbnailing
 
 
   _onSubmit: (e) =>
-    console.log 'wat'
     postFile = @_form.querySelector('#file')
 
     # If the files attribute isn't supported, or we have no file (source upload), use regular

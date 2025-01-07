@@ -73,7 +73,6 @@ export default class PostUploadForm
     formData = new FormData(@form_element)
 
     onprogress = (e) =>
-      console.log 'hi'
       done = e.loaded
       total = e.total
       progress = if total > 0 then done / total else 1

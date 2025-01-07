@@ -139,7 +139,6 @@ export default class ThumbnailView
       post = Post.posts.get(postId)
       if post.frames.length > 0
         for _frame, frameIdx in post.frames
-          console.log 'hey'
           @post_ids.push postId
           @post_frames.push frameIdx
       else

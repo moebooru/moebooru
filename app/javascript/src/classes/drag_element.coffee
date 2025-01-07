@@ -191,7 +191,7 @@ export default class DragElement
     ###
 
     @drag_handlers.push document.on('selectstart', @selectstart_event)
-    @drag_handlers.push Element.on(window, 'pagehide', @pagehide_event.bindAsEventListener(this))
+    @drag_handlers.push Element.on(window, 'pagehide', @pagehide_event)
     if touch
       @drag_handlers.push document.on('touchend', @touchend_event)
       @drag_handlers.push document.on('touchcancel', @touchend_event)
@@ -215,7 +215,7 @@ export default class DragElement
         latest_event: event
     return
 
-  pagehide_event: (event) ->
+  pagehide_event: (event) =>
     @stop_dragging event, true
     return
 

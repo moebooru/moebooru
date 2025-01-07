@@ -7,7 +7,6 @@ import { maintainUrlHash } from 'src/utils/maintain_url_hash'
 #
 # EmulateDoubleClick
 # ResponsiveSingleClick
-# PreventDragScrolling
 #
 # Most of these are annoying hacks to work around the fact that WebKit on browsers was
 # designed with displaying scrolling webpages in mind, apparently without consideration
@@ -15,13 +14,6 @@ import { maintainUrlHash } from 'src/utils/maintain_url_hash'
 # of the browser mobile hacks no longer make sense: separate display viewports, touch
 # dragging, double-click zooming and their associated side-effects.
 ###
-
-### Stop all touchmove events on the document, to prevent dragging the window around. ###
-window.PreventDragScrolling = ->
-  Element.observe document, 'touchmove', (event) ->
-    event.preventDefault()
-    return
-  return
 
 window.InitializeFullScreenBrowserHandlers = ->
   # These handlers deal with heavily browser-specific issues.  Only install them
@@ -37,5 +29,4 @@ window.InitializeFullScreenBrowserHandlers = ->
 
     if window.navigator.standalone
       maintainUrlHash()
-  PreventDragScrolling()
   return

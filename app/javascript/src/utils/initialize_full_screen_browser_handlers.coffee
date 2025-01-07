@@ -14,8 +14,7 @@ import { maintainUrlHash } from 'src/utils/maintain_url_hash'
 # of the browser mobile hacks no longer make sense: separate display viewports, touch
 # dragging, double-click zooming and their associated side-effects.
 ###
-
-window.InitializeFullScreenBrowserHandlers = ->
+export initializeFullScreenBrowserHandlers = ->
   # These handlers deal with heavily browser-specific issues.  Only install them
   # on browsers that have been tested to need them. 
   if navigator.userAgent.indexOf('Android') != -1 and navigator.userAgent.indexOf('WebKit') != -1

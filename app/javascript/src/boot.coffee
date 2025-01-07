@@ -33,6 +33,7 @@ import User from './classes/user'
 import UserRecord from './classes/user_record'
 import WindowTitleHandler from './classes/window_title_handler'
 import { initTextAreas } from './utils/init_text_areas'
+import { initializeFullScreenBrowserHandlers } from './utils/initialize_full_screen_browser_handlers'
 import { onKey } from './utils/on_key'
 
 Rails.start()
@@ -76,3 +77,4 @@ window.TagCompletionBox = TagCompletionBox
 window.ThumbnailView = ThumbnailView
 window.UploadSimilarSearch = UploadSimilarSearch
 window.WindowTitleHandler = WindowTitleHandler
+window.initializeFullScreenBrowserHandlers = initializeFullScreenBrowserHandlers

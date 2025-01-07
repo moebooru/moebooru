@@ -20,6 +20,7 @@ import Pool from './classes/pool'
 import PostLoader from './classes/post_loader'
 import PostQuickEdit from './classes/post_quick_edit'
 import PostShowTabs from './classes/post_show_tabs'
+import PostUploadForm from './classes/post_upload_form'
 import PreloadPosts from './classes/preload_posts'
 import RelatedTags from './classes/related_tags'
 import SimilarWithThumbnailing from './classes/similar_with_thumbnailing'
@@ -72,6 +73,7 @@ window.Note = Note
 window.OnKey = onKey
 window.PostLoader = PostLoader
 window.PostQuickEdit = PostQuickEdit
+window.PostUploadForm = PostUploadForm
 window.SimilarWithThumbnailing = SimilarWithThumbnailing
 window.TagCompletionBox = TagCompletionBox
 window.ThumbnailView = ThumbnailView

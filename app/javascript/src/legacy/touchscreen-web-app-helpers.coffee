@@ -1,3 +1,4 @@
+import EmulateDoubleClick from 'src/classes/emulate_double_click'
 import { maintainUrlHash } from 'src/utils/maintain_url_hash'
 import { distanceSquared } from 'src/utils/math'
 ###

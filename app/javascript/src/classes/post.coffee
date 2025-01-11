@@ -1,18 +1,30 @@
 import { numberToHumanSize } from 'src/utils/math'
 
-window.Post =
-  posts: new Hash
-  tag_types: new Hash
-  votes: new Hash
-  tag_type_names: [
-    'general'
-    'artist'
-    ''
-    'copyright'
-    'character'
-    'circle'
-    'faults'
-  ]
+export default class Post
+  constructor: ->
+    @posts = new Hash
+    @tag_types = new Hash
+    @votes = new Hash
+
+    @tag_type_names = [
+      'general'
+      'artist'
+      ''
+      'copyright'
+      'character'
+      'circle'
+      'faults'
+    ]
+    @applied_list = []
+    @blacklists = []
+    @current_blacklists = null
+    @hide_inactive_blacklists = true
+    @disabled_blacklists = {}
+    @hover_info_hovered_post = null
+    @hover_info_displayed_post = null
+    @hover_info_shift_held = false
+    @hover_info_pinned_post = null
+
   make_request: (path, params, finished) ->
     jQuery.ajax path,
       data: params
@@ -22,7 +34,7 @@ window.Post =
       notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
 
     .done (resp) =>
-      Post.register_resp resp
+      @register_resp resp
 
       # Fire posts:update, to allow observers to update their display on change.
       if resp.posts? && resp.posts.length > 0
@@ -49,31 +61,31 @@ window.Post =
           $('pending-notice').hide()
       return
 
-    Post.make_request '/post/moderate.json', params, completion
+    @make_request '/post/moderate.json', params, completion
+
   undelete: (post_id, finished) ->
-    Post.make_request '/post/undelete.json', { id: post_id }, finished
-  applied_list: []
+    @make_request '/post/undelete.json', { id: post_id }, finished
+
   reset_tag_script_applied: ->
     i = 0
-    while i < Post.applied_list.length
-      Post.applied_list[i].removeClassName 'tag-script-applied'
+    while i < @applied_list.length
+      @applied_list[i].removeClassName 'tag-script-applied'
       ++i
-    Post.applied_list = []
+    @applied_list = []
     return
+
   update_batch: (posts, finished) ->
     original_count = posts.length
     if TagCompletion
 
-      ### Tell TagCompletion about recently used tags. ###
-
+      # Tell TagCompletion about recently used tags.
       posts.each (post) ->
         if !post.tags?
           return
         TagCompletion.add_recent_tags_from_update post.tags, post.old_tags
         return
 
-    ### posts is a hash of id: { post }.  Convert this to a Rails-format object array. ###
-
+    # posts is a hash of id: { post }.  Convert this to a Rails-format object array.
     params_array = []
     posts.each (post) ->
       $H(post).each (pair2) ->
@@ -82,13 +94,13 @@ window.Post =
         return
       return
 
-    complete = (resp) ->
-      resp.posts.each (post) ->
-        Post.update_styles post
+    complete = (resp) =>
+      resp.posts.each (post) =>
+        @update_styles post
         element = $$('#p' + post.id + ' > .directlink')
         if element.length > 0
           element[0].addClassName 'tag-script-applied'
-          Post.applied_list.push element[0]
+          @applied_list.push element[0]
         return
       notice (if original_count == 1 then 'Post' else 'Posts') + ' updated'
       if finished
@@ -96,7 +108,7 @@ window.Post =
       return
 
     params = params_array.join('&')
-    Post.make_request '/post/update_batch.json', params, complete
+    @make_request '/post/update_batch.json', params, complete
     return
   update_styles: (post) ->
     e = $('p' + post.id)
@@ -128,14 +140,13 @@ window.Post =
 
   activate_all_posts: ->
     post_ids = []
-    Post.posts.each (pair) ->
+    @posts.each (pair) ->
 
-      ### Only activate posts that are actually displayed; we may have others registered. ###
-
+      # Only activate posts that are actually displayed; we may have others registered.
       if $('p' + pair.key)
         post_ids.push pair.key
       return
-    Post.activate_posts post_ids, (resp) ->
+    @activate_posts post_ids, (resp) ->
       if resp.count == 0
         notice 'No posts were activated.'
       else
@@ -143,11 +154,11 @@ window.Post =
       return
     return
   activate_post: (post_id) ->
-    Post.update_batch [ {
+    @update_batch [ {
       id: post_id
       is_held: false
-    } ], ->
-      post = Post.posts.get(post_id)
+    } ], =>
+      post = @posts.get(post_id)
       if post.is_held
         notice 'Couldn\'t activate post'
       else
@@ -156,10 +167,10 @@ window.Post =
     return
 
   init_add_to_favs: (postId, addToFavs, removeFromFavs) ->
-    updateAddToFavs = (e, postIds) ->
+    updateAddToFavs = (e, postIds) =>
       return if postIds? && !postIds.has(postId)?
 
-      vote = Post.votes.get(postId) || 0
+      vote = @votes.get(postId) || 0
       addToFavs.show vote < 3
       removeFromFavs.show vote >= 3
 
@@ -173,13 +184,14 @@ window.Post =
     if score > 3
       return
     notice 'Voting...'
-    Post.make_request '/post/vote.json', {
+    @make_request '/post/vote.json', {
       id: post_id
       score: score
     }, (resp) ->
       notice 'Vote saved'
       return
     return
+
   flag: (id, finished) ->
     reason = prompt('Why should this post be flagged for deletion?', '')
     if !reason
@@ -195,12 +207,12 @@ window.Post =
           e.addClassName 'flagged'
       return
 
-    Post.make_request '/post/flag.json', {
+    @make_request '/post/flag.json', {
       'id': id
       'reason': reason
     }, complete
-  unflag: (id, finished) ->
 
+  unflag: (id, finished) ->
     complete = ->
       notice 'Post was approved'
       if finished
@@ -211,10 +223,11 @@ window.Post =
           e.removeClassName 'flagged'
       return
 
-    Post.make_request '/post/flag.json', {
+    @make_request '/post/flag.json', {
       id: id
       unflag: 1
     }, complete
+
   observe_text_area: (field_id) ->
     $(field_id).observe 'keydown', (e) ->
       if e.keyCode == Event.KEY_RETURN
@@ -224,13 +237,11 @@ window.Post =
     return
   get_post_tags_by_type: (post) ->
     results = new Hash
-    post.tags.each (tag) ->
-      tag_type = Post.tag_types.get(tag)
+    post.tags.each (tag) =>
+      tag_type = @tag_types.get(tag)
 
-      ### We can end up not knowing a tag's type due to tag script editing giving us
-      # tags we weren't told the type of. 
-      ###
-
+      # We can end up not knowing a tag's type due to tag script editing giving us
+      # tags we weren't told the type of.
       if !tag_type
         tag_type = 'general'
       list = results.get(tag_type)
@@ -241,7 +252,7 @@ window.Post =
       return
     results
   get_post_tags_with_type: (post) ->
-    tag_types = Post.get_post_tags_by_type(post)
+    tag_types = @get_post_tags_by_type(post)
     types = tag_types.keys()
     type_order = [
       'artist'
@@ -273,11 +284,11 @@ window.Post =
     results
   register_resp: (resp) ->
     if resp.posts
-      Post.register_posts resp.posts
+      @register_posts resp.posts
     if resp.tags
-      Post.register_tags resp.tags
+      @register_tags resp.tags
     if resp.votes
-      Post.register_votes resp.votes
+      @register_votes resp.votes
     if resp.pools
       Pool.register_pools resp.pools
     if resp.pool_posts
@@ -291,8 +302,8 @@ window.Post =
     @posts.set post.id, post
     return
   register_posts: (posts) ->
-    posts.each (post) ->
-      Post.register post
+    posts.each (post) =>
+      @register post
       return
     return
   unregister_all: ->
@@ -301,19 +312,17 @@ window.Post =
   register_tags: (tags, no_send_to_completion) ->
     @tag_types.update tags
 
-    ### If no_send_to_completion is true, this data is coming from completion, so there's
-    # no need to send it back. 
-    ###
-
+    # If no_send_to_completion is true, this data is coming from completion, so there's
+    # no need to send it back.
     if TagCompletion and !no_send_to_completion
       TagCompletion.update_tag_types()
     return
   register_votes: (votes) ->
     @votes.update votes
     return
-  blacklists: []
+
   is_blacklisted: (post_id) ->
-    post = Post.posts.get(post_id)
+    post = @posts.get(post_id)
 
     # Missing post data, pretend it's not blacklisted.
     return false if !post?
@@ -321,10 +330,8 @@ window.Post =
     has_tag = (tag) ->
       post.match_tags.indexOf(tag) != -1
 
-    ### This is done manually, since this needs to be fast and Prototype's functions are
-    # too slow. 
-    ###
-
+    # This is done manually, since this needs to be fast and Prototype's functions are
+    # too slow.
     blacklist_applies = (b) ->
       require = b.require
       require_len = require.length
@@ -343,7 +350,7 @@ window.Post =
         ++j
       true
 
-    blacklists = Post.blacklists
+    blacklists = @blacklists
     len = blacklists.length
     i = 0
     while i < len
@@ -353,41 +360,37 @@ window.Post =
       ++i
     false
   apply_blacklists: ->
-    Post.blacklists.each (b) ->
+    @blacklists.each (b) ->
       b.hits = 0
       return
     count = 0
-    Post.posts.each (pair) ->
+    @posts.each (pair) =>
       thumb = $('p' + pair.key)
       if !thumb
         return
       post = pair.value
       has_tag = post.match_tags.member.bind(post.match_tags)
       post.blacklisted = []
-      if post.id != Post.blacklist_options.exclude
-        Post.blacklists.each (b) ->
+      if post.id != @blacklist_options.exclude
+        @blacklists.each (b) ->
           if b.require.all(has_tag) and !b.exclude.any(has_tag)
             b.hits++
-            if !Post.disabled_blacklists[b.tags]
+            if !@disabled_blacklists[b.tags]
               post.blacklisted.push b
           return
       bld = post.blacklisted.length > 0
 
-      ### The class .javascript-hide hides elements only if JavaScript is enabled, and is
+      # The class .javascript-hide hides elements only if JavaScript is enabled, and is
       # applied to all posts by default; we remove the class to show posts.  This prevents
       # posts from being shown briefly during page load before this script is executed,
-      # but also doesn't break the page if JavaScript is disabled. 
-      ###
-
+      # but also doesn't break the page if JavaScript is disabled.
       count += bld
-      if Post.blacklist_options.replace
+      if @blacklist_options.replace
         if bld
           thumb.src = Vars.asset['blank.gif']
 
-          ### Trying to work around Firefox displaying the old thumb.src briefly before loading
-          # the blacklisted thumbnail, even though they're applied at the same time: 
-          ###
-
+          # Trying to work around Firefox displaying the old thumb.src briefly before loading
+          # the blacklisted thumbnail, even though they're applied at the same time:
           f = (event) ->
             img = event.target
             img.stopObserving 'load'
@@ -407,36 +410,34 @@ window.Post =
         else
           thumb.removeClassName 'javascript-hide'
       return
-    if Post.countText
-      Post.countText.update count
+    if @countText
+      @countText.update count
     notice = $('blacklisted-notice')
     if notice
       notice.show count > 0
     count
-  current_blacklists: null
-  hide_inactive_blacklists: true
-  disabled_blacklists: {}
+
   blacklists_update_disabled: ->
-    Post.blacklists.each (b) ->
+    @blacklists.each (b) =>
       if !b.a
         return
-      if Post.disabled_blacklists[b.tags] or b.hits == 0
+      if @disabled_blacklists[b.tags] or b.hits == 0
         b.a.addClassName 'blacklisted-tags-disabled'
       else
         b.a.removeClassName 'blacklisted-tags-disabled'
       return
     return
   init_blacklisted: (options) ->
-    Post.blacklist_options = Object.extend({
+    @blacklist_options = Object.extend({
       replace: false
       exclude: null
     }, options)
     bl_entries = undefined
-    if Post.current_blacklists
-      bl_entries = Post.current_blacklists
+    if @current_blacklists
+      bl_entries = @current_blacklists
     else
       bl_entries = JSON.parse(jQuery('#user-blacklisted-tags').text())
-    Post.blacklists = []
+    @blacklists = []
     bl_entries.each (val) ->
       s = val.replace(/(rating:[qes])\w+/, '$1')
       tags = s.match(/\S+/g)
@@ -454,12 +455,12 @@ window.Post =
         else
           b.require.push tag
         return
-      Post.blacklists.push b
+      @blacklists.push b
       return
-    Post.countText = $('blacklist-count')
-    if Post.countText
-      Post.countText.update ''
-    Post.apply_blacklists()
+    @countText = $('blacklist-count')
+    if @countText
+      @countText.update ''
+    @apply_blacklists()
     sidebar = $('blacklisted-sidebar')
     if sidebar
       sidebar.show()
@@ -467,15 +468,15 @@ window.Post =
     if list
       while list.firstChild
         list.removeChild list.firstChild
-      Post.blacklists.sort (a, b) ->
+      @blacklists.sort (a, b) ->
         if a.hits == 0 and b.hits > 0
           return 1
         if a.hits > 0 and b.hits == 0
           return -1
         a.tags.join(' ').localeCompare b.tags.join(' ')
       inactive_blacklists_hidden = 0
-      Post.blacklists.each (b) ->
-        if Post.hide_inactive_blacklists and !b.hits
+      @blacklists.each (b) =>
+        if @hide_inactive_blacklists and !b.hits
           ++inactive_blacklists_hidden
           return
         li = list.appendChild(document.createElement('li'))
@@ -488,16 +489,15 @@ window.Post =
         del.update '⊘'
         del.observe 'click', (event) ->
 
-          ### We need to call run_login_onclick ourself, since this form isn't created with the form helpers. ###
-
+          # We need to call run_login_onclick ourself, since this form isn't created with the form helpers.
           if !User.run_login_onclick(event)
             return false
           event.stop()
           tag = b.original_tag_string
-          User.modify_blacklist [], [ tag ], (resp) ->
+          User.modify_blacklist [], [ tag ], (resp) =>
             notice 'Unblacklisted "' + tag + '"'
-            Post.current_blacklists = resp.result
-            Post.init_blacklisted()
+            @current_blacklists = resp.result
+            @init_blacklisted()
             return
           return
         li.appendChild document.createTextNode('» ')
@@ -508,10 +508,10 @@ window.Post =
         if !b.hits
           a.addClassName 'blacklisted-tags-disabled'
         else
-          $(a).observe 'click', (event) ->
-            Post.disabled_blacklists[b.tags] = !Post.disabled_blacklists[b.tags]
-            Post.apply_blacklists()
-            Post.blacklists_update_disabled()
+          $(a).observe 'click', (event) =>
+            @disabled_blacklists[b.tags] = !@disabled_blacklists[b.tags]
+            @apply_blacklists()
+            @blacklists_update_disabled()
             event.stop()
             return
         tags = a.appendChild(document.createTextNode(b.tags.join(' ')))
@@ -522,36 +522,34 @@ window.Post =
           span.appendChild document.createTextNode('(' + b.hits + ')')
         return
 
-      ### Add the "Show all blacklists" button.  If Post.hide_inactive_blacklists is false, then
-      # we've already clicked it and hidden it, so don't recreate it. 
-      ###
-
-      if Post.hide_inactive_blacklists and inactive_blacklists_hidden > 0
+      # Add the "Show all blacklists" button.  If Post.hide_inactive_blacklists is false, then
+      # we've already clicked it and hidden it, so don't recreate it.
+      if @hide_inactive_blacklists and inactive_blacklists_hidden > 0
         li = list.appendChild(document.createElement('li'))
         li.className = 'no-focus-outline'
         li.id = 'blacklisted-tag-show-all'
         a = li.appendChild(document.createElement('a'))
         a.href = '#'
         a.className = 'no-focus-outline'
-        $(a).observe 'click', (event) ->
+        $(a).observe 'click', (event) =>
           event.stop()
           $('blacklisted-tag-show-all').hide()
-          Post.hide_inactive_blacklists = false
-          Post.init_blacklisted()
+          @hide_inactive_blacklists = false
+          @init_blacklisted()
           return
         tags = a.appendChild(document.createTextNode('» Show all blacklists'))
         li.appendChild document.createTextNode(' ')
-    Post.blacklists_update_disabled()
+    @blacklists_update_disabled()
     return
   blacklist_add_commit: ->
     tag = $('add-blacklist').value
     if tag == ''
       return
     $('add-blacklist').value = ''
-    User.modify_blacklist [tag], [], (resp) ->
+    User.modify_blacklist [tag], [], (resp) =>
       notice 'Blacklisted "' + tag + '"'
-      Post.current_blacklists = resp.result
-      Post.init_blacklisted()
+      @current_blacklists = resp.result
+      @init_blacklisted()
       return
     return
   last_click_id: null
@@ -559,7 +557,7 @@ window.Post =
     if id and id == @last_click_id
       return true
     @last_click_id = id
-    if !Post.is_blacklisted(post_id)
+    if !@is_blacklisted(post_id)
       return true
     notice 'This post matches one of your blacklists.  Click again to open.'
     false
@@ -571,10 +569,8 @@ window.Post =
     ratio = 1
     if img.scale_factor == 1 or !img.scale_factor?
 
-      ### Use clientWidth for sizing the width, and the window height for the height.
-      # This prevents needing to scroll horizontally to center the image. 
-      ###
-
+      # Use clientWidth for sizing the width, and the window height for the height.
+      # This prevents needing to scroll horizontally to center the image.
       client_width = $('right-col').clientWidth - 15
       client_height = window.innerHeight - 15
       ratio = Math.min(ratio, client_width / img.original_width)
@@ -601,24 +597,20 @@ window.Post =
     ]
   center_image: (img) ->
 
-    ### Make sure we have enough space to scroll far enough to center the image.  Set a
+    # Make sure we have enough space to scroll far enough to center the image.  Set a
     # minimum size on the body to give us more space on the right and bottom, and add
-    # a padding to the image to give more space on the top and left. 
-    ###
-
+    # a padding to the image to give more space on the top and left.
     if !img
       img = $('image')
     if !img
       return
 
-    ### Any existing padding (possibly from a previous call to this function) will be
-    # included in cumulativeOffset and throw things off, so clear it. 
-    ###
-
+    # Any existing padding (possibly from a previous call to this function) will be
+    # included in cumulativeOffset and throw things off, so clear it.
     img.setStyle
       paddingLeft: 0
       paddingTop: 0
-    target_offset = Post.get_scroll_offset_to_center(img)
+    target_offset = @get_scroll_offset_to_center(img)
     padding_left = -target_offset[0]
     if padding_left < 0
       padding_left = 0
@@ -634,11 +626,9 @@ window.Post =
       minWidth: required_width + 'px'
       minHeight: required_height + 'px'
 
-    ### Resizing the body may shift the image to the right, since it's centered in the content.
-    # Recalculate offsets with the new cumulativeOffset. 
-    ###
-
-    target_offset = Post.get_scroll_offset_to_center(img)
+    # Resizing the body may shift the image to the right, since it's centered in the content.
+    # Recalculate offsets with the new cumulativeOffset.
+    target_offset = @get_scroll_offset_to_center(img)
     window.scroll target_offset[0], target_offset[1]
     return
   scale_and_fit_image: (img) ->
@@ -653,8 +643,7 @@ window.Post =
     client_width = window_size.width
     client_height = window_size.height
 
-    ### Zoom the image to fit the viewport. ###
-
+    # Zoom the image to fit the viewport.
     ratio = client_width / img.original_width
     if img.original_height * ratio > client_height
       ratio = client_height / img.original_height
@@ -662,7 +651,7 @@ window.Post =
       img.width = img.original_width * ratio
       img.height = img.original_height * ratio
     @center_image img
-    Post.adjust_notes()
+    @adjust_notes()
     return
   adjust_notes: ->
     if !notesManager
@@ -679,7 +668,7 @@ window.Post =
     img.already_resized = true
     # un-resize
     if img.scale_factor? and img.scale_factor != 1
-      Post.resize_image()
+      @resize_image()
 
     f = ->
       img.original_height = null
@@ -718,7 +707,7 @@ window.Post =
     document.getElementsByTagName('head')[0].appendChild style
     return
   init_post_list: ->
-    Post.posts.each (p) ->
+    @posts.each (p) =>
       post_id = p[0]
       post = p[1]
       directlink = $('p' + post_id)
@@ -727,43 +716,42 @@ window.Post =
       directlink = directlink.down('.directlink')
       if !directlink
         return
-      directlink.observe 'mouseover', ((event) ->
-        Post.set_same_user post.creator_id
+      directlink.observe 'mouseover', ((event) =>
+        @set_same_user post.creator_id
         false
       ), true
-      directlink.observe 'mouseout', ((event) ->
-        Post.set_same_user null
+      directlink.observe 'mouseout', ((event) =>
+        @set_same_user null
         false
       ), true
       return
     return
   init_hover_thumb: (hover, post_id, thumb, container) ->
 
-    ### Hover thumbs trigger rendering bugs in IE7. ###
-
+    # Hover thumbs trigger rendering bugs in IE7.
     if Prototype.Browser.IE
       return
-    hover.observe 'mouseover', (e) ->
-      Post.hover_thumb_mouse_over post_id, hover, thumb, container
+    hover.observe 'mouseover', (e) =>
+      @hover_thumb_mouse_over post_id, hover, thumb, container
       return
-    hover.observe 'mouseout', (e) ->
+    hover.observe 'mouseout', (e) =>
       if e.relatedTarget == thumb
         return
-      Post.hover_thumb_mouse_out thumb
+      @hover_thumb_mouse_out thumb
       return
     if !thumb.hover_init
       thumb.hover_init = true
-      thumb.observe 'mouseout', (e) ->
-        Post.hover_thumb_mouse_out thumb
+      thumb.observe 'mouseout', (e) =>
+        @hover_thumb_mouse_out thumb
         return
     return
   hover_thumb_mouse_over: (post_id, AlignItem, image, container) ->
-    post = Post.posts.get(post_id)
+    post = @posts.get(post_id)
     image.hide()
     offset = AlignItem.cumulativeOffset()
     image.style.width = 'auto'
     image.style.height = 'auto'
-    if Post.is_blacklisted(post_id)
+    if @is_blacklisted(post_id)
       image.src = Vars.asset['blacklisted-preview.png']
     else
       image.src = post.preview_url
@@ -773,20 +761,16 @@ window.Post =
     container_top = container.cumulativeOffset().top
     container_bottom = container_top + container.getHeight() - 1
 
-    ### Normally, align to the item we're hovering over.  If the image overflows over
+    # Normally, align to the item we're hovering over.  If the image overflows over
     # the bottom edge of the container, shift it upwards to stay in the container,
-    # unless the container's too small and that would put it over the top. 
-    ###
-
+    # unless the container's too small and that would put it over the top.
     y = offset.top - 2
 
-    ### -2 for top 2px border ###
-
+    # -2 for top 2px border
     if y + image.getHeight() > container_bottom
       bottom_aligned_y = container_bottom - image.getHeight() - 4
 
-      ### 4 for top 2px and bottom 2px borders ###
-
+      # 4 for top 2px and bottom 2px borders
       if bottom_aligned_y >= container_top
         y = bottom_aligned_y
     image.style.top = y + 'px'
@@ -808,36 +792,32 @@ window.Post =
   hover_info_pin: (post_id) ->
     post = null
     if post_id?
-      post = Post.posts.get(post_id)
-    Post.hover_info_pinned_post = post
-    Post.hover_info_update()
+      post = @posts.get(post_id)
+    @hover_info_pinned_post = post
+    @hover_info_update()
     return
   hover_info_mouseover: (post_id) ->
-    post = Post.posts.get(post_id)
-    if Post.hover_info_hovered_post == post
+    post = @posts.get(post_id)
+    if @hover_info_hovered_post == post
       return
-    Post.hover_info_hovered_post = post
-    Post.hover_info_update()
+    @hover_info_hovered_post = post
+    @hover_info_update()
     return
   hover_info_mouseout: ->
-    if !Post.hover_info_hovered_post?
+    if !@hover_info_hovered_post?
       return
-    Post.hover_info_hovered_post = null
-    Post.hover_info_update()
+    @hover_info_hovered_post = null
+    @hover_info_update()
     return
-  hover_info_hovered_post: null
-  hover_info_displayed_post: null
-  hover_info_shift_held: false
-  hover_info_pinned_post: null
   hover_info_update: ->
-    post = Post.hover_info_pinned_post
+    post = @hover_info_pinned_post
     if !post
-      post = Post.hover_info_hovered_post
-      if !Post.hover_info_shift_held
+      post = @hover_info_hovered_post
+      if !@hover_info_shift_held
         post = null
-    if Post.hover_info_displayed_post == post
+    if @hover_info_displayed_post == post
       return
-    Post.hover_info_displayed_post = post
+    @hover_info_displayed_post = post
     hover = $('index-hover-info')
     overlay = $('index-hover-overlay')
     if !post
@@ -849,7 +829,7 @@ window.Post =
     hover.select('#hover-tags SPAN A').each (elem) ->
       elem.innerHTML = ''
       return
-    tags_by_type = Post.get_post_tags_by_type(post)
+    tags_by_type = @get_post_tags_by_type(post)
     tags_by_type.each (key) ->
       elem = $('hover-tag-' + key[0])
       list = []
@@ -886,10 +866,8 @@ window.Post =
     hover.down('#hover-author').innerHTML = post.author
     hover.show()
 
-    ### Reset the box to 0x0 before polling the size, so it expands to its maximum size,
-    # and read the size. 
-    ###
-
+    # Reset the box to 0x0 before polling the size, so it expands to its maximum size,
+    # and read the size.
     hover.style.left = '0px'
     hover.style.top = '0px'
     hover_width = hover.scrollWidth
@@ -901,10 +879,8 @@ window.Post =
     x = thumb_center_x - (hover_width / 2)
     y = thumb_top_y - hover_height
 
-    ### Clamp the X coordinate so the box doesn't fall off the side of the screen.  Don't
-    # clamp Y. 
-    ###
-
+    # Clamp the X coordinate so the box doesn't fall off the side of the screen.  Don't
+    # clamp Y.
     client_width = document.viewport.getDimensions()['width']
     if x < 0
       x = 0
@@ -915,10 +891,8 @@ window.Post =
     overlay.down('A').href = (if User.get_use_browser() then '/post/browse#' else '/post/show/') + post.id
     overlay.down('IMG').src = post.preview_url
 
-    ### This doesn't always align properly in Firefox if full-page zooming is being
-    # used. 
-    ###
-
+    # This doesn't always align properly in Firefox if full-page zooming is being
+    # used.
     x = thumb_center_x - (post.actual_preview_width / 2)
     y = thumb_offset[1]
     overlay.style.left = x + 'px'
@@ -926,53 +900,53 @@ window.Post =
     overlay.show()
     return
   hover_info_shift_down: ->
-    if Post.hover_info_shift_held
+    if @hover_info_shift_held
       return
-    Post.hover_info_shift_held = true
-    Post.hover_info_update()
+    @hover_info_shift_held = true
+    @hover_info_update()
     return
   hover_info_shift_up: ->
-    if !Post.hover_info_shift_held
+    if !@hover_info_shift_held
       return
-    Post.hover_info_shift_held = false
-    Post.hover_info_update()
+    @hover_info_shift_held = false
+    @hover_info_update()
     return
   hover_info_init: ->
-    document.observe 'keydown', (e) ->
+    document.observe 'keydown', (e) =>
       if e.keyCode != 16
         return
-      Post.hover_info_shift_down()
+      @hover_info_shift_down()
       return
-    document.observe 'keyup', (e) ->
+    document.observe 'keyup', (e) =>
       if e.keyCode != 16
         return
-      Post.hover_info_shift_up()
+      @hover_info_shift_up()
       return
-    document.observe 'blur', (e) ->
-      Post.hover_info_shift_up()
+    document.observe 'blur', (e) =>
+      @hover_info_shift_up()
       return
     overlay = $('index-hover-overlay')
-    Post.posts.each (p) ->
+    @posts.each (p) =>
       post_id = p[0]
       post = p[1]
       span = $('p' + post.id)
       if !span?
         return
-      span.down('A').observe 'mouseover', (e) ->
-        Post.hover_info_mouseover post_id
+      span.down('A').observe 'mouseover', (e) =>
+        @hover_info_mouseover post_id
         return
-      span.down('A').observe 'mouseout', (e) ->
+      span.down('A').observe 'mouseout', (e) =>
         if e.relatedTarget? && overlay.contains(e.relatedTarget)
           return
-        Post.hover_info_mouseout()
+        @hover_info_mouseout()
         return
       return
-    overlay.observe 'mouseout', (e) ->
-      Post.hover_info_mouseout()
+    overlay.observe 'mouseout', (e) =>
+      @hover_info_mouseout()
       return
     return
-  highlight_posts_with_tag: (tag) ->
-    Post.posts.each (p) ->
+  highlight_posts_with_tag: (tag) =>
+    @posts.each (p) ->
       post_id = p[0]
       post = p[1]
       thumb = $('p' + post.id)
@@ -996,7 +970,7 @@ window.Post =
     jQuery.ajax(
       url: '/post.json'
       data: tags: 'parent:' + old_parent_id
-      dataType: 'json').done (resp) ->
+      dataType: 'json').done (resp) =>
       post = undefined
       i = undefined
       change_requests = []
@@ -1019,7 +993,7 @@ window.Post =
           document.location.reload()
           return
 
-      Post.update_batch change_requests, finished
+      @update_batch change_requests, finished
       return
     return
   get_url_for_post_in_pool: (post_id, pool_id) ->
@@ -1028,17 +1002,14 @@ window.Post =
     if !post_id?
       notice 'No more posts in this pool'
       return
-    window.location.href = Post.get_url_for_post_in_pool(post_id, pool_id)
+    window.location.href = @get_url_for_post_in_pool(post_id, pool_id)
     return
   InitBrowserLinks: ->
     if !User.get_use_browser()
       return
 
-    ###
     # Break out the controller, action, ID and anchor:
     # http://url.com/post/show/123#anchor
-    ###
-
     parse_url = (href) ->
       match = href.match(/^(https?:\/\/[^\/]+)\/([a-z]+)\/([a-z]+)\/([0-9]+)([^#]*)(#.*)?$/)
       if !match
@@ -1050,23 +1021,18 @@ window.Post =
         hash: match[6]
       }
 
-    ###
     # Parse an index search URL and return the tags.  Only accept URLs with no other parameters;
     # this shouldn't match the paginator in post/index.
     #
     # http://url.com/post?tags=tagme
-    ###
-
     parse_index_url = (href) ->
       match = href.match(/^(https?:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/)
       if !match
         return null
       match[3]
 
-    ### If the current page is /pool/show, make post links include both the post ID and
-    # the pool ID, eg. "#12345/pool:123". 
-    ###
-
+    # If the current page is /pool/show, make post links include both the post ID and
+    # the pool ID, eg. "#12345/pool:123".
     current = parse_url(document.location.href)
     current_pool_id = null
     if current and current.controller == 'pool' and current.action == 'show'
@@ -1082,10 +1048,8 @@ window.Post =
       if !target
         return
 
-      ### If the URL has a hash, then it's something like a post comment link, so leave it
-      # alone. 
-      ###
-
+      # If the URL has a hash, then it's something like a post comment link, so leave it
+      # alone.
       if target.hash
         return
       if target.controller == 'post' and target.action == 'show'
@@ -1105,16 +1069,16 @@ window.Post =
   get_cached_sample_urls: ->
     # If the data format is out of date, clear it.
     if localStorage.sample_url_format != '2'
-      Post.clear_sample_url_cache()
-    if Post.cached_sample_urls?
-      return Post.cached_sample_urls
+      @clear_sample_url_cache()
+    if @cached_sample_urls?
+      return @cached_sample_urls
     try
       sample_urls = JSON.parse(window.localStorage.sample_urls)
     catch SyntaxError
       return {}
     if !sample_urls?
       return {}
-    Post.cached_sample_urls = sample_urls
+    @cached_sample_urls = sample_urls
     sample_urls
   clear_sample_url_cache: ->
     if 'sample_urls' of localStorage
@@ -1124,56 +1088,48 @@ window.Post =
     localStorage.sample_url_format = 2
     return
   cache_sample_urls: ->
-    sample_urls = Post.get_cached_sample_urls()
+    sample_urls = @get_cached_sample_urls()
     if !sample_urls?
       return
 
-    ### Track post URLs in the order we see them, and push old data out. ###
-
+    # Track post URLs in the order we see them, and push old data out.
     fifo = window.localStorage.sample_url_fifo or null
     fifo = if fifo then fifo.split(',') else []
-    Post.posts.each (id_and_post) ->
+    @posts.each (id_and_post) ->
       post = id_and_post[1]
       if post.sample_url
         sample_urls[post.id] = post.sample_url
       fifo.push post.id
       return
 
-    ### Erase all but the most recent 1000 items. ###
-
+    # Erase all but the most recent 1000 items.
     fifo = fifo.splice(-1000)
 
-    ### Make a set of the FIFO, so we can do lookups quickly. ###
-
+    # Make a set of the FIFO, so we can do lookups quickly.
     fifo_set = {}
     fifo.each (post_id) ->
       fifo_set[post_id] = true
       return
 
-    ### Make a list of items no longer in the FIFO to be deleted. ###
-
+    # Make a list of items no longer in the FIFO to be deleted.
     post_ids_to_expire = []
     for post_id of sample_urls
       if !(post_id of fifo_set)
         post_ids_to_expire.push post_id
 
-    ### Erase items no longer in the FIFO. ###
-
+    # Erase items no longer in the FIFO.
     post_ids_to_expire.each (post_id) ->
       delete sample_urls[post_id]
       return
 
-    ### Save the cached items and FIFO back to localStorage. ###
-
-    Post.cached_sample_urls = sample_urls
+    # Save the cached items and FIFO back to localStorage.
+    @cached_sample_urls = sample_urls
     try
       window.localStorage.sample_urls = JSON.stringify(sample_urls)
       window.localStorage.sample_url_fifo = fifo.join(',')
     catch e
-
-      ### If this fails for some reason, clear the data. ###
-
-      Post.clear_sample_url_cache()
+      # If this fails for some reason, clear the data.
+      @clear_sample_url_cache()
       throw e
     return
   prompt_to_delete: (post_id, completed) ->
@@ -1183,10 +1139,10 @@ window.Post =
         window.location.reload()
         return
 
-    flag_detail = Post.posts.get(post_id).flag_detail
+    flag_detail = @posts.get(post_id).flag_detail
     default_reason = if flag_detail then flag_detail.reason else ''
     reason = prompt('Reason:', default_reason)
     if !reason
       return false
-    Post.approve post_id, reason, completed
+    @approve post_id, reason, completed
     true

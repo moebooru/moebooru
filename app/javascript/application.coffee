@@ -9,6 +9,4 @@ import 'src/post'
 import 'src/vote'
 
 import 'src/legacy/common'
-import 'src/legacy/post'
-
 import 'src/boot'

@@ -372,7 +372,7 @@ export default class Post
       has_tag = post.match_tags.member.bind(post.match_tags)
       post.blacklisted = []
       if post.id != @blacklist_options.exclude
-        @blacklists.each (b) ->
+        @blacklists.each (b) =>
           if b.require.all(has_tag) and !b.exclude.any(has_tag)
             b.hits++
             if !@disabled_blacklists[b.tags]
@@ -487,7 +487,7 @@ export default class Post
         del.style.left = '-0.75em'
         del.href = '#'
         del.update '⊘'
-        del.observe 'click', (event) ->
+        del.observe 'click', (event) =>
 
           # We need to call run_login_onclick ourself, since this form isn't created with the form helpers.
           if !User.run_login_onclick(event)

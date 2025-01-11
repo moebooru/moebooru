@@ -34,7 +34,7 @@ get_style_for_mode = (s) ->
   else
     { background: '#AFA' }
 
-export default class PostModeMenuClass
+export default class PostModeMenu
   constructor: ->
     @dragging_active = false
     @dragging_from_post = null

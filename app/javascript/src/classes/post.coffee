@@ -438,7 +438,7 @@ export default class Post
     else
       bl_entries = JSON.parse(jQuery('#user-blacklisted-tags').text())
     @blacklists = []
-    bl_entries.each (val) ->
+    bl_entries.each (val) =>
       s = val.replace(/(rating:[qes])\w+/, '$1')
       tags = s.match(/\S+/g)
       if !tags

@@ -1,16 +1,20 @@
-window.TagScript =
-  TagEditArea: null
+export default class TagScript
+  constructor: ->
+    TagEditArea = null
+
   load: ->
     @TagEditArea.value = Cookie.get('tag-script')
     return
+
   save: ->
     Cookie.put 'tag-script', @TagEditArea.value
     return
+
   init: (element, x) ->
     @TagEditArea = element
-    TagScript.load()
-    @TagEditArea.observe 'change', (e) ->
-      TagScript.save()
+    @load()
+    @TagEditArea.observe 'change', (e) =>
+      @save()
       return
     @TagEditArea.observe 'focus', (e) ->
       Post.reset_tag_script_applied()
@@ -18,15 +22,17 @@ window.TagScript =
 
     # This mostly keeps the tag script field in sync between windows, but it
     # doesn't work in Opera, which sends focus events before blur events.
-    Event.on window, 'unload', ->
-      TagScript.save()
+    Event.on window, 'unload', =>
+      @save()
       return
-    document.observe 'focus', (e) ->
-      TagScript.load()
+    document.observe 'focus', (e) =>
+      @load()
       return
     return
+
   parse: (script) ->
     script.match /\[.+?\]|\S+/g
+
   test: (tags, predicate) ->
     split_pred = predicate.match(/\S+/g)
     is_true = true
@@ -41,11 +47,12 @@ window.TagScript =
           throw $break
       return
     is_true
+
   process: (tags, command) ->
     if command.match(/^\[if/)
       match = command.match(/\[if\s+(.+?)\s*,\s*(.+?)\]/)
-      if TagScript.test(tags, match[1])
-        TagScript.process tags, match[2]
+      if @test(tags, match[1])
+        @process tags, match[2]
       else
         tags
     else if command == '[reset]'
@@ -59,13 +66,13 @@ window.TagScript =
   run: (post_ids, tag_script, finished) ->
     if !Object.isArray(post_ids)
       post_ids = $A([ post_ids ])
-    commands = TagScript.parse(tag_script) or []
+    commands = @parse(tag_script) or []
     posts = new Array
-    post_ids.each (post_id) ->
+    post_ids.each (post_id) =>
       post = Post.posts.get(post_id)
       old_tags = post.tags.join(' ')
-      commands.each (x) ->
-        post.tags = TagScript.process(post.tags, x)
+      commands.each (x) =>
+        post.tags = @process(post.tags, x)
         return
       posts.push
         id: post_id

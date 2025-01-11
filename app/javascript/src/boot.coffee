@@ -27,6 +27,7 @@ import RelatedTags from './classes/related_tags'
 import SimilarWithThumbnailing from './classes/similar_with_thumbnailing'
 import TagCompletion from './classes/tag_completion'
 import TagCompletionBox from './classes/tag_completion_box'
+import TagScript from './classes/tag_script'
 import ThumbnailView from './classes/thumbnail_view'
 import Timeago from './classes/timeago'
 import UploadSimilarSearch from './classes/upload_similar_search'
@@ -45,6 +46,7 @@ window.InlineImage = new InlineImage
 window.Pool = new Pool
 window.PostModeMenu = new PostModeMenu
 window.TagCompletion = new TagCompletion
+window.TagScript = new TagScript
 window.UrlHash = new UrlHashHandler
 window.User = new User
 window.autocomplete = new Autocomplete

@@ -1,57 +1,92 @@
-window.PostModeMenu =
-  mode: 'view'
+get_style_for_mode = (s) ->
+  if s == 'view'
+    { background: '' }
+  else if s == 'edit'
+    { background: '#3A3' }
+  else if s == 'rating-q'
+    { background: '#AAA' }
+  else if s == 'rating-s'
+    { background: '#6F6' }
+  else if s == 'rating-e'
+    { background: '#F66' }
+  else if s == 'vote'
+    { background: '#FAA' }
+  else if s == 'lock-rating'
+    { background: '#AA3' }
+  else if s == 'lock-note'
+    { background: '#3AA' }
+  else if s == 'approve'
+    { background: '#26A' }
+  else if s == 'flag'
+    { background: '#F66' }
+  else if s == 'add-to-pool'
+    { background: '#26A' }
+  else if s == 'apply-tag-script'
+    { background: '#A3A' }
+  else if s == 'reparent-quick'
+    { background: '#CCA' }
+  else if s == 'remove-from-pool'
+    { background: '#CCA' }
+  else if s == 'reparent'
+    { background: '#0C0' }
+  else if s == 'dupe'
+    { background: '#0C0' }
+  else
+    { background: '#AFA' }
+
+export default class PostModeMenuClass
+  constructor: ->
+    @dragging_active = false
+    @dragging_from_post = null
+    @dragging_hash = null
+    @dragging_list = null
+    @mode = 'view'
+
   init: (pool_id) ->
-    try
-
-      ### This part doesn't work on IE7; for now, let's allow execution to continue so at least some initialization is run ###
-
-      ### If pool_id isn't null, it's the pool that we're currently searching for. ###
-
-      @pool_id = pool_id
-      color_element = $('mode-box')
-      @original_style = border: color_element.getStyle('border')
-      if Cookie.get('mode') == ''
-        Cookie.put 'mode', 'view'
-        $('mode').value = 'view'
-      else
-        $('mode').value = Cookie.get('mode')
-    catch e
+    # If pool_id isn't null, it's the pool that we're currently searching for.
+    @pool_id = pool_id
+    color_element = $('mode-box')
+    @original_style = border: color_element.getStyle('border')
+    if Cookie.get('mode') == ''
+      Cookie.put 'mode', 'view'
+      $('mode').value = 'view'
+    else
+      $('mode').value = Cookie.get('mode')
     @vote_score = Cookie.get('vote')
     if @vote_score == ''
       @vote_score = 1
       Cookie.put 'vote', @vote_score
     else
       @vote_score = +@vote_score
-    Post.posts.each (p) ->
+    Post.posts.each (p) =>
       post_id = p[0]
       post = p[1]
       span = $('p' + post.id)
       if !span?
         return
 
-      ### Use post_id here, not post, since the post object can be replaced later after updates. ###
-
-      span.down('A').observe 'click', (e) ->
-        PostModeMenu.click e, post_id
+      # Use post_id here, not post, since the post object can be replaced later after updates.
+      span.down('A').observe 'click', (e) =>
+        @click e, post_id
         return
-      span.down('A').observe 'mousedown', (e) ->
-        PostModeMenu.post_mousedown e, post_id
+      span.down('A').observe 'mousedown', (e) =>
+        @post_mousedown e, post_id
         return
-      span.down('A').observe 'mouseover', (e) ->
-        PostModeMenu.post_mouseover e, post_id
+      span.down('A').observe 'mouseover', (e) =>
+        @post_mouseover e, post_id
         return
-      span.down('A').observe 'mouseout', (e) ->
-        PostModeMenu.post_mouseout e, post_id
+      span.down('A').observe 'mouseout', (e) =>
+        @post_mouseout e, post_id
         return
-      span.down('A').observe 'mouseup', (e) ->
-        PostModeMenu.post_mouseup e, post_id
+      span.down('A').observe 'mouseup', (e) =>
+        @post_mouseup e, post_id
         return
       return
-    document.observe 'mouseup', (e) ->
-      PostModeMenu.post_mouseup e, null
+    document.observe 'mouseup', (e) =>
+      @post_mouseup e, null
       return
-    Event.observe window, 'pagehide', (e) ->
-      PostModeMenu.post_end_drag()
+    Event.observe window, 'pagehide', (e) =>
+      @post_end_drag()
       return
     @change()
     return
@@ -60,47 +95,12 @@ window.PostModeMenu =
     Cookie.put 'vote', @vote_score
     Post.update_vote_widget 'vote-menu', @vote_score
     return
-  get_style_for_mode: (s) ->
-    if s == 'view'
-      { background: '' }
-    else if s == 'edit'
-      { background: '#3A3' }
-    else if s == 'rating-q'
-      { background: '#AAA' }
-    else if s == 'rating-s'
-      { background: '#6F6' }
-    else if s == 'rating-e'
-      { background: '#F66' }
-    else if s == 'vote'
-      { background: '#FAA' }
-    else if s == 'lock-rating'
-      { background: '#AA3' }
-    else if s == 'lock-note'
-      { background: '#3AA' }
-    else if s == 'approve'
-      { background: '#26A' }
-    else if s == 'flag'
-      { background: '#F66' }
-    else if s == 'add-to-pool'
-      { background: '#26A' }
-    else if s == 'apply-tag-script'
-      { background: '#A3A' }
-    else if s == 'reparent-quick'
-      { background: '#CCA' }
-    else if s == 'remove-from-pool'
-      { background: '#CCA' }
-    else if s == 'reparent'
-      { background: '#0C0' }
-    else if s == 'dupe'
-      { background: '#0C0' }
-    else
-      { background: '#AFA' }
   change: ->
     if !$('mode')
       return
     s = $F('mode')
     Cookie.put 'mode', s, 7
-    PostModeMenu.mode = s
+    @mode = s
     if s != 'edit'
       $('quick-edit').hide()
     if s != 'apply-tag-script'
@@ -163,44 +163,39 @@ window.PostModeMenu =
     else if s.value == 'add-to-pool'
       Pool.add_post post_id, 0
     else if s.value == 'remove-from-pool'
-      Pool.remove_post post_id, PostModeMenu.pool_id
+      Pool.remove_post post_id, @pool_id
     event.stopPropagation()
     event.preventDefault()
     return
-  dragging_from_post: null
-  dragging_active: false
-  dragging_list: null
-  dragging_hash: null
+
   post_add_to_hovered_list: (post_id) ->
     element = element = $$('#p' + post_id + ' > .directlink')
     if element.length > 0
       element[0].addClassName 'tag-script-applied'
       Post.applied_list.push element[0]
-    if !PostModeMenu.dragging_hash.get(post_id)
-      PostModeMenu.dragging_hash.set post_id, true
-      PostModeMenu.dragging_list.push post_id
+    if !@dragging_hash.get(post_id)
+      @dragging_hash.set post_id, true
+      @dragging_list.push post_id
     return
   post_mousedown: (event, post_id) ->
     if event.button != 0
       return
-    if PostModeMenu.mode == 'reparent-quick'
-      PostModeMenu.dragging_from_post = post_id
-      PostModeMenu.post_begin_drag()
-    else if PostModeMenu.mode == 'apply-tag-script'
+    if @mode == 'reparent-quick'
+      @dragging_from_post = post_id
+      @post_begin_drag()
+    else if @mode == 'apply-tag-script'
       Post.reset_tag_script_applied()
-      PostModeMenu.dragging_from_post = post_id
-      PostModeMenu.dragging_list = new Array
-      PostModeMenu.dragging_hash = new Hash
-      PostModeMenu.post_add_to_hovered_list post_id
+      @dragging_from_post = post_id
+      @dragging_list = new Array
+      @dragging_hash = new Hash
+      @post_add_to_hovered_list post_id
     else
       return
 
-    ### Prevent the mousedown from being processed; this keeps it from turning into
+    # Prevent the mousedown from being processed; this keeps it from turning into
     # a real drag action, which will suppress our mouseover/mouseout messages.  We
     # only do this when the tag script is enabled, so we don't mess with regular
-    # clicks. 
-    ###
-
+    # clicks.
     event.preventDefault()
     event.stopPropagation()
     return
@@ -209,46 +204,45 @@ window.PostModeMenu =
     return
   post_end_drag: ->
     document.body.removeClassName 'dragging-to-post'
-    PostModeMenu.dragging_from_post = null
+    @dragging_from_post = null
     return
   post_mouseup: (event, post_id) ->
     if event.button != 0
       return
-    if !PostModeMenu.dragging_from_post
+    if !@dragging_from_post
       return
-    if PostModeMenu.mode == 'reparent-quick'
+    if @mode == 'reparent-quick'
       if post_id
         notice 'Updating post'
         Post.update_batch [ {
-          id: PostModeMenu.dragging_from_post
+          id: @dragging_from_post
           parent_id: post_id
         } ]
-      PostModeMenu.post_end_drag()
+      @post_end_drag()
       return
-    else if PostModeMenu.mode == 'apply-tag-script'
+    else if @mode == 'apply-tag-script'
       if post_id
         return
 
-      ### We clicked or dragged some posts to apply a tag script; process it. ###
-
+      # We clicked or dragged some posts to apply a tag script; process it.
       tag_script = TagScript.TagEditArea.value
-      TagScript.run PostModeMenu.dragging_list, tag_script
-      PostModeMenu.dragging_from_post = null
-      PostModeMenu.dragging_active = false
-      PostModeMenu.dragging_list = null
-      PostModeMenu.dragging_hash = null
+      TagScript.run @dragging_list, tag_script
+      @dragging_from_post = null
+      @dragging_active = false
+      @dragging_list = null
+      @dragging_hash = null
     return
   post_mouseover: (event, post_id) ->
     post = $('p' + post_id)
-    style = PostModeMenu.get_style_for_mode(PostModeMenu.mode)
+    style = get_style_for_mode(@mode)
     post.down('span').setStyle style
-    if PostModeMenu.mode != 'apply-tag-script'
+    if @mode != 'apply-tag-script'
       return
-    if !PostModeMenu.dragging_from_post
+    if !@dragging_from_post
       return
-    if post_id != PostModeMenu.dragging_from_post
-      PostModeMenu.dragging_active = true
-    PostModeMenu.post_add_to_hovered_list post_id
+    if post_id != @dragging_from_post
+      @dragging_active = true
+    @post_add_to_hovered_list post_id
     return
   post_mouseout: (event, post_id) ->
     post = $('p' + post_id)
@@ -262,6 +256,7 @@ window.PostModeMenu =
     )
     TagScript.run post_ids, tag_script
     return
+
 window.TagScript =
   TagEditArea: null
   load: ->
@@ -280,10 +275,8 @@ window.TagScript =
       Post.reset_tag_script_applied()
       return
 
-    ### This mostly keeps the tag script field in sync between windows, but it
-    # doesn't work in Opera, which sends focus events before blur events. 
-    ###
-
+    # This mostly keeps the tag script field in sync between windows, but it
+    # doesn't work in Opera, which sends focus events before blur events.
     Event.on window, 'unload', ->
       TagScript.save()
       return

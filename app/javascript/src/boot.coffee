@@ -18,6 +18,7 @@ import NotesManager from './classes/notes_manager'
 import Notice from './classes/notice'
 import Pool from './classes/pool'
 import PostLoader from './classes/post_loader'
+import PostModeMenu from './classes/post_mode_menu'
 import PostQuickEdit from './classes/post_quick_edit'
 import PostShowTabs from './classes/post_show_tabs'
 import PostUploadForm from './classes/post_upload_form'
@@ -42,6 +43,7 @@ Rails.start()
 window.History = new History
 window.InlineImage = new InlineImage
 window.Pool = new Pool
+window.PostModeMenu = new PostModeMenu
 window.TagCompletion = new TagCompletion
 window.UrlHash = new UrlHashHandler
 window.User = new User

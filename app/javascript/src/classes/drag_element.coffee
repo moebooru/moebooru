@@ -46,7 +46,6 @@ export default class DragElement
     return
 
   move_timer_update: =>
-    @move_timer = null
     if !@options.ondrag
       return
     if !@last_event_params?
@@ -135,14 +134,7 @@ export default class DragElement
       x: x
       y: y
       event: event
-    if @dragging_by_touch and Prototype.Browser.AndroidWebKit
-
-      # Touch events on Android tend to queue up when they come in faster than we
-      # can process.  Set a timer, so we discard multiple events in quick succession.
-      if !@move_timer?
-        @move_timer = window.setTimeout(@move_timer_update, 10)
-    else
-      @move_timer_update()
+    @move_timer_update()
     return
 
   mousedown_event: (event) =>

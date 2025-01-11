@@ -7,8 +7,6 @@ Object.extend Element.Methods,
       $(element).hide()
 Element.addMethods()
 
-Prototype.Browser.AndroidWebKit = navigator.userAgent.indexOf('Android') != -1 and navigator.userAgent.indexOf('WebKit') != -1
-
 # Some UI simply doesn't make sense on a touchscreen, and may need to be disabled or changed.
 # It'd be nice if this could be done generically, but this is the best available so far...
 Prototype.BrowserFeatures.Touchscreen =

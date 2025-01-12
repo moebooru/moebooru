@@ -157,7 +157,6 @@ class ForumPost < ApplicationRecord
   end
 
   def clear_cache
-    Rails.cache.delete "forum_posts"
     Rails.cache.delete LATEST_CACHE_KEY
   end
 

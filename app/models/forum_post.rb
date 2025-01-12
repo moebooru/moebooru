@@ -1,4 +1,6 @@
 class ForumPost < ApplicationRecord
+  LATEST_CACHE_KEY = 'forum_posts_latest_v4'
+
   belongs_to :creator, class_name: "User", foreign_key: :creator_id
   belongs_to :updater, class_name: "User", foreign_key: :last_updated_by
   after_create :initialize_last_updated_by
@@ -156,7 +158,7 @@ class ForumPost < ApplicationRecord
 
   def clear_cache
     Rails.cache.delete "forum_posts"
-    Rails.cache.delete "forum_posts_latest_v3"
+    Rails.cache.delete LATEST_CACHE_KEY
   end
 
   def last_updater

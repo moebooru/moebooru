@@ -204,7 +204,7 @@
 </div>
 
 <script id="forum-posts-latest" type="application/json">
-  <%= Rails.cache.fetch "forum_posts_latest_v4" do
+  <%= Rails.cache.fetch ForumPost::LATEST_CACHE_KEY do
     ForumPost.latest.map { |p| p.slice(:id, :pages, :title, :updated_at) }.to_json.html_safe
   end %>
 </script>

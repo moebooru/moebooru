@@ -45,13 +45,11 @@ export default class PostModeMenu
   init: (pool_id) ->
     # If pool_id isn't null, it's the pool that we're currently searching for.
     @pool_id = pool_id
-    color_element = $('mode-box')
-    @original_style = border: color_element.getStyle('border')
     if Cookie.get('mode') == ''
       Cookie.put 'mode', 'view'
-      $('mode').value = 'view'
+      $('mode')?.value = 'view'
     else
-      $('mode').value = Cookie.get('mode')
+      $('mode')?.value = Cookie.get('mode')
     @vote_score = Cookie.get('vote')
     if @vote_score == ''
       @vote_score = 1

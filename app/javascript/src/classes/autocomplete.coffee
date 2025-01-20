@@ -1,4 +1,6 @@
 import autocompleter from 'autocompleter'
+import TagCompletion from './tag_completion'
+import TagCompletionBox from './tag_completion_box'
 
 $ = jQuery
 
@@ -7,7 +9,7 @@ autocompleterMap = (match) =>
   value: match
 
 export default class Autocomplete
-  constructor: ->
+  constructor: (@tagCompletionInstance) ->
     $ =>
       @_genericCompletionAll()
       @_tagCompletion()
@@ -43,4 +45,4 @@ export default class Autocomplete
     return if !tags?
 
     new TagCompletionBox(tags)
-    TagCompletion?.observe_tag_changes_on_submit editForm, tags
+    @tagCompletionInstance.observe_tag_changes_on_submit editForm, tags

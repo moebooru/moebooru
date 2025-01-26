@@ -321,7 +321,7 @@ export default class Post
     @votes.update votes
     return
 
-  is_blacklisted: (post_id) ->
+  is_blacklisted: (post_id) =>
     post = @posts.get(post_id)
 
     # Missing post data, pretend it's not blacklisted.

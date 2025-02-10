@@ -6,7 +6,7 @@
     "autocompleter": "^9.3.2",
     "coffeescript": "^2.7.0",
     "cropperjs": "^1.5.12",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "esbuild-coffeescript": "^2.0.0",
     "esbuild-plugin-less": "^1.1.6",
     "glob": "^11.0.0",

@@ -66,6 +66,7 @@ module Post::SqlMethods
         conds << "FALSE"
       end
 
+      generate_sql_range_helper(q[:ratio], "ROUND(p.width::numeric / GREATEST(1, p.height), 3)", conds, cond_params)
       generate_sql_range_helper(q[:post_id], "p.id", conds, cond_params)
       generate_sql_range_helper(q[:mpixels], "p.width*p.height/1000000.0", conds, cond_params)
       generate_sql_range_helper(q[:width], "p.width", conds, cond_params)
@@ -314,10 +315,10 @@ module Post::SqlMethods
           sql << " ORDER BY width*height/1000000.0"
 
         when "portrait"
-          sql << " ORDER BY 1.0*width/GREATEST(1, height)"
+          sql << " ORDER BY ROUND(width::numeric/GREATEST(1, height), 3)"
 
         when "landscape"
-          sql << " ORDER BY 1.0*width/GREATEST(1, height) DESC"
+          sql << " ORDER BY ROUND(width::numeric/GREATEST(1, height), 3) DESC"
 
         when "portrait_pool"
           # We can only do this if we're searching for a pool.

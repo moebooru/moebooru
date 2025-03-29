@@ -21,7 +21,7 @@ module Tag::ParseMethods
           nil
         end
       when :rational
-        Rational(x.tr(":", "/")).to_f.round(3) rescue 0
+        x.tr(":", "/").to_r.to_f.round(3) rescue 0
       end
     end
 

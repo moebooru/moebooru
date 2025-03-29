@@ -1,5 +1,5 @@
 class ForumPost < ApplicationRecord
-  LATEST_CACHE_KEY = 'forum_posts_latest_v4'
+  LATEST_CACHE_KEY = "forum_posts_latest_v4"
 
   belongs_to :creator, class_name: "User", foreign_key: :creator_id
   belongs_to :updater, class_name: "User", foreign_key: :last_updated_by

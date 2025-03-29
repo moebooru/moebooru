@@ -9,16 +9,19 @@ module Tag::ParseMethods
     end
 
     def parse_cast(x, type)
-      if type == :integer
+      case type
+      when :integer
         x.to_i
-      elsif type == :float
+      when :float
         x.to_f
-      elsif type == :date
+      when :date
         begin
           x.to_date
         rescue
           nil
         end
+      when :rational
+        Rational(x.tr(":", "/")).to_f.round(3) rescue 0
       end
     end
 
@@ -68,9 +71,11 @@ module Tag::ParseMethods
           next
         end
 
-        if token =~ /^(unlocked|deleted|ext|user|sub|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|pending|shown|limit):(.+)$/
+        if token =~ /^(ratio|unlocked|deleted|ext|user|sub|vote|-vote|fav|md5|-rating|rating|width|height|mpixels|score|source|id|date|pool|-pool|parent|order|change|holds|pending|shown|limit):(.+)$/
           if Regexp.last_match[1] == "user"
             q[:user] = Regexp.last_match[2]
+          elsif Regexp.last_match[1] == "ratio"
+            q[:ratio] = parse_helper(Regexp.last_match[2], :rational)
           elsif Regexp.last_match[1] == "vote"
             vote, user = Regexp.last_match[2].split(":", 2)
             user_id = User.find_by_name(user).id rescue nil

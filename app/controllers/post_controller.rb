@@ -420,7 +420,9 @@ class PostController < ApplicationController
 
   def browse
     response.headers["Cache-Control"] = "max-age=300"
-    render layout: "bare"
+    respond_to do |format|
+      format.html { render layout: "bare" }
+    end
   end
 
   def view

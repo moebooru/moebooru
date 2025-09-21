@@ -139,7 +139,7 @@ Rails.application.routes.draw do
   match "post/acknowledge_new_deleted_posts", via: [ :post, :get ]
   match "post/activate", via: [ :post, :get ]
   get "post/atom(.:format)" => "post#atom", :defaults => { format: :atom }
-  match "post/browse", via: [ :post, :get ]
+  get "post/browse"
   match "post/delete(/:id)" => "post#delete", :via => [ :post, :get ]
   match "post/deleted_index", via: [ :post, :get ]
   get "post/error"

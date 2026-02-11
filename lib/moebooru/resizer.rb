@@ -39,7 +39,7 @@ module Moebooru
       write_crop = "#{output_size[:crop_width]}x#{output_size[:crop_height]}+#{output_size[:crop_left]}+#{output_size[:crop_top]}"
 
       write_format = output_path.split(".")[-1]
-      if write_format =~ /\A(jpe?g|gif|png)\z/i
+      if write_format =~ /\A(jpe?g|gif|png|webp)\z/i
         write_format = write_format.downcase
       else
         write_format = file_ext

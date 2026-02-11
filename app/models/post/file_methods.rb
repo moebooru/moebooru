@@ -37,7 +37,7 @@ module Post::FileMethods
   end
 
   def validate_content_type
-    unless %w[jpg png gif swf].include?(file_ext.downcase)
+    unless %w[jpg png gif webp swf].include?(file_ext.downcase)
       errors.add(:file, "is an invalid content type: " + file_ext.downcase)
       throw :abort
     end
@@ -314,7 +314,7 @@ module Post::FileMethods
 
   # Returns true if the post is an image format that GD can handle.
   def image?
-    %w[jpg jpeg gif png].include?(file_ext.downcase)
+    %w[jpg jpeg gif png webp].include?(file_ext.downcase)
   end
 
   # Returns true if the post is a Flash movie.
@@ -343,6 +343,9 @@ module Post::FileMethods
 
     when "image/png"
       "png"
+
+    when "image/webp"
+      "webp"
 
     when "application/x-shockwave-flash"
       "swf"

@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 7.2.1"
+gem "rails", "~> 8.0.0"
+gem "minitest", "< 6"
 
 gem "sprockets-rails"
 gem "jsbundling-rails", ">= 1.3.0"

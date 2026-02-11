@@ -44,7 +44,7 @@ class DmailTest < ActiveSupport::TestCase
     assert_equal [ CONFIG["email_from"] ], mail.from
     assert_equal %w[member@danbooru.com], mail.to
     assert_equal "#{CONFIG["app_name"]} - Message received from admin", mail.subject
-    assert_equal "<p>admin said:</p>\r\n<div>\r\n  <p>Subject: hello</p>\r\n  <hr />\r\n  hello\r\n</div>\r\n", mail.body.raw_source
+    assert_equal "<p>admin said:</p>\n<div>\n  <p>Subject: hello</p>\n  <hr />\n  hello\n</div>\n", mail.body.raw_source
 
     response_a = Dmail.create(to_name: "admin", from_name: "member", parent_id: msg.id, title: "hello", body: "you are wrong")
     assert_equal("Re: hello", response_a.title)

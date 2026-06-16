@@ -5,6 +5,7 @@ const t = I18n.scopify('js.forum');
 window.Forum = {
   mark_all_read () {
     $.ajax(Moebooru.path('/forum/mark_all_read')).done(function () {
+      document.getElementById('forum-post-last-read-at').text = JSON.stringify((new Date()).toISOString());
       $('span.forum-topic').removeClass('unread-topic');
       $('div.forum-update').removeClass('forum-update');
       menu.syncForumMenu(true);

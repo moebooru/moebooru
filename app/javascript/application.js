@@ -1,6 +1,5 @@
 import 'src/i18n';
 import 'src/cookie';
-import 'src/forum';
 
 import 'src/moebooru';
 

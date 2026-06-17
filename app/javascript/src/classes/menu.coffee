@@ -25,7 +25,7 @@ export default class Menu
 
     $(document).on 'click', '#forum-mark-all-read', (e) ->
       e.preventDefault()
-      Forum.mark_all_read()
+      Forum.markAllRead()
 
     $(document).on 'click', '#main-menu .search-link', (e) =>
       e.preventDefault()

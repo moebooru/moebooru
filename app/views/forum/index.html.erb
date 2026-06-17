@@ -51,7 +51,7 @@
   <% content_for :subnavbar do %>
     <li><%= link_to t('.new'), :action => "new" %></li>
     <% unless @current_user.is_anonymous? %>
-      <li><%= link_to_function t('.mark'), "Forum.mark_all_read()" %></li>
+      <li><%= link_to_function t('.mark'), "Forum.markAllRead()" %></li>
     <% end %>
     <li><%= link_to t('.help'), help_path("forum") %></li>
   <% end %>

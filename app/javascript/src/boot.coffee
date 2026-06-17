@@ -37,12 +37,14 @@ import User from './classes/user'
 import UserRecord from './classes/user_record'
 import Vote from './classes/vote'
 import WindowTitleHandler from './classes/window_title_handler'
+import * as Forum from './forum'
 import { initTextAreas } from './utils/init_text_areas'
 import { initializeFullScreenBrowserHandlers } from './utils/initialize_full_screen_browser_handlers'
 import { onKey } from './utils/on_key'
 
 Rails.start()
 
+window.Forum = Forum
 window.History = new History
 window.InlineImage = new InlineImage
 window.Pool = new Pool

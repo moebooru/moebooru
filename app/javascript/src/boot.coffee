@@ -35,11 +35,11 @@ import UploadSimilarSearch from './classes/upload_similar_search'
 import UrlHashHandler from './classes/url_hash_handler'
 import User from './classes/user'
 import UserRecord from './classes/user_record'
+import Vote from './classes/vote'
 import WindowTitleHandler from './classes/window_title_handler'
 import { initTextAreas } from './utils/init_text_areas'
 import { initializeFullScreenBrowserHandlers } from './utils/initialize_full_screen_browser_handlers'
 import { onKey } from './utils/on_key'
-import Vote from './vote'
 
 Rails.start()
 

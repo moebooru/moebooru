@@ -1,30 +1,7 @@
 (($) ->
 
-  Post = ->
-    @posts = {}
-    return
-
-  Post.prototype =
-    registerPosts: (posts) ->
-      th = this
-      if posts.length == 1
-        @current = posts[0]
-      posts.forEach (p, idx, arr) ->
-        p.tags = p.tags.match(/\S+/g) or []
-        p.metatags = p.tags.clone()
-        p.metatags.push 'rating:' + p.rating[0]
-        p.metatags.push 'status:' + p.status
-        th.posts[p.id] = p
-        return
-      false
-    get: (post_id) ->
-      @posts[post_id]
   $ ->
-    post = new Post
     inLargerVersion = false
-    Moe.on 'post:add', (e, data) ->
-      post.registerPosts data
-      return
     $('.highres-show').on 'click', ->
       img = $('#image')
       w = img.attr('large_width')

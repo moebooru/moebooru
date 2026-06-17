@@ -1,164 +1,204 @@
-import Mousetrap from 'mousetrap'
+/* global favorite, I18n, jQuery, Moebooru, notice, User */
+import Mousetrap from 'mousetrap';
 
-$ = jQuery
-t = I18n.scopify('js.vote')
+const $ = jQuery;
+const t = I18n.scopify('js.vote');
 
-REMOVE = 0
-GOOD = 1
-GREAT = 2
-FAVORITE = 3
+const REMOVE = 0;
+const GOOD = 1;
+const GREAT = 2;
+const FAVORITE = 3;
 
-getScore = (star) ->
-  parseInt(star.dataset.star, 10)
+const label = [
+  t('.remove'),
+  t('.good'),
+  t('.great'),
+  t('.fav')
+];
 
+const shortcutMapping = [
+  ['`', REMOVE],
+  ['1', GOOD],
+  ['2', GREAT],
+  ['3', FAVORITE]
+];
 
-class window.Vote
-  constructor: (container, id) ->
-    nodes = container.find('*')
-    @desc = nodes.filter('.vote-desc')
-    @stars = nodes.filter('.star-off')
-    @post_score = nodes.filter("#post-score-#{id}, .post-score")
-    @vote_up = nodes.filter('.vote-up')
-    @post_id = id
-    @label = [
-      t('.remove')
-      t('.good')
-      t('.great')
-      t('.fav')
-    ]
-    @setupEvents()
-    @data =
-      score: null
-      vote: null
+function getScore (star) {
+  return parseInt(star.dataset.star, 10);
+}
 
+export default class Vote {
+  data = {
+    score: null,
+    vote: null
+  };
 
-  set: (vote) =>
-    User.run_login false, =>
-      notice t('.voting')
-      $.ajax
-        url: Moebooru.path('/post/vote.json')
-        data:
-          id: @post_id
+  desc;
+  post_score;
+  post_id;
+  stars;
+  vote_up;
+
+  constructor (container, id) {
+    const nodes = container.find('*');
+    this.desc = nodes.filter('.vote-desc');
+    this.stars = nodes.filter('.star-off');
+    this.post_score = nodes.filter(`#post-score-${id}, .post-score`);
+    this.vote_up = nodes.filter('.vote-up');
+    this.post_id = id;
+    this.setupEvents();
+  }
+
+  set = (vote) => {
+    User.run_login(false, () => {
+      notice(t('.voting'));
+      $.ajax({
+        url: Moebooru.path('/post/vote.json'),
+        data: {
+          id: this.post_id,
           score: vote
-        dataType: 'json'
-        type: 'post'
-        statusCode: 403: ->
-          notice "#{t('js.error')}#{t('js.denied')}"
-      .done (data) =>
-        @updateWidget vote, data.posts[0].score
-        $('#favorited-by').html favorite.linkToUsers(data.voted_by[FAVORITE])
-        notice t('.saved')
+        },
+        dataType: 'json',
+        type: 'post',
+        statusCode: {
+          403 () {
+            notice(`${t('js.error')}${t('js.denied')}`);
+          }
+        }
+      }).done((data) => {
+        this.updateWidget(vote, data.posts[0].score);
+        $('#favorited-by').html(favorite.linkToUsers(data.voted_by[FAVORITE]));
+        notice(t('.saved'));
+      });
+    });
+  };
 
+  setupEvents () {
+    this.stars.on('click', (e) => {
+      e.preventDefault();
+      this.set(getScore(e.currentTarget));
+    });
 
-  setupEvents: =>
-    @stars.on 'click', (e) =>
-      e.preventDefault()
-      score = getScore(e.currentTarget)
-      @set score
-      return
+    this.stars.on('mouseover', (e) => {
+      this.setMouseover(e.currentTarget);
+    });
 
-    @stars.on 'mouseover', (e) => @setMouseover e.currentTarget
+    this.stars.on('mouseout', (e) => {
+      this.setMouseover(null);
+    });
 
-    @stars.on 'mouseout', => @setMouseover null
+    this.vote_up.on('click', (e) => {
+      e.preventDefault();
+      if (this.vote < FAVORITE) {
+        this.set(this.vote + 1);
+      }
+    });
 
-    @vote_up.on 'click', (e) =>
-      e.preventDefault()
-      @set(@vote + 1) if @vote < FAVORITE
-      return
+    $('#add-to-favs > a').on('click', (e) => {
+      e.preventDefault();
+      this.set(FAVORITE);
+    });
 
-    $('#add-to-favs > a').on 'click', (e) =>
-      e.preventDefault()
-      @set FAVORITE
+    $('#remove-from-favs > a').on('click', (e) => {
+      e.preventDefault();
+      this.set(GREAT);
+    });
+  }
 
-    $('#remove-from-favs > a').on 'click', (e) =>
-      e.preventDefault()
-      @set GREAT
+  updateWidget (vote, targetScore) {
+    const add = $('#add-to-favs');
+    const rm = $('#remove-from-favs');
+    this.vote = vote || 0;
+    this.data.score = targetScore;
+    this.data.vote = vote;
 
+    for (const star of this.stars) {
+      const score = getScore(star);
+      const $star = $(star);
+      if (score <= vote) {
+        $star.removeClass('star-set-after');
+        $star.addClass('star-set-upto');
+      } else {
+        $star.removeClass('star-set-upto');
+        $star.addClass('star-set-after');
+      }
+    }
 
-  updateWidget: (vote, targetScore) =>
-    add = $('#add-to-favs')
-    rm = $('#remove-from-favs')
-    @vote = vote || 0
-    @data.score = targetScore
-    @data.vote = vote
+    if (vote === FAVORITE) {
+      add.hide();
+      rm.show();
+    } else {
+      add.show();
+      rm.hide();
+    }
+    this.post_score.text(targetScore);
+  }
 
-    for star in @stars
-      score = getScore(star)
-      $star = $(star)
-      if score <= vote
-        $star.removeClass 'star-set-after'
-        $star.addClass 'star-set-upto'
-      else
-        $star.removeClass 'star-set-upto'
-        $star.addClass 'star-set-after'
+  initShortcut () {
+    for (const [key, value] of shortcutMapping) {
+      Mousetrap.bind(key, () => this.set(value));
+    }
+  }
 
-    if vote == FAVORITE
-      add.hide()
-      rm.show()
-    else
-      add.show()
-      rm.hide()
-    @post_score.text targetScore
+  setMouseover (targetStar) {
+    if (targetStar != null && !targetStar.classList.contains('star')) {
+      targetStar = $(targetStar).closest('.star')[0];
+    }
 
+    if (targetStar == null) {
+      this.mouseout();
+      return;
+    }
 
-  initShortcut: =>
-    mapping =
-      '`': REMOVE
-      '1': GOOD
-      '2': GREAT
-      '3': FAVORITE
+    const targetScore = getScore(targetStar);
 
-    for own key, value of mapping
-      do (key, value) =>
-        Mousetrap.bind key, => @set value
+    for (const star of this.stars) {
+      const score = getScore(star);
+      const $star = $(star);
 
+      if (score <= targetScore) {
+        $star.removeClass('star-hovered-after');
+        $star.addClass('star-hovered-upto');
+      } else {
+        $star.removeClass('star-hovered-upto');
+        $star.addClass('star-hovered-after');
+      }
+      if (score !== targetScore) {
+        $star.removeClass('star-hovered');
+        $star.addClass('star-unhovered');
+      } else {
+        $star.removeClass('star-unhovered');
+        $star.removeClass('star-hovered');
+      }
+    }
 
-  setMouseover: (targetStar) =>
-    if targetStar? && !targetStar.classList.contains('star')
-      targetStar = $(targetStar).closest('.star')[0]
+    this.desc.text(label[targetScore]);
+  }
 
-    if !targetStar?
-      @mouseout()
-      return
+  mouseout () {
+    for (const star of this.stars) {
+      star.classList.remove('star-hovered', 'star-unhovered', 'star-hovered-after', 'star-hovered-upto');
+    }
 
-    targetScore = getScore(targetStar)
+    this.desc.text('');
+  }
 
-    for star in @stars
-      score = getScore(star)
-      $star = $(star)
+  activateItem (targetStar) {
+    if (targetStar == null) {
+      return;
+    }
 
-      if score <= targetScore
-        $star.removeClass 'star-hovered-after'
-        $star.addClass 'star-hovered-upto'
-      else
-        $star.removeClass 'star-hovered-upto'
-        $star.addClass 'star-hovered-after'
-      if score != targetScore
-        $star.removeClass 'star-hovered'
-        $star.addClass 'star-unhovered'
-      else
-        $star.removeClass 'star-unhovered'
-        $star.removeClass 'star-hovered'
+    if (!targetStar.classList.contains('star')) {
+      targetStar = $(targetStar).closest('.star')[0];
+    }
 
-    @desc.text @label[targetScore]
+    if (targetStar == null) {
+      return;
+    }
 
+    const score = getScore(targetStar);
+    this.set(score);
 
-  mouseout: =>
-    for star in @stars
-      star.classList.remove 'star-hovered', 'star-unhovered', 'star-hovered-after', 'star-hovered-upto'
-
-    @desc.text ''
-
-
-  activateItem: (targetStar) =>
-    return unless targetStar?
-
-    if !targetStar.classList.contains('star')
-      targetStar = $(targetStar).closest('.star')[0]
-
-    return unless targetStar?
-
-    score = getScore(targetStar)
-    @set score
-
-    score
+    return score;
+  }
+}

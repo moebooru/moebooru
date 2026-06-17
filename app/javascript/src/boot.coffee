@@ -39,6 +39,7 @@ import WindowTitleHandler from './classes/window_title_handler'
 import { initTextAreas } from './utils/init_text_areas'
 import { initializeFullScreenBrowserHandlers } from './utils/initialize_full_screen_browser_handlers'
 import { onKey } from './utils/on_key'
+import Vote from './vote'
 
 Rails.start()
 
@@ -51,6 +52,7 @@ window.TagCompletion = new TagCompletion
 window.TagScript = new TagScript
 window.UrlHash = new UrlHashHandler
 window.User = new User
+window.Vote = Vote
 window.autocomplete = new Autocomplete(window.TagCompletion)
 window.checkAll = new CheckAll
 window.comment = new Comment

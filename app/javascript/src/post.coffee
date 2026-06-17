@@ -19,6 +19,8 @@
       notesManager.all.invoke 'adjustScale'
       false
     $('#post_tags').on 'keydown', (e) ->
+      return if e.target.closest('#quick-edit') != null
+
       if e.which == 13
         e.preventDefault()
         document.getElementById('edit-form').requestSubmit()

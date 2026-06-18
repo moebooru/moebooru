@@ -1,5 +1,5 @@
 export function clamp (n, min, max) {
-  return Math.max(Math.min(n, max), min);
+  return n < min ? min : (n > max ? max : n);
 }
 
 // Return the squared distance between two points.

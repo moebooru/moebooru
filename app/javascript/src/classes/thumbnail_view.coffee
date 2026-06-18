@@ -1,5 +1,6 @@
 import DragElement from 'src/classes/drag_element'
 import { sortArrayByDistance } from 'src/utils/array'
+import { isTouchscreen } from 'src/utils/browser'
 import PreloadContainer from './preload_container'
 
 # Handle the thumbnail view, and navigation for the main view.
@@ -704,7 +705,7 @@ export default class ThumbnailView
     # to be loaded.  It also triggers a bug in iPhone WebKit (covering up the original target of
     # a mouseover during the event seems to cause the subsequent click event to not be delivered).
     # Just disable hover thumbnails for touchscreens.
-    if Prototype.BrowserFeatures.Touchscreen
+    if isTouchscreen
       return
     if !@thumb_container_shown
       return

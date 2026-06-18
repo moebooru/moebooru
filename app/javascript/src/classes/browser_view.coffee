@@ -1,6 +1,7 @@
 import DragElement from 'src/classes/drag_element'
 import PreloadContainer from 'src/classes/preload_container'
 import WindowDragElementAbsolute from 'src/classes/window_drag_element_absolute'
+import { isTouchscreen } from 'src/utils/browser'
 import { escapeHtml, stringToDom } from 'src/utils/dom'
 import { removeImageElement } from 'src/utils/image'
 import { numberToHumanSize } from 'src/utils/math'
@@ -256,7 +257,7 @@ export default class BrowserView
     @container.on 'swipe:horizontal', (e) =>
       document.fire 'viewer:show-next-post', prev: e.memo.right
 
-    if Prototype.BrowserFeatures.Touchscreen
+    if isTouchscreen
       @create_voting_popup()
       @image_swipe = new SwipeHandler(@container.down('.image-container'))
 
@@ -338,7 +339,7 @@ export default class BrowserView
   set_post_ui: (visible) ->
     # Disable the post UI by default on touchscreens; we don't have an interface
     # to toggle it.
-    if Prototype.BrowserFeatures.Touchscreen && window.screen.availWidth < 1024
+    if isTouchscreen && window.screen.availWidth < 1024
       visible = false
 
     # If we don't have a post displayed, always hide the post UI even if it's currently
@@ -461,7 +462,7 @@ export default class BrowserView
 
     # When we're on the regular version and we're on a touchscreen, disable drag
     # scrolling so we can use it to switch images instead.
-    if Prototype.BrowserFeatures.Touchscreen and @image_dragger
+    if isTouchscreen and @image_dragger
       @image_dragger.set_disabled !b
 
     # Only allow dragging to create new frames when not viewing the large version,

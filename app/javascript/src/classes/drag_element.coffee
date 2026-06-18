@@ -1,3 +1,5 @@
+import { isWebkit } from 'src/utils/browser'
+
 # When element is dragged, the document moves around it.  If scroll_element is true, the
 # element should be positioned (eg. position: absolute), and the element itself will be
 # scrolled.
@@ -33,7 +35,7 @@ export default class DragElement
     # at all; detecting whether a click event came from the drag or not is difficult.
     # Cancelling mouseup has no effect.  FF, IE7 and Opera still send the click event
     # if their dragstart or mousedown event is cancelled; WebKit doesn't.
-    if !Prototype.Browser.WebKit
+    if !isWebkit
       @handlers.push element.on('click', @click_event)
     return
 

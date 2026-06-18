@@ -1,4 +1,5 @@
 import DragElement from 'src/classes/drag_element'
+import { isWebkit } from 'src/utils/browser'
 import { applyDrag, createDragBox } from 'src/utils/drag_box'
 import { frameDimensionsFromImage, frameDimensionsToImage } from 'src/utils/frame_math'
 import { clamp } from 'src/utils/math'
@@ -108,7 +109,7 @@ export default class FrameEditor
 
   update_show_corner_drag: ->
     shown = @post_id? && @editing_frame? && @show_corner_drag
-    if Prototype.Browser.WebKit
+    if isWebkit
       # Work around a WebKit (maybe just a Chrome) issue.  Images are downloaded immediately, but
       # they're only decompressed the first time they're actually painted on screen.  This happens
       # late, after all style is applied: hiding with display: none, visibility: hidden or even

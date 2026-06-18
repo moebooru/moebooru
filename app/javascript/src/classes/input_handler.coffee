@@ -1,3 +1,5 @@
+import { isWebkit } from 'src/utils/browser'
+
 # This handler handles global keypress bindings, and fires viewer: events.
 export default class InputHandler
   constructor: ->
@@ -24,7 +26,7 @@ export default class InputHandler
       return true
     if e.shiftKey or e.altKey or e.ctrlKey or e.metaKey
       return false
-    grave_keycode = if Prototype.Browser.WebKit then 192 else 96
+    grave_keycode = if isWebkit then 192 else 96
     if key == 32
       document.fire 'viewer:set-thumb-bar', toggle: true
     else if key == 49

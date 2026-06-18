@@ -1,12 +1,15 @@
-export default class ClipRange
-  constructor: (@min, @max) ->
-    throw 'paramError' if @min > @max
+import { clamp } from 'src/utils/math';
 
+export default class ClipRange {
+  constructor (min, max) {
+    if (min > max) {
+      throw new Error('paramError (min is larger than max)');
+    }
+    this.min = min;
+    this.max = max;
+  }
 
-  clip: (x) =>
-    if x < @min
-      return @min
-    if x > @max
-      return @max
-
-    x
+  clip (x) {
+    return clamp(x, this.min, this.max);
+  }
+}

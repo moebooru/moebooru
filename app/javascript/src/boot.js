@@ -40,12 +40,16 @@ import Vote from './classes/vote';
 import WindowTitleHandler from './classes/window_title_handler';
 import { Cookie, Cookies } from './cookie';
 import initCookie from './init.cookie';
+import postListeners from './post';
 import * as Forum from './utils/forum';
 import { initTextAreas } from './utils/init_text_areas';
 import { initializeFullScreenBrowserHandlers } from './utils/initialize_full_screen_browser_handlers';
 import { onKey } from './utils/on_key';
 
-jQuery(initCookie);
+jQuery(() => {
+  initCookie();
+  postListeners();
+});
 Rails.start();
 
 window.Cookie = Cookie;

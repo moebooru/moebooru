@@ -1,4 +1,6 @@
-/* globals Cookies, jQuery */
+/* globals jQuery */
+import { Cookies } from './cookie';
+
 const $ = jQuery;
 
 export default function initCookie () {

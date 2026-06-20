@@ -38,6 +38,7 @@ import User from './classes/user';
 import UserRecord from './classes/user_record';
 import Vote from './classes/vote';
 import WindowTitleHandler from './classes/window_title_handler';
+import { Cookie, Cookies } from './cookie';
 import initCookie from './init.cookie';
 import * as Forum from './utils/forum';
 import { initTextAreas } from './utils/init_text_areas';
@@ -47,6 +48,8 @@ import { onKey } from './utils/on_key';
 jQuery(initCookie);
 Rails.start();
 
+window.Cookie = Cookie;
+window.Cookies = Cookies;
 window.Forum = Forum;
 window.History = new History();
 window.InlineImage = new InlineImage();

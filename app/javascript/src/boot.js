@@ -1,3 +1,4 @@
+/* globals jQuery */
 import Rails from '@rails/ujs';
 import Autocomplete from './classes/autocomplete';
 import BrowserView from './classes/browser_view';
@@ -37,11 +38,13 @@ import User from './classes/user';
 import UserRecord from './classes/user_record';
 import Vote from './classes/vote';
 import WindowTitleHandler from './classes/window_title_handler';
+import initCookie from './init.cookie';
 import * as Forum from './utils/forum';
 import { initTextAreas } from './utils/init_text_areas';
 import { initializeFullScreenBrowserHandlers } from './utils/initialize_full_screen_browser_handlers';
 import { onKey } from './utils/on_key';
 
+jQuery(initCookie);
 Rails.start();
 
 window.Forum = Forum;

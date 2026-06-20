@@ -3,7 +3,6 @@ import 'src/cookie';
 
 import 'src/moebooru';
 
-import 'src/init.cookie';
 import 'src/post';
 
 import 'src/legacy/common';

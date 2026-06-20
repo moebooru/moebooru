@@ -16,7 +16,7 @@ export default function initCookie () {
   }
 
   // Show block/ban reason if the user is blocked/banned.
-  if (Cookies.get('block_reason') !== null && Cookies.get('block_reason') !== '') {
+  if (Cookies.get('block_reason') != null && Cookies.get('block_reason') !== '') {
     $('#block-reason').text(Cookies.get('block_reason')).show();
   }
 

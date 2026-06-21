@@ -1,1148 +1,1375 @@
-import { numberToHumanSize } from 'src/utils/math'
-
-export default class Post
-  constructor: ->
-    @posts = new Hash
-    @tag_types = new Hash
-    @votes = new Hash
-
-    @tag_type_names = [
-      'general'
-      'artist'
-      ''
-      'copyright'
-      'character'
-      'circle'
-      'faults'
-    ]
-    @applied_list = []
-    @blacklists = []
-    @current_blacklists = null
-    @hide_inactive_blacklists = true
-    @disabled_blacklists = {}
-    @hover_info_hovered_post = null
-    @hover_info_displayed_post = null
-    @hover_info_shift_held = false
-    @hover_info_pinned_post = null
-
-  make_request: (path, params, finished) ->
-    jQuery.ajax path,
-      data: params
-      dataType: 'json'
-      method: 'POST'
-    .fail (xhr) =>
-      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
-
-    .done (resp) =>
-      @register_resp resp
-
-      # Fire posts:update, to allow observers to update their display on change.
-      if resp.posts? && resp.posts.length > 0
-        jQuery(document).trigger 'posts:update', [new Set(resp.posts.map((post) => post.id))]
-
-      finished?(resp)
-
-  approve: (post_id, delete_reason, finished) ->
-    notice 'Approving post #' + post_id
-    params = {}
-    params['ids[' + post_id + ']'] = '1'
-    params['commit'] = if delete_reason then 'Delete' else 'Approve'
-    if delete_reason
-      params['reason'] = delete_reason
-
-    completion = ->
-      notice if delete_reason then 'Post deleted' else 'Post approved'
-      if finished
-        finished post_id
-      else
-        if $('p' + post_id)
-          $('p' + post_id).removeClassName 'pending'
-        if $('pending-notice')
-          $('pending-notice').hide()
-      return
-
-    @make_request '/post/moderate.json', params, completion
-
-  undelete: (post_id, finished) ->
-    @make_request '/post/undelete.json', { id: post_id }, finished
-
-  reset_tag_script_applied: ->
-    i = 0
-    while i < @applied_list.length
-      @applied_list[i].removeClassName 'tag-script-applied'
-      ++i
-    @applied_list = []
-    return
-
-  update_batch: (posts, finished) ->
-    original_count = posts.length
-    if TagCompletion
-
-      # Tell TagCompletion about recently used tags.
-      posts.each (post) ->
-        if !post.tags?
-          return
-        TagCompletion.add_recent_tags_from_update post.tags, post.old_tags
-        return
-
-    # posts is a hash of id: { post }.  Convert this to a Rails-format object array.
-    params_array = []
-    posts.each (post) ->
-      $H(post).each (pair2) ->
-        s = 'post[][' + pair2.key + ']=' + window.encodeURIComponent(pair2.value)
-        params_array.push s
-        return
-      return
-
-    complete = (resp) =>
-      resp.posts.each (post) =>
-        @update_styles post
-        element = $$('#p' + post.id + ' > .directlink')
-        if element.length > 0
-          element[0].addClassName 'tag-script-applied'
-          @applied_list.push element[0]
-        return
-      notice (if original_count == 1 then 'Post' else 'Posts') + ' updated'
-      if finished
-        finished resp.posts
-      return
-
-    params = params_array.join('&')
-    @make_request '/post/update_batch.json', params, complete
-    return
-  update_styles: (post) ->
-    e = $('p' + post.id)
-    if !e
-      return
-    if post['has_children']
-      e.addClassName 'has-children'
-    else
-      e.removeClassName 'has-children'
-    if post['parent_id']
-      e.addClassName 'has-parent'
-    else
-      e.removeClassName 'has-parent'
-    return
-
-  activate_posts: (postIds, finished) ->
-    notice "Activating #{postIds.length} #{if postIds.length == 1 then 'post' else 'posts'}"
-
-    jQuery.ajax '/post/activate.json',
-      data:
-        post_ids: postIds
-      dataType: 'json'
-      method: 'POST'
-
-    .done finished
-
-    .fail (xhr) =>
-      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
-
-  activate_all_posts: ->
-    post_ids = []
-    @posts.each (pair) ->
-
-      # Only activate posts that are actually displayed; we may have others registered.
-      if $('p' + pair.key)
-        post_ids.push pair.key
-      return
-    @activate_posts post_ids, (resp) ->
-      if resp.count == 0
-        notice 'No posts were activated.'
-      else
-        notice resp.count + (if resp.count == 1 then ' post' else ' posts') + ' activated'
-      return
-    return
-  activate_post: (post_id) ->
-    @update_batch [ {
-      id: post_id
-      is_held: false
-    } ], =>
-      post = @posts.get(post_id)
-      if post.is_held
-        notice 'Couldn\'t activate post'
-      else
-        $('held-notice').remove()
-      return
-    return
-
-  init_add_to_favs: (postId, addToFavs, removeFromFavs) ->
-    updateAddToFavs = (e, postIds) =>
-      return if postIds? && !postIds.has(postId)?
-
-      vote = @votes.get(postId) || 0
-      addToFavs.show vote < 3
-      removeFromFavs.show vote >= 3
-
-      return
-
-    updateAddToFavs()
-    jQuery(document).on 'posts:update', updateAddToFavs
-    return
-
-  vote: (post_id, score) ->
-    if score > 3
-      return
-    notice 'Voting...'
-    @make_request '/post/vote.json', {
-      id: post_id
-      score: score
-    }, (resp) ->
-      notice 'Vote saved'
-      return
-    return
-
-  flag: (id, finished) ->
-    reason = prompt('Why should this post be flagged for deletion?', '')
-    if !reason
-      return false
-
-    complete = ->
-      notice 'Post was flagged for deletion'
-      if finished
-        finished id
-      else
-        e = $('p' + id)
-        if e
-          e.addClassName 'flagged'
-      return
-
-    @make_request '/post/flag.json', {
-      'id': id
-      'reason': reason
-    }, complete
-
-  unflag: (id, finished) ->
-    complete = ->
-      notice 'Post was approved'
-      if finished
-        finished id
-      else
-        e = $('p' + id)
-        if e
-          e.removeClassName 'flagged'
-      return
-
-    @make_request '/post/flag.json', {
-      id: id
-      unflag: 1
-    }, complete
-
-  observe_text_area: (field_id) ->
-    $(field_id).observe 'keydown', (e) ->
-      if e.keyCode == Event.KEY_RETURN
-        e.stop()
-        @up('form').requestSubmit()
-      return
-    return
-  get_post_tags_by_type: (post) ->
-    results = new Hash
-    post.tags.each (tag) =>
-      tag_type = @tag_types.get(tag)
-
-      # We can end up not knowing a tag's type due to tag script editing giving us
-      # tags we weren't told the type of.
-      if !tag_type
-        tag_type = 'general'
-      list = results.get(tag_type)
-      if !list
-        list = []
-        results.set tag_type, list
-      list.push tag
-      return
-    results
-  get_post_tags_with_type: (post) ->
-    tag_types = @get_post_tags_by_type(post)
-    types = tag_types.keys()
-    type_order = [
-      'artist'
-      'circle'
-      'copyright'
-      'character'
-      'faults'
-      'general'
-    ]
-    types = types.sort((a, b) ->
-      a_idx = type_order.indexOf(a)
-      if a_idx == -1
-        a_idx = 999
-      b_idx = type_order.indexOf(b)
-      if b_idx == -1
-        b_idx = 999
-      a_idx - b_idx
-    )
-    results = new Array
-    types.each (type) ->
-      tags = tag_types.get(type)
-      tags.each (tag) ->
-        results.push [
-          tag
-          type
-        ]
-        return
-      return
-    results
-  register_resp: (resp) ->
-    if resp.posts
-      @register_posts resp.posts
-    if resp.tags
-      @register_tags resp.tags
-    if resp.votes
-      @register_votes resp.votes
-    if resp.pools
-      Pool.register_pools resp.pools
-    if resp.pool_posts
-      Pool.register_pool_posts resp.pool_posts, resp.posts
-    return
-  register: (post) ->
-    post.tags = post.tags.match(/\S+/g) or []
-    post.match_tags = post.tags.clone()
-    post.match_tags.push 'rating:' + post.rating.charAt(0)
-    post.match_tags.push 'status:' + post.status
-    @posts.set post.id, post
-    return
-  register_posts: (posts) ->
-    posts.each (post) =>
-      @register post
-      return
-    return
-  unregister_all: ->
-    @posts = new Hash
-    return
-  register_tags: (tags, no_send_to_completion) ->
-    @tag_types.update tags
-
-    # If no_send_to_completion is true, this data is coming from completion, so there's
-    # no need to send it back.
-    if TagCompletion and !no_send_to_completion
-      TagCompletion.update_tag_types()
-    return
-  register_votes: (votes) ->
-    @votes.update votes
-    return
-
-  is_blacklisted: (post_id) =>
-    post = @posts.get(post_id)
-
-    # Missing post data, pretend it's not blacklisted.
-    return false if !post?
-
-    has_tag = (tag) ->
-      post.match_tags.indexOf(tag) != -1
-
-    # This is done manually, since this needs to be fast and Prototype's functions are
-    # too slow.
-    blacklist_applies = (b) ->
-      require = b.require
-      require_len = require.length
-      j = undefined
-      j = 0
-      while j < require_len
-        if !has_tag(require[j])
-          return false
-        ++j
-      exclude = b.exclude
-      exclude_len = exclude.length
-      j = 0
-      while j < exclude_len
-        if has_tag(exclude[j])
-          return false
-        ++j
-      true
-
-    blacklists = @blacklists
-    len = blacklists.length
-    i = 0
-    while i < len
-      b = blacklists[i]
-      if blacklist_applies(b)
-        return true
-      ++i
-    false
-  apply_blacklists: ->
-    @blacklists.each (b) ->
-      b.hits = 0
-      return
-    count = 0
-    @posts.each (pair) =>
-      thumb = $('p' + pair.key)
-      if !thumb
-        return
-      post = pair.value
-      has_tag = post.match_tags.member.bind(post.match_tags)
-      post.blacklisted = []
-      if post.id != @blacklist_options.exclude
-        @blacklists.each (b) =>
-          if b.require.all(has_tag) and !b.exclude.any(has_tag)
-            b.hits++
-            if !@disabled_blacklists[b.tags]
-              post.blacklisted.push b
-          return
-      bld = post.blacklisted.length > 0
-
-      # The class .javascript-hide hides elements only if JavaScript is enabled, and is
-      # applied to all posts by default; we remove the class to show posts.  This prevents
-      # posts from being shown briefly during page load before this script is executed,
-      # but also doesn't break the page if JavaScript is disabled.
-      count += bld
-      if @blacklist_options.replace
-        if bld
-          thumb.src = Vars.asset['blank.gif']
-
-          # Trying to work around Firefox displaying the old thumb.src briefly before loading
-          # the blacklisted thumbnail, even though they're applied at the same time:
-          f = (event) ->
-            img = event.target
-            img.stopObserving 'load'
-            img.stopObserving 'error'
-            img.src = '/blacklisted-preview.png'
-            img.removeClassName 'javascript-hide'
-            return
-
-          thumb.observe 'load', f
-          thumb.observe 'error', f
-        else
-          thumb.src = post.preview_url
-          thumb.removeClassName 'javascript-hide'
-      else
-        if bld
-          thumb.addClassName 'javascript-hide'
-        else
-          thumb.removeClassName 'javascript-hide'
-      return
-    if @countText
-      @countText.update count
-    notice = $('blacklisted-notice')
-    if notice
-      notice.show count > 0
-    count
-
-  blacklists_update_disabled: ->
-    @blacklists.each (b) =>
-      if !b.a
-        return
-      if @disabled_blacklists[b.tags] or b.hits == 0
-        b.a.addClassName 'blacklisted-tags-disabled'
-      else
-        b.a.removeClassName 'blacklisted-tags-disabled'
-      return
-    return
-  init_blacklisted: (options) ->
-    @blacklist_options = Object.extend({
-      replace: false
-      exclude: null
-    }, options)
-    bl_entries = undefined
-    if @current_blacklists
-      bl_entries = @current_blacklists
-    else
-      bl_entries = JSON.parse(jQuery('#user-blacklisted-tags').text())
-    @blacklists = []
-    bl_entries.each (val) =>
-      s = val.replace(/(rating:[qes])\w+/, '$1')
-      tags = s.match(/\S+/g)
-      if !tags
-        return
-      b =
-        tags: tags
-        original_tag_string: val
-        require: []
-        exclude: []
-        hits: 0
-      tags.each (tag) ->
-        if tag.charAt(0) == '-'
-          b.exclude.push tag.slice(1)
-        else
-          b.require.push tag
-        return
-      @blacklists.push b
-      return
-    @countText = $('blacklist-count')
-    if @countText
-      @countText.update ''
-    @apply_blacklists()
-    sidebar = $('blacklisted-sidebar')
-    if sidebar
-      sidebar.show()
-    list = $('blacklisted-list')
-    if list
-      while list.firstChild
-        list.removeChild list.firstChild
-      @blacklists.sort (a, b) ->
-        if a.hits == 0 and b.hits > 0
-          return 1
-        if a.hits > 0 and b.hits == 0
-          return -1
-        a.tags.join(' ').localeCompare b.tags.join(' ')
-      inactive_blacklists_hidden = 0
-      @blacklists.each (b) =>
-        if @hide_inactive_blacklists and !b.hits
-          ++inactive_blacklists_hidden
-          return
-        li = list.appendChild(document.createElement('li'))
-        li.className = 'blacklisted-tags'
-        li.style.position = 'relative'
-        del = li.appendChild($(document.createElement('a')))
-        del.style.position = 'absolute'
-        del.style.left = '-0.75em'
-        del.href = '#'
-        del.update '⊘'
-        del.observe 'click', (event) =>
-
-          # We need to call run_login_onclick ourself, since this form isn't created with the form helpers.
-          if !User.run_login_onclick(event)
-            return false
-          event.stop()
-          tag = b.original_tag_string
-          User.modify_blacklist [], [ tag ], (resp) =>
-            notice 'Unblacklisted "' + tag + '"'
-            @current_blacklists = resp.result
-            @init_blacklisted()
-            return
-          return
-        li.appendChild document.createTextNode('» ')
-        a = li.appendChild(document.createElement('a'))
-        b.a = a
-        a.href = '#'
-        a.className = 'no-focus-outline'
-        if !b.hits
-          a.addClassName 'blacklisted-tags-disabled'
-        else
-          $(a).observe 'click', (event) =>
-            @disabled_blacklists[b.tags] = !@disabled_blacklists[b.tags]
-            @apply_blacklists()
-            @blacklists_update_disabled()
-            event.stop()
-            return
-        tags = a.appendChild(document.createTextNode(b.tags.join(' ')))
-        li.appendChild document.createTextNode(' ')
-        span = li.appendChild(document.createElement('span'))
-        span.className = 'post-count'
-        if b.hits > 0
-          span.appendChild document.createTextNode('(' + b.hits + ')')
-        return
-
-      # Add the "Show all blacklists" button.  If Post.hide_inactive_blacklists is false, then
-      # we've already clicked it and hidden it, so don't recreate it.
-      if @hide_inactive_blacklists and inactive_blacklists_hidden > 0
-        li = list.appendChild(document.createElement('li'))
-        li.className = 'no-focus-outline'
-        li.id = 'blacklisted-tag-show-all'
-        a = li.appendChild(document.createElement('a'))
-        a.href = '#'
-        a.className = 'no-focus-outline'
-        $(a).observe 'click', (event) =>
-          event.stop()
-          $('blacklisted-tag-show-all').hide()
-          @hide_inactive_blacklists = false
-          @init_blacklisted()
-          return
-        tags = a.appendChild(document.createTextNode('» Show all blacklists'))
-        li.appendChild document.createTextNode(' ')
-    @blacklists_update_disabled()
-    return
-  blacklist_add_commit: ->
-    tag = $('add-blacklist').value
-    if tag == ''
-      return
-    $('add-blacklist').value = ''
-    User.modify_blacklist [tag], [], (resp) =>
-      notice 'Blacklisted "' + tag + '"'
-      @current_blacklists = resp.result
-      @init_blacklisted()
-      return
-    return
-  last_click_id: null
-  check_avatar_blacklist: (post_id, id) ->
-    if id and id == @last_click_id
-      return true
-    @last_click_id = id
-    if !@is_blacklisted(post_id)
-      return true
-    notice 'This post matches one of your blacklists.  Click again to open.'
-    false
-  resize_image: ->
-    img = $('image')
-    if !img.original_width?
-      img.original_width = img.width
-      img.original_height = img.height
-    ratio = 1
-    if img.scale_factor == 1 or !img.scale_factor?
-
-      # Use clientWidth for sizing the width, and the window height for the height.
-      # This prevents needing to scroll horizontally to center the image.
-      client_width = $('right-col').clientWidth - 15
-      client_height = window.innerHeight - 15
-      ratio = Math.min(ratio, client_width / img.original_width)
-      ratio = Math.min(ratio, client_height / img.original_height)
-    img.width = img.original_width * ratio
-    img.height = img.original_height * ratio
-    img.scale_factor = ratio
-    if notesManager
-      i = 0
-      while i < notesManager.all.length
-        notesManager.all[i].adjustScale()
-        ++i
-    return
-  get_scroll_offset_to_center: (element) ->
-    window_size = document.viewport.getDimensions()
-    offset = element.cumulativeOffset()
-    left_spacing = (window_size.width - (element.offsetWidth)) / 2
-    top_spacing = (window_size.height - (element.offsetHeight)) / 2
-    scroll_x = offset.left - left_spacing
-    scroll_y = offset.top - top_spacing
-    [
-      scroll_x
-      scroll_y
-    ]
-  center_image: (img) ->
-
-    # Make sure we have enough space to scroll far enough to center the image.  Set a
-    # minimum size on the body to give us more space on the right and bottom, and add
-    # a padding to the image to give more space on the top and left.
-    if !img
-      img = $('image')
-    if !img
-      return
-
-    # Any existing padding (possibly from a previous call to this function) will be
-    # included in cumulativeOffset and throw things off, so clear it.
-    img.setStyle
-      paddingLeft: 0
-      paddingTop: 0
-    target_offset = @get_scroll_offset_to_center(img)
-    padding_left = -target_offset[0]
-    if padding_left < 0
-      padding_left = 0
-    img.setStyle paddingLeft: padding_left + 'px'
-    padding_top = -target_offset[1]
-    if padding_top < 0
-      padding_top = 0
-    img.setStyle paddingTop: padding_top + 'px'
-    window_size = document.viewport.getDimensions()
-    required_width = target_offset[0] + window_size.width
-    required_height = target_offset[1] + window_size.height
-    $(document.body).setStyle
-      minWidth: required_width + 'px'
-      minHeight: required_height + 'px'
-
-    # Resizing the body may shift the image to the right, since it's centered in the content.
-    # Recalculate offsets with the new cumulativeOffset.
-    target_offset = @get_scroll_offset_to_center(img)
-    window.scroll target_offset[0], target_offset[1]
-    return
-  scale_and_fit_image: (img) ->
-    if !img
-      img = $('image')
-    if !img
-      return
-    if !img.original_width?
-      img.original_width = img.width
-      img.original_height = img.height
-    window_size = document.viewport.getDimensions()
-    client_width = window_size.width
-    client_height = window_size.height
-
-    # Zoom the image to fit the viewport.
-    ratio = client_width / img.original_width
-    if img.original_height * ratio > client_height
-      ratio = client_height / img.original_height
-    if ratio < 1
-      img.width = img.original_width * ratio
-      img.height = img.original_height * ratio
-    @center_image img
-    @adjust_notes()
-    return
-  adjust_notes: ->
-    if !notesManager
-      return
-    i = 0
-    while i < notesManager.all.length
-      notesManager.all[i].adjustScale()
-      ++i
-    return
-  highres: ->
-    img = $('image')
-    if img.already_resized
-      return
-    img.already_resized = true
-    # un-resize
-    if img.scale_factor? and img.scale_factor != 1
-      @resize_image()
-
-    f = ->
-      img.original_height = null
-      img.original_width = null
-      highres = $('highres-show')
-      img.height = highres.getAttribute('link_height')
-      img.width = highres.getAttribute('link_width')
-      $('note-container').insert after: img
-      img.src = highres.href
-      if notesManager
-        notesManager.all.invoke 'adjustScale'
-      return
-
-    # Clear the image before loading the new one, so it doesn't show the old image
-    # at the new resolution while the new one loads.  Hide it, so we don't flicker
-    # a placeholder frame.
-    if $('resized_notice')
-      $('resized_notice').hide()
-    img.height = img.width = 0
-    img.src = ''
-    img.remove()
-    f img
-    return
-  set_same_user: (creator_id) ->
-    old = $('creator-id-css')
-    if old
-      old.parentNode.removeChild old
-    css = '.creator-id-' + creator_id + ' .directlink { background-color: #300 !important; }'
-    style = document.createElement('style')
-    style.id = 'creator-id-css'
-    style.type = 'text/css'
-    if style.styleSheet
-      style.styleSheet.cssText = css
-    else
-      style.appendChild document.createTextNode(css)
-    document.getElementsByTagName('head')[0].appendChild style
-    return
-  init_post_list: ->
-    @posts.each (p) =>
-      post_id = p[0]
-      post = p[1]
-      directlink = $('p' + post_id)
-      if !directlink
-        return
-      directlink = directlink.down('.directlink')
-      if !directlink
-        return
-      directlink.observe 'mouseover', ((event) =>
-        @set_same_user post.creator_id
-        false
-      ), true
-      directlink.observe 'mouseout', ((event) =>
-        @set_same_user null
-        false
-      ), true
-      return
-    return
-  init_hover_thumb: (hover, post_id, thumb, container) ->
-
-    # Hover thumbs trigger rendering bugs in IE7.
-    if Prototype.Browser.IE
-      return
-    hover.observe 'mouseover', (e) =>
-      @hover_thumb_mouse_over post_id, hover, thumb, container
-      return
-    hover.observe 'mouseout', (e) =>
-      if e.relatedTarget == thumb
-        return
-      @hover_thumb_mouse_out thumb
-      return
-    if !thumb.hover_init
-      thumb.hover_init = true
-      thumb.observe 'mouseout', (e) =>
-        @hover_thumb_mouse_out thumb
-        return
-    return
-  hover_thumb_mouse_over: (post_id, AlignItem, image, container) ->
-    post = @posts.get(post_id)
-    image.hide()
-    offset = AlignItem.cumulativeOffset()
-    image.style.width = 'auto'
-    image.style.height = 'auto'
-    if @is_blacklisted(post_id)
-      image.src = Vars.asset['blacklisted-preview.png']
-    else
-      image.src = post.preview_url
-      if post.status != 'deleted'
-        image.style.width = post.actual_preview_width + 'px'
-        image.style.height = post.actual_preview_height + 'px'
-    container_top = container.cumulativeOffset().top
-    container_bottom = container_top + container.getHeight() - 1
-
-    # Normally, align to the item we're hovering over.  If the image overflows over
-    # the bottom edge of the container, shift it upwards to stay in the container,
-    # unless the container's too small and that would put it over the top.
-    y = offset.top - 2
-
-    # -2 for top 2px border
-    if y + image.getHeight() > container_bottom
-      bottom_aligned_y = container_bottom - image.getHeight() - 4
-
-      # 4 for top 2px and bottom 2px borders
-      if bottom_aligned_y >= container_top
-        y = bottom_aligned_y
-    image.style.top = y + 'px'
-    image.show()
-    return
-  hover_thumb_mouse_out: (image) ->
-    image.hide()
-    return
-  acknowledge_new_deleted_posts: =>
-    jQuery.ajax '/post/acknowledge_new_deleted_posts.json',
-      method: 'POST'
-      dataType: 'json'
-    .done (resp) =>
-      noticeLabel = document.querySelector('#posts-deleted-notice')
-      noticeLabel.style.display = 'none' if noticeLabel?
-    .fail (xhr) =>
-      notice "Error: #{xhr.responseJSON?.reason ? 'unknown error'}"
-
-  hover_info_pin: (post_id) ->
-    post = null
-    if post_id?
-      post = @posts.get(post_id)
-    @hover_info_pinned_post = post
-    @hover_info_update()
-    return
-  hover_info_mouseover: (post_id) ->
-    post = @posts.get(post_id)
-    if @hover_info_hovered_post == post
-      return
-    @hover_info_hovered_post = post
-    @hover_info_update()
-    return
-  hover_info_mouseout: ->
-    if !@hover_info_hovered_post?
-      return
-    @hover_info_hovered_post = null
-    @hover_info_update()
-    return
-  hover_info_update: ->
-    post = @hover_info_pinned_post
-    if !post
-      post = @hover_info_hovered_post
-      if !@hover_info_shift_held
-        post = null
-    if @hover_info_displayed_post == post
-      return
-    @hover_info_displayed_post = post
-    hover = $('index-hover-info')
-    overlay = $('index-hover-overlay')
-    if !post
-      hover.hide()
-      overlay.hide()
-      overlay.down('IMG').src = Vars.asset['blank.gif']
-      return
-    hover.down('#hover-dimensions').innerHTML = post.width + 'x' + post.height
-    hover.select('#hover-tags SPAN A').each (elem) ->
-      elem.innerHTML = ''
-      return
-    tags_by_type = @get_post_tags_by_type(post)
-    tags_by_type.each (key) ->
-      elem = $('hover-tag-' + key[0])
-      list = []
-      key[1].each (tag) ->
-        list.push tag
-        return
-      elem.innerHTML = list.join(' ')
-      return
-    if post.rating == 's'
-      hover.down('#hover-rating').innerHTML = 's'
-    else if post.rating == 'q'
-      hover.down('#hover-rating').innerHTML = 'q'
-    else if post.rating == 'e'
-      hover.down('#hover-rating').innerHTML = 'e'
-    hover.down('#hover-post-id').innerHTML = post.id
-    hover.down('#hover-score').innerHTML = post.score
-    if post.is_shown_in_index
-      hover.down('#hover-not-shown').hide()
-    else
-      hover.down('#hover-not-shown').show()
-    hover.down('#hover-is-parent').show post.has_children
-    hover.down('#hover-is-child').show post.parent_id?
-    hover.down('#hover-is-pending').show post.status == 'pending'
-    hover.down('#hover-is-flagged').show post.status == 'flagged'
-
-    set_text_content = (element, text) ->
-      (element.innerText or element).textContent = text
-      return
-
-    if post.status == 'flagged'
-      hover.down('#hover-flagged-reason').textContent = post.flag_detail.reason
-      hover.down('#hover-flagged-by').textContent = post.flag_detail.flagged_by
-    hover.down('#hover-file-size').innerHTML = numberToHumanSize(post.file_size)
-    hover.down('#hover-author').innerHTML = post.author
-    hover.show()
-
-    # Reset the box to 0x0 before polling the size, so it expands to its maximum size,
-    # and read the size.
-    hover.style.left = '0px'
-    hover.style.top = '0px'
-    hover_width = hover.scrollWidth
-    hover_height = hover.scrollHeight
-    hover_thumb = $('p' + post.id).down('IMG')
-    thumb_offset = hover_thumb.cumulativeOffset()
-    thumb_center_x = thumb_offset[0] + hover_thumb.scrollWidth / 2
-    thumb_top_y = thumb_offset[1]
-    x = thumb_center_x - (hover_width / 2)
-    y = thumb_top_y - hover_height
-
-    # Clamp the X coordinate so the box doesn't fall off the side of the screen.  Don't
-    # clamp Y.
-    client_width = document.viewport.getDimensions()['width']
-    if x < 0
-      x = 0
-    if x + hover_width > client_width
-      x = client_width - hover_width
-    hover.style.left = x + 'px'
-    hover.style.top = y + 'px'
-    overlay.down('A').href = (if User.get_use_browser() then '/post/browse#' else '/post/show/') + post.id
-    overlay.down('IMG').src = post.preview_url
-
-    # This doesn't always align properly in Firefox if full-page zooming is being
-    # used.
-    x = thumb_center_x - (post.actual_preview_width / 2)
-    y = thumb_offset[1]
-    overlay.style.left = x + 'px'
-    overlay.style.top = y + 'px'
-    overlay.show()
-    return
-  hover_info_shift_down: ->
-    if @hover_info_shift_held
-      return
-    @hover_info_shift_held = true
-    @hover_info_update()
-    return
-  hover_info_shift_up: ->
-    if !@hover_info_shift_held
-      return
-    @hover_info_shift_held = false
-    @hover_info_update()
-    return
-  hover_info_init: ->
-    document.observe 'keydown', (e) =>
-      if e.keyCode != 16
-        return
-      @hover_info_shift_down()
-      return
-    document.observe 'keyup', (e) =>
-      if e.keyCode != 16
-        return
-      @hover_info_shift_up()
-      return
-    document.observe 'blur', (e) =>
-      @hover_info_shift_up()
-      return
-    overlay = $('index-hover-overlay')
-    @posts.each (p) =>
-      post_id = p[0]
-      post = p[1]
-      span = $('p' + post.id)
-      if !span?
-        return
-      span.down('A').observe 'mouseover', (e) =>
-        @hover_info_mouseover post_id
-        return
-      span.down('A').observe 'mouseout', (e) =>
-        if e.relatedTarget? && overlay.contains(e.relatedTarget)
-          return
-        @hover_info_mouseout()
-        return
-      return
-    overlay.observe 'mouseout', (e) =>
-      @hover_info_mouseout()
-      return
-    return
-  highlight_posts_with_tag: (tag) =>
-    @posts.each (p) ->
-      post_id = p[0]
-      post = p[1]
-      thumb = $('p' + post.id)
-      if !thumb
-        return
-      if tag and post.tags.indexOf(tag) != -1
-        thumb.addClassName 'highlighted-post'
-      else
-        thumb.removeClassName 'highlighted-post'
-      return
-    return
-  reparent_post: (post_id, old_parent_id, has_grandparent, finished) ->
-    # If the parent has a parent, this is too complicated to handle automatically.
-    if has_grandparent
-      alert 'The parent post has a parent, so this post can\'t be automatically reparented.'
-      return
-    # Request a list of child posts.
-    # The parent post itself will be returned by "parent:". This is expected;
-    # it'll cause us to parent the post to itself, which unparents it
-    # from the old parent.
-    jQuery.ajax(
-      url: '/post.json'
-      data: tags: 'parent:' + old_parent_id
-      dataType: 'json').done (resp) =>
-      post = undefined
-      i = undefined
-      change_requests = []
-      i = 0
-      while i < resp.length
-        post = resp[i]
-        if post.id == old_parent_id and post.parent_id?
-          alert 'The parent post has a parent, so this post can\'t be automatically reparented.'
-          return
-        change_requests.push
-          id: resp[i].id
-          tags: 'parent:' + post_id
-          old_tags: ''
-        ++i
-      # We have the list of changes to make in change_requests.
-      # Send a batch request.
-      if !finished?
-
-        finished = ->
-          document.location.reload()
-          return
-
-      @update_batch change_requests, finished
-      return
-    return
-  get_url_for_post_in_pool: (post_id, pool_id) ->
-    '/post/show/' + post_id + '?pool_id=' + pool_id
-  jump_to_post_in_pool: (post_id, pool_id) ->
-    if !post_id?
-      notice 'No more posts in this pool'
-      return
-    window.location.href = @get_url_for_post_in_pool(post_id, pool_id)
-    return
-  InitBrowserLinks: ->
-    if !User.get_use_browser()
-      return
-
-    # Break out the controller, action, ID and anchor:
-    # http://url.com/post/show/123#anchor
-    parse_url = (href) ->
-      match = href.match(/^(https?:\/\/[^\/]+)\/([a-z]+)\/([a-z]+)\/([0-9]+)([^#]*)(#.*)?$/)
-      if !match
-        return null
-      {
-        controller: match[2]
-        action: match[3]
-        id: match[4]
-        hash: match[6]
+// Generated by CoffeeScript 2.7.0
+var Post;
+
+import {
+  numberToHumanSize
+} from 'src/utils/math';
+
+export default Post = (function() {
+  class Post {
+    constructor() {
+      this.is_blacklisted = this.is_blacklisted.bind(this);
+      this.acknowledge_new_deleted_posts = this.acknowledge_new_deleted_posts.bind(this);
+      this.highlight_posts_with_tag = this.highlight_posts_with_tag.bind(this);
+      this.posts = new Hash();
+      this.tag_types = new Hash();
+      this.votes = new Hash();
+      this.tag_type_names = ['general', 'artist', '', 'copyright', 'character', 'circle', 'faults'];
+      this.applied_list = [];
+      this.blacklists = [];
+      this.current_blacklists = null;
+      this.hide_inactive_blacklists = true;
+      this.disabled_blacklists = {};
+      this.hover_info_hovered_post = null;
+      this.hover_info_displayed_post = null;
+      this.hover_info_shift_held = false;
+      this.hover_info_pinned_post = null;
+    }
+
+    make_request(path, params, finished) {
+      return jQuery.ajax(path, {
+        data: params,
+        dataType: 'json',
+        method: 'POST'
+      }).fail((xhr) => {
+        var ref, ref1;
+        return notice(`Error: ${(ref = (ref1 = xhr.responseJSON) != null ? ref1.reason : void 0) != null ? ref : 'unknown error'}`);
+      }).done((resp) => {
+        this.register_resp(resp);
+        // Fire posts:update, to allow observers to update their display on change.
+        if ((resp.posts != null) && resp.posts.length > 0) {
+          jQuery(document).trigger('posts:update', [
+            new Set(resp.posts.map((post) => {
+              return post.id;
+            }))
+          ]);
+        }
+        return typeof finished === "function" ? finished(resp) : void 0;
+      });
+    }
+
+    approve(post_id, delete_reason, finished) {
+      var completion, params;
+      notice('Approving post #' + post_id);
+      params = {};
+      params['ids[' + post_id + ']'] = '1';
+      params['commit'] = delete_reason ? 'Delete' : 'Approve';
+      if (delete_reason) {
+        params['reason'] = delete_reason;
       }
+      completion = function() {
+        notice(delete_reason ? 'Post deleted' : 'Post approved');
+        if (finished) {
+          finished(post_id);
+        } else {
+          if ($('p' + post_id)) {
+            $('p' + post_id).removeClassName('pending');
+          }
+          if ($('pending-notice')) {
+            $('pending-notice').hide();
+          }
+        }
+      };
+      return this.make_request('/post/moderate.json', params, completion);
+    }
 
-    # Parse an index search URL and return the tags.  Only accept URLs with no other parameters;
-    # this shouldn't match the paginator in post/index.
-    #
-    # http://url.com/post?tags=tagme
-    parse_index_url = (href) ->
-      match = href.match(/^(https?:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/)
-      if !match
-        return null
-      match[3]
+    undelete(post_id, finished) {
+      return this.make_request('/post/undelete.json', {
+        id: post_id
+      }, finished);
+    }
 
-    # If the current page is /pool/show, make post links include both the post ID and
-    # the pool ID, eg. "#12345/pool:123".
-    current = parse_url(document.location.href)
-    current_pool_id = null
-    if current and current.controller == 'pool' and current.action == 'show'
-      current_pool_id = current.id
-    $$('A').each (a) ->
-      if a.hasClassName('no-browser-link') or a.up('.no-browser-link')
-        return
-      tags = parse_index_url(a.href)
-      if tags?
-        a.href = '/post/browse#/' + tags
-        return
-      target = parse_url(a.href)
-      if !target
-        return
+    reset_tag_script_applied() {
+      var i;
+      i = 0;
+      while (i < this.applied_list.length) {
+        this.applied_list[i].removeClassName('tag-script-applied');
+        ++i;
+      }
+      this.applied_list = [];
+    }
 
-      # If the URL has a hash, then it's something like a post comment link, so leave it
-      # alone.
-      if target.hash
-        return
-      if target.controller == 'post' and target.action == 'show'
-        url = '/post/browse#' + target.id
-        if current_pool_id?
-          url += '/pool:' + current_pool_id
-        a.browse_href = url
-        a.orig_href = a.href
-      else if target.controller == 'pool' and target.action == 'show'
-        a.browse_href = '/post/browse#/pool:' + target.id
-        a.orig_href = a.href
-      if a.browse_href
-        a.href = a.browse_href
-      return
-    return
-  cached_sample_urls: null
-  get_cached_sample_urls: ->
-    # If the data format is out of date, clear it.
-    if localStorage.sample_url_format != '2'
-      @clear_sample_url_cache()
-    if @cached_sample_urls?
-      return @cached_sample_urls
-    try
-      sample_urls = JSON.parse(window.localStorage.sample_urls)
-    catch SyntaxError
-      return {}
-    if !sample_urls?
-      return {}
-    @cached_sample_urls = sample_urls
-    sample_urls
-  clear_sample_url_cache: ->
-    if 'sample_urls' of localStorage
-      delete window.localStorage.sample_urls
-    if 'sample_url_fifo' of localStorage
-      delete window.localStorage.sample_url_fifo
-    localStorage.sample_url_format = 2
-    return
-  cache_sample_urls: ->
-    sample_urls = @get_cached_sample_urls()
-    if !sample_urls?
-      return
+    update_batch(posts, finished) {
+      var complete, original_count, params, params_array;
+      original_count = posts.length;
+      if (TagCompletion) {
+        // Tell TagCompletion about recently used tags.
+        posts.each(function(post) {
+          if (post.tags == null) {
+            return;
+          }
+          TagCompletion.add_recent_tags_from_update(post.tags, post.old_tags);
+        });
+      }
+      // posts is a hash of id: { post }.  Convert this to a Rails-format object array.
+      params_array = [];
+      posts.each(function(post) {
+        $H(post).each(function(pair2) {
+          var s;
+          s = 'post[][' + pair2.key + ']=' + window.encodeURIComponent(pair2.value);
+          params_array.push(s);
+        });
+      });
+      complete = (resp) => {
+        resp.posts.each((post) => {
+          var element;
+          this.update_styles(post);
+          element = $$('#p' + post.id + ' > .directlink');
+          if (element.length > 0) {
+            element[0].addClassName('tag-script-applied');
+            this.applied_list.push(element[0]);
+          }
+        });
+        notice((original_count === 1 ? 'Post' : 'Posts') + ' updated');
+        if (finished) {
+          finished(resp.posts);
+        }
+      };
+      params = params_array.join('&');
+      this.make_request('/post/update_batch.json', params, complete);
+    }
 
-    # Track post URLs in the order we see them, and push old data out.
-    fifo = window.localStorage.sample_url_fifo or null
-    fifo = if fifo then fifo.split(',') else []
-    @posts.each (id_and_post) ->
-      post = id_and_post[1]
-      if post.sample_url
-        sample_urls[post.id] = post.sample_url
-      fifo.push post.id
-      return
+    update_styles(post) {
+      var e;
+      e = $('p' + post.id);
+      if (!e) {
+        return;
+      }
+      if (post['has_children']) {
+        e.addClassName('has-children');
+      } else {
+        e.removeClassName('has-children');
+      }
+      if (post['parent_id']) {
+        e.addClassName('has-parent');
+      } else {
+        e.removeClassName('has-parent');
+      }
+    }
 
-    # Erase all but the most recent 1000 items.
-    fifo = fifo.splice(-1000)
+    activate_posts(postIds, finished) {
+      notice(`Activating ${postIds.length} ${postIds.length === 1 ? 'post' : 'posts'}`);
+      return jQuery.ajax('/post/activate.json', {
+        data: {
+          post_ids: postIds
+        },
+        dataType: 'json',
+        method: 'POST'
+      }).done(finished).fail((xhr) => {
+        var ref, ref1;
+        return notice(`Error: ${(ref = (ref1 = xhr.responseJSON) != null ? ref1.reason : void 0) != null ? ref : 'unknown error'}`);
+      });
+    }
 
-    # Make a set of the FIFO, so we can do lookups quickly.
-    fifo_set = {}
-    fifo.each (post_id) ->
-      fifo_set[post_id] = true
-      return
+    activate_all_posts() {
+      var post_ids;
+      post_ids = [];
+      this.posts.each(function(pair) {
+        // Only activate posts that are actually displayed; we may have others registered.
+        if ($('p' + pair.key)) {
+          post_ids.push(pair.key);
+        }
+      });
+      this.activate_posts(post_ids, function(resp) {
+        if (resp.count === 0) {
+          notice('No posts were activated.');
+        } else {
+          notice(resp.count + (resp.count === 1 ? ' post' : ' posts') + ' activated');
+        }
+      });
+    }
 
-    # Make a list of items no longer in the FIFO to be deleted.
-    post_ids_to_expire = []
-    for post_id of sample_urls
-      if !(post_id of fifo_set)
-        post_ids_to_expire.push post_id
+    activate_post(post_id) {
+      this.update_batch([
+        {
+          id: post_id,
+          is_held: false
+        }
+      ], () => {
+        var post;
+        post = this.posts.get(post_id);
+        if (post.is_held) {
+          notice('Couldn\'t activate post');
+        } else {
+          $('held-notice').remove();
+        }
+      });
+    }
 
-    # Erase items no longer in the FIFO.
-    post_ids_to_expire.each (post_id) ->
-      delete sample_urls[post_id]
-      return
+    init_add_to_favs(postId, addToFavs, removeFromFavs) {
+      var updateAddToFavs;
+      updateAddToFavs = (e, postIds) => {
+        var vote;
+        if ((postIds != null) && (postIds.has(postId) == null)) {
+          return;
+        }
+        vote = this.votes.get(postId) || 0;
+        addToFavs.show(vote < 3);
+        removeFromFavs.show(vote >= 3);
+      };
+      updateAddToFavs();
+      jQuery(document).on('posts:update', updateAddToFavs);
+    }
 
-    # Save the cached items and FIFO back to localStorage.
-    @cached_sample_urls = sample_urls
-    try
-      window.localStorage.sample_urls = JSON.stringify(sample_urls)
-      window.localStorage.sample_url_fifo = fifo.join(',')
-    catch e
-      # If this fails for some reason, clear the data.
-      @clear_sample_url_cache()
-      throw e
-    return
-  prompt_to_delete: (post_id, completed) ->
-    if !completed?
+    vote(post_id, score) {
+      if (score > 3) {
+        return;
+      }
+      notice('Voting...');
+      this.make_request('/post/vote.json', {
+        id: post_id,
+        score: score
+      }, function(resp) {
+        notice('Vote saved');
+      });
+    }
 
-      completed = ->
-        window.location.reload()
-        return
+    flag(id, finished) {
+      var complete, reason;
+      reason = prompt('Why should this post be flagged for deletion?', '');
+      if (!reason) {
+        return false;
+      }
+      complete = function() {
+        var e;
+        notice('Post was flagged for deletion');
+        if (finished) {
+          finished(id);
+        } else {
+          e = $('p' + id);
+          if (e) {
+            e.addClassName('flagged');
+          }
+        }
+      };
+      return this.make_request('/post/flag.json', {
+        'id': id,
+        'reason': reason
+      }, complete);
+    }
 
-    flag_detail = @posts.get(post_id).flag_detail
-    default_reason = if flag_detail then flag_detail.reason else ''
-    reason = prompt('Reason:', default_reason)
-    if !reason
-      return false
-    @approve post_id, reason, completed
-    true
+    unflag(id, finished) {
+      var complete;
+      complete = function() {
+        var e;
+        notice('Post was approved');
+        if (finished) {
+          finished(id);
+        } else {
+          e = $('p' + id);
+          if (e) {
+            e.removeClassName('flagged');
+          }
+        }
+      };
+      return this.make_request('/post/flag.json', {
+        id: id,
+        unflag: 1
+      }, complete);
+    }
+
+    observe_text_area(field_id) {
+      $(field_id).observe('keydown', function(e) {
+        if (e.keyCode === Event.KEY_RETURN) {
+          e.stop();
+          this.up('form').requestSubmit();
+        }
+      });
+    }
+
+    get_post_tags_by_type(post) {
+      var results;
+      results = new Hash();
+      post.tags.each((tag) => {
+        var list, tag_type;
+        tag_type = this.tag_types.get(tag);
+        if (!tag_type) {
+          tag_type = 'general';
+        }
+        list = results.get(tag_type);
+        if (!list) {
+          list = [];
+          results.set(tag_type, list);
+        }
+        list.push(tag);
+      });
+      return results;
+    }
+
+    get_post_tags_with_type(post) {
+      var results, tag_types, type_order, types;
+      tag_types = this.get_post_tags_by_type(post);
+      types = tag_types.keys();
+      type_order = ['artist', 'circle', 'copyright', 'character', 'faults', 'general'];
+      types = types.sort(function(a, b) {
+        var a_idx, b_idx;
+        a_idx = type_order.indexOf(a);
+        if (a_idx === -1) {
+          a_idx = 999;
+        }
+        b_idx = type_order.indexOf(b);
+        if (b_idx === -1) {
+          b_idx = 999;
+        }
+        return a_idx - b_idx;
+      });
+      results = new Array();
+      types.each(function(type) {
+        var tags;
+        tags = tag_types.get(type);
+        tags.each(function(tag) {
+          results.push([tag, type]);
+        });
+      });
+      return results;
+    }
+
+    register_resp(resp) {
+      if (resp.posts) {
+        this.register_posts(resp.posts);
+      }
+      if (resp.tags) {
+        this.register_tags(resp.tags);
+      }
+      if (resp.votes) {
+        this.register_votes(resp.votes);
+      }
+      if (resp.pools) {
+        Pool.register_pools(resp.pools);
+      }
+      if (resp.pool_posts) {
+        Pool.register_pool_posts(resp.pool_posts, resp.posts);
+      }
+    }
+
+    register(post) {
+      post.tags = post.tags.match(/\S+/g) || [];
+      post.match_tags = post.tags.clone();
+      post.match_tags.push('rating:' + post.rating.charAt(0));
+      post.match_tags.push('status:' + post.status);
+      this.posts.set(post.id, post);
+    }
+
+    register_posts(posts) {
+      posts.each((post) => {
+        this.register(post);
+      });
+    }
+
+    unregister_all() {
+      this.posts = new Hash();
+    }
+
+    register_tags(tags, no_send_to_completion) {
+      this.tag_types.update(tags);
+      // If no_send_to_completion is true, this data is coming from completion, so there's
+      // no need to send it back.
+      if (TagCompletion && !no_send_to_completion) {
+        TagCompletion.update_tag_types();
+      }
+    }
+
+    register_votes(votes) {
+      this.votes.update(votes);
+    }
+
+    is_blacklisted(post_id) {
+      var b, blacklist_applies, blacklists, has_tag, i, len, post;
+      post = this.posts.get(post_id);
+      if (post == null) {
+        // Missing post data, pretend it's not blacklisted.
+        return false;
+      }
+      has_tag = function(tag) {
+        return post.match_tags.indexOf(tag) !== -1;
+      };
+      // This is done manually, since this needs to be fast and Prototype's functions are
+      // too slow.
+      blacklist_applies = function(b) {
+        var exclude, exclude_len, j, require, require_len;
+        require = b.require;
+        require_len = require.length;
+        j = void 0;
+        j = 0;
+        while (j < require_len) {
+          if (!has_tag(require[j])) {
+            return false;
+          }
+          ++j;
+        }
+        exclude = b.exclude;
+        exclude_len = exclude.length;
+        j = 0;
+        while (j < exclude_len) {
+          if (has_tag(exclude[j])) {
+            return false;
+          }
+          ++j;
+        }
+        return true;
+      };
+      blacklists = this.blacklists;
+      len = blacklists.length;
+      i = 0;
+      while (i < len) {
+        b = blacklists[i];
+        if (blacklist_applies(b)) {
+          return true;
+        }
+        ++i;
+      }
+      return false;
+    }
+
+    apply_blacklists() {
+      var count, notice;
+      this.blacklists.each(function(b) {
+        b.hits = 0;
+      });
+      count = 0;
+      this.posts.each((pair) => {
+        var bld, f, has_tag, post, thumb;
+        thumb = $('p' + pair.key);
+        if (!thumb) {
+          return;
+        }
+        post = pair.value;
+        has_tag = post.match_tags.member.bind(post.match_tags);
+        post.blacklisted = [];
+        if (post.id !== this.blacklist_options.exclude) {
+          this.blacklists.each((b) => {
+            if (b.require.all(has_tag) && !b.exclude.any(has_tag)) {
+              b.hits++;
+              if (!this.disabled_blacklists[b.tags]) {
+                post.blacklisted.push(b);
+              }
+            }
+          });
+        }
+        bld = post.blacklisted.length > 0;
+        // The class .javascript-hide hides elements only if JavaScript is enabled, and is
+        // applied to all posts by default; we remove the class to show posts.  This prevents
+        // posts from being shown briefly during page load before this script is executed,
+        // but also doesn't break the page if JavaScript is disabled.
+        count += bld;
+        if (this.blacklist_options.replace) {
+          if (bld) {
+            thumb.src = Vars.asset['blank.gif'];
+            // Trying to work around Firefox displaying the old thumb.src briefly before loading
+            // the blacklisted thumbnail, even though they're applied at the same time:
+            f = function(event) {
+              var img;
+              img = event.target;
+              img.stopObserving('load');
+              img.stopObserving('error');
+              img.src = '/blacklisted-preview.png';
+              img.removeClassName('javascript-hide');
+            };
+            thumb.observe('load', f);
+            thumb.observe('error', f);
+          } else {
+            thumb.src = post.preview_url;
+            thumb.removeClassName('javascript-hide');
+          }
+        } else {
+          if (bld) {
+            thumb.addClassName('javascript-hide');
+          } else {
+            thumb.removeClassName('javascript-hide');
+          }
+        }
+      });
+      if (this.countText) {
+        this.countText.update(count);
+      }
+      notice = $('blacklisted-notice');
+      if (notice) {
+        notice.show(count > 0);
+      }
+      return count;
+    }
+
+    blacklists_update_disabled() {
+      this.blacklists.each((b) => {
+        if (!b.a) {
+          return;
+        }
+        if (this.disabled_blacklists[b.tags] || b.hits === 0) {
+          b.a.addClassName('blacklisted-tags-disabled');
+        } else {
+          b.a.removeClassName('blacklisted-tags-disabled');
+        }
+      });
+    }
+
+    init_blacklisted(options) {
+      var a, bl_entries, inactive_blacklists_hidden, li, list, sidebar, tags;
+      this.blacklist_options = Object.extend({
+        replace: false,
+        exclude: null
+      }, options);
+      bl_entries = void 0;
+      if (this.current_blacklists) {
+        bl_entries = this.current_blacklists;
+      } else {
+        bl_entries = JSON.parse(jQuery('#user-blacklisted-tags').text());
+      }
+      this.blacklists = [];
+      bl_entries.each((val) => {
+        var b, s, tags;
+        s = val.replace(/(rating:[qes])\w+/, '$1');
+        tags = s.match(/\S+/g);
+        if (!tags) {
+          return;
+        }
+        b = {
+          tags: tags,
+          original_tag_string: val,
+          require: [],
+          exclude: [],
+          hits: 0
+        };
+        tags.each(function(tag) {
+          if (tag.charAt(0) === '-') {
+            b.exclude.push(tag.slice(1));
+          } else {
+            b.require.push(tag);
+          }
+        });
+        this.blacklists.push(b);
+      });
+      this.countText = $('blacklist-count');
+      if (this.countText) {
+        this.countText.update('');
+      }
+      this.apply_blacklists();
+      sidebar = $('blacklisted-sidebar');
+      if (sidebar) {
+        sidebar.show();
+      }
+      list = $('blacklisted-list');
+      if (list) {
+        while (list.firstChild) {
+          list.removeChild(list.firstChild);
+        }
+        this.blacklists.sort(function(a, b) {
+          if (a.hits === 0 && b.hits > 0) {
+            return 1;
+          }
+          if (a.hits > 0 && b.hits === 0) {
+            return -1;
+          }
+          return a.tags.join(' ').localeCompare(b.tags.join(' '));
+        });
+        inactive_blacklists_hidden = 0;
+        this.blacklists.each((b) => {
+          var a, del, li, span, tags;
+          if (this.hide_inactive_blacklists && !b.hits) {
+            ++inactive_blacklists_hidden;
+            return;
+          }
+          li = list.appendChild(document.createElement('li'));
+          li.className = 'blacklisted-tags';
+          li.style.position = 'relative';
+          del = li.appendChild($(document.createElement('a')));
+          del.style.position = 'absolute';
+          del.style.left = '-0.75em';
+          del.href = '#';
+          del.update('⊘');
+          del.observe('click', (event) => {
+            var tag;
+            if (!User.run_login_onclick(event)) {
+              return false;
+            }
+            event.stop();
+            tag = b.original_tag_string;
+            User.modify_blacklist([], [tag], (resp) => {
+              notice('Unblacklisted "' + tag + '"');
+              this.current_blacklists = resp.result;
+              this.init_blacklisted();
+            });
+          });
+          li.appendChild(document.createTextNode('» '));
+          a = li.appendChild(document.createElement('a'));
+          b.a = a;
+          a.href = '#';
+          a.className = 'no-focus-outline';
+          if (!b.hits) {
+            a.addClassName('blacklisted-tags-disabled');
+          } else {
+            $(a).observe('click', (event) => {
+              this.disabled_blacklists[b.tags] = !this.disabled_blacklists[b.tags];
+              this.apply_blacklists();
+              this.blacklists_update_disabled();
+              event.stop();
+            });
+          }
+          tags = a.appendChild(document.createTextNode(b.tags.join(' ')));
+          li.appendChild(document.createTextNode(' '));
+          span = li.appendChild(document.createElement('span'));
+          span.className = 'post-count';
+          if (b.hits > 0) {
+            span.appendChild(document.createTextNode('(' + b.hits + ')'));
+          }
+        });
+        // Add the "Show all blacklists" button.  If Post.hide_inactive_blacklists is false, then
+        // we've already clicked it and hidden it, so don't recreate it.
+        if (this.hide_inactive_blacklists && inactive_blacklists_hidden > 0) {
+          li = list.appendChild(document.createElement('li'));
+          li.className = 'no-focus-outline';
+          li.id = 'blacklisted-tag-show-all';
+          a = li.appendChild(document.createElement('a'));
+          a.href = '#';
+          a.className = 'no-focus-outline';
+          $(a).observe('click', (event) => {
+            event.stop();
+            $('blacklisted-tag-show-all').hide();
+            this.hide_inactive_blacklists = false;
+            this.init_blacklisted();
+          });
+          tags = a.appendChild(document.createTextNode('» Show all blacklists'));
+          li.appendChild(document.createTextNode(' '));
+        }
+      }
+      this.blacklists_update_disabled();
+    }
+
+    blacklist_add_commit() {
+      var tag;
+      tag = $('add-blacklist').value;
+      if (tag === '') {
+        return;
+      }
+      $('add-blacklist').value = '';
+      User.modify_blacklist([tag], [], (resp) => {
+        notice('Blacklisted "' + tag + '"');
+        this.current_blacklists = resp.result;
+        this.init_blacklisted();
+      });
+    }
+
+    check_avatar_blacklist(post_id, id) {
+      if (id && id === this.last_click_id) {
+        return true;
+      }
+      this.last_click_id = id;
+      if (!this.is_blacklisted(post_id)) {
+        return true;
+      }
+      notice('This post matches one of your blacklists.  Click again to open.');
+      return false;
+    }
+
+    resize_image() {
+      var client_height, client_width, i, img, ratio;
+      img = $('image');
+      if (img.original_width == null) {
+        img.original_width = img.width;
+        img.original_height = img.height;
+      }
+      ratio = 1;
+      if (img.scale_factor === 1 || (img.scale_factor == null)) {
+        // Use clientWidth for sizing the width, and the window height for the height.
+        // This prevents needing to scroll horizontally to center the image.
+        client_width = $('right-col').clientWidth - 15;
+        client_height = window.innerHeight - 15;
+        ratio = Math.min(ratio, client_width / img.original_width);
+        ratio = Math.min(ratio, client_height / img.original_height);
+      }
+      img.width = img.original_width * ratio;
+      img.height = img.original_height * ratio;
+      img.scale_factor = ratio;
+      if (notesManager) {
+        i = 0;
+        while (i < notesManager.all.length) {
+          notesManager.all[i].adjustScale();
+          ++i;
+        }
+      }
+    }
+
+    get_scroll_offset_to_center(element) {
+      var left_spacing, offset, scroll_x, scroll_y, top_spacing, window_size;
+      window_size = document.viewport.getDimensions();
+      offset = element.cumulativeOffset();
+      left_spacing = (window_size.width - element.offsetWidth) / 2;
+      top_spacing = (window_size.height - element.offsetHeight) / 2;
+      scroll_x = offset.left - left_spacing;
+      scroll_y = offset.top - top_spacing;
+      return [scroll_x, scroll_y];
+    }
+
+    center_image(img) {
+      var padding_left, padding_top, required_height, required_width, target_offset, window_size;
+      if (!img) {
+        img = $('image');
+      }
+      if (!img) {
+        return;
+      }
+      // Any existing padding (possibly from a previous call to this function) will be
+      // included in cumulativeOffset and throw things off, so clear it.
+      img.setStyle({
+        paddingLeft: 0,
+        paddingTop: 0
+      });
+      target_offset = this.get_scroll_offset_to_center(img);
+      padding_left = -target_offset[0];
+      if (padding_left < 0) {
+        padding_left = 0;
+      }
+      img.setStyle({
+        paddingLeft: padding_left + 'px'
+      });
+      padding_top = -target_offset[1];
+      if (padding_top < 0) {
+        padding_top = 0;
+      }
+      img.setStyle({
+        paddingTop: padding_top + 'px'
+      });
+      window_size = document.viewport.getDimensions();
+      required_width = target_offset[0] + window_size.width;
+      required_height = target_offset[1] + window_size.height;
+      $(document.body).setStyle({
+        minWidth: required_width + 'px',
+        minHeight: required_height + 'px'
+      });
+      // Resizing the body may shift the image to the right, since it's centered in the content.
+      // Recalculate offsets with the new cumulativeOffset.
+      target_offset = this.get_scroll_offset_to_center(img);
+      window.scroll(target_offset[0], target_offset[1]);
+    }
+
+    scale_and_fit_image(img) {
+      var client_height, client_width, ratio, window_size;
+      if (!img) {
+        img = $('image');
+      }
+      if (!img) {
+        return;
+      }
+      if (img.original_width == null) {
+        img.original_width = img.width;
+        img.original_height = img.height;
+      }
+      window_size = document.viewport.getDimensions();
+      client_width = window_size.width;
+      client_height = window_size.height;
+      // Zoom the image to fit the viewport.
+      ratio = client_width / img.original_width;
+      if (img.original_height * ratio > client_height) {
+        ratio = client_height / img.original_height;
+      }
+      if (ratio < 1) {
+        img.width = img.original_width * ratio;
+        img.height = img.original_height * ratio;
+      }
+      this.center_image(img);
+      this.adjust_notes();
+    }
+
+    adjust_notes() {
+      var i;
+      if (!notesManager) {
+        return;
+      }
+      i = 0;
+      while (i < notesManager.all.length) {
+        notesManager.all[i].adjustScale();
+        ++i;
+      }
+    }
+
+    highres() {
+      var f, img;
+      img = $('image');
+      if (img.already_resized) {
+        return;
+      }
+      img.already_resized = true;
+      // un-resize
+      if ((img.scale_factor != null) && img.scale_factor !== 1) {
+        this.resize_image();
+      }
+      f = function() {
+        var highres;
+        img.original_height = null;
+        img.original_width = null;
+        highres = $('highres-show');
+        img.height = highres.getAttribute('link_height');
+        img.width = highres.getAttribute('link_width');
+        $('note-container').insert({
+          after: img
+        });
+        img.src = highres.href;
+        if (notesManager) {
+          notesManager.all.invoke('adjustScale');
+        }
+      };
+      // Clear the image before loading the new one, so it doesn't show the old image
+      // at the new resolution while the new one loads.  Hide it, so we don't flicker
+      // a placeholder frame.
+      if ($('resized_notice')) {
+        $('resized_notice').hide();
+      }
+      img.height = img.width = 0;
+      img.src = '';
+      img.remove();
+      f(img);
+    }
+
+    set_same_user(creator_id) {
+      var css, old, style;
+      old = $('creator-id-css');
+      if (old) {
+        old.parentNode.removeChild(old);
+      }
+      css = '.creator-id-' + creator_id + ' .directlink { background-color: #300 !important; }';
+      style = document.createElement('style');
+      style.id = 'creator-id-css';
+      style.type = 'text/css';
+      if (style.styleSheet) {
+        style.styleSheet.cssText = css;
+      } else {
+        style.appendChild(document.createTextNode(css));
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    init_post_list() {
+      this.posts.each((p) => {
+        var directlink, post, post_id;
+        post_id = p[0];
+        post = p[1];
+        directlink = $('p' + post_id);
+        if (!directlink) {
+          return;
+        }
+        directlink = directlink.down('.directlink');
+        if (!directlink) {
+          return;
+        }
+        directlink.observe('mouseover', ((event) => {
+          this.set_same_user(post.creator_id);
+          return false;
+        }), true);
+        directlink.observe('mouseout', ((event) => {
+          this.set_same_user(null);
+          return false;
+        }), true);
+      });
+    }
+
+    init_hover_thumb(hover, post_id, thumb, container) {
+      // Hover thumbs trigger rendering bugs in IE7.
+      if (Prototype.Browser.IE) {
+        return;
+      }
+      hover.observe('mouseover', (e) => {
+        this.hover_thumb_mouse_over(post_id, hover, thumb, container);
+      });
+      hover.observe('mouseout', (e) => {
+        if (e.relatedTarget === thumb) {
+          return;
+        }
+        this.hover_thumb_mouse_out(thumb);
+      });
+      if (!thumb.hover_init) {
+        thumb.hover_init = true;
+        thumb.observe('mouseout', (e) => {
+          this.hover_thumb_mouse_out(thumb);
+        });
+      }
+    }
+
+    hover_thumb_mouse_over(post_id, AlignItem, image, container) {
+      var bottom_aligned_y, container_bottom, container_top, offset, post, y;
+      post = this.posts.get(post_id);
+      image.hide();
+      offset = AlignItem.cumulativeOffset();
+      image.style.width = 'auto';
+      image.style.height = 'auto';
+      if (this.is_blacklisted(post_id)) {
+        image.src = Vars.asset['blacklisted-preview.png'];
+      } else {
+        image.src = post.preview_url;
+        if (post.status !== 'deleted') {
+          image.style.width = post.actual_preview_width + 'px';
+          image.style.height = post.actual_preview_height + 'px';
+        }
+      }
+      container_top = container.cumulativeOffset().top;
+      container_bottom = container_top + container.getHeight() - 1;
+      // Normally, align to the item we're hovering over.  If the image overflows over
+      // the bottom edge of the container, shift it upwards to stay in the container,
+      // unless the container's too small and that would put it over the top.
+      y = offset.top - 2;
+      // -2 for top 2px border
+      if (y + image.getHeight() > container_bottom) {
+        bottom_aligned_y = container_bottom - image.getHeight() - 4;
+        // 4 for top 2px and bottom 2px borders
+        if (bottom_aligned_y >= container_top) {
+          y = bottom_aligned_y;
+        }
+      }
+      image.style.top = y + 'px';
+      image.show();
+    }
+
+    hover_thumb_mouse_out(image) {
+      image.hide();
+    }
+
+    acknowledge_new_deleted_posts() {
+      return jQuery.ajax('/post/acknowledge_new_deleted_posts.json', {
+        method: 'POST',
+        dataType: 'json'
+      }).done((resp) => {
+        var noticeLabel;
+        noticeLabel = document.querySelector('#posts-deleted-notice');
+        if (noticeLabel != null) {
+          return noticeLabel.style.display = 'none';
+        }
+      }).fail((xhr) => {
+        var ref, ref1;
+        return notice(`Error: ${(ref = (ref1 = xhr.responseJSON) != null ? ref1.reason : void 0) != null ? ref : 'unknown error'}`);
+      });
+    }
+
+    hover_info_pin(post_id) {
+      var post;
+      post = null;
+      if (post_id != null) {
+        post = this.posts.get(post_id);
+      }
+      this.hover_info_pinned_post = post;
+      this.hover_info_update();
+    }
+
+    hover_info_mouseover(post_id) {
+      var post;
+      post = this.posts.get(post_id);
+      if (this.hover_info_hovered_post === post) {
+        return;
+      }
+      this.hover_info_hovered_post = post;
+      this.hover_info_update();
+    }
+
+    hover_info_mouseout() {
+      if (this.hover_info_hovered_post == null) {
+        return;
+      }
+      this.hover_info_hovered_post = null;
+      this.hover_info_update();
+    }
+
+    hover_info_update() {
+      var client_width, hover, hover_height, hover_thumb, hover_width, overlay, post, set_text_content, tags_by_type, thumb_center_x, thumb_offset, thumb_top_y, x, y;
+      post = this.hover_info_pinned_post;
+      if (!post) {
+        post = this.hover_info_hovered_post;
+        if (!this.hover_info_shift_held) {
+          post = null;
+        }
+      }
+      if (this.hover_info_displayed_post === post) {
+        return;
+      }
+      this.hover_info_displayed_post = post;
+      hover = $('index-hover-info');
+      overlay = $('index-hover-overlay');
+      if (!post) {
+        hover.hide();
+        overlay.hide();
+        overlay.down('IMG').src = Vars.asset['blank.gif'];
+        return;
+      }
+      hover.down('#hover-dimensions').innerHTML = post.width + 'x' + post.height;
+      hover.select('#hover-tags SPAN A').each(function(elem) {
+        elem.innerHTML = '';
+      });
+      tags_by_type = this.get_post_tags_by_type(post);
+      tags_by_type.each(function(key) {
+        var elem, list;
+        elem = $('hover-tag-' + key[0]);
+        list = [];
+        key[1].each(function(tag) {
+          list.push(tag);
+        });
+        elem.innerHTML = list.join(' ');
+      });
+      if (post.rating === 's') {
+        hover.down('#hover-rating').innerHTML = 's';
+      } else if (post.rating === 'q') {
+        hover.down('#hover-rating').innerHTML = 'q';
+      } else if (post.rating === 'e') {
+        hover.down('#hover-rating').innerHTML = 'e';
+      }
+      hover.down('#hover-post-id').innerHTML = post.id;
+      hover.down('#hover-score').innerHTML = post.score;
+      if (post.is_shown_in_index) {
+        hover.down('#hover-not-shown').hide();
+      } else {
+        hover.down('#hover-not-shown').show();
+      }
+      hover.down('#hover-is-parent').show(post.has_children);
+      hover.down('#hover-is-child').show(post.parent_id != null);
+      hover.down('#hover-is-pending').show(post.status === 'pending');
+      hover.down('#hover-is-flagged').show(post.status === 'flagged');
+      set_text_content = function(element, text) {
+        (element.innerText || element).textContent = text;
+      };
+      if (post.status === 'flagged') {
+        hover.down('#hover-flagged-reason').textContent = post.flag_detail.reason;
+        hover.down('#hover-flagged-by').textContent = post.flag_detail.flagged_by;
+      }
+      hover.down('#hover-file-size').innerHTML = numberToHumanSize(post.file_size);
+      hover.down('#hover-author').innerHTML = post.author;
+      hover.show();
+      // Reset the box to 0x0 before polling the size, so it expands to its maximum size,
+      // and read the size.
+      hover.style.left = '0px';
+      hover.style.top = '0px';
+      hover_width = hover.scrollWidth;
+      hover_height = hover.scrollHeight;
+      hover_thumb = $('p' + post.id).down('IMG');
+      thumb_offset = hover_thumb.cumulativeOffset();
+      thumb_center_x = thumb_offset[0] + hover_thumb.scrollWidth / 2;
+      thumb_top_y = thumb_offset[1];
+      x = thumb_center_x - (hover_width / 2);
+      y = thumb_top_y - hover_height;
+      // Clamp the X coordinate so the box doesn't fall off the side of the screen.  Don't
+      // clamp Y.
+      client_width = document.viewport.getDimensions()['width'];
+      if (x < 0) {
+        x = 0;
+      }
+      if (x + hover_width > client_width) {
+        x = client_width - hover_width;
+      }
+      hover.style.left = x + 'px';
+      hover.style.top = y + 'px';
+      overlay.down('A').href = (User.get_use_browser() ? '/post/browse#' : '/post/show/') + post.id;
+      overlay.down('IMG').src = post.preview_url;
+      // This doesn't always align properly in Firefox if full-page zooming is being
+      // used.
+      x = thumb_center_x - (post.actual_preview_width / 2);
+      y = thumb_offset[1];
+      overlay.style.left = x + 'px';
+      overlay.style.top = y + 'px';
+      overlay.show();
+    }
+
+    hover_info_shift_down() {
+      if (this.hover_info_shift_held) {
+        return;
+      }
+      this.hover_info_shift_held = true;
+      this.hover_info_update();
+    }
+
+    hover_info_shift_up() {
+      if (!this.hover_info_shift_held) {
+        return;
+      }
+      this.hover_info_shift_held = false;
+      this.hover_info_update();
+    }
+
+    hover_info_init() {
+      var overlay;
+      document.observe('keydown', (e) => {
+        if (e.keyCode !== 16) {
+          return;
+        }
+        this.hover_info_shift_down();
+      });
+      document.observe('keyup', (e) => {
+        if (e.keyCode !== 16) {
+          return;
+        }
+        this.hover_info_shift_up();
+      });
+      document.observe('blur', (e) => {
+        this.hover_info_shift_up();
+      });
+      overlay = $('index-hover-overlay');
+      this.posts.each((p) => {
+        var post, post_id, span;
+        post_id = p[0];
+        post = p[1];
+        span = $('p' + post.id);
+        if (span == null) {
+          return;
+        }
+        span.down('A').observe('mouseover', (e) => {
+          this.hover_info_mouseover(post_id);
+        });
+        span.down('A').observe('mouseout', (e) => {
+          if ((e.relatedTarget != null) && overlay.contains(e.relatedTarget)) {
+            return;
+          }
+          this.hover_info_mouseout();
+        });
+      });
+      overlay.observe('mouseout', (e) => {
+        this.hover_info_mouseout();
+      });
+    }
+
+    highlight_posts_with_tag(tag) {
+      this.posts.each(function(p) {
+        var post, post_id, thumb;
+        post_id = p[0];
+        post = p[1];
+        thumb = $('p' + post.id);
+        if (!thumb) {
+          return;
+        }
+        if (tag && post.tags.indexOf(tag) !== -1) {
+          thumb.addClassName('highlighted-post');
+        } else {
+          thumb.removeClassName('highlighted-post');
+        }
+      });
+    }
+
+    reparent_post(post_id, old_parent_id, has_grandparent, finished) {
+      // If the parent has a parent, this is too complicated to handle automatically.
+      if (has_grandparent) {
+        alert('The parent post has a parent, so this post can\'t be automatically reparented.');
+        return;
+      }
+      // Request a list of child posts.
+      // The parent post itself will be returned by "parent:". This is expected;
+      // it'll cause us to parent the post to itself, which unparents it
+      // from the old parent.
+      jQuery.ajax({
+        url: '/post.json',
+        data: {
+          tags: 'parent:' + old_parent_id
+        },
+        dataType: 'json'
+      }).done((resp) => {
+        var change_requests, i, post;
+        post = void 0;
+        i = void 0;
+        change_requests = [];
+        i = 0;
+        while (i < resp.length) {
+          post = resp[i];
+          if (post.id === old_parent_id && (post.parent_id != null)) {
+            alert('The parent post has a parent, so this post can\'t be automatically reparented.');
+            return;
+          }
+          change_requests.push({
+            id: resp[i].id,
+            tags: 'parent:' + post_id,
+            old_tags: ''
+          });
+          ++i;
+        }
+        if (finished == null) {
+          finished = function() {
+            document.location.reload();
+          };
+        }
+        this.update_batch(change_requests, finished);
+      });
+    }
+
+    get_url_for_post_in_pool(post_id, pool_id) {
+      return '/post/show/' + post_id + '?pool_id=' + pool_id;
+    }
+
+    jump_to_post_in_pool(post_id, pool_id) {
+      if (post_id == null) {
+        notice('No more posts in this pool');
+        return;
+      }
+      window.location.href = this.get_url_for_post_in_pool(post_id, pool_id);
+    }
+
+    InitBrowserLinks() {
+      var current, current_pool_id, parse_index_url, parse_url;
+      if (!User.get_use_browser()) {
+        return;
+      }
+      // Break out the controller, action, ID and anchor:
+      // http://url.com/post/show/123#anchor
+      parse_url = function(href) {
+        var match;
+        match = href.match(/^(https?:\/\/[^\/]+)\/([a-z]+)\/([a-z]+)\/([0-9]+)([^#]*)(#.*)?$/);
+        if (!match) {
+          return null;
+        }
+        return {
+          controller: match[2],
+          action: match[3],
+          id: match[4],
+          hash: match[6]
+        };
+      };
+      // Parse an index search URL and return the tags.  Only accept URLs with no other parameters;
+      // this shouldn't match the paginator in post/index.
+
+      // http://url.com/post?tags=tagme
+      parse_index_url = function(href) {
+        var match;
+        match = href.match(/^(https?:\/\/[^\/]+)\/post(\/index)?\?tags=([^&]*)$/);
+        if (!match) {
+          return null;
+        }
+        return match[3];
+      };
+      // If the current page is /pool/show, make post links include both the post ID and
+      // the pool ID, eg. "#12345/pool:123".
+      current = parse_url(document.location.href);
+      current_pool_id = null;
+      if (current && current.controller === 'pool' && current.action === 'show') {
+        current_pool_id = current.id;
+      }
+      $$('A').each(function(a) {
+        var tags, target, url;
+        if (a.hasClassName('no-browser-link') || a.up('.no-browser-link')) {
+          return;
+        }
+        tags = parse_index_url(a.href);
+        if (tags != null) {
+          a.href = '/post/browse#/' + tags;
+          return;
+        }
+        target = parse_url(a.href);
+        if (!target) {
+          return;
+        }
+        // If the URL has a hash, then it's something like a post comment link, so leave it
+        // alone.
+        if (target.hash) {
+          return;
+        }
+        if (target.controller === 'post' && target.action === 'show') {
+          url = '/post/browse#' + target.id;
+          if (current_pool_id != null) {
+            url += '/pool:' + current_pool_id;
+          }
+          a.browse_href = url;
+          a.orig_href = a.href;
+        } else if (target.controller === 'pool' && target.action === 'show') {
+          a.browse_href = '/post/browse#/pool:' + target.id;
+          a.orig_href = a.href;
+        }
+        if (a.browse_href) {
+          a.href = a.browse_href;
+        }
+      });
+    }
+
+    get_cached_sample_urls() {
+      var SyntaxError, sample_urls;
+      // If the data format is out of date, clear it.
+      if (localStorage.sample_url_format !== '2') {
+        this.clear_sample_url_cache();
+      }
+      if (this.cached_sample_urls != null) {
+        return this.cached_sample_urls;
+      }
+      try {
+        sample_urls = JSON.parse(window.localStorage.sample_urls);
+      } catch (error) {
+        SyntaxError = error;
+        return {};
+      }
+      if (sample_urls == null) {
+        return {};
+      }
+      this.cached_sample_urls = sample_urls;
+      return sample_urls;
+    }
+
+    clear_sample_url_cache() {
+      if ('sample_urls' in localStorage) {
+        delete window.localStorage.sample_urls;
+      }
+      if ('sample_url_fifo' in localStorage) {
+        delete window.localStorage.sample_url_fifo;
+      }
+      localStorage.sample_url_format = 2;
+    }
+
+    cache_sample_urls() {
+      var e, fifo, fifo_set, post_id, post_ids_to_expire, sample_urls;
+      sample_urls = this.get_cached_sample_urls();
+      if (sample_urls == null) {
+        return;
+      }
+      // Track post URLs in the order we see them, and push old data out.
+      fifo = window.localStorage.sample_url_fifo || null;
+      fifo = fifo ? fifo.split(',') : [];
+      this.posts.each(function(id_and_post) {
+        var post;
+        post = id_and_post[1];
+        if (post.sample_url) {
+          sample_urls[post.id] = post.sample_url;
+        }
+        fifo.push(post.id);
+      });
+      // Erase all but the most recent 1000 items.
+      fifo = fifo.splice(-1000);
+      // Make a set of the FIFO, so we can do lookups quickly.
+      fifo_set = {};
+      fifo.each(function(post_id) {
+        fifo_set[post_id] = true;
+      });
+      // Make a list of items no longer in the FIFO to be deleted.
+      post_ids_to_expire = [];
+      for (post_id in sample_urls) {
+        if (!(post_id in fifo_set)) {
+          post_ids_to_expire.push(post_id);
+        }
+      }
+      // Erase items no longer in the FIFO.
+      post_ids_to_expire.each(function(post_id) {
+        delete sample_urls[post_id];
+      });
+      // Save the cached items and FIFO back to localStorage.
+      this.cached_sample_urls = sample_urls;
+      try {
+        window.localStorage.sample_urls = JSON.stringify(sample_urls);
+        window.localStorage.sample_url_fifo = fifo.join(',');
+      } catch (error) {
+        e = error;
+        // If this fails for some reason, clear the data.
+        this.clear_sample_url_cache();
+        throw e;
+      }
+    }
+
+    prompt_to_delete(post_id, completed) {
+      var default_reason, flag_detail, reason;
+      if (completed == null) {
+        completed = function() {
+          window.location.reload();
+        };
+      }
+      flag_detail = this.posts.get(post_id).flag_detail;
+      default_reason = flag_detail ? flag_detail.reason : '';
+      reason = prompt('Reason:', default_reason);
+      if (!reason) {
+        return false;
+      }
+      this.approve(post_id, reason, completed);
+      return true;
+    }
+
+  };
+
+  Post.prototype.last_click_id = null;
+
+  Post.prototype.cached_sample_urls = null;
+
+  return Post;
+
+}).call(this);

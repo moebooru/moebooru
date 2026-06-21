@@ -3,7 +3,6 @@
 import babel from '@babel/core';
 import { createHash } from 'crypto';
 import esbuild from 'esbuild';
-import coffeeScriptPlugin from 'esbuild-coffeescript';
 import { lessLoader } from 'esbuild-plugin-less';
 import fsPromises from 'fs/promises';
 import { globSync } from 'glob';
@@ -11,10 +10,6 @@ import { globSync } from 'glob';
 const outdir = 'app/assets/builds';
 
 const plugins = [
-  coffeeScriptPlugin({
-    bare: true,
-    inlineMap: true
-  }),
   lessLoader({
     rootpath: '',
     sourceMap: {
@@ -39,9 +34,6 @@ const plugins = [
         const result = await babel.transformAsync(esbuildOutput, options);
         const filename = 'application.jsout';
         const outfileBabel = `${outdir}/${filename}`;
-        result.map.sources = result.map.sources
-          // CoffeeScript sourcemap and Esbuild sourcemap combined generates duplicated source paths
-          .map((path) => path.replace(/\.\.\/\.\.\/javascript(\/.+)?\/app\/javascript\//, '../../javascript/'));
         const resultMap = JSON.stringify(result.map);
         const resultMapHash = createHash('sha256').update(resultMap).digest('hex');
 
@@ -93,7 +85,6 @@ const config = {
   nodePaths: ['app/javascript'],
   outdir,
   plugins,
-  resolveExtensions: ['.coffee', '.js'],
   sourcemap: 'external'
 };
 

@@ -79,15 +79,12 @@ export default Post = (function () {
       }, finished);
     }
 
-    reset_tag_script_applied () {
-      let i;
-      i = 0;
-      while (i < this.applied_list.length) {
-        this.applied_list[i].removeClassName('tag-script-applied');
-        ++i;
+    reset_tag_script_applied = () => {
+      for (const item of this.applied_list) {
+        item.removeClassName('tag-script-applied');
       }
       this.applied_list = [];
-    }
+    };
 
     update_batch (posts, finished) {
       let complete, original_count, params, params_array;

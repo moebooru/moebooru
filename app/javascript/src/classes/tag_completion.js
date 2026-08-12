@@ -157,7 +157,7 @@ export default TagCompletion = class TagCompletion {
     // If we have data available, load it.
     if (localStorage.tag_data != null) {
       this.tag_data = localStorage.tag_data;
-      if (!(typeof this.most_recent_tag_data_version === 'function' ? this.most_recent_tag_data_version(localStorage.tag_data_version === this.most_recent_tag_data_version) : void 0)) {
+      if (this.most_recent_tag_data_version == null || localStorage.tag_data_version === this.most_recent_tag_data_version) {
         // console.log("Already on most recent tag data version");
         complete();
         return this.tag_data != null;

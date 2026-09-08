@@ -26,7 +26,7 @@ module NonStupidDigestAssets
   end
 
   module CompileWithNonDigest
-    def compile *args
+    def compile(*args)
       paths = super
       NonStupidDigestAssets.assets(assets).each do |(logical_path, digest_path)|
         full_digest_path = File.join dir, digest_path

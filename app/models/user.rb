@@ -20,7 +20,7 @@ class User < ApplicationRecord
       end
       begin
         current_time = Time.now
-        user_logs.find_or_initialize_by(ip_addr: ip).update created_at: current_time
+        UserLog.upsert({ user_id: id, ip_addr: ip, created_at: current_time }, unique_by: %i[user_id ip_addr])
         update_column :last_logged_in_at, current_time
       # Once in a blue moon there will be race condition on find_or_initialize
       # resulting unique key constraint violation.

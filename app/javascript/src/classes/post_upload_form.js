@@ -3,15 +3,9 @@ let PostUploadForm;
 
 export default PostUploadForm = class PostUploadForm {
   constructor (form, progress) {
-    let SupportsFormData, XHRLevel2;
     this.document_keydown_event = this.document_keydown_event.bind(this);
     this.click_cancel = this.click_cancel.bind(this);
     this.form_submit_event = this.form_submit_event.bind(this);
-    XHRLevel2 = 'XMLHttpRequest' in window && ((new XMLHttpRequest()).upload != null);
-    SupportsFormData = 'FormData' in window;
-    if (!XHRLevel2 || !SupportsFormData) {
-      return;
-    }
     this.form_element = form;
     this.cancel_element = this.form_element.down('.cancel');
     this.progress = progress;
